@@ -1,10 +1,12 @@
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = 
+drumgizmo_LDADD = $(JACK_LIBS)
 
-drumgizmo_CXXFLAGS = 
+drumgizmo_CXXFLAGS = $(JACK_CXXFLAGS)
 
 drumgizmo_SOURCES = \
-	drumgizmo.cc
+	drumgizmo.cc \
+	jackclient.cc
 
-EXTRA_DIST =
+EXTRA_DIST = \
+	jackclient.h

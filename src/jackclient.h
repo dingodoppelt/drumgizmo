@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumgizmo.cc
+ *            jackclient.h
  *
- *  Sun Jul 20 19:25:01 CEST 2008
+ *  Sun Jul 20 21:48:44 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,14 +24,37 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#ifndef __DRUMGIZMO_JACKCLIENT_H__
+#define __DRUMGIZMO_JACKCLIENT_H__
 
-#include "jackclient.h"
+#include <vector>
 
-int main(int argc, char *argv[])
-{
-  JackClient client;
+#include <jack/jack.h>
+#include <jack/midiport.h>
 
-  client.activate();
-  return 0;
-}
+class JackClient {
+public:
+  JackClient(size_t num_inputs = 16, size_t num_outputs = 16);
+  ~JackClient();
 
+  void activate();
+
+  // Callbacks
+  void shutdown();
+  int process(jack_nframes_t nframes);
+  void thread_init();
+  void freewheel_mode(int freewheel_mode);
+  int buffer_size(jack_nframes_t nframes);
+  int sample_rate(jack_nframes_t nframes);
+  void port_registration(jack_port_id_t port, int i);
+  int graph_order();
+  int xrun();
+
+private:
+	jack_client_t *jack_client;
+  std::vector< jack_port_t *> input_ports;
+  std::vector< jack_port_t *> output_ports;
+  jack_port_t *midi_port;
+};
+
+#endif/*__DRUMGIZMO_JACKCLIENT_H__*/
