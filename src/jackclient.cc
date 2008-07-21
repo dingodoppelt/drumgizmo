@@ -96,8 +96,16 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 	//jack_set_xrun_callback(jack_client, _wrap_jack_xrun, this);
 
 
-  sample[0] = new Sample("cymbal.wav");
+  sample[0] = new Sample("kick.wav");
   sample[1] = new Sample("snare.wav");
+  sample[2] = new Sample("crash1.wav");
+  sample[3] = new Sample("tom1.wav");
+  sample[4] = new Sample("tom2.wav");
+  sample[5] = new Sample("tom3.wav");
+  sample[6] = new Sample("tom4.wav");
+  sample[7] = new Sample("hihat.wav");
+  sample[8] = new Sample("crash2.wav");
+  sample[9] = new Sample("ride.wav");
 }
 
 JackClient::~JackClient()

@@ -62,7 +62,7 @@ private:
   Ports output_ports;
   jack_port_t *midi_port;
 
-  Sample *sample[2];
+  Sample *sample[32];
   Events events;
 
   MidiMapper midimapper;
