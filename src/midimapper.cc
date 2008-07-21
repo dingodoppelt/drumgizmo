@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            jackclient.h
+ *            midimapper.cc
  *
- *  Sun Jul 20 21:48:44 CEST 2008
+ *  Mon Jul 21 15:24:08 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,48 +24,33 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_JACKCLIENT_H__
-#define __DRUMGIZMO_JACKCLIENT_H__
-
-#include <vector>
-
-#include <jack/jack.h>
-#include <jack/midiport.h>
-
-#include "event.h"
-#include "sample.h"
 #include "midimapper.h"
 
-typedef std::vector< jack_port_t *> Ports;
+#define NOTE_ON 0x90
 
-class JackClient {
-public:
-  JackClient(size_t num_inputs = 16, size_t num_outputs = 16);
-  ~JackClient();
+MidiMapper::MidiMapper()
+{
+  for(int i = 0; i < 16; i++) _map[i] = i % 2;
+}
 
-  void activate();
+//http://ccrma-www.stanford.edu/~craig/articles/linuxmidi/misc/essenmidi.html
+int MidiMapper::map(jack_midi_event_t event)
+{
+  // Parse midi event
+  printf("[ Time: %d  Size: %d  ", event.time, event.size);
+  for(size_t j = 0; j < event.size; j++) {
+    jack_midi_data_t m = event.buffer[j];
+    printf("  Data: %d ", m);
+  }
+  printf("]\n");
 
-  // Callbacks
-  void shutdown();
-  int process(jack_nframes_t nframes);
-  void thread_init();
-  void freewheel_mode(int freewheel_mode);
-  int buffer_size(jack_nframes_t nframes);
-  int sample_rate(jack_nframes_t nframes);
-  void port_registration(jack_port_id_t port, int i);
-  int graph_order();
-  int xrun();
+  if(event.size == 3) return -1;
+  if(event.buffer[0] != NOTE_ON) return -1;
 
-private:
-	jack_client_t *jack_client;
-  Ports input_ports;
-  Ports output_ports;
-  jack_port_t *midi_port;
+  int key = event.buffer[1];
+  //  int velocity = event.buffer[2];
 
-  Sample *sample[2];
-  Events events;
+  if(_map.find(key) == _map.end()) return -1; // key is not in map.
 
-  MidiMapper midimapper;
-};
-
-#endif/*__DRUMGIZMO_JACKCLIENT_H__*/
+  return _map[key];
+}

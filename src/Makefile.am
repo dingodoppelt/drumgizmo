@@ -8,9 +8,11 @@ drumgizmo_SOURCES = \
 	drumgizmo.cc \
 	event.cc \
 	jackclient.cc \
+	midimapper.cc \
 	sample.cc
 
 EXTRA_DIST = \
 	jackclient.h \
 	event.h \
+	midimapper.h \
 	sample.h

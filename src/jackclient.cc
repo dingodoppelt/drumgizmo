@@ -121,21 +121,15 @@ int JackClient::process(jack_nframes_t nframes)
 	for(jack_nframes_t i = 0; i < midievents; i++) {
 		jack_midi_event_t midi_event;
 		jack_midi_event_get(&midi_event, midibuffer, i);
-    /*
-    // Parse midi event
-		printf("[ Time: %d  Size: %d  ", midi_event.time, midi_event.size);
-		for(size_t j = 0; j < midi_event.size; j++) {
-			jack_midi_data_t m = midi_event.buffer[j];
-			printf("  Data: %d ", m);
-		}
-		printf("]\n");
-    */
     
+    int s = midimapper.map(midi_event);
+    if(s == -1) continue; // -1 is illigal node.
+
     Ports::iterator pi = output_ports.begin();
     while(pi != output_ports.end()) {
 
       // Create trigger event
-      Event event(*pi, sample[midi_event.buffer[0]], midi_event.time);
+      Event event(*pi, sample[s], midi_event.time);
       events.insert(event);
 
       pi++;

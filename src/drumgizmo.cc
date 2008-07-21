@@ -47,7 +47,7 @@ int process(jack_nframes_t nframes, void *arg)
     jack_midi_event_write(port_buf, time, all_notes_off, size);
 
     timer = 0;
-    next = (size_t)(((float)rand() / (float)RAND_MAX) * 0.3 * 44100);
+    next = (size_t)(((float)rand() / (float)RAND_MAX) * 0.2 * 44100);
   }
 
   timer += nframes;
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
   client.activate();
 
-  sendMidi();
+  //  sendMidi();
 
   while(1) sleep(1);
 
