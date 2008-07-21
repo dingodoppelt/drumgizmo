@@ -63,7 +63,7 @@ private:
   Ports output_ports;
   jack_port_t *midi_port;
 
-  Sample *sample;
+  Sample *sample[2];
   Events events;
 };
 

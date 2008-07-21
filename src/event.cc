@@ -26,11 +26,12 @@
  */
 #include "event.h"
 
-Event::Event(Sample *sample, size_t onset)
+Event::Event(jack_port_t *port, Sample *sample, size_t time, size_t duration)
 {
+  this->port = port;
   this->sample = sample;
-  this->onset = onset;
-  duration = 0;
+  this->time = time;
+  this->duration = duration;
 }
 
 Event::~Event()
@@ -39,5 +40,6 @@ Event::~Event()
 
 bool Event::operator<(const Event& event) const
 {
-  return onset + duration < event.onset + event.duration;
+  if(time == event.time) return this < &event;
+  return time < event.time;
 }

@@ -96,7 +96,8 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 	//jack_set_xrun_callback(jack_client, _wrap_jack_xrun, this);
 
 
-  sample = new Sample("/home/deva/snare.wav");
+  sample[0] = new Sample("cymbal.wav");
+  sample[1] = new Sample("snare.wav");
 }
 
 JackClient::~JackClient()
@@ -130,10 +131,15 @@ int JackClient::process(jack_nframes_t nframes)
 		printf("]\n");
     */
     
-    // Create trigger event
-    Event event(sample, midi_event.time);
-    events.insert(event);
+    Ports::iterator pi = output_ports.begin();
+    while(pi != output_ports.end()) {
 
+      // Create trigger event
+      Event event(*pi, sample[midi_event.buffer[0]], midi_event.time);
+      events.insert(event);
+
+      pi++;
+    }
 	}
 
   jack_midi_clear_buffer(midibuffer);
@@ -152,30 +158,38 @@ int JackClient::process(jack_nframes_t nframes)
     pi++;
   }
 
+  Events nextevents;
+
+  //  printf("Events %d\n", events.size());
+
   // Handle events
   Events::iterator ei = events.begin();
   while(ei != events.end()) {
 
-    printf("Event\n");
+    Event event = *ei;
 
-    Ports::iterator pi = output_ports.begin();
-    while(pi != output_ports.end()) {
-
-      jack_default_audio_sample_t *buffer;
-      buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(*pi, nframes);
-
-      for(size_t j = 0; j < nframes; j++) {
-        buffer[j] = sample->data[j];//(float)rand() / (float)RAND_MAX; // Set output
-      }
-
-      pi++;
+    jack_default_audio_sample_t *buffer;
+    buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(event.port, nframes);
+    
+    size_t size = (event.sample->size - event.duration) < nframes ?
+      (event.sample->size - event.duration) - event.time : nframes - event.time;
+    
+    for(size_t j = event.time; j < event.time + size; j++) {
+      //memcpy(buffer + event.time, event.sample->data + event.duration, size);
+      buffer[j] += event.sample->data[event.duration + j];
     }
-
+    
+    if(event.duration + size < event.sample->size) {
+      Event e(event.port, event.sample, 0, event.duration + size);
+      nextevents.insert(e);
+    }
+    
     ei++;
   }
 
-  // Remove all events
-  events.clear();
+  // Remove all dead events
+  events = nextevents;
+
   /*
 	for(size_t i = 0; i < output_ports.size(); i++) {
 		jack_default_audio_sample_t *buffer;

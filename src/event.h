@@ -27,19 +27,22 @@
 #ifndef __DRUMGIZMO_EVENT_H__
 #define __DRUMGIZMO_EVENT_H__
 
+#include <jack/jack.h>
+
 #include <set>
 #include "sample.h"
 
 class Event {
 public:
-  Event(Sample *sample, size_t onset);
+  Event(jack_port_t *port, Sample *sample, size_t time, size_t duration = 0);
   ~Event();
 
   bool operator<(const Event& event) const;
 
+  jack_port_t *port;
   Sample *sample;
   size_t duration;
-  size_t onset;
+  size_t time;
 };
 
 typedef std::set< Event > Events;

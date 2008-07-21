@@ -31,20 +31,23 @@
 
 static jack_port_t *test_midi_port = NULL;
 static size_t timer = 0;
+static size_t next = 44100;
 
 int process(jack_nframes_t nframes, void *arg)
 {
   //  if(jack_port_connected_to(test_midi_port, "DrumGizmo:midi_in")) {
   void* port_buf = jack_port_get_buffer(test_midi_port, nframes);
 
-  if(timer > 44100) { // activate every second (44100 samples)
-    printf("ding\n");
+  if(timer > next) { // activate every second (44100 samples)
+    //    printf("ding\n");
 
-    jack_nframes_t time = 1;
-    size_t size = 3;
-    jack_midi_data_t all_notes_off[] = { 0xB0, 123, 0 };
+    jack_nframes_t time = (jack_nframes_t)(((float)rand() / (float)RAND_MAX) * nframes);
+    size_t size = 1;
+    jack_midi_data_t all_notes_off[] = { rand() % 2 };
     jack_midi_event_write(port_buf, time, all_notes_off, size);
+
     timer = 0;
+    next = (size_t)(((float)rand() / (float)RAND_MAX) * 0.3 * 44100);
   }
 
   timer += nframes;
