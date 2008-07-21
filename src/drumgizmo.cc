@@ -24,14 +24,66 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-
 #include "jackclient.h"
+
+#include <jack/jack.h>
+#include <jack/midiport.h>
+
+static jack_port_t *test_midi_port = NULL;
+static size_t timer = 0;
+
+int process(jack_nframes_t nframes, void *arg)
+{
+  //  if(jack_port_connected_to(test_midi_port, "DrumGizmo:midi_in")) {
+  void* port_buf = jack_port_get_buffer(test_midi_port, nframes);
+
+  if(timer > 44100) { // activate every second (44100 samples)
+    printf("ding\n");
+
+    jack_nframes_t time = 1;
+    size_t size = 3;
+    jack_midi_data_t all_notes_off[] = { 0xB0, 123, 0 };
+    jack_midi_event_write(port_buf, time, all_notes_off, size);
+    timer = 0;
+  }
+
+  timer += nframes;
+  
+  return 0;
+}
+
+void sendMidi()
+{
+	jack_status_t status;
+
+  jack_client_t *jack_client = jack_client_open("MidiTest", JackNullOption, &status);
+
+	test_midi_port = jack_port_register(jack_client,
+                                      "midi_out",
+                                      JACK_DEFAULT_MIDI_TYPE,
+                                      JackPortIsOutput,// | JackPortIsTerminal,
+                                      0);
+
+  jack_set_process_callback(jack_client, process, NULL);
+
+	jack_activate(jack_client);
+
+  jack_connect(jack_client, "MidiTest:midi_out", "DrumGizmo:midi_in");
+
+  jack_connect(jack_client, "DrumGizmo:output_1", "system:playback_1");
+  jack_connect(jack_client, "DrumGizmo:output_2", "system:playback_2");
+}
 
 int main(int argc, char *argv[])
 {
   JackClient client;
 
   client.activate();
+
+  sendMidi();
+
+  while(1) sleep(1);
+
   return 0;
 }
 

@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            jackclient.h
+ *            event.cc
  *
- *  Sun Jul 20 21:48:44 CEST 2008
+ *  Mon Jul 21 10:56:02 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,47 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_JACKCLIENT_H__
-#define __DRUMGIZMO_JACKCLIENT_H__
-
-#include <vector>
-
-#include <jack/jack.h>
-#include <jack/midiport.h>
-
 #include "event.h"
-#include "sample.h"
 
-#define TEST_MIDI
+Event::Event(Sample *sample, size_t onset)
+{
+  this->sample = sample;
+  this->onset = onset;
+  duration = 0;
+}
 
-typedef std::vector< jack_port_t *> Ports;
+Event::~Event()
+{
+}
 
-class JackClient {
-public:
-  JackClient(size_t num_inputs = 16, size_t num_outputs = 16);
-  ~JackClient();
-
-  void activate();
-
-  // Callbacks
-  void shutdown();
-  int process(jack_nframes_t nframes);
-  void thread_init();
-  void freewheel_mode(int freewheel_mode);
-  int buffer_size(jack_nframes_t nframes);
-  int sample_rate(jack_nframes_t nframes);
-  void port_registration(jack_port_id_t port, int i);
-  int graph_order();
-  int xrun();
-
-private:
-	jack_client_t *jack_client;
-  Ports input_ports;
-  Ports output_ports;
-  jack_port_t *midi_port;
-
-  Sample *sample;
-  Events events;
-};
-
-#endif/*__DRUMGIZMO_JACKCLIENT_H__*/
+bool Event::operator<(const Event& event) const
+{
+  return onset + duration < event.onset + event.duration;
+}

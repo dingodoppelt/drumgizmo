@@ -56,7 +56,7 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 
 	// Setup input port
 	midi_port = jack_port_register(jack_client,
-                                 "Midi in",
+                                 "midi_in",
                                  JACK_DEFAULT_MIDI_TYPE,
                                  JackPortIsInput,// | JackPortIsTerminal,
                                  0);
@@ -64,7 +64,7 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 	// Setup input ports
 	for(size_t i = 0; i < num_inputs; i++) {
 		char port_name[32];
-		sprintf(port_name, "Port %i", i);
+		sprintf(port_name, "input_%i", i + 1);
 		jack_port_t *port = jack_port_register(jack_client,
                                            port_name,
                                            JACK_DEFAULT_AUDIO_TYPE,
@@ -76,7 +76,7 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 	// Setup output ports
 	for(size_t i = 0; i < num_outputs; i++) {
 		char port_name[32];
-		sprintf(port_name, "Port %i", i);
+		sprintf(port_name, "output_%i", i + 1);
 		jack_port_t *port = jack_port_register(jack_client,
                                            port_name,
                                            JACK_DEFAULT_AUDIO_TYPE,
@@ -85,15 +85,18 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
     output_ports.push_back(port);
 	}
 
-	jack_on_shutdown(jack_client, _wrap_jack_shutdown, this);
+	//jack_on_shutdown(jack_client, _wrap_jack_shutdown, this);
   jack_set_process_callback(jack_client, _wrap_jack_process, this);
-	jack_set_thread_init_callback(jack_client, _wrap_jack_thread_init, this);
-	jack_set_freewheel_callback(jack_client, _wrap_jack_freewheel_mode, this);
-	jack_set_buffer_size_callback(jack_client, _wrap_jack_buffer_size, this);
-	jack_set_sample_rate_callback(jack_client, _wrap_jack_sample_rate, this);
-	jack_set_port_registration_callback(jack_client, _wrap_jack_port_registration, this);
-	jack_set_graph_order_callback(jack_client, _wrap_jack_graph_order, this);
-	jack_set_xrun_callback(jack_client, _wrap_jack_xrun, this);
+	//jack_set_thread_init_callback(jack_client, _wrap_jack_thread_init, this);
+	//jack_set_freewheel_callback(jack_client, _wrap_jack_freewheel_mode, this);
+	//jack_set_buffer_size_callback(jack_client, _wrap_jack_buffer_size, this);
+	//jack_set_sample_rate_callback(jack_client, _wrap_jack_sample_rate, this);
+	//jack_set_port_registration_callback(jack_client, _wrap_jack_port_registration, this);
+	//jack_set_graph_order_callback(jack_client, _wrap_jack_graph_order, this);
+	//jack_set_xrun_callback(jack_client, _wrap_jack_xrun, this);
+
+
+  sample = new Sample("/home/deva/snare.wav");
 }
 
 JackClient::~JackClient()
@@ -112,32 +115,74 @@ void JackClient::shutdown()
 
 int JackClient::process(jack_nframes_t nframes)
 {
-  /*
-	int pos = -1;
-	Params *params = (Params*)arg;
-
-	void *midibuffer = jack_port_get_buffer(params->midi_port, nframes);
+	void *midibuffer = jack_port_get_buffer(midi_port, nframes);
 	jack_nframes_t midievents = jack_midi_get_event_count(midibuffer);
 	for(jack_nframes_t i = 0; i < midievents; i++) {
-		jack_midi_event_t event;
-		jack_midi_event_get(&event, midibuffer, i);
-		printf("[ Time: %d  Size: %d  ", event.time, event.size);
-		for(int j = 0; j < event.size; j++) {
-			jack_midi_data_t m = event.buffer[j];
+		jack_midi_event_t midi_event;
+		jack_midi_event_get(&midi_event, midibuffer, i);
+    /*
+    // Parse midi event
+		printf("[ Time: %d  Size: %d  ", midi_event.time, midi_event.size);
+		for(size_t j = 0; j < midi_event.size; j++) {
+			jack_midi_data_t m = midi_event.buffer[j];
 			printf("  Data: %d ", m);
 		}
 		printf("]\n");
-		for(int i = 0; i < NUM_PORTS; i++) {
-			pos = event.time;
-		}
+    */
+    
+    // Create trigger event
+    Event event(sample, midi_event.time);
+    events.insert(event);
+
 	}
 
-	for(int i = 0; i < NUM_PORTS; i++) {
+  jack_midi_clear_buffer(midibuffer);
+
+  // Reset ports 
+  Ports::iterator pi = output_ports.begin();
+  while(pi != output_ports.end()) {
+    
+    jack_default_audio_sample_t *buffer;
+    buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(*pi, nframes);
+    
+    for(size_t j = 0; j < nframes; j++) {
+      buffer[j] = 0;
+    }
+    
+    pi++;
+  }
+
+  // Handle events
+  Events::iterator ei = events.begin();
+  while(ei != events.end()) {
+
+    printf("Event\n");
+
+    Ports::iterator pi = output_ports.begin();
+    while(pi != output_ports.end()) {
+
+      jack_default_audio_sample_t *buffer;
+      buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(*pi, nframes);
+
+      for(size_t j = 0; j < nframes; j++) {
+        buffer[j] = sample->data[j];//(float)rand() / (float)RAND_MAX; // Set output
+      }
+
+      pi++;
+    }
+
+    ei++;
+  }
+
+  // Remove all events
+  events.clear();
+  /*
+	for(size_t i = 0; i < output_ports.size(); i++) {
 		jack_default_audio_sample_t *buffer;
-		buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(params->drums[i].port, nframes);
+		buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(output_ports[i], nframes);
 		for(int j = 0; j < nframes; j++) {
-			if(j == pos) params->drums[i].samples[0].p = -j;
-			offset_t p = params->drums[i].samples[0].p;
+			if(j == pos) drums[i].samples[0].p = -j;
+			offset_t p = drums[i].samples[0].p;
 			size_t data_size = params->drums[i].samples[0].data_size;
 			jack_default_audio_sample_t *samples = params->drums[i].samples[0].data;
 			if(p+j > data_size) buffer[j] = 0;
@@ -147,6 +192,7 @@ int JackClient::process(jack_nframes_t nframes)
 		params->drums[i].samples[0].p += nframes;
 	}
   */
+
 	return 0;
 }
 
