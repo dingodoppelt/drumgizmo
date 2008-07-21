@@ -49,7 +49,7 @@ function hfile() {
   local pr=`echo $PROJECT | tr 'a-z.' 'A-Z_'`
   echo "#ifndef __${pr}_${hn}__" >> $1;
   echo "#define __${pr}_${hn}__" >> $1;
-  echo "#endif/*__${pr}_${hn}__" >> $1;
+  echo "#endif/*__${pr}_${hn}__*/" >> $1;
 }
 
 if [ "$#" = "1" ]; then
