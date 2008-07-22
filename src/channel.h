@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            channel.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 17:14:27 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,18 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#ifndef __DRUMGIZMO_CHANNEL_H__
+#define __DRUMGIZMO_CHANNEL_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <string>
+#include <jack/jack.h>
 
-#include <sndfile.h>
+class Channel {
+public:
+  Channel(std::string name);
 
-Sample::Sample(std::string name)
-{
-  this->name = name;
-}
+  std::string name;
+  jack_port_t *port;
+};
 
-Sample::~Sample()
-{
-}
+#endif/*__DRUMGIZMO_CHANNEL_H__*/

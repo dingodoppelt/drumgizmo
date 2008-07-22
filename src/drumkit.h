@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            drumkit.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 16:29:16 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,30 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#ifndef __DRUMGIZMO_DRUMKIT_H__
+#define __DRUMGIZMO_DRUMKIT_H__
+
+#include <map>
+#include <string>
+
 #include "sample.h"
+#include "instrument.h"
+#include "channel.h"
 
-#include <stdlib.h>
-#include <unistd.h>
+typedef std::map< std::string, Channel* > Channels;
+typedef std::map< std::string, Sample* > Samples;
 
-#include <sndfile.h>
+typedef unsigned int midi_note_t;
+typedef std::map< midi_note_t, Instrument* > Instruments;
 
-Sample::Sample(std::string name)
-{
-  this->name = name;
-}
+class DrumKit {
+public:
+  std::string name;
+  std::string description;
 
-Sample::~Sample()
-{
-}
+  Channels channels;
+  Samples samples;
+  Instruments instruments;
+};
+
+#endif/*__DRUMGIZMO_DRUMKIT_H__*/

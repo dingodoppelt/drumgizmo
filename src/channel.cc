@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            channel.cc
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 17:14:28 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,10 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#include "channel.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <sndfile.h>
-
-Sample::Sample(std::string name)
+Channel::Channel(std::string name)
 {
   this->name = name;
-}
-
-Sample::~Sample()
-{
+  this->port = NULL;
 }

@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            velocity.cc
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 18:04:58 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,36 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#include "velocity.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <sndfile.h>
-
-Sample::Sample(std::string name)
+Velocity::Velocity(unsigned int lower, unsigned int upper)
 {
-  this->name = name;
+  this->lower = lower;
+  this->upper = upper;
 }
 
-Sample::~Sample()
+void Velocity::addSample(Sample *sample, float probability)
 {
+  if(samples.find(sample) != samples.end()) {
+    samples[sample] += probability;
+  } else {
+    samples[sample] = probability;
+  }
+}
+
+Sample *Velocity::getSample()
+{
+  Sample *sample = NULL;
+
+  float x = (float)rand() / (float)RAND_MAX;
+  float sum = 0.0;
+  
+  Samples::iterator i = samples.begin();
+  while(i != samples.end() && x > sum) {
+    sum += i->second;
+    sample = i->first;
+    i++;
+  }
+
+  return sample;
 }

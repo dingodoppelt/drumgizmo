@@ -30,17 +30,17 @@
 #include <jack/jack.h>
 
 #include <set>
-#include "sample.h"
+#include "audiofile.h"
 
 class Event {
 public:
-  Event(jack_port_t *port, Sample *sample, size_t time, size_t duration = 0);
+  Event(jack_port_t *port, AudioFile *sample, size_t time, size_t duration = 0);
   ~Event();
 
   bool operator<(const Event& event) const;
 
   jack_port_t *port;
-  Sample *sample;
+  AudioFile *sample;
   size_t duration;
   size_t time;
 };

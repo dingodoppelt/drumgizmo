@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            audiofile.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 17:14:11 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,26 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#ifndef __DRUMGIZMO_AUDIOFILE_H__
+#define __DRUMGIZMO_AUDIOFILE_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <jack/jack.h>
+#include <string>
 
-#include <sndfile.h>
+class AudioFile {
+public:
+  AudioFile(std::string filename);
+  ~AudioFile();
 
-Sample::Sample(std::string name)
-{
-  this->name = name;
-}
+  void load();
+  void unload();
 
-Sample::~Sample()
-{
-}
+	jack_default_audio_sample_t *data;
+	size_t size;
+  std::string channel;
+
+private:
+  std::string filename;
+};
+
+#endif/*__DRUMGIZMO_AUDIOFILE_H__*/

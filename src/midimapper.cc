@@ -28,9 +28,9 @@
 
 #define NOTE_ON 0x90
 
-MidiMapper::MidiMapper()
+MidiMapper::MidiMapper(DrumKit *drumkit)
 {
-  // for(int i = 0; i < 255; i++) _map[i] = 1;
+  this->drumkit = drumkit;
   /*
 35  Acoustic Bass Drum  59  Ride Cymbal 2
 36  Bass Drum 1         60  Hi Bongo
@@ -53,29 +53,25 @@ MidiMapper::MidiMapper()
 53  Ride Bell           77  Low Wood Block
 54  Tambourine          78  Mute Cuica
 55  Splash Cymbal       79  Open Cuica
-56  Cowbell             80 Mute Triangle
+56  Cowbell             80  Mute Triangle
 57  Crash Cymbal 2      81  Open Triangle
 58  Vibraslap
   */
-  _map[36] = 0; // kick
-  _map[38] = 1; // snare
-  _map[49] = 2; // crash1
-  _map[50] = 3; // tom1
-  _map[48] = 3; // tom2
-  _map[47] = 3; // tom3
-  _map[45] = 4; // tom4
-  _map[43] = 5; // tom5
-  _map[41] = 6; // tom6
-  _map[46] = 7; // open hihat
-  _map[57] = 8; // crash2
-  _map[51] = 9; // ride 1
-  _map[53] = 9; // ride bell
-  _map[59] = 9; // ride 2
 }
 
 //http://ccrma-www.stanford.edu/~craig/articles/linuxmidi/misc/essenmidi.html
-int MidiMapper::map(jack_midi_event_t event)
+Sample *MidiMapper::map(jack_midi_event_t event)
 {
+  Sample *sample = NULL;
+
+  if(event.size != 3) return NULL;
+  if(event.buffer[0] != NOTE_ON) return NULL;
+
+  int key = event.buffer[1];
+  int velocity = event.buffer[2];
+
+  if(velocity == 0) return NULL;
+
   // Parse midi event
   printf("[ Time: %d  Size: %d  ", event.time, event.size);
   for(size_t j = 0; j < event.size; j++) {
@@ -84,14 +80,12 @@ int MidiMapper::map(jack_midi_event_t event)
   }
   printf("]\n");
 
-  if(event.size != 3) return -1;
-  if(event.buffer[0] != NOTE_ON) return -1;
+  if(drumkit->instruments.find(key) == drumkit->instruments.end()) return NULL;
 
-  int key = event.buffer[1];
-  int velocity = event.buffer[2];
+  Velocity *v = drumkit->instruments[key]->getVelocity(velocity);
+  
+  if(!v) return NULL;
+  sample = v->getSample();
 
-  if(velocity == 0) return -1;
-  if(_map.find(key) == _map.end()) return -1; // key is not in map.
-
-  return _map[key];
+  return sample;
 }

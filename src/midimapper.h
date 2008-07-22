@@ -29,16 +29,19 @@
 
 #include <jack/midiport.h>
 
+#include "drumkit.h"
+
 #include <map>
 
 class MidiMapper {
 public:
-  MidiMapper();
+  MidiMapper(DrumKit *drumkit);
 
-  int map(jack_midi_event_t event);
+  Sample *map(jack_midi_event_t event);
 
 private:
   std::map< int, int > _map;
+  DrumKit *drumkit;
 };
 
 #endif/*__DRUMGIZMO_MIDIMAPPER_H__*/

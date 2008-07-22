@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            drumkitparser.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 16:24:58 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,32 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#ifndef __DRUMGIZMO_DRUMKITPARSER_H__
+#define __DRUMGIZMO_DRUMKITPARSER_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include "saxparser.h"
+#include "drumkit.h"
 
-#include <sndfile.h>
+class DrumKitParser : public SAXParser {
+public:
+  DrumKitParser(char *file);
+  ~DrumKitParser();
 
-Sample::Sample(std::string name)
-{
-  this->name = name;
-}
+  void startTag(std::string name, std::map< std::string, std::string> attributes);
+  void endTag(std::string name);
 
-Sample::~Sample()
-{
-}
+  DrumKit *getDrumkit();
+
+protected:
+  int readData(char *data, size_t size);
+
+private:
+  FILE *fd;
+  DrumKit *dk;
+
+  Sample *lastsample;
+  Instrument *lastinstrument;
+  Velocity *lastvelocity;
+};
+
+#endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/

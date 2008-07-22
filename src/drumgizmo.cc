@@ -26,6 +26,8 @@
  */
 #include "jackclient.h"
 
+#include "drumkitparser.h"
+
 #include <jack/jack.h>
 #include <jack/midiport.h>
 
@@ -79,7 +81,10 @@ void sendMidi()
 
 int main(int argc, char *argv[])
 {
-  JackClient client;
+  DrumKitParser parser("/tmp/aasimonster/aasimonster.xml");
+  if(parser.parse()) return 1;
+
+  JackClient client(parser.getDrumkit());
 
   client.activate();
 

@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            instrument.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 17:14:19 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,31 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#ifndef __DRUMGIZMO_INSTRUMENT_H__
+#define __DRUMGIZMO_INSTRUMENT_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <string>
+#include <vector>
 
-#include <sndfile.h>
+#include <jack/jack.h>
 
-Sample::Sample(std::string name)
-{
-  this->name = name;
-}
+#include "velocity.h"
 
-Sample::~Sample()
-{
-}
+class Instrument {
+public:
+  Instrument(std::string name, unsigned int midimap);
+
+  void addVelocity(Velocity *velocity);
+  Velocity *getVelocity(unsigned int velocity);
+
+  std::string name;
+  unsigned int midimap;
+
+  jack_port_t *port;
+
+private:
+  typedef std::vector< Velocity * > Velocities;
+  Velocities velocities;
+};
+
+#endif/*__DRUMGIZMO_INSTRUMENT_H__*/

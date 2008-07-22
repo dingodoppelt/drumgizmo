@@ -32,6 +32,7 @@
 #include <jack/jack.h>
 #include <jack/midiport.h>
 
+#include "drumkit.h"
 #include "event.h"
 #include "sample.h"
 #include "midimapper.h"
@@ -40,7 +41,7 @@ typedef std::vector< jack_port_t *> Ports;
 
 class JackClient {
 public:
-  JackClient(size_t num_inputs = 16, size_t num_outputs = 16);
+  JackClient(DrumKit *drumkit);
   ~JackClient();
 
   void activate();
@@ -62,8 +63,9 @@ private:
   Ports output_ports;
   jack_port_t *midi_port;
 
-  Sample *sample[32];
   Events events;
+
+  DrumKit *drumkit;
 
   MidiMapper midimapper;
 };

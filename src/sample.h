@@ -27,15 +27,20 @@
 #ifndef __DRUMGIZMO_SAMPLE_H__
 #define __DRUMGIZMO_SAMPLE_H__
 
-#include <jack/jack.h>
+#include <map>
+#include <string>
+#include "audiofile.h"
+
+typedef std::map< std::string, AudioFile* > AudioFiles;
 
 class Sample {
 public:
-  Sample(char *file);
+  Sample(std::string name);
   ~Sample();
 
-	jack_default_audio_sample_t *data;
-	size_t size;
+  AudioFiles audiofiles;
+
+  std::string name;
 };
 
 #endif/*__DRUMGIZMO_SAMPLE_H__*/

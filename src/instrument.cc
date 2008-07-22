@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            sample.cc
+ *            instrument.cc
  *
- *  Mon Jul 21 10:23:20 CEST 2008
+ *  Tue Jul 22 17:14:20 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,25 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "sample.h"
+#include "instrument.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <sndfile.h>
-
-Sample::Sample(std::string name)
+Instrument::Instrument(std::string name, unsigned int midimap)
 {
   this->name = name;
+  this->midimap = midimap;
 }
 
-Sample::~Sample()
+void Instrument::addVelocity(Velocity *velocity)
 {
+  velocities.push_back(velocity);
+}
+
+Velocity *Instrument::getVelocity(unsigned int v)
+{
+  Velocities::iterator i = velocities.begin();
+  while(i != velocities.end()) {
+    if(v >= (*i)->lower && v <= (*i)->upper) return *i;
+    i++;
+  }
+  return NULL;
 }

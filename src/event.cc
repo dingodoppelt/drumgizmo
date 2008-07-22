@@ -26,10 +26,11 @@
  */
 #include "event.h"
 
-Event::Event(jack_port_t *port, Sample *sample, size_t time, size_t duration)
+Event::Event(jack_port_t *port, AudioFile *sample, size_t time, size_t duration)
 {
   this->port = port;
   this->sample = sample;
+  sample->load();
   this->time = time;
   this->duration = duration;
 }

@@ -48,8 +48,11 @@ extern "C"
     return ((JackClient*)arg)->xrun();}
 }  // extern "C"
 
-JackClient::JackClient(size_t num_inputs, size_t num_outputs)
+JackClient::JackClient(DrumKit *drumkit)
+  : midimapper(drumkit)
 {
+  this->drumkit = drumkit;
+
 	jack_status_t status;
 
 	jack_client = jack_client_open("DrumGizmo", JackNullOption, &status);
@@ -62,27 +65,29 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
                                  0);
 
 	// Setup input ports
-	for(size_t i = 0; i < num_inputs; i++) {
-		char port_name[32];
-		sprintf(port_name, "input_%i", i + 1);
-		jack_port_t *port = jack_port_register(jack_client,
-                                           port_name,
-                                           JACK_DEFAULT_AUDIO_TYPE,
-                                           JackPortIsInput | JackPortIsTerminal,
-                                           0);
-    input_ports.push_back(port);
+  Instruments::iterator ii = drumkit->instruments.begin();
+	while(ii != drumkit->instruments.end()) {
+    Instrument *instrument = ii->second;
+		instrument->port = jack_port_register(jack_client,
+                                          instrument->name.c_str(),
+                                          JACK_DEFAULT_AUDIO_TYPE,
+                                          JackPortIsInput | JackPortIsTerminal,
+                                          0);
+    input_ports.push_back(instrument->port);
+    ii++;
 	}
 
 	// Setup output ports
-	for(size_t i = 0; i < num_outputs; i++) {
-		char port_name[32];
-		sprintf(port_name, "output_%i", i + 1);
-		jack_port_t *port = jack_port_register(jack_client,
-                                           port_name,
-                                           JACK_DEFAULT_AUDIO_TYPE,
-                                           JackPortIsOutput | JackPortIsTerminal,
-                                           0);
-    output_ports.push_back(port);
+  Channels::iterator ci = drumkit->channels.begin();
+  while(ci != drumkit->channels.end()) {
+    Channel *channel = ci->second;
+		channel->port = jack_port_register(jack_client,
+                                       channel->name.c_str(),
+                                       JACK_DEFAULT_AUDIO_TYPE,
+                                       JackPortIsOutput | JackPortIsTerminal,
+                                       0);
+    output_ports.push_back(channel->port);
+    ci++;
 	}
 
 	//jack_on_shutdown(jack_client, _wrap_jack_shutdown, this);
@@ -94,18 +99,6 @@ JackClient::JackClient(size_t num_inputs, size_t num_outputs)
 	//jack_set_port_registration_callback(jack_client, _wrap_jack_port_registration, this);
 	//jack_set_graph_order_callback(jack_client, _wrap_jack_graph_order, this);
 	//jack_set_xrun_callback(jack_client, _wrap_jack_xrun, this);
-
-
-  sample[0] = new Sample("kick.wav");
-  sample[1] = new Sample("snare.wav");
-  sample[2] = new Sample("crash1.wav");
-  sample[3] = new Sample("tom1.wav");
-  sample[4] = new Sample("tom2.wav");
-  sample[5] = new Sample("tom3.wav");
-  sample[6] = new Sample("tom4.wav");
-  sample[7] = new Sample("hihat.wav");
-  sample[8] = new Sample("crash2.wav");
-  sample[9] = new Sample("ride.wav");
 }
 
 JackClient::~JackClient()
@@ -130,18 +123,23 @@ int JackClient::process(jack_nframes_t nframes)
 		jack_midi_event_t midi_event;
 		jack_midi_event_get(&midi_event, midibuffer, i);
     
-    int s = midimapper.map(midi_event);
-    if(s == -1) continue; // -1 is illigal node.
+    Sample *sample = midimapper.map(midi_event);
+    if(!sample) continue;
 
-    Ports::iterator pi = output_ports.begin();
-    while(pi != output_ports.end()) {
+    AudioFiles::iterator ai = sample->audiofiles.begin();
+    while(ai != sample->audiofiles.end()) {
+      printf("!\n");
+      AudioFile *audiofile = ai->second;
+      audiofile->load();
 
-      // Create trigger event
-      Event event(*pi, sample[s], midi_event.time);
-      events.insert(event);
-
-      pi++;
+      if(drumkit->channels.find(audiofile->channel) != drumkit->channels.end()) {
+        Channel *channel = drumkit->channels[audiofile->channel];
+        Event event(channel->port, audiofile, midi_event.time);
+        events.insert(event);
+      }
+      ai++;
     }
+
 	}
 
   jack_midi_clear_buffer(midibuffer);
@@ -191,23 +189,6 @@ int JackClient::process(jack_nframes_t nframes)
 
   // Remove all dead events
   events = nextevents;
-
-  /*
-	for(size_t i = 0; i < output_ports.size(); i++) {
-		jack_default_audio_sample_t *buffer;
-		buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(output_ports[i], nframes);
-		for(int j = 0; j < nframes; j++) {
-			if(j == pos) drums[i].samples[0].p = -j;
-			offset_t p = drums[i].samples[0].p;
-			size_t data_size = params->drums[i].samples[0].data_size;
-			jack_default_audio_sample_t *samples = params->drums[i].samples[0].data;
-			if(p+j > data_size) buffer[j] = 0;
-			else buffer[j] = samples[(j + p) % data_size];
-			//      params->drums[i].samples[0].p ++;
-		}
-		params->drums[i].samples[0].p += nframes;
-	}
-  */
 
 	return 0;
 }
