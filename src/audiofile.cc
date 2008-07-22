@@ -65,12 +65,12 @@ void AudioFile::load()
 	size = sf_seek(fh, 0, SEEK_END);
 	data = (jack_default_audio_sample_t*)malloc(sizeof(jack_default_audio_sample_t)*size);
 
-	printf("Loading %s, %d samples\n", filename.c_str(), size);
+  //	printf("Loading %s, %d samples\n", filename.c_str(), size);
 
 	sf_seek(fh, 0, SEEK_SET);
 	sf_read_float(fh, data, size); 
 
-  for(size_t i = 0; i < size; i++) data[i] *= 0.1;
+  //  for(size_t i = 0; i < size; i++) data[i] *= 0.1;
 
 	sf_close(fh);
 }

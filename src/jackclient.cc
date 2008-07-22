@@ -128,7 +128,6 @@ int JackClient::process(jack_nframes_t nframes)
 
     AudioFiles::iterator ai = sample->audiofiles.begin();
     while(ai != sample->audiofiles.end()) {
-      printf("!\n");
       AudioFile *audiofile = ai->second;
       audiofile->load();
 
@@ -171,12 +170,12 @@ int JackClient::process(jack_nframes_t nframes)
     jack_default_audio_sample_t *buffer;
     buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(event.port, nframes);
     
-    size_t size = (event.sample->size - event.duration) < nframes ?
-      (event.sample->size - event.duration) - event.time : nframes - event.time;
+    size_t dtime = nframes - event.time; // how much buffer is left?
+    size_t size = event.sample->size - event.duration; // how much audio is left?
+    if(size > dtime) size = dtime;
     
     for(size_t j = event.time; j < event.time + size; j++) {
-      //memcpy(buffer + event.time, event.sample->data + event.duration, size);
-      buffer[j] += event.sample->data[event.duration + j];
+      buffer[j] += event.sample->data[event.duration + j - event.time];
     }
     
     if(event.duration + size < event.sample->size) {

@@ -71,7 +71,7 @@ Sample *MidiMapper::map(jack_midi_event_t event)
   int velocity = event.buffer[2];
 
   if(velocity == 0) return NULL;
-
+  /*
   // Parse midi event
   printf("[ Time: %d  Size: %d  ", event.time, event.size);
   for(size_t j = 0; j < event.size; j++) {
@@ -79,7 +79,7 @@ Sample *MidiMapper::map(jack_midi_event_t event)
     printf("  Data: %d ", m);
   }
   printf("]\n");
-
+  */
   if(drumkit->instruments.find(key) == drumkit->instruments.end()) return NULL;
 
   Velocity *v = drumkit->instruments[key]->getVelocity(velocity);
