@@ -29,7 +29,7 @@
 BeatMapper::BeatMapper(Instrument *instrument)
 {
   this->instrument = instrument;
-  for(size_t i = 0; i < HISTORY_SIZE; i++) hist[i] = 0.0;
+  for(size_t i = 0; i < HISTORY_SIZE; i++) hist[i] = 1.0;
   C = 1.3;
   mindist = 2;
   last = mindist;
@@ -46,7 +46,6 @@ Sample *BeatMapper::map(jack_nframes_t nframes)
   float e = 0.0;
   for(size_t i = 0; i < nframes; i++) {
     e += buffer[i] * buffer[i];
-    //    buffer[i] = 0.0;
   }
 
   float E = 0.0;
