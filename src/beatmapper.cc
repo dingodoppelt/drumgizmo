@@ -50,6 +50,7 @@ Sample *BeatMapper::map(jack_nframes_t nframes)
 
   float E = 0.0;
   for(size_t i = 0; i < HISTORY_SIZE; i++) E += hist[i] / (float)HISTORY_SIZE;
+  if(E == 0) E = 1.0; // We do not have a connection
 
   //  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 * E);
 
