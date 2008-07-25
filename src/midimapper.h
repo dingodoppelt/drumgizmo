@@ -40,7 +40,6 @@ public:
   Sample *map(jack_midi_event_t event);
 
 private:
-  std::map< int, int > _map;
   DrumKit *drumkit;
 };
 

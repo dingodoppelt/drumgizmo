@@ -73,7 +73,11 @@ JackClient::JackClient(DrumKit *drumkit)
                                           JACK_DEFAULT_AUDIO_TYPE,
                                           JackPortIsInput | JackPortIsTerminal,
                                           0);
-    input_ports.push_back(instrument->port);
+
+    BeatMapper *beatmapper = new BeatMapper(instrument);
+    beatmappers.push_back(beatmapper);
+
+    //    input_ports.push_back(instrument->port);
     ii++;
 	}
 
@@ -117,6 +121,9 @@ void JackClient::shutdown()
 
 int JackClient::process(jack_nframes_t nframes)
 {
+  //
+  // Look for midi input
+  //
 	void *midibuffer = jack_port_get_buffer(midi_port, nframes);
 	jack_nframes_t midievents = jack_midi_get_event_count(midibuffer);
 	for(jack_nframes_t i = 0; i < midievents; i++) {
@@ -140,10 +147,38 @@ int JackClient::process(jack_nframes_t nframes)
     }
 
 	}
-
   jack_midi_clear_buffer(midibuffer);
 
+  //
+  // Look for audio trigger input
+  //
+  //  std::vector< BeatMapper >::iterator bi = beatmappers.begin();
+  //  while(bi != beatmappers.end()) {
+  for(size_t bi = 0; bi < beatmappers.size(); bi++) {
+    BeatMapper *beatmapper = beatmappers[bi];//*bi;
+
+    Sample *sample = beatmapper->map(nframes);
+    if(!sample) continue;
+
+    AudioFiles::iterator ai = sample->audiofiles.begin();
+    while(ai != sample->audiofiles.end()) {
+      AudioFile *audiofile = ai->second;
+      audiofile->load();
+
+      if(drumkit->channels.find(audiofile->channel) != drumkit->channels.end()) {
+        Channel *channel = drumkit->channels[audiofile->channel];
+        Event event(channel->port, audiofile, 0);
+        events.insert(event);
+      }
+      ai++;
+    }
+
+    //bi++;
+  }
+
+  //
   // Reset ports 
+  //
   Ports::iterator pi = output_ports.begin();
   while(pi != output_ports.end()) {
     
@@ -159,9 +194,9 @@ int JackClient::process(jack_nframes_t nframes)
 
   Events nextevents;
 
-  //  printf("Events %d\n", events.size());
-
+  //
   // Handle events
+  //
   Events::iterator ei = events.begin();
   while(ei != events.end()) {
 

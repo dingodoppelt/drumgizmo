@@ -28,6 +28,63 @@
 
 #include "drumkitparser.h"
 
+int main(int argc, char *argv[])
+{
+  DrumKitParser parser("/tmp/aasimonster/aasimonster.xml");
+  if(parser.parse()) return 1;
+
+  JackClient client(parser.getDrumkit());
+
+  client.activate();
+
+  //  sendMidi();
+
+  while(1) sleep(1);
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
 #include <jack/jack.h>
 #include <jack/midiport.h>
 
@@ -78,20 +135,4 @@ void sendMidi()
   jack_connect(jack_client, "DrumGizmo:output_1", "system:playback_1");
   jack_connect(jack_client, "DrumGizmo:output_2", "system:playback_2");
 }
-
-int main(int argc, char *argv[])
-{
-  DrumKitParser parser("/tmp/aasimonster/aasimonster.xml");
-  if(parser.parse()) return 1;
-
-  JackClient client(parser.getDrumkit());
-
-  client.activate();
-
-  //  sendMidi();
-
-  while(1) sleep(1);
-
-  return 0;
-}
-
+#endif/*0*/

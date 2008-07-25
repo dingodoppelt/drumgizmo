@@ -6,6 +6,7 @@ drumgizmo_CXXFLAGS = $(JACK_CXXFLAGS) $(SNDFILE_CXXFLAGS)
 
 drumgizmo_SOURCES = \
 	audiofile.cc \
+	beatmapper.cc \
 	channel.cc \
 	drumgizmo.cc \
 	drumkitparser.cc \
@@ -19,6 +20,7 @@ drumgizmo_SOURCES = \
 
 EXTRA_DIST = \
 	audiofile.h \
+	beatmapper.h \
 	channel.h \
 	drumkit.h \
 	drumkitparser.h \
