@@ -52,7 +52,7 @@ Sample *BeatMapper::map(jack_nframes_t nframes)
   float E = 0.0;
   for(size_t i = 0; i < HISTORY_SIZE; i++) E += hist[i] / (float)HISTORY_SIZE;
 
-  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 * E);
+  //  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 * E);
 
   // Shift history and save new value
   for(size_t i = 0; i < HISTORY_SIZE - 1; i++) hist[i] = hist[i+1];
