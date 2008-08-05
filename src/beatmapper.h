@@ -34,7 +34,7 @@
 
 #include <map>
 
-#define HISTORY_SIZE 43
+#define HISTORY_SIZE 200
 
 class BeatMapper {
 public:

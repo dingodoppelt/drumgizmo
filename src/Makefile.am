@@ -14,6 +14,7 @@ drumgizmo_SOURCES = \
 	instrument.cc \
 	jackclient.cc \
 	midimapper.cc \
+	midiplayer.cc \
 	sample.cc \
 	saxparser.cc \
 	velocity.cc
@@ -28,6 +29,7 @@ EXTRA_DIST = \
 	instrument.h \
 	jackclient.h \
 	midimapper.h \
+	midiplayer.h \
 	sample.h \
 	saxparser.h \
 	velocity.h

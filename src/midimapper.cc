@@ -80,7 +80,10 @@ Sample *MidiMapper::map(jack_midi_event_t event)
   }
   printf("]\n");
   */
-  if(drumkit->instruments.find(key) == drumkit->instruments.end()) return NULL;
+  if(drumkit->instruments.find(key) == drumkit->instruments.end()) {
+    printf("Unknown intrsument %d\n", key);
+    return NULL;
+  }
 
   Velocity *v = drumkit->instruments[key]->getVelocity(velocity);
   

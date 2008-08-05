@@ -36,6 +36,12 @@ dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.17)
 
 dnl ======================
+dnl Check for eXpat library
+dnl ======================
+AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
+AC_CHECK_LIB(expat, XML_ParserCreate, ,  AC_MSG_ERROR([*** eXpat library not found!]))
+
+dnl ======================
 dnl Check for getopt
 dnl ======================
 AC_HAVE_HEADERS(getopt.h)

@@ -26,18 +26,21 @@
  */
 #include "beatmapper.h"
 
+#define DEF 2.0
+
 BeatMapper::BeatMapper(Instrument *instrument)
 {
   this->instrument = instrument;
-  for(size_t i = 0; i < HISTORY_SIZE; i++) hist[i] = 1.0;
+  for(size_t i = 0; i < HISTORY_SIZE; i++) hist[i] = DEF;
   C = 1.3;
-  mindist = 2;
+  mindist = 4;
   last = mindist;
 }
 
 
 Sample *BeatMapper::map(jack_nframes_t nframes)
 {
+  return NULL;
   Sample *sample = NULL;
   
   jack_default_audio_sample_t *buffer;
@@ -50,13 +53,15 @@ Sample *BeatMapper::map(jack_nframes_t nframes)
 
   float E = 0.0;
   for(size_t i = 0; i < HISTORY_SIZE; i++) E += hist[i] / (float)HISTORY_SIZE;
-  if(E == 0) E = 1.0; // We do not have a connection
+  if(E == 0) E = DEF; // We do not have a connection
 
   //  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 * E);
 
   // Shift history and save new value
   for(size_t i = 0; i < HISTORY_SIZE - 1; i++) hist[i] = hist[i+1];
-  hist[HISTORY_SIZE - 1] = e;
+  hist[HISTORY_SIZE - 1] = e>DEF?e:DEF;
+
+  if(instrument->name == "hihat" && e > 0) printf("e: %f\n", e);
 
   if(e > C * E && last > mindist) {
     Velocity *v = instrument->getVelocity(127);

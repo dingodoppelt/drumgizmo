@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumgizmo.cc
+ *            midiplayer.h
  *
- *  Sun Jul 20 19:25:01 CEST 2008
+ *  Sat Jul 26 15:23:18 CEST 2008
  *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,23 +24,25 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#ifndef __DRUMGIZMO_MIDIPLAYER_H__
+#define __DRUMGIZMO_MIDIPLAYER_H__
 
-#include "jackclient.h"
-#include "drumkitparser.h"
-#include "midiplayer.h"
+#include <jack/jack.h>
+#include <jack/midiport.h>
 
-int main(int argc, char *argv[])
-{
-  DrumKitParser parser("/tmp/aasimonster/aasimonster.xml");
-  if(parser.parse()) return 1;
+class MidiPlayer {
+public:
+  MidiPlayer(char *filename);
+  ~MidiPlayer();
 
-  JackClient client(parser.getDrumkit());
+  int process(jack_nframes_t nframes);
 
-  client.activate();
+private:
+  jack_client_t *jack_client;
+  jack_port_t *port;
 
-  MidiPlayer player("dimmer.mid");
+  size_t timer;
+  size_t next;
+};
 
-  while(1) sleep(1);
-
-  return 0;
-}
+#endif/*__DRUMGIZMO_MIDIPLAYER_H__*/
