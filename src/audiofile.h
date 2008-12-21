@@ -32,7 +32,7 @@
 
 class AudioFile {
 public:
-  AudioFile(std::string filename);
+  AudioFile(std::string filename, bool preload = false);
   ~AudioFile();
 
   void load();

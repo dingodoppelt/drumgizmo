@@ -33,7 +33,7 @@ int _process(jack_nframes_t nframes, void *arg)
   return ((MidiPlayer*)arg)->process(nframes);
 }
 
-MidiPlayer::MidiPlayer(char *filename)
+MidiPlayer::MidiPlayer(std::string filename)
 {
 	jack_status_t status;
 

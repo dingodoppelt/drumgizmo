@@ -32,7 +32,7 @@
 
 class DrumKitParser : public SAXParser {
 public:
-  DrumKitParser(char *file);
+  DrumKitParser(std::string kitfile, bool preload = false);
   ~DrumKitParser();
 
   void startTag(std::string name, std::map< std::string, std::string> attributes);
@@ -50,6 +50,8 @@ private:
   Sample *lastsample;
   Instrument *lastinstrument;
   Velocity *lastvelocity;
+
+  bool preload;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/

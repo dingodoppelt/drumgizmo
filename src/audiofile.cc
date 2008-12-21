@@ -31,12 +31,12 @@
 
 #include <sndfile.h>
 
-AudioFile::AudioFile(std::string filename)
+AudioFile::AudioFile(std::string filename, bool preload)
 {
   this->filename = filename;
   data = NULL;
   size = 0;
-  //  load();
+  if(preload) load();
 }
 
 AudioFile::~AudioFile()
@@ -56,8 +56,6 @@ void AudioFile::unload()
 void AudioFile::load()
 {
   if(data) return;
-
-  filename = "/tmp/aasimonster/" + filename;
 
 	SF_INFO sf_info;
 	SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);

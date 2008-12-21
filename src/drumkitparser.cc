@@ -26,10 +26,28 @@
  */
 #include "drumkitparser.h"
 
-DrumKitParser::DrumKitParser(char *file)
+#define DIR_SEPERATOR '/'
+
+DrumKitParser::DrumKitParser(std::string kitfile, bool preload)
 {
+  std::string file;
+  std::string path;
+
+  char *split = strrchr(kitfile.c_str(), DIR_SEPERATOR);
+  if(split) {
+    file = split + 1;
+    split = '\0';
+    path = kitfile.substr(0, kitfile.length() - file.length());
+    // All drum samples are relative to the kitfile, so we must chdir there to be able to open them.
+    chdir(path.c_str());
+  } else {
+    file = kitfile;
+  }
+
+  this->preload = preload;
+
   dk = NULL;
-  fd = fopen(file, "r");
+  fd = fopen(file.c_str(), "r");
   if(!fd) return;
   dk = new DrumKit();
 }
@@ -62,7 +80,7 @@ void DrumKitParser::startTag(std::string name, std::map< std::string, std::strin
   }
 
   if(name == "audiofile") {
-    AudioFile *af = new AudioFile(attributes["name"]);
+    AudioFile *af = new AudioFile(attributes["name"], preload);
     af->channel = attributes["channel"];
     lastsample->audiofiles[attributes["name"]] = af;
   }

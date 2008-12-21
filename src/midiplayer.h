@@ -29,10 +29,11 @@
 
 #include <jack/jack.h>
 #include <jack/midiport.h>
+#include <string>
 
 class MidiPlayer {
 public:
-  MidiPlayer(char *filename);
+  MidiPlayer(std::string midifile);
   ~MidiPlayer();
 
   int process(jack_nframes_t nframes);
