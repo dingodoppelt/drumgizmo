@@ -36,7 +36,6 @@ DrumKitParser::DrumKitParser(std::string kitfile, bool preload)
   char *split = strrchr(kitfile.c_str(), DIR_SEPERATOR);
   if(split) {
     file = split + 1;
-    split = '\0';
     path = kitfile.substr(0, kitfile.length() - file.length());
     // All drum samples are relative to the kitfile, so we must chdir there to be able to open them.
     chdir(path.c_str());
