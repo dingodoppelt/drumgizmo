@@ -31,12 +31,22 @@
 
 #include <sndfile.h>
 
-AudioFile::AudioFile(std::string filename, bool preload)
+AudioFile::AudioFile(std::string filename, bool preload, int min_velocity)
 {
   this->filename = filename;
   data = NULL;
   size = 0;
-  if(preload) load();
+
+  char *p = (char*)filename.c_str() + filename.length() - 6;
+  int num = atoi(p);
+  if(num < 0) num *= -1;
+
+  printf("%s", filename.c_str());
+  if(preload && num  >= min_velocity) {
+    printf(" ... loading");
+    load();
+  }
+  printf("\n");
 }
 
 AudioFile::~AudioFile()

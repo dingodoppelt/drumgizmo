@@ -28,7 +28,7 @@
 
 #define DIR_SEPERATOR '/'
 
-DrumKitParser::DrumKitParser(std::string kitfile, bool preload)
+DrumKitParser::DrumKitParser(std::string kitfile, bool preload, int min_velocity)
 {
   std::string file;
   std::string path;
@@ -44,6 +44,7 @@ DrumKitParser::DrumKitParser(std::string kitfile, bool preload)
   }
 
   this->preload = preload;
+  this->min_velocity = min_velocity;
 
   dk = NULL;
   fd = fopen(file.c_str(), "r");
@@ -79,7 +80,7 @@ void DrumKitParser::startTag(std::string name, std::map< std::string, std::strin
   }
 
   if(name == "audiofile") {
-    AudioFile *af = new AudioFile(attributes["name"], preload);
+    AudioFile *af = new AudioFile(attributes["name"], preload, min_velocity);
     af->channel = attributes["channel"];
     lastsample->audiofiles[attributes["name"]] = af;
   }

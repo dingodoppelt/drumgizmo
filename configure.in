@@ -1,7 +1,7 @@
 # Filename: configure.in
 
 AC_INIT(src/drumgizmo.cc)
-AM_INIT_AUTOMAKE( drumgizmo, 0.0.1 )
+AM_INIT_AUTOMAKE( drumgizmo, 0.0.2 )
 
 AC_PROG_CXX
 

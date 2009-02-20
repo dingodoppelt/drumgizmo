@@ -46,10 +46,11 @@ static const char copyright_str[] =
 static const char usage_str[] =
 "Usage: %s [options] drumkitfile\n"
 "Options:\n"
-"  -p, --preload       Load entire kit audio files into memory (uses ALOT of memory).\n"
-"  -m, --midi midifile Load midifile, and play it.\n"
-"  -v, --version       Print version information and exit.\n"
-"  -h, --help          Print this message and exit.\n"
+"  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
+"  -P, --preload_vel vel  Load all files with velocity above vel into memory (uses a little less memory).\n"
+"  -m, --midi midifile    Load midifile, and play it.\n"
+"  -v, --version          Print version information and exit.\n"
+"  -h, --help             Print this message and exit.\n"
 ;
 
 int main(int argc, char *argv[])
@@ -57,18 +58,21 @@ int main(int argc, char *argv[])
   int c;
 
   char *midifile = NULL;
-  bool preload = false;
+  bool preload = true;
+  int min_velocity = 18;
 
   int option_index = 0;
   while(1) {
     static struct option long_options[] = {
+      {"preload_vel", required_argument, 0, 'P'},
+      {"preload", no_argument, 0, 'p'},
       {"midi", required_argument, 0, 'm'},
       {"help", no_argument, 0, 'h'},
       {"version", no_argument, 0, 'v'},
       {0, 0, 0, 0}
     };
     
-    c = getopt_long (argc, argv, "hvpm:", long_options, &option_index);
+    c = getopt_long (argc, argv, "hvpP:m:", long_options, &option_index);
     
     if (c == -1)
       break;
@@ -82,6 +86,11 @@ int main(int argc, char *argv[])
       preload = true;
       break;
  
+    case 'P':
+      preload = true;
+      min_velocity = atoi(optarg);
+      break;
+
     case '?':
     case 'h':
       printf(version_str);
@@ -114,7 +123,7 @@ int main(int argc, char *argv[])
   
   printf("Using kitfile: %s\n", kitfile.c_str());
 
-  DrumKitParser parser(kitfile, preload);
+  DrumKitParser parser(kitfile, preload, min_velocity);
   if(parser.parse()) return 1;
 
   JackClient client(parser.getDrumkit());
