@@ -25,7 +25,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "drumkitparser.h"
-
+#include <string.h>
 #define DIR_SEPERATOR '/'
 
 DrumKitParser::DrumKitParser(std::string kitfile, bool preload, int min_velocity)

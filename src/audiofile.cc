@@ -63,6 +63,7 @@ void AudioFile::unload()
   size = 0;
 }
 
+#define THRESHOLD 0.0001
 void AudioFile::load()
 {
   if(data) return;
@@ -71,15 +72,24 @@ void AudioFile::load()
 	SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
 
 	size = sf_seek(fh, 0, SEEK_END);
-	data = (jack_default_audio_sample_t*)malloc(sizeof(jack_default_audio_sample_t)*size);
+	jack_default_audio_sample_t* tmp_data = (jack_default_audio_sample_t*)malloc(sizeof(jack_default_audio_sample_t)*size);
 
   //	printf("Loading %s, %d samples\n", filename.c_str(), size);
 
 	sf_seek(fh, 0, SEEK_SET);
-	sf_read_float(fh, data, size); 
+	sf_read_float(fh, tmp_data, size); 
 
   //  for(size_t i = 0; i < size; i++) data[i] *= 0.1;
 
 	sf_close(fh);
+
+  // Find real size (crop 'silence')
+  while(size > 0 && tmp_data[size--] < THRESHOLD) {}
+	data = (jack_default_audio_sample_t*)malloc(sizeof(jack_default_audio_sample_t)*size);
+  for(size_t i = 0; i < size; i++) data[i] = tmp_data[i];
+  // ramp down
+  //  if(size > 1024) for(size_t i = 1024; i >= 0; i--) data[size - i] *= (float)i/1024.0;
+  free(tmp_data);
+
 }
 

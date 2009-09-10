@@ -26,6 +26,8 @@
  */
 #include "velocity.h"
 
+#include <stdlib.h>
+
 Velocity::Velocity(unsigned int lower, unsigned int upper)
 {
   this->lower = lower;

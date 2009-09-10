@@ -29,6 +29,7 @@
 #include "jackclient.h"
 #include "drumkitparser.h"
 #include "midiplayer.h"
+#include <string.h>
 
 static const char version_str[] =
 "DrumGizmo v" VERSION "\n"
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
 
   char *midifile = NULL;
   bool preload = true;
-  int min_velocity = 18;
+  int min_velocity = 0;//18;
 
   int option_index = 0;
   while(1) {
@@ -107,19 +108,24 @@ int main(int argc, char *argv[])
     }
   }
 
-  if(argc < option_index + 2) {
+  std::string kitfile;
+
+  if(option_index < argc) {
+    printf("non-option ARGV-elements: ");
+    while (optind < argc) {
+      if(kitfile != "") {
+        fprintf(stderr, "Can only handle a single kitfile.\n");
+        printf(usage_str, argv[0]);
+        return 1;
+      }
+      kitfile = argv[optind++];
+    }
+    printf("\n");
+  } else {
     fprintf(stderr, "Missing kitfile.\n");
     printf(usage_str, argv[0]);
     return 1;
   }
-
-  if(argc > option_index + 2) {
-    fprintf(stderr, "Can only handle a single kitfile.\n");
-    printf(usage_str, argv[0]);
-    return 1;
-  }
-
-  std::string kitfile = argv[option_index + 1];
   
   printf("Using kitfile: %s\n", kitfile.c_str());
 
