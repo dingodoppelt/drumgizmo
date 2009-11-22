@@ -26,7 +26,7 @@
  */
 #include "midimapper.h"
 
-#define NOTE_ON 0x90
+#define NOTE_ON 0x9
 
 MidiMapper::MidiMapper(DrumKit *drumkit)
 {
@@ -64,8 +64,10 @@ Sample *MidiMapper::map(jack_midi_event_t event)
 {
   Sample *sample = NULL;
 
+  //  printf("m"); fflush(stdout);
+
   if(event.size != 3) return NULL;
-  if(event.buffer[0] != NOTE_ON) return NULL;
+  if(event.buffer[0] & NOTE_ON != NOTE_ON) return NULL;
 
   int key = event.buffer[1];
   int velocity = event.buffer[2];
@@ -81,7 +83,7 @@ Sample *MidiMapper::map(jack_midi_event_t event)
   printf("]\n");
   */
   if(drumkit->instruments.find(key) == drumkit->instruments.end()) {
-    printf("Unknown intrsument %d\n", key);
+    printf("Unknown instrument %d\n", key);
     return NULL;
   }
 

@@ -41,12 +41,12 @@ AudioFile::AudioFile(std::string filename, bool preload, int min_velocity)
   int num = atoi(p);
   if(num < 0) num *= -1;
 
-  printf("%s", filename.c_str());
+  //printf("%s", filename.c_str());
   if(preload && num  >= min_velocity) {
-    printf(" ... loading");
+    //printf(" ... loading");
     load();
   }
-  printf("\n");
+  printf("."); fflush(stdout);
 }
 
 AudioFile::~AudioFile()

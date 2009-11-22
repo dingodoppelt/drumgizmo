@@ -136,7 +136,11 @@ int main(int argc, char *argv[])
 
   client.activate();
 
-  if(midifile) MidiPlayer player(midifile);
+  if(midifile) {
+    MidiPlayer player(midifile);
+    
+    while(1) sleep(1);
+  }
 
   while(1) sleep(1);
 

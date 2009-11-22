@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midiplayer.h
+ *            mainwindow.h
  *
- *  Sat Jul 26 15:23:18 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Tue Nov 10 10:21:03 CET 2009
+ *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,31 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIPLAYER_H__
-#define __DRUMGIZMO_MIDIPLAYER_H__
+#ifndef __DRUMGIZMO_MAINWINDOW_H__
+#define __DRUMGIZMO_MAINWINDOW_H__
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
-#include <string>
-#include <smf.h>
+#include <QWidget>
+#include <QScrollBar>
 
-class MidiPlayer {
+#include "canvas.h"
+#include "audioextractor.h"
+
+class MainWindow : public QWidget {
+Q_OBJECT
 public:
-  MidiPlayer(std::string midifile);
-  ~MidiPlayer();
+  MainWindow();
 
-  int process(jack_nframes_t nframes);
+public slots:
+  void setXScale(int);
+  void setYScale(int);
+  void setXOffset(int);
+  void setYOffset(int);
+  void doExport();
 
 private:
-  jack_client_t *jack_client;
-  jack_port_t *port;
-
-  size_t timer;
-  size_t next;
-
-  smf_t *smf;
-  smf_event_t *cur_event;
-  unsigned int timeline;
+  Canvas *canvas;
+  AudioExtractor *extractor;
+  QScrollBar *yoffset;
+  QScrollBar *yscale;
+  QScrollBar *xscale;
+  QScrollBar *xoffset;
 };
 
-#endif/*__DRUMGIZMO_MIDIPLAYER_H__*/
+#endif/*__DRUMGIZMO_MAINWINDOW_H__*/

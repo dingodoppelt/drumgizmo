@@ -26,8 +26,6 @@
  */
 #include "midiplayer.h"
 
-#define NOTE_ON 0x90
-
 int _process(jack_nframes_t nframes, void *arg)
 {
   return ((MidiPlayer*)arg)->process(nframes);
@@ -35,9 +33,16 @@ int _process(jack_nframes_t nframes, void *arg)
 
 MidiPlayer::MidiPlayer(std::string filename)
 {
+  timeline = 0;
+  cur_event = NULL;
+
+  printf("Loading MIDI file: %s\n", filename.c_str());
+  smf = smf_load(filename.c_str());
+  printf("done\n");
+
 	jack_status_t status;
 
-  jack_client_t *jack_client = jack_client_open("MidiTest", JackNullOption, &status);
+  jack_client_t *jack_client = jack_client_open("MidiGizmo", JackNullOption, &status);
 
 	port = jack_port_register(jack_client,
                             "midi_out",
@@ -49,8 +54,9 @@ MidiPlayer::MidiPlayer(std::string filename)
 
 	jack_activate(jack_client);
 
-  jack_connect(jack_client, "MidiTest:midi_out", "DrumGizmo:midi_in");
+  jack_connect(jack_client, "MidiGizmo:midi_out", "DrumGizmo:midi_in");
 
+  jack_connect(jack_client, "DrumGizmo:Alesis", "system:playback_1");
   jack_connect(jack_client, "DrumGizmo:Kick-R", "system:playback_1");
   jack_connect(jack_client, "DrumGizmo:Kick-L", "system:playback_1");
   jack_connect(jack_client, "DrumGizmo:SnareTop", "system:playback_1");
@@ -63,6 +69,7 @@ MidiPlayer::MidiPlayer(std::string filename)
   jack_connect(jack_client, "DrumGizmo:Ride", "system:playback_1");
   //  jack_connect(jack_client, "DrumGizmo:Hihat", "system:playback_1");
 
+  jack_connect(jack_client, "DrumGizmo:Alesis", "system:playback_2");
   jack_connect(jack_client, "DrumGizmo:Kick-R", "system:playback_2");
   jack_connect(jack_client, "DrumGizmo:Kick-L", "system:playback_2");
   jack_connect(jack_client, "DrumGizmo:SnareTop", "system:playback_2");
@@ -80,12 +87,15 @@ MidiPlayer::MidiPlayer(std::string filename)
   jack_connect(jack_client, "DrumGizmo:Amb-R", "system:playback_1");
   jack_connect(jack_client, "DrumGizmo:Amb-L", "system:playback_2");
 
+  /*
   timer = 0;
   next = 44100;
+  */
 }
 
 MidiPlayer::~MidiPlayer()
 {
+  smf_delete(smf);
 }
 
 #if 0 // All
@@ -93,12 +103,12 @@ MidiPlayer::~MidiPlayer()
 static int inst[] = { 35, 36, 38, 46, 41, 43, 45, 47, 49, 57, 51 };
 #endif
 
-#if 1 // Cymbals
+#if 0 // Cymbals
 #define NUM_INST 3
 static int inst[] = { 51, 49, 57 };
 #endif
 
-#if 0 // Toms
+#if 1 // Toms
 #define NUM_INST 4
 static int inst[] = { 41, 43, 45, 47 };
 #endif
@@ -109,13 +119,42 @@ static int inst[] = { 35, 36 };
 #endif
 int MidiPlayer::process(jack_nframes_t nframes)
 {
-  return 0;
-
   //  if(jack_port_connected_to(test_midi_port, "DrumGizmo:midi_in")) {
   void* port_buf = jack_port_get_buffer(port, nframes);
+    
 
+  double cur_max_time = (double)(timeline + nframes) / 44100.0;
+  double cur_min_time = (double)(timeline) / 44100.0;
+
+  printf("["); fflush(stdout);
+
+  if(!cur_event) cur_event = smf_get_next_event(smf);
+
+  do {
+    if(cur_event) {
+      if(!smf_event_is_metadata(cur_event)) {
+
+        printf("p"); fflush(stdout);
+
+        jack_nframes_t time = (jack_nframes_t)((cur_event->time_seconds - cur_min_time) * 44100.0);
+        jack_midi_event_write(port_buf, time, (jack_midi_data_t*)cur_event->midi_buffer,
+                              cur_event->midi_buffer_length);
+      }
+    } else {
+      smf_rewind(smf);
+    }
+    cur_event = smf_get_next_event(smf);
+    while(!cur_event) cur_event = smf_get_next_event(smf);
+  } while(cur_event->time_seconds < cur_max_time && cur_event->time_seconds >= cur_min_time);
+
+  timeline += nframes;
+
+  printf("]\n"); fflush(stdout);
+
+
+  /*
   if(timer > next) { // activate every second (44100 samples)
-    //    printf("ding\n");
+
 
     jack_nframes_t time = (jack_nframes_t)(((float)rand() / (float)RAND_MAX) * nframes);
     size_t size = 3;
@@ -127,6 +166,7 @@ int MidiPlayer::process(jack_nframes_t nframes)
   }
 
   timer += nframes;
+  */
   
   return 0;
 }

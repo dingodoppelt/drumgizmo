@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midiplayer.h
+ *            editor.cc
  *
- *  Sat Jul 26 15:23:18 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Tue Nov 10 08:37:43 CET 2009
+ *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,31 +24,16 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIPLAYER_H__
-#define __DRUMGIZMO_MIDIPLAYER_H__
+#include <QApplication>
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
-#include <string>
-#include <smf.h>
+#include "mainwindow.h"
 
-class MidiPlayer {
-public:
-  MidiPlayer(std::string midifile);
-  ~MidiPlayer();
+int main(int argc, char *argv[])
+{
+  QApplication app(argc, argv);
 
-  int process(jack_nframes_t nframes);
+  MainWindow wnd;
+  wnd.show();
 
-private:
-  jack_client_t *jack_client;
-  jack_port_t *port;
-
-  size_t timer;
-  size_t next;
-
-  smf_t *smf;
-  smf_event_t *cur_event;
-  unsigned int timeline;
-};
-
-#endif/*__DRUMGIZMO_MIDIPLAYER_H__*/
+  return app.exec();
+}

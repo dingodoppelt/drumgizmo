@@ -1,8 +1,8 @@
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(JACK_LIBS) $(SNDFILE_LIBS)
+drumgizmo_LDADD = $(JACK_LIBS) $(SNDFILE_LIBS) $(SMF_LIBS)
 
-drumgizmo_CXXFLAGS = $(JACK_CXXFLAGS) $(SNDFILE_CXXFLAGS)
+drumgizmo_CXXFLAGS = $(JACK_CXXFLAGS) $(SNDFILE_CXXFLAGS) $(SMF_CFLAGS)
 
 drumgizmo_SOURCES = \
 	audiofile.cc \

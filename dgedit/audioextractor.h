@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midiplayer.h
+ *            audioextractor.h
  *
- *  Sat Jul 26 15:23:18 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat Nov 21 13:09:35 CET 2009
+ *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,31 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIPLAYER_H__
-#define __DRUMGIZMO_MIDIPLAYER_H__
+#ifndef __DRUMGIZMO_AUDIOEXTRACTOR_H__
+#define __DRUMGIZMO_AUDIOEXTRACTOR_H__
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
-#include <string>
-#include <smf.h>
+#include <QObject>
+#include <QVector>
+#include <QPair>
+#include <QString>
 
-class MidiPlayer {
+#include "selection.h"
+
+class AudioExtractor : public QObject {
+Q_OBJECT
 public:
-  MidiPlayer(std::string midifile);
-  ~MidiPlayer();
+  AudioExtractor(QObject *parent);
 
-  int process(jack_nframes_t nframes);
+  void addFile(QString file, QString name);
+  void removeFile(QString file);
+  void setExportPath(QString path);
+  void setOutputPrefix(QString prefix);
+
+public slots:
+  void exportSelections(Selections selections);
 
 private:
-  jack_client_t *jack_client;
-  jack_port_t *port;
-
-  size_t timer;
-  size_t next;
-
-  smf_t *smf;
-  smf_event_t *cur_event;
-  unsigned int timeline;
+  float *load(QString file, size_t *size);
+  void exportSelection(QString name, int index, float *data, size_t size, Selection sel);
+  QVector< QPair<QString, QString> > audiofiles;
+  QString exportpath;
+  QString prefix;
 };
 
-#endif/*__DRUMGIZMO_MIDIPLAYER_H__*/
+#endif/*__DRUMGIZMO_AUDIOEXTRACTOR_H__*/

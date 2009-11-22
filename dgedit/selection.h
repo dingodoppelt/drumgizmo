@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midiplayer.h
+ *            selection.h
  *
- *  Sat Jul 26 15:23:18 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat Nov 21 13:20:46 CET 2009
+ *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,31 +24,25 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIPLAYER_H__
-#define __DRUMGIZMO_MIDIPLAYER_H__
+#ifndef __DRUMGIZMO_SELECTION_H__
+#define __DRUMGIZMO_SELECTION_H__
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
-#include <string>
-#include <smf.h>
+#include <QMap>
 
-class MidiPlayer {
+class Selection {
 public:
-  MidiPlayer(std::string midifile);
-  ~MidiPlayer();
-
-  int process(jack_nframes_t nframes);
-
-private:
-  jack_client_t *jack_client;
-  jack_port_t *port;
-
-  size_t timer;
-  size_t next;
-
-  smf_t *smf;
-  smf_event_t *cur_event;
-  unsigned int timeline;
+  Selection(int from = 0, int to = 0, int fadein = 0, int fadeout = 0) {
+    this->from = from;
+    this->to = to;
+    this->fadein = fadein;
+    this->fadeout = fadeout;
+  }
+  int from;
+  int to;
+  int fadein;
+  int fadeout;
 };
 
-#endif/*__DRUMGIZMO_MIDIPLAYER_H__*/
+typedef QMap<int, Selection> Selections;
+
+#endif/*__DRUMGIZMO_SELECTION_H__*/

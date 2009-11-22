@@ -1,3 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = src
-DISTDIRS = src
+SUBDIRS = src dgedit
+DISTDIRS = src dgedit

@@ -26,6 +26,11 @@ fi
 #AC_SUBST(MOC)
 
 dnl ======================
+dnl Check for libsmf
+dnl ======================
+PKG_CHECK_MODULES(SMF, smf >= 1.2)
+
+dnl ======================
 dnl Check for jack
 dnl ======================
 PKG_CHECK_MODULES(JACK, jack >= 0.109.2)
@@ -42,6 +47,23 @@ AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
 AC_CHECK_LIB(expat, XML_ParserCreate, ,  AC_MSG_ERROR([*** eXpat library not found!]))
 
 dnl ======================
+dnl Check for Qt
+dnl ======================
+PKG_CHECK_MODULES(QT, QtCore QtGui >= 4.5)
+AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
+AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
+AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
+if (test "$QT_MOC" = ""); then
+  AC_MSG_ERROR([QT4 moc is required.])
+fi
+if (test "$QT_RCC" = ""); then
+  AC_MSG_ERROR([QT4 rcc is required.])
+fi
+if (test "$QT_UIC" = ""); then
+  AC_MSG_ERROR([QT4 uic is required.])
+fi
+
+dnl ======================
 dnl Check for getopt
 dnl ======================
 AC_HAVE_HEADERS(getopt.h)
@@ -53,5 +75,6 @@ AC_SUBST(LDFLAGS)
 
 AC_OUTPUT(
 	Makefile
-	src/Makefile)
+	src/Makefile
+  dgedit/Makefile)
 
