@@ -27,16 +27,19 @@
 #ifndef __DRUMGIZMO_MAINWINDOW_H__
 #define __DRUMGIZMO_MAINWINDOW_H__
 
-#include <QWidget>
+#include <QMainWindow>
 #include <QScrollBar>
+#include <QListWidget>
 
 #include "canvas.h"
 #include "audioextractor.h"
 
-class MainWindow : public QWidget {
+class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
   MainWindow();
+
+  void addFile(QString file, QString name);
 
 public slots:
   void setXScale(int);
@@ -44,6 +47,7 @@ public slots:
   void setXOffset(int);
   void setYOffset(int);
   void doExport();
+  void loadFile();
 
 private:
   Canvas *canvas;
@@ -52,6 +56,7 @@ private:
   QScrollBar *yscale;
   QScrollBar *xscale;
   QScrollBar *xoffset;
+  QListWidget *filelist;
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

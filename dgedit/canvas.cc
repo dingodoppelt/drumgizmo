@@ -132,6 +132,9 @@ void Canvas::load(QString file)
 
     mipmaps[dev] = lookup;
   }
+
+  updateWav();
+  update();
 }
 
 

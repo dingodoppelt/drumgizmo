@@ -30,6 +30,12 @@
 #include <QVBoxLayout>
 
 #include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QFileDialog>
+#include <QStatusBar>
+#include <QApplication>
+#include <QDockWidget>
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
@@ -37,14 +43,17 @@
 
 MainWindow::MainWindow()
 {
+  QWidget *central = new QWidget();
   QHBoxLayout *lh = new QHBoxLayout();
   QVBoxLayout *lv = new QVBoxLayout();
-  setLayout(lv);
+  central->setLayout(lv);
+  setCentralWidget(central);
 
   extractor = new AudioExtractor(this);
   canvas = new Canvas(this);
   lh->addWidget(canvas);
 
+  QWidget *dock = new QWidget();
   yoffset = new QScrollBar(Qt::Vertical);
   yoffset->setRange(0, MAXVAL);
   yoffset->setPageStep(PAGESTEP);
@@ -69,6 +78,8 @@ MainWindow::MainWindow()
   xoffset->setSingleStep(SINGLESTEP);
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
+  QHBoxLayout *btns = new QHBoxLayout();
+
   QPushButton *autosel = new QPushButton();
   autosel->setText("Auto");
   connect(autosel, SIGNAL(clicked()), canvas, SLOT(clearSelections()));
@@ -82,23 +93,51 @@ MainWindow::MainWindow()
   exportsel->setText("Export");
   connect(exportsel, SIGNAL(clicked()), this, SLOT(doExport()));
 
+  QPushButton *loadbtn = new QPushButton();
+  loadbtn->setText("Load");
+  connect(loadbtn, SIGNAL(clicked()), this, SLOT(loadFile()));
+
+  btns->addWidget(autosel);
+  btns->addWidget(clearsel);
+  btns->addWidget(exportsel);
+  btns->addWidget(loadbtn);
+
+  QVBoxLayout *configs = new QVBoxLayout();
+  
+  configs->addWidget(new QLabel("Prefix:"));
+  QLineEdit *prefix = new QLineEdit();
+  connect(prefix, SIGNAL(textChanged(const QString &)),
+          extractor, SLOT(setOutputPrefix(const QString &)));
+  prefix->setText("china");
+  configs->addWidget(prefix);
+
+  configs->addWidget(new QLabel("Export path:"));
+  QLineEdit *exportp = new QLineEdit();
+  connect(exportp, SIGNAL(textChanged(const QString &)),
+          extractor, SLOT(setExportPath(const QString &)));
+  exportp->setText("/home/deva/tmp/drumgizmoexport");
+  configs->addWidget(exportp);
+
+  configs->addWidget(new QLabel("Files:"));
+  filelist = new QListWidget();
+  addFile("/home/deva/aasimonster/tmp/china/Amb L-20.wav", "amb-l");
+  addFile("/home/deva/aasimonster/tmp/china/Amb R-20.wav", "amb-r");
+  addFile("/home/deva/aasimonster/tmp/china/OH L-20.wav", "oh-l");
+  addFile("/home/deva/aasimonster/tmp/china/OH R-20.wav", "oh-r");
+  configs->addWidget(filelist);
+
   lh->addWidget(yscale);
   lh->addWidget(yoffset);
   lv->addLayout(lh);
   lv->addWidget(xscale);
   lv->addWidget(xoffset);
-  lv->addWidget(autosel);
-  lv->addWidget(clearsel);
-  lv->addWidget(exportsel);
+  lv->addLayout(btns);
 
-  extractor->setExportPath("/home/deva/tmp/drumgizmoexport");
-  extractor->setOutputPrefix("china");
-  extractor->addFile("/home/deva/aasimonster/tmp/china/Amb L-20.wav", "amb-l");
-  extractor->addFile("/home/deva/aasimonster/tmp/china/Amb R-20.wav", "amb-r");
-  extractor->addFile("/home/deva/aasimonster/tmp/china/OH L-20.wav", "oh-l");
-  extractor->addFile("/home/deva/aasimonster/tmp/china/OH R-20.wav", "oh-r");
-
-  canvas->load("/home/deva/aasimonster/tmp/china/OH L-20.wav");
+  QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);
+  dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  dockWidget->setWidget(dock);
+  addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
+  dock->setLayout(configs);
 
   yscale->setValue(MAXVAL);
   yoffset->setValue(MAXVAL/2);
@@ -106,6 +145,7 @@ MainWindow::MainWindow()
   xoffset->setValue(0);
 
   resize(800, 600);
+  statusBar()->showMessage("Ready");
 }
 
 void MainWindow::setXScale(int sz)
@@ -142,4 +182,25 @@ void MainWindow::setYOffset(int of)
 void MainWindow::doExport()
 {
   extractor->exportSelections(canvas->selections());
+}
+
+void MainWindow::loadFile()
+{
+  QString filename = 
+    QFileDialog::getOpenFileName(this, tr("Open file"),
+                                 "", tr("Audio Files (*.wav)"));
+  statusBar()->showMessage("Loading...");
+  qApp->processEvents();
+  canvas->load(filename);
+  statusBar()->showMessage("Ready");
+}
+
+void MainWindow::addFile(QString file, QString name)
+{
+  QListWidgetItem *item = new QListWidgetItem();
+  item->setText(file);
+  item->setData(Qt::UserRole, name);
+  filelist->addItem(item);
+
+  extractor->addFile(file, name);
 }

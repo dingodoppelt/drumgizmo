@@ -41,11 +41,11 @@ public:
 
   void addFile(QString file, QString name);
   void removeFile(QString file);
-  void setExportPath(QString path);
-  void setOutputPrefix(QString prefix);
 
 public slots:
   void exportSelections(Selections selections);
+  void setExportPath(const QString &path);
+  void setOutputPrefix(const QString &prefix);
 
 private:
   float *load(QString file, size_t *size);

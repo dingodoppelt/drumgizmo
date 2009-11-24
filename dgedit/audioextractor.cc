@@ -141,12 +141,12 @@ void AudioExtractor::removeFile(QString file)
   }
 }
 
-void AudioExtractor::setOutputPrefix(QString p)
+void AudioExtractor::setOutputPrefix(const QString &p)
 {
   prefix = p;
 }
 
-void AudioExtractor::setExportPath(QString path)
+void AudioExtractor::setExportPath(const QString &path)
 {
   exportpath = path;
 }
