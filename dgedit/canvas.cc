@@ -181,6 +181,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     if(val > active_selection->to) val = active_selection->to - 1;
     active_selection->from = val;
     update();
+    emit selectionsChanged(_selections);
     return;
   }
 
@@ -189,6 +190,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     if(val < active_selection->from) val = active_selection->from + 1;
     active_selection->to = val;
     update();
+    emit selectionsChanged(_selections);
     return;
   }
 
@@ -230,12 +232,14 @@ void Canvas::mousePressEvent(QMouseEvent *event)
       if(abs(event->x() - mapX(i.value().from)) < 2) {
         active_selection = &i.value();
         selection_is_moving_left = true;
+        emit activeSelectionChanged(i.value());
         return;
       }
 
       if(abs(event->x() - mapX(i.value().to)) < 2) {
         active_selection = &i.value();
         selection_is_moving_right = true;
+        emit activeSelectionChanged(i.value());
         return;
       }
 
@@ -249,6 +253,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
          event->x() < mapX(i.value().to)) {
         active_selection = &i.value();
         update();
+        emit activeSelectionChanged(i.value());
         return;
       }
 
@@ -494,6 +499,7 @@ void Canvas::autoCreateSelections()
     }
   }
   update();
+  emit selectionsChanged(_selections);
 }
 
 void Canvas::clearSelections()
@@ -503,6 +509,7 @@ void Canvas::clearSelections()
   selection_is_moving_right = false;
   setCursor(Qt::ArrowCursor);
   update();
+  emit selectionsChanged(_selections);
 }
 
 Selections Canvas::selections()

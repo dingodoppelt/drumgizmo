@@ -36,6 +36,8 @@
 #include <QStatusBar>
 #include <QApplication>
 #include <QDockWidget>
+#include <QSettings>
+
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
@@ -51,7 +53,6 @@ MainWindow::MainWindow()
 
   extractor = new AudioExtractor(this);
   canvas = new Canvas(this);
-  lh->addWidget(canvas);
 
   QWidget *dock = new QWidget();
   yoffset = new QScrollBar(Qt::Vertical);
@@ -77,6 +78,19 @@ MainWindow::MainWindow()
   xoffset->setPageStep(PAGESTEP);
   xoffset->setSingleStep(SINGLESTEP);
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
+
+  sorter = new SampleSorter();
+  connect(canvas, SIGNAL(selectionsChanged(Selections)), sorter, SLOT(setSelections(Selections)));
+  connect(canvas, SIGNAL(activeSelectionChanged(Selection)), sorter, SLOT(setActiveSelection(Selection)));
+
+  lh->addWidget(canvas);
+  lh->addWidget(yscale);
+  lh->addWidget(yoffset);
+  lv->addLayout(lh, 100);
+  lv->addWidget(xscale, 100);
+  lv->addWidget(xoffset, 100);
+  lv->addWidget(sorter, 15);
+
 
   QHBoxLayout *btns = new QHBoxLayout();
 
@@ -104,6 +118,8 @@ MainWindow::MainWindow()
 
   QVBoxLayout *configs = new QVBoxLayout();
   
+  configs->addLayout(btns);
+
   configs->addWidget(new QLabel("Prefix:"));
   QLineEdit *prefix = new QLineEdit();
   connect(prefix, SIGNAL(textChanged(const QString &)),
@@ -126,13 +142,6 @@ MainWindow::MainWindow()
   addFile("/home/deva/aasimonster/tmp/china/OH R-20.wav", "oh-r");
   configs->addWidget(filelist);
 
-  lh->addWidget(yscale);
-  lh->addWidget(yoffset);
-  lv->addLayout(lh);
-  lv->addWidget(xscale);
-  lv->addWidget(xoffset);
-  lv->addLayout(btns);
-
   QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);
   dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   dockWidget->setWidget(dock);
@@ -144,8 +153,34 @@ MainWindow::MainWindow()
   xscale->setValue(0);
   xoffset->setValue(0);
 
-  resize(800, 600);
+  loadSettings();
   statusBar()->showMessage("Ready");
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+  saveSettings();
+  QApplication::quit();
+}
+
+void MainWindow::loadSettings()
+{
+  QSettings settings("Aasimon.org", "DGEdit");
+
+  settings.beginGroup("MainWindow");
+  resize(settings.value("size", QSize(700, 800)).toSize());
+  move(settings.value("pos", QPoint(0, 0)).toPoint());
+  settings.endGroup();
+}
+
+void MainWindow::saveSettings()
+{
+  QSettings settings("Aasimon.org", "DGEdit");
+
+  settings.beginGroup("MainWindow");
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.endGroup();
 }
 
 void MainWindow::setXScale(int sz)
@@ -181,7 +216,7 @@ void MainWindow::setYOffset(int of)
 
 void MainWindow::doExport()
 {
-  extractor->exportSelections(canvas->selections());
+  extractor->exportSelections(sorter->selections());
 }
 
 void MainWindow::loadFile()
@@ -191,7 +226,9 @@ void MainWindow::loadFile()
                                  "", tr("Audio Files (*.wav)"));
   statusBar()->showMessage("Loading...");
   qApp->processEvents();
+  sorter->setWavData(NULL, 0);
   canvas->load(filename);
+  sorter->setWavData(canvas->data, canvas->size);
   statusBar()->showMessage("Ready");
 }
 

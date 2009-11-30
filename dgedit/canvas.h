@@ -44,6 +44,8 @@ public:
   Selections selections();
 
 signals:
+  void selectionsChanged(Selections selections);
+  void activeSelectionChanged(Selection selection);
 
 public slots:
   void setXScale(float scale);
@@ -71,9 +73,11 @@ private:
 
   QImage wav;
 
+public:
   float *data;
-  QMap<int, float *> mipmaps;
   size_t size;
+private:
+  QMap<int, float *> mipmaps;
 
   float xscale;
   float yscale;

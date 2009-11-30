@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            mainwindow.h
+ *            samplesorter.h
  *
- *  Tue Nov 10 10:21:03 CET 2009
+ *  Mon Nov 30 07:45:58 CET 2009
  *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,47 +24,42 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MAINWINDOW_H__
-#define __DRUMGIZMO_MAINWINDOW_H__
+#ifndef __DRUMGIZMO_SAMPLESORTER_H__
+#define __DRUMGIZMO_SAMPLESORTER_H__
 
-#include <QMainWindow>
-#include <QScrollBar>
-#include <QListWidget>
+#include <QWidget>
+#include "selection.h"
 
-#include "canvas.h"
-#include "audioextractor.h"
-#include "samplesorter.h"
-
-class MainWindow : public QMainWindow {
+class SampleSorter : public QWidget {
 Q_OBJECT
 public:
-  MainWindow();
+  SampleSorter();
 
-  void addFile(QString file, QString name);
+  Selections selections();
 
 public slots:
-  void setXScale(int);
-  void setYScale(int);
-  void setXOffset(int);
-  void setYOffset(int);
-  void doExport();
-  void loadFile();
+  void setSelections(Selections selections);
+  void setWavData(const float *data, size_t size);
+  void resort();
+  void setAttackLength(int len);
+  int attackLength();
+  void setActiveSelection(Selection s);
 
 protected:
-  void closeEvent(QCloseEvent*);
+  void paintEvent(QPaintEvent *event);
 
 private:
-  void loadSettings();
-  void saveSettings();
+  Selections _selections;
+  QMap<float, Selection> sorted;
+  float min;
+  float max;
+  int attlen;
 
-  SampleSorter *sorter;
-  Canvas *canvas;
-  AudioExtractor *extractor;
-  QScrollBar *yoffset;
-  QScrollBar *yscale;
-  QScrollBar *xscale;
-  QScrollBar *xoffset;
-  QListWidget *filelist;
+  // Wav data
+  const float *data;
+  size_t size;
+
+  Selection sel;
 };
 
-#endif/*__DRUMGIZMO_MAINWINDOW_H__*/
+#endif/*__DRUMGIZMO_SAMPLESORTER_H__*/
