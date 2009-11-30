@@ -105,13 +105,9 @@ MainWindow::MainWindow()
   exportsel->setText("Export");
   connect(exportsel, SIGNAL(clicked()), this, SLOT(doExport()));
 
-  QPushButton *loadbtn = new QPushButton();
-  loadbtn->setText("Add files...");
-
   btns->addWidget(autosel);
   btns->addWidget(clearsel);
   btns->addWidget(exportsel);
-  btns->addWidget(loadbtn);
 
   QVBoxLayout *configs = new QVBoxLayout();
   
@@ -131,7 +127,11 @@ MainWindow::MainWindow()
   exportp->setText("/home/deva/tmp/drumgizmoexport");
   configs->addWidget(exportp);
 
-  configs->addWidget(new QLabel("Files:"));
+  QPushButton *loadbtn = new QPushButton();
+  loadbtn->setText("Add files...");
+  configs->addWidget(loadbtn);
+
+  configs->addWidget(new QLabel("Files: (double-click to set as master)"));
   filelist = new FileList();
   connect(filelist, SIGNAL(masterFileChanged(QString)), this, SLOT(loadFile(QString)));
   connect(loadbtn, SIGNAL(clicked()), filelist, SLOT(addFiles()));

@@ -31,7 +31,8 @@
 
 FileList::FileList()
 {
-  connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
+  connect(this, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+          this, SLOT(selectionChanged(QListWidgetItem *)));
 }
 
 void FileList::addFiles()
@@ -55,8 +56,8 @@ void FileList::addFiles()
   }
 }
 
-void FileList::selectionChanged()
+void FileList::selectionChanged(QListWidgetItem *item)
 {
-  QString filename = currentItem()->text();
+  QString filename = item->text();
   emit masterFileChanged(filename);
 }

@@ -43,7 +43,7 @@ public slots:
   void addFiles();
 
 private slots:
-  void selectionChanged();
+  void selectionChanged(QListWidgetItem *item);
 };
 
 
