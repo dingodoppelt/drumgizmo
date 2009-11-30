@@ -38,7 +38,7 @@ FileList::FileList()
 void FileList::addFiles()
 {
   QStringList files = QFileDialog::getOpenFileNames(this, tr("Open file"),
-                                              "", tr("Audio Files (*.wav)"));
+                                                    "", tr("Audio Files (*.wav)"));
   QStringList::Iterator i = files.begin();
   while(i != files.end()) {
     QString file = *i;
@@ -48,6 +48,7 @@ void FileList::addFiles()
     QListWidgetItem *item = new QListWidgetItem();
     item->setText(file);
     item->setData(Qt::UserRole, name);
+    item->setIcon(QPixmap("icons/file.png"));
     addItem(item);
     
     emit fileAdded(file, name);
@@ -56,8 +57,13 @@ void FileList::addFiles()
   }
 }
 
-void FileList::selectionChanged(QListWidgetItem *item)
+void FileList::selectionChanged(QListWidgetItem *i)
 {
-  QString filename = item->text();
+  QString filename = i->text();
+
+  for(int idx = 0; idx < count(); idx++)
+    item(idx)->setIcon(QPixmap("icons/file.png"));
+
+  i->setIcon(QPixmap("icons/master.png"));
   emit masterFileChanged(filename);
 }
