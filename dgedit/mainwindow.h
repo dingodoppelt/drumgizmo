@@ -40,8 +40,6 @@ Q_OBJECT
 public:
   MainWindow();
 
-  void addFile(QString file, QString name);
-
 public slots:
   void setXScale(int);
   void setYScale(int);
@@ -49,6 +47,7 @@ public slots:
   void setYOffset(int);
   void doExport();
   void loadFile();
+  void addFile();
 
 protected:
   void closeEvent(QCloseEvent*);

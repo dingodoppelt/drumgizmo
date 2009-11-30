@@ -37,7 +37,7 @@
 #include <QApplication>
 #include <QDockWidget>
 #include <QSettings>
-
+#include <QFileInfo>
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
@@ -109,7 +109,7 @@ MainWindow::MainWindow()
 
   QPushButton *loadbtn = new QPushButton();
   loadbtn->setText("Load");
-  connect(loadbtn, SIGNAL(clicked()), this, SLOT(loadFile()));
+  connect(loadbtn, SIGNAL(clicked()), this, SLOT(addFile()));
 
   btns->addWidget(autosel);
   btns->addWidget(clearsel);
@@ -136,10 +136,7 @@ MainWindow::MainWindow()
 
   configs->addWidget(new QLabel("Files:"));
   filelist = new QListWidget();
-  addFile("/home/deva/aasimonster/tmp/china/Amb L-20.wav", "amb-l");
-  addFile("/home/deva/aasimonster/tmp/china/Amb R-20.wav", "amb-r");
-  addFile("/home/deva/aasimonster/tmp/china/OH L-20.wav", "oh-l");
-  addFile("/home/deva/aasimonster/tmp/china/OH R-20.wav", "oh-r");
+  connect(filelist, SIGNAL(itemSelectionChanged()), this, SLOT(loadFile()));
   configs->addWidget(filelist);
 
   QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);
@@ -221,23 +218,34 @@ void MainWindow::doExport()
 
 void MainWindow::loadFile()
 {
-  QString filename = 
-    QFileDialog::getOpenFileName(this, tr("Open file"),
-                                 "", tr("Audio Files (*.wav)"));
+  QString filename = filelist->currentItem()->text();
+
+  setCursor(Qt::WaitCursor);
   statusBar()->showMessage("Loading...");
   qApp->processEvents();
   sorter->setWavData(NULL, 0);
   canvas->load(filename);
   sorter->setWavData(canvas->data, canvas->size);
   statusBar()->showMessage("Ready");
+  setCursor(Qt::ArrowCursor);
 }
 
-void MainWindow::addFile(QString file, QString name)
+void MainWindow::addFile()
 {
-  QListWidgetItem *item = new QListWidgetItem();
-  item->setText(file);
-  item->setData(Qt::UserRole, name);
-  filelist->addItem(item);
+  QStringList files = QFileDialog::getOpenFileNames(this, tr("Open file"),
+                                              "", tr("Audio Files (*.wav)"));
+  QStringList::Iterator i = files.begin();
+  while(i != files.end()) {
+    QString file = *i;
+    QFileInfo fi(file);
+    QString name = fi.baseName();
 
-  extractor->addFile(file, name);
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setText(file);
+    item->setData(Qt::UserRole, name);
+    filelist->addItem(item);
+    
+    extractor->addFile(file, name);
+    i++;
+  }
 }
