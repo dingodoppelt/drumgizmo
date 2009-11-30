@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            mainwindow.h
+ *            filelist.h
  *
- *  Tue Nov 10 10:21:03 CET 2009
+ *  Mon Nov 30 15:35:52 CET 2009
  *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,45 +24,28 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MAINWINDOW_H__
-#define __DRUMGIZMO_MAINWINDOW_H__
+#ifndef __DRUMGIZMO_FILELIST_H__
+#define __DRUMGIZMO_FILELIST_H__
 
-#include <QMainWindow>
-#include <QScrollBar>
+#include <QListWidget>
 
-#include "canvas.h"
-#include "audioextractor.h"
-#include "samplesorter.h"
-#include "filelist.h"
-
-class MainWindow : public QMainWindow {
+class FileList : public QListWidget {
 Q_OBJECT
 public:
-  MainWindow();
+  FileList();
+
+signals:
+  void masterFileChanged(QString filename);
+  void fileAdded(QString file, QString name);
+  void fileRemoved(QString file, QString name);
 
 public slots:
-  void setXScale(int);
-  void setYScale(int);
-  void setXOffset(int);
-  void setYOffset(int);
-  void doExport();
-  void loadFile(QString filename);
+  void addFiles();
 
-protected:
-  void closeEvent(QCloseEvent*);
-
-private:
-  void loadSettings();
-  void saveSettings();
-
-  SampleSorter *sorter;
-  Canvas *canvas;
-  AudioExtractor *extractor;
-  FileList *filelist;
-  QScrollBar *yoffset;
-  QScrollBar *yscale;
-  QScrollBar *xscale;
-  QScrollBar *xoffset;
+private slots:
+  void selectionChanged();
 };
 
-#endif/*__DRUMGIZMO_MAINWINDOW_H__*/
+
+
+#endif/*__DRUMGIZMO_FILELIST_H__*/

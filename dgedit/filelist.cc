@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            mainwindow.h
+ *            filelist.cc
  *
- *  Tue Nov 10 10:21:03 CET 2009
+ *  Mon Nov 30 15:35:52 CET 2009
  *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,45 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MAINWINDOW_H__
-#define __DRUMGIZMO_MAINWINDOW_H__
-
-#include <QMainWindow>
-#include <QScrollBar>
-
-#include "canvas.h"
-#include "audioextractor.h"
-#include "samplesorter.h"
 #include "filelist.h"
 
-class MainWindow : public QMainWindow {
-Q_OBJECT
-public:
-  MainWindow();
+#include <QFileDialog>
+#include <QFileInfo>
 
-public slots:
-  void setXScale(int);
-  void setYScale(int);
-  void setXOffset(int);
-  void setYOffset(int);
-  void doExport();
-  void loadFile(QString filename);
+FileList::FileList()
+{
+  connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
+}
 
-protected:
-  void closeEvent(QCloseEvent*);
+void FileList::addFiles()
+{
+  QStringList files = QFileDialog::getOpenFileNames(this, tr("Open file"),
+                                              "", tr("Audio Files (*.wav)"));
+  QStringList::Iterator i = files.begin();
+  while(i != files.end()) {
+    QString file = *i;
+    QFileInfo fi(file);
+    QString name = fi.baseName();
 
-private:
-  void loadSettings();
-  void saveSettings();
+    QListWidgetItem *item = new QListWidgetItem();
+    item->setText(file);
+    item->setData(Qt::UserRole, name);
+    addItem(item);
+    
+    emit fileAdded(file, name);
 
-  SampleSorter *sorter;
-  Canvas *canvas;
-  AudioExtractor *extractor;
-  FileList *filelist;
-  QScrollBar *yoffset;
-  QScrollBar *yscale;
-  QScrollBar *xscale;
-  QScrollBar *xoffset;
-};
+    i++;
+  }
+}
 
-#endif/*__DRUMGIZMO_MAINWINDOW_H__*/
+void FileList::selectionChanged()
+{
+  QString filename = currentItem()->text();
+  emit masterFileChanged(filename);
+}
