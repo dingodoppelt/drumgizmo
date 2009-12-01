@@ -30,6 +30,8 @@
 #include <QFileInfo>
 #include <QMenu>
 
+#include "itemeditor.h"
+
 FileList::FileList()
 {
   setContextMenuPolicy(Qt::CustomContextMenu);
@@ -54,9 +56,9 @@ void FileList::addFiles()
     QString name = fi.baseName();
 
     QListWidgetItem *item = new QListWidgetItem();
-    item->setText(file);
-    item->setData(Qt::UserRole, name);
-    item->setIcon(QPixmap("icons/file.png"));
+    setItemFile(item, file);
+    setItemName(item, name);
+    setItemMaster(item, false);
     addItem(item);
     
     emit fileAdded(file, name);
@@ -67,13 +69,13 @@ void FileList::addFiles()
 
 void FileList::setMasterFile(QListWidgetItem *i)
 {
-  QString filename = i->text();
+  QString filename = itemFile(i);
 
   for(int idx = 0; idx < count(); idx++) {
-    item(idx)->setIcon(QPixmap("icons/file.png"));
+    setItemMaster(item(idx), false);
   }
 
-  i->setIcon(QPixmap("icons/master.png"));
+  setItemMaster(i, true);
   emit masterFileChanged(filename);
 }
 
@@ -115,8 +117,8 @@ void FileList::setMaster()
 
 void FileList::removeFile()
 {
-  QString file = activeItem->text();
-  QString name = activeItem->data(Qt::UserRole).toString();
+  QString file = itemFile(activeItem);
+  QString name = itemName(activeItem);
 
   printf("Removing: %s\n", file.toStdString().c_str());
   delete activeItem;//takeItem(row(activeItem));
@@ -128,4 +130,37 @@ void FileList::removeFile()
 
 void FileList::editName()
 {
+  ItemEditor *e = new ItemEditor(activeItem, itemName(activeItem));
+  connect(e, SIGNAL(updateItem(QListWidgetItem *, QString)),
+          this, SLOT(setItemName(QListWidgetItem *, QString)));
+}
+
+
+// Item utility functions.
+QString FileList::itemFile(QListWidgetItem *i)
+{
+  return i->data(Qt::ToolTipRole).toString();
+}
+
+void FileList::setItemFile(QListWidgetItem *i, QString file)
+{
+  i->setData(Qt::ToolTipRole, file);
+  i->setData(Qt::DisplayRole, itemName(i) + "\t" + file);
+}
+
+QString FileList::itemName(QListWidgetItem *i)
+{
+  return i->data(Qt::UserRole).toString();
+}
+
+void FileList::setItemName(QListWidgetItem *i, QString name)
+{
+  i->setData(Qt::UserRole, name);
+  i->setData(Qt::DisplayRole, name + "\t" + itemFile(i));
+}
+
+void FileList::setItemMaster(QListWidgetItem *i, bool master)
+{
+  if(master) i->setIcon(QPixmap("icons/master.png"));
+  else i->setIcon(QPixmap("icons/file.png"));
 }

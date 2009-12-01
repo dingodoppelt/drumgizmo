@@ -10,6 +10,7 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	audioextractor.cc \
 	canvas.cc \
 	filelist.cc \
+	itemeditor.cc \
 	mainwindow.cc \
 	samplesorter.cc
 
@@ -17,6 +18,7 @@ EXTRA_DIST = \
 	audioextractor.h \
 	canvas.h \
 	filelist.h \
+	itemeditor.h \
 	mainwindow.h \
 	samplesorter.h
 

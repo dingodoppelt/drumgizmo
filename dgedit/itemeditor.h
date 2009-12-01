@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            filelist.h
+ *            itemeditor.h
  *
- *  Mon Nov 30 15:35:52 CET 2009
+ *  Tue Dec  1 11:01:40 CET 2009
  *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,50 +24,26 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_FILELIST_H__
-#define __DRUMGIZMO_FILELIST_H__
+#ifndef __DRUMGIZMO_ITEMEDITOR_H__
+#define __DRUMGIZMO_ITEMEDITOR_H__
 
-#include <QListWidget>
+#include <QLineEdit>
+#include <QString>
 #include <QListWidgetItem>
-#include <QAction>
-#include <QMenu>
 
-class FileList : public QListWidget {
+class ItemEditor : public QLineEdit {
 Q_OBJECT
 public:
-  FileList();
+  ItemEditor(QListWidgetItem *i, QString v);
+
+protected:
+  void focusOutEvent(QFocusEvent *);
 
 signals:
-  void masterFileChanged(QString filename);
-  void fileAdded(QString file, QString name);
-  void fileRemoved(QString file, QString name);
-
-public slots:
-  void addFiles();
-  void popupMenu(const QPoint &pos);
-
-private slots:
-  void selectionChanged(QListWidgetItem *item);
-  void setMaster();
-  void removeFile();
-  void editName();
-  void setItemName(QListWidgetItem *i, QString name);
+  void updateItem(QListWidgetItem *i, QString v);
 
 private:
-  QString itemFile(QListWidgetItem *i);
-  QString itemName(QListWidgetItem *i);
-  void setItemFile(QListWidgetItem *i, QString file);
-  void setItemMaster(QListWidgetItem *i, bool master);
-
-  void setMasterFile(QListWidgetItem *i);
-  void createMenus();
-
-  QMenu *menu;
-  QAction *setMasterAction;
-  QAction *editAction;
-  QAction *removeAction;
-
-  QListWidgetItem *activeItem;
+  QListWidgetItem *i;
 };
 
-#endif/*__DRUMGIZMO_FILELIST_H__*/
+#endif/*__DRUMGIZMO_ITEMEDITOR_H__*/
