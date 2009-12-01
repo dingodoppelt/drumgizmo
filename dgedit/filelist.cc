@@ -28,11 +28,19 @@
 
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QMenu>
 
 FileList::FileList()
 {
+  setContextMenuPolicy(Qt::CustomContextMenu);
+
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+          this, SLOT(popupMenu(const QPoint &)));
+
   connect(this, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
           this, SLOT(selectionChanged(QListWidgetItem *)));
+
+  createMenus();
 }
 
 void FileList::addFiles()
@@ -57,13 +65,67 @@ void FileList::addFiles()
   }
 }
 
-void FileList::selectionChanged(QListWidgetItem *i)
+void FileList::setMasterFile(QListWidgetItem *i)
 {
   QString filename = i->text();
 
-  for(int idx = 0; idx < count(); idx++)
+  for(int idx = 0; idx < count(); idx++) {
     item(idx)->setIcon(QPixmap("icons/file.png"));
+  }
 
   i->setIcon(QPixmap("icons/master.png"));
   emit masterFileChanged(filename);
+}
+
+void FileList::selectionChanged(QListWidgetItem *i)
+{
+  setMasterFile(i);
+}
+
+
+void FileList::createMenus()
+{
+  menu = new QMenu();
+
+  setMasterAction = new QAction("Set as Master (dbl-click)", this);
+  connect(setMasterAction, SIGNAL(triggered()), this, SLOT(setMaster()));
+
+  editAction = new QAction("Edit name", this);
+  connect(editAction, SIGNAL(triggered()), this, SLOT(editName()));
+
+  removeAction = new QAction("Remove", this);
+  connect(removeAction, SIGNAL(triggered()), this, SLOT(removeFile()));
+
+  menu->addAction(setMasterAction);
+  menu->addAction(editAction);
+  menu->addAction(removeAction);
+}
+
+void FileList::popupMenu(const QPoint & pos)
+{
+  activeItem = itemAt(pos);
+  if(!activeItem) return;
+  menu->popup(mapToGlobal(pos));
+}
+
+void FileList::setMaster()
+{
+  setMasterFile(activeItem);
+}
+
+void FileList::removeFile()
+{
+  QString file = activeItem->text();
+  QString name = activeItem->data(Qt::UserRole).toString();
+
+  printf("Removing: %s\n", file.toStdString().c_str());
+  delete activeItem;//takeItem(row(activeItem));
+  activeItem = NULL;
+  setCurrentRow(-1);
+
+  emit fileRemoved(file, name);
+}
+
+void FileList::editName()
+{
 }

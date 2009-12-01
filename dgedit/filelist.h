@@ -28,6 +28,9 @@
 #define __DRUMGIZMO_FILELIST_H__
 
 #include <QListWidget>
+#include <QListWidgetItem>
+#include <QAction>
+#include <QMenu>
 
 class FileList : public QListWidget {
 Q_OBJECT
@@ -41,9 +44,24 @@ signals:
 
 public slots:
   void addFiles();
+  void popupMenu(const QPoint &pos);
 
 private slots:
   void selectionChanged(QListWidgetItem *item);
+  void setMaster();
+  void removeFile();
+  void editName();
+
+private:
+  void setMasterFile(QListWidgetItem *i);
+  void createMenus();
+
+  QMenu *menu;
+  QAction *setMasterAction;
+  QAction *editAction;
+  QAction *removeAction;
+
+  QListWidgetItem *activeItem;
 };
 
 

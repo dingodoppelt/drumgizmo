@@ -39,10 +39,9 @@ Q_OBJECT
 public:
   AudioExtractor(QObject *parent);
 
-  void addFile(QString file, QString name);
-  void removeFile(QString file);
-
 public slots:
+  void addFile(QString file, QString name);
+  void removeFile(QString file, QString name);
   void exportSelections(Selections selections);
   void setExportPath(const QString &path);
   void setOutputPrefix(const QString &prefix);

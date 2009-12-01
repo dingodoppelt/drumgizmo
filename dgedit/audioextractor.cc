@@ -129,11 +129,11 @@ void AudioExtractor::addFile(QString file, QString name)
   audiofiles.push_back(pair);
 }
 
-void AudioExtractor::removeFile(QString file)
+void AudioExtractor::removeFile(QString file, QString name)
 {
   QVector< QPair<QString, QString> >::iterator j = audiofiles.begin();
   while(j != audiofiles.end()) {
-    if(file == j->first) {
+    if(file == j->first && name == j->second) {
       audiofiles.erase(j);
       return;
     }
