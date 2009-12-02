@@ -135,8 +135,12 @@ MainWindow::MainWindow()
   filelist = new FileList();
   connect(filelist, SIGNAL(masterFileChanged(QString)), this, SLOT(loadFile(QString)));
   connect(loadbtn, SIGNAL(clicked()), filelist, SLOT(addFiles()));
-  connect(filelist, SIGNAL(fileAdded(QString, QString)), extractor, SLOT(addFile(QString, QString)));
-  connect(filelist, SIGNAL(fileRemoved(QString, QString)), extractor, SLOT(removeFile(QString, QString)));
+  connect(filelist, SIGNAL(fileAdded(QString, QString)),
+          extractor, SLOT(addFile(QString, QString)));
+  connect(filelist, SIGNAL(fileRemoved(QString, QString)),
+          extractor, SLOT(removeFile(QString, QString)));
+  connect(filelist, SIGNAL(nameChanged(QString, QString)),
+          extractor, SLOT(changeName(QString, QString)));
   configs->addWidget(filelist);
 
   QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);

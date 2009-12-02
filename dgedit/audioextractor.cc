@@ -99,7 +99,7 @@ void AudioExtractor::exportSelection(QString name,
 
 void AudioExtractor::exportSelections(Selections selections)
 {
-  QVector< QPair<QString, QString> >::iterator j = audiofiles.begin();
+  AudioFileList::iterator j = audiofiles.begin();
   while(j != audiofiles.end()) {
 
     QString file = j->first;
@@ -131,9 +131,9 @@ void AudioExtractor::addFile(QString file, QString name)
 
 void AudioExtractor::removeFile(QString file, QString name)
 {
-  QVector< QPair<QString, QString> >::iterator j = audiofiles.begin();
+  AudioFileList::iterator j = audiofiles.begin();
   while(j != audiofiles.end()) {
-    if(file == j->first && name == j->second) {
+    if(file == j->first/* && name == j->second*/) {
       audiofiles.erase(j);
       return;
     }
@@ -151,3 +151,14 @@ void AudioExtractor::setExportPath(const QString &path)
   exportpath = path;
 }
 
+void AudioExtractor::changeName(QString file, QString name)
+{
+  AudioFileList::iterator j = audiofiles.begin();
+  while(j != audiofiles.end()) {
+    if(file == j->first) {
+      j->second = name;
+      return;
+    }
+    j++;
+  }
+}

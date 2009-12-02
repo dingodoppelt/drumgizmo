@@ -41,6 +41,7 @@ signals:
   void masterFileChanged(QString filename);
   void fileAdded(QString file, QString name);
   void fileRemoved(QString file, QString name);
+  void nameChanged(QString file, QString name);
 
 public slots:
   void addFiles();

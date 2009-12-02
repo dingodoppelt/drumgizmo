@@ -155,8 +155,12 @@ QString FileList::itemName(QListWidgetItem *i)
 
 void FileList::setItemName(QListWidgetItem *i, QString name)
 {
+  QString oldname = itemName(i);
+
   i->setData(Qt::UserRole, name);
   i->setData(Qt::DisplayRole, name + "\t" + itemFile(i));
+
+  if(oldname != "" && oldname != name) emit nameChanged(itemFile(i), name);
 }
 
 void FileList::setItemMaster(QListWidgetItem *i, bool master)

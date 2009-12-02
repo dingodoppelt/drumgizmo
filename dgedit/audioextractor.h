@@ -28,11 +28,13 @@
 #define __DRUMGIZMO_AUDIOEXTRACTOR_H__
 
 #include <QObject>
-#include <QVector>
-#include <QPair>
+#include <QSet>
+#include <QLinkedList>
 #include <QString>
 
 #include "selection.h"
+
+typedef QLinkedList< QPair<QString, QString> > AudioFileList;
 
 class AudioExtractor : public QObject {
 Q_OBJECT
@@ -41,6 +43,7 @@ public:
 
 public slots:
   void addFile(QString file, QString name);
+  void changeName(QString file, QString name);
   void removeFile(QString file, QString name);
   void exportSelections(Selections selections);
   void setExportPath(const QString &path);
@@ -49,7 +52,7 @@ public slots:
 private:
   float *load(QString file, size_t *size);
   void exportSelection(QString name, int index, float *data, size_t size, Selection sel);
-  QVector< QPair<QString, QString> > audiofiles;
+  AudioFileList audiofiles;
   QString exportpath;
   QString prefix;
 };
