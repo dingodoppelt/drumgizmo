@@ -165,6 +165,6 @@ void FileList::setItemName(QListWidgetItem *i, QString name)
 
 void FileList::setItemMaster(QListWidgetItem *i, bool master)
 {
-  if(master) i->setIcon(QPixmap("icons/master.png"));
-  else i->setIcon(QPixmap("icons/file.png"));
+  if(master) i->setIcon(QPixmap(":icons/master.png"));
+  else i->setIcon(QPixmap(":icons/file.png"));
 }

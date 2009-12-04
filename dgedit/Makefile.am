@@ -12,7 +12,9 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	filelist.cc \
 	itemeditor.cc \
 	mainwindow.cc \
-	samplesorter.cc
+	samplesorter.cc \
+	dgedit.qrc \
+	dgedit_qrc.cpp
 
 EXTRA_DIST = \
 	audioextractor.h \
@@ -24,7 +26,10 @@ EXTRA_DIST = \
 
 dgedit_MOC = $(shell ../tools/MocList cc )
 
-BUILT_SOURCES = $(dgedit_MOC)
+dgedit_qrc.cpp: dgedit.qrc
+	rcc $< > $@
+
+BUILT_SOURCES = $(dgedit_MOC) dgedit_qrc.cpp
 
 CLEANFILES = $(BUILT_SOURCES)
 
