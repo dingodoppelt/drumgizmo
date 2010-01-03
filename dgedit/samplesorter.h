@@ -36,6 +36,7 @@ public:
   SampleSorter();
 
   Selections selections();
+  QVector<int> levels();
 
 public slots:
   void setSelections(Selections selections);

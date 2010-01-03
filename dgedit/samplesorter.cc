@@ -34,6 +34,8 @@
 #define MAXFLOAT (3.40282347e+38F)
 #endif
 
+#define NUM_LEVELS 6
+
 SampleSorter::SampleSorter()
 {
   data = NULL;
@@ -78,6 +80,26 @@ Selections SampleSorter::selections()
 
   return s;
 }
+
+QVector<int> SampleSorter::levels()
+{
+  QVector<int> lvls;
+  int idx = 0;
+  float next = min;
+
+  QMap<float, Selection>::iterator i = sorted.begin();
+  while(i != sorted.end()) {
+    if(i.key() >= next) {
+      lvls.push_back(idx);
+      next += (max - min) / NUM_LEVELS;
+    }
+    i++;
+    idx++;
+  }
+
+  return lvls;
+}
+
 
 void SampleSorter::resort()
 {

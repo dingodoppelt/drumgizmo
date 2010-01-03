@@ -217,7 +217,7 @@ void MainWindow::setYOffset(int of)
 
 void MainWindow::doExport()
 {
-  extractor->exportSelections(sorter->selections());
+  extractor->exportSelections(sorter->selections(), sorter->levels());
 }
 
 void MainWindow::loadFile(QString filename)

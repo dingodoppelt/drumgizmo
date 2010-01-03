@@ -26,6 +26,9 @@
  */
 #include "audioextractor.h"
 
+#include <QDomDocument>
+#include <QFile>
+
 #include <sndfile.h>
 
 AudioExtractor::AudioExtractor(QObject *parent)
@@ -56,15 +59,13 @@ float *AudioExtractor::load(QString file, size_t *size)
   return data;
 }
 
-void AudioExtractor::exportSelection(QString name,
+void AudioExtractor::exportSelection(QString filename,
                                      int index,
                                      float *data, size_t size,
                                      Selection sel)
 {
-  QString file = exportpath + "/" + prefix + "-" + name + "-" + QString::number(index) + ".wav";
-
   printf("Writing: %s (sz: %d, from %d to %d)\n",
-         file.toStdString().c_str(), size, sel.from, sel.to);
+         filename.toStdString().c_str(), size, sel.from, sel.to);
   
   if(sel.from > (int)size || sel.to > (int)size || sel.to < 0 || sel.from < 0 || sel.to < sel.from) {
     printf("Out of bounds\n");
@@ -88,7 +89,7 @@ void AudioExtractor::exportSelection(QString name,
   sf_info.samplerate = 44100;
   sf_info.channels = 1;
 
-  SNDFILE *fh = sf_open(file.toStdString().c_str(), SFM_WRITE, &sf_info);
+  SNDFILE *fh = sf_open(filename.toStdString().c_str(), SFM_WRITE, &sf_info);
   if(!fh) {
     printf("Open for write error...\n");
     return;
@@ -97,21 +98,29 @@ void AudioExtractor::exportSelection(QString name,
   sf_close(fh);
 }
 
-void AudioExtractor::exportSelections(Selections selections)
+void AudioExtractor::exportSelections(Selections selections, QVector<int> levels)
 {
+  // Do the actual exporting one file at the time.
   AudioFileList::iterator j = audiofiles.begin();
   while(j != audiofiles.end()) {
 
     QString file = j->first;
     QString name = j->second;
     size_t size;
+
+    // TODO: Use sf_seek instead...
     float *data = load(file, &size);
     if(!data) continue;
 
     int index = 0;
     QMap<int, Selection>::iterator i = selections.begin();
     while(i != selections.end()) {
-      exportSelection(name, ++index, data, size, i.value());
+      index++;
+
+      QString file = exportpath + "/" + prefix + "/samples/" +
+        prefix + "-" + name + "-" + QString::number(index) + ".wav";
+
+      exportSelection(file, index, data, size, i.value());
       i++;
     }
 
@@ -119,6 +128,69 @@ void AudioExtractor::exportSelections(Selections selections)
     
     j++;
   }
+
+  QDomDocument doc;
+  QDomProcessingInstruction header =
+    doc.createProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
+  doc.appendChild(header); 
+
+  QDomElement instrument = doc.createElement("instrument");
+  instrument.setAttribute("name", prefix);
+  doc.appendChild(instrument);
+
+  QDomElement samples = doc.createElement("samples");
+  instrument.appendChild(samples);
+
+  // Do the adding to the xml file one sample at the time.
+  int index = 0;
+  QMap<int, Selection>::iterator i = selections.begin();
+  while(i != selections.end()) {
+    index++;
+
+    QDomElement sample = doc.createElement("sample");
+    sample.setAttribute("name", prefix + "-" + QString::number(index));
+    samples.appendChild(sample);
+
+    AudioFileList::iterator j = audiofiles.begin();
+    while(j != audiofiles.end()) {
+
+      QString file = j->first;
+      QString name = j->second;
+
+      QDomElement audiofile = doc.createElement("audiofile");
+      audiofile.setAttribute("file", "samples/" + prefix + "-" + name + "-"
+                             + QString::number(index) + ".wav");
+      audiofile.setAttribute("channel", name);
+      sample.appendChild(audiofile);
+
+      j++;
+    }
+
+    i++;
+  }
+
+  QDomElement velocities = doc.createElement("velocities");
+  instrument.appendChild(velocities);
+
+  QVector<int>::iterator k = levels.begin();
+  while(k != levels.end()) {
+    QDomElement velocity = doc.createElement("velocity");
+    velocity.setAttribute("lower", "0");
+    velocity.setAttribute("upper", "127");
+    velocities.appendChild(velocity);
+
+    QDomElement sampleref = doc.createElement("sampleref");
+    sampleref.setAttribute("name", "bleh");
+    sampleref.setAttribute("probability", "0.1");
+    velocity.appendChild(sampleref);
+
+    k++;
+  }
+
+  QFile xmlfile(exportpath + "/" + prefix + "/" + prefix + ".xml");
+  xmlfile.open(QIODevice::WriteOnly);
+  xmlfile.write(doc.toByteArray());
+  xmlfile.close();
 }
 
 void AudioExtractor::addFile(QString file, QString name)

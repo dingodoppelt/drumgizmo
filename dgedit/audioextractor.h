@@ -31,6 +31,7 @@
 #include <QSet>
 #include <QLinkedList>
 #include <QString>
+#include <QVector>
 
 #include "selection.h"
 
@@ -45,7 +46,7 @@ public slots:
   void addFile(QString file, QString name);
   void changeName(QString file, QString name);
   void removeFile(QString file, QString name);
-  void exportSelections(Selections selections);
+  void exportSelections(Selections selections, QVector<int> levels);
   void setExportPath(const QString &path);
   void setOutputPrefix(const QString &prefix);
 
