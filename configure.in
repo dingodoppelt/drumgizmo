@@ -17,14 +17,6 @@ if test x$with_debug == xyes; then
     CXXFLAGS="$CXXFLAGS -Wall -Werror -g"
 fi 
 
-#dnl ======================
-#dnl Check for Qt
-#dnl ======================
-#PKG_CHECK_MODULES(QTCORE, QtCore >= 4.3)
-#PKG_CHECK_MODULES(QTGUI, QtGui >= 4.3)
-#MOC=`pkg-config QtCore --variable=moc_location`
-#AC_SUBST(MOC)
-
 dnl ======================
 dnl Check for libsmf
 dnl ======================
@@ -49,7 +41,7 @@ AC_CHECK_LIB(expat, XML_ParserCreate, ,  AC_MSG_ERROR([*** eXpat library not fou
 dnl ======================
 dnl Check for Qt
 dnl ======================
-PKG_CHECK_MODULES(QT, QtCore QtGui >= 4.5)
+PKG_CHECK_MODULES(QT, QtCore QtGui QtXml >= 4.5)
 AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
 AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
 AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
