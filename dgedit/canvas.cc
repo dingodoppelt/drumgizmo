@@ -79,11 +79,31 @@ Canvas::~Canvas()
   if(data) delete[] data;
 }
 
+#define VALL(x) (x*4)
+#define VALU(x) (x*4+1)
+#define POWL(x) (x*4+2)
+#define POWU(x) (x*4+3)
+/*
+static void genmipmap(float *in, size_t insz, float **out, size_t *outsz)
+{
+  *outsz = (insz / 2) * 4;
+  *out = new float[*outsz];
+  float *lookup = *out;
 
-#define VALL(x) (x*2)
-#define VALU(x) (x*2+1)
-#define POWL(x) (x*2+2)
-#define POWU(x) (x*2+3)
+  for(size_t i = 0; i < *outsz / 4; i++) {
+    lookup[VALL(i)] = 0.0;
+    lookup[VALU(i)] = 0.0;
+    lookup[POWL(i)] = 0.0;
+    lookup[POWU(i)] = 0.0;
+    for(size_t j = i * 2; j < i*2+2 && j < insz / 4; j++) {
+      if(in[VALU(j)] > lookup[VALU(i)]) lookup[VALU(i)] = in[VALU(j)];
+      if(in[VALL(j)] < lookup[VALL(i)]) lookup[VALL(i)] = in[VALL(j)];
+      if(in[POWU(j)] > 0) lookup[POWU(i)] += in[POWU(j)];
+      if(in[POWL(j)] < 0) lookup[POWL(i)] += in[POWL(j)];
+    }
+  }
+}
+*/
 void Canvas::load(QString file)
 {
   if(data) {
@@ -132,7 +152,30 @@ void Canvas::load(QString file)
 
     mipmaps[dev] = lookup;
   }
+  /*
 
+  size_t sz = (size / 2) * 4;
+  mipmaps[2] = new float[sz];
+  float *lookup = mipmaps[2];
+  for(size_t i = 0; i < sz; i++) {
+    lookup[VALL(i)] = 0.0;
+    lookup[VALU(i)] = 0.0;
+    lookup[POWL(i)] = 0.0;
+    lookup[POWU(i)] = 0.0;
+    for(size_t j = i * 2; j < (i + 1) * 2; j++) {
+      if(data[j] > lookup[VALU(i)]) lookup[VALU(i)] = data[j];
+      if(data[j] < lookup[VALL(i)]) lookup[VALL(i)] = data[j];
+      if(data[j] > 0) lookup[POWU(i)] += data[j];
+      if(data[j] < 0) lookup[POWL(i)] += data[j];
+    }
+  }
+
+  size_t dev = 3;
+  do {
+    genmipmap(mipmaps[dev], sz, &mipmaps[dev], &sz);
+    dev++;
+  } while(sz > 2);
+  */
   updateWav();
   update();
 }
