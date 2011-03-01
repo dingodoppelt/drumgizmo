@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            channelmixer.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sun Oct 17 10:14:34 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#ifndef __DRUMGIZMO_CHANNELMIXER_H__
+#define __DRUMGIZMO_CHANNELMIXER_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <map>
 
-#include <sndfile.h>
+#include "channel.h"
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+class MixerSettings {
+public:
+  float gain;
+  Channel *output;
+};
 
-  data = NULL;
-  size = 0;
-}
+class ChannelMixer {
+public:
+  ChannelMixer(Channels &channels,
+               Channel *defaultchannel = NULL, float defaultgain = 1.0);
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
+  MixerSettings &lookup(InstrumentChannel *channel);
 
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
+  void setDefaults(Channel *defaultchannel, float defaultgain);
 
-void AudioFile::load()
-{
-  if(data) return;
+private:
+  std::map<InstrumentChannel *, MixerSettings> mix;
 
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
+  Channel *defaultchannel;
+  float defaultgain;
 
+  Channels &channels;
+};
+
+#endif/*__DRUMGIZMO_CHANNELMIXER_H__*/

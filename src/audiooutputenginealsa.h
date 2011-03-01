@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audiooutputenginealsa.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Sep 16 11:22:52 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,28 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__
+#define __DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+// Use the newer ALSA API
+#define ALSA_PCM_NEW_HW_PARAMS_API
 
-#include <sndfile.h>
+#include <asoundlib.h>
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+#include "audiooutputengine.h"
 
-  data = NULL;
-  size = 0;
-}
+class AudioOutputEngineAlsa : public AudioOutputEngine {
+public:
+  AudioOutputEngineAlsa();
+  ~AudioOutputEngineAlsa();
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
+  bool init(Channels *channels);
 
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
+  void run(DrumGizmo *drumgizmo);
   
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
+private:
+  snd_pcm_t *handle;
+  snd_pcm_hw_params_t *params;
+};
 
+#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__*/

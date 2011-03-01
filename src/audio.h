@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audio.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Sep 16 20:15:45 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,17 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#ifndef __DRUMGIZMO_AUDIO_H__
+#define __DRUMGIZMO_AUDIO_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+typedef unsigned int channels_t;
+typedef unsigned int channel_t;
 
-#include <sndfile.h>
+#define ALL_CHANNELS ((channel_t)0xffffffff)
+#define NO_CHANNEL ((channel_t)0xfffffffe)
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+typedef float sample_t;
 
-  data = NULL;
-  size = 0;
-}
+typedef float level_t;
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
-
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
-
+#endif/*__DRUMGIZMO_AUDIO_H__*/

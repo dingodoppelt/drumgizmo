@@ -25,85 +25,52 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "drumkitparser.h"
+
 #include <string.h>
+#include <stdio.h>
+
 #define DIR_SEPERATOR '/'
 
-DrumKitParser::DrumKitParser(std::string kitfile, bool preload, int min_velocity)
+DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
+  : kit(k)
 {
-  std::string file;
-  std::string path;
-
-  char *split = strrchr(kitfile.c_str(), DIR_SEPERATOR);
-  if(split) {
-    file = split + 1;
-    path = kitfile.substr(0, kitfile.length() - file.length());
-    // All drum samples are relative to the kitfile, so we must chdir there to be able to open them.
-    chdir(path.c_str());
-  } else {
-    file = kitfile;
-  }
-
-  this->preload = preload;
-  this->min_velocity = min_velocity;
-
-  dk = NULL;
-  fd = fopen(file.c_str(), "r");
+  fd = fopen(kitfile.c_str(), "r");
   if(!fd) return;
-  dk = new DrumKit();
 }
 
 DrumKitParser::~DrumKitParser()
 {
-  if(dk) fclose(fd);
+  if(fd) fclose(fd);
 }
 
-void DrumKitParser::startTag(std::string name, std::map< std::string, std::string> attributes)
+void DrumKitParser::startTag(std::string name,
+                             std::map< std::string, std::string> attributes)
 {
   if(name == "drumkit") {
-    dk->name = attributes["name"];
-    dk->description = attributes["description"];
+    kit.name = attributes["name"];
+    kit.description = attributes["description"];
   }
 
   if(name == "channels") {}
 
   if(name == "channel") {
-    Channel *c = new Channel(attributes["name"]);
-    dk->channels[attributes["name"]] = c;
+    //    Channel *c = new Channel(attributes["name"]);
+    //    dk->channels[attributes["name"]] = c;
   }
 
-  if(name == "samples") {}
-
-  if(name == "sample") {
-    Sample *s = new Sample(attributes["name"]);
-    dk->samples[attributes["name"]] = s;
-    lastsample = s;
+  if(name == "instruments") {
   }
-
-  if(name == "audiofile") {
-    AudioFile *af = new AudioFile(attributes["name"], preload, min_velocity);
-    af->channel = attributes["channel"];
-    lastsample->audiofiles[attributes["name"]] = af;
-  }
-
-  if(name == "instruments") {}
 
   if(name == "instrument") {
-    midi_note_t m = atoi(attributes["midimap"].c_str());
-    Instrument *i = new Instrument(attributes["name"], m);
-    dk->instruments[m] = i;
-    lastinstrument = i;
-  }
-  
-  if(name == "velocity") {
-    Velocity *v = new Velocity(atoi(attributes["lower"].c_str()),
-                               atoi(attributes["upper"].c_str()));
-    lastinstrument->addVelocity(v);
-    lastvelocity = v;
   }
 
-  if(name == "sampleref") {
-    lastvelocity->addSample(dk->samples[attributes["name"]],
-                            atof(attributes["probability"].c_str()));
+  if(name == "channelmap") {
+  }
+
+  if(name == "midimaps") {
+  }
+
+  if(name == "midimap") {
   }
 }
 
@@ -111,14 +78,9 @@ void DrumKitParser::endTag(std::string name)
 {
 }
 
-DrumKit *DrumKitParser::getDrumkit()
-{
-  return dk;
-}
-
 int DrumKitParser::readData(char *data, size_t size)
 {
-  if(!fd) return 0;
+  if(!fd) return -1;
   return fread(data, 1, size, fd);
 }
 

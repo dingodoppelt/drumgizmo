@@ -108,7 +108,7 @@ static int inst[] = { 35, 36, 38, 46, 41, 43, 45, 47, 49, 57, 51 };
 static int inst[] = { 51, 49, 57 };
 #endif
 
-#if 1 // Toms
+#if 0 // Toms
 #define NUM_INST 4
 static int inst[] = { 41, 43, 45, 47 };
 #endif

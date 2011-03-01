@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.cc
+ *            drumgizmo.h
  *
- *  Sat Sep 18 22:02:16 CEST 2010
+ *  Thu Sep 16 10:24:40 CEST 2010
  *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,27 +24,62 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#ifndef __DRUMGIZMO_DRUMGIZMO_H__
+#define __DRUMGIZMO_DRUMGIZMO_H__
+
+#include <string>
+#include <list>
+
+#include "drumkit.h"
+#include "audio.h"
 #include "event.h"
 
-void EventQueue::post(Event *event, timepos_t time)
-{
-  MutexAutolock lock(mutex);
-  event->offset = time;
-  queue.insert(std::pair<timepos_t, Event*>(time, event));
-}
+#include "channelmixer.h"
 
-Event *EventQueue::take(timepos_t time)
-{
-  MutexAutolock lock(mutex);
-  std::multimap<timepos_t, Event*>::iterator i = queue.find(time);
-  if(i == queue.end()) return NULL;
-  Event *event = i->second;
-  queue.erase(i);
-  return event;
-}
+class AudioOutputEngine;
+class AudioInputEngine;
 
-bool EventQueue::hasEvent(timepos_t time)
-{
-  MutexAutolock lock(mutex);
-  return queue.find(time) != queue.end();
-}
+class DrumGizmo {
+public:
+  DrumGizmo(AudioOutputEngine &outputengine,
+            AudioInputEngine &inputengine,
+            ChannelMixer &mixer);
+  ~DrumGizmo();
+
+  bool loadkit(const std::string &kitfile);
+
+  bool init(bool preload = true);
+
+  void run();
+  void stop();
+
+  void pre(size_t sz);
+  void getSamples(Channel *c, sample_t *s, size_t sz);
+  void post(size_t sz);
+
+  bool isRunning() { return is_running; }
+
+  Channels channels;
+  ChannelMixer mixer;
+
+  EventQueue eventqueue;
+
+private:
+  bool is_running;
+  
+  AudioOutputEngine &oe;
+  AudioInputEngine &ie;
+
+  std::list< Event* > activeevents[100];
+  timepos_t time;
+
+  AudioFiles audiofiles;
+
+#ifdef TEST_DRUMGIZMO
+public:
+#endif
+  DrumKit kit;
+};
+
+
+#endif/*__DRUMGIZMO_DRUMGIZMO_H__*/

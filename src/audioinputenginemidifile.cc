@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audioinputenginemidifile.cc
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sun Feb 27 11:43:32 CET 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,21 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#include "audioinputenginemidifile.h"
 
-#include <stdlib.h>
-#include <unistd.h>
+#ifdef TEST_AUDIOINPUTENGINEMIDIFILE
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
 
-#include <sndfile.h>
+TEST_BEGIN;
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+// TODO: Put some testcode here (see test.h for usable macros).
 
-  data = NULL;
-  size = 0;
-}
+TEST_END;
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
-
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
-
+#endif/*TEST_AUDIOINPUTENGINEMIDIFILE*/

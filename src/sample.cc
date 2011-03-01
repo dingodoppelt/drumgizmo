@@ -39,3 +39,35 @@ Sample::Sample(std::string name)
 Sample::~Sample()
 {
 }
+
+void Sample::addAudioFile(Channel *c, AudioFile *a)
+{
+  audiofiles[c] = a;
+}
+
+AudioFile *Sample::getAudioFile(Channel *c)
+{
+  if(audiofiles.find(c) == audiofiles.end()) return NULL;
+  return audiofiles[c];
+}
+
+#ifdef TEST_SAMPLE
+//deps: channel.cc audiofile.cc
+//cflags: $(SNDFILE_CFLAGS)
+//libs: $(SNDFILE_LIBS)
+#include "test.h"
+
+TEST_BEGIN;
+
+Sample s;
+InstrumentChannel c;
+InstrumentChannel c2;
+AudioFile a("test");
+
+s.addAudioFile(&c, &a);
+TEST_EQUAL(s.getAudioFile(&c), &a, "?");
+TEST_EQUAL(s.getAudioFile(&c2), NULL, "?");
+
+TEST_END;
+
+#endif/*TEST_SAMPLE*/

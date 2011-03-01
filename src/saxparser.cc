@@ -25,6 +25,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "saxparser.h"
+
+#include <stdio.h>
 #include <string.h>
 
 static void character_hndl(void *p, const XML_Char *s, int len)
@@ -90,8 +92,13 @@ int SAXParser::parse()
   
   do {
     len = readData(buf, sizeof(buf) - 1);
-    if (! XML_Parse(p, buf, len, len == 0)) {
-      parseError(buf, len, XML_ErrorString(XML_GetErrorCode(p)), (int)XML_GetCurrentLineNumber(p));
+    if(len == -1) {
+      parseError((char*)"", 0, "Could not read data", 0);
+      return 1;
+    }
+    if(!XML_Parse(p, buf, len, len == 0)) {
+      parseError(buf, len, XML_ErrorString(XML_GetErrorCode(p)),
+                 (int)XML_GetCurrentLineNumber(p));
       return 1;
     }
 

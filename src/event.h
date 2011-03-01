@@ -2,8 +2,8 @@
 /***************************************************************************
  *            event.h
  *
- *  Mon Jul 21 10:56:01 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat Sep 18 22:02:16 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -27,24 +27,97 @@
 #ifndef __DRUMGIZMO_EVENT_H__
 #define __DRUMGIZMO_EVENT_H__
 
-#include <jack/jack.h>
+#include <map>
+#include <stdio.h>
+#include <string>
+#include <sndfile.h>
 
-#include <set>
-#include "audiofile.h"
+#include "audio.h"
+#include "mutex.h"
+
+typedef unsigned int timepos_t;
 
 class Event {
 public:
-  Event(jack_port_t *port, AudioFile *sample, size_t time, size_t duration = 0);
-  ~Event();
+  typedef enum {
+    sine,
+    noise,
+    sample
+  } type_t;
+  
+  virtual type_t type() = 0;
 
-  bool operator<(const Event& event) const;
-
-  jack_port_t *port;
-  AudioFile *sample;
-  size_t duration;
-  size_t time;
+  channel_t channel;
+  timepos_t offset;
 };
 
-typedef std::set< Event > Events;
+class EventSine : public Event {
+public:
+  EventSine(channel_t c, float f, float g, timepos_t l)
+  {
+    channel = c;
+    freq = f;
+    gain = g;
+    len = l;
+    t = 0;
+  }
+  Event::type_t type() { return Event::sine; }
+
+  float freq;
+  float gain;
+  timepos_t len;
+
+  unsigned int t;
+};
+
+class EventNoise : public Event {
+public:
+  EventNoise(channel_t c, float g, timepos_t l)
+  {
+    channel = c;
+    gain = g;
+    len = l;
+    t = 0;
+  }
+  Event::type_t type() { return Event::noise; }
+
+  float gain;
+  timepos_t len;
+
+  unsigned int t;
+};
+
+class EventSample : public Event {
+public:
+  EventSample(channel_t c, float g, std::string f)
+  {
+    channel = c;
+    gain = g;
+    t = 0;
+    file = f;
+  }
+
+  Event::type_t type() { return Event::sample; }
+
+  float gain;
+
+  unsigned int t;
+
+  std::string file;
+};
+
+
+
+class EventQueue {
+public:
+  void post(Event *event, timepos_t time);
+  Event *take(timepos_t time);
+  bool hasEvent(timepos_t time);
+  size_t size() { return queue.size(); }
+
+private:
+  std::multimap< timepos_t, Event* > queue;
+  Mutex mutex;
+};
 
 #endif/*__DRUMGIZMO_EVENT_H__*/

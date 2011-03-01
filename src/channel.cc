@@ -29,5 +29,29 @@
 Channel::Channel(std::string name)
 {
   this->name = name;
-  this->port = NULL;
+  num = NO_CHANNEL;
 }
+
+#ifdef TEST_CHANNEL
+//deps:
+//cflags:
+//libs:
+#include "test.h"
+
+TEST_BEGIN;
+
+Channel c1;
+TEST_EQUAL_STR(c1.name, "", "Empty name?");
+TEST_EQUAL_INT(c1.num, NO_CHANNEL, "No physical channel assigned?");
+
+Channel c2("ch2");
+TEST_EQUAL_STR(c2.name, "ch2", "Nonempty name?");
+TEST_EQUAL_INT(c2.num, NO_CHANNEL, "No physical channel assigned?");
+
+Channels channels;
+channels.push_back(c1);
+channels.push_back(c2);
+
+TEST_END;
+
+#endif/*TEST_CHANNEL*/

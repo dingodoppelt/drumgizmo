@@ -29,18 +29,32 @@
 
 #include <map>
 #include <string>
+
+#include "channel.h"
 #include "audiofile.h"
 
-typedef std::map< std::string, AudioFile* > AudioFiles;
+typedef std::map< Channel*, AudioFile* > AudioFiles;
 
 class Sample {
 public:
-  Sample(std::string name);
+  Sample(std::string name = "");
   ~Sample();
 
-  AudioFiles audiofiles;
+  void addAudioFile(InstrumentChannel *c, AudioFile *a);
+  AudioFile *getAudioFile(InstrumentChannel *c);
 
+private:
   std::string name;
+  AudioFiles audiofiles;
 };
 
+/*
+ *   <sample name="kick-r-1">
+ *    <audiofile channel="Alesis-3" file="samples/1-kick-r-Alesis-3.wav"/>
+ *    <audiofile channel="Amb L-3" file="samples/1-kick-r-Amb L-3.wav"/>
+ *    <audiofile channel="Amb R-3" file="samples/1-kick-r-Amb R-3.wav"/>
+ *    <audiofile channel="Kick L-3" file="samples/1-kick-r-Kick L-3.wav"/>
+ *    <audiofile channel="Kick R-3" file="samples/1-kick-r-Kick R-3.wav"/>
+ *   </sample>
+ */
 #endif/*__DRUMGIZMO_SAMPLE_H__*/

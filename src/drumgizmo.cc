@@ -2,8 +2,8 @@
 /***************************************************************************
  *            drumgizmo.cc
  *
- *  Sun Jul 20 19:25:01 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Sep 16 10:24:40 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,125 +24,214 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <config.h>
-#include <getopt.h>
-#include "jackclient.h"
+#include "drumgizmo.h"
+
+#include <math.h>
+#include <stdio.h>
+
 #include "drumkitparser.h"
-#include "midiplayer.h"
-#include <string.h>
+#include "audiooutputengine.h"
+#include "audioinputengine.h"
+#include "event.h"
 
-static const char version_str[] =
-"DrumGizmo v" VERSION "\n"
-;
-
-static const char copyright_str[] =
-"Copyright (C) 2008-2009 Bent Bisballe Nyeng - Aasimon.org.\n"
-"This is free software.  You may redistribute copies of it under the terms of\n"
-"the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
-"There is NO WARRANTY, to the extent permitted by law.\n"
-"\n"
-"Written by Bent Bisballe Nyeng (deva@aasimon.org)\n"
-;
-
-static const char usage_str[] =
-"Usage: %s [options] drumkitfile\n"
-"Options:\n"
-"  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
-"  -P, --preload_vel vel  Load all files with velocity above vel into memory (uses a little less memory).\n"
-"  -m, --midi midifile    Load midifile, and play it.\n"
-"  -v, --version          Print version information and exit.\n"
-"  -h, --help             Print this message and exit.\n"
-;
-
-int main(int argc, char *argv[])
+DrumGizmo::DrumGizmo(AudioOutputEngine &o,
+                     AudioInputEngine &i,
+                     ChannelMixer &m)
+  : mixer(m), oe(o), ie(i)
 {
-  int c;
-
-  char *midifile = NULL;
-  bool preload = true;
-  int min_velocity = 0;//18;
-
-  int option_index = 0;
-  while(1) {
-    static struct option long_options[] = {
-      {"preload_vel", required_argument, 0, 'P'},
-      {"preload", no_argument, 0, 'p'},
-      {"midi", required_argument, 0, 'm'},
-      {"help", no_argument, 0, 'h'},
-      {"version", no_argument, 0, 'v'},
-      {0, 0, 0, 0}
-    };
-    
-    c = getopt_long (argc, argv, "hvpP:m:", long_options, &option_index);
-    
-    if (c == -1)
-      break;
-
-    switch(c) {
-    case 'm':
-      midifile = strdup(optarg);
-      break;
-
-    case 'p':
-      preload = true;
-      break;
- 
-    case 'P':
-      preload = true;
-      min_velocity = atoi(optarg);
-      break;
-
-    case '?':
-    case 'h':
-      printf(version_str);
-      printf(usage_str, argv[0]);
-      return 0;
-
-    case 'v':
-      printf(version_str);
-      printf(copyright_str);
-      return 0;
-
-    default:
-      break;
-    }
-  }
-
-  std::string kitfile;
-
-  if(option_index < argc) {
-    printf("non-option ARGV-elements: ");
-    while (optind < argc) {
-      if(kitfile != "") {
-        fprintf(stderr, "Can only handle a single kitfile.\n");
-        printf(usage_str, argv[0]);
-        return 1;
-      }
-      kitfile = argv[optind++];
-    }
-    printf("\n");
-  } else {
-    fprintf(stderr, "Missing kitfile.\n");
-    printf(usage_str, argv[0]);
-    return 1;
-  }
-  
-  printf("Using kitfile: %s\n", kitfile.c_str());
-
-  DrumKitParser parser(kitfile, preload, min_velocity);
-  if(parser.parse()) return 1;
-
-  JackClient client(parser.getDrumkit());
-
-  client.activate();
-
-  if(midifile) {
-    MidiPlayer player(midifile);
-    
-    while(1) sleep(1);
-  }
-
-  while(1) sleep(1);
-
-  return 0;
+  time = 0;
+  Channel c1; c1.num = 0; c1.name="left";
+  Channel c2; c2.num = 1; c2.name="right";
+  channels.push_back(c1);
+  channels.push_back(c2);
 }
+
+DrumGizmo::~DrumGizmo()
+{
+  AudioFiles::iterator i = audiofiles.begin();
+  while(i != audiofiles.end()) {
+    AudioFile *audiofile = i->second;
+    delete audiofile;
+    i++;
+  }
+}
+
+bool DrumGizmo::loadkit(const std::string &kitfile)
+{
+  /*
+  DrumKitParser parser(kitfile, kit);
+  if(parser.parse()) return false;
+  */
+
+  return true;
+}
+
+bool DrumGizmo::init(bool preload)
+{
+  if(preload) {
+    AudioFiles::iterator i = audiofiles.begin();
+    while(i != audiofiles.end()) {
+      AudioFile *audiofile = i->second;
+      audiofile->load();
+      i++;
+    }
+  }
+
+  if(!oe.init(&channels)) return false;
+
+  if(!ie.init(&eventqueue)) return false;
+
+  return true;
+}
+
+void DrumGizmo::run()
+{
+  is_running = true;
+  oe.run(this);
+}
+
+void DrumGizmo::pre(size_t sz)
+{
+  ie.run(time, sz);
+
+  for(size_t n = 0; n < sz; n++) {
+    while(eventqueue.hasEvent(time + n)) {
+      Event *event = eventqueue.take(time + n);
+      activeevents[event->channel].push_back(event);
+    }
+  }
+}
+
+void DrumGizmo::getSamples(Channel *c, sample_t *s, size_t sz)
+{
+  for(std::list< Event* >::iterator i = activeevents[c->num].begin();
+      i != activeevents[c->num].end();
+      i++) {
+    bool removeevent = false;
+
+    Event *event = *i;
+
+    Event::type_t type = event->type();
+    switch(type) {
+    case Event::sine:
+      {
+        EventSine *evt = (EventSine *)event;
+        for(size_t n = 0; n < sz; n++) {
+          
+          if(evt->offset > (time + n)) continue;
+
+          if(evt->t > evt->len) {
+            removeevent = true;
+            break;
+          }
+
+          float x = (float)evt->t / 44100.0;
+          float gain = evt->gain;
+          gain *= 1.0 - ((float)evt->t / (float)evt->len);
+          sample_t val = gain * sin(2.0 * M_PI * evt->freq * x);
+          s[n] += val;
+
+          evt->t++;
+        }
+      }
+      break;
+
+    case Event::noise:
+      {
+        EventNoise *evt = (EventNoise *)event;
+        for(size_t n = 0; n < sz; n++) {
+
+          if(evt->offset > (time + n)) continue;
+
+          if(evt->t > evt->len) {
+            removeevent = true;
+            break;
+          }
+
+          float gain = evt->gain;
+          gain *= 1.0 - ((float)evt->t / (float)evt->len);
+          sample_t val = (float)rand() / (float)RAND_MAX;
+          s[n] += val * gain;
+          evt->t++;
+        }
+      }
+      break;
+
+    case Event::sample:
+      {
+        /*
+        EventSample *evt = (EventSample *)event;
+        AudioFile *af = audiofiles[evt->file];
+        af->load(); // Make sure it is loaded.
+        for(size_t n = 0; n < sz; n++) {
+
+          if(evt->offset > (time + n)) continue;
+
+          if(evt->t > af->size) {
+            removeevent = true;
+            break;
+          }
+
+          float gain = evt->gain;
+          gain *= 1.0 - ((float)evt->t / (float)af->size);
+          sample_t val = af->data[evt->t];
+          s[n] += val * gain;
+          evt->t++;
+        }
+        */
+      }
+      break;
+    }
+    
+    if(removeevent) {
+      delete event;
+      i = activeevents[c->num].erase(i);
+      if(activeevents[0].size() +
+         activeevents[1].size() +
+         eventqueue.size() == 0) {/*is_running = false;*/}
+    }
+  }
+}
+
+void DrumGizmo::post(size_t sz)
+{
+  time += sz;
+}
+
+void DrumGizmo::stop()
+{
+  // engine.stop();
+}
+
+#ifdef TEST_DRUMGIZMO
+//deps: instrument.cc sample.cc channel.cc audiofile.cc event.cc
+//cflags: $(SNDFILE_CFLAGS)
+//libs: $(SNDFILE_LIBS)
+#include "test.h"
+
+class AudioOutputEngineDummy : public AudioOutputEngine {
+public:
+  bool init(Channels *channels) { return true; }
+  void run(DrumGizmo *drumgizmo) {}
+};
+
+TEST_BEGIN;
+
+AudioOutputEngineDummy a;
+DrumGizmo g(a);
+
+Channel ch0("ch0"); g.channels.push_back(ch0);
+Channel ch1("ch1"); g.channels.push_back(ch1);
+
+Instrument i("test");
+Sample s1; i.addSample(0.0, 1.0, &s1);
+Sample s2; i.addSample(0.0, 1.0, &s2);
+Sample s3; i.addSample(0.0, 1.0, &s3);
+
+//g.kit.instruments["instr"] = i;
+
+g.run();
+
+TEST_END;
+
+#endif/*TEST_DRUMGIZMO*/

@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audioinputengine.cc
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sun Feb 27 11:33:20 CET 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#include "audioinputengine.h"
 
-#include <stdlib.h>
-#include <unistd.h>
+#include "audioinputenginejackmidi.h"
+#include "audioinputenginemidifile.h"
 
-#include <sndfile.h>
-
-AudioFile::AudioFile(std::string filename)
+AudioInputEngine *createAudioInputEngine(std::string engine)
 {
-  this->filename = filename;
+  AudioInputEngine *e = NULL;
 
-  data = NULL;
-  size = 0;
+  if(engine == "jackmidi") e = new AudioInputEngineJackMidi();
+  if(engine == "midifile") e = new AudioInputEngineMidiFile();
+
+  return e;
 }
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
+#ifdef TEST_AUDIOINPUTENGINE
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
 
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
+TEST_BEGIN;
 
-void AudioFile::load()
-{
-  if(data) return;
+// TODO: Put some testcode here (see test.h for usable macros).
 
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
+TEST_END;
 
+#endif/*TEST_AUDIOINPUTENGINE*/

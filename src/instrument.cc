@@ -26,23 +26,60 @@
  */
 #include "instrument.h"
 
-Instrument::Instrument(std::string name, unsigned int midimap)
+#include <stdlib.h>
+
+Instrument::Instrument(std::string name)
 {
   this->name = name;
-  this->midimap = midimap;
 }
 
-void Instrument::addVelocity(Velocity *velocity)
+Sample *Instrument::sample(level_t level)
 {
-  velocities.push_back(velocity);
+  std::vector<Sample*> s = samples.get(level);
+  if(s.size() == 0) return NULL;
+  size_t idx = rand()%(s.size());
+  return s[idx];
 }
 
-Velocity *Instrument::getVelocity(unsigned int v)
+void Instrument::addSample(level_t a, level_t b, Sample *s)
 {
-  Velocities::iterator i = velocities.begin();
-  while(i != velocities.end()) {
-    if(v >= (*i)->lower && v <= (*i)->upper) return *i;
-    i++;
-  }
-  return NULL;
+  samples.insert(a, b, s);
 }
+
+#ifdef TEST_INSTRUMENT
+//deps: channel.cc sample.cc audiofile.cc
+//cflags: $(SNDFILE_CFLAGS)
+//libs: $(SNDFILE_LIBS)
+#include "test.h"
+
+TEST_BEGIN;
+
+Instrument i("test");
+
+Sample *a = new Sample();
+i.addSample(0.0, 1.0, a);
+
+Sample *b = new Sample();
+i.addSample(0.0, 1.0, b);
+
+Sample *c = new Sample();
+i.addSample(1.5, 1.7, c);
+
+TEST_EQUAL(i.sample(0.0), b, "?");
+TEST_EQUAL(i.sample(0.0), a, "?");
+TEST_EQUAL(i.sample(0.0), b, "?");
+TEST_EQUAL(i.sample(0.0), b, "?");
+TEST_EQUAL(i.sample(0.0), b, "?");
+TEST_EQUAL(i.sample(0.0), b, "?");
+TEST_EQUAL(i.sample(0.0), a, "?");
+TEST_EQUAL(i.sample(0.0), a, "?");
+
+TEST_EQUAL(i.sample(2.0), NULL, "?");
+
+TEST_EQUAL(i.sample(1.6), c, "?");
+TEST_EQUAL(i.sample(1.6), c, "?");
+TEST_EQUAL(i.sample(1.6), c, "?");
+
+TEST_END;
+
+#endif/*TEST_INSTRUMENT*/

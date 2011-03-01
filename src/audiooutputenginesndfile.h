@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audiooutputenginesndfile.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Tue Sep 21 09:31:29 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,28 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__
+#define __DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include <string>
 
 #include <sndfile.h>
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+#include "audiooutputengine.h"
 
-  data = NULL;
-  size = 0;
-}
+class AudioOutputEngineSndFile : public AudioOutputEngine {
+public:
+  AudioOutputEngineSndFile(std::string filename);
+  ~AudioOutputEngineSndFile();
 
-AudioFile::~AudioFile()
-{
-  unload();
-}
+  bool init(Channels *channels);
 
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
+  void run(DrumGizmo *drumgizmo);
+  
+private:
+  std::string filename;
   SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
+  SNDFILE *fh;
+};
 
+#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__*/

@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            midimap.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Wed Sep 15 15:44:48 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#ifndef __DRUMGIZMO_MIDIMAP_H__
+#define __DRUMGIZMO_MIDIMAP_H__
 
-#include <stdlib.h>
-#include <unistd.h>
+#include "midi.h"
 
-#include <sndfile.h>
+class MidiMap {
+public:
+  midi_note_t note;
+  midi_velocity_t from;
+  midi_velocity_t to;
+  std::string instrument;
+  // float gain; // TODO: Add this to gain the entire instrument.
+};
 
-AudioFile::AudioFile(std::string filename)
-{
-  this->filename = filename;
+//typedef std::vector< MidiMap > MidiMaps;
 
-  data = NULL;
-  size = 0;
-}
-
-AudioFile::~AudioFile()
-{
-  unload();
-}
-
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
-
+#endif/*__DRUMGIZMO_MIDIMAP_H__*/

@@ -26,6 +26,8 @@
  */
 #include "beatmapper.h"
 
+#include <stdio.h>
+
 #define DEF 2.0
 
 BeatMapper::BeatMapper(Instrument *instrument)

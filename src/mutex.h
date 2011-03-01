@@ -1,47 +1,55 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set et sw=2 ts=2: */
 /***************************************************************************
- *            channel.h
+ *            mutex.h
  *
- *  Tue Jul 22 17:14:27 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Nov 12 10:51:32 CET 2009
+ *  Copyright 2009 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
 /*
- *  This file is part of DrumGizmo.
+ *  This file is part of Pracro.
  *
- *  DrumGizmo is free software; you can redistribute it and/or modify
+ *  Pracro is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  DrumGizmo is distributed in the hope that it will be useful,
+ *  Pracro is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with DrumGizmo; if not, write to the Free Software
+ *  along with Pracro; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CHANNEL_H__
-#define __DRUMGIZMO_CHANNEL_H__
+#ifndef __PRACRO_MUTEX_H__
+#define __PRACRO_MUTEX_H__
 
-#include <vector>
-#include <string>
+#include <pthread.h>
 
-#include "audio.h"
-
-class Channel {
+class Mutex {
 public:
-  Channel(std::string name = "");
+  Mutex();
+  ~Mutex();
 
-  std::string name;
-  channel_t num;
+  bool trylock();
+  void lock();
+  void unlock();
+
+private:
+  pthread_mutex_t mutex;
 };
 
-typedef Channel InstrumentChannel;
+class MutexAutolock {
+public:
+  MutexAutolock(Mutex &mutex);
+  ~MutexAutolock();
 
-typedef std::vector< Channel > Channels;
+private:
+  Mutex &mutex;
+};
 
-#endif/*__DRUMGIZMO_CHANNEL_H__*/
+#endif/*__PRACRO_MUTEX_H__*/

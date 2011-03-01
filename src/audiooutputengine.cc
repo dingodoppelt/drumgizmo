@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.cc
+ *            audioooutputengine.cc
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Sep 16 10:27:01 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,51 +24,19 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "audiofile.h"
+#include "audiooutputengine.h"
 
-#include <stdlib.h>
-#include <unistd.h>
+#include "audiooutputenginealsa.h"
+#include "audiooutputenginejack.h"
+#include "audiooutputenginesndfile.h"
 
-#include <sndfile.h>
-
-AudioFile::AudioFile(std::string filename)
+AudioOutputEngine *createAudioOutputEngine(std::string engine)
 {
-  this->filename = filename;
+  AudioOutputEngine *e = NULL;
 
-  data = NULL;
-  size = 0;
+  if(engine == "alsa") e = new AudioOutputEngineAlsa();
+  if(engine == "jack") e = new AudioOutputEngineJack();
+  if(engine == "sndfile") e = new AudioOutputEngineSndFile("out.wav");
+
+  return e;
 }
-
-AudioFile::~AudioFile()
-{
-  unload();
-}
-
-void AudioFile::unload()
-{
-  if(data) {
-    delete data;
-    data = NULL;
-    size = 0;
-  }
-}
-
-void AudioFile::load()
-{
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    return;
-  }
-    
-  size = sf_info.frames;
-  data = new sample_t[size];
-  
-  sf_read_float(fh, data, size); 
-  
-  sf_close(fh);
-}
-

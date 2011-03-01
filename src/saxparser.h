@@ -39,7 +39,8 @@ public:
   int parse();
 
   virtual void characterData(std::string &data) {}
-  virtual void startTag(std::string name, std::map< std::string, std::string> attributes) {}
+  virtual void startTag(std::string name,
+                        std::map< std::string, std::string> attributes) {}
   virtual void endTag(std::string name) {}
 
   virtual void parseError(char *buf, size_t len, std::string error, int lineno);

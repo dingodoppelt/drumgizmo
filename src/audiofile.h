@@ -27,20 +27,21 @@
 #ifndef __DRUMGIZMO_AUDIOFILE_H__
 #define __DRUMGIZMO_AUDIOFILE_H__
 
-#include <jack/jack.h>
 #include <string>
+#include <map>
+
+#include "audio.h"
 
 class AudioFile {
 public:
-  AudioFile(std::string filename, bool preload = false, int min_velocity = 0);
+  AudioFile(std::string filename);
   ~AudioFile();
 
   void load();
   void unload();
 
-	jack_default_audio_sample_t *data;
+	sample_t *data;
 	size_t size;
-  std::string channel;
 
 private:
   std::string filename;

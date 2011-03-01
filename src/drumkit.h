@@ -30,23 +30,14 @@
 #include <map>
 #include <string>
 
-#include "sample.h"
-#include "instrument.h"
 #include "channel.h"
-
-typedef std::map< std::string, Channel* > Channels;
-typedef std::map< std::string, Sample* > Samples;
-
-typedef unsigned int midi_note_t;
-typedef std::map< midi_note_t, Instrument* > Instruments;
+#include "instrument.h"
+#include "midimap.h"
 
 class DrumKit {
 public:
   std::string name;
   std::string description;
-
-  Channels channels;
-  Samples samples;
   Instruments instruments;
 };
 
