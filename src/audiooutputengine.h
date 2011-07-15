@@ -28,24 +28,23 @@
 #define __DRUMGIZMO_AUDIOOUTPUTENGINE_H__
 
 #include <string>
+#include <stdlib.h>
+#include <audiotypes.h>
 
 #include "channel.h"
 
-class DrumGizmo;
-
 class AudioOutputEngine {
 public:
-  AudioOutputEngine() {}
-  virtual ~AudioOutputEngine() {}
+  virtual bool init(Channels channels) = 0;
 
-  virtual bool init(Channels *channels) = 0;
+  virtual void setParm(std::string parm, std::string value) = 0;
 
-  virtual void run(DrumGizmo *drumgizmo) = 0;
+  virtual bool start() = 0;
+  virtual void stop() = 0;
 
-protected:
-  Channels *channels;
+  virtual void pre(size_t nsamples) = 0;
+  virtual void run(int ch, sample_t *samples, size_t nsamples) = 0;
+  virtual void post(size_t nsamples) = 0;
 };
-
-AudioOutputEngine *createAudioOutputEngine(std::string engine);
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/

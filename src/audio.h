@@ -27,14 +27,6 @@
 #ifndef __DRUMGIZMO_AUDIO_H__
 #define __DRUMGIZMO_AUDIO_H__
 
-typedef unsigned int channels_t;
-typedef unsigned int channel_t;
-
-#define ALL_CHANNELS ((channel_t)0xffffffff)
-#define NO_CHANNEL ((channel_t)0xfffffffe)
-
-typedef float sample_t;
-
-typedef float level_t;
+#include <audiotypes.h>
 
 #endif/*__DRUMGIZMO_AUDIO_H__*/

@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiooutputenginealsa.h
+ *            path.cc
  *
- *  Thu Sep 16 11:22:52 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Tue May  3 14:42:47 CEST 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,28 +24,38 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__
-#define __DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__
+#include "path.h"
 
-// Use the newer ALSA API
-#define ALSA_PCM_NEW_HW_PARAMS_API
+#include <libgen.h>
+#include <string.h>
+#include <stdlib.h>
 
-#include <asoundlib.h>
+std::string getPath(std::string file)
+{
+  char *b = strdup(file.c_str());
+  std::string p = dirname(b);
+  free(b);
+  return p;
+}
 
-#include "audiooutputengine.h"
+#ifdef TEST_PATH
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
 
-class AudioOutputEngineAlsa : public AudioOutputEngine {
-public:
-  AudioOutputEngineAlsa();
-  ~AudioOutputEngineAlsa();
+TEST_BEGIN;
 
-  bool init(Channels *channels);
+std::string a = "../dir/file";
+TEST_EQUAL_STR(getPath(a), "../dir", "relative path");
 
-  void run(DrumGizmo *drumgizmo);
-  
-private:
-  snd_pcm_t *handle;
-  snd_pcm_hw_params_t *params;
-};
+std::string b = "/abs/path/file";
+TEST_EQUAL_STR(getPath(b), "/abs/path", "absolute path");
 
-#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINEALSA_H__*/
+
+TEST_END;
+
+#endif/*TEST_PATH*/

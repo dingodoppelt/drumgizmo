@@ -1,0 +1,14 @@
+Makefile.am.test: ${TEST_SOURCE_DEPS}
+	${TEST_SCRIPT_DIR}/testlist > Makefile.am.test
+	@touch Makefile.am	
+
+test: Makefile.am.test $(TESTFILES)
+	@echo "All tests done."
+
+test_clean:
+	rm -f $(TESTFILES) $(TESTLOGS)
+
+TESTLOGS = `for F in ${TESTFILES}; do echo $$F.log; done`
+
+CLEANFILES = $(TESTFILES) $(TESTLOGS) Makefile.am.test *~
+

@@ -31,59 +31,34 @@
 #include <vector>
 
 #include "rangemap.h"
+
 #include "sample.h"
 
+class InstrumentParser;
 class Instrument {
+  friend class InstrumentParser;
 public:
-  Instrument(std::string name);
+  Instrument();
 
   Sample *sample(level_t level);
 
-  void addSample(level_t a, level_t b, Sample *s);
+  std::string name();
+  std::string description();
+
+  //  std::map<std::string, std::string> channelmap;
+
+  std::vector<AudioFile*> audiofiles;
 
 private:
-  std::string name;
+  std::string _name;
+  std::string _description;
   RangeMap<level_t, Sample*> samples;
+  void addSample(level_t a, level_t b, Sample *s);
+
+  std::vector<Sample*> samplelist;
 };
 
-typedef std::map< std::string, Instrument > Instruments;
-
-/*
- * <?xml version='1.0' encoding='UTF-8'?>
- * <instrument name="kick-r">
- *  <samples>
- *   <sample name="kick-r-1">
- *    <audiofile channel="Alesis-3" file="samples/1-kick-r-Alesis-3.wav"/>
- *    <audiofile channel="Amb L-3" file="samples/1-kick-r-Amb L-3.wav"/>
- *    <audiofile channel="Amb R-3" file="samples/1-kick-r-Amb R-3.wav"/>
- *    <audiofile channel="Kick L-3" file="samples/1-kick-r-Kick L-3.wav"/>
- *    <audiofile channel="Kick R-3" file="samples/1-kick-r-Kick R-3.wav"/>
- *   </sample>
- *   <sample name="kick-r-2">
- *    <audiofile channel="Alesis-3" file="samples/2-kick-r-Alesis-3.wav"/>
- *    <audiofile channel="Amb L-3" file="samples/2-kick-r-Amb L-3.wav"/>
- *    <audiofile channel="Amb R-3" file="samples/2-kick-r-Amb R-3.wav"/>
- *    <audiofile channel="Kick L-3" file="samples/2-kick-r-Kick L-3.wav"/>
- *    <audiofile channel="Kick R-3" file="samples/2-kick-r-Kick R-3.wav"/>
- *   </sample>
- *   <sample name="kick-r-3">
- *    <audiofile channel="Alesis-3" file="samples/3-kick-r-Alesis-3.wav"/>
- *    <audiofile channel="Amb L-3" file="samples/3-kick-r-Amb L-3.wav"/>
- *    <audiofile channel="Amb R-3" file="samples/3-kick-r-Amb R-3.wav"/>
- *    <audiofile channel="Kick L-3" file="samples/3-kick-r-Kick L-3.wav"/>
- *    <audiofile channel="Kick R-3" file="samples/3-kick-r-Kick R-3.wav"/>
- *   </sample>
- *  </samples>
- *  <velocities>
- *   <velocity lower="0" upper="99">
- *    <sampleref name="kick-r-1"/>
- *    <sampleref name="kick-r-2"/>
- *   </velocity>
- *   <velocity lower="100" upper="127">
- *    <sampleref name="kick-r-3"/>
- *   </velocity>
- *  </velocities>
- * </instrument>
- */
+//typedef std::map< std::string, Instrument > Instruments;
+typedef std::vector< Instrument > Instruments;
 
 #endif/*__DRUMGIZMO_INSTRUMENT_H__*/

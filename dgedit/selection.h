@@ -41,6 +41,8 @@ public:
   int to;
   int fadein;
   int fadeout;
+
+  QString name;
 };
 
 typedef QMap<int, Selection> Selections;

@@ -45,6 +45,8 @@ protected:
 private:
   FILE *fd;
   DrumKit &kit;
+  //  Instrument *instr;
+  std::string path;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/

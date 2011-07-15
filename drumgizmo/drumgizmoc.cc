@@ -33,8 +33,8 @@
 
 #include "drumgizmo.h"
 
-#include "audiooutputengine.h"
-#include "audioinputengine.h"
+#include "audiooutputenginedl.h"
+#include "audioinputenginedl.h"
 
 #include "event.h"
 
@@ -43,7 +43,7 @@ static const char version_str[] =
 ;
 
 static const char copyright_str[] =
-"Copyright (C) 2008-2009 Bent Bisballe Nyeng - Aasimon.org.\n"
+"Copyright (C) 2008-2011 Bent Bisballe Nyeng - Aasimon.org.\n"
 "This is free software.  You may redistribute copies of it under the terms of\n"
 "the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
@@ -55,8 +55,10 @@ static const char usage_str[] =
 "Usage: %s [options] drumkitfile\n"
 "Options:\n"
 "  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
-"  -o, --outputengine alsa|jack|sndfile  Use said audio engine.\n"
-"  -i, --inputengine jackmidi|midifile  Use said audio engine.\n"
+"  -i, --inputengine dummy|test|jackmidi|midifile  Use said event input engine.\n"
+"  -I, --inputparms parmlist  Set input engine parameters.\n"
+"  -o, --outputengine dummy|alsa|jack|sndfile  Use said audio output engine.\n"
+"  -O, --outputparms parmlist  Set output engine parameters.\n"
 "  -v, --version          Print version information and exit.\n"
 "  -h, --help             Print this message and exit.\n"
 ;
@@ -67,31 +69,51 @@ int main(int argc, char *argv[])
 
   std::string outputengine;
   std::string inputengine;
+  std::string iparms;
+  std::string oparms;
   bool preload = false;
 
   int option_index = 0;
   while(1) {
     static struct option long_options[] = {
       {"preload", no_argument, 0, 'p'},
-      {"outputengine", required_argument, 0, 'o'},
       {"inputengine", required_argument, 0, 'i'},
+      {"inputparms", required_argument, 0, 'I'},
+      {"outputengine", required_argument, 0, 'o'},
+      {"outputparms", required_argument, 0, 'O'},
       {"help", no_argument, 0, 'h'},
       {"version", no_argument, 0, 'v'},
       {0, 0, 0, 0}
     };
     
-    c = getopt_long (argc, argv, "hvpo:i:", long_options, &option_index);
+    c = getopt_long (argc, argv, "hvpo:O:i:I:", long_options, &option_index);
     
     if (c == -1)
       break;
 
     switch(c) {
-    case 'o':
-      outputengine = optarg;
-      break;
-
     case 'i':
       inputengine = optarg;
+      if(inputengine == "help") {
+        printf("Available input engines: jackmidi, midifile.\n");
+        return 0;
+      }
+      break;
+
+    case 'I':
+      iparms = optarg;
+      break;
+
+    case 'o':
+      outputengine = optarg;
+      if(outputengine == "help") {
+        printf("Available output engines: alsa, jack, sndfile.\n");
+        return 0;
+      }
+      break;
+
+    case 'O':
+      oparms = optarg;
       break;
 
     case 'p':
@@ -114,29 +136,82 @@ int main(int argc, char *argv[])
     }
   }
 
+  if(inputengine == "") {
+    printf("Missing input engine\n");
+    return 1;
+  }
+
+  AudioInputEngine *ie = new AudioInputEngineDL(inputengine);
+
+  if(ie == NULL) {
+    printf("Invalid input engine: %s\n", inputengine.c_str());
+    return 1;
+  }
+
+  {
+  std::string parm;
+  std::string val;
+  bool inval = false;
+  for(size_t i = 0; i < iparms.size(); i++) {
+    if(iparms[i] == ',') {
+      ie->setParm(parm, val);
+      parm = "";
+      val = "";
+      inval = false;
+      continue;
+    }
+
+    if(iparms[i] == '=') {
+      inval = true;
+      continue;
+    }
+
+    if(inval) {
+      val += iparms[i];
+    } else {
+      parm += iparms[i];
+    }
+  }
+  if(parm != "") ie->setParm(parm, val);
+  }
+
   if(outputengine == "") {
     printf("Missing output engine\n");
     return 1;
   }
 
-  AudioOutputEngine *oe = createAudioOutputEngine(outputengine);
+  AudioOutputEngine *oe = new AudioOutputEngineDL(outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());
     return 1;
   }
 
+  {
+  std::string parm;
+  std::string val;
+  bool inval = false;
+  for(size_t i = 0; i < oparms.size(); i++) {
+    if(oparms[i] == ',') {
+      oe->setParm(parm, val);
+      parm = "";
+      val = "";
+      inval = false;
+      continue;
+    }
 
-  if(inputengine == "") {
-    printf("Missing input engine\n");
-    return 1;
+    if(oparms[i] == '=') {
+      inval = true;
+      continue;
+    }
+
+    if(inval) {
+      val += oparms[i];
+    } else {
+      parm += oparms[i];
+    }
   }
-
-  AudioInputEngine *ie = createAudioInputEngine(inputengine);
-
-  if(ie == NULL) {
-    printf("Invalid input engine: %s\n", outputengine.c_str());
-    return 1;
+  if(parm != "") oe->setParm(parm, val);
   }
 
   std::string kitfile;
@@ -160,15 +235,8 @@ int main(int argc, char *argv[])
   
   printf("Using kitfile: %s\n", kitfile.c_str());
 
-  Channels channels;
-  Channel c1; c1.num = 0;
-  Channel c2; c2.num = 1;
-  channels.push_back(c1);
-  channels.push_back(c2);
-  ChannelMixer m(channels, &channels[0]);
-
-  DrumGizmo gizmo(*oe, *ie, m);
-  if(/*kitfile == "" ||*/ !gizmo.loadkit(kitfile)) {
+  DrumGizmo gizmo(oe, ie);
+  if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
   }

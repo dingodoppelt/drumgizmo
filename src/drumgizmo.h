@@ -30,20 +30,19 @@
 #include <string>
 #include <list>
 
+#include "audiooutputengine.h"
+#include "audioinputengine.h"
+
+#include "events.h"
+#include "audiofile.h"
 #include "drumkit.h"
-#include "audio.h"
-#include "event.h"
 
-#include "channelmixer.h"
-
-class AudioOutputEngine;
-class AudioInputEngine;
+#define MAX_NUM_CHANNELS 512
 
 class DrumGizmo {
 public:
-  DrumGizmo(AudioOutputEngine &outputengine,
-            AudioInputEngine &inputengine,
-            ChannelMixer &mixer);
+  DrumGizmo(AudioOutputEngine *outputengine,
+            AudioInputEngine *inputengine);
   ~DrumGizmo();
 
   bool loadkit(const std::string &kitfile);
@@ -51,29 +50,22 @@ public:
   bool init(bool preload = true);
 
   void run();
+  void run(size_t pos, sample_t *samples, size_t nsamples);
   void stop();
 
-  void pre(size_t sz);
-  void getSamples(Channel *c, sample_t *s, size_t sz);
-  void post(size_t sz);
+  void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
   bool isRunning() { return is_running; }
-
-  Channels channels;
-  ChannelMixer mixer;
-
-  EventQueue eventqueue;
 
 private:
   bool is_running;
   
-  AudioOutputEngine &oe;
-  AudioInputEngine &ie;
+  AudioOutputEngine *oe;
+  AudioInputEngine *ie;
 
-  std::list< Event* > activeevents[100];
-  timepos_t time;
+  std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
-  AudioFiles audiofiles;
+  std::map<std::string, AudioFile *> audiofiles;
 
 #ifdef TEST_DRUMGIZMO
 public:

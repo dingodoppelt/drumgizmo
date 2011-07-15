@@ -26,19 +26,6 @@
  */
 #include "audioinputengine.h"
 
-#include "audioinputenginejackmidi.h"
-#include "audioinputenginemidifile.h"
-
-AudioInputEngine *createAudioInputEngine(std::string engine)
-{
-  AudioInputEngine *e = NULL;
-
-  if(engine == "jackmidi") e = new AudioInputEngineJackMidi();
-  if(engine == "midifile") e = new AudioInputEngineMidiFile();
-
-  return e;
-}
-
 #ifdef TEST_AUDIOINPUTENGINE
 //Additional dependency files
 //deps:

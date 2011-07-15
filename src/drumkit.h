@@ -2,8 +2,8 @@
 /***************************************************************************
  *            drumkit.h
  *
- *  Tue Jul 22 16:29:16 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Wed Mar  9 15:27:26 CET 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -32,13 +32,20 @@
 
 #include "channel.h"
 #include "instrument.h"
-#include "midimap.h"
 
+class DrumKitParser;
 class DrumKit {
+  friend class DrumKitParser;
 public:
-  std::string name;
-  std::string description;
+  std::string name();
+  std::string description();
+  
   Instruments instruments;
+  Channels channels;
+ 
+private:
+  std::string _name;
+  std::string _description;
 };
 
 #endif/*__DRUMGIZMO_DRUMKIT_H__*/

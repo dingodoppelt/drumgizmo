@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            jackclient.h
+ *            midimap.h
  *
- *  Sun Jul 20 21:48:44 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Mon Jun 13 21:36:29 CEST 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,52 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_JACKCLIENT_H__
-#define __DRUMGIZMO_JACKCLIENT_H__
+#ifndef __DRUMGIZMO_MIDIMAP_H__
+#define __DRUMGIZMO_MIDIMAP_H__
 
-#include <vector>
+#include <map>
+#include <string>
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
-
-#include "drumkit.h"
-#include "event.h"
-#include "sample.h"
-#include "midimapper.h"
-#include "beatmapper.h"
-
-typedef std::vector< jack_port_t *> Ports;
-
-class JackClient {
+class MidiMap {
 public:
-  JackClient(DrumKit *drumkit);
-  ~JackClient();
-
-  void activate();
-
-  // Callbacks
-  void shutdown();
-  int process(jack_nframes_t nframes);
-  void thread_init();
-  void freewheel_mode(int freewheel_mode);
-  int buffer_size(jack_nframes_t nframes);
-  int sample_rate(jack_nframes_t nframes);
-  void port_registration(jack_port_id_t port, int i);
-  int graph_order();
-  int xrun();
+  MidiMap();
+  bool load(std::string file);
+  int lookup(int note);
 
 private:
-	jack_client_t *jack_client;
-  //  Ports input_ports;
-  Ports output_ports;
-  jack_port_t *midi_port;
-
-  Events events;
-
-  DrumKit *drumkit;
-
-  MidiMapper midimapper;
-  std::vector< BeatMapper* > beatmappers;
+  std::map<int, int> map;
 };
 
-#endif/*__DRUMGIZMO_JACKCLIENT_H__*/
+#endif/*__DRUMGIZMO_MIDIMAP_H__*/

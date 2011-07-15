@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiooutputenginesndfile.h
+ *            jackclient.h
  *
- *  Tue Sep 21 09:31:29 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Sun Jul 20 21:48:44 CEST 2008
+ *  Copyright 2008 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,28 +24,41 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__
-#define __DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__
+#ifndef __DRUMGIZMO_JACKCLIENT_H__
+#define __DRUMGIZMO_JACKCLIENT_H__
 
-#include <string>
+#include <jack/jack.h>
+#include <set>
 
-#include <sndfile.h>
-
-#include "audiooutputengine.h"
-
-class AudioOutputEngineSndFile : public AudioOutputEngine {
+class JackProcess {
 public:
-  AudioOutputEngineSndFile(std::string filename);
-  ~AudioOutputEngineSndFile();
-
-  bool init(Channels *channels);
-
-  void run(DrumGizmo *drumgizmo);
-  
-private:
-  std::string filename;
-  SF_INFO sf_info;
-  SNDFILE *fh;
+  virtual void jack_process(jack_nframes_t nframes) = 0;
 };
 
-#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINESNDFILE_H__*/
+class JackClient {
+public:
+  JackClient();
+  ~JackClient();
+
+  void addJackProcess(JackProcess *process);
+  void removeJackProcess(JackProcess *process);
+
+  void activate();
+  int process(jack_nframes_t nframes);
+
+	jack_client_t *jack_client;
+
+  // Sort of private...
+  int refcnt;
+
+private:
+  std::set<JackProcess *> jack_processes;
+  bool active;
+};
+
+extern JackClient *jackclient;
+
+JackClient *init_jack_client();
+void close_jack_client();
+
+#endif/*__DRUMGIZMO_JACKCLIENT_H__*/

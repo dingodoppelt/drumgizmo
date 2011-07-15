@@ -34,6 +34,7 @@
 #include <QVector>
 
 #include "selection.h"
+#include "samplesorter.h"
 
 typedef QLinkedList< QPair<QString, QString> > AudioFileList;
 
@@ -46,7 +47,7 @@ public slots:
   void addFile(QString file, QString name);
   void changeName(QString file, QString name);
   void removeFile(QString file, QString name);
-  void exportSelections(Selections selections, QVector<int> levels);
+  void exportSelections(Selections selections, Levels levels);
   void setExportPath(const QString &path);
   void setOutputPrefix(const QString &prefix);
 

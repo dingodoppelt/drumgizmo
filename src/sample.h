@@ -35,15 +35,18 @@
 
 typedef std::map< Channel*, AudioFile* > AudioFiles;
 
+class InstrumentParser;
 class Sample {
+  friend class InstrumentParser;
 public:
-  Sample(std::string name = "");
+  Sample(std::string name);
   ~Sample();
 
-  void addAudioFile(InstrumentChannel *c, AudioFile *a);
   AudioFile *getAudioFile(InstrumentChannel *c);
 
 private:
+  void addAudioFile(InstrumentChannel *c, AudioFile *a);
+
   std::string name;
   AudioFiles audiofiles;
 };

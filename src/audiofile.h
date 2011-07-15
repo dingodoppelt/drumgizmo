@@ -43,7 +43,6 @@ public:
 	sample_t *data;
 	size_t size;
 
-private:
   std::string filename;
 };
 

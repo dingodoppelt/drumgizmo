@@ -1,7 +1,7 @@
 # Filename: configure.in
 
 AC_INIT(src/drumgizmo.cc)
-AM_INIT_AUTOMAKE( drumgizmo, 0.0.2 )
+AM_INIT_AUTOMAKE( drumgizmo, 0.1.0 )
 
 AC_PROG_CXX
 
@@ -11,11 +11,150 @@ AM_PROG_LIBTOOL
 AM_CONFIG_HEADER(config.h)
 AC_STDC_HEADERS
 
-AC_ARG_WITH(debug,  [  --with-debug           build with debug support])
+dnl ======================
+dnl Init pkg-config
+dnl ======================
+PKG_PROG_PKG_CONFIG(0.23)
+
+AC_ARG_WITH(debug,  [  --with-debug            Build with debug support])
 if test x$with_debug == xyes; then
     AC_MSG_WARN([*** Building with debug support!])
     CXXFLAGS="$CXXFLAGS -Wall -Werror -g"
 fi 
+
+dnl ======================
+dnl Compile LV2 plugin
+dnl ======================
+AC_ARG_ENABLE([lv2],
+[  --with-lv2   Compile the LV2 plugin [default=yes]],,
+        [with_lv2="yes"])
+if test "x$with_lv2" = "xyes"; then
+	 with_lv2=yes 
+else
+	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
+   with_lv2=no
+fi
+AM_CONDITIONAL([WITH_LV2], [test "x$with_lv2" = "xyes"])
+
+dnl ***
+dnl *** Input plugins
+dnl ***
+
+dnl *** Dummy
+AC_ARG_ENABLE([input_dummy],
+[  --disable-input-dummy   Disable input dummy plugin [default=enabled]],,
+        [enable_input_dummy="yes"])
+if test "x$enable_input_dummy" = "xyes"; then
+	 have_input_dummy=yes 
+else
+	 AC_MSG_RESULT([*** input dummy plugin disabled per user request ***])
+   have_input_dummy=no
+fi
+AM_CONDITIONAL([HAVE_INPUT_DUMMY], [test "x$have_input_dummy" = "xyes"])
+
+dnl *** Test
+AC_ARG_ENABLE([input_test],
+[  --disable-input-test   Disable input test plugin [default=enabled]],,
+        [enable_input_test="yes"])
+if test "x$enable_input_test" = "xyes"; then
+	 have_input_test=yes 
+else
+	 AC_MSG_RESULT([*** input test plugin disabled per user request ***])
+   have_input_test=no
+fi
+AM_CONDITIONAL([HAVE_INPUT_TEST], [test "x$have_input_test" = "xyes"])
+
+dnl *** Jackmidi
+AC_ARG_ENABLE([input_jackmidi],
+[  --disable-input-jackmidi   Disable input jackmidi plugin [default=enabled]],,
+        [enable_input_jackmidi="yes"])
+if test "x$enable_input_jackmidi" = "xyes"; then
+	 have_input_jackmidi=yes 
+else
+	 AC_MSG_RESULT([*** input jackmidi plugin disabled per user request ***])
+   have_input_jackmidi=no
+fi
+AM_CONDITIONAL([HAVE_INPUT_JACKMIDI], [test "x$have_input_jackmidi" = "xyes"])
+
+dnl *** Midifile
+AC_ARG_ENABLE([input_midifile],
+[  --disable-input-midifile   Disable input midifile plugin [default=enabled]],,
+        [enable_input_midifile="yes"])
+if test "x$enable_input_midifile" = "xyes"; then
+	 have_input_midifile=yes 
+else
+	 AC_MSG_RESULT([*** input midifile plugin disabled per user request ***])
+   have_input_midifile=no
+fi
+AM_CONDITIONAL([HAVE_INPUT_MIDIFILE], [test "x$have_input_midifile" = "xyes"])
+
+
+INPUT_PLUGINS="midifile jackmidi dummy test"
+AC_SUBST(INPUT_PLUGINS)
+
+
+dnl ***
+dnl *** Output plugins
+dnl ***
+
+dnl *** dummy
+AC_ARG_ENABLE([output_dummy],
+[  --disable-output-dummy   Disable output dummy plugin [default=enabled]],,
+        [enable_output_dummy="yes"])
+if test "x$enable_output_dummy" = "xyes"; then
+	 have_output_dummy=yes 
+else
+	 AC_MSG_RESULT([*** output dummy plugin disabled per user request ***])
+   have_output_dummy=no
+fi
+AM_CONDITIONAL([HAVE_OUTPUT_DUMMY], [test "x$have_output_dummy" = "xyes"])
+
+dnl *** alsa
+AC_ARG_ENABLE([output_alsa],
+[  --disable-output-alsa   Disable output alsa plugin [default=enabled]],,
+        [enable_output_alsa="yes"])
+if test "x$enable_output_alsa" = "xyes"; then
+	 have_output_alsa=yes 
+else
+	 AC_MSG_RESULT([*** output alsa plugin disabled per user request ***])
+   have_output_alsa=no
+fi
+AM_CONDITIONAL([HAVE_OUTPUT_ALSA], [test "x$have_output_alsa" = "xyes"])
+
+dnl *** wavfile
+AC_ARG_ENABLE([output_wavfile],
+[  --disable-output-wavfile   Disable output wavfile plugin [default=enabled]],,
+        [enable_output_wavfile="yes"])
+if test "x$enable_output_wavfile" = "xyes"; then
+	 have_output_wavfile=yes 
+else
+	 AC_MSG_RESULT([*** output wavfile plugin disabled per user request ***])
+   have_output_wavfile=no
+fi
+AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
+
+OUTPUT_PLUGINS="dummy alsa wavfile"
+AC_SUBST(OUTPUT_PLUGINS)
+
+dnl
+dnl Setup plugin paths
+dnl
+plugindir=${libdir}/drumgizmo
+AC_SUBST([plugindir])
+
+INPUT_PLUGIN_DIR=${plugindir}/input
+OUTPUT_PLUGIN_DIR=${plugindir}/output
+LV2_PLUGIN_DIR=${plugindir}/lv2
+AC_SUBST([INPUT_PLUGIN_DIR])
+AC_SUBST([OUTPUT_PLUGIN_DIR])
+AC_SUBST([LV2_PLUGIN_DIR])
+
+AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/input",
+  [Input plugin dir])
+AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/output",
+  [Output plugin dir])
+AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
+  [LV2 plugin dir])
 
 dnl ======================
 dnl Check for libsmf
@@ -25,18 +164,67 @@ PKG_CHECK_MODULES(SMF, smf >= 1.2)
 dnl ======================
 dnl Check for jack
 dnl ======================
-PKG_CHECK_MODULES(JACK, jack >= 0.109.2)
+PKG_CHECK_MODULES(JACK, jack >= 0.120.2)
+
+dnl ======================
+dnl Check for alsa library
+dnl ======================
+PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)
 
 dnl ======================
 dnl Check for sndfile
 dnl ======================
-PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.17)
+PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.21)
+
+dnl ======================
+dnl Check for the pthread library
+dnl ======================
+tmp_CXXFLAGS="$CXXFLAGS"
+tmp_CPPFLAGS="$CPPFLAGS"
+tmp_CFLAGS="$CFLAGS"
+tmp_LDFLAGS="$LDFLAGS"
+tmp_LIBS="$LIBS"
+CXXFLAGS=""
+CPPFLAGS=""
+CFLAGS=""
+LDFLAGS=""
+LIBS=""
+AC_CHECK_HEADER(pthread.h, , AC_MSG_ERROR([*** pthread header file not found!]))
+AC_CHECK_LIB(pthread,  pthread_mutex_init, , AC_MSG_ERROR([*** pthread library not found!]))
+PTHREAD_CFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
+PTHREAD_LIBS="$LDFLAGS $LIBS"
+CXXFLAGS="$tmp_CXXFLAGS"
+CPPFLAGS="$tmp_CPPFLAGS"
+CFLAGS="$tmp_CFLAGS"
+LDFLAGS="$tmp_LDFLAGS"
+LIBS="$tmp_LIBS"
+AC_SUBST(PTHREAD_CFLAGS)
+AC_SUBST(PTHREAD_LIBS)
 
 dnl ======================
 dnl Check for eXpat library
 dnl ======================
+tmp_CXXFLAGS="$CXXFLAGS"
+tmp_CPPFLAGS="$CPPFLAGS"
+tmp_CFLAGS="$CFLAGS"
+tmp_LDFLAGS="$LDFLAGS"
+tmp_LIBS="$LIBS"
+CXXFLAGS=""
+CPPFLAGS=""
+CFLAGS=""
+LDFLAGS=""
+LIBS=""
 AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
-AC_CHECK_LIB(expat, XML_ParserCreate, ,  AC_MSG_ERROR([*** eXpat library not found!]))
+AC_CHECK_LIB(expat, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!]))
+EXPAT_CFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
+EXPAT_LIBS="$LDFLAGS $LIBS"
+CXXFLAGS="$tmp_CXXFLAGS"
+CPPFLAGS="$tmp_CPPFLAGS"
+CFLAGS="$tmp_CFLAGS"
+LDFLAGS="$tmp_LDFLAGS"
+LIBS="$tmp_LIBS"
+AC_SUBST(EXPAT_CFLAGS)
+AC_SUBST(EXPAT_LIBS)
 
 dnl ======================
 dnl Check for Qt
@@ -68,5 +256,16 @@ AC_SUBST(LDFLAGS)
 AC_OUTPUT(
 	Makefile
 	src/Makefile
+	lv2/Makefile
+	drumgizmo/Makefile
+	drumgizmo/input/Makefile
+	drumgizmo/input/dummy/Makefile
+	drumgizmo/input/test/Makefile
+	drumgizmo/input/jackmidi/Makefile
+	drumgizmo/input/midifile/Makefile
+	drumgizmo/output/Makefile
+	drumgizmo/output/dummy/Makefile
+	drumgizmo/output/alsa/Makefile
+	drumgizmo/output/wavfile/Makefile
   dgedit/Makefile)
 

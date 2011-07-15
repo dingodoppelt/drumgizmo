@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.cc
+ *            output_lv2.cc
  *
- *  Sat Sep 18 22:02:16 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Wed Jul 13 14:27:06 CEST 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,27 +24,66 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "event.h"
+#include "output_lv2.h"
 
-void EventQueue::post(Event *event, timepos_t time)
+#include <string.h>
+
+OutputLV2::OutputLV2()
 {
-  MutexAutolock lock(mutex);
-  event->offset = time;
-  queue.insert(std::pair<timepos_t, Event*>(time, event));
+  for(size_t i = 0; i < NUM_OUTPUTS; i++) outputPort[i] = NULL;
 }
 
-Event *EventQueue::take(timepos_t time)
+OutputLV2::~OutputLV2()
 {
-  MutexAutolock lock(mutex);
-  std::multimap<timepos_t, Event*>::iterator i = queue.find(time);
-  if(i == queue.end()) return NULL;
-  Event *event = i->second;
-  queue.erase(i);
-  return event;
 }
 
-bool EventQueue::hasEvent(timepos_t time)
+bool OutputLV2::init(Channels channels)
 {
-  MutexAutolock lock(mutex);
-  return queue.find(time) != queue.end();
+  return true;
 }
+
+void OutputLV2::setParm(std::string parm, std::string value)
+{
+}
+
+bool OutputLV2::start()
+{
+  return true;
+}
+
+void OutputLV2::stop()
+{
+}
+
+void OutputLV2::pre(size_t nsamples)
+{
+}
+
+void OutputLV2::run(int ch, sample_t *samples, size_t nsamples)
+{
+  if(ch < NUM_OUTPUTS) {
+    if(outputPort[ch])
+      memcpy(outputPort[ch], samples, nsamples * sizeof(sample_t));
+  }
+}
+
+void OutputLV2::post(size_t nsamples)
+{
+}
+
+#ifdef TEST_OUTPUT_LV2
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
+
+TEST_BEGIN;
+
+// TODO: Put some testcode here (see test.h for usable macros).
+
+TEST_END;
+
+#endif/*TEST_OUTPUT_LV2*/

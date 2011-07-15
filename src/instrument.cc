@@ -27,14 +27,17 @@
 #include "instrument.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
-Instrument::Instrument(std::string name)
+#include "sample.h"
+
+Instrument::Instrument()
 {
-  this->name = name;
 }
 
 Sample *Instrument::sample(level_t level)
 {
+  //  printf("Find level %f\n", level);
   std::vector<Sample*> s = samples.get(level);
   if(s.size() == 0) return NULL;
   size_t idx = rand()%(s.size());
@@ -44,6 +47,16 @@ Sample *Instrument::sample(level_t level)
 void Instrument::addSample(level_t a, level_t b, Sample *s)
 {
   samples.insert(a, b, s);
+}
+
+std::string Instrument::name()
+{
+  return _name;
+}
+
+std::string Instrument::description()
+{
+  return _description;
 }
 
 #ifdef TEST_INSTRUMENT

@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiooutputenginejack.h
+ *            instrumentparser.h
  *
- *  Thu Sep 16 10:28:37 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Wed Mar  9 13:22:24 CET 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,36 +24,37 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINEJACK_H__
-#define __DRUMGIZMO_AUDIOOUTPUTENGINEJACK_H__
+#ifndef __DRUMGIZMO_INSTRUMENTPARSER_H__
+#define __DRUMGIZMO_INSTRUMENTPARSER_H__
+
+#include "saxparser.h"
+#include "instrument.h"
 
 #include <vector>
 
-#include <jack/jack.h>
-
-#include "audiooutputengine.h"
-
-class AudioOutputEngineJack : public AudioOutputEngine {
+class InstrumentParser : public SAXParser {
 public:
-  AudioOutputEngineJack();
-  ~AudioOutputEngineJack();
+  InstrumentParser(const std::string &instrfile, Instrument &instrument);
+  ~InstrumentParser();
 
-  bool init(Channels *channels);
+  void startTag(std::string name,
+                std::map< std::string, std::string> attributes);
+  void endTag(std::string name);
 
-  void run(DrumGizmo *drumgizmo);
+  std::vector<InstrumentChannel *> channellist;
 
-  // Internal callback method. *must* be public.
-  int process(jack_nframes_t nframes);
+protected:
+  int readData(char *data, size_t size);
 
 private:
-	jack_client_t *jack_client;
-  std::vector< jack_port_t *> output_ports;
+  FILE *fd;
+  Instrument &instrument;
+  Sample *s;
 
-  jack_port_t *port0;
-  jack_port_t *port1;
+  std::string path;
 
-  DrumGizmo *gizmo;
+  level_t lower;
+  level_t upper;
 };
 
-
-#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINEJACK_H__*/
+#endif/*__DRUMGIZMO_INSTRUMENTPARSER_H__*/

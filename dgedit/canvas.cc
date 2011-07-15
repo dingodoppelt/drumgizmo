@@ -35,7 +35,6 @@
 #include <math.h>
 
 #define DEFYSCALE 200
-#define MIPMAPS 65536
 
 Canvas::Canvas(QWidget *parent)
   : QWidget(parent)
@@ -43,8 +42,12 @@ Canvas::Canvas(QWidget *parent)
   setAttribute(Qt::WA_StaticContents);
   setMouseTracking(true);
   setFocusPolicy(Qt::ClickFocus);
+
+  mipmap = NULL;
+
   data = NULL;
   size = 0;
+
   xscale = 1.0;
   yscale = 1.0;
   xoffset = 0.0;
@@ -77,31 +80,7 @@ Canvas::Canvas(QWidget *parent)
 Canvas::~Canvas()
 {
   if(data) delete[] data;
-}
-
-#define VALL(x) (x*4)
-#define VALU(x) (x*4+1)
-#define POWL(x) (x*4+2)
-#define POWU(x) (x*4+3)
-
-static void genmipmap(float *in, size_t insz, float *out, size_t outsz)
-{
-  float *lookup = out;
-
-  for(size_t i = 0; i < outsz; i++) {
-    lookup[VALL(i)] = 0.0;
-    lookup[VALU(i)] = 0.0;
-    lookup[POWL(i)] = 0.0;
-    lookup[POWU(i)] = 0.0;
-
-    for(size_t j = i * (insz / outsz); j < (i+1)*(insz / outsz); j++) {
-      if(in[VALU(j)] > lookup[VALU(i)]) lookup[VALU(i)] = in[VALU(j)];
-      if(in[VALL(j)] < lookup[VALL(i)]) lookup[VALL(i)] = in[VALL(j)];
-      if(in[POWU(j)] > 0) lookup[POWU(i)] += in[POWU(j)];
-      if(in[POWL(j)] < 0) lookup[POWL(i)] += in[POWL(j)];
-    }
-
-  }
+  if(mipmap) delete mipmap;
 }
 
 void Canvas::load(QString file)
@@ -110,55 +89,30 @@ void Canvas::load(QString file)
     delete[] data;
     data = NULL;
     size = 0;
+  }
 
-    QMap<int, float*>::iterator i = mipmaps.begin();
-    while(i != mipmaps.end()) {
-      delete[] i.value();
-      i++;
-    }
-
+  if(mipmap) {
+    delete mipmap;
+    mipmap = NULL;
   }
 
   SF_INFO sf_info;
 	SNDFILE *fh = sf_open(file.toStdString().c_str(), SFM_READ, &sf_info);
   if(!fh) {
     printf("Load error...\n");
+    return;
   }
 
-	size = sf_seek(fh, 0, SEEK_END);
+  size = sf_info.frames;
+
+  printf("Size: %u\n", (unsigned int)sf_info.frames);
   data = new float[size];
 
-	sf_seek(fh, 0, SEEK_SET);
 	sf_read_float(fh, data, size); 
 
 	sf_close(fh);
 
-  size_t lastsz = 0;
-  for(size_t dev = 2; dev <= MIPMAPS; dev*=2) {
-    size_t mipmapsize = size/dev;
-
-    float *lookup = new float[mipmapsize * 4];
-
-    if(dev == 2) {
-      for(size_t i = 0; i < mipmapsize; i++) {
-        lookup[VALL(i)] = 0.0;
-        lookup[VALU(i)] = 0.0;
-        lookup[POWL(i)] = 0.0;
-        lookup[POWU(i)] = 0.0;
-        for(size_t j = i * dev; j < (i + 1) * dev; j++) {
-          if(data[j] > lookup[VALU(i)]) lookup[VALU(i)] = data[j];
-          if(data[j] < lookup[VALL(i)]) lookup[VALL(i)] = data[j];
-          if(data[j] > 0) lookup[POWU(i)] += data[j];
-          if(data[j] < 0) lookup[POWL(i)] += data[j];
-        }
-      }
-    } else {
-      genmipmap(mipmaps[dev/2], lastsz, lookup, mipmapsize);
-    }
-
-    lastsz = mipmapsize;
-    mipmaps[dev] = lookup;
-  }
+  mipmap = new MipMap(data, size);
 
   updateWav();
   update();
@@ -323,42 +277,17 @@ void Canvas::resizeEvent(QResizeEvent *)
   update();
 }
 
-void Canvas::getWavValues(int last, int lx, float *vu, float *vl, float *avgu, float *avgl)
+void Canvas::getWavValues(int last, int lx, float *vu, float *vl,
+                          float *avgu, float *avgl)
 {
-  float *lookup = data;
-  int dev = 1;
+  if(mipmap == NULL) return;
 
-  int i = 2;
-  while(i < (lx - last) && mipmaps.find(i) != mipmaps.end()) {
-    lookup = mipmaps[i];
-    dev = i;
-    i *= 2;
-  }
+  MipMapValue val = mipmap->lookup(last, lx);
 
-  *vu = *vl = *avgu = *avgl = 0;
-  for(int i = last / dev; i < lx / dev; i++) {
-    float lval;
-    float uval;
-    float lpow;
-    float upow;
-    if(dev > 1) {
-      lval = -lookup[VALL(i)];
-      uval = -lookup[VALU(i)];
-      upow = -lookup[POWL(i)];
-      lpow = -lookup[POWU(i)];
-    } else {
-      lpow = upow = lval = uval = -lookup[i];
-    }
-    if(lpow < 0.0) *avgl += lpow;
-    if(upow > 0.0) *avgu += upow;
-    if(lval > *vl) *vl = lval;
-    if(uval < *vu) *vu = uval;
-  }
-  
-  if((lx - last) != 0) {
-    *avgu /= (float)(lx - last);
-    *avgl /= (float)(lx - last);
-  }
+  *vu = val.max;
+  *vl = val.min;
+  *avgu = val.uavg;
+  *avgl = val.lavg;
 }
 
 void Canvas::updateWav()
@@ -514,10 +443,15 @@ void Canvas::autoCreateSelections()
         }
       }
 
+      int minsize = 100; // attack.
+      float minval = 0.0001; // noise floor
       int to = i;
-      float runavg = fabs(data[to]);
-      while(runavg > 0.001 && to < (int)size) {
-        runavg = runavg * 0.99999 + fabs(data[to]) * 0.00001;
+      float runavg = fabs(data[from]);
+      while((runavg > minval ||
+             to < from + minsize) &&
+            to < (int)size) {
+        double p = 0.9;
+        runavg = runavg * p + fabs(data[to]) * (1 - p);
         to++;
       }
       _selections[from] = Selection(from, to, 2, (to - from) / 3);

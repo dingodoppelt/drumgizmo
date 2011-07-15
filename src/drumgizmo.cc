@@ -29,83 +29,178 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "drumkitparser.h"
-#include "audiooutputengine.h"
-#include "audioinputengine.h"
-#include "event.h"
+#include <event.h>
+#include <audiotypes.h>
 
-DrumGizmo::DrumGizmo(AudioOutputEngine &o,
-                     AudioInputEngine &i,
-                     ChannelMixer &m)
-  : mixer(m), oe(o), ie(i)
+#include <string.h>
+
+#include "drumkitparser.h"
+
+DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
+  : oe(o), ie(i)
 {
-  time = 0;
-  Channel c1; c1.num = 0; c1.name="left";
-  Channel c2; c2.num = 1; c2.name="right";
-  channels.push_back(c1);
-  channels.push_back(c2);
 }
 
 DrumGizmo::~DrumGizmo()
 {
+  /*
   AudioFiles::iterator i = audiofiles.begin();
   while(i != audiofiles.end()) {
     AudioFile *audiofile = i->second;
     delete audiofile;
     i++;
   }
+  */
 }
 
 bool DrumGizmo::loadkit(const std::string &kitfile)
 {
-  /*
   DrumKitParser parser(kitfile, kit);
   if(parser.parse()) return false;
+  /*
+  Instruments::iterator i = kit.instruments.begin();
+  while(i != kit.instruments.end()) {
+    Instrument &instr = i->second;
+    InstrumentParser iparser(instr.file, instr);
+    if(iparser.parse()) return false;
+    i++;
+  }
   */
-
   return true;
 }
 
 bool DrumGizmo::init(bool preload)
 {
   if(preload) {
+    /*
     AudioFiles::iterator i = audiofiles.begin();
     while(i != audiofiles.end()) {
       AudioFile *audiofile = i->second;
       audiofile->load();
       i++;
     }
+    */
   }
 
-  if(!oe.init(&channels)) return false;
-
-  if(!ie.init(&eventqueue)) return false;
+  if(!ie->init(kit.instruments)) return false;
+  if(!oe->init(kit.channels)) return false;
 
   return true;
 }
 
+void DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
+{
+  ie->pre();
+  oe->pre(nsamples);
+
+
+  //
+  // Read new events
+  //
+
+  size_t nev;
+  event_t *evs = ie->run(pos, nsamples, &nev);
+
+  for(size_t e = 0; e < nev; e++) {
+    /*
+      printf("Event: type: %d\tinstrument: %d\tvelocity: %f\toffset: %d\n",
+      evs[e].type,
+      evs[e].instrument,
+      evs[e].velocity,
+      evs[e].offset);
+    */
+    if(evs[e].type == TYPE_ONSET) {
+      Instrument *i = NULL;
+      int d = evs[e].instrument;
+      /*
+        Instruments::iterator it = kit.instruments.begin();
+        while(d-- && it != kit.instruments.end()) {
+        i = &(it->second);
+        it++;
+        }
+      */
+      
+      if(d < (int)kit.instruments.size()) {
+        i = &kit.instruments[d];
+      }
+      
+      if(i == NULL) {
+        printf("Missing Instrument %d.\n", evs[e].instrument);
+        continue;
+      }
+      
+      Sample *s = i->sample(evs[e].velocity);
+      
+      if(s == NULL) {
+        printf("Missing Sample.\n");
+        continue;
+      }
+      
+      Channels::iterator j = kit.channels.begin();
+      while(j != kit.channels.end()) {
+        Channel &ch = *j;
+        AudioFile *af = s->getAudioFile(&ch);
+        if(af == NULL) {
+          //printf("Missing AudioFile.\n");
+        } else {
+          printf("Adding event %d.\n", evs[e].offset);
+          Event *evt = new EventSample(ch.num, 1.0, af);
+          evt->offset = evs[e].offset + pos;
+          activeevents[ch.num].push_back(evt);
+        }
+        j++;
+      }
+    }
+    
+    if(evs[e].type == TYPE_STOP) {
+      printf("Stoooooop!\n");
+      //    running = false;
+    }
+    
+  }
+    
+  free(evs);
+  
+  
+  //
+  // Write audio
+  //
+  
+  for(size_t c = 0; c < kit.channels.size(); c++) {
+    memset(samples, 0, nsamples * sizeof(sample_t));
+    getSamples(c, pos, samples, nsamples);
+    oe->run(c, samples, nsamples);
+  }
+  
+  ie->post();
+  oe->post(nsamples);
+  
+  pos += nsamples;
+}
+
 void DrumGizmo::run()
 {
-  is_running = true;
-  oe.run(this);
-}
+  ie->start();
+  oe->start();
 
-void DrumGizmo::pre(size_t sz)
-{
-  ie.run(time, sz);
+  size_t pos = 0;
+  size_t nsamples = 512;
+  sample_t samples[nsamples];
 
-  for(size_t n = 0; n < sz; n++) {
-    while(eventqueue.hasEvent(time + n)) {
-      Event *event = eventqueue.take(time + n);
-      activeevents[event->channel].push_back(event);
-    }
+  bool running = true;
+
+  while(running) {
+    run(pos, samples, nsamples);
   }
+
+  ie->stop();
+  oe->stop();
 }
 
-void DrumGizmo::getSamples(Channel *c, sample_t *s, size_t sz)
+void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 {
-  for(std::list< Event* >::iterator i = activeevents[c->num].begin();
-      i != activeevents[c->num].end();
+  for(std::list< Event* >::iterator i = activeevents[ch].begin();
+      i != activeevents[ch].end();
       i++) {
     bool removeevent = false;
 
@@ -113,59 +208,15 @@ void DrumGizmo::getSamples(Channel *c, sample_t *s, size_t sz)
 
     Event::type_t type = event->type();
     switch(type) {
-    case Event::sine:
-      {
-        EventSine *evt = (EventSine *)event;
-        for(size_t n = 0; n < sz; n++) {
-          
-          if(evt->offset > (time + n)) continue;
-
-          if(evt->t > evt->len) {
-            removeevent = true;
-            break;
-          }
-
-          float x = (float)evt->t / 44100.0;
-          float gain = evt->gain;
-          gain *= 1.0 - ((float)evt->t / (float)evt->len);
-          sample_t val = gain * sin(2.0 * M_PI * evt->freq * x);
-          s[n] += val;
-
-          evt->t++;
-        }
-      }
-      break;
-
-    case Event::noise:
-      {
-        EventNoise *evt = (EventNoise *)event;
-        for(size_t n = 0; n < sz; n++) {
-
-          if(evt->offset > (time + n)) continue;
-
-          if(evt->t > evt->len) {
-            removeevent = true;
-            break;
-          }
-
-          float gain = evt->gain;
-          gain *= 1.0 - ((float)evt->t / (float)evt->len);
-          sample_t val = (float)rand() / (float)RAND_MAX;
-          s[n] += val * gain;
-          evt->t++;
-        }
-      }
-      break;
-
     case Event::sample:
       {
-        /*
         EventSample *evt = (EventSample *)event;
-        AudioFile *af = audiofiles[evt->file];
+        AudioFile *af = evt->file;
         af->load(); // Make sure it is loaded.
+        //        printf("playing: %s (%d)\n", af->filename.c_str(), sz);
         for(size_t n = 0; n < sz; n++) {
 
-          if(evt->offset > (time + n)) continue;
+          if(evt->offset > (pos + n)) continue;
 
           if(evt->t > af->size) {
             removeevent = true;
@@ -178,24 +229,16 @@ void DrumGizmo::getSamples(Channel *c, sample_t *s, size_t sz)
           s[n] += val * gain;
           evt->t++;
         }
-        */
       }
       break;
     }
-    
+
     if(removeevent) {
       delete event;
-      i = activeevents[c->num].erase(i);
-      if(activeevents[0].size() +
-         activeevents[1].size() +
-         eventqueue.size() == 0) {/*is_running = false;*/}
+      i = activeevents[ch].erase(i);
     }
-  }
-}
 
-void DrumGizmo::post(size_t sz)
-{
-  time += sz;
+  }
 }
 
 void DrumGizmo::stop()

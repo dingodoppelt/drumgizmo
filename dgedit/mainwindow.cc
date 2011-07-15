@@ -78,8 +78,10 @@ MainWindow::MainWindow()
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
   sorter = new SampleSorter();
-  connect(canvas, SIGNAL(selectionsChanged(Selections)), sorter, SLOT(setSelections(Selections)));
-  connect(canvas, SIGNAL(activeSelectionChanged(Selection)), sorter, SLOT(setActiveSelection(Selection)));
+  connect(canvas, SIGNAL(selectionsChanged(Selections)),
+          sorter, SLOT(setSelections(Selections)));
+  connect(canvas, SIGNAL(activeSelectionChanged(Selection)),
+          sorter, SLOT(setActiveSelection(Selection)));
 
   lh->addWidget(canvas);
   lh->addWidget(yscale);
@@ -117,7 +119,7 @@ MainWindow::MainWindow()
   QLineEdit *prefix = new QLineEdit();
   connect(prefix, SIGNAL(textChanged(const QString &)),
           extractor, SLOT(setOutputPrefix(const QString &)));
-  prefix->setText("china");
+  prefix->setText("kick-r");
   configs->addWidget(prefix);
 
   configs->addWidget(new QLabel("Export path:"));
@@ -133,7 +135,8 @@ MainWindow::MainWindow()
 
   configs->addWidget(new QLabel("Files: (double-click to set as master)"));
   filelist = new FileList();
-  connect(filelist, SIGNAL(masterFileChanged(QString)), this, SLOT(loadFile(QString)));
+  connect(filelist, SIGNAL(masterFileChanged(QString)),
+          this, SLOT(loadFile(QString)));
   connect(loadbtn, SIGNAL(clicked()), filelist, SLOT(addFiles()));
   connect(filelist, SIGNAL(fileAdded(QString, QString)),
           extractor, SLOT(addFile(QString, QString)));

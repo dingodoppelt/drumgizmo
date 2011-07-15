@@ -29,12 +29,19 @@
 #include <string.h>
 #include <stdio.h>
 
-#define DIR_SEPERATOR '/'
+#include "instrumentparser.h"
+#include "path.h"
 
 DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
   : kit(k)
 {
+  //  instr = NULL;
+  path = getPath(kitfile);
+
   fd = fopen(kitfile.c_str(), "r");
+
+  printf("Parsing drumkit in %s\n", kitfile.c_str());
+
   if(!fd) return;
 }
 
@@ -44,38 +51,93 @@ DrumKitParser::~DrumKitParser()
 }
 
 void DrumKitParser::startTag(std::string name,
-                             std::map< std::string, std::string> attributes)
+                             std::map< std::string, std::string> attr)
 {
   if(name == "drumkit") {
-    kit.name = attributes["name"];
-    kit.description = attributes["description"];
+    if(attr.find("name") != attr.end())
+      kit._name = attr["name"];
+
+    if(attr.find("description") != attr.end())
+      kit._description = attr["description"];
   }
 
   if(name == "channels") {}
 
   if(name == "channel") {
-    //    Channel *c = new Channel(attributes["name"]);
-    //    dk->channels[attributes["name"]] = c;
+    if(attr.find("name") == attr.end()) {
+      printf("Missing channel name.\n");
+      return;
+    }
+    Channel c(attr["name"]);
+    c.num = kit.channels.size();
+    kit.channels.push_back(c);
   }
 
   if(name == "instruments") {
   }
 
   if(name == "instrument") {
-  }
+    if(attr.find("name") == attr.end()) {
+      printf("Missing name in instrument tag.\n");
+      return;
+    }
+    if(attr.find("file") == attr.end()) {
+      printf("Missing file in instrument tag.\n");
+      return;
+    }
+    Instrument i;
+    InstrumentParser parser(path + "/" + attr["file"], i);
+    parser.parse();
+    kit.instruments.push_back(i);//[attr["name"]] = i;
 
+    // Assign kit channel numbers to instruments channels.
+    std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
+    while(ic != parser.channellist.end()) {
+      InstrumentChannel *c = *ic;
+
+      for(size_t cnt = 0; cnt < kit.channels.size(); cnt++) {
+        if(kit.channels[cnt].name == c->name) c->num = kit.channels[cnt].num;
+      }
+      if(c->num == NO_CHANNEL) {
+        printf("Missing channel '%s' in instrument '%s'\n",
+               c->name.c_str(), i.name().c_str());
+      } else {
+        printf("Assigned channel '%s' to number %d in instrument '%s'\n",
+               c->name.c_str(), c->num, i.name().c_str());
+      }
+      ic++;
+    }
+
+    //instr = &kit.instruments[attr["name"]];
+  }
+  /*
   if(name == "channelmap") {
-  }
+    if(instr == NULL) {
+      printf("Missing instrument.\n");
+      return;
+    }
 
-  if(name == "midimaps") {
-  }
+    if(attr.find("in") == attr.end()) {
+      printf("Missing 'in' in channelmap tag.\n");
+      return;
+    }
 
-  if(name == "midimap") {
+    if(attr.find("out") == attr.end()) {
+      printf("Missing 'out' in channelmap tag.\n");
+      return;
+    }
+    instr->channelmap[attr["in"]] = attr["out"];
   }
+  */
 }
 
 void DrumKitParser::endTag(std::string name)
 {
+  /*
+  if(name == "instrument") {
+    instr = NULL;
+  }
+  */
 }
 
 int DrumKitParser::readData(char *data, size_t size)
@@ -84,3 +146,92 @@ int DrumKitParser::readData(char *data, size_t size)
   return fread(data, 1, size, fd);
 }
 
+#ifdef TEST_DRUMKITPARSER
+//deps: drumkit.cc saxparser.cc instrument.cc sample.cc audiofile.cc channel.cc
+//cflags: $(EXPAT_CFLAGS) $(SNDFILE_CFLAGS)
+//libs: $(EXPAT_LIBS) $(SNDFILE_LIBS)
+#include "test.h"
+
+const char xml[] =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<drumkit name=\"The Aasimonster\"\n"
+"         description=\"A large deathmetal drumkit\">\n"
+"  <channels>\n"
+"    <channel name=\"Alesis\"/>\n"
+"    <channel name=\"Kick-L\"/>\n"
+"    <channel name=\"Kick-R\"/>\n"
+"    <channel name=\"SnareTop\"/>\n"
+"    <channel name=\"SnareTrigger\"/>\n"
+"    <channel name=\"SnareBottom\"/>\n"
+"    <channel name=\"OH-L\"/>\n"
+"    <channel name=\"OH-R\"/>\n"
+"    <channel name=\"Hihat\"/>\n"
+"    <channel name=\"Ride\"/>\n"
+"    <channel name=\"Tom1\"/>\n"
+"    <channel name=\"Tom2\"/>\n"
+"    <channel name=\"Tom3\"/>\n"
+"    <channel name=\"Tom4\"/>\n"
+"    <channel name=\"Amb-R\"/>\n"
+"    <channel name=\"Amb-L\"/>\n"
+"  </channels>\n"
+"  <instruments>\n"
+"    <instrument name=\"Ride\" file=\"ride.xml\">\n"
+"      <channelmap in=\"Alesis\" out=\"Alesis\" gain=\"1.5\"/>\n"
+"      <channelmap in=\"Kick-L\" out=\"Kick-L\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Kick-R\" out=\"Kick-R\"/>\n"
+"      <channelmap in=\"SnareTop\" out=\"SnareTop\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"SnareTrigger\" out=\"SnareTrigger\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"SnareBottom\" out=\"SnareBottom\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"OH-L\" out=\"OH-L\"/>\n"
+"      <channelmap in=\"OH-R\" out=\"OH-R\"/>\n"
+"      <channelmap in=\"Hihat\" out=\"Hihat\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Ride\" out=\"Ride\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom1\" out=\"Tom1\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom2\" out=\"Tom2\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom3\" out=\"Tom3\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom4\" out=\"Tom4\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Amb-R\" out=\"Amb-R\"/>\n"
+"      <channelmap in=\"Amb-L\" out=\"Amb-L\"/>\n"
+"    </instrument>\n"
+"    <instrument name=\"Snare\" file=\"snare.xml\">\n"
+"      <channelmap in=\"Alesis\" out=\"Alesis\" gain=\"1.5\"/>\n"
+"      <channelmap in=\"Kick-L\" out=\"Kick-L\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Kick-R\" out=\"Kick-R\"/>\n"
+"      <channelmap in=\"SnareTop\" out=\"SnareTop\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"SnareTrigger\" out=\"SnareTrigger\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"SnareBottom\" out=\"SnareBottom\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"OH-L\" out=\"OH-L\"/>\n"
+"      <channelmap in=\"OH-R\" out=\"OH-R\"/>\n"
+"      <channelmap in=\"Hihat\" out=\"Hihat\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Ride\" out=\"Ride\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom1\" out=\"Tom1\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom2\" out=\"Tom2\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom3\" out=\"Tom3\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Tom4\" out=\"Tom4\" gain=\"0.5\"/>\n"
+"      <channelmap in=\"Amb-R\" out=\"Amb-R\"/>\n"
+"      <channelmap in=\"Amb-L\" out=\"Amb-L\"/>\n"
+"    </instrument>\n"
+"  </instruments>\n"
+"</drumkit>\n"
+  ;
+
+#define FNAME "/tmp/drumkittest.xml"
+
+TEST_BEGIN;
+
+FILE *fp = fopen(FNAME, "w");
+fprintf(fp, "%s", xml);
+fclose(fp);
+
+DrumKit kit;
+DrumKitParser p(FNAME, kit);
+TEST_EQUAL_INT(p.parse(), 0, "Parsing went well?");
+
+TEST_EQUAL_STR(kit.name(), "The Aasimonster", "Compare name");
+TEST_EQUAL_INT(kit.instruments.size(), 2, "How many instruments?");
+
+unlink(FNAME);
+
+TEST_END;
+
+#endif/*TEST_DRUMKITPARSER*/

@@ -3,7 +3,7 @@ bin_PROGRAMS = dgedit
 dgedit_LDADD = $(SNDFILE_LIBS) $(QT_LIBS) $(shell ../tools/MocList o )
 
 dgedit_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(QT_CFLAGS)
-CXXFLAGS += $(QT_CFLAGS)
+AM_CXXFLAGS = $(QT_CFLAGS)
 
 dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	dgedit.cc \
@@ -12,6 +12,7 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	filelist.cc \
 	itemeditor.cc \
 	mainwindow.cc \
+	mipmap.cc \
 	samplesorter.cc \
 	dgedit.qrc \
 	dgedit_qrc.cpp
@@ -22,6 +23,7 @@ EXTRA_DIST = \
 	filelist.h \
 	itemeditor.h \
 	mainwindow.h \
+	mipmap.h \
 	samplesorter.h
 
 dgedit_MOC = $(shell ../tools/MocList cc )

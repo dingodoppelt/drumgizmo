@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audioinputenginemidifile.h
+ *            output_lv2.h
  *
- *  Sun Feb 27 11:43:32 CET 2011
+ *  Wed Jul 13 14:27:06 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,18 +24,30 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__
-#define __DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__
+#ifndef __DRUMGIZMO_OUTPUT_LV2_H__
+#define __DRUMGIZMO_OUTPUT_LV2_H__
 
-#include "audioinputengine.h"
+#include <audiooutputengine.h>
 
-class AudioInputEngineMidiFile : public AudioInputEngine {
+#define NUM_OUTPUTS 16
+
+class OutputLV2 : public AudioOutputEngine {
 public:
-  AudioInputEngineMidiFile() {}
-  ~AudioInputEngineMidiFile() {}
+  OutputLV2();
+  ~OutputLV2();
 
-  bool init(EventQueue *eventqueue) { return true; }
-  void run(size_t pos, size_t len) {}
+  bool init(Channels channels);
+
+  void setParm(std::string parm, std::string value);
+
+  bool start();
+  void stop();
+
+  void pre(size_t nsamples);
+  void run(int ch, sample_t *samples, size_t nsamples);
+  void post(size_t nsamples);
+
+  sample_t *outputPort[NUM_OUTPUTS];
 };
 
-#endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__*/
+#endif/*__DRUMGIZMO_OUTPUT_LV2_H__*/

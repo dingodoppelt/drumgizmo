@@ -32,6 +32,9 @@
 
 #include "audio.h"
 
+#define ALL_CHANNELS ((channel_t)0xffffffff)
+#define NO_CHANNEL ((channel_t)0xfffffffe)
+
 class Channel {
 public:
   Channel(std::string name = "");

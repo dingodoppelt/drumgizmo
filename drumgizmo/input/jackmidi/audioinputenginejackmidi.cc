@@ -28,34 +28,30 @@
 
 #define NOTE_ON 0x90
 
-extern "C" {
-  static int _wrap_jack_process(jack_nframes_t nframes, void *arg){
-    return ((AudioInputEngineJackMidi*)arg)->process(nframes);}
-}
-
 AudioInputEngineJackMidi::AudioInputEngineJackMidi()
 {
+  jackclient = init_jack_client();
+
+  jackclient->addJackProcess(this);
+
   pos = 0;
 }
 
 AudioInputEngineJackMidi::~AudioInputEngineJackMidi()
 {
-  //  wait_stop();
-  jack_client_close(jack_client);
+  jackclient->removeJackProcess(this);
+  close_jack_client();
 }
 
-int AudioInputEngineJackMidi::process(jack_nframes_t nframes)
+void AudioInputEngineJackMidi::jack_process(jack_nframes_t nframes)
 {
-  //  printf("               jk: %d\n", pos);
-
   void *midibuffer = jack_port_get_buffer(midi_port, nframes);
 
   jack_nframes_t midievents = jack_midi_get_event_count(midibuffer);
-  //  if(midievents) printf("#%d\n", midievents);
+
   for(jack_nframes_t i = 0; i < midievents; i++) {
     jack_midi_event_t event;
     jack_midi_event_get(&event, midibuffer, i);
-    
     
     if(event.size != 3) continue;
     if((event.buffer[0] & NOTE_ON) != NOTE_ON) continue;
@@ -63,38 +59,79 @@ int AudioInputEngineJackMidi::process(jack_nframes_t nframes)
     int key = event.buffer[1];
     int velocity = event.buffer[2];
     
-    //if(velocity == 0) continue;
-    
     printf("Event key:%d vel:%d\n", key, velocity);
-    Event *evt = new EventSine(0, key * 10, (float)velocity / 127.0, 1000);
-    eventqueue->post(evt, pos + event.time);
+    /*
+    if(kit->midimap.find(key) == kit->midimap.end()) {
+      printf("Missing note %d in midimap.\n", key);
+      continue;
+    }
+
+    std::string instr = kit->midimap[key];
+
+    if(kit->instruments.find(instr) == kit->instruments.end()) {
+      printf("Missing instrument %s.\n", instr.c_str());
+      continue;
+    }
+    */
+
+    Instrument *i = NULL;
+    int d = key % kit->instruments.size();
+    Instruments::iterator it = kit->instruments.begin();
+    while(d--) {
+      i = &(it->second);
+      it++;
+    }
+
+    if(i == NULL) {
+      continue;
+    }
+
+    //    Sample *s = i.sample((float)velocity/127.0);
+    Sample *s = i->sample(0.5);
+    
+    if(s == NULL) {
+      printf("Missing Sample.\n");
+      continue;
+    }
+
+    Channels::iterator j = kit->channels.begin();
+    while(j != kit->channels.end()) {
+      Channel &ch = *j;
+      AudioFile *af = s->getAudioFile(&ch);
+      if(af == NULL) {
+        printf("Missing AudioFile.\n");
+      } else {
+        printf("Adding event.\n");
+        Event *evt = new EventSample(ch.num, 1.0, af);
+        eventqueue->post(evt, pos + event.time + nframes);
+      }
+      j++;
+    }
   }
   
   jack_midi_clear_buffer(midibuffer);
     
   pos += nframes;
-
-  return 0;
 }
 
-bool AudioInputEngineJackMidi::init(EventQueue *e)
+bool AudioInputEngineJackMidi::init(EventQueue *e, DrumKit *dk)
 {
   eventqueue = e;
+  kit = dk;
 
-	jack_status_t status;
-
-	jack_client = jack_client_open("DrumGizmo", JackNullOption, &status);
-
-	midi_port = jack_port_register(jack_client,
+	midi_port = jack_port_register(jackclient->jack_client,
                                  "drumgizmo_midiin",
                                  JACK_DEFAULT_MIDI_TYPE,
                                  JackPortIsInput,// | JackPortIsTerminal,
                                  0);
 
-  jack_set_process_callback(jack_client, _wrap_jack_process, this);
+  return true;
+}
 
-  jack_activate(jack_client);
 
+bool AudioInputEngineJackMidi::activate()
+{
+  jackclient->activate();
   return true;
 }
 

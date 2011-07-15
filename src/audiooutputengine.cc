@@ -26,17 +26,3 @@
  */
 #include "audiooutputengine.h"
 
-#include "audiooutputenginealsa.h"
-#include "audiooutputenginejack.h"
-#include "audiooutputenginesndfile.h"
-
-AudioOutputEngine *createAudioOutputEngine(std::string engine)
-{
-  AudioOutputEngine *e = NULL;
-
-  if(engine == "alsa") e = new AudioOutputEngineAlsa();
-  if(engine == "jack") e = new AudioOutputEngineJack();
-  if(engine == "sndfile") e = new AudioOutputEngineSndFile("out.wav");
-
-  return e;
-}

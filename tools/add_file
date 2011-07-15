@@ -41,6 +41,23 @@ function ccfile() {
   echo -n $hf >> $1;
   echo '"' >> $1;
   echo '' >> $1;
+  local hn=`echo $1 | cut -d'.' -f1 | tr 'a-z.' 'A-Z_'`
+  echo "#ifdef TEST_${hn}" >> $1;
+  echo "//Additional dependency files" >> $1;
+  echo "//deps:" >> $1;
+  echo "//Required cflags (autoconf vars may be used)" >> $1;
+  echo "//cflags:" >> $1;
+  echo "//Required link options (autoconf vars may be used)" >> $1;
+  echo "//libs:" >> $1;
+  echo "#include \"test.h\"" >> $1;
+  echo "" >> $1;
+  echo "TEST_BEGIN;" >> $1;
+  echo "" >> $1;
+  echo "// TODO: Put some testcode here (see test.h for usable macros)." >> $1;
+  echo "" >> $1;
+  echo "TEST_END;" >> $1;
+  echo "" >> $1;
+  echo "#endif/*TEST_${hn}*/" >> $1;
 }
 
 function hfile() {

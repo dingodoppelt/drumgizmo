@@ -28,7 +28,16 @@
 #define __DRUMGIZMO_SAMPLESORTER_H__
 
 #include <QWidget>
+#include <QVector>
 #include "selection.h"
+
+class Level {
+public:
+  int velocity;
+  QMap<float, Selection> selections;
+};
+
+typedef QVector<Level> Levels;
 
 class SampleSorter : public QWidget {
 Q_OBJECT
@@ -36,7 +45,7 @@ public:
   SampleSorter();
 
   Selections selections();
-  QVector<int> levels();
+  Levels levels();
 
 public slots:
   void setSelections(Selections selections);
@@ -48,6 +57,9 @@ public slots:
 
 protected:
   void paintEvent(QPaintEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private:
   Selections _selections;
@@ -61,6 +73,13 @@ private:
   size_t size;
 
   Selection sel;
+
+  QVector<int> threshold;
+  bool threshold_is_moving;
+  bool selection_is_moving_left;
+  bool selection_is_moving_right;
+  int cur_thr;
+
 };
 
 #endif/*__DRUMGIZMO_SAMPLESORTER_H__*/

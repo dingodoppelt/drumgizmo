@@ -28,6 +28,7 @@
 
 #include <QDomDocument>
 #include <QFile>
+#include <QDir>
 
 #include <sndfile.h>
 
@@ -48,10 +49,10 @@ float *AudioExtractor::load(QString file, size_t *size)
     return NULL;
   }
 
-	*size = sf_seek(fh, 0, SEEK_END);
+  *size = sf_info.frames;
+
   data = new float[*size];
 
-	sf_seek(fh, 0, SEEK_SET);
 	sf_read_float(fh, data, *size); 
 
 	sf_close(fh);
@@ -67,7 +68,11 @@ void AudioExtractor::exportSelection(QString filename,
   printf("Writing: %s (sz: %d, from %d to %d)\n",
          filename.toStdString().c_str(), size, sel.from, sel.to);
   
-  if(sel.from > (int)size || sel.to > (int)size || sel.to < 0 || sel.from < 0 || sel.to < sel.from) {
+  if(sel.from > (int)size ||
+     sel.to > (int)size ||
+     sel.to < 0 ||
+     sel.from < 0 ||
+     sel.to < sel.from) {
     printf("Out of bounds\n");
     return;
   }
@@ -98,7 +103,8 @@ void AudioExtractor::exportSelection(QString filename,
   sf_close(fh);
 }
 
-void AudioExtractor::exportSelections(Selections selections, QVector<int> levels)
+void AudioExtractor::exportSelections(Selections selections,
+                                      Levels levels)
 {
   // Do the actual exporting one file at the time.
   AudioFileList::iterator j = audiofiles.begin();
@@ -117,8 +123,12 @@ void AudioExtractor::exportSelections(Selections selections, QVector<int> levels
     while(i != selections.end()) {
       index++;
 
-      QString file = exportpath + "/" + prefix + "/samples/" +
-        prefix + "-" + name + "-" + QString::number(index) + ".wav";
+      QString path = exportpath + "/" + prefix + "/samples";
+      QString file = path + "/" + QString::number(index) +
+        "-" + prefix + "-" + name + ".wav";
+
+      QDir d;
+      d.mkpath(path);
 
       exportSelection(file, index, data, size, i.value());
       i++;
@@ -147,8 +157,10 @@ void AudioExtractor::exportSelections(Selections selections, QVector<int> levels
   while(i != selections.end()) {
     index++;
 
+    i->name = prefix + "-" + QString::number(index);
+
     QDomElement sample = doc.createElement("sample");
-    sample.setAttribute("name", prefix + "-" + QString::number(index));
+    sample.setAttribute("name", i->name);
     samples.appendChild(sample);
 
     AudioFileList::iterator j = audiofiles.begin();
@@ -158,8 +170,9 @@ void AudioExtractor::exportSelections(Selections selections, QVector<int> levels
       QString name = j->second;
 
       QDomElement audiofile = doc.createElement("audiofile");
-      audiofile.setAttribute("file", "samples/" + prefix + "-" + name + "-"
-                             + QString::number(index) + ".wav");
+      audiofile.setAttribute("file", "samples/" + 
+                             QString::number(index) + "-" + prefix +
+                             "-" + name + ".wav");
       audiofile.setAttribute("channel", name);
       sample.appendChild(audiofile);
 
@@ -172,17 +185,37 @@ void AudioExtractor::exportSelections(Selections selections, QVector<int> levels
   QDomElement velocities = doc.createElement("velocities");
   instrument.appendChild(velocities);
 
-  QVector<int>::iterator k = levels.begin();
+  Levels::iterator k = levels.begin();
   while(k != levels.end()) {
+
+    Levels::iterator nxt = k;
+    nxt++;
+    int next;
+    if(nxt == levels.end()) next = 127;
+    else next = nxt->velocity - 1;
+    
+
     QDomElement velocity = doc.createElement("velocity");
-    velocity.setAttribute("lower", "0");
-    velocity.setAttribute("upper", "127");
+    velocity.setAttribute("lower", k->velocity);
+    velocity.setAttribute("upper", next);
     velocities.appendChild(velocity);
 
-    QDomElement sampleref = doc.createElement("sampleref");
-    sampleref.setAttribute("name", "bleh");
-    sampleref.setAttribute("probability", "0.1");
-    velocity.appendChild(sampleref);
+    QMap<float, Selection>::iterator i = k->selections.begin();
+    while(i != k->selections.end()) {
+
+      QMap<int, Selection>::iterator j = selections.begin();
+      while(j != selections.end()) {
+        if(i->from == j->from && i->to == j->to) {
+          QDomElement sampleref = doc.createElement("sampleref");
+          sampleref.setAttribute("name", j->name);
+          sampleref.setAttribute("probability",
+                                 1.0 / (double)k->selections.size());
+          velocity.appendChild(sampleref);
+        }
+        j++;
+      }
+      i++;
+    }
 
     k++;
   }

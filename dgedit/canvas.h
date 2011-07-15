@@ -32,6 +32,7 @@
 #include <QImage>
 
 #include "selection.h"
+#include "mipmap.h"
 
 class Canvas : public QWidget {
 Q_OBJECT
@@ -64,8 +65,11 @@ protected:
   void keyReleaseEvent(QKeyEvent *event);
 
 private:
+  MipMap *mipmap;
+
   void updateWav();
-  void getWavValues(int last, int lx, float *vu, float *vl, float *avgu, float *avgl);
+  void getWavValues(int last, int lx, float *vu, float *vl,
+                    float *avgu, float *avgl);
   float mapX(float x);
   float unmapX(float x);
   float mapY(float y);
@@ -77,8 +81,6 @@ public:
   float *data;
   size_t size;
 private:
-  QMap<int, float *> mipmaps;
-
   float xscale;
   float yscale;
   float xoffset;

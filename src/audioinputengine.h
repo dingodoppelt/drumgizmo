@@ -29,18 +29,22 @@
 
 #include <string>
 
-#include "event.h"
+#include <event.h>
+
+#include "instrument.h"
 
 class AudioInputEngine {
 public:
-  AudioInputEngine() {}
-  virtual ~AudioInputEngine() {}
+  virtual bool init(Instruments &instruments) = 0;
 
-  virtual bool init(EventQueue *e) = 0;
+  virtual void setParm(std::string parm, std::string value) = 0;
 
-  virtual void run(size_t pos, size_t len) = 0;
+  virtual bool start() = 0;
+  virtual void stop() = 0;
+
+  virtual void pre() = 0;
+  virtual event_t *run(size_t pos, size_t len, size_t *nevents) = 0;
+  virtual void post() = 0;
 };
-
-AudioInputEngine *createAudioInputEngine(std::string engine);
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINE_H__*/

@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            cli.h
+ *            audioinputenginemidifile.h
  *
- *  Thu Sep 16 10:23:22 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Sun Feb 27 11:43:32 CET 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,6 +24,18 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CLI_H__
-#define __DRUMGIZMO_CLI_H__
-#endif/*__DRUMGIZMO_CLI_H__*/
+#ifndef __DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__
+#define __DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__
+
+#include "audioinputengine.h"
+
+class AudioInputEngineMidiFile : public AudioInputEngine {
+public:
+  AudioInputEngineMidiFile() {}
+  ~AudioInputEngineMidiFile() {}
+
+  bool init(EventQueue *eventqueue, DrumKit *drumkit) { return true; }
+  void run(size_t pos, size_t len) {}
+};
+
+#endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDIFILE_H__*/

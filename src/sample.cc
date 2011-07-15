@@ -47,8 +47,19 @@ void Sample::addAudioFile(Channel *c, AudioFile *a)
 
 AudioFile *Sample::getAudioFile(Channel *c)
 {
+  /*
   if(audiofiles.find(c) == audiofiles.end()) return NULL;
   return audiofiles[c];
+  */
+
+  AudioFiles::iterator i = audiofiles.begin();
+  while(i != audiofiles.end()) {
+    Channel *ch = i->first;
+    if(c->num == ch->num) return i->second;
+    i++;
+  }
+
+  return NULL;
 }
 
 #ifdef TEST_SAMPLE

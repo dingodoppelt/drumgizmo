@@ -37,6 +37,8 @@ AudioFile::AudioFile(std::string filename)
 
   data = NULL;
   size = 0;
+
+  load();
 }
 
 AudioFile::~AudioFile()

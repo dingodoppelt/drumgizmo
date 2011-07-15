@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audioinputenginejackmidi.h
+ *            mipmap.h
  *
- *  Sun Feb 27 11:33:31 CET 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Fri Sep  3 16:39:45 CEST 2010
+ *  Copyright 2010 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,32 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOINPUTENGINEJACKMIDI_H__
-#define __DRUMGIZMO_AUDIOINPUTENGINEJACKMIDI_H__
+#ifndef __DRUMGIZMO_MIPMAP_H__
+#define __DRUMGIZMO_MIPMAP_H__
 
-#include <jack/jack.h>
-#include <jack/midiport.h>
+#include <QMap>
+#include <stddef.h>
 
-#include "audioinputengine.h"
-#include "event.h"
-
-class AudioInputEngineJackMidi : public AudioInputEngine {
+class MipMapValue {
 public:
-  AudioInputEngineJackMidi();
-  ~AudioInputEngineJackMidi();
-
-  bool init(EventQueue *e);
-  void run(size_t pos, size_t len) {}
-
-  void thread_main();
-
-  int process(jack_nframes_t nframes);
-
-private:
-  size_t pos;
-  EventQueue *eventqueue;
-  jack_client_t *jack_client;
-  jack_port_t *midi_port;
+  MipMapValue() { max = min = uavg = lavg = 0.0; }
+  float max;
+  float min;
+  float uavg;
+  float lavg;
 };
 
-#endif/*__DRUMGIZMO_AUDIOINPUTENGINEJACKMIDI_H__*/
+class MipMap {
+public:
+  MipMap(float *data, size_t size);
+
+  MipMapValue lookup(size_t begin, size_t end);
+
+private:
+  float *data;
+  size_t size;
+
+  MipMapValue *values;
+
+  size_t zoom;
+
+  MipMapValue data_lookup(size_t begin, size_t end);
+  MipMapValue mipmap_lookup(size_t begin, size_t end);
+
+  MipMap *lowerlevel;
+};
+
+#endif/*__DRUMGIZMO_MIPMAP_H__*/
