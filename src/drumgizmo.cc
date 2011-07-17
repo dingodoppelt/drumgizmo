@@ -188,8 +188,6 @@ void DrumGizmo::run()
   size_t nsamples = 512;
   sample_t samples[nsamples];
 
-  bool running = true;
-
   while(run(pos, samples, nsamples) == true) {
     pos += nsamples;
   }
