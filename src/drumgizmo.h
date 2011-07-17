@@ -50,7 +50,7 @@ public:
   bool init(bool preload = true);
 
   void run();
-  void run(size_t pos, sample_t *samples, size_t nsamples);
+  bool run(size_t pos, sample_t *samples, size_t nsamples);
   void stop();
 
   void getSamples(int ch, int pos, sample_t *s, size_t sz);

@@ -88,7 +88,7 @@ bool DrumGizmo::init(bool preload)
   return true;
 }
 
-void DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
+bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
   ie->pre();
   oe->pre(nsamples);
@@ -153,8 +153,7 @@ void DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     }
     
     if(evs[e].type == TYPE_STOP) {
-      printf("Stoooooop!\n");
-      //    running = false;
+      return false;
     }
     
   }
@@ -176,6 +175,8 @@ void DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   oe->post(nsamples);
   
   pos += nsamples;
+
+  return true;
 }
 
 void DrumGizmo::run()
@@ -189,8 +190,8 @@ void DrumGizmo::run()
 
   bool running = true;
 
-  while(running) {
-    run(pos, samples, nsamples);
+  while(run(pos, samples, nsamples) == true) {
+    pos += nsamples;
   }
 
   ie->stop();
