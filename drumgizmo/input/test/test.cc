@@ -86,7 +86,7 @@ event_t *Test::run(size_t pos, size_t nsamples, size_t *nevents)
   *nevents = 1;
   event_t *evs = (event_t *)malloc(sizeof(event_t));
   evs[0].type = TYPE_ONSET;
-  if(len != -1 && pos > len * 44100) evs[0].type = TYPE_STOP;
+  if(len != -1 && (int)pos > len * 44100) evs[0].type = TYPE_STOP;
 
   if(instr != -1) evs[0].instrument = instr;
   else evs[0].instrument = rand() % 32;
