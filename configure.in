@@ -30,6 +30,10 @@ AC_ARG_ENABLE([lv2],
         [with_lv2="yes"])
 if test "x$with_lv2" = "xyes"; then
 	 with_lv2=yes 
+   dnl ======================
+   dnl Check for lv2core
+   dnl ======================
+   PKG_CHECK_MODULES(LV2, lv2core >= 4.1)
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    with_lv2=no
@@ -164,7 +168,7 @@ PKG_CHECK_MODULES(SMF, smf >= 1.2)
 dnl ======================
 dnl Check for jack
 dnl ======================
-PKG_CHECK_MODULES(JACK, jack >= 0.120.2)
+PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
 
 dnl ======================
 dnl Check for alsa library

@@ -38,7 +38,7 @@ lib_LTLIBRARIES = $(lv2ltlibs)
 libdir = $(LV2_PLUGIN_DIR)
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
-	 $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS)
-liblv2_la_LDFLAGS = $(SNDFILE_LIBS) $(EXPAT_CFLAGS)
+	 $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS)
+liblv2_la_LDFLAGS = $(SNDFILE_LIBS) $(EXPAT_LIBS)  $(LV2_LIBS)
 liblv2_la_LIBADD =
 liblv2_la_SOURCES = $(lv2buildsources)
