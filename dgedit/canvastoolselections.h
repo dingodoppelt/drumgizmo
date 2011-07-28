@@ -26,4 +26,51 @@
  */
 #ifndef __DRUMGIZMO_CANVASTOOLSELECTIONS_H__
 #define __DRUMGIZMO_CANVASTOOLSELECTIONS_H__
+
+#include "canvastool.h"
+
+#include <QColor>
+
+#include "canvas.h"
+
+#include "selection.h"
+
+class CanvasToolSelections : public CanvasTool {
+Q_OBJECT
+public:
+  CanvasToolSelections(Canvas *canvas);
+
+  bool mouseMoveEvent(QMouseEvent *event);
+  bool mousePressEvent(QMouseEvent *event);
+  bool mouseReleaseEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent *event, QPainter &painter);
+  void keyReleaseEvent(QKeyEvent *event);
+
+  Selections selections();
+
+signals:
+  void selectionsChanged(Selections selections);
+  void activeSelectionChanged(Selection selection);
+
+public slots:
+  void autoCreateSelections();
+  void clearSelections();
+
+private:
+  bool selection_is_moving_left;
+  bool selection_is_moving_right;
+  Selection *active_selection;
+  Selections _selections;
+
+  Canvas *canvas;
+
+  float *data;
+  size_t size;
+
+  QColor colSelBg;
+  QColor colSel;
+  QColor colActiveSelBg;
+  QColor colActiveSel;
+};
+
 #endif/*__DRUMGIZMO_CANVASTOOLSELECTIONS_H__*/

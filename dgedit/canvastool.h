@@ -27,40 +27,31 @@
 #ifndef __DRUMGIZMO_CANVASTOOL_H__
 #define __DRUMGIZMO_CANVASTOOL_H__
 
+#include <QMouseEvent>
+#include <QResizeEvent>
+#include <QPaintEvent>
+#include <QKeyEvent>
+#include <QPainter>
+
 class CanvasTool : public QObject {
 Q_OBJECT
 public:
-  virtual void mouseMoveEvent(QMouseEvent *event) = 0;
-  virtual void mousePressEvent(QMouseEvent *event) = 0;
-  virtual void mouseReleaseEvent(QMouseEvent *event) = 0;
-  virtual void resizeEvent(QResizeEvent *event) = 0;
-  virtual void paintEvent(QPaintEvent *event) = 0;
-  virtual void keyReleaseEvent(QKeyEvent *event) = 0;
+  virtual bool mouseMoveEvent(QMouseEvent *event);
+  virtual bool mousePressEvent(QMouseEvent *event);
+  virtual bool mouseReleaseEvent(QMouseEvent *event);
+  virtual void resizeEvent(QResizeEvent *event);
+  virtual void paintEvent(QPaintEvent *event, QPainter &painter);
+  virtual void keyReleaseEvent(QKeyEvent *event);
+
+  bool isActive();
 
 signals:
   void activateChanged(bool activestate);
 
 public slots:
-  void setActive(bool active)
-  {
-    _active = active;
-    emit activateChanged(active);
-  }
-  
-  void activate()
-  {
-    setActive(true);
-  }
-
-  void disactivate()
-  {
-    setActive(false);
-  }
-
-  bool isActive()
-  {
-    return _active;
-  }
+  void setActive(bool active);  
+  void activate();
+  void disactivate();
 
 private:
   bool _active;

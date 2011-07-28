@@ -34,6 +34,8 @@
 
 #include <math.h>
 
+#include "canvastoolselections.h"
+
 #define DEFYSCALE 200
 
 Canvas::Canvas(QWidget *parent)
@@ -55,9 +57,6 @@ Canvas::Canvas(QWidget *parent)
 
   threshold = 0.5;
   threshold_is_moving = false;
-  selection_is_moving_left = false;
-  selection_is_moving_right = false;
-  active_selection = NULL;
 
   colBg = QColor(180, 200, 180);
   colSec = QColor(160, 180, 160);
@@ -67,14 +66,12 @@ Canvas::Canvas(QWidget *parent)
   colHalf = QColor(180, 180, 255);
   colThreshold = QColor(255, 127, 127);
   colThresholdMoving = QColor(180, 0, 0);
-  colSelBg = QColor(255, 0, 0, 60);
-  colSel = QColor(255, 0, 0, 160);
-  colActiveSelBg = QColor(255, 255, 0, 60);
-  colActiveSel = QColor(255, 255, 0, 160);
 
   setCursor(Qt::ArrowCursor);
   
   wav = QImage(width(), height(), QImage::Format_RGB32);
+
+  tools.push_back(new CanvasToolSelections(this));
 }
 
 Canvas::~Canvas()
@@ -157,41 +154,18 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     return;
   }
 
-  if(selection_is_moving_left) {
-    float val = unmapX(event->x());
-    if(val > active_selection->to) val = active_selection->to - 1;
-    active_selection->from = val;
-    update();
-    emit selectionsChanged(_selections);
-    return;
-  }
-
-  if(selection_is_moving_right) {
-    float val = unmapX(event->x());
-    if(val < active_selection->from) val = active_selection->from + 1;
-    active_selection->to = val;
-    update();
-    emit selectionsChanged(_selections);
-    return;
-  }
-
   if(event->button() != Qt::LeftButton) {
     if(abs(event->y() - mapY(threshold)) < 2 ||
        abs(event->y() - mapY(-threshold)) < 2 ) {
       setCursor(Qt::SplitVCursor);
+      return;
     } else {
       setCursor(Qt::ArrowCursor);
     }
+  }
 
-    // Check if a selection is being dragged.
-    QMap<int, Selection>::iterator i = _selections.begin();
-    while(i != _selections.end()) {
-      if(abs(event->x() - mapX(i.value().from)) < 2
-        || abs(event->x() - mapX(i.value().to)) < 2) {
-        setCursor(Qt::SplitHCursor);
-      }
-      i++;
-    }
+  for(int i = 0; i < tools.size(); i++) {
+    if(tools[i]->mouseMoveEvent(event)) return;
   }
 }
 
@@ -206,48 +180,10 @@ void Canvas::mousePressEvent(QMouseEvent *event)
       update();
       return;
     }
+  }
 
-    // Check if a selection is being dragged.
-    QMap<int, Selection>::iterator i = _selections.begin();
-    while(i != _selections.end()) {
-      if(abs(event->x() - mapX(i.value().from)) < 2) {
-        active_selection = &i.value();
-        selection_is_moving_left = true;
-        emit activeSelectionChanged(i.value());
-        return;
-      }
-
-      if(abs(event->x() - mapX(i.value().to)) < 2) {
-        active_selection = &i.value();
-        selection_is_moving_right = true;
-        emit activeSelectionChanged(i.value());
-        return;
-      }
-
-      i++;
-    }
-
-    // Check if a selection is being selected.
-    i = _selections.begin();
-    while(i != _selections.end()) {
-      if(event->x() > mapX(i.value().from) &&
-         event->x() < mapX(i.value().to)) {
-        active_selection = &i.value();
-        update();
-        emit activeSelectionChanged(i.value());
-        return;
-      }
-
-      i++;
-    }
-
-    // Make new selection
-    int from = unmapX(event->x());
-    _selections[from] = Selection(from, from);
-    active_selection = &_selections[from];
-    selection_is_moving_right = true;
-    update();
-    return;
+  for(int i = 0; i < tools.size(); i++) {
+    if(tools[i]->mousePressEvent(event)) return;
   }
 }
 
@@ -260,18 +196,19 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
       update();
       return;
     }
-    if(selection_is_moving_left || selection_is_moving_right) {
-      selection_is_moving_left = false;
-      selection_is_moving_right = false;
-      setCursor(Qt::ArrowCursor);
-      update();
-      return;
-    }
+  }
+
+  for(int i = 0; i < tools.size(); i++) {
+    if(tools[i]->mouseReleaseEvent(event)) return;
   }
 }
 
-void Canvas::resizeEvent(QResizeEvent *)
+void Canvas::resizeEvent(QResizeEvent *event)
 {
+  for(int i = 0; i < tools.size(); i++) {
+    tools[i]->resizeEvent(event);
+  }
+
   wav = QImage(width(), height(), QImage::Format_RGB32);
   updateWav();
   update();
@@ -352,36 +289,15 @@ void Canvas::paintEvent(QPaintEvent *event)
   painter.drawLine(event->rect().x(), mapY(-threshold),
                    event->rect().x() + event->rect().width(), mapY(-threshold));
 
-  int pos = unmapX(event->rect().x());
-  int width = unmapX(event->rect().width());
-  QMap<int, Selection>::iterator i = _selections.begin();
-  while(i != _selections.end()) {
-    int from = i.value().from;
-    int to = i.value().to;
-    int fadein = i.value().fadein;
-    int fadeout = i.value().fadeout;
-    if(from > pos + width || to + width < pos) { i++; continue; }
-    if(active_selection == &i.value()) {
-      painter.setBrush(colActiveSelBg);
-      painter.setPen(colActiveSel);
-    } else {
-      painter.setBrush(colSelBg);
-      painter.setPen(colSel);
-    }
-    painter.drawRect(mapX(from), mapY(-1.0), mapX(to) - mapX(from), mapY(1.0) - mapY(-1.0));
-    painter.drawLine(mapX(from), mapY(0.0), mapX(from + fadein), mapY(-1.0));
-    painter.drawLine(mapX(from), mapY(0.0), mapX(from + fadein), mapY(1.0));
-    painter.drawLine(mapX(to - fadeout), mapY(-1.0), mapX(to), mapY(0.0));
-    painter.drawLine(mapX(to - fadeout), mapY(1.0), mapX(to), mapY(0.0));
-    i++;
+  for(int i = 0; i < tools.size(); i++) {
+    tools[i]->paintEvent(event, painter);
   }
 } 
 
 void Canvas::keyReleaseEvent(QKeyEvent *event)
 {
-  if(active_selection && event->key() == Qt::Key_Delete) {
-    _selections.remove(active_selection->from);
-    update();
+  for(int i = 0; i < tools.size(); i++) {
+    tools[i]->keyReleaseEvent(event);
   }
 }
 
@@ -421,59 +337,4 @@ void Canvas::setYOffset(float offset)
   yoffset = offset;
   updateWav();
   update();
-}
-
-void Canvas::autoCreateSelections()
-{
-  for(size_t i = 0; i < size; i++) {
-    if(fabs(data[i]) > fabs(threshold)) {
-      int from = i;
-
-      if(data[from] > 0.0) {
-        while(data[from] > data[from-1] // Falling
-              && data[from-1] > 0.0 // Not crossing zero
-              ) {
-          from--;
-        }
-      } else if(data[from] < 0.0) {
-        while(data[from] < data[from-1] // Rising
-              && data[from-1] < 0.0 // Not crossing zero
-              ) {
-          from--;
-        }
-      }
-
-      int minsize = 100; // attack.
-      float minval = 0.00003; // noise floor
-      int to = i;
-      float runavg = fabs(data[from]);
-      while((runavg > minval ||
-             to < from + minsize) &&
-            to < (int)size) {
-        double p = 0.9;
-        runavg = runavg * p + fabs(data[to]) * (1 - p);
-        to++;
-      }
-      _selections[from] = Selection(from, to, 2, (to - from) / 3);
-
-      i = to+1;
-    }
-  }
-  update();
-  emit selectionsChanged(_selections);
-}
-
-void Canvas::clearSelections()
-{
-  _selections.clear();
-  selection_is_moving_left = false;
-  selection_is_moving_right = false;
-  setCursor(Qt::ArrowCursor);
-  update();
-  emit selectionsChanged(_selections);
-}
-
-Selections Canvas::selections()
-{
-  return _selections;
 }

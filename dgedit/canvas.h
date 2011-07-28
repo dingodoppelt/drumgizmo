@@ -31,7 +31,6 @@
 #include <QColor>
 #include <QImage>
 
-#include "selection.h"
 #include "mipmap.h"
 #include "canvastool.h"
 
@@ -42,22 +41,19 @@ public:
   ~Canvas();
 
   void load(QString file);
-
-  Selections selections();
   
   void addTool(CanvasTool *tool);
 
-signals:
-  void selectionsChanged(Selections selections);
-  void activeSelectionChanged(Selection selection);
+  float mapX(float x);
+  float unmapX(float x);
+  float mapY(float y);
+  float unmapY(float y);
 
 public slots:
   void setXScale(float scale);
   void setYScale(float scale);
   void setXOffset(float scroll);
   void setYOffset(float scroll);
-  void autoCreateSelections();
-  void clearSelections();
 
 protected:
   void mouseMoveEvent(QMouseEvent *event);
@@ -73,10 +69,6 @@ private:
   void updateWav();
   void getWavValues(int last, int lx, float *vu, float *vl,
                     float *avgu, float *avgl);
-  float mapX(float x);
-  float unmapX(float x);
-  float mapY(float y);
-  float unmapY(float y);
 
   QImage wav;
 
@@ -91,9 +83,6 @@ private:
 
   float threshold;
   bool threshold_is_moving;
-  bool selection_is_moving_left;
-  bool selection_is_moving_right;
-  Selection *active_selection;
 
   QColor colBg;
   QColor colSec;
@@ -103,12 +92,7 @@ private:
   QColor colWavAvg;
   QColor colThreshold;
   QColor colThresholdMoving;
-  QColor colSelBg;
-  QColor colSel;
-  QColor colActiveSelBg;
-  QColor colActiveSel;
 
-  Selections _selections;
 
 
   QVector<CanvasTool*> tools;
