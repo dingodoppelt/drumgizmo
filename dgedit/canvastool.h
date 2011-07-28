@@ -30,12 +30,12 @@
 class CanvasTool : public QObject {
 Q_OBJECT
 public:
-  virtual void mouseMoveEvent(QMouseEvent *event);
-  virtual void mousePressEvent(QMouseEvent *event);
-  virtual void mouseReleaseEvent(QMouseEvent *event);
-  virtual void resizeEvent(QResizeEvent *event);
-  virtual void paintEvent(QPaintEvent *event);
-  virtual void keyReleaseEvent(QKeyEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event) = 0;
+  virtual void mousePressEvent(QMouseEvent *event) = 0;
+  virtual void mouseReleaseEvent(QMouseEvent *event) = 0;
+  virtual void resizeEvent(QResizeEvent *event) = 0;
+  virtual void paintEvent(QPaintEvent *event) = 0;
+  virtual void keyReleaseEvent(QKeyEvent *event) = 0;
 
 signals:
   void activateChanged(bool activestate);

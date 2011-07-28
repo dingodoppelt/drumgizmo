@@ -33,6 +33,7 @@
 
 #include "selection.h"
 #include "mipmap.h"
+#include "canvastool.h"
 
 class Canvas : public QWidget {
 Q_OBJECT
@@ -43,6 +44,8 @@ public:
   void load(QString file);
 
   Selections selections();
+  
+  void addTool(CanvasTool *tool);
 
 signals:
   void selectionsChanged(Selections selections);
@@ -106,6 +109,9 @@ private:
   QColor colActiveSel;
 
   Selections _selections;
+
+
+  QVector<CanvasTool*> tools;
 };
 
 #endif/*__DRUMGIZMO_CANVAS_H__*/

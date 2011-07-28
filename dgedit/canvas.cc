@@ -444,7 +444,7 @@ void Canvas::autoCreateSelections()
       }
 
       int minsize = 100; // attack.
-      float minval = 0.0001; // noise floor
+      float minval = 0.00003; // noise floor
       int to = i;
       float runavg = fabs(data[from]);
       while((runavg > minval ||
