@@ -77,6 +77,7 @@ bool CanvasToolSelections::mouseMoveEvent(QMouseEvent *event)
       if(abs(event->x() - mapX(i.value().from)) < 2
         || abs(event->x() - mapX(i.value().to)) < 2) {
         canvas->setCursor(Qt::SplitHCursor);
+        return true;
       }
       i++;
     }

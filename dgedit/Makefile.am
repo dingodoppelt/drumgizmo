@@ -1,6 +1,6 @@
 bin_PROGRAMS = dgedit
 
-dgedit_LDADD = $(SNDFILE_LIBS) $(QT_LIBS) $(shell ../tools/MocList o )
+dgedit_LDADD = $(SNDFILE_LIBS) $(QT_LIBS) $(shell ../tools/MocList o ) -lao
 
 dgedit_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(QT_CFLAGS)
 AM_CXXFLAGS = $(QT_CFLAGS)
@@ -10,6 +10,7 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	audioextractor.cc \
 	canvas.cc \
 	canvastool.cc \
+	canvastoollisten.cc \
 	canvastoolselections.cc \
 	canvastoolthreshold.cc \
 	filelist.cc \
@@ -24,6 +25,7 @@ EXTRA_DIST = \
 	audioextractor.h \
 	canvas.h \
 	canvastool.h \
+	canvastoollisten.cc \
 	canvastoolselections.h \
 	canvastoolthreshold.h \
 	filelist.h \

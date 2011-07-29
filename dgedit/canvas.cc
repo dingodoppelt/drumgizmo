@@ -36,6 +36,7 @@
 
 #include "canvastoolselections.h"
 #include "canvastoolthreshold.h"
+#include "canvastoollisten.h"
 
 #define DEFYSCALE 200
 
@@ -67,6 +68,7 @@ Canvas::Canvas(QWidget *parent)
   
   wav = QImage(width(), height(), QImage::Format_RGB32);
 
+  tools.push_back(new CanvasToolListen(this));
   tools.push_back(new CanvasToolThreshold(this));
   tools.push_back(new CanvasToolSelections(this));
 }
@@ -146,6 +148,8 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
   for(int i = 0; i < tools.size(); i++) {
     if(tools[i]->mouseMoveEvent(event)) return;
   }
+
+  setCursor(Qt::ArrowCursor);
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event)

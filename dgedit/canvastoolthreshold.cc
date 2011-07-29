@@ -50,8 +50,6 @@ bool CanvasToolThreshold::mouseMoveEvent(QMouseEvent *event)
        abs(event->y() - mapY(-threshold)) < 2 ) {
       canvas->setCursor(Qt::SplitVCursor);
       return true;
-    } else {
-      canvas->setCursor(Qt::ArrowCursor);
     }
   }
 
