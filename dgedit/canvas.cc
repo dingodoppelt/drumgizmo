@@ -35,6 +35,7 @@
 #include <math.h>
 
 #include "canvastoolselections.h"
+#include "canvastoolthreshold.h"
 
 #define DEFYSCALE 200
 
@@ -55,22 +56,18 @@ Canvas::Canvas(QWidget *parent)
   xoffset = 0.0;
   yoffset = 0.5;
 
-  threshold = 0.5;
-  threshold_is_moving = false;
-
   colBg = QColor(180, 200, 180);
   colSec = QColor(160, 180, 160);
   colWavMax = QColor(100, 100, 100);
   colWavAvg = QColor(0, 0, 0);
   colMax = QColor(127, 127, 255);
   colHalf = QColor(180, 180, 255);
-  colThreshold = QColor(255, 127, 127);
-  colThresholdMoving = QColor(180, 0, 0);
 
   setCursor(Qt::ArrowCursor);
   
   wav = QImage(width(), height(), QImage::Format_RGB32);
 
+  tools.push_back(new CanvasToolThreshold(this));
   tools.push_back(new CanvasToolSelections(this));
 }
 
@@ -146,24 +143,6 @@ float Canvas::unmapY(float y)
 
 void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
-  if(threshold_is_moving) {
-    float val = unmapY(event->y());
-    if(fabs(val) > 1.0) val = 1.0;
-    threshold = fabs(val);
-    update();
-    return;
-  }
-
-  if(event->button() != Qt::LeftButton) {
-    if(abs(event->y() - mapY(threshold)) < 2 ||
-       abs(event->y() - mapY(-threshold)) < 2 ) {
-      setCursor(Qt::SplitVCursor);
-      return;
-    } else {
-      setCursor(Qt::ArrowCursor);
-    }
-  }
-
   for(int i = 0; i < tools.size(); i++) {
     if(tools[i]->mouseMoveEvent(event)) return;
   }
@@ -171,17 +150,6 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
-  if(event->button() == Qt::LeftButton) {
-
-    // Check if threshold is being dragged.
-    if(abs(event->y() - mapY(threshold)) < 2 ||
-       abs(event->y() - mapY(-threshold)) < 2 ) {
-      threshold_is_moving = true;
-      update();
-      return;
-    }
-  }
-
   for(int i = 0; i < tools.size(); i++) {
     if(tools[i]->mousePressEvent(event)) return;
   }
@@ -189,15 +157,6 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event)
 {
-  if(event->button() == Qt::LeftButton) {
-    if(threshold_is_moving) {
-      threshold_is_moving = false;
-      setCursor(Qt::ArrowCursor);
-      update();
-      return;
-    }
-  }
-
   for(int i = 0; i < tools.size(); i++) {
     if(tools[i]->mouseReleaseEvent(event)) return;
   }
@@ -281,13 +240,6 @@ void Canvas::paintEvent(QPaintEvent *event)
   QPainter painter(this);
 
   painter.drawImage(event->rect(),wav,event->rect());
-
-  if(threshold_is_moving) painter.setPen(colThresholdMoving);
-  else painter.setPen(colThreshold);
-  painter.drawLine(event->rect().x(), mapY(threshold),
-                   event->rect().x() + event->rect().width(), mapY(threshold));
-  painter.drawLine(event->rect().x(), mapY(-threshold),
-                   event->rect().x() + event->rect().width(), mapY(-threshold));
 
   for(int i = 0; i < tools.size(); i++) {
     tools[i]->paintEvent(event, painter);

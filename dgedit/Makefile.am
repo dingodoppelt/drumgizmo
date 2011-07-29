@@ -11,6 +11,7 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	canvas.cc \
 	canvastool.cc \
 	canvastoolselections.cc \
+	canvastoolthreshold.cc \
 	filelist.cc \
 	itemeditor.cc \
 	mainwindow.cc \
@@ -24,6 +25,7 @@ EXTRA_DIST = \
 	canvas.h \
 	canvastool.h \
 	canvastoolselections.h \
+	canvastoolthreshold.h \
 	filelist.h \
 	itemeditor.h \
 	mainwindow.h \

@@ -81,19 +81,12 @@ private:
   float xoffset;
   float yoffset;
 
-  float threshold;
-  bool threshold_is_moving;
-
   QColor colBg;
   QColor colSec;
   QColor colMax;
   QColor colHalf;
   QColor colWavMax;
   QColor colWavAvg;
-  QColor colThreshold;
-  QColor colThresholdMoving;
-
-
 
   QVector<CanvasTool*> tools;
 };
