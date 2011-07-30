@@ -30,6 +30,7 @@
 #include "canvastool.h"
 
 #include <QThread>
+#include <QTimer>
 
 #include <ao/ao.h>
 
@@ -59,10 +60,15 @@ public:
   bool mouseReleaseEvent(QMouseEvent *event);
   void paintEvent(QPaintEvent *event, QPainter &painter);
 
+public slots:
+  void update();
+
 private:
   Canvas *canvas;
 
   Player player;
+  QTimer timer;
+  size_t lastpos;
 };
 
 #endif/*__DRUMGIZMO_CANVASTOOLLISTEN_H__*/

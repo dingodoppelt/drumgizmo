@@ -26,7 +26,7 @@
  */
 #include "canvastoollisten.h"
 
-#define BUFSZ 1024
+#define BUFSZ 1024 * 2
 
 Player::Player(Canvas *c)
 {
@@ -65,12 +65,12 @@ void Player::run()
       }
 
       ao_play(dev, (char*)s, BUFSZ * sizeof(short));
-      canvas->update();
+      //      canvas->update();
 
       pos += BUFSZ;
 
     } else {
-      msleep(100);
+      msleep(22);
     }
   }
 }
@@ -78,20 +78,27 @@ void Player::run()
 CanvasToolListen::CanvasToolListen(Canvas *c)
   : player(c)
 {
+  lastpos = 0;
   canvas = c ;
   player.start();
+  QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
 bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 {
   player.pos = canvas->unmapX(event->x());
   player.playing = true;
+  canvas->update();
+  timer.start(50);
   return true;
 }
 
 bool CanvasToolListen::mouseReleaseEvent(QMouseEvent *event)
 {
   player.playing = false;
+  timer.stop();
+  lastpos = 0;
+  canvas->update();
   return true;
 }
 
@@ -104,4 +111,16 @@ void CanvasToolListen::paintEvent(QPaintEvent *event, QPainter &painter)
                      canvas->mapX(player.pos),
                      event->rect().y() + event->rect().height());
    }
+}
+
+void CanvasToolListen::update()
+{
+  size_t pos = player.pos;
+  size_t last = canvas->mapX(lastpos);
+  size_t x = canvas->mapX(player.pos);
+  QRect r(last, 0,
+          x - last + 2, canvas->height());
+  
+  canvas->update(r);
+  lastpos = pos;
 }
