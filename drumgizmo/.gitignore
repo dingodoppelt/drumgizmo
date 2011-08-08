@@ -1,0 +1,14 @@
+.deps
+Makefile.am.test
+*.o
+drumgizmo
+input/*/.deps/
+input/*/.libs/
+input/*/*.lo
+input/*/*.o
+input/*/*.la
+output/*/.deps/
+output/*/.libs/
+output/*/*.lo
+output/*/*.o
+output/*/*.la

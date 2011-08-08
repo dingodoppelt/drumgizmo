@@ -1,0 +1,5 @@
+.deps
+*.moc.cc
+*.o
+dgedit
+*_qrc.cpp
