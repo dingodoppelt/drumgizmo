@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midi.h
+ *            midimapparser.h
  *
- *  Wed Sep 15 15:43:53 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
+ *  Mon Aug  8 16:55:30 CEST 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,10 +24,29 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDI_H__
-#define __DRUMGIZMO_MIDI_H__
+#ifndef __DRUMGIZMO_MIDIMAPPARSER_H__
+#define __DRUMGIZMO_MIDIMAPPARSER_H__
 
-typedef unsigned int midi_note_t;
-typedef unsigned int midi_velocity_t;
+#include <stdio.h>
 
-#endif/*__DRUMGIZMO_MIDI_H__*/
+#include "saxparser.h"
+
+#include "midimapper.h"
+
+class MidiMapParser : public SAXParser {
+public:
+  MidiMapParser(std::string file);
+  ~MidiMapParser();
+
+  void startTag(std::string name, attr_t attr);
+
+  midimap_t midimap;
+
+protected:
+  int readData(char *data, size_t size);
+
+private:
+  FILE *fd;
+};
+
+#endif/*__DRUMGIZMO_MIDIMAPPARSER_H__*/

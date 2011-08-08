@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<midimap>
+	<map note="35" instr="kick"/>
+	<map note="36" instr="kick"/>
+
+	<map note="38" instr="snare"/>
+
+	<map note="43" instr="tom4"/>
+	<map note="45" instr="tom3"/>
+	<map note="47" instr="tom2"/>
+	<map note="48" instr="tom1"/>
+
+	<map note="46" instr="hihat"/>
+
+	<map note="51" instr="ride"/>
+	<map note="53" instr="ride-bell"/>
+
+	<map note="49" instr="crash-1"/>
+	<map note="57" instr="crash-2"/>
+
+	<map note="52" instr="china"/>
+
+	<map note="55" instr="splash"/>
+
+</midimap>

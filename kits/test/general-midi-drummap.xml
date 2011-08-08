@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<midimap>
+	<map note="35" instr="Bass Kick"/>
+	<map note="36" instr="Rock Kick"/>
+	<map note="37" instr="Side Kick"/>
+	<map note="38" instr="Acoustic Snare"/>
+	<map note="39" instr="Handclap"/>
+	<map note="40" instr="Electric Snare"/>
+	<map note="41" instr="Low Floor Tom"/>
+	<map note="42" instr="Closed Hi-Hat"/>
+	<map note="43" instr="High Floor Tom"/>
+	<map note="44" instr="Pedal Hi-Hat"/>
+	<map note="45" instr="Low Tom"/>
+	<map note="46" instr="Open Hi-Hat"/>
+	<map note="47" instr="Low Mid-Tom"/>
+	<map note="48" instr="High Mid-Tom"/>
+	<map note="49" instr="Crash Cymbal 1"/>
+	<map note="50" instr="High Tom"/>
+	<map note="51" instr="Ride Cymbal 1"/>
+	<map note="52" instr="Chinese Cymbal"/>
+	<map note="53" instr="Ride Bell"/>
+	<map note="54" instr="Tambourine"/>
+	<map note="55" instr="Splash Cymbal"/>
+	<map note="56" instr="Cowbell"/>
+	<map note="57" instr="Crash Cymbal 2"/>
+	<map note="58" instr="Vibraslap"/>
+	<map note="59" instr="Ride Cymbal 2"/>
+	<map note="60" instr="High Bongo"/>
+	<map note="61" instr="Low Bongo"/>
+	<map note="62" instr="Mute High Conga"/>
+	<map note="63" instr="Open High Conga"/>
+	<map note="64" instr="Low Conga"/>
+	<map note="65" instr="High Timbale"/>
+	<map note="66" instr="Low Timbale"/>
+	<map note="67" instr="High Agogo"/>
+	<map note="68" instr="Low Agogo"/>
+	<map note="69" instr="Cabasa"/>
+	<map note="70" instr="Maracas"/>
+	<map note="71" instr="Short Whistle"/>
+	<map note="72" instr="Long Whistle"/>
+	<map note="73" instr="Short Guiro"/>
+	<map note="74" instr="Long Guiro"/>
+	<map note="75" instr="Claves"/>
+	<map note="76" instr="High Woodblock"/>
+	<map note="77" instr="Low Woodblock"/>
+	<map note="78" instr="Mute Cuica"/>
+	<map note="79" instr="Open Cuica"/>
+	<map note="80" instr="Mute Triangle"/>
+	<map note="81" instr="Open Triangle"/>
+</midimap>

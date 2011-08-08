@@ -27,20 +27,18 @@
 #ifndef __DRUMGIZMO_MIDIMAPPER_H__
 #define __DRUMGIZMO_MIDIMAPPER_H__
 
-#include <jack/midiport.h>
-
-#include "drumkit.h"
-
 #include <map>
+#include <string>
+
+typedef std::map<int, std::string> midimap_t;
+typedef std::map<std::string, int> instrmap_t;
 
 class MidiMapper {
 public:
-  MidiMapper(DrumKit *drumkit);
+  int lookup(int note);
 
-  Sample *map(jack_midi_event_t event);
-
-private:
-  DrumKit *drumkit;
+  instrmap_t instrmap;
+  midimap_t midimap;
 };
 
 #endif/*__DRUMGIZMO_MIDIMAPPER_H__*/

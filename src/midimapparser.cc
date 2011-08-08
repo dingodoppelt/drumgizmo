@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            midimap.h
+ *            midimapparser.cc
  *
- *  Mon Jun 13 21:36:29 CEST 2011
+ *  Mon Aug  8 16:55:30 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,20 +24,46 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIMAP_H__
-#define __DRUMGIZMO_MIDIMAP_H__
+#include "midimapparser.h"
 
-#include <map>
-#include <string>
+MidiMapParser::MidiMapParser(std::string file)
+{
+  fd = fopen(file.c_str(), "r");
+}
 
-class MidiMap {
-public:
-  MidiMap();
-  bool load(std::string file);
-  int lookup(int note);
+MidiMapParser::~MidiMapParser()
+{
+  if(fd) fclose(fd);
+}
 
-private:
-  std::map<int, int> map;
-};
+void MidiMapParser::startTag(std::string name, attr_t attr)
+{
+  if(name == "map") {
+    if(attr.find("note") != attr.end() && attr.find("instr") != attr.end()) {
+      midimap[atoi(attr["note"].c_str())] = attr["instr"];
+    }
+  }
+}
 
-#endif/*__DRUMGIZMO_MIDIMAP_H__*/
+int MidiMapParser::readData(char *data, size_t size)
+{
+  if(!fd) return -1;
+  return fread(data, 1, size, fd);
+}
+
+#ifdef TEST_MIDIMAPPARSER
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
+
+TEST_BEGIN;
+
+// TODO: Put some testcode here (see test.h for usable macros).
+
+TEST_END;
+
+#endif/*TEST_MIDIMAPPARSER*/
