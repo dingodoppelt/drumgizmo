@@ -31,7 +31,8 @@
 
 #include <smf.h>
 
-#include "midimap.h"
+#include <midimapper.h>
+#include <midimapparser.h>
 
 #define NOTE_ON 0x90
 
@@ -55,7 +56,7 @@ private:
   smf_t *smf;
   smf_event_t *cur_event;
 
-  MidiMap mmap;
+  MidiMapper mmap;
 
   // Parameters
   std::string filename;
@@ -78,7 +79,13 @@ bool MidiFile::init(int instruments, char *inames[])
 {
   smf = smf_load(filename.c_str());
 
-  mmap.load(midimapfile);
+  MidiMapParser p(midimapfile);
+  if(p.parse()) return false;
+  mmap.midimap = p.midimap;
+
+  for(int i = 0; i < instruments; i++) {
+    mmap.instrmap[inames[i]] = i;
+  }
 
   return true;
 }
@@ -132,13 +139,16 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
         printf("evpos: %d, sec: %f, pos: %d, len: %d, max_time: %f\n",
                evpos, cur_event->time_seconds, pos, len, cur_max_time);
         */
-        evs[nevs].instrument = mmap.lookup(key);
-        evs[nevs].velocity = velocity / 127.0;
+        int i = mmap.lookup(key);
+        if(i != -1) {
+          evs[nevs].instrument = i;
+          evs[nevs].velocity = velocity / 127.0;
         
-        nevs++;
-        if(nevs > 999) {
-          printf("PANIC!\n");
-          break;
+          nevs++;
+          if(nevs > 999) {
+            printf("PANIC!\n");
+            break;
+          }
         }
       }
     }
