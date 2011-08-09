@@ -28,6 +28,7 @@
 #define __DRUMGIZMO_INPUT_LV2_H__
 
 #include <audioinputengine.h>
+#include <midimapper.h>
 
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
 
@@ -48,6 +49,8 @@ public:
   void post();
 
   LV2_Event_Buffer *eventPort;
+
+  MidiMapper mmap;
 };
 
 #endif/*__DRUMGIZMO_INPUT_LV2_H__*/

@@ -26,6 +26,8 @@
  */
 #include "input_lv2.h"
 
+#include <midimapparser.h>
+
 InputLV2::InputLV2()
 {
   eventPort = NULL;
@@ -37,6 +39,14 @@ InputLV2::~InputLV2()
 
 bool InputLV2::init(Instruments &instruments)
 {
+  MidiMapParser p("/home/deva/docs/c/drumgizmo/kits/test/midimap.xml");
+  if(p.parse()) {/*return false;*/}
+  mmap.midimap = p.midimap;
+
+  for(size_t i = 0; i < instruments.size(); i++) {
+    mmap.instrmap[instruments[i].name()] = i;
+  }
+
   return true;
 }
 
@@ -80,9 +90,10 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
     
     //printf("Event key:%d vel:%d\n", key, velocity);
     
-    if(velocity) {
+    int i = mmap.lookup(key);
+    if(velocity && i != -1) {
       list[listsize].type = TYPE_ONSET;
-      list[listsize].instrument = key;
+      list[listsize].instrument = i;
       list[listsize].velocity = velocity / 127.0;
       list[listsize].offset = ev->frames;
       listsize++;

@@ -11,6 +11,7 @@ lv2sources = \
 	$(top_srcdir)/src/events.cc \
 	$(top_srcdir)/src/instrument.cc \
 	$(top_srcdir)/src/instrumentparser.cc \
+	$(top_srcdir)/src/midimapparser.cc \
 	$(top_srcdir)/src/midimapper.cc \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/path.cc \
