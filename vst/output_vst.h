@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            path.cc
+ *            output_vst.h
  *
- *  Tue May  3 14:42:47 CEST 2011
+ *  Tue Sep 20 10:40:14 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,50 +24,31 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "path.h"
+#ifndef __DRUMGIZMO_OUTPUT_VST_H__
+#define __DRUMGIZMO_OUTPUT_VST_H__
 
-#ifndef WIN32
-#include <libgen.h>
-#endif
+#include <audiooutputengine.h>
 
-#include <string.h>
-#include <stdlib.h>
+class OutputVST : public AudioOutputEngine {
+public:
+  OutputVST();
+  ~OutputVST();
 
-std::string getPath(std::string file)
-{
-  std::string p;
-#ifndef WIN32
-  char *b = strdup(file.c_str());
-  p = dirname(b);
-  free(b);
-#else
-  char drive[_MAX_DRIVE];
-  char dir[_MAX_DIR];
-  _splitpath(file.c_str(), drive, dir, NULL, NULL);
-  p = std::string(drive) + dir;
-#endif
+  bool init(Channels channels);
 
-  return p;
-}
+  void setParm(std::string parm, std::string value);
 
-#ifdef TEST_PATH
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+  bool start();
+  void stop();
 
-TEST_BEGIN;
+  void pre(size_t nsamples);
+  void run(int ch, sample_t *samples, size_t nsamples);
+  void post(size_t nsamples);
 
-std::string a = "../dir/file";
-TEST_EQUAL_STR(getPath(a), "../dir", "relative path");
+  void setOutputs(float **outputs);
 
-std::string b = "/abs/path/file";
-TEST_EQUAL_STR(getPath(b), "/abs/path", "absolute path");
+private:
+  sample_t **outputs;
+};
 
-
-TEST_END;
-
-#endif/*TEST_PATH*/
+#endif/*__DRUMGIZMO_OUTPUT_VST_H__*/

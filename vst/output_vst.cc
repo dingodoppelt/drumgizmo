@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            path.cc
+ *            output_vst.cc
  *
- *  Tue May  3 14:42:47 CEST 2011
+ *  Tue Sep 20 10:40:14 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,50 +24,63 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "path.h"
-
-#ifndef WIN32
-#include <libgen.h>
-#endif
+#include "output_vst.h"
 
 #include <string.h>
-#include <stdlib.h>
 
-std::string getPath(std::string file)
+#include "constants.h"
+
+OutputVST::OutputVST()
 {
-  std::string p;
-#ifndef WIN32
-  char *b = strdup(file.c_str());
-  p = dirname(b);
-  free(b);
-#else
-  char drive[_MAX_DRIVE];
-  char dir[_MAX_DIR];
-  _splitpath(file.c_str(), drive, dir, NULL, NULL);
-  p = std::string(drive) + dir;
-#endif
-
-  return p;
+  outputs = NULL;
 }
 
-#ifdef TEST_PATH
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+OutputVST::~OutputVST()
+{
+}
 
-TEST_BEGIN;
+bool OutputVST::init(Channels channels)
+{
+  return true;
+}
 
-std::string a = "../dir/file";
-TEST_EQUAL_STR(getPath(a), "../dir", "relative path");
+void OutputVST::setParm(std::string parm, std::string value)
+{
+}
 
-std::string b = "/abs/path/file";
-TEST_EQUAL_STR(getPath(b), "/abs/path", "absolute path");
+bool OutputVST::start()
+{
+  return true;
+}
 
+void OutputVST::stop()
+{
+}
 
-TEST_END;
+void OutputVST::pre(size_t nsamples)
+{
+  if(!outputs) return;
 
-#endif/*TEST_PATH*/
+  for(size_t ch = 0; ch < NUM_OUTPUTS; ch++) {
+    memset(outputs[ch], 0, nsamples * sizeof(sample_t));
+  }
+}
+
+void OutputVST::run(int ch, sample_t *samples, size_t nsamples)
+{
+  if(!outputs) return;
+
+  if(ch < NUM_OUTPUTS) {
+    memcpy(outputs[ch], samples, nsamples * sizeof(sample_t));
+  }
+}
+
+void OutputVST::post(size_t nsamples)
+{
+  outputs = NULL;
+}
+
+void OutputVST::setOutputs(float **outputs)
+{
+  this->outputs = outputs;
+}

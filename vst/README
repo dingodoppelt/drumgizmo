@@ -1,0 +1,11 @@
+Get http://expat.sourceforge.net/ and http://www.mega-nerd.com/libsndfile/
+ in their win32 binary versions.
+Unpack them in the vst/ subfolders: expat and libsndfile.
+
+Get vstsdk2.4 and unpack it in the vstsdk2.4 subfolder.
+
+Use mingw and compile with 'make'.
+
+Copy libexpat.dll and libsndfile-1.dll to the system32 folder.
+
+Run the DAW with drumgizmo_vst.dll.

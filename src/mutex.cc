@@ -27,31 +27,61 @@
  */
 #include "mutex.h"
 
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
+struct mutex_private_t {
+#ifdef WIN32
+  HANDLE mutex; 
+#else
+  pthread_mutex_t mutex;
+#endif
+};
+
 Mutex::Mutex()
 {
-  pthread_mutex_init (&mutex, NULL);
+  prv = new struct mutex_private_t();
+#ifdef WIN32
+  prv->mutex = CreateMutex(NULL,  // default security attributes
+                           FALSE, // initially not owned
+                           NULL); // unnamed mutex
+#else
+  pthread_mutex_init (&prv->mutex, NULL);
+#endif
 }
 
 Mutex::~Mutex()
 {
-  pthread_mutex_destroy(&mutex);
-}
+#ifdef WIN32
+  CloseHandle(prv->mutex);
+#else
+  pthread_mutex_destroy(&prv->mutex);
+#endif
 
-bool Mutex::trylock()
-{
-  return pthread_mutex_trylock(&mutex) == 0;
+  if(prv) delete prv;
 }
 
 void Mutex::lock()
 {
-  pthread_mutex_lock(&mutex);
+#ifdef WIN32
+  WaitForSingleObject(prv->mutex, // handle to mutex
+                      INFINITE);  // no time-out interval
+#else
+  pthread_mutex_lock(&prv->mutex);
+#endif
 }
 
 void Mutex::unlock()
 {
-  pthread_mutex_unlock(&mutex);
+#ifdef WIN32
+  ReleaseMutex(prv->mutex);
+#else
+  pthread_mutex_unlock(&prv->mutex);
+#endif
 }
-
 
 MutexAutolock::MutexAutolock(Mutex &m)
   : mutex(m)

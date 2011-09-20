@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            path.cc
+ *            input_vst.h
  *
- *  Tue May  3 14:42:47 CEST 2011
+ *  Tue Sep 20 10:40:10 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,50 +24,37 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "path.h"
+#ifndef __DRUMGIZMO_INPUT_VST_H__
+#define __DRUMGIZMO_INPUT_VST_H__
 
-#ifndef WIN32
-#include <libgen.h>
-#endif
+#include <audioinputengine.h>
+#include <midimapper.h>
 
-#include <string.h>
-#include <stdlib.h>
+#include <public.sdk/source/vst2.x/audioeffectx.h>
 
-std::string getPath(std::string file)
-{
-  std::string p;
-#ifndef WIN32
-  char *b = strdup(file.c_str());
-  p = dirname(b);
-  free(b);
-#else
-  char drive[_MAX_DRIVE];
-  char dir[_MAX_DIR];
-  _splitpath(file.c_str(), drive, dir, NULL, NULL);
-  p = std::string(drive) + dir;
-#endif
+class InputVST : public AudioInputEngine {
+public:
+  InputVST();
+  ~InputVST();
 
-  return p;
-}
+  bool init(Instruments &instruments);
 
-#ifdef TEST_PATH
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+  void setParm(std::string parm, std::string value);
 
-TEST_BEGIN;
+  bool start();
+  void stop();
 
-std::string a = "../dir/file";
-TEST_EQUAL_STR(getPath(a), "../dir", "relative path");
+  void pre();
+  event_t *run(size_t pos, size_t len, size_t *nevents);
+  void post();
 
-std::string b = "/abs/path/file";
-TEST_EQUAL_STR(getPath(b), "/abs/path", "absolute path");
+  void processEvents(VstEvents* ev);
 
+  MidiMapper mmap;
 
-TEST_END;
+private:
+  event_t *list;
+  size_t listsize;
+};
 
-#endif/*TEST_PATH*/
+#endif/*__DRUMGIZMO_INPUT_VST_H__*/
