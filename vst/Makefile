@@ -29,7 +29,7 @@ EXPAT_BASE = expat
 EXPAT_FLAGS = -I${EXPAT_BASE}/Source/lib -L${EXPAT_BASE}/Bin -lexpat
 
 SNDFILE_BASE = libsndfile
-SNDFILE_FLAGS = -I${SNDFILE_BASE}\include -L${SNDFILE_BASE}/bin -lsndfile-1
+SNDFILE_FLAGS = -I${SNDFILE_BASE}\include -L${SNDFILE_BASE}/bin -lsndfile-1 -static
 
 SRC = \
 	drumgizmo_vst.cc \

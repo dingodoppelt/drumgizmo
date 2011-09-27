@@ -58,8 +58,8 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		setNumOutputs(NUM_OUTPUTS);
 		canProcessReplacing();
 		isSynth();
-    char id[] = "DGv1"; // Four bytes typecasted into an unsigned integer
-		setUniqueID((unsigned int)*id);
+    char id[] = "BLOP"; // Four bytes typecasted into an unsigned integer
+		setUniqueID(*(unsigned int*)id);
 	}
 
 	initProcess();
@@ -208,19 +208,19 @@ bool DrumGizmoVst::getProgramNameIndexed(VstInt32 category, VstInt32 index,
 
 bool DrumGizmoVst::getEffectName(char* name)
 {
-	vst_strncpy(name, "DrumGizmo", kVstMaxEffectNameLen);
+	vst_strncpy(name, "DrumGizmoSKU", kVstMaxEffectNameLen);
 	return true;
 }
 
 bool DrumGizmoVst::getVendorString(char* text)
 {
-	vst_strncpy(text, "Aasimon.org", kVstMaxVendorStrLen);
+	vst_strncpy(text, "Aasimon.org-yeah", kVstMaxVendorStrLen);
 	return true;
 }
 
 bool DrumGizmoVst::getProductString(char* text)
 {
-	vst_strncpy(text, "Vst Synth", kVstMaxProductStrLen);
+	vst_strncpy(text, "Vst Synthdims", kVstMaxProductStrLen);
 	return true;
 }
 
@@ -233,7 +233,7 @@ VstInt32 DrumGizmoVst::canDo(char* text)
 {
 	if(!strcmp(text, "receiveVstEvents")) return 1;
 	if(!strcmp(text, "receiveVstMidiEvent"))	return 1;
-	if(!strcmp(text, "midiProgramNames")) return 1;
+  //if(!strcmp(text, "midiProgramNames")) return 1;
 	return -1;	// explicitly can't do; 0 => don't know
 }
 
