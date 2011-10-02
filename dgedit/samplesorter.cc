@@ -45,7 +45,7 @@ SampleSorter::SampleSorter()
   attlen = 666; // Magical constants needs biblical proportions...
 
   cur_thr = -1;
-  threshold.push_back(100);
+  threshold.push_back(0.8);
   threshold_is_moving = false;
 }
 
@@ -94,7 +94,7 @@ Levels SampleSorter::levels()
   for(int i = 0; i < threshold.size(); i++) {
     for(int j = 0; j < threshold.size(); j++) {
       if(threshold[i] < threshold[j]) {
-        int tmp = threshold[i];
+        float tmp = threshold[i];
         threshold[i] = threshold[j];
         threshold[j] = tmp;
       }
@@ -108,13 +108,13 @@ Levels SampleSorter::levels()
     if(i == -1) lvl.velocity = 0;
     else lvl.velocity = threshold[i];
     
-    int next;
-    if(i == threshold.size() - 1) next = 127;
+    float next;
+    if(i == threshold.size() - 1) next = 1.0;
     else next = threshold[i+1];
 
     QMap<float, Selection>::iterator i = sorted.begin();
     while(i != sorted.end()) {
-      float val = (i.key()/max)*127.0;
+      float val = (i.key()/max);
       if(val >= lvl.velocity && val <= next) {
         lvl.selections[i.key()] = i.value();
       }
@@ -170,9 +170,9 @@ void SampleSorter::setActiveSelection(Selection s)
 
 #define MAP(p) (height()-(int)(p*((float)height()/(float)width())))
 
-#define unmapX(x) ((double)x/(double)(width()-1)*127.0)
+#define unmapX(x) ((double)x/(double)(width()-1))
 #define unmapY(x) x
-#define mapX(x) (((double)x/127.0)*(width()-1))
+#define mapX(x) (((double)x)*(width()-1))
 #define mapY(x) x
 
 
@@ -198,6 +198,16 @@ void SampleSorter::paintEvent(QPaintEvent *event)
   painter.setPen(colFg);
   painter.drawLine(0,height(),width(),0);
 
+  for(int i = 0; i < threshold.size(); i++) {
+    if(cur_thr == i) painter.setPen(colPtSel);
+    else painter.setPen(colPt);
+    painter.drawLine(mapX(threshold[i]), 0, mapX(threshold[i]), height());
+    char valstr[32];
+    sprintf(valstr, "%.3f", threshold[i]);
+    painter.setPen(colVel);
+    painter.drawText(mapX(threshold[i]), height(), valstr);
+  }
+
   if(sorted.isEmpty()) return;
 
   QMap<float, Selection>::iterator i = sorted.begin();
@@ -209,24 +219,14 @@ void SampleSorter::paintEvent(QPaintEvent *event)
     drawCircle(painter, x, MAP(x));
     i++;
   }
-
-  for(int i = 0; i < threshold.size(); i++) {
-    if(cur_thr == i) painter.setPen(colPtSel);
-    else painter.setPen(colPt);
-    painter.drawLine(mapX(threshold[i]), 0, mapX(threshold[i]), height());
-    char valstr[32];
-    sprintf(valstr, "%d", (int)threshold[i]);
-    painter.setPen(colVel);
-    painter.drawText(mapX(threshold[i]), height(), valstr);
-  }
 }
 
 void SampleSorter::mouseMoveEvent(QMouseEvent *event)
 {
   if(cur_thr != -1 && cur_thr < threshold.size()) {
     float val = unmapX(event->x());
-    if(val < 0) val = 0;
-    if(val > 127) val = 127;
+    if(val < 0.0) val = 0.0;
+    if(val > 1.0) val = 1.0;
     threshold[cur_thr] = fabs(val);
     update();
     return;
@@ -259,7 +259,7 @@ void SampleSorter::mousePressEvent(QMouseEvent *event)
     }
 
     // Make new selection
-    int from = unmapX(event->x());
+    float from = unmapX(event->x());
     threshold.push_back(from);
     cur_thr = threshold.size() - 1;
     threshold_is_moving = true;
@@ -272,7 +272,7 @@ void SampleSorter::mouseReleaseEvent(QMouseEvent *event)
 {
   if(event->button() == Qt::LeftButton) {
     if(threshold_is_moving) {
-      if(threshold[cur_thr] == 0 || threshold[cur_thr] == 127) {
+      if(threshold[cur_thr] == 0.0 || threshold[cur_thr] == 1.0) {
         threshold.remove(cur_thr);
       }
       threshold_is_moving = false;

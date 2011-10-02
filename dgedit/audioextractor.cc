@@ -190,9 +190,9 @@ void AudioExtractor::exportSelections(Selections selections,
 
     Levels::iterator nxt = k;
     nxt++;
-    int next;
-    if(nxt == levels.end()) next = 127;
-    else next = nxt->velocity - 1;
+    float next;
+    if(nxt == levels.end()) next = 1.0;
+    else next = nxt->velocity;
     
 
     QDomElement velocity = doc.createElement("velocity");

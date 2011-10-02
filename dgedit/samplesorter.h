@@ -33,7 +33,7 @@
 
 class Level {
 public:
-  int velocity;
+  float velocity;
   QMap<float, Selection> selections;
 };
 
@@ -74,7 +74,7 @@ private:
 
   Selection sel;
 
-  QVector<int> threshold;
+  QVector<double> threshold;
   bool threshold_is_moving;
   bool selection_is_moving_left;
   bool selection_is_moving_right;

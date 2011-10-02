@@ -184,6 +184,7 @@ void CanvasToolSelections::keyReleaseEvent(QKeyEvent *event)
 {
   if(active_selection && event->key() == Qt::Key_Delete) {
     _selections.remove(active_selection->from);
+    emit selectionsChanged(_selections);
     canvas->update();
   }
 }
