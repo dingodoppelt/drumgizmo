@@ -87,6 +87,9 @@ bool CanvasToolThreshold::mouseReleaseEvent(QMouseEvent *event)
       threshold_is_moving = false;
       canvas->setCursor(Qt::ArrowCursor);
       canvas->update();
+
+      emit thresholdChanged(threshold);
+
       return true;
     }
   }

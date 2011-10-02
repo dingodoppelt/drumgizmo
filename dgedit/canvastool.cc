@@ -26,6 +26,8 @@
  */
 #include "canvastool.h"
 
+#include <stdio.h>
+
 bool CanvasTool::mouseMoveEvent(QMouseEvent *)
 {
   return false;
@@ -55,6 +57,7 @@ void CanvasTool::keyReleaseEvent(QKeyEvent *)
 
 void CanvasTool::setActive(bool active)
 {
+  printf("setActive(%d)\n", active);
   _active = active;
   emit activateChanged(active);
 }

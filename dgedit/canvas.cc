@@ -34,10 +34,6 @@
 
 #include <math.h>
 
-#include "canvastoolselections.h"
-#include "canvastoolthreshold.h"
-#include "canvastoollisten.h"
-
 #define DEFYSCALE 200
 
 Canvas::Canvas(QWidget *parent)
@@ -67,10 +63,6 @@ Canvas::Canvas(QWidget *parent)
   setCursor(Qt::ArrowCursor);
   
   wav = QImage(width(), height(), QImage::Format_RGB32);
-
-  tools.push_back(new CanvasToolListen(this));
-  tools.push_back(new CanvasToolThreshold(this));
-  tools.push_back(new CanvasToolSelections(this));
 }
 
 Canvas::~Canvas()

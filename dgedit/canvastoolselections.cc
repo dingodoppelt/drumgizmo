@@ -27,6 +27,7 @@
 #include "canvastoolselections.h"
 
 #include <math.h>
+#include <stdio.h>
 
 #define mapX(x) canvas->mapX(x)
 #define mapY(x) canvas->mapY(x)
@@ -35,9 +36,11 @@
 
 CanvasToolSelections::CanvasToolSelections(Canvas *c)
 {
+  threshold = 0.5; // Default from CanvasToolThreshold
+
   canvas = c;
-  data = canvas->data;
-  size = canvas->size;
+  //  data = canvas->data;
+  //  size = canvas->size;
 
   selection_is_moving_left = false;
   selection_is_moving_right = false;
@@ -185,9 +188,16 @@ void CanvasToolSelections::keyReleaseEvent(QKeyEvent *event)
   }
 }
 
+void CanvasToolSelections::thresholdChanged(double t)
+{
+  threshold = t;
+}
+
 void CanvasToolSelections::autoCreateSelections()
 {
-  /*
+  float *data = canvas->data;
+  size_t size = canvas->size;
+
   for(size_t i = 0; i < size; i++) {
     if(fabs(data[i]) > fabs(threshold)) {
       int from = i;
@@ -224,7 +234,6 @@ void CanvasToolSelections::autoCreateSelections()
   }
   canvas->update();
   emit selectionsChanged(_selections);
-  */
 }
 
 void CanvasToolSelections::clearSelections()

@@ -36,10 +36,28 @@
 #include <QApplication>
 #include <QDockWidget>
 #include <QSettings>
+#include <QToolBar>
+#include <QAction>
+#include <QMenuBar>
+
+#include "canvastool.h"
+#include "canvastoolselections.h"
+#include "canvastoolthreshold.h"
+#include "canvastoollisten.h"
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
 #define PAGESTEP MAXVAL/10000
+
+static void addTool(QToolBar *toolbar, Canvas *canvas, CanvasTool *tool)
+{
+  QAction *action = new QAction(tool->name(), toolbar);
+  action->setCheckable(true);
+  toolbar->addAction(action);
+  tool->connect(action, SIGNAL(toggled(bool)), tool, SLOT(setActive(bool)));
+  tool->setActive(false);
+  canvas->tools.push_back(tool);
+}
 
 MainWindow::MainWindow()
 {
@@ -51,6 +69,21 @@ MainWindow::MainWindow()
 
   extractor = new AudioExtractor(this);
   canvas = new Canvas(this);
+
+  QToolBar *toolbar = addToolBar("Tools");
+  CanvasTool *listen = new CanvasToolListen(canvas);
+  addTool(toolbar, canvas, listen);
+  CanvasTool *threshold = new CanvasToolThreshold(canvas);
+  addTool(toolbar, canvas, threshold);
+  CanvasTool *selections = new CanvasToolSelections(canvas);
+  connect(threshold, SIGNAL(thresholdChanged(double)),
+          selections, SLOT(thresholdChanged(double)));
+  addTool(toolbar, canvas, selections);
+
+  QMenu *fileMenu = menuBar()->addMenu("&File");
+  QAction *act_quit = new QAction("&Quit", this);
+  fileMenu->addAction(act_quit);
+  connect(act_quit, SIGNAL(triggered()), this, SLOT(close()));
 
   QWidget *dock = new QWidget();
   yoffset = new QScrollBar(Qt::Vertical);
@@ -78,9 +111,9 @@ MainWindow::MainWindow()
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
   sorter = new SampleSorter();
-  connect(canvas, SIGNAL(selectionsChanged(Selections)),
+  connect(selections, SIGNAL(selectionsChanged(Selections)),
           sorter, SLOT(setSelections(Selections)));
-  connect(canvas, SIGNAL(activeSelectionChanged(Selection)),
+  connect(selections, SIGNAL(activeSelectionChanged(Selection)),
           sorter, SLOT(setActiveSelection(Selection)));
 
   lh->addWidget(canvas);
@@ -96,12 +129,12 @@ MainWindow::MainWindow()
 
   QPushButton *autosel = new QPushButton();
   autosel->setText("Auto");
-  connect(autosel, SIGNAL(clicked()), canvas, SLOT(clearSelections()));
-  connect(autosel, SIGNAL(clicked()), canvas, SLOT(autoCreateSelections()));
+  connect(autosel, SIGNAL(clicked()), selections, SLOT(clearSelections()));
+  connect(autosel, SIGNAL(clicked()), selections, SLOT(autoCreateSelections()));
 
   QPushButton *clearsel = new QPushButton();
   clearsel->setText("Clear");
-  connect(clearsel, SIGNAL(clicked()), canvas, SLOT(clearSelections()));
+  connect(clearsel, SIGNAL(clicked()), selections, SLOT(clearSelections()));
 
   QPushButton *exportsel = new QPushButton();
   exportsel->setText("Export");

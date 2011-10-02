@@ -56,6 +56,7 @@ Q_OBJECT
 public:
   CanvasToolListen(Canvas *canvas);
 
+  QString name() { return "Listen"; }
   bool mousePressEvent(QMouseEvent *event);
   bool mouseReleaseEvent(QMouseEvent *event);
   void paintEvent(QPaintEvent *event, QPainter &painter);

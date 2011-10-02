@@ -75,6 +75,9 @@ private:
 public:
   float *data;
   size_t size;
+
+  QVector<CanvasTool*> tools;
+
 private:
   float xscale;
   float yscale;
@@ -87,8 +90,6 @@ private:
   QColor colHalf;
   QColor colWavMax;
   QColor colWavAvg;
-
-  QVector<CanvasTool*> tools;
 };
 
 #endif/*__DRUMGIZMO_CANVAS_H__*/

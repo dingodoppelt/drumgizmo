@@ -86,6 +86,7 @@ CanvasToolListen::CanvasToolListen(Canvas *c)
 
 bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 {
+  if(!isActive()) return false;
   player.pos = canvas->unmapX(event->x());
   player.playing = true;
   canvas->update();
@@ -95,6 +96,7 @@ bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 
 bool CanvasToolListen::mouseReleaseEvent(QMouseEvent *event)
 {
+  if(!isActive()) return false;
   player.playing = false;
   timer.stop();
   lastpos = 0;
@@ -104,6 +106,8 @@ bool CanvasToolListen::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasToolListen::paintEvent(QPaintEvent *event, QPainter &painter)
 {
+  if(!isActive()) return;
+
   if(player.playing) {
     painter.setPen(QColor(0, 127, 127));
     painter.drawLine(canvas->mapX(player.pos),

@@ -32,10 +32,12 @@
 #include <QPaintEvent>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QString>
 
 class CanvasTool : public QObject {
 Q_OBJECT
 public:
+  virtual QString name() = 0;
   virtual bool mouseMoveEvent(QMouseEvent *event);
   virtual bool mousePressEvent(QMouseEvent *event);
   virtual bool mouseReleaseEvent(QMouseEvent *event);

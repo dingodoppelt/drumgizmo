@@ -40,6 +40,7 @@ Q_OBJECT
 public:
   CanvasToolSelections(Canvas *canvas);
 
+  QString name() { return "Selections"; }
   bool mouseMoveEvent(QMouseEvent *event);
   bool mousePressEvent(QMouseEvent *event);
   bool mouseReleaseEvent(QMouseEvent *event);
@@ -55,6 +56,7 @@ signals:
 public slots:
   void autoCreateSelections();
   void clearSelections();
+  void thresholdChanged(double threshold);
 
 private:
   bool selection_is_moving_left;
@@ -64,8 +66,7 @@ private:
 
   Canvas *canvas;
 
-  float *data;
-  size_t size;
+  double threshold;
 
   QColor colSelBg;
   QColor colSel;

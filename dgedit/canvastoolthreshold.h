@@ -38,10 +38,14 @@ Q_OBJECT
 public:
   CanvasToolThreshold(Canvas *canvas);
 
+  QString name() { return "Threshold"; }
   bool mouseMoveEvent(QMouseEvent *event);
   bool mousePressEvent(QMouseEvent *event);
   bool mouseReleaseEvent(QMouseEvent *event);
   void paintEvent(QPaintEvent *event, QPainter &painter);
+
+signals:
+  void thresholdChanged(double threshold);
 
 private:
   float threshold;
