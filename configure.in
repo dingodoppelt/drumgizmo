@@ -74,6 +74,10 @@ AC_ARG_ENABLE([input_jackmidi],
         [enable_input_jackmidi="yes"])
 if test "x$enable_input_jackmidi" = "xyes"; then
 	 have_input_jackmidi=yes 
+	 dnl ======================
+	 dnl Check for jack
+	 dnl ======================
+	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
 else
 	 AC_MSG_RESULT([*** input jackmidi plugin disabled per user request ***])
    have_input_jackmidi=no
@@ -85,7 +89,11 @@ AC_ARG_ENABLE([input_midifile],
 [  --disable-input-midifile   Disable input midifile plugin [default=enabled]],,
         [enable_input_midifile="yes"])
 if test "x$enable_input_midifile" = "xyes"; then
-	 have_input_midifile=yes 
+	 have_input_midifile=yes
+	 dnl ======================
+	 dnl Check for libsmf
+	 dnl ======================
+	 PKG_CHECK_MODULES(SMF, smf >= 1.2)
 else
 	 AC_MSG_RESULT([*** input midifile plugin disabled per user request ***])
    have_input_midifile=no
@@ -119,6 +127,10 @@ AC_ARG_ENABLE([output_alsa],
         [enable_output_alsa="yes"])
 if test "x$enable_output_alsa" = "xyes"; then
 	 have_output_alsa=yes 
+	 dnl ======================
+	 dnl Check for alsa library
+	 dnl ======================
+	 PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)
 else
 	 AC_MSG_RESULT([*** output alsa plugin disabled per user request ***])
    have_output_alsa=no
@@ -148,32 +160,17 @@ AC_SUBST([plugindir])
 
 INPUT_PLUGIN_DIR=${plugindir}/input
 OUTPUT_PLUGIN_DIR=${plugindir}/output
-LV2_PLUGIN_DIR=${plugindir}/lv2
+#LV2_PLUGIN_DIR=${plugindir}/lv2
 AC_SUBST([INPUT_PLUGIN_DIR])
 AC_SUBST([OUTPUT_PLUGIN_DIR])
-AC_SUBST([LV2_PLUGIN_DIR])
+#AC_SUBST([LV2_PLUGIN_DIR])
 
 AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/input",
   [Input plugin dir])
 AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/output",
   [Output plugin dir])
-AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
-  [LV2 plugin dir])
-
-dnl ======================
-dnl Check for libsmf
-dnl ======================
-PKG_CHECK_MODULES(SMF, smf >= 1.2)
-
-dnl ======================
-dnl Check for jack
-dnl ======================
-PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
-
-dnl ======================
-dnl Check for alsa library
-dnl ======================
-PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)
+#AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
+#  [LV2 plugin dir])
 
 dnl ======================
 dnl Check for sndfile
