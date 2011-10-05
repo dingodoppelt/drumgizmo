@@ -85,38 +85,12 @@ void DrumKitParser::startTag(std::string name,
       printf("Missing file in instrument tag.\n");
       return;
     }
-    Instrument i;
-    InstrumentParser parser(path + "/" + attr["file"], i);
-    parser.parse();
-    kit.instruments.push_back(i);//[attr["name"]] = i;
 
-    // Assign kit channel numbers to instruments channels.
-    std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
-    while(ic != parser.channellist.end()) {
-      InstrumentChannel *c = *ic;
-
-      for(size_t cnt = 0; cnt < kit.channels.size(); cnt++) {
-        if(kit.channels[cnt].name == c->name) c->num = kit.channels[cnt].num;
-      }
-      if(c->num == NO_CHANNEL) {
-        printf("Missing channel '%s' in instrument '%s'\n",
-               c->name.c_str(), i.name().c_str());
-      } else {
-        printf("Assigned channel '%s' to number %d in instrument '%s'\n",
-               c->name.c_str(), c->num, i.name().c_str());
-      }
-      ic++;
-    }
-
-    //instr = &kit.instruments[attr["name"]];
+    instr_name = attr["name"];
+    instr_file = attr["file"];
   }
-  /*
-  if(name == "channelmap") {
-    if(instr == NULL) {
-      printf("Missing instrument.\n");
-      return;
-    }
 
+  if(name == "channelmap") {
     if(attr.find("in") == attr.end()) {
       printf("Missing 'in' in channelmap tag.\n");
       return;
@@ -126,18 +100,45 @@ void DrumKitParser::startTag(std::string name,
       printf("Missing 'out' in channelmap tag.\n");
       return;
     }
-    instr->channelmap[attr["in"]] = attr["out"];
+
+    channelmap[attr["in"]] = attr["out"];
   }
-  */
 }
 
 void DrumKitParser::endTag(std::string name)
 {
-  /*
   if(name == "instrument") {
-    instr = NULL;
+    Instrument i;
+    InstrumentParser parser(path + "/" + instr_file, i);
+    parser.parse();
+    kit.instruments.push_back(i);//[attr["name"]] = i;
+
+    // Assign kit channel numbers to instruments channels.
+    std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
+    while(ic != parser.channellist.end()) {
+      InstrumentChannel *c = *ic;
+
+      std::string cname = c->name;
+      if(channelmap.find(cname) != channelmap.end()) cname = channelmap[cname];
+
+      for(size_t cnt = 0; cnt < kit.channels.size(); cnt++) {
+        if(kit.channels[cnt].name == cname) c->num = kit.channels[cnt].num;
+      }
+      if(c->num == NO_CHANNEL) {
+        printf("Missing channel '%s' in instrument '%s'\n",
+               c->name.c_str(), i.name().c_str());
+      } else {
+        /*
+          printf("Assigned channel '%s' to number %d in instrument '%s'\n",
+             c->name.c_str(), c->num, i.name().c_str());
+        */
+      }
+      ic++;
+    }
+
+    channelmap.clear();
+
   }
-  */
 }
 
 int DrumKitParser::readData(char *data, size_t size)

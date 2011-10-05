@@ -47,6 +47,10 @@ private:
   DrumKit &kit;
   //  Instrument *instr;
   std::string path;
+
+  std::map<std::string, std::string> channelmap;
+  std::string instr_file;
+  std::string instr_name;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/
