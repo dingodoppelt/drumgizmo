@@ -39,7 +39,7 @@ InputLV2::~InputLV2()
 
 bool InputLV2::init(Instruments &instruments)
 {
-  MidiMapParser p("/home/deva/docs/c/drumgizmo/kits/test/midimap.xml");
+  MidiMapParser p(getenv("DRUMGIZMO_MIDIMAP"));
   if(p.parse()) {/*return false;*/}
   mmap.midimap = p.midimap;
 
@@ -88,7 +88,7 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
     int key = data[1];
     int velocity = data[2];
     
-    //printf("Event key:%d vel:%d\n", key, velocity);
+    printf("Event key:%d vel:%d\n", key, velocity);
     
     int i = mmap.lookup(key);
     if(velocity && i != -1) {
