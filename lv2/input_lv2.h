@@ -30,7 +30,7 @@
 #include <audioinputengine.h>
 #include <midimapper.h>
 
-#include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
+#include "event-helpers.h"
 
 class InputLV2 : public AudioInputEngine {
 public:
