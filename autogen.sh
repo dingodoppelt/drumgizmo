@@ -51,6 +51,16 @@ if [ "$DIE" -eq 1 ]; then
         exit 1
 fi
 
+# Create testfiles
+TESTDIRS=src
+for d in $TESTDIRS
+do
+		if [ ! -f $d/Makefile.am.test ]
+		then
+				touch $d/Makefile.am.test
+		fi
+done
+
 aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
     aclocal $aclocalinclude; \
@@ -69,3 +79,11 @@ aclocalinclude="$ACLOCAL_FLAGS"; \
  echo "done.")
 
 rm -f config.cache
+
+for d in $TESTDIRS
+do
+		if [ -f $d/Makefile.am.test ]
+		then
+				rm $d/Makefile.am.test
+		fi
+done
