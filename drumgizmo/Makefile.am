@@ -1,3 +1,5 @@
+if ENABLE_CLI
+
 SUBDIRS = input output
 
 bin_PROGRAMS = drumgizmo
@@ -41,3 +43,5 @@ TEST_SCRIPT_DIR = $(top_srcdir)/tools
 include ${TEST_SCRIPT_DIR}/Makefile.am.test
 
 include Makefile.am.test
+
+endif

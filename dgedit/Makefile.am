@@ -1,3 +1,5 @@
+if HAVE_EDITOR
+
 bin_PROGRAMS = dgedit
 
 dgedit_LDADD = $(SNDFILE_LIBS) $(QT_LIBS) $(shell ../tools/MocList o ) -lao
@@ -55,3 +57,5 @@ CLEANFILES = $(BUILT_SOURCES)
 # command for creating .res file from .rc on Win32
 %.res: %.rc
 	rc $<
+
+endif

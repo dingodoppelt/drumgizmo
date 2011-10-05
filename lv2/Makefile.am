@@ -1,4 +1,13 @@
-lv2sources = \
+if ENABLE_LV2
+
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
+	 $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS)
+lv2plugindir = $(libdir)/lv2/drumgizmo.lv2
+lv2plugin_LTLIBRARIES = drumgizmo.la
+lv2plugin_DATA = manifest.ttl drumgizmo.ttl
+EXTRA_DIST = $(lv2plugin_DATA)
+
+drumgizmo_la_SOURCES = 
 	lv2.cc \
 	input_lv2.cc \
 	output_lv2.cc \
@@ -17,29 +26,13 @@ lv2sources = \
 	$(top_srcdir)/src/path.cc \
 	$(top_srcdir)/src/sample.cc \
 	$(top_srcdir)/src/saxparser.cc \
-	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/velocity.cc
+	lv2_event.h \
+	lv2-saverestore.h
 
-if WITH_LV2
+#	$(top_srcdir)/plugingui/gui.cc
 
-lv2ltlibs = liblv2.la
-lv2buildsources = $(lv2sources)
-
-else
-
-lv2ltlibs =
-lv2buildsources =
+drumgizmo_la_LDFLAGS = -module -avoid-version
+drumgizmo_la_LIBADD = $(SNDFILE_LIBS) $(EXPAT_LIBS)  $(LV2_LIBS) -lX11
 
 endif
-
-EXTRA_DIST = $(lv2sources)
-
-lib_LTLIBRARIES = $(lv2ltlibs)
-
-libdir = $(LV2_PLUGIN_DIR)
-
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
-	 $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS)
-liblv2_la_LDFLAGS = $(SNDFILE_LIBS) $(EXPAT_LIBS)  $(LV2_LIBS)
-liblv2_la_LIBADD =
-liblv2_la_SOURCES = $(lv2buildsources)

@@ -26,151 +26,198 @@ dnl ======================
 dnl Compile LV2 plugin
 dnl ======================
 AC_ARG_ENABLE([lv2],
-[  --with-lv2   Compile the LV2 plugin [default=yes]],,
-        [with_lv2="yes"])
-if test "x$with_lv2" = "xyes"; then
-	 with_lv2=yes 
+[  --enable-lv2   Compile the LV2 plugin [default=yes]],,
+        [enable_lv2="yes"])
+if test "x$enable_lv2" = "xyes"; then
+	 enable_lv2=yes 
    dnl ======================
    dnl Check for lv2core
    dnl ======================
    PKG_CHECK_MODULES(LV2, lv2core >= 4.1)
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
-   with_lv2=no
+   enable_lv2=no
 fi
-AM_CONDITIONAL([WITH_LV2], [test "x$with_lv2" = "xyes"])
+AM_CONDITIONAL([ENABLE_LV2], [test "x$enable_lv2" = "xyes"])
 
-dnl ***
-dnl *** Input plugins
-dnl ***
 
-dnl *** Dummy
-AC_ARG_ENABLE([input_dummy],
-[  --disable-input-dummy   Disable input dummy plugin [default=enabled]],,
-        [enable_input_dummy="yes"])
-if test "x$enable_input_dummy" = "xyes"; then
-	 have_input_dummy=yes 
+dnl ======================
+dnl Compile cli client
+dnl ======================
+AC_ARG_ENABLE([cli],
+[  --enable-cli   Compile the command line interface [default=yes]],,
+        [enable_cli="yes"])
+if test "x$enable_cli" = "xyes"; then
+	 enable_cli=yes 
+
+   dnl ======================
+   dnl Check for getopt
+   dnl ======================
+   AC_HAVE_HEADERS(getopt.h)
+   
+   dnl ***
+   dnl *** Input plugins
+   dnl ***
+   
+   dnl *** Dummy
+   AC_ARG_ENABLE([input_dummy],
+   [  --disable-input-dummy   Disable input dummy plugin [default=enabled]],,
+           [enable_input_dummy="yes"])
+   if test "x$enable_input_dummy" = "xyes"; then
+   	 have_input_dummy=yes 
+   else
+   	 AC_MSG_RESULT([*** input dummy plugin disabled per user request ***])
+      have_input_dummy=no
+   fi
+   
+   dnl *** Test
+   AC_ARG_ENABLE([input_test],
+   [  --disable-input-test   Disable input test plugin [default=enabled]],,
+           [enable_input_test="yes"])
+   if test "x$enable_input_test" = "xyes"; then
+   	 have_input_test=yes 
+   else
+   	 AC_MSG_RESULT([*** input test plugin disabled per user request ***])
+      have_input_test=no
+   fi
+   
+   dnl *** Jackmidi
+   AC_ARG_ENABLE([input_jackmidi],
+   [  --disable-input-jackmidi   Disable input jackmidi plugin [default=enabled]],,
+           [enable_input_jackmidi="yes"])
+   if test "x$enable_input_jackmidi" = "xyes"; then
+   	 have_input_jackmidi=yes 
+   	 dnl ======================
+   	 dnl Check for jack
+   	 dnl ======================
+   	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
+   else
+   	 AC_MSG_RESULT([*** input jackmidi plugin disabled per user request ***])
+      have_input_jackmidi=no
+   fi
+   
+   dnl *** Midifile
+   AC_ARG_ENABLE([input_midifile],
+   [  --disable-input-midifile   Disable input midifile plugin [default=enabled]],,
+           [enable_input_midifile="yes"])
+   if test "x$enable_input_midifile" = "xyes"; then
+   	 have_input_midifile=yes
+   	 dnl ======================
+   	 dnl Check for libsmf
+   	 dnl ======================
+   	 PKG_CHECK_MODULES(SMF, smf >= 1.2)
+   else
+   	 AC_MSG_RESULT([*** input midifile plugin disabled per user request ***])
+      have_input_midifile=no
+   fi   
+   
+   INPUT_PLUGINS="midifile jackmidi dummy test"
+   AC_SUBST(INPUT_PLUGINS)
+   
+   
+   dnl ***
+   dnl *** Output plugins
+   dnl ***
+   
+   dnl *** dummy
+   AC_ARG_ENABLE([output_dummy],
+   [  --disable-output-dummy   Disable output dummy plugin [default=enabled]],,
+           [enable_output_dummy="yes"])
+   if test "x$enable_output_dummy" = "xyes"; then
+   	 have_output_dummy=yes 
+   else
+   	 AC_MSG_RESULT([*** output dummy plugin disabled per user request ***])
+      have_output_dummy=no
+   fi
+   
+   dnl *** alsa
+   AC_ARG_ENABLE([output_alsa],
+   [  --disable-output-alsa   Disable output alsa plugin [default=enabled]],,
+           [enable_output_alsa="yes"])
+   if test "x$enable_output_alsa" = "xyes"; then
+   	 have_output_alsa=yes 
+   	 dnl ======================
+   	 dnl Check for alsa library
+   	 dnl ======================
+   	 PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)
+   else
+   	 AC_MSG_RESULT([*** output alsa plugin disabled per user request ***])
+      have_output_alsa=no
+   fi
+   
+   dnl *** wavfile
+   AC_ARG_ENABLE([output_wavfile],
+   [  --disable-output-wavfile   Disable output wavfile plugin [default=enabled]],,
+           [enable_output_wavfile="yes"])
+   if test "x$enable_output_wavfile" = "xyes"; then
+   	 have_output_wavfile=yes 
+   else
+   	 AC_MSG_RESULT([*** output wavfile plugin disabled per user request ***])
+      have_output_wavfile=no
+   fi
+   
+   OUTPUT_PLUGINS="dummy alsa wavfile"
+   AC_SUBST(OUTPUT_PLUGINS)
+   
+   dnl
+   dnl Setup plugin paths
+   dnl
+   plugindir=${libdir}/drumgizmo
+   AC_SUBST([plugindir])
+   
+   INPUT_PLUGIN_DIR=${plugindir}/input
+   OUTPUT_PLUGIN_DIR=${plugindir}/output
+   #LV2_PLUGIN_DIR=${plugindir}/lv2
+   AC_SUBST([INPUT_PLUGIN_DIR])
+   AC_SUBST([OUTPUT_PLUGIN_DIR])
+   #AC_SUBST([LV2_PLUGIN_DIR])
+   
+   AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/input",
+     [Input plugin dir])
+   AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/output",
+     [Output plugin dir])
+   #AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
+   #  [LV2 plugin dir])
 else
-	 AC_MSG_RESULT([*** input dummy plugin disabled per user request ***])
-   have_input_dummy=no
+	 AC_MSG_RESULT([*** Command line interface disabled per user request ***])
+   enable_cli=no
 fi
+AM_CONDITIONAL([ENABLE_CLI], [test "x$enable_cli" == "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_DUMMY], [test "x$have_input_dummy" = "xyes"])
-
-dnl *** Test
-AC_ARG_ENABLE([input_test],
-[  --disable-input-test   Disable input test plugin [default=enabled]],,
-        [enable_input_test="yes"])
-if test "x$enable_input_test" = "xyes"; then
-	 have_input_test=yes 
-else
-	 AC_MSG_RESULT([*** input test plugin disabled per user request ***])
-   have_input_test=no
-fi
 AM_CONDITIONAL([HAVE_INPUT_TEST], [test "x$have_input_test" = "xyes"])
-
-dnl *** Jackmidi
-AC_ARG_ENABLE([input_jackmidi],
-[  --disable-input-jackmidi   Disable input jackmidi plugin [default=enabled]],,
-        [enable_input_jackmidi="yes"])
-if test "x$enable_input_jackmidi" = "xyes"; then
-	 have_input_jackmidi=yes 
-	 dnl ======================
-	 dnl Check for jack
-	 dnl ======================
-	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
-else
-	 AC_MSG_RESULT([*** input jackmidi plugin disabled per user request ***])
-   have_input_jackmidi=no
-fi
 AM_CONDITIONAL([HAVE_INPUT_JACKMIDI], [test "x$have_input_jackmidi" = "xyes"])
-
-dnl *** Midifile
-AC_ARG_ENABLE([input_midifile],
-[  --disable-input-midifile   Disable input midifile plugin [default=enabled]],,
-        [enable_input_midifile="yes"])
-if test "x$enable_input_midifile" = "xyes"; then
-	 have_input_midifile=yes
-	 dnl ======================
-	 dnl Check for libsmf
-	 dnl ======================
-	 PKG_CHECK_MODULES(SMF, smf >= 1.2)
-else
-	 AC_MSG_RESULT([*** input midifile plugin disabled per user request ***])
-   have_input_midifile=no
-fi
 AM_CONDITIONAL([HAVE_INPUT_MIDIFILE], [test "x$have_input_midifile" = "xyes"])
-
-
-INPUT_PLUGINS="midifile jackmidi dummy test"
-AC_SUBST(INPUT_PLUGINS)
-
-
-dnl ***
-dnl *** Output plugins
-dnl ***
-
-dnl *** dummy
-AC_ARG_ENABLE([output_dummy],
-[  --disable-output-dummy   Disable output dummy plugin [default=enabled]],,
-        [enable_output_dummy="yes"])
-if test "x$enable_output_dummy" = "xyes"; then
-	 have_output_dummy=yes 
-else
-	 AC_MSG_RESULT([*** output dummy plugin disabled per user request ***])
-   have_output_dummy=no
-fi
 AM_CONDITIONAL([HAVE_OUTPUT_DUMMY], [test "x$have_output_dummy" = "xyes"])
-
-dnl *** alsa
-AC_ARG_ENABLE([output_alsa],
-[  --disable-output-alsa   Disable output alsa plugin [default=enabled]],,
-        [enable_output_alsa="yes"])
-if test "x$enable_output_alsa" = "xyes"; then
-	 have_output_alsa=yes 
-	 dnl ======================
-	 dnl Check for alsa library
-	 dnl ======================
-	 PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)
-else
-	 AC_MSG_RESULT([*** output alsa plugin disabled per user request ***])
-   have_output_alsa=no
-fi
 AM_CONDITIONAL([HAVE_OUTPUT_ALSA], [test "x$have_output_alsa" = "xyes"])
-
-dnl *** wavfile
-AC_ARG_ENABLE([output_wavfile],
-[  --disable-output-wavfile   Disable output wavfile plugin [default=enabled]],,
-        [enable_output_wavfile="yes"])
-if test "x$enable_output_wavfile" = "xyes"; then
-	 have_output_wavfile=yes 
-else
-	 AC_MSG_RESULT([*** output wavfile plugin disabled per user request ***])
-   have_output_wavfile=no
-fi
 AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
 
-OUTPUT_PLUGINS="dummy alsa wavfile"
-AC_SUBST(OUTPUT_PLUGINS)
 
-dnl
-dnl Setup plugin paths
-dnl
-plugindir=${libdir}/drumgizmo
-AC_SUBST([plugindir])
-
-INPUT_PLUGIN_DIR=${plugindir}/input
-OUTPUT_PLUGIN_DIR=${plugindir}/output
-#LV2_PLUGIN_DIR=${plugindir}/lv2
-AC_SUBST([INPUT_PLUGIN_DIR])
-AC_SUBST([OUTPUT_PLUGIN_DIR])
-#AC_SUBST([LV2_PLUGIN_DIR])
-
-AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/input",
-  [Input plugin dir])
-AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/output",
-  [Output plugin dir])
-#AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
-#  [LV2 plugin dir])
+AC_ARG_ENABLE([editor],
+[  --disable-editor       Disable Qt editor [default=enabled]],,
+        [enable_editor="yes"])
+if test "x$enable_editor" = "xyes"; then
+	 have_editor=yes 
+   dnl ======================
+   dnl Check for Qt
+   dnl ======================
+   PKG_CHECK_MODULES(QT, QtCore QtGui QtXml >= 4.5)
+   AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
+   AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
+   AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
+   if (test "$QT_MOC" = ""); then
+     AC_MSG_ERROR([QT4 moc is required.])
+   fi
+   if (test "$QT_RCC" = ""); then
+     AC_MSG_ERROR([QT4 rcc is required.])
+   fi
+   if (test "$QT_UIC" = ""); then
+     AC_MSG_ERROR([QT4 uic is required.])
+   fi
+else
+	 AC_MSG_RESULT([*** Qt Drumkit Editor disabled per user request ***])
+   have_editor=no
+fi
+AM_CONDITIONAL([HAVE_EDITOR], [test "x$have_editor" = "xyes"])
 
 dnl ======================
 dnl Check for sndfile
@@ -226,28 +273,6 @@ LDFLAGS="$tmp_LDFLAGS"
 LIBS="$tmp_LIBS"
 AC_SUBST(EXPAT_CFLAGS)
 AC_SUBST(EXPAT_LIBS)
-
-dnl ======================
-dnl Check for Qt
-dnl ======================
-PKG_CHECK_MODULES(QT, QtCore QtGui QtXml >= 4.5)
-AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
-AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
-AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
-if (test "$QT_MOC" = ""); then
-  AC_MSG_ERROR([QT4 moc is required.])
-fi
-if (test "$QT_RCC" = ""); then
-  AC_MSG_ERROR([QT4 rcc is required.])
-fi
-if (test "$QT_UIC" = ""); then
-  AC_MSG_ERROR([QT4 uic is required.])
-fi
-
-dnl ======================
-dnl Check for getopt
-dnl ======================
-AC_HAVE_HEADERS(getopt.h)
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
