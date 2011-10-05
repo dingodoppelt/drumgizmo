@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+#include <lv2.h>
 
 #include <stdlib.h>
 
@@ -93,7 +93,7 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
   dglv2->buffer_size = 0;
 
   dglv2->dg = new DrumGizmo(dglv2->out, dglv2->in);
-  dglv2->dg->loadkit("/home/deva/docs/c/drumgizmo/kits/test/test.xml");
+  dglv2->dg->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
   dglv2->dg->init(true);
 
   return (LV2_Handle)dglv2;
