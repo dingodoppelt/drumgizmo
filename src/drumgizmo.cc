@@ -102,13 +102,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   event_t *evs = ie->run(pos, nsamples, &nev);
 
   for(size_t e = 0; e < nev; e++) {
-    /*
-      printf("Event: type: %d\tinstrument: %d\tvelocity: %f\toffset: %d\n",
-      evs[e].type,
-      evs[e].instrument,
-      evs[e].velocity,
-      evs[e].offset);
-    */
     if(evs[e].type == TYPE_ONSET) {
       Instrument *i = NULL;
       int d = evs[e].instrument;
@@ -143,7 +136,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         if(af == NULL) {
           //printf("Missing AudioFile.\n");
         } else {
-          printf("Adding event %d.\n", evs[e].offset);
+          //printf("Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af);
           evt->offset = evs[e].offset + pos;
           activeevents[ch.num].push_back(evt);
@@ -212,7 +205,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
         af->load(); // Make sure it is loaded.
-        //        printf("playing: %s (%d)\n", af->filename.c_str(), sz);
+
         for(size_t n = 0; n < sz; n++) {
 
           if(evt->offset > (pos + n)) continue;
@@ -221,11 +214,12 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             removeevent = true;
             break;
           }
-
-          float gain = evt->gain;
-          gain *= 1.0 - ((float)evt->t / (float)af->size);
+          
+          //float gain = evt->gain;
+          //gain *= 1.0 - ((float)evt->t / (float)af->size);
           sample_t val = af->data[evt->t];
-          s[n] += val * gain;
+          s[n] += val;// * gain;
+          
           evt->t++;
         }
       }
