@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            instrument.h
+ *            configuration.h
  *
- *  Tue Jul 22 17:14:19 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat Oct  8 14:37:13 CEST 2011
+ *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,44 +24,17 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_INSTRUMENT_H__
-#define __DRUMGIZMO_INSTRUMENT_H__
+#ifndef __DRUMGIZMO_CONFIGURATION_H__
+#define __DRUMGIZMO_CONFIGURATION_H__
 
-#include <string>
-#include <vector>
+namespace Conf {
+  extern bool enable_velocity_modifier;
+  extern float velocity_modifier_falloff;
+  extern float velocity_modifier_weight;
 
-#include "rangemap.h"
-
-#include "sample.h"
-
-class InstrumentParser;
-class Instrument {
-  friend class InstrumentParser;
-public:
-  Instrument();
-
-  Sample *sample(level_t level, size_t pos);
-
-  std::string name();
-  std::string description();
-
-  //  std::map<std::string, std::string> channelmap;
-
-  std::vector<AudioFile*> audiofiles;
-
-private:
-  std::string _name;
-  std::string _description;
-  RangeMap<level_t, Sample*> samples;
-  void addSample(level_t a, level_t b, Sample *s);
-
-  std::vector<Sample*> samplelist;
-
-  size_t lastpos;
-  float mod;
+  extern bool enable_velocity_randomiser;
+  extern float velocity_randomiser_weight;
 };
 
-//typedef std::map< std::string, Instrument > Instruments;
-typedef std::vector< Instrument > Instruments;
 
-#endif/*__DRUMGIZMO_INSTRUMENT_H__*/
+#endif/*__DRUMGIZMO_CONFIGURATION_H__*/

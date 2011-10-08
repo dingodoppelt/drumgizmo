@@ -2,18 +2,21 @@ if ENABLE_LV2
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	 $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS)
-lv2plugindir = $(libdir)/lv2/drumgizmo.lv2
-lv2plugin_LTLIBRARIES = drumgizmo.la
-lv2plugin_DATA = manifest.ttl drumgizmo.ttl
+
+plugindir = $(libdir)/lv2/drumgizmo.lv2
+plugin_LTLIBRARIES = drumgizmo.la
+plugin_DATA = manifest.ttl drumgizmo.ttl
+
 EXTRA_DIST = $(lv2plugin_DATA)
 
-drumgizmo_la_SOURCES = 
+drumgizmo_la_SOURCES = \
 	lv2.cc \
 	input_lv2.cc \
 	output_lv2.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/channel.cc \
 	$(top_srcdir)/src/channelmixer.cc \
+	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/drumgizmo.cc \
 	$(top_srcdir)/src/drumkit.cc \
 	$(top_srcdir)/src/drumkitparser.cc \
@@ -27,12 +30,8 @@ drumgizmo_la_SOURCES =
 	$(top_srcdir)/src/sample.cc \
 	$(top_srcdir)/src/saxparser.cc \
 	$(top_srcdir)/src/velocity.cc
-	lv2_event.h \
-	lv2-saverestore.h
-
-#	$(top_srcdir)/plugingui/gui.cc
 
 drumgizmo_la_LDFLAGS = -module -avoid-version
-drumgizmo_la_LIBADD = $(SNDFILE_LIBS) $(EXPAT_LIBS)  $(LV2_LIBS) -lX11
+drumgizmo_la_LIBADD = $(SNDFILE_LIBS) $(EXPAT_LIBS) $(LV2_LIBS) -lX11
 
 endif

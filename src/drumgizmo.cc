@@ -122,7 +122,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         continue;
       }
       
-      Sample *s = i->sample(evs[e].velocity);
+      Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
       
       if(s == NULL) {
         printf("Missing Sample.\n");

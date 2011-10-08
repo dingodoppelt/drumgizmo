@@ -30,17 +30,40 @@
 #include <stdio.h>
 
 #include "sample.h"
+#include "configuration.h"
 
 Instrument::Instrument()
 {
+  mod = 1.0;
+  lastpos = 0;
 }
 
-Sample *Instrument::sample(level_t level)
+Sample *Instrument::sample(level_t level, size_t pos)
 {
+  if(Conf::enable_velocity_randomiser) {
+    float r = (float)rand() / (float)RAND_MAX; // random number: [0;1]
+    r -= 0.5; // random number [-0.5;0.5]
+    r *= Conf::velocity_randomiser_weight * 2; // ex. random number [-0.1;0.1]
+    level += r;
+    if(level > 1.0) level = 1.0;
+    if(level < 0.0) level = 0.0;
+  }
+
+  if(Conf::enable_velocity_modifier) {
+    mod += (pos - lastpos) / (44100.0 * Conf::velocity_modifier_falloff);
+    if(mod > 1.0) mod = 1.0;
+  }
+
   //  printf("Find level %f\n", level);
-  std::vector<Sample*> s = samples.get(level);
+  std::vector<Sample*> s = samples.get(level * mod);
   if(s.size() == 0) return NULL;
   size_t idx = rand()%(s.size());
+
+  if(Conf::enable_velocity_modifier) {
+    lastpos = pos;
+    mod *= Conf::velocity_modifier_weight;
+  }
+
   return s[idx];
 }
 

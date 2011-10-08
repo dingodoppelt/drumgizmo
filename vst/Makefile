@@ -10,6 +10,7 @@ DG_SRC = \
 	${DG_BASE}/src/audiofile.cc \
 	${DG_BASE}/src/channel.cc \
 	${DG_BASE}/src/channelmixer.cc \
+	${DG_BASE}/src/configuration.cc \
 	${DG_BASE}/src/drumgizmo.cc \
 	${DG_BASE}/src/drumkit.cc \
 	${DG_BASE}/src/drumkitparser.cc \

@@ -15,6 +15,7 @@ drumgizmo_SOURCES = \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/channel.cc \
 	$(top_srcdir)/src/channelmixer.cc \
+	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/drumgizmo.cc \
 	$(top_srcdir)/src/drumkit.cc \
 	$(top_srcdir)/src/drumkitparser.cc \
