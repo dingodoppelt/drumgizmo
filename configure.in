@@ -40,6 +40,37 @@ else
 fi
 AM_CONDITIONAL([ENABLE_LV2], [test "x$enable_lv2" = "xyes"])
 
+#dnl ======================
+#dnl Compile VST plugin
+#dnl ======================
+#AC_ARG_ENABLE([vst],
+#[  --enable-vst   Compile the VST plugin [default=yes]],,
+#        [enable_vst="yes"])
+#if test "x$enable_vst" = "xyes"; then
+#	 enable_vst=yes 
+#   dnl ======================
+#   dnl Check for vstcore
+#   dnl ======================
+#   PKG_CHECK_MODULES(VST, vstcore >= 4.1)
+#else
+#	 AC_MSG_RESULT([*** VST plugin will not be compiled ***])
+#   enable_vst=no
+#fi
+#AM_CONDITIONAL([ENABLE_VST], [test "x$enable_vst" = "xyes"])
+
+dnl ======================
+dnl Compile AU plugin
+dnl ======================
+#AC_ARG_ENABLE([au],
+#[  --enable-au   Compile the audio units plugin [default=no]],,
+#        [enable_au="no"])
+#if test "x$enable_au" = "xyes"; then
+#	 enable_au=yes 
+#else
+#	 AC_MSG_RESULT([*** Audio Units plugin will not be compiled ***])
+#   enable_au=no
+#fi
+#AM_CONDITIONAL([ENABLE_AU], [test "x$enable_au" = "xyes"])
 
 dnl ======================
 dnl Compile cli client
@@ -162,22 +193,18 @@ if test "x$enable_cli" = "xyes"; then
    dnl
    dnl Setup plugin paths
    dnl
-   plugindir=${libdir}/drumgizmo
-   AC_SUBST([plugindir])
+   dgplugindir=${libdir}/drumgizmo
+   AC_SUBST([dgplugindir])
    
-   INPUT_PLUGIN_DIR=${plugindir}/input
-   OUTPUT_PLUGIN_DIR=${plugindir}/output
-   #LV2_PLUGIN_DIR=${plugindir}/lv2
+   INPUT_PLUGIN_DIR=${dgplugindir}/input
+   OUTPUT_PLUGIN_DIR=${dfplugindir}/output
    AC_SUBST([INPUT_PLUGIN_DIR])
    AC_SUBST([OUTPUT_PLUGIN_DIR])
-   #AC_SUBST([LV2_PLUGIN_DIR])
    
    AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/input",
      [Input plugin dir])
    AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${prefix}/lib/drumgizmo/output",
      [Output plugin dir])
-   #AC_DEFINE_UNQUOTED(LV2_PLUGIN_DIR, "${prefix}/lib/drumgizmo/lv2",
-   #  [LV2 plugin dir])
 else
 	 AC_MSG_RESULT([*** Command line interface disabled per user request ***])
    enable_cli=no
@@ -279,10 +306,16 @@ AC_SUBST(CPPFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
 
+#	au/Makefile
+
 AC_OUTPUT(
 	Makefile
+	tools/Makefile
 	src/Makefile
+	vst/Makefile
 	lv2/Makefile
+	plugingui/Makefile
+	include/Makefile
 	drumgizmo/Makefile
 	drumgizmo/input/Makefile
 	drumgizmo/input/dummy/Makefile
