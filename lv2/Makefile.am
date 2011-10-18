@@ -7,7 +7,12 @@ plugindir = $(libdir)/lv2/drumgizmo.lv2
 plugin_LTLIBRARIES = drumgizmo.la
 plugin_DATA = manifest.ttl drumgizmo.ttl
 
-EXTRA_DIST = $(lv2plugin_DATA)
+EXTRA_DIST = \
+	$(plugin_DATA) \
+	input_lv2.h \
+	output_lv2.h \
+	lv2_event.h \
+	event-helpers.h
 
 drumgizmo_la_SOURCES = \
 	lv2.cc \

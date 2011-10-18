@@ -1,3 +1,5 @@
+DISTDIRS = input output
+
 if ENABLE_CLI
 
 SUBDIRS = input output

@@ -27,14 +27,15 @@ EXTRA_DIST = \
 	audioextractor.h \
 	canvas.h \
 	canvastool.h \
-	canvastoollisten.cc \
+	canvastoollisten.h \
 	canvastoolselections.h \
 	canvastoolthreshold.h \
 	filelist.h \
 	itemeditor.h \
 	mainwindow.h \
 	mipmap.h \
-	samplesorter.h
+	samplesorter.h \
+	selection.h
 
 dgedit_MOC = $(shell ../tools/MocList cc )
 
