@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "event.h"
+#include "lv2_event.h"
 
 /** @file
  * Helper functions for the LV2 Event extension
