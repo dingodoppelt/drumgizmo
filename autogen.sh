@@ -52,7 +52,7 @@ if [ "$DIE" -eq 1 ]; then
 fi
 
 # Create testfiles
-TESTDIRS=src plugingui
+TESTDIRS="src plugingui drumgizmo"
 for d in $TESTDIRS
 do
 		if [ ! -f $d/Makefile.am.test ]
