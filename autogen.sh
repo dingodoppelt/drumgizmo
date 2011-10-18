@@ -52,7 +52,7 @@ if [ "$DIE" -eq 1 ]; then
 fi
 
 # Create testfiles
-TESTDIRS=src
+TESTDIRS=src plugingui
 for d in $TESTDIRS
 do
 		if [ ! -f $d/Makefile.am.test ]
