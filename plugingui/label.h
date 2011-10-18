@@ -26,4 +26,20 @@
  */
 #ifndef __DRUMGIZMO_LABEL_H__
 #define __DRUMGIZMO_LABEL_H__
+
+#include "widget.h"
+
+class Label : public Widget {
+public:
+  Label(GlobalContext *gctx, Widget *parent);
+
+  void setText(std::string text);
+
+protected:
+  virtual void repaint(RepaintEvent *e);
+
+private:
+  std::string _text;
+};
+
 #endif/*__DRUMGIZMO_LABEL_H__*/

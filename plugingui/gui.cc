@@ -32,28 +32,40 @@
 
 #include "button.h"
 #include "lineedit.h"
+#include "label.h"
+#include "led.h"
 
 GUI::GUI()
 {
   gctx = new GlobalContext();
   eventhandler = new EventHandler(gctx);
   window = new _Window(gctx);
-  window->setSize(450, 40);
+  window->setSize(450 + 70, 40 + 40);
+
+  Label *lbl = new Label(gctx, window);
+  lbl->setText("Drumkit:");
+  lbl->move(10, 10);
+  lbl->setSize(70, 20);
 
   LineEdit *l = new LineEdit(gctx, window);
   l->setText("");
-  l->move(10, 10);
+  l->move(10 + 70, 10);
   l->setSize(210, 20);
 
   Button *b1 = new Button(gctx, window);
   b1->setText("OK");
-  b1->move(230, 10);
+  b1->move(230 + 70, 10);
   b1->setSize(100, 20);
 
   Button *b2 = new Button(gctx, window);
   b2->setText("Cancel");
-  b2->move(340, 10);
+  b2->move(340 + 70, 10);
   b2->setSize(100, 20);
+
+  LED *led = new LED(gctx, window);
+  led->move(10,30);
+  led->setSize(14, 14);
+  led->setState(false);
 }
 
 GUI::~GUI()

@@ -87,7 +87,48 @@ Widget::Widget(GlobalContext *gctx, Widget *parent)
     XNextEvent(gctx->display, &e);
     if(e.type == MapNotify) break;
   }
-#endif
+#endif/*X11*/
+
+#ifdef WIN32
+	WNDCLASSEX wcex;
+	WNDID wndId;
+
+	wctx->m_hwnd = 0;
+	wctx->m_className = NULL;
+
+	memset(&wcex, 0, sizeof(wcex));
+
+	/*
+	Time to register a window class. Generic flags and everything. cbWndExtra is the
+	size of a pointer to an object - we need this in the wndproc handler.
+	*/
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = class_style;
+	wcex.lpfnWndProc = (WNDPROC) data;
+	wcex.cbWndExtra = sizeof(CWindow *);
+	wcex.hInstance = GetModuleHandle(NULL);
+
+  //	if(ex_style && WS_EX_TRANSPARENT == WS_EX_TRANSPARENT) {
+  //		wcex.hbrBackground = NULL;
+  //	} else {
+  wcex.hbrBackground = (HBRUSH) COLOR_BACKGROUND + 1;
+  //	}
+	
+	wcex.lpszClassName = wctx->m_className = strdup(className);
+
+	RegisterClassEx(&wcex);
+
+	if(parent) {
+		style = style | WS_CHILD;
+		wndId = parent->getWndId();
+	} else {
+		style = style | WS_OVERLAPPEDWINDOW;
+		wndId = 0;
+	}
+
+	wctx->m_hwnd = CreateWindowEx(ex_style, wctx->m_className, "DGBasisWidget", style, x, y, w, h,
+		wndId, NULL, GetModuleHandle(NULL), NULL);
+#endif/*WIN32*/
 }
 
 Widget::~Widget()

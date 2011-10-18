@@ -9,6 +9,7 @@ plugingui_SOURCES = \
 	globalcontext.cc \
 	gui.cc \
 	colour.cc \
+	led.cc \
 	window.cc \
 	widget.cc \
 	lineedit.cc \
@@ -24,6 +25,7 @@ EXTRA_DIST = \
 	globalcontext.h \
 	gui.h \
 	colour.h \
+	led.h \
 	window.h \
 	widget.h \
 	lineedit.h \

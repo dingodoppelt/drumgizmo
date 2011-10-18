@@ -60,11 +60,11 @@ void Button::repaint(RepaintEvent *e)
   p.drawRectangle(0,0,width()-1,height()-1);
 
   p.setColour(Colour(0.8));
-  if(state == down) {
+  if(state == up) {
     p.drawLine(1,1,1,height());
     p.drawLine(1,1,width(),1);
   }
-  if(state == up) {
+  if(state == down) {
     p.drawLine(width()-2,0, width()-2,height()-2);
     p.drawLine(width()-2,height()-2,0, height()-2);
   }

@@ -87,6 +87,31 @@ void Painter::drawText(int x, int y, std::string text)
 #endif/*X11*/
 }
 
+void Painter::drawPoint(int x, int y)
+{
+#ifdef X11
+  XDrawPoint(gctx->display, wctx->window, wctx->gc, x, y);
+#endif/*X11*/
+}
+
+void Painter::drawCircle(int x, int y, int r)
+{
+#ifdef X11
+  XDrawArc(gctx->display, wctx->window, wctx->gc, x, y, r, r, 0, 360 * 64);
+#endif/*X11*/
+}
+
+void Painter::drawFilledCircle(int x, int y, int r)
+{
+#ifdef X11
+  r *= 2;
+  for(int s = 1; s < r; s++)
+    XDrawArc(gctx->display, wctx->window, wctx->gc,
+             x - s / 2, y - s / 2, s, s,
+             0, 360 * 64);
+#endif/*X11*/
+}
+
 void Painter::flush()
 {
 #ifdef X11

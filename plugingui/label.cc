@@ -26,6 +26,27 @@
  */
 #include "label.h"
 
+#include "painter.h"
+
+Label::Label(GlobalContext *gctx, Widget *parent)
+  : Widget(gctx, parent)
+{
+}
+
+void Label::setText(std::string text)
+{
+  _text = text;
+  repaint(NULL);
+}
+
+void Label::repaint(RepaintEvent *e)
+{
+  Painter p(gctx, wctx);
+  p.setColour(Colour(1));
+  p.drawText(10, height() / 2 + 4, _text);
+}
+
+
 #ifdef TEST_LABEL
 //Additional dependency files
 //deps:

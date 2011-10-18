@@ -47,6 +47,9 @@ public:
   void drawText(int x, int y, std::string text);
   void drawRectangle(int x1, int y1, int x2, int y2);
   void drawFilledRectangle(int x1, int y1, int x2, int y2);
+  void drawPoint(int x, int y);
+  void drawCircle(int x, int y, int r);
+  void drawFilledCircle(int x, int y, int r);
 
 private:
   GlobalContext *gctx;

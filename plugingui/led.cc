@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            globalcontext.h
+ *            led.cc
  *
- *  Sun Oct  9 19:16:47 CEST 2011
+ *  Sat Oct 15 19:12:33 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,32 +24,55 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_GLOBALCONTEXT_H__
-#define __DRUMGIZMO_GLOBALCONTEXT_H__
+#include "led.h"
 
-#ifdef X11
-#include <X11/Xlib.h>
-#endif/*X11*/
+#include "painter.h"
 
-#ifdef WIN32
-#include <windows.h>
-#endif/*WIN32*/
+LED::LED(GlobalContext *gctx, Widget *parent)
+  : Widget(gctx, parent)
+{
+  state = true;
+}
 
-#include <map>
+void LED::setState(bool state)
+{
+  if(this->state != state) {
+    this->state = state;
+    repaint(NULL);
+  }
+}
 
-class Widget;
+void LED::repaint(RepaintEvent *e)
+{
+  size_t h = height() - 1;
+  size_t w = width() - 1;
 
-class GlobalContext {
-public:
-  GlobalContext();
-  ~GlobalContext();
+  Painter p(gctx, wctx);
+  
+  if(state) p.setColour(Colour(0,1,0));
+  else p.setColour(Colour(1,0,0));
 
-  Widget *keyboardFocus;
+  size_t size = w / 2;
+  if(h / 2 < size) size = h / 2;
+  p.drawFilledCircle(w/2, h/2, size);
 
-#ifdef X11
-  Display *display;
-  std::map<Window, Widget*> widgets;
-#endif/*X11*/
-};
+  p.setColour(Colour(1));
+  p.drawFilledCircle(w/3, h/3, size / 6);
+}
 
-#endif/*__DRUMGIZMO_GLOBALCONTEXT_H__*/
+#ifdef TEST_LED
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
+
+TEST_BEGIN;
+
+// TODO: Put some testcode here (see test.h for usable macros).
+
+TEST_END;
+
+#endif/*TEST_LED*/
