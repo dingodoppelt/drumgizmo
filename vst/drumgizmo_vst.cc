@@ -58,7 +58,7 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		setNumOutputs(NUM_OUTPUTS);
 		canProcessReplacing();
 		isSynth();
-    char id[] = "BLOP"; // Four bytes typecasted into an unsigned integer
+    char id[] = "DGV1"; // Four bytes typecasted into an unsigned integer
 		setUniqueID(*(unsigned int*)id);
 	}
 
@@ -208,19 +208,19 @@ bool DrumGizmoVst::getProgramNameIndexed(VstInt32 category, VstInt32 index,
 
 bool DrumGizmoVst::getEffectName(char* name)
 {
-	vst_strncpy(name, "DrumGizmoSKU", kVstMaxEffectNameLen);
+	vst_strncpy(name, "DrumGizmo", kVstMaxEffectNameLen);
 	return true;
 }
 
 bool DrumGizmoVst::getVendorString(char* text)
 {
-	vst_strncpy(text, "Aasimon.org-yeah", kVstMaxVendorStrLen);
+	vst_strncpy(text, "Aasimon.org", kVstMaxVendorStrLen);
 	return true;
 }
 
 bool DrumGizmoVst::getProductString(char* text)
 {
-	vst_strncpy(text, "Vst Synthdims", kVstMaxProductStrLen);
+	vst_strncpy(text, "Vst Synth", kVstMaxProductStrLen);
 	return true;
 }
 
