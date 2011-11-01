@@ -31,6 +31,8 @@
 #include "painter.h"
 #include "globalcontext.h"
 
+using namespace DGGUI;
+
 #define BORDER 10
 
 LineEdit::LineEdit(GlobalContext *gctx, Widget *parent)
@@ -77,7 +79,9 @@ void LineEdit::key(KeyEvent *e)
       }
 
     } else if(e->keycode >= 10 && e->keycode <= 61) {
-      _text += e->text;
+      std::string pre = _text.substr(0, pos);
+      std::string post = _text.substr(pos, std::string::npos);
+      _text = pre + e->text + post;
       pos++;
     }
 
