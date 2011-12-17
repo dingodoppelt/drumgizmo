@@ -1,6 +1,3 @@
-ARCH=-DWIN32 
-DLL=dll
-
 VST_BASE = vstsdk2.4
 VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
 VST_SRC = \
@@ -8,12 +5,12 @@ VST_SRC = \
 	${VST_SRC_BASE}/audioeffect.cpp \
 	${VST_SRC_BASE}/vstplugmain.cpp
 
-DG_BASE = ../
+DG_BASE = ..
 DG_SRC = \
 	${DG_BASE}/src/audiofile.cc \
+	${DG_BASE}/src/configuration.cc \
 	${DG_BASE}/src/channel.cc \
 	${DG_BASE}/src/channelmixer.cc \
-	${DG_BASE}/src/configuration.cc \
 	${DG_BASE}/src/drumgizmo.cc \
 	${DG_BASE}/src/drumkit.cc \
 	${DG_BASE}/src/drumkitparser.cc \
@@ -29,11 +26,36 @@ DG_SRC = \
 	${DG_BASE}/src/velocity.cc
 DG_FLAGS = -I../include -I../src
 
-EXPAT_BASE = expat
-EXPAT_FLAGS = -I${EXPAT_BASE}/Source/lib -L${EXPAT_BASE}/Bin -lexpat
+GUI_SRC = \
+	$(DG_BASE)/plugingui/plugingui.cc \
+	$(DG_BASE)/plugingui/globalcontext.cc \
+	$(DG_BASE)/plugingui/label.cc \
+	$(DG_BASE)/plugingui/eventhandler.cc \
+	$(DG_BASE)/plugingui/font.cc \
+	$(DG_BASE)/plugingui/window.cc \
+	$(DG_BASE)/plugingui/widget.cc \
+	$(DG_BASE)/plugingui/colour.cc \
+	$(DG_BASE)/plugingui/painter.cc \
+	$(DG_BASE)/plugingui/button.cc \
+	$(DG_BASE)/plugingui/pixelbuffer.cc \
+	$(DG_BASE)/plugingui/filelineedit.cc \
+	$(DG_BASE)/plugingui/lineedit.cc \
+	$(DG_BASE)/plugingui/led.cc \
+	$(DG_BASE)/plugingui/checkbox.cc \
+	$(DG_BASE)/plugingui/slider.cc
 
-SNDFILE_BASE = libsndfile
-SNDFILE_FLAGS = -I${SNDFILE_BASE}\include -L${SNDFILE_BASE}/bin -lsndfile-1 -static
+GUI_FLAGS=-lgdi32 -I../plugingui
+
+#
+# http://old.nabble.com/using-VC%2B%2B-.lib-with-mingw-td23151303.html
+# Given `-lfoo', the win32 build of GNU ld will search for libfoo.a and foo.lib
+#
+
+EXPAT_BASE=c:/expat
+EXPAT_FLAGS=-I${EXPAT_BASE}/Source/lib -L${EXPAT_BASE}/Bin -llibexpat
+
+SNDFILE_BASE=c:/libsndfile
+SNDFILE_FLAGS=-I${SNDFILE_BASE}/include -L${SNDFILE_BASE}/lib -llibsndfile-1
 
 SRC = \
 	drumgizmo_vst.cc \
@@ -41,7 +63,23 @@ SRC = \
 	output_vst.cc
 
 all:
-	g++ -g -Wall ${ARCH} ${DG_FLAGS} ${EXPAT_FLAGS} ${SNDFILE_FLAGS} -I${VST_BASE} ${DG_SRC} ${VST_SRC} ${SRC} -shared -o drumgizmo_vst.${DLL} -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ -g -Wall -DWIN32 ${DG_FLAGS} -I${VST_BASE} ${DG_SRC} ${VST_SRC} ${SRC} ${GUI_SRC} ${GUI_FLAGS} ${EXPAT_FLAGS} ${SNDFILE_FLAGS} -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
 
 clean:
 	rm -f drumgizmo_vst.dll libdrumgizmo_vst.a
+
+#LDFLAGS="-g -Wall -DWIN32 ${DG_FLAGS} ${EXPAT_FLAGS} ${SNDFILE_FLAGS} -I${VST_BASE}"
+#CFLAGS=$(LDFLAGS)
+#SOURCES="$(DG_SRC) $(VST_SRC) $(SRC)"
+#OBJECTS=$(SOURCES:.cc=.o)
+#
+#all: drumgizmo_vst.dll
+#
+#drumgizmo_vst.dll: $(OBJECTS)
+#	g++ $(OBJECTS) $(LDFLAGS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+#
+#%.o: %.cc
+#	g++ -c $(CFLAGS) $< -o $@
+#
+#clean:
+#	del -rf *.o drumgizmo_vst.dll libdrumgizmo_vst.a
