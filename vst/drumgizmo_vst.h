@@ -28,6 +28,7 @@
 #define __DRUMGIZMO_DRUMGIZMO_VST_H__
 
 #include <public.sdk/source/vst2.x/audioeffectx.h>
+#include <public.sdk/source/vst2.x/aeffeditor.h>
 
 #include <drumgizmo.h>
 
@@ -77,13 +78,14 @@ public:
 	bool hasMidiProgramsChanged(VstInt32 channel);
 	bool getMidiKeyName(VstInt32 channel, MidiKeyName* keyName);
 
+  DrumGizmo *drumgizmo;
+
 private:
 	void initProcess();
   //	void noteOn(VstInt32 note, VstInt32 velocity, VstInt32 delta);
   //	void noteOff();
 	void fillProgram(VstInt32 channel, VstInt32 prg, MidiProgramName* mpn);
 
-  DrumGizmo *drumgizmo;
   InputVST *input;
   OutputVST *output;
   size_t pos;

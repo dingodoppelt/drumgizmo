@@ -28,8 +28,46 @@
 
 #include "constants.h"
 
+#include <time.h>
+
 #define NUM_PROGRAMS 0
 #define NUM_PARAMS 0
+
+#include <plugingui.h>
+
+class DGEditor : public AEffEditor {
+public:
+  DGEditor(AudioEffect* effect) 
+  {
+    dgeff = (DrumGizmoVst*)effect;
+    plugingui = new PluginGUI(dgeff->drumgizmo);
+  }
+
+  bool open(void* ptr)
+  {
+    plugingui->show();
+    return true;
+  }
+
+  void close()
+  {
+    plugingui->hide();
+  }
+
+  bool isOpen()
+  {
+    return false;
+  }
+
+	void idle()
+  {
+    plugingui->processEvents();
+  }
+
+private:
+  DrumGizmoVst* dgeff;
+  PluginGUI *plugingui;
+};
 
 AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 {
@@ -58,12 +96,19 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		setNumOutputs(NUM_OUTPUTS);
 		canProcessReplacing();
 		isSynth();
-    char id[] = "DGV1"; // Four bytes typecasted into an unsigned integer
+
+    char id[] = "DGV2"; // Four bytes typecasted into an unsigned integer
 		setUniqueID(*(unsigned int*)id);
+
+    //    setUniqueID((unsigned int)time(NULL));
+    
 	}
 
 	initProcess();
 	suspend();
+
+  DGEditor *editor = new DGEditor(this);
+  setEditor(editor);
 }
 
 DrumGizmoVst::~DrumGizmoVst()
@@ -208,7 +253,7 @@ bool DrumGizmoVst::getProgramNameIndexed(VstInt32 category, VstInt32 index,
 
 bool DrumGizmoVst::getEffectName(char* name)
 {
-	vst_strncpy(name, "DrumGizmo", kVstMaxEffectNameLen);
+	vst_strncpy(name, "DrumGizmoA", kVstMaxEffectNameLen);
 	return true;
 }
 
@@ -220,7 +265,7 @@ bool DrumGizmoVst::getVendorString(char* text)
 
 bool DrumGizmoVst::getProductString(char* text)
 {
-	vst_strncpy(text, "Vst Synth", kVstMaxProductStrLen);
+	vst_strncpy(text, "Vst SynthA", kVstMaxProductStrLen);
 	return true;
 }
 
@@ -286,7 +331,7 @@ VstInt32 DrumGizmoVst::getMidiProgramCategory(VstInt32 channel,
 {
 	cat->parentCategoryIndex = -1;	// -1:no parent category
 	cat->flags = 0;					// reserved, none defined yet, zero.
-	VstInt32 category = cat->thisCategoryIndex;
+  //	VstInt32 category = cat->thisCategoryIndex;
 	vst_strncpy(cat->name, "Drums", 63);
 	return 1;
 }
@@ -331,7 +376,7 @@ void DrumGizmoVst::processReplacing(float** inputs, float** outputs,
 {
   output->setOutputs(outputs);
 
-   if(buffer_size != sampleFrames) {
+  if(buffer_size != (size_t)sampleFrames) {
     if(buffer) free(buffer);
     buffer_size = sampleFrames;
     buffer = (sample_t*)malloc(sizeof(sample_t) * buffer_size);
