@@ -53,8 +53,15 @@ DrumGizmo::~DrumGizmo()
   */
 }
 
+std::string DrumGizmo::drumkitfile()
+{
+  return kitfile;
+}
+
 bool DrumGizmo::loadkit(const std::string &kitfile)
 {
+  this->kitfile = kitfile;
+  kit = DrumKit();
   DrumKitParser parser(kitfile, kit);
   if(parser.parse()) return false;
   /*
@@ -159,9 +166,15 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   //
   
   for(size_t c = 0; c < kit.channels.size(); c++) {
-    memset(samples, 0, nsamples * sizeof(sample_t));
-    getSamples(c, pos, samples, nsamples);
-    oe->run(c, samples, nsamples);
+    sample_t *buf = samples;
+    bool internal = false;
+    if(oe->getBuffer(c)) {
+      buf = oe->getBuffer(c);
+      internal = true;
+    }
+    memset(buf, 0, nsamples * sizeof(sample_t));
+    getSamples(c, pos, buf, nsamples);
+    if(!internal) oe->run(c, samples, nsamples);
   }
   
   ie->post();
@@ -189,6 +202,19 @@ void DrumGizmo::run()
   oe->stop();
 }
 
+#ifdef SSE
+#define SZ 16
+typedef float v4sf __attribute__ ((vector_size (sizeof(float)*SZ)));
+
+union f4vector 
+{
+  v4sf v;
+  float f[SZ];
+};
+#else/*SSE*/
+#define SZ 0
+#endif/*SSE*/
+
 void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 {
   for(std::list< Event* >::iterator i = activeevents[ch].begin();
@@ -206,22 +232,25 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         AudioFile *af = evt->file;
         af->load(); // Make sure it is loaded.
 
-        for(size_t n = 0; n < sz; n++) {
+        size_t n = 0;
+        if(evt->offset > (size_t)pos) n = evt->offset - pos;
+        size_t end = sz;
+        if(evt->t + end - n > af->size) end = af->size - evt->t + n;
 
-          if(evt->offset > (pos + n)) continue;
+#ifdef SSE
+        size_t optend = ((end - n) / SZ) * SZ;
+        for(; n < optend; n+=SZ) {
+          *(v4sf*)&(s[n]) += *(v4sf*)&(af->data[evt->t]);
+          evt->t += SZ;
+        }
+#endif
 
-          if(evt->t > af->size) {
-            removeevent = true;
-            break;
-          }
-          
-          //float gain = evt->gain;
-          //gain *= 1.0 - ((float)evt->t / (float)af->size);
-          sample_t val = af->data[evt->t];
-          s[n] += val;// * gain;
-          
+        for(; n < end; n++) {
+          s[n] += af->data[evt->t];
           evt->t++;
         }
+
+        if(evt->t > af->size) removeevent = true;
       }
       break;
     }
@@ -239,34 +268,301 @@ void DrumGizmo::stop()
   // engine.stop();
 }
 
+#include "configuration.h"
+
+std::string float2str(float a)
+{
+  char buf[256];
+  sprintf(buf, "%f", a);
+  return buf;
+}
+
+std::string bool2str(bool a)
+{
+  return a?"true":"false";
+}
+
+float str2float(std::string a)
+{
+  if(a == "") return 0.0;
+  return atof(a.c_str());
+}
+
+std::string DrumGizmo::configString()
+{
+  return
+    "<config>\n"
+    "  <value name=\"drumkitfile\">" + kitfile + "</value>\n"
+    "  <value name=\"midimapfile\">" + midimapfile + "</value>\n"
+    "  <value name=\"enable_velocity_modifier\">" +
+    bool2str(Conf::enable_velocity_modifier) + "</value>\n"
+    "  <value name=\"velocity_modifier_falloff\">" +
+    float2str(Conf::velocity_modifier_falloff) + "</value>\n"
+    "  <value name=\"velocity_modifier_weight\">" +
+    float2str(Conf::velocity_modifier_weight) + "</value>\n"
+    "  <value name=\"enable_velocity_randomiser\">" +
+    bool2str(Conf::enable_velocity_randomiser) + "</value>\n"
+    "  <value name=\"velocity_randomiser_weight\">" +
+    float2str(Conf::velocity_randomiser_weight) + "</value>\n"
+    "</config>";
+}
+
+#include "saxparser.h"
+
+class ConfigParser : public SAXParser {
+public:
+  ConfigParser()
+  {
+    str = NULL;
+  }
+
+  void characterData(std::string &data)
+  {
+    if(str) str->append(data);
+  }
+
+  void startTag(std::string name, attr_t attr)
+  {
+    if(name == "value" && attr.find("name") != attr.end()) {
+      values[attr["name"]] = "";
+      str = &values[attr["name"]];
+    }
+  }
+
+  void endTag(std::string name)
+  {
+    if(name == "value") str = NULL;
+  }
+
+  std::string value(std::string name, std::string def = "")
+  {
+    if(values.find(name) == values.end()) return def;
+    return values[name];
+  }
+
+  std::map<std::string, std::string> values;
+  std::string *str;
+};
+
+void DrumGizmo::setConfigString(std::string cfg)
+{
+  printf("Load config: %s\n", cfg.c_str());
+
+  std::string dkf;
+  ConfigParser p;
+  p.parse(cfg);
+
+  midimapfile = p.value("midimapfile");
+
+  if(p.value("enable_velocity_modifier") != "") {
+    Conf::enable_velocity_modifier =
+      p.value("enable_velocity_modifier") == "true";
+  }
+
+  if(p.value("velocity_modifier_falloff") != "") {
+    Conf::velocity_modifier_falloff =
+      str2float(p.value("velocity_modifier_falloff"));
+  }
+
+  if(p.value("velocity_modifier_weight") != "") {
+    Conf::velocity_modifier_weight =
+      str2float(p.value("velocity_modifier_weight"));
+  }
+
+  if(p.value("enable_velocity_randomiser") != "") {
+    Conf::enable_velocity_randomiser =
+      p.value("enable_velocity_randomiser") == "true";
+  }
+
+  if(p.value("velocity_randomiser_weight") != "") {
+    Conf::velocity_randomiser_weight =
+      str2float(p.value("velocity_randomiser_weight"));
+  }
+
+  if(drumkitfile() != p.value("drumkitfile")) {
+    loadkit(p.values["drumkitfile"]);
+    init(true);
+  }
+}
+
 #ifdef TEST_DRUMGIZMO
-//deps: instrument.cc sample.cc channel.cc audiofile.cc event.cc
-//cflags: $(SNDFILE_CFLAGS)
-//libs: $(SNDFILE_LIBS)
+//deps: instrument.cc sample.cc channel.cc audiofile.cc drumkitparser.cc configuration.cc saxparser.cc instrumentparser.cc path.cc
+//cflags: $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) -I../include -DSSE -msse -msse2 -msse3
+//libs: $(SNDFILE_LIBS) $(EXPAT_LIBS)
 #include "test.h"
 
-class AudioOutputEngineDummy : public AudioOutputEngine {
+static float f(size_t x)
+{
+  return x + 1.0;
+}
+
+class AITest : public AudioInputEngine {
 public:
-  bool init(Channels *channels) { return true; }
-  void run(DrumGizmo *drumgizmo) {}
+  bool init(Instruments &instruments) { return true; }
+  void setParm(std::string parm, std::string value) {}
+  bool start() { return true; }
+  void stop() {}
+  void pre() {}
+  event_t *run(size_t pos, size_t len, size_t *nevents)
+  {
+    event_t *e = NULL;
+    *nevents = 0;
+
+    if(pos <= offset && offset < pos + len) {
+      e = new event_t;
+
+      e->type = TYPE_ONSET;
+      e->instrument = 0;
+      e->velocity = 1.0;
+      e->offset = offset - pos;
+
+      *nevents = 1;
+    }
+    return e;
+  }
+  void post() {}
+  size_t offset;
 };
+
+class AOTest : public AudioOutputEngine {
+public:
+  bool init(Channels channels) { return true; }
+  void setParm(std::string parm, std::string value) {}
+  bool start() { return true; }
+  void stop() {}
+  void pre(size_t nsamples) {}
+  void run(int ch, sample_t *samples, size_t nsamples)
+  {
+  }
+  void post(size_t nsamples) {}
+};
+
+const char xml_kit[] =
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+  "<drumkit name=\"test\" description=\"\">\n"
+  "  <channels>\n"
+  "    <channel name=\"ch1\"/>\n"
+  "  </channels>\n"
+  "  <instruments>\n"
+  "    <instrument name=\"instr1\" file=\"instr1.xml\">\n"
+  "      <channelmap in=\"ch1\" out=\"ch1\"/>\n"
+  "		</instrument>\n"
+  "	</instruments>\n"
+  "</drumkit>";
+
+const char xml_instr[] =
+  "<?xml version='1.0' encoding='UTF-8'?>\n"
+  "<instrument name=\"instr1\">\n"
+  " <samples>\n"
+  "  <sample name=\"sample1\">\n"
+  "   <audiofile channel=\"ch1\" file=\"instr1.wav\"/>\n"
+  "  </sample>\n"
+  " </samples>\n"
+  " <velocities>\n"
+  "  <velocity lower=\"0\" upper=\"1.0\">\n"
+  "   <sampleref name=\"sample1\"/>\n"
+  "  </velocity>\n"
+  " </velocities>\n"
+  "</instrument>";
+
+#define PCM_SIZE 100
+
+void createTestKit()
+{
+  FILE *fp;
+  fp = fopen("/tmp/kit.xml", "w");
+  fwrite(xml_kit, strlen(xml_kit), 1, fp);
+  fclose(fp);
+
+  fp = fopen("/tmp/instr1.xml", "w");
+  fwrite(xml_instr, strlen(xml_instr), 1, fp);
+  fclose(fp);
+
+  SF_INFO sf_info;
+  sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
+  sf_info.samplerate = 44100;
+  sf_info.channels = 1;
+
+  SNDFILE *fh = sf_open("/tmp/instr1.wav", SFM_WRITE, &sf_info);
+  if(!fh) {
+    printf("Error: %s\n", sf_strerror(fh));
+  }
+
+  size_t size = PCM_SIZE;
+  sample_t samples[size];
+
+  for(size_t i = 0; i < size; i++) {
+    samples[i] = f(i);//(float)i / (float)size;
+  }
+
+  sf_write_float(fh, samples, size); 
+  sf_close(fh);
+}
+
+void deleteTestKit()
+{
+  unlink("/tmp/kit.xml");
+  unlink("/tmp/instr1.xml");
+  unlink("/tmp/instr1.wav");
+}
 
 TEST_BEGIN;
 
-AudioOutputEngineDummy a;
-DrumGizmo g(a);
+createTestKit();
 
-Channel ch0("ch0"); g.channels.push_back(ch0);
-Channel ch1("ch1"); g.channels.push_back(ch1);
+size_t size = PCM_SIZE;
+for(size_t chunksz = 1; chunksz < offset + size + padding + 1; chunksz++) {
 
-Instrument i("test");
-Sample s1; i.addSample(0.0, 1.0, &s1);
-Sample s2; i.addSample(0.0, 1.0, &s2);
-Sample s3; i.addSample(0.0, 1.0, &s3);
+  sample_t samples[chunksz];
 
-//g.kit.instruments["instr"] = i;
+  for(size_t offset = 0; offset < chunksz + size + 1; offset++) {
+    //size_t offset = 5; {
+    for(size_t padding = 0; padding < chunksz + size + offset + 1; padding++) {
+      //size_t padding = 2; {
+      TEST_MSG("Values (offset %d, padding %d, chunksz %d)",
+               offset, padding, chunksz);
+      
+      AOTest ao;
+      AITest ai; ai.offset = offset;
+      DrumGizmo dg(&ao, &ai);
+      dg.loadkit("/tmp/kit.xml");
+      
+      size_t pos = 0;
+      //      sample_t samples[chunksz];
+      while(pos < offset + size + padding) {
+        dg.run(pos, samples, chunksz);
+        
+        float err = 0;
+        size_t errcnt = 0;
+        for(size_t i = 0; i < chunksz && pos < offset + size + padding; i++) {
+          float val = 0.0;
+          if(pos >= offset && pos < (offset + size)) val = f(pos - offset);
+          float diff = samples[i] - val;
+          /*
+          if(diff != 0.0) {
+            TEST_EQUAL_FLOAT(samples[i], val,
+                           "samples[%d] ?= val, pos %d", i, pos);
+          }
+          */
+          if(diff != 0.0) errcnt++;
 
-g.run();
+          err += fabs(diff);
+          pos++;
+        }
+
+        TEST_EQUAL_FLOAT(err, 0.0,
+                         "Compare error (offset %d, padding %d, chunksz %d)",
+                         offset, padding, chunksz);
+        TEST_EQUAL_INT(errcnt, 0,
+                       "Compare count (offset %d, padding %d, chunksz %d)",
+                       offset, padding, chunksz);
+      }
+
+    }
+  }
+}
+
+deleteTestKit();
 
 TEST_END;
 
