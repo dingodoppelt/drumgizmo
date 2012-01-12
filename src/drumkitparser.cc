@@ -40,7 +40,7 @@ DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
 
   fd = fopen(kitfile.c_str(), "r");
 
-  printf("Parsing drumkit in %s\n", kitfile.c_str());
+  //  printf("Parsing drumkit in %s\n", kitfile.c_str());
 
   if(!fd) return;
 }
@@ -108,10 +108,11 @@ void DrumKitParser::startTag(std::string name,
 void DrumKitParser::endTag(std::string name)
 {
   if(name == "instrument") {
-    Instrument i;
-    InstrumentParser parser(path + "/" + instr_file, i);
+    Instrument *i = new Instrument();
+    //    Instrument &i = kit.instruments[kit.instruments.size() - 1];
+    InstrumentParser parser(path + "/" + instr_file, *i);
     parser.parse();
-    kit.instruments.push_back(i);//[attr["name"]] = i;
+    kit.instruments.push_back(i);
 
     // Assign kit channel numbers to instruments channels.
     std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
@@ -126,7 +127,7 @@ void DrumKitParser::endTag(std::string name)
       }
       if(c->num == NO_CHANNEL) {
         printf("Missing channel '%s' in instrument '%s'\n",
-               c->name.c_str(), i.name().c_str());
+               c->name.c_str(), i->name().c_str());
       } else {
         /*
           printf("Assigned channel '%s' to number %d in instrument '%s'\n",
