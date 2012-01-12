@@ -39,6 +39,7 @@ class Instrument {
   friend class InstrumentParser;
 public:
   Instrument();
+  ~Instrument();
 
   Sample *sample(level_t level, size_t pos);
 
@@ -62,6 +63,6 @@ private:
 };
 
 //typedef std::map< std::string, Instrument > Instruments;
-typedef std::vector< Instrument > Instruments;
+typedef std::vector< Instrument* > Instruments;
 
 #endif/*__DRUMGIZMO_INSTRUMENT_H__*/

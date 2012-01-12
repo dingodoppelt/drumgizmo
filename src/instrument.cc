@@ -34,12 +34,28 @@
 
 Instrument::Instrument()
 {
+  printf("new Instrument %p\n", this);
   mod = 1.0;
   lastpos = 0;
 }
 
+Instrument::~Instrument()
+{
+  printf("delete Instrument %p\n", this);
+  std::vector<AudioFile*>::iterator i = audiofiles.begin();
+  while(i != audiofiles.end()) {
+    delete *i;
+    i++;
+  }
+}
+
 Sample *Instrument::sample(level_t level, size_t pos)
 {
+  if(Conf::enable_velocity_modifier == false) {
+    mod = 1.0;
+    lastpos = 0;
+  }
+
   if(Conf::enable_velocity_randomiser) {
     float r = (float)rand() / (float)RAND_MAX; // random number: [0;1]
     r -= 0.5; // random number [-0.5;0.5]

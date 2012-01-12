@@ -33,6 +33,7 @@
 
 AudioFile::AudioFile(std::string filename)
 {
+  //printf("new AudioFile %p\n", this);
   this->filename = filename;
 
   data = NULL;
@@ -43,6 +44,7 @@ AudioFile::AudioFile(std::string filename)
 
 AudioFile::~AudioFile()
 {
+  //printf("delete AudioFile %p\n", this);
   unload();
 }
 
@@ -62,7 +64,7 @@ void AudioFile::load()
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
   if(!fh) {
-    printf("Load error...\n");
+    printf("SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(fh));
     return;
   }
     
