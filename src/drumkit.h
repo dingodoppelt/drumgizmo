@@ -37,6 +37,8 @@ class DrumKitParser;
 class DrumKit {
   friend class DrumKitParser;
 public:
+  ~DrumKit();
+
   std::string name();
   std::string description();
   

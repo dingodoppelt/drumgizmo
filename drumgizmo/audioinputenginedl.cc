@@ -118,7 +118,7 @@ bool AudioInputEngineDL::init(Instruments &instruments)
 {
   char **n = (char**)malloc(sizeof(char*)*instruments.size());
   for(size_t i = 0; i < instruments.size(); i++) {
-    n[i] = strdup(instruments[i].name().c_str());
+    n[i] = strdup(instruments[i]->name().c_str());
   }
 
   bool ret = i_init(ptr, instruments.size(), n);
