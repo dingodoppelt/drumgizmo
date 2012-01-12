@@ -37,16 +37,9 @@ InputLV2::~InputLV2()
 {
 }
 
-bool InputLV2::init(Instruments &instruments)
+bool InputLV2::init(Instruments &i)
 {
-  MidiMapParser p(getenv("DRUMGIZMO_MIDIMAP"));
-  if(p.parse()) {/*return false;*/}
-  mmap.midimap = p.midimap;
-
-  for(size_t i = 0; i < instruments.size(); i++) {
-    mmap.instrmap[instruments[i].name()] = i;
-  }
-
+  instruments = &i;
   return true;
 }
 
@@ -112,6 +105,17 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 
 void InputLV2::post()
 {
+}
+
+void InputLV2::loadMidiMap(std::string f)
+{
+  MidiMapParser p(f);
+  if(p.parse()) {/*return false;*/}
+  mmap.midimap = p.midimap;
+
+  for(size_t i = 0; i < instruments->size(); i++) {
+    mmap.instrmap[(*instruments)[i]->name()] = i;
+  }
 }
 
 #ifdef TEST_INPUT_LV2

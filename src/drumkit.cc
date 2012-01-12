@@ -26,6 +26,15 @@
  */
 #include "drumkit.h"
 
+DrumKit::~DrumKit()
+{
+  Instruments::iterator i = instruments.begin();
+  while(i != instruments.end()) {
+    delete *i;
+    i++;
+  }
+}
+
 std::string DrumKit::name()
 {
   return _name;
