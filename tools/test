@@ -22,8 +22,9 @@ if ${COMPILE} >> ${OUTPUT}.log 2>&1; then
 
 	echo -n "* Running   $TEST test"
 	echo Running $TEST test: >> $OUTPUT.log
+#	gdb ./$OUTPUT --eval-command=run 
 	if ./$OUTPUT >> $OUTPUT.log 2>&1; then
-	        echo -e "\r\t\t\t\t\t\t[\033[1;32mSuccess\033[0;2m]"
+		echo -e "\r\t\t\t\t\t\t[\033[1;32mSuccess\033[0;2m]"
 		echo "[Success]" >> $OUTPUT.log
 	else
 		echo -e "\r\t\t\t\t\t\t[\033[1;31mFailure\033[0;2m]"
