@@ -24,7 +24,7 @@ DG_SRC = \
 	${DG_BASE}/src/sample.cc \
 	${DG_BASE}/src/saxparser.cc \
 	${DG_BASE}/src/velocity.cc
-DG_FLAGS = -I../include -I../src
+DG_FLAGS = -I../include -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	$(DG_BASE)/plugingui/plugingui.cc \
