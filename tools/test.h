@@ -157,12 +157,36 @@
     }                                                         \
   }
 
+#define TEST_EQUAL_PTR(x, y, fmt...) {                        \
+    TEST_BASE(fmt);                                           \
+    void *i1 = x;                                             \
+    void *i2 = y;                                             \
+    fprintf(stderr, "Comparing: \"%p\" == \"%p\"\n", i1, i2); \
+    if(i1 == i2) {                                            \
+      TEST_OK(#x" and "#y" are equal.");                      \
+    } else {                                                  \
+      TEST_FAIL(#x" and "#y" are not equal.");                \
+    }                                                         \
+  }
+
+#define TEST_NOTEQUAL_PTR(x, y, fmt...) {                     \
+    TEST_BASE(fmt);                                           \
+    void *i1 = x;                                             \
+    void *i2 = y;                                             \
+    fprintf(stderr, "Comparing: \"%p\" != \"%p\"\n", i1, i2); \
+    if(i1 != i2) {                                            \
+      TEST_OK(#x" and "#y" are not equal.");                  \
+    } else {                                                  \
+      TEST_FAIL(#x" and "#y" are equal.");                    \
+    }                                                         \
+  }
+
 #define TEST_EQUAL_FLOAT(x, y, fmt...) {                      \
     TEST_BASE(fmt);                                           \
     double d1 = x;                                            \
     double d2 = y;                                            \
-    fprintf(stderr, "Comparing: \"%f\" == \"%f\"\n", d1, d2); \
-    if(d1 == d2) {                                            \
+    fprintf(stderr, "Comparing: \"%.64f\" == \"%.64f\"\n", d1, d2); \
+    if(d1 >= d2 && d1 <= d2) {                                            \
       TEST_OK(#x" and "#y" are equal.");                      \
     } else {                                                  \
       TEST_FAIL(#x" and "#y" are not equal.");                \
@@ -173,7 +197,7 @@
     TEST_BASE(fmt);                                           \
     double d1 = x;                                            \
     double d2 = y;                                            \
-    fprintf(stderr, "Comparing: \"%f\" != \"%f\"\n", d1, d2); \
+    fprintf(stderr, "Comparing: \"%.64f\" != \"%.64f\"\n", d1, d2); \
     if(d1 != d2) {                                            \
       TEST_OK(#x" and "#y" are not equal.");                  \
     } else {                                                  \
@@ -209,7 +233,7 @@
     TEST_BASE(fmt);                                             \
     double d1 = x;                                              \
     double d2 = y;                                              \
-    fprintf(stderr, "Comparing: \"%f\" > \"%f\"\n", d1, d2);    \
+    fprintf(stderr, "Comparing: \"%.64f\" > \"%.64f\"\n", d1, d2);    \
     if(d1 > d2) {                                               \
       TEST_OK(#x" are greater than "#y".");                     \
     } else {                                                    \
@@ -221,7 +245,7 @@
     TEST_BASE(fmt);                                                \
     double d1 = x;                                                 \
     double d2 = y;                                                 \
-    fprintf(stderr, "Comparing: \"%f\" < \"%f\"\n", d1, d2);       \
+    fprintf(stderr, "Comparing: \"%.64f\" < \"%.64f\"\n", d1, d2);       \
     if(d1 < d2) {                                                  \
       TEST_OK(#x" are less than "#y".");                           \
     } else {                                                       \
