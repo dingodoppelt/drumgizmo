@@ -48,9 +48,14 @@ public:
   event_t *run(size_t pos, size_t len, size_t *nevents);
   void post();
 
+  void loadMidiMap(std::string file);
+
   LV2_Event_Buffer *eventPort;
 
   MidiMapper mmap;
+
+private:
+  Instruments *instruments;
 };
 
 #endif/*__DRUMGIZMO_INPUT_LV2_H__*/

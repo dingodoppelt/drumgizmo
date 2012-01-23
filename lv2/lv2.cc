@@ -28,20 +28,82 @@
 
 #include <stdlib.h>
 
-#include <drumgizmo.h>
+#include "lv2_gui.h"
+#include "lv2_state.h"
 
-#include "input_lv2.h"
-#include "output_lv2.h"
+#include "lv2_instance.h"
 
 #define MIDI_EVENT_URI "http://lv2plug.in/ns/ext/midi#MidiEvent"
 
-typedef struct {
-  InputLV2 *in;
-  OutputLV2 *out;
-  DrumGizmo *dg;
-  sample_t *buffer;
-  size_t buffer_size;
-} DGLV2;
+#define NS_ATOM "http://lv2plug.in/ns/ext/atom#"
+#define NS_DG "http://drumgizmo.org/lv2/atom#"
+
+/*
+ * Stuff to handle DrumGizmo* transmission from instance to GUI.
+ */
+static LV2_DrumGizmo_Descriptor dg_descriptor;
+
+static DrumGizmo *dg_get_pci(LV2_Handle instance)
+{
+  DGLV2 *dglv2 = (DGLV2 *)instance;
+  return dglv2->dg;
+}
+
+
+/*
+ * Stuff to save/restore plugin state.
+ */
+void dg_save(LV2_Handle                 instance,
+             LV2_State_Store_Function   store,
+             void*                      callback_data,
+             uint32_t                   flags,
+             const LV2_Feature *const * features)
+{
+  DGLV2 *dglv2 = (DGLV2 *)instance;
+  printf("dg_save\n");
+
+  std::string config = dglv2->dg->configString();
+  printf("%s\n", config.c_str());
+
+  store(callback_data,
+        dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
+                                 NULL, NS_DG "config"),
+        config.data(), config.length(),
+        dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
+                                 NULL, NS_ATOM "String"),
+        LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE);
+}
+
+void dg_restore(LV2_Handle                  instance,
+                LV2_State_Retrieve_Function retrieve,
+                void*                       callback_data,
+                uint32_t                    flags,
+                const LV2_Feature *const *  features)
+{
+  DGLV2 *dglv2 = (DGLV2 *)instance;
+  printf("dg_restore\n");
+
+  size_t      size;
+  uint32_t    type;
+  //  uint32_t    flags;
+
+  const char* data =
+    (const char*)retrieve(callback_data,
+                          dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
+                                                   NULL, NS_DG "config"),
+                          &size, &type, &flags);
+  std::string config;
+  config.append(data, size);
+  dglv2->dg->setConfigString(config);
+
+  dglv2->in->loadMidiMap(dglv2->dg->midimapfile);
+}
+
+
+static LV2_State_Interface dg_persist = {
+  dg_save,
+  dg_restore
+};
 
 /** A globally unique, case-sensitive identifier for this plugin type.
  *
@@ -86,6 +148,16 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
 {
   DGLV2 *dglv2 = new DGLV2;
 
+  dglv2->urimap = NULL;
+  for (int i = 0 ; features[i] ; i++) {
+    printf("DG: feature: %s\n", features[i]->URI);
+    if (!strcmp(features[i]->URI, LV2_URI_MAP_URI)) {
+      dglv2->urimap = (LV2_URI_Map_Feature*)features[i]->data;
+    }
+ }
+
+  dg_descriptor.get_pci = dg_get_pci;
+
   dglv2->in = new InputLV2();
   dglv2->out = new OutputLV2();
 
@@ -93,8 +165,8 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
   dglv2->buffer_size = 0;
 
   dglv2->dg = new DrumGizmo(dglv2->out, dglv2->in);
-  dglv2->dg->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
-  dglv2->dg->init(true);
+  //  dglv2->dg->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
+  //  dglv2->dg->init(true);
 
   return (LV2_Handle)dglv2;
 }
@@ -143,8 +215,10 @@ void connect_port(LV2_Handle instance,
   if(port == 0) {// MIDI in
     dglv2->in->eventPort = (LV2_Event_Buffer*)data_location;
   } else {// Audio Port
-    if(port - 1 < NUM_OUTPUTS)
-      dglv2->out->outputPort[port - 1] = (sample_t*)data_location;
+    if(port - 1 < NUM_OUTPUTS) {
+      dglv2->out->outputPorts[port - 1].samples = (sample_t*)data_location;
+      dglv2->out->outputPorts[port - 1].size = 0;
+    }
   }
 }
 
@@ -197,13 +271,17 @@ void run(LV2_Handle instance,
   static size_t pos = 0;
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
+  // The buffer is not used anymore - declared NULL in 'instantiate'.
+  /*
   if(dglv2->buffer_size != sample_count) {
     if(dglv2->buffer) free(dglv2->buffer);
     dglv2->buffer_size = sample_count;
     dglv2->buffer = (sample_t*)malloc(sizeof(sample_t) * dglv2->buffer_size);
+    printf("(Re)allocate buffer: %d samples\n", dglv2->buffer_size);
   }
+  */
 
-  dglv2->dg->run(pos, dglv2->buffer, dglv2->buffer_size);
+  dglv2->dg->run(pos, dglv2->buffer, sample_count);
 
   pos += sample_count;
 }
@@ -272,6 +350,12 @@ void cleanup(LV2_Handle instance)
  * for extensibility anyway). */
 const void* extension_data(const char *uri)
 {
+  printf("extension_data(%s)\n", uri);
+
+  if(!strcmp(uri, PLUGIN_INSTANCE_URI)) return &dg_descriptor;
+  if(!strcmp(uri, "http://lv2plug.in/ns/ext/state#Interface")) {
+    return &dg_persist;
+  }
   return NULL;
 }
 

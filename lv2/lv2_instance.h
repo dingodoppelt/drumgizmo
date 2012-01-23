@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            output_lv2.h
+ *            lv2_instance.h
  *
- *  Wed Jul 13 14:27:06 CEST 2011
+ *  Sun Nov 20 15:27:41 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,39 +24,25 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_OUTPUT_LV2_H__
-#define __DRUMGIZMO_OUTPUT_LV2_H__
+#ifndef __DRUMGIZMO_LV2_INSTANCE_H__
+#define __DRUMGIZMO_LV2_INSTANCE_H__
 
-#include <audiooutputengine.h>
+#include <lv2.h>
 
-#define NUM_OUTPUTS 64
+#include "input_lv2.h"
+#include "output_lv2.h"
 
-class OutputPort {
-public:
-  size_t size;
-  sample_t *samples;
-};
+#include <drumgizmo.h>
 
-class OutputLV2 : public AudioOutputEngine {
-public:
-  OutputLV2();
-  ~OutputLV2();
+#include "lv2_uri_map.h"
 
-  bool init(Channels channels);
+typedef struct {
+  InputLV2 *in;
+  OutputLV2 *out;
+  DrumGizmo *dg;
+  sample_t *buffer;
+  size_t buffer_size;
+  LV2_URI_Map_Feature* urimap;
+} DGLV2;
 
-  void setParm(std::string parm, std::string value);
-
-  bool start();
-  void stop();
-
-  void pre(size_t nsamples);
-  void run(int ch, sample_t *samples, size_t nsamples);
-  void post(size_t nsamples);
-
-  sample_t *getBuffer(int c);
-
-  //  sample_t *outputPort[NUM_OUTPUTS];
-  OutputPort outputPorts[NUM_OUTPUTS];
-};
-
-#endif/*__DRUMGIZMO_OUTPUT_LV2_H__*/
+#endif/*__DRUMGIZMO_LV2_INSTANCE_H__*/

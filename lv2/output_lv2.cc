@@ -30,7 +30,10 @@
 
 OutputLV2::OutputLV2()
 {
-  for(size_t i = 0; i < NUM_OUTPUTS; i++) outputPort[i] = NULL;
+  for(size_t i = 0; i < NUM_OUTPUTS; i++) {
+    outputPorts[i].size = 0;
+    outputPorts[i].samples = NULL;
+  }
 }
 
 OutputLV2::~OutputLV2()
@@ -59,16 +62,25 @@ void OutputLV2::pre(size_t nsamples)
 {
 }
 
+#include <stdio.h>
 void OutputLV2::run(int ch, sample_t *samples, size_t nsamples)
 {
   if(ch < NUM_OUTPUTS) {
-    if(outputPort[ch])
-      memcpy(outputPort[ch], samples, nsamples * sizeof(sample_t));
+    //    if(outputPorts[ch].size != nsamples) printf("port.%d nsamples.%d\n", outputPorts[ch].size, nsamples);
+    if(outputPorts[ch].samples) {
+      memcpy(outputPorts[ch].samples, samples, nsamples * sizeof(sample_t));
+    }
   }
 }
 
 void OutputLV2::post(size_t nsamples)
 {
+}
+
+sample_t *OutputLV2::getBuffer(int ch)
+{
+  if(ch < NUM_OUTPUTS) return outputPorts[ch].samples;
+  return NULL;
 }
 
 #ifdef TEST_OUTPUT_LV2
