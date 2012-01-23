@@ -197,7 +197,7 @@ if test "x$enable_cli" = "xyes"; then
    AC_SUBST([dgplugindir])
    
    INPUT_PLUGIN_DIR=${dgplugindir}/input
-   OUTPUT_PLUGIN_DIR=${dfplugindir}/output
+   OUTPUT_PLUGIN_DIR=${dgplugindir}/output
    AC_SUBST([INPUT_PLUGIN_DIR])
    AC_SUBST([OUTPUT_PLUGIN_DIR])
    
