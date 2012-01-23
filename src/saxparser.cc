@@ -108,6 +108,18 @@ int SAXParser::parse()
   return 0;
 }
 
+int SAXParser::parse(std::string buffer)
+{
+  if(!XML_Parse(p, buffer.c_str(), buffer.length(), true)) {
+    parseError((char*)buffer.c_str(), buffer.length(),
+               XML_ErrorString(XML_GetErrorCode(p)),
+               (int)XML_GetCurrentLineNumber(p));
+    return 1;
+  }
+
+  return 0;
+}
+
 void SAXParser::parseError(char *buf, size_t len, std::string error, int lineno)
 {
   fprintf(stderr, "SAXParser error at line %d: %s\n", lineno, error.c_str());

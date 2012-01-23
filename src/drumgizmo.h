@@ -46,6 +46,7 @@ public:
   ~DrumGizmo();
 
   bool loadkit(const std::string &kitfile);
+  std::string drumkitfile();
 
   bool init(bool preload = true);
 
@@ -56,6 +57,11 @@ public:
   void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
   bool isRunning() { return is_running; }
+
+  std::string configString();
+  void setConfigString(std::string cfg);
+
+  std::string midimapfile;
 
 private:
   bool is_running;
@@ -71,6 +77,8 @@ private:
 public:
 #endif
   DrumKit kit;
+
+  std::string kitfile;
 };
 
 

@@ -35,7 +35,7 @@ InstrumentParser::InstrumentParser(const std::string &file, Instrument &i)
   : instrument(i)
 {
   s = NULL;
-  printf("Parsing instrument in %s\n", file.c_str());
+  //  printf("Parsing instrument in %s\n", file.c_str());
   path = getPath(file);
   fd = fopen(file.c_str(), "r");
   if(!fd) return;

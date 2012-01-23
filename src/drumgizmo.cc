@@ -121,7 +121,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       */
       
       if(d < (int)kit.instruments.size()) {
-        i = &kit.instruments[d];
+        i = kit.instruments[d];
       }
       
       if(i == NULL) {
@@ -203,16 +203,8 @@ void DrumGizmo::run()
 }
 
 #ifdef SSE
-#define SZ 16
-typedef float v4sf __attribute__ ((vector_size (sizeof(float)*SZ)));
-
-union f4vector 
-{
-  v4sf v;
-  float f[SZ];
-};
-#else/*SSE*/
-#define SZ 0
+#define N 8
+typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
 #endif/*SSE*/
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
@@ -238,13 +230,13 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         if(evt->t + end - n > af->size) end = af->size - evt->t + n;
 
 #ifdef SSE
-        size_t optend = ((end - n) / SZ) * SZ;
-        for(; n < optend; n+=SZ) {
-          *(v4sf*)&(s[n]) += *(v4sf*)&(af->data[evt->t]);
-          evt->t += SZ;
+        size_t optend = ((end - n) / N) * N + n;
+        for(; n < optend; n += N) {
+          *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);
+          evt->t += N;
         }
 #endif
-
+        //printf("n: %d end: %d, diff: %d", n, end, end - n); fflush(stdout);
         for(; n < end; n++) {
           s[n] += af->data[evt->t];
           evt->t++;
@@ -386,7 +378,7 @@ void DrumGizmo::setConfigString(std::string cfg)
 }
 
 #ifdef TEST_DRUMGIZMO
-//deps: instrument.cc sample.cc channel.cc audiofile.cc drumkitparser.cc configuration.cc saxparser.cc instrumentparser.cc path.cc
+//deps: instrument.cc sample.cc channel.cc audiofile.cc drumkit.cc drumkitparser.cc configuration.cc saxparser.cc instrumentparser.cc path.cc
 //cflags: $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) -I../include -DSSE -msse -msse2 -msse3
 //libs: $(SNDFILE_LIBS) $(EXPAT_LIBS)
 #include "test.h"
@@ -511,8 +503,8 @@ TEST_BEGIN;
 createTestKit();
 
 size_t size = PCM_SIZE;
-for(size_t chunksz = 1; chunksz < offset + size + padding + 1; chunksz++) {
-
+//for(size_t chunksz = 1; chunksz < size + 1; chunksz++) {
+size_t chunksz = 16; {
   sample_t samples[chunksz];
 
   for(size_t offset = 0; offset < chunksz + size + 1; offset++) {

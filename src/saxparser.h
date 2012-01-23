@@ -39,7 +39,8 @@ public:
   virtual ~SAXParser();
 
   int parse();
-
+  int parse(std::string buffer);
+  
   virtual void characterData(std::string &data) {}
   virtual void startTag(std::string name, attr_t attr) {}
   virtual void endTag(std::string name) {}

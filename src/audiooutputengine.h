@@ -45,6 +45,9 @@ public:
   virtual void pre(size_t nsamples) = 0;
   virtual void run(int ch, sample_t *samples, size_t nsamples) = 0;
   virtual void post(size_t nsamples) = 0;
+
+  // Reimplement this if you wish to use internal buffer directly.
+  virtual sample_t *getBuffer(int ch) { return NULL; }
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/
