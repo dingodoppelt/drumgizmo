@@ -8,7 +8,7 @@ bin_PROGRAMS = drumgizmo
 
 drumgizmo_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) -ldl
 
-drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src
+drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -DSSE -msse -msse2 -msse3
 
 drumgizmo_SOURCES = \
 	audioinputenginedl.cc \
