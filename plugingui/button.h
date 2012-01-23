@@ -30,19 +30,24 @@
 #include <string>
 
 #include "widget.h"
-#include "globalcontext.h"
+
+namespace GUI {
 
 class Button : public Widget {
 public:
-  Button(GlobalContext *gctx, Widget *parent);
+  Button(Widget *parent);
+
+  bool isFocusable() { return true; }
 
   void setText(std::string text);
 
-protected:
+  void registerClickHandler(void (*handler)(void *), void *ptr);
+
+  //protected:
   virtual void clicked() {}
 
-  virtual void repaint(RepaintEvent *e);
-  virtual void button(ButtonEvent *e);
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
 
 private:
   typedef enum {
@@ -52,6 +57,11 @@ private:
 
   std::string text;
   state_t state;
+
+  void (*handler)(void *);
+  void *ptr;
+};
+
 };
 
 #endif/*__DRUMGIZMO_BUTTON_H__*/

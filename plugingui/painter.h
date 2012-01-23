@@ -29,14 +29,30 @@
 
 #include <string>
 
+#include "widget.h"
 #include "colour.h"
+#include "pixelbuffer.h"
+#include "font.h"
 
-class GlobalContext;
-class WidgetContext;
+namespace GUI {
 
+struct __img__ {
+  size_t width;
+  size_t height;
+  unsigned int pixels[128000];
+  unsigned int order;
+};
+/*
+struct __img__ {
+  size_t width;
+  size_t height;
+  unsigned int *pixels;
+  unsigned int order;
+};
+*/
 class Painter {
 public:
-  Painter(GlobalContext *gctx, WidgetContext *wctx);
+  Painter(Widget *widget);
   ~Painter();
 
   void flush();
@@ -44,18 +60,20 @@ public:
   void setColour(Colour colour);
 
   void drawLine(int x1, int y1, int x2, int y2);
-  void drawText(int x, int y, std::string text);
+  void drawText(int x, int y, Font &font, std::string text);
   void drawRectangle(int x1, int y1, int x2, int y2);
   void drawFilledRectangle(int x1, int y1, int x2, int y2);
   void drawPoint(int x, int y);
   void drawCircle(int x, int y, int r);
   void drawFilledCircle(int x, int y, int r);
+  void drawImage(int x, int y, struct __img__ * img);
 
 private:
-  GlobalContext *gctx;
-  WidgetContext *wctx;
+  Widget *widget;
+  PixelBufferAlpha *pixbuf;
   Colour colour;
 };
 
+};
 
 #endif/*__DRUMGIZMO_PAINTER_H__*/

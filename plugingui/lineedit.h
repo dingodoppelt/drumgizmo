@@ -32,20 +32,29 @@
 
 #include "widget.h"
 
+namespace GUI {
+
 class LineEdit : public Widget {
 public:
-  LineEdit(GlobalContext *gctx, Widget *parent);
+  LineEdit(Widget *parent);
+
+  bool isFocusable() { return true; }
 
   std::string text();
   void setText(std::string text);
 
+  //protected:
+  void keyEvent(KeyEvent *e);
+  void repaintEvent(RepaintEvent *e);
+
 protected:
-  void key(KeyEvent *e);
-  void repaint(RepaintEvent *e);
+  virtual void textChanged() {}
 
 private:
   std::string _text;
   size_t pos;
+};
+
 };
 
 #endif/*__DRUMGIZMO_LINEEDIT_H__*/

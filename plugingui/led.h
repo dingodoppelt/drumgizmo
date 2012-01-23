@@ -29,18 +29,28 @@
 
 #include "widget.h"
 
+namespace GUI {
+
 class LED : public Widget {
 public:
-  LED(GlobalContext *gctx, Widget *parent);
+  typedef enum {
+    red,
+    green,
+    blue,
+    off
+  } state_t;
 
-  void setState(bool state);
+  LED(Widget *parent);
 
-protected:
-  void repaint(RepaintEvent *e);
+  void setState(state_t state);
+
+  //protected:
+  void repaintEvent(RepaintEvent *e);
 
 private:
-  bool state;
+  state_t state;
 };
 
+};
 
 #endif/*__DRUMGIZMO_LED_H__*/

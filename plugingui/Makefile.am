@@ -4,36 +4,34 @@ plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) -ldl -lX11
 
 plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -DSTANDALONE -DX11
 
+include Makefile.am.plugingui
+include $(top_srcdir)/src/Makefile.am.drumgizmo
+
 plugingui_SOURCES = \
-	eventhandler.cc \
-	globalcontext.cc \
-	gui.cc \
-	colour.cc \
-	led.cc \
-	window.cc \
-	widget.cc \
-	lineedit.cc \
-	button.cc \
-	checkbox.cc \
-	combobox.cc \
-	label.cc \
-	painter.cc
+	$(PLUGIN_GUI_SOURCES)
+
+#	$(DRUMGIZMO_SOURCES)
 
 EXTRA_DIST = \
-	event.h \
+	guievent.h \
 	eventhandler.h \
 	globalcontext.h \
-	gui.h \
+	plugingui.h \
+	pixelbuffer.h \
 	colour.h \
+	font.h \
+	filelineedit.h \
 	led.h \
 	window.h \
 	widget.h \
 	lineedit.h \
 	button.h \
-	checkbox.h \
-	combobox.h \
 	label.h \
-	painter.h
+	painter.h \
+	img_font.h \
+	img_back.h \
+	checkbox.h \
+	slider.h
 
 ################
 # Test Section #

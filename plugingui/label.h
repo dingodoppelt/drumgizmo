@@ -29,17 +29,25 @@
 
 #include "widget.h"
 
+#include <string>
+
+#include "guievent.h"
+
+namespace GUI {
+
 class Label : public Widget {
 public:
-  Label(GlobalContext *gctx, Widget *parent);
+  Label(Widget *parent);
 
   void setText(std::string text);
 
-protected:
-  virtual void repaint(RepaintEvent *e);
+  //protected:
+  virtual void repaintEvent(RepaintEvent *e);
 
 private:
   std::string _text;
+};
+
 };
 
 #endif/*__DRUMGIZMO_LABEL_H__*/

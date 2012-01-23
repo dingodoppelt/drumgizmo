@@ -1,0 +1,20 @@
+PLUGIN_GUI_SOURCES = \
+	$(top_srcdir)/plugingui/plugingui.cc \
+	$(top_srcdir)/plugingui/globalcontext.cc \
+	$(top_srcdir)/plugingui/label.cc \
+	$(top_srcdir)/plugingui/eventhandler.cc \
+	$(top_srcdir)/plugingui/font.cc \
+	$(top_srcdir)/plugingui/window.cc \
+	$(top_srcdir)/plugingui/widget.cc \
+	$(top_srcdir)/plugingui/colour.cc \
+	$(top_srcdir)/plugingui/painter.cc \
+	$(top_srcdir)/plugingui/button.cc \
+	$(top_srcdir)/plugingui/pixelbuffer.cc \
+	$(top_srcdir)/plugingui/filelineedit.cc \
+	$(top_srcdir)/plugingui/lineedit.cc \
+	$(top_srcdir)/plugingui/led.cc \
+	$(top_srcdir)/plugingui/checkbox.cc \
+	$(top_srcdir)/plugingui/slider.cc
+
+PLUGIN_GUI_LIBS = -lX11
+

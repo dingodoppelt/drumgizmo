@@ -2,7 +2,7 @@
 /***************************************************************************
  *            checkbox.cc
  *
- *  Sun Oct  9 13:02:01 CEST 2011
+ *  Sat Nov 26 15:07:44 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -25,6 +25,68 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "checkbox.h"
+
+#include "painter.h"
+
+#include <stdio.h>
+
+GUI::CheckBox::CheckBox(Widget *parent)
+  : GUI::Widget(parent)
+{
+  state = false;
+  handler = NULL;
+}
+
+void GUI::CheckBox::buttonEvent(ButtonEvent *e)
+{
+  if(e->direction == -1) {
+    state = !state;
+    repaintEvent(NULL);
+    if(handler) handler(ptr);
+  }
+}
+
+void GUI::CheckBox::registerClickHandler(void (*handler)(void *), void *ptr)
+{
+  this->handler = handler;
+  this->ptr = ptr;
+}
+
+void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
+{
+  //  printf("CheckBox::repaintEvent\n");
+
+  Painter p(this);
+
+  float alpha = 0.8;
+
+  p.setColour(Colour(0.5, alpha));
+  p.drawFilledRectangle(0,0,width()-1,height()-1);
+
+  p.setColour(Colour(0.1, alpha));
+  p.drawRectangle(0,0,width()-1,height()-1);
+
+  if(state) {
+    p.setColour(Colour(0.8, alpha));
+    p.drawLine(0,0,width()-1,height()-1);
+    p.drawLine(0,width()-1,height()-1,0);
+  }
+
+  p.setColour(Colour(0.3, alpha));
+  p.drawPoint(0,height()-1);
+  p.drawPoint(width()-1,0);
+}
+
+bool GUI::CheckBox::checked()
+{
+  return state;
+}
+
+void GUI::CheckBox::setChecked(bool c)
+{
+  state = c;
+  repaintEvent(NULL);
+}
 
 #ifdef TEST_CHECKBOX
 //Additional dependency files

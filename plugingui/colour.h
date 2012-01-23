@@ -27,7 +27,7 @@
 #ifndef __DRUMGIZMO_COLOUR_H__
 #define __DRUMGIZMO_COLOUR_H__
 
-class GlobalContext;
+namespace GUI {
 
 class Colour {
 public:
@@ -44,10 +44,8 @@ public:
   float green;
   float blue;
   float alpha;
+};
 
-#ifdef X11
-  int getColour(GlobalContext *gctx);
-#endif/*X11*/
 };
 
 #endif/*__DRUMGIZMO_COLOUR_H__*/

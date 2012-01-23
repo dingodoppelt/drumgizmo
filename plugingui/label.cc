@@ -28,22 +28,29 @@
 
 #include "painter.h"
 
-Label::Label(GlobalContext *gctx, Widget *parent)
-  : Widget(gctx, parent)
+#include <stdio.h>
+//#include <arpa/inet.h>
+
+#include "img_test.h"
+
+GUI::Label::Label(GUI::Widget *parent) : GUI::Widget(parent)
 {
 }
 
-void Label::setText(std::string text)
+void GUI::Label::setText(std::string text)
 {
   _text = text;
-  repaint(NULL);
+  repaintEvent(NULL);
 }
 
-void Label::repaint(RepaintEvent *e)
+void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
 {
-  Painter p(gctx, wctx);
+  //  printf("Label::repaintEvent\n");
+  Painter p(this);
   p.setColour(Colour(1));
-  p.drawText(10, height() / 2 + 4, _text);
+
+  Font font;
+  p.drawText(10, height() / 2 + 4, font, _text);
 }
 
 

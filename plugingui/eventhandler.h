@@ -27,19 +27,36 @@
 #ifndef __DRUMGIZMO_EVENTHANDLER_H__
 #define __DRUMGIZMO_EVENTHANDLER_H__
 
-#include "event.h"
+#include "guievent.h"
+#include "globalcontext.h"
 
-class GlobalContext;
+#include "window.h"
+
+namespace GUI {
 
 class EventHandler {
 public:
   EventHandler(GlobalContext *gctx);
 
+  void processEvents(Window *window);
+
   bool hasEvent();
   Event *getNextEvent();
 
-private:
+  void registerCloseHandler(void (*handler)(void *), void *ptr);
+
+#ifdef WIN32
+  Event *event;
+#endif/*WIN32*/
+
   GlobalContext *gctx;
+
+private:
+
+  void (*closeHandler)(void *);
+  void *closeHandlerPtr;
+};
+
 };
 
 #endif/*__DRUMGIZMO_EVENTHANDLER_H__*/

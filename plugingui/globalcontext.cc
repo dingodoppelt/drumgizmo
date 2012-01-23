@@ -26,16 +26,18 @@
  */
 #include "globalcontext.h"
 
-GlobalContext::GlobalContext()
+GUI::GlobalContext::GlobalContext()
 {
-  keyboardFocus = NULL;
-
 #ifdef X11
   display = XOpenDisplay(NULL);
 #endif/*X11*/
+
+#ifdef WIN32
+  eventhandler = NULL;
+#endif/*WIN32*/
 }
 
-GlobalContext::~GlobalContext()
+GUI::GlobalContext::~GlobalContext()
 {
 #ifdef X11
   XCloseDisplay(display);

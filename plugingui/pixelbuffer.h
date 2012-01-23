@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.h
+ *            pixelbuffer.h
  *
- *  Sun Oct  9 16:11:47 CEST 2011
+ *  Thu Nov 10 09:00:37 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,69 +24,56 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_EVENT_H__
-#define __DRUMGIZMO_EVENT_H__
+#ifndef __DRUMGIZMO_PIXELBUFFER_H__
+#define __DRUMGIZMO_PIXELBUFFER_H__
 
-#include <unistd.h>
+#include <stdlib.h>
 
-#include <string>
+namespace GUI {
 
-#ifdef X11
-#include <X11/Xlib.h>
-#endif/*X11*/
-
-class Event {
+class PixelBuffer {
 public:
-  typedef enum {
-    MouseMove,
-    Repaint,
-    Button,
-    Key
-  } Type;
+  PixelBuffer(size_t width, size_t height);
 
-  virtual Type type() = 0;
+  void realloc(size_t width, size_t height);
 
-#ifdef X11
-  Window window_id;
-#endif/*X11*/
-};
+  void setPixel(size_t x, size_t y,
+                unsigned char red,
+                unsigned char green,
+                unsigned char blue,
+                unsigned char alpha);
 
-class MouseMoveEvent : public Event {
-public:
-  virtual Type type() { return MouseMove; }
-
-  size_t x;
-  size_t y;
-};
-
-class ButtonEvent : public Event {
-public:
-  virtual Type type() { return Button; }
-
-  size_t x;
-  size_t y;
-
-  int direction;
-  int button;
-};
-
-class RepaintEvent : public Event {
-public:
-  virtual Type type() { return Repaint; }
-
-  size_t x;
-  size_t y;
+  unsigned char *buf;
   size_t width;
   size_t height;
 };
 
-class KeyEvent : public Event {
+class PixelBufferAlpha {
 public:
-  virtual Type type() { return Key; }
+  PixelBufferAlpha(size_t width, size_t height);
 
-  int direction;
-  int keycode;
-  std::string text;
+  int idx;
+  size_t x, y;
+
+  void realloc(size_t width, size_t height);
+
+  void setPixel(size_t x, size_t y,
+                unsigned char red,
+                unsigned char green,
+                unsigned char blue,
+                unsigned char alpha);
+
+  void pixel(size_t x, size_t y,
+             unsigned char *red,
+             unsigned char *green,
+             unsigned char *blue,
+             unsigned char *alpha);
+
+  unsigned char *buf;
+  size_t width;
+  size_t height;
 };
 
-#endif/*__DRUMGIZMO_EVENT_H__*/
+};
+
+#endif/*__DRUMGIZMO_PIXELBUFFER_H__*/

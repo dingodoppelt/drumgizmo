@@ -28,35 +28,63 @@
 
 #include "painter.h"
 
-LED::LED(GlobalContext *gctx, Widget *parent)
-  : Widget(gctx, parent)
+GUI::LED::LED(Widget *parent)
+  : GUI::Widget(parent)
 {
-  state = true;
+  state = off;
 }
 
-void LED::setState(bool state)
+void GUI::LED::setState(GUI::LED::state_t state)
 {
   if(this->state != state) {
     this->state = state;
-    repaint(NULL);
+    repaintEvent(NULL);
   }
 }
 
-void LED::repaint(RepaintEvent *e)
+void GUI::LED::repaintEvent(GUI::RepaintEvent *e)
 {
   size_t h = height() - 1;
   size_t w = width() - 1;
 
-  Painter p(gctx, wctx);
-  
-  if(state) p.setColour(Colour(0,1,0));
-  else p.setColour(Colour(1,0,0));
+  Painter p(this);
+  float alpha = 0.9;
+  switch(state) {
+  case red:
+    p.setColour(Colour(1, 0, 0,alpha));
+    break;
+  case green:
+    p.setColour(Colour(0, 1, 0, alpha));
+    break;
+  case blue:
+    p.setColour(Colour(0, 0, 1, alpha));
+    break;
+  case off:
+    p.setColour(Colour(0.2, 0.2, 0.2, alpha));
+    break;
+  }
 
   size_t size = w / 2;
   if(h / 2 < size) size = h / 2;
   p.drawFilledCircle(w/2, h/2, size);
 
-  p.setColour(Colour(1));
+  switch(state) {
+  case red:
+    p.setColour(Colour(0.4, 0, 0,alpha));
+    break;
+  case green:
+    p.setColour(Colour(0, 0.4, 0, alpha));
+    break;
+  case blue:
+    p.setColour(Colour(0, 0, 0.4, alpha));
+    break;
+  case off:
+    p.setColour(Colour(0.1, 0.1, 0.1, alpha));
+    break;
+  }
+  p.drawCircle(w/2, h/2, size);
+
+  p.setColour(Colour(1,alpha));
   p.drawFilledCircle(w/3, h/3, size / 6);
 }
 

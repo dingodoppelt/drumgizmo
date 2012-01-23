@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            colour.cc
+ *            filelineedit.cc
  *
- *  Fri Oct 14 09:38:28 CEST 2011
+ *  Sun Nov 13 20:47:00 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,30 +24,26 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "colour.h"
+#include "filelineedit.h"
 
-#include "globalcontext.h"
+#include <stdio.h>
 
-GUI::Colour::Colour()
+FileLineEdit::FileLineEdit(GUI::Widget *parent, GUI::LED *led)
+  : LineEdit(parent)
 {
-  red = blue = green = alpha = 1.0;
+  this->led = led;
 }
 
-GUI::Colour::Colour(float grey, float a)
+void FileLineEdit::textChanged()
 {
-  red = green = blue = grey;
-  alpha = a;
+  FILE *fp = fopen(text().c_str(), "r");
+  GUI::LED::state_t state = GUI::LED::off;
+  if(fp) state = GUI::LED::blue;
+  led->setState(state);
+  if(fp) fclose(fp);
 }
 
-GUI::Colour::Colour(float r, float g, float b, float a)
-{
-  red = r;
-  green = g;
-  blue = b;
-  alpha = a;
-}
-
-#ifdef TEST_COLOUR
+#ifdef TEST_FILELINEEDIT
 //Additional dependency files
 //deps:
 //Required cflags (autoconf vars may be used)
@@ -62,4 +58,4 @@ TEST_BEGIN;
 
 TEST_END;
 
-#endif/*TEST_COLOUR*/
+#endif/*TEST_FILELINEEDIT*/

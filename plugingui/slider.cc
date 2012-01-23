@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            button.cc
+ *            slider.cc
  *
- *  Sun Oct  9 13:01:56 CEST 2011
+ *  Sat Nov 26 18:10:22 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,58 +24,92 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "button.h"
+#include "slider.h"
 
 #include "painter.h"
 
 #include <stdio.h>
 
-GUI::Button::Button(Widget *parent)
+GUI::Slider::Slider(Widget *parent)
   : GUI::Widget(parent)
 {
   state = up;
+
+  val = 0.0;
+  maximum = 1.0;
+  minimum = 0.0;
+
   handler = NULL;
   ptr = NULL;
 }
 
-void GUI::Button::registerClickHandler(void (*handler)(void *), void *ptr)
+void GUI::Slider::setValue(float v)
+{
+  val = v;
+  if(handler) handler(ptr);
+  repaintEvent(NULL);
+}
+
+float GUI::Slider::value()
+{
+  return val;
+}
+
+void GUI::Slider::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   this->handler = handler;
   this->ptr = ptr;
 }
 
-void GUI::Button::buttonEvent(ButtonEvent *e)
+void GUI::Slider::mouseMoveEvent(MouseMoveEvent *e)
+{
+  if(state == down) {
+    val = maximum / (float)width() * (float)e->x;
+    if(handler) handler(ptr);
+    repaintEvent(NULL);
+  }
+}
+
+void GUI::Slider::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == 1) {
     state = down;
+    val = maximum / (float)width() * (float)e->x;
+    if(handler) handler(ptr);
     repaintEvent(NULL);
   }
   if(e->direction == -1) {
     state = up;
+    val = maximum / (float)width() * (float)e->x;
     repaintEvent(NULL);
     clicked();
     if(handler) handler(ptr);
   }
 }
 
-void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
+void GUI::Slider::repaintEvent(GUI::RepaintEvent *e)
 {
-  //  printf("Button::repaintEvent\n");
+  printf("Slider::repaintEvent (%f)\n", val);
 
   Painter p(this);
 
   float alpha = 0.8;
+
+  int xpos = (int)((val / maximum) * (float)(width() - 1));
 
   if(hasKeyboardFocus()) {
     p.setColour(Colour(0.6, alpha));
   } else {
     p.setColour(Colour(0.5, alpha));
   }
-  p.drawFilledRectangle(0,0,width()-1,height()-1);
-
+  p.drawFilledRectangle(0,0,width(),height());
+  /*
   p.setColour(Colour(0.1, alpha));
   p.drawRectangle(0,0,width()-1,height()-1);
-
+  */
+  p.setColour(Colour(1, 0, 0, alpha));
+  p.drawLine(xpos, 0, xpos, height()-1);
+  /*
   p.setColour(Colour(0.8, alpha));
   switch(state) {
   case up:
@@ -87,24 +121,13 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
     p.drawLine(width()-1,height()-1,0, height()-1);
     break;
   }
-
+  */
   p.setColour(Colour(0.3, alpha));
   p.drawPoint(0,height()-1);
   p.drawPoint(width()-1,0);
-
-  Font font;
-  p.setColour(Colour(0.9, alpha));
-  p.drawText(width()/2-(text.length()*3)+(state==up?0:1),
-             height()/2+4+(state==up?0:1), font, text);
 }
 
-void GUI::Button::setText(std::string text)
-{
-  this->text = text;
-  repaintEvent(NULL);
-}
-
-#ifdef TEST_BUTTON
+#ifdef TEST_SLIDER
 //Additional dependency files
 //deps:
 //Required cflags (autoconf vars may be used)
@@ -119,4 +142,4 @@ TEST_BEGIN;
 
 TEST_END;
 
-#endif/*TEST_BUTTON*/
+#endif/*TEST_SLIDER*/

@@ -34,6 +34,303 @@
 #include <X11/Xutil.h>
 #endif/*X11*/
 
+GUI::EventHandler::EventHandler(GlobalContext *gctx)
+{
+  this->gctx = gctx;
+#ifdef WIN32
+  this->gctx->eventhandler = this;
+  event = NULL;
+#endif/*WIN32*/
+}
+
+bool GUI::EventHandler::hasEvent()
+{
+#ifdef X11
+  return XPending(gctx->display);
+#endif/*X11*/
+
+#ifdef WIN32
+	MSG		msg;
+  return PeekMessage(&msg, NULL, 0, 0, 0) != 0;
+#endif/*WIN32*/
+  return false;
+}
+
+#ifdef WIN32
+
+extern GUI::Window *gwindow;
+
+#include "window.h"
+LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+  GUI::EventHandler *handler =
+    (GUI::EventHandler *) GetWindowLong(hwnd, GWL_USERDATA);
+
+
+	switch(msg) {
+	case WM_SIZE:
+    {
+      static bool first = true;
+      if(!first) {
+        GUI::ResizeEvent *e = new GUI::ResizeEvent();
+        e->width = LOWORD(lp);
+        e->height = HIWORD(lp);
+        handler->event = e;
+        first = false;
+      }
+    }
+		break;
+
+	case WM_MOVE:
+    {
+//      GUI::MoveEvent *e = new GUI::MoveEvent();
+//      e->x = (int)(short) LOWORD(lp);
+//      e->y = (int)(short) HIWORD(lp);
+//      handler->event = e;
+    }
+		break;
+
+	case WM_CLOSE:
+    {
+      GUI::CloseEvent *e = new GUI::CloseEvent();
+      handler->event = e;
+    }
+//		HWND child, old;
+//		old	= 0;
+
+//		numDialogs--;
+
+//		while(old != (child = GetNextDlgGroupItem(hwnd, hwnd, false))) {
+//			old = child;
+//			EndDialog(child, 0);
+//		}
+
+//		if(numDialogs) EndDialog(hwnd, 0);
+//		else PostQuitMessage(0);
+//		return 0;
+
+	case WM_MOUSEMOVE:
+    {
+      GUI::MouseMoveEvent *e = new GUI::MouseMoveEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      handler->event = e;
+      //		xPos = (int)(short) LOWORD(lp);
+      //		yPos = (int)(short) HIWORD(lp);
+      //		fwKeys = wp;
+    }
+		break;
+
+	case WM_MOUSEWHEEL:
+		//fwKeys = LOWORD(wp);
+		//zDelta = (short) HIWORD(wp);
+		//xPos = (short) LOWORD(lp);
+		//yPos = (short) HIWORD(lp);
+ 		break;
+
+	case WM_LBUTTONUP:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 0;
+      e->direction = -1;
+      handler->event = e;
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_LBUTTONDOWN:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 0;
+      e->direction = 1;
+      handler->event = e;
+    }
+    //xPos = (int)(short) LOWORD(lp);
+		//yPos = (int)(short) HIWORD(lp);
+		//fwKeys = wp;
+		break;
+
+	case WM_MBUTTONUP:
+		//xPos = (int)(short) LOWORD(lp);
+		//yPos = (int)(short) HIWORD(lp);
+		//fwKeys = wp;
+		break;
+
+	case WM_MBUTTONDOWN:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 1;
+      e->direction = 1;
+      handler->event = e;
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_RBUTTONUP:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 1;
+      e->direction = -1;
+      handler->event = e;
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_RBUTTONDOWN:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 1;
+      e->direction = 1;
+      handler->event = e;
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_KEYDOWN:
+    {
+      GUI::KeyEvent *e = new GUI::KeyEvent();
+      switch(wp) {
+      case 37: e->keycode = GUI::KeyEvent::KEY_LEFT; break;
+      case 39: e->keycode = GUI::KeyEvent::KEY_RIGHT; break;
+      case 8: e->keycode = GUI::KeyEvent::KEY_BACKSPACE; break;
+      case 46: e->keycode = GUI::KeyEvent::KEY_DELETE; break;
+      case 36: e->keycode = GUI::KeyEvent::KEY_HOME; break;
+      case 35: e->keycode = GUI::KeyEvent::KEY_END; break;
+      default: e->keycode = GUI::KeyEvent::KEY_UNKNOWN; break;
+      }
+      e->text = "";
+      e->direction = -1;
+      handler->event = e;
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_CHAR:
+    {
+      printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
+      if(wp >= ' ') { // Filter control chars.
+        GUI::KeyEvent *e = new GUI::KeyEvent();
+        e->keycode = GUI::KeyEvent::KEY_CHARACTER;
+        e->text += (char)wp;
+        e->direction = -1;
+        handler->event = e;
+      }
+    }
+    //		xPos = (int)(short) LOWORD(lp);
+    //		yPos = (int)(short) HIWORD(lp);
+    //		fwKeys = wp;
+		break;
+
+	case WM_PAINT:
+    {
+      GUI::RepaintEvent *e = new GUI::RepaintEvent();
+      e->x = 0;
+      e->y = 0;
+      e->width = 100;
+      e->height = 100;
+      handler->event = e;
+
+
+
+
+
+
+
+
+
+
+	PAINTSTRUCT	ps;
+  //	RECT		rect;
+	HDC			hdc;
+
+  //  bool m_state = true;
+  //	HBRUSH	m_brush;
+  //	HPEN	m_penh, m_pens;		//Outer
+  //	HPEN	m_penih, m_penis;	//Inner
+
+	hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
+	if(hdc) {
+    //		GetClientRect(handler->gctx->m_hwnd, &rect);
+
+    //Backgound
+    //		FillRect(hdc, &rect, m_brush);
+
+    /*
+    POINT p[2];
+    p[0].x = p[0].y = 10;
+    p[1].x = p[1].y = 10;
+    SelectObject(hdc, m_penis);
+    Polyline(hdc, p, 2);
+    */
+    GUI::PixelBuffer &px = gwindow->wpixbuf;
+    for(size_t y = 0; y < px.height; y++) {
+      for(size_t x = 0; x < px.width; x++) {
+        int col = *((int*)(&px.buf[(x + y * px.width) * 3])) & 0xffffff;
+        SetPixel(hdc, x, y, col);
+      }
+    }
+
+    /*
+		//Edges
+		drawHilight(hdc, m_state ? m_pens : m_penh, &rect);
+		drawShadow(hdc, m_state ? m_penh : m_pens, &rect);
+
+		//Lav rect 1 mindre (shrink)
+		rect.left++;
+		rect.right--;
+		rect.top++;
+		rect.bottom--;
+
+		drawHilight(hdc, m_state ? m_penis : m_penih, &rect);
+		drawShadow(hdc, m_state ? m_penih : m_penis, &rect);
+    */
+		EndPaint(handler->gctx->m_hwnd, &ps);
+	}
+
+
+
+
+
+
+
+
+    }
+		return DefWindowProc(hwnd, msg, wp, lp);
+	}
+
+	return DefWindowProc(hwnd, msg, wp, lp);
+}
+#endif/*WIN32*/
+
+GUI::Event *GUI::EventHandler::getNextEvent()
+{
+  Event *event = NULL;
+#ifdef X11
+  XEvent xe;
+  XNextEvent(gctx->display, &xe);
+
+  //printf("XEvent ?%d[%d]\n", ConfigureNotify, xe.type);
+
 /**
  * KeyPress                2
  * KeyRelease              3
@@ -72,26 +369,6 @@
  * LASTEvent               36      // must be bigger than any event #
  **/
 
-EventHandler::EventHandler(GlobalContext *gctx)
-{
-  this->gctx = gctx;
-}
-
-bool EventHandler::hasEvent()
-{
-#ifdef X11
-  return XPending(gctx->display);
-#endif/*X11*/
-  return false;
-}
-
-Event *EventHandler::getNextEvent()
-{
-  Event *event = NULL;
-#ifdef X11
-  XEvent xe;
-  XNextEvent(gctx->display, &xe);
-
   if(xe.type == MotionNotify) {
     MouseMoveEvent *e = new MouseMoveEvent();
     e->window_id = xe.xmotion.window;
@@ -110,6 +387,23 @@ Event *EventHandler::getNextEvent()
     event = e;
   }
 
+  if(xe.type == ConfigureNotify) {
+    /*
+    if(hasEvent()) { // Hack to make sure only the last resize event is played.
+      XEvent nxe;
+      XPeekEvent(gctx->display, &nxe);
+      if(xe.type == ConfigureNotify) return NULL;
+    }
+    */
+    ResizeEvent *e = new ResizeEvent();
+    e->window_id = xe.xconfigure.window;
+    //    e->x = xe.xconfigure.x;
+    //    e->y = xe.xconfigure.y;
+    e->width = xe.xconfigure.width;
+    e->height = xe.xconfigure.height;
+    event = e;
+  }
+
   if(xe.type == ButtonPress || xe.type == ButtonRelease) {
     ButtonEvent *e = new ButtonEvent();
     e->window_id = xe.xbutton.window;
@@ -125,31 +419,160 @@ Event *EventHandler::getNextEvent()
     KeyEvent *e = new KeyEvent();
     e->window_id = xe.xkey.window;
 
+    switch(xe.xkey.keycode) {
+    case 113: e->keycode = KeyEvent::KEY_LEFT; break;
+    case 114: e->keycode = KeyEvent::KEY_RIGHT; break;
+    case 119: e->keycode = KeyEvent::KEY_DELETE; break;
+    case 22: e->keycode = KeyEvent::KEY_BACKSPACE; break;
+    case 110: e->keycode = KeyEvent::KEY_HOME; break;
+    case 115: e->keycode = KeyEvent::KEY_END; break;
+    default: e->keycode = KeyEvent::KEY_UNKNOWN; break;
+    }
+
     char buf[1024];
     int sz = XLookupString(&xe.xkey, buf, sizeof(buf),  NULL, NULL);
-
-    e->keycode = xe.xkey.keycode;
+    if(sz && e->keycode == KeyEvent::KEY_UNKNOWN) {
+      e->keycode = KeyEvent::KEY_CHARACTER;
+    }
     e->text.append(buf, sz);
+
     e->direction = xe.type == KeyPress?1:-1;
     event = e;
   }
 
-#if 0
-  printf("event: %d\n", e.type);
-
-  if(e.type == DestroyNotify) {
+  if(xe.type == ClientMessage &&
+     (unsigned int)xe.xclient.data.l[0] == gctx->wmDeleteMessage) {
+    printf("?\n");
+    CloseEvent *e = new CloseEvent();
+    event = e;
   }
-  if(e.type == ClientMessage &&
-     e.xclient.data.l[0] == wdg->wmDeleteMessage) {
-  }
-#endif
 
 #endif/*X11*/
+
+#ifdef WIN32
+	MSG		msg;
+
+	if(GetMessage(&msg, NULL, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+	}
+
+  //  printf("Got message: %p\n", this->event);
+
+  event = this->event;
+  this->event = NULL;
+#endif/*WIN32*/
 
   return event;
 }
 
+void GUI::EventHandler::registerCloseHandler(void (*handler)(void *), void *ptr)
+{
+  this->closeHandler = handler;
+  this->closeHandlerPtr = ptr;
+}
 
+void GUI::EventHandler::processEvents(Window *window)
+{
+  while(hasEvent()) {
+    Event *event = getNextEvent();
+
+    if(event == NULL) continue;
+
+    //    Widget *widget = gctx->widgets[event->window_id];
+    switch(event->type()) {
+    case Event::Repaint:
+      //      window->repaint((RepaintEvent*)event);
+      window->redraw();
+      break;
+    case Event::Resize:{
+      //      window->repaint((RepaintEvent*)event)
+      ResizeEvent *re = (ResizeEvent*)event;
+      if(re->width != window->width() || re->height != window->height()) {
+        window->resized(re->width, re->height);
+        window->repaint_r(NULL);
+      }
+    }      break;
+    case Event::MouseMove:
+      {
+        MouseMoveEvent *me = (MouseMoveEvent*)event;
+
+        Widget *w = window->find(me->x, me->y);
+
+        if(window->buttonDownFocus()) {
+          Widget *w = window->buttonDownFocus();
+          if(me->x < w->x()) me->x = w->x();
+          if(me->x > w->x() + w->width()) me->x = w->x() + w->width();
+          if(me->y < w->y()) me->y = w->y();
+          if(me->y > w->y() + w->height()) me->y = w->y() + w->height();
+
+          me->x -= w->x();
+          me->y -= w->y();
+
+          window->buttonDownFocus()->mouseMoveEvent(me);
+          break;
+        }
+
+        if(w) {
+          me->x -= w->x();
+          me->y -= w->y();
+          w->mouseMoveEvent(me);
+        }
+      }
+      break;
+    case Event::Button:
+      {
+        ButtonEvent *be = (ButtonEvent *)event;
+
+        Widget *w = window->find(be->x, be->y);
+
+        if(window->buttonDownFocus()) {
+          if(be->direction == -1) {
+            Widget *w = window->buttonDownFocus();
+            if(be->x < w->x()) be->x = w->x();
+            if(be->x > w->x() + w->width()) be->x = w->x() + w->width();
+            if(be->y < w->y()) be->y = w->y();
+            if(be->y > w->y() + w->height()) be->y = w->y() + w->height();
+            
+            be->x -= w->x();
+            be->y -= w->y();
+
+            w->buttonEvent(be);
+            break;
+          } else {
+            window->setButtonDownFocus(NULL);
+          }
+        }
+
+        if(w) {
+          be->x -= w->x();
+          be->y -= w->y();
+
+          w->buttonEvent(be);
+
+          if(be->direction == 1) {
+            if(w->catchMouse()) window->setButtonDownFocus(w);
+          } else {
+            if(w->isFocusable()) window->setKeyboardFocus(w);
+          }
+        }
+      }
+      break;
+    case Event::Key:
+      //      window->key((KeyEvent*)event);
+      //      lineedit->keyEvent((KeyEvent*)event);
+      if(window->keyboardFocus())
+        window->keyboardFocus()->keyEvent((KeyEvent*)event);
+      break;
+    case Event::Close:
+      if(closeHandler) closeHandler(closeHandlerPtr);
+      //delete window;
+      //window = NULL;
+      break;
+    }
+    delete event;
+  }
+}
 
 #ifdef TEST_EVENTHANDLER
 //Additional dependency files

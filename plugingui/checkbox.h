@@ -2,7 +2,7 @@
 /***************************************************************************
  *            checkbox.h
  *
- *  Sun Oct  9 13:02:01 CEST 2011
+ *  Sat Nov 26 15:07:44 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -26,4 +26,35 @@
  */
 #ifndef __DRUMGIZMO_CHECKBOX_H__
 #define __DRUMGIZMO_CHECKBOX_H__
+
+#include "widget.h"
+
+namespace GUI {
+
+class CheckBox : public Widget {
+public:
+  CheckBox(Widget *parent);
+
+  bool isFocusable() { return true; }
+
+  bool checked();
+  void setChecked(bool checked);
+
+  void registerClickHandler(void (*handler)(void *), void *ptr);
+
+  //protected:
+  virtual void clicked() {}
+
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
+
+private:
+  bool state;
+
+  void (*handler)(void *);
+  void *ptr;
+};
+
+};
+
 #endif/*__DRUMGIZMO_CHECKBOX_H__*/

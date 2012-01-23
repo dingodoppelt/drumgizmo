@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            colour.cc
+ *            filelineedit.h
  *
- *  Fri Oct 14 09:38:28 CEST 2011
+ *  Sun Nov 13 20:47:00 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,42 +24,21 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "colour.h"
+#ifndef __DRUMGIZMO_FILELINEEDIT_H__
+#define __DRUMGIZMO_FILELINEEDIT_H__
 
-#include "globalcontext.h"
+#include "lineedit.h"
+#include "led.h"
 
-GUI::Colour::Colour()
-{
-  red = blue = green = alpha = 1.0;
-}
+class FileLineEdit : public GUI::LineEdit {
+public:
+  FileLineEdit(Widget *parent, GUI::LED *led);
 
-GUI::Colour::Colour(float grey, float a)
-{
-  red = green = blue = grey;
-  alpha = a;
-}
+protected:
+  void textChanged();
 
-GUI::Colour::Colour(float r, float g, float b, float a)
-{
-  red = r;
-  green = g;
-  blue = b;
-  alpha = a;
-}
+private:
+  GUI::LED *led;
+};
 
-#ifdef TEST_COLOUR
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_COLOUR*/
+#endif/*__DRUMGIZMO_FILELINEEDIT_H__*/

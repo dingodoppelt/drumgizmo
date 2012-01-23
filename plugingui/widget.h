@@ -29,40 +29,58 @@
 
 #include <vector>
 
-class GlobalContext;
-class WidgetContext;
+#include "guievent.h"
+#include "pixelbuffer.h"
+#include <vector>
 
-#include "event.h"
+namespace GUI {
+
+class Window;
 
 class Widget {
 public:
-  Widget(GlobalContext *gctx, Widget *parent);
-  ~Widget();
+  Widget(Widget *parent);
+  virtual ~Widget();
 
-  void show();
-  void hide();
+  virtual void show();
+  virtual void hide();
 
-  void setSize(size_t width, size_t height);
-  void move(size_t x, size_t y);
+  virtual void resize(size_t width, size_t height);
+  virtual void move(size_t x, size_t y);
 
-  size_t x();
-  size_t y();
-  size_t width();
-  size_t height();
+  virtual size_t x();
+  virtual size_t y();
+  virtual size_t width();
+  virtual size_t height();
+
+  virtual bool isFocusable() { return false; }
+  virtual bool catchMouse() { return false; }
 
   void addChild(Widget *widget);
 
-  virtual void repaint(RepaintEvent *e) {}
-  virtual void mouseMove(MouseMoveEvent *e) {}
-  virtual void button(ButtonEvent *e) {}
-  virtual void key(KeyEvent *e) {}
-  
+  virtual void repaintEvent(RepaintEvent *e) {}
+  virtual void mouseMoveEvent(MouseMoveEvent *e) {}
+  virtual void buttonEvent(ButtonEvent *e) {}
+  virtual void keyEvent(KeyEvent *e) {}
+
+  Widget *find(size_t x, size_t y);
+
+  virtual Window *window();
+
+  void repaint_r(RepaintEvent *e);
+
+  PixelBufferAlpha pixbuf;
+  std::vector<PixelBufferAlpha *> getPixelBuffers();
+
+  bool hasKeyboardFocus();
+
 protected:
-  GlobalContext *gctx;
-  WidgetContext *wctx;
   std::vector<Widget*> children;
   Widget *parent;
+  Window *_window;
   size_t _x, _y, _width, _height;
+};
+
 };
 
 #endif/*__DRUMGIZMO_WIDGET_H__*/

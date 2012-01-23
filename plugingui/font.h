@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            colour.cc
+ *            font.h
  *
- *  Fri Oct 14 09:38:28 CEST 2011
+ *  Sat Nov 12 11:13:41 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,42 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "colour.h"
+#ifndef __DRUMGIZMO_FONT_H__
+#define __DRUMGIZMO_FONT_H__
+
+#include "pixelbuffer.h"
 
 #include "globalcontext.h"
 
-GUI::Colour::Colour()
-{
-  red = blue = green = alpha = 1.0;
-}
+#include <string>
 
-GUI::Colour::Colour(float grey, float a)
-{
-  red = green = blue = grey;
-  alpha = a;
-}
+namespace GUI {
 
-GUI::Colour::Colour(float r, float g, float b, float a)
-{
-  red = r;
-  green = g;
-  blue = b;
-  alpha = a;
-}
+class Font {
+public:
+  Font();
+  
+  void setFace(std::string face);
+  std::string face();
 
-#ifdef TEST_COLOUR
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+  void setSize(size_t points);
+  size_t size();
 
-TEST_BEGIN;
+  size_t textWidth(std::string text);
+  size_t textHeight(std::string text);
 
-// TODO: Put some testcode here (see test.h for usable macros).
+  PixelBufferAlpha *render(GlobalContext *gctx, std::string text);
 
-TEST_END;
+private:
+  GlobalContext *gctx;
+};
 
-#endif/*TEST_COLOUR*/
+};
+#endif/*__DRUMGIZMO_FONT_H__*/

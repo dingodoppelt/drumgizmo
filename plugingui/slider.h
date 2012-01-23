@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            colour.cc
+ *            slider.h
  *
- *  Fri Oct 14 09:38:28 CEST 2011
+ *  Sat Nov 26 18:10:22 CET 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,42 +24,47 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "colour.h"
+#ifndef __DRUMGIZMO_SLIDER_H__
+#define __DRUMGIZMO_SLIDER_H__
 
-#include "globalcontext.h"
+#include "widget.h"
 
-GUI::Colour::Colour()
-{
-  red = blue = green = alpha = 1.0;
-}
+namespace GUI {
 
-GUI::Colour::Colour(float grey, float a)
-{
-  red = green = blue = grey;
-  alpha = a;
-}
+class Slider : public Widget {
+public:
+  Slider(Widget *parent);
 
-GUI::Colour::Colour(float r, float g, float b, float a)
-{
-  red = r;
-  green = g;
-  blue = b;
-  alpha = a;
-}
+  bool catchMouse() { return true; }
 
-#ifdef TEST_COLOUR
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+  void setValue(float value);
+  float value();
 
-TEST_BEGIN;
+  void registerClickHandler(void (*handler)(void *), void *ptr);
 
-// TODO: Put some testcode here (see test.h for usable macros).
+  //protected:
+  virtual void clicked() {}
 
-TEST_END;
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
+  virtual void mouseMoveEvent(MouseMoveEvent *e);
 
-#endif/*TEST_COLOUR*/
+private:
+  typedef enum {
+    up,
+    down
+  } state_t;
+
+  float val;
+  float maximum;
+  float minimum;
+
+  state_t state;
+
+  void (*handler)(void *);
+  void *ptr;
+};
+
+};
+
+#endif/*__DRUMGIZMO_SLIDER_H__*/

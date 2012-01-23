@@ -29,13 +29,19 @@
 
 #ifdef X11
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #endif/*X11*/
 
 #ifdef WIN32
+//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
+typedef HWND WNDID;
+namespace GUI { class EventHandler; };
 #endif/*WIN32*/
 
 #include <map>
+
+namespace GUI {
 
 class Widget;
 
@@ -44,12 +50,18 @@ public:
   GlobalContext();
   ~GlobalContext();
 
-  Widget *keyboardFocus;
-
 #ifdef X11
   Display *display;
-  std::map<Window, Widget*> widgets;
+  Atom wmDeleteMessage;
 #endif/*X11*/
+
+#ifdef WIN32
+	WNDID	m_hwnd;
+	char	*m_className;
+  EventHandler *eventhandler;
+#endif/*WIN32*/
+};
+
 };
 
 #endif/*__DRUMGIZMO_GLOBALCONTEXT_H__*/

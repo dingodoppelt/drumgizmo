@@ -29,80 +29,95 @@
 #include <stdio.h>
 
 #include "painter.h"
-#include "globalcontext.h"
 
-using namespace DGGUI;
+#include "window.h"
 
 #define BORDER 10
 
-LineEdit::LineEdit(GlobalContext *gctx, Widget *parent)
-  : Widget(gctx, parent)
+GUI::LineEdit::LineEdit(Widget *parent)
+  : GUI::Widget(parent)
 {
   pos = 0;
-  gctx->keyboardFocus = this;
 }
 
-void LineEdit::setText(std::string text)
+void GUI::LineEdit::setText(std::string text)
 {
   _text = text;
+  textChanged();
 }
 
-std::string LineEdit::text()
+std::string GUI::LineEdit::text()
 {
   return _text;
 }
 
-void LineEdit::key(KeyEvent *e)
+void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 {
-  //  printf("%d\n", e->keycode);
+  bool change = false;
+  
   if(e->direction == -1) {
 
-    if(e->keycode == 113) { // left key
+    if(e->keycode == GUI::KeyEvent::KEY_LEFT) {
       if(pos) pos--;
 
-    } else if(e->keycode == 114) { // right key
+    } else if(e->keycode == GUI::KeyEvent::KEY_HOME) {
+      pos = 0;
+
+    } else if(e->keycode == GUI::KeyEvent::KEY_END) {
+      pos = _text.length();
+
+    } else if(e->keycode == GUI::KeyEvent::KEY_RIGHT) {
       if(pos < _text.length()) pos++;
 
-    } else if(e->keycode == 119) { // delete
+    } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
       if(pos < _text.length()) {
         std::string t = _text.substr(0, pos);
         t += _text.substr(pos + 1, std::string::npos);
         _text = t;
+        change = true;
       }
 
-    } else if(e->keycode == 22) { // backspace
+    } else if(e->keycode == GUI::KeyEvent::KEY_BACKSPACE) {
       if(pos > 0) {
         std::string t = _text.substr(0, pos - 1);
         t += _text.substr(pos, std::string::npos);
         _text = t;
         pos--;
+        change = true;
       }
 
-    } else if(e->keycode >= 10 && e->keycode <= 61) {
+    } else if(e->keycode == GUI::KeyEvent::KEY_CHARACTER) {
       std::string pre = _text.substr(0, pos);
       std::string post = _text.substr(pos, std::string::npos);
       _text = pre + e->text + post;
+      change = true;
       pos++;
     }
 
-    repaint(NULL);
+    repaintEvent(NULL);
   }
+
+  if(change) textChanged();
 }
 
-void LineEdit::repaint(RepaintEvent *e)
+void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
 {
-  Painter p(gctx, wctx);
+  Painter p(this);
   
-  p.setColour(Colour(0));
+  p.setColour(Colour(0, 0.4));
   p.drawFilledRectangle(3,3,width()-3,height()-3);
 
+  Font font;
   p.setColour(Colour(1,1,1));
   p.drawRectangle(0,0,width()-1,height()-1);
-  p.drawRectangle(2,2,width()-5,height()-5);
-  p.drawText(BORDER, height()/2+4, _text);
+  p.drawRectangle(2,2,width()-3,height()-3);
+  p.drawText(BORDER, height()/2+4, font, _text);
 
-  p.setColour(Colour(0.8));
-  p.drawLine(pos * 6 + BORDER - 1, 4, pos * 6 + BORDER - 1, height() - 5);
+  if(hasKeyboardFocus()) {
+    size_t px = font.textWidth(_text.substr(0, pos));
+    p.setColour(Colour(0.8));
+    p.drawLine(px + BORDER - 1, 4, px + BORDER - 1, height() - 5);
+  }
 }
 
 #ifdef TEST_LINEEDIT

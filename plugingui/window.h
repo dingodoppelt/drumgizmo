@@ -29,11 +29,67 @@
 
 #include "widget.h"
 
-class _Window : public Widget {
-public:
-  _Window(GlobalContext *gctx);
+#include "globalcontext.h"
 
-  void repaint(RepaintEvent *e);
+#include "pixelbuffer.h"
+
+namespace GUI {
+
+class Window : public Widget {
+public:
+  Window(GlobalContext *gctx);
+  ~Window();
+
+  void show();
+  void hide();
+
+  void resize(size_t width, size_t height);
+  void move(size_t x, size_t y);
+
+  size_t x();
+  size_t y();
+  size_t width();
+  size_t height();
+
+  void addChild(Widget *widget);
+
+  void repaintEvent(GUI::RepaintEvent *e);
+
+  void beginPaint();
+  void endPaint();
+
+  Window *window();
+
+  // handlers
+  virtual void redraw();
+  void resized(size_t w, size_t h);
+
+  Widget *keyboardFocus();
+  void setKeyboardFocus(Widget *widget);
+
+  Widget *buttonDownFocus();
+  void setButtonDownFocus(Widget *widget);
+
+  GlobalContext *gctx;
+
+  PixelBuffer wpixbuf;
+
+protected:
+  void updateBuffer();
+
+  size_t refcount;
+
+  Widget *_keyboardFocus;
+  Widget *_buttonDownFocus;
+
+#ifdef X11
+  ::Window xwindow;
+  GC gc;
+  XImage *buffer;
+#endif/*X11*/
+
+};
+
 };
 
 #endif/*__DRUMGIZMO_WINDOW_H__*/
