@@ -31,9 +31,12 @@
 #include <public.sdk/source/vst2.x/aeffeditor.h>
 
 #include <drumgizmo.h>
+#include <plugingui.h>
 
 #include "input_vst.h"
 #include "output_vst.h"
+
+class DGEditor;
 
 class DrumGizmoVst : public AudioEffectX
 {
@@ -91,6 +94,23 @@ private:
   size_t pos;
   sample_t *buffer;
   size_t buffer_size;
+
+  DGEditor *editor;
+};
+
+class DGEditor : public AEffEditor {
+public:
+  DGEditor(AudioEffect* effect);
+
+  bool open(void* ptr);
+  void close();
+  bool isOpen();
+	void idle();
+
+private:
+  DrumGizmoVst* dgeff;
+  PluginGUI *plugingui;
+  DrumGizmo *drumgizmo;
 };
 
 #endif/*__DRUMGIZMO_DRUMGIZMO_VST_H__*/

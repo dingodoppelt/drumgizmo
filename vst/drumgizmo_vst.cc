@@ -33,41 +33,36 @@
 #define NUM_PROGRAMS 0
 #define NUM_PARAMS 0
 
-#include <plugingui.h>
+DGEditor::DGEditor(AudioEffect* effect) 
+{
+  dgeff = (DrumGizmoVst*)effect;
+  plugingui = NULL;
+  drumgizmo = dgeff->drumgizmo;
+}
 
-class DGEditor : public AEffEditor {
-public:
-  DGEditor(AudioEffect* effect) 
-  {
-    dgeff = (DrumGizmoVst*)effect;
-    plugingui = new PluginGUI(dgeff->drumgizmo);
-  }
+bool DGEditor::open(void* ptr)
+{
+  if(!plugingui) plugingui = new PluginGUI(drumgizmo);
+  plugingui->show();
+  return true;
+}
 
-  bool open(void* ptr)
-  {
-    plugingui->show();
-    return true;
-  }
+void DGEditor::close()
+{
+  plugingui->hide();
+  delete plugingui;
+  plugingui = NULL;
+}
 
-  void close()
-  {
-    plugingui->hide();
-  }
+bool DGEditor::isOpen()
+{
+  return plugingui != NULL;;
+}
 
-  bool isOpen()
-  {
-    return false;
-  }
-
-	void idle()
-  {
-    plugingui->processEvents();
-  }
-
-private:
-  DrumGizmoVst* dgeff;
-  PluginGUI *plugingui;
-};
+void DGEditor::idle()
+{
+  if(plugingui) plugingui->processEvents();
+}
 
 AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 {
@@ -97,7 +92,7 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		canProcessReplacing();
 		isSynth();
 
-    char id[] = "DGV2"; // Four bytes typecasted into an unsigned integer
+    char id[] = "DGV4"; // Four bytes typecasted into an unsigned integer
 		setUniqueID(*(unsigned int*)id);
 
     //    setUniqueID((unsigned int)time(NULL));
@@ -107,7 +102,7 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 	initProcess();
 	suspend();
 
-  DGEditor *editor = new DGEditor(this);
+  editor = new DGEditor(this);
   setEditor(editor);
 }
 
@@ -253,7 +248,7 @@ bool DrumGizmoVst::getProgramNameIndexed(VstInt32 category, VstInt32 index,
 
 bool DrumGizmoVst::getEffectName(char* name)
 {
-	vst_strncpy(name, "DrumGizmoA", kVstMaxEffectNameLen);
+	vst_strncpy(name, "DrumGizmo4", kVstMaxEffectNameLen);
 	return true;
 }
 
@@ -265,7 +260,7 @@ bool DrumGizmoVst::getVendorString(char* text)
 
 bool DrumGizmoVst::getProductString(char* text)
 {
-	vst_strncpy(text, "Vst SynthA", kVstMaxProductStrLen);
+	vst_strncpy(text, "Vst Synth", kVstMaxProductStrLen);
 	return true;
 }
 
