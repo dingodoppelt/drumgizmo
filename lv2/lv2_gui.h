@@ -27,7 +27,8 @@
 #ifndef __DRUMGIZMO_LV2_GUI_H__
 #define __DRUMGIZMO_LV2_GUI_H__
 
-#include "lv2_data_access.h"
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+#include <lv2/lv2plug.in/ns/ext/data-access/data-access.h>
 
 #define PLUGIN_INSTANCE_URI "http://drumgizmo.org/ns/drumgizmo-plugin-instance"
 

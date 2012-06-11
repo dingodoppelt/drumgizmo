@@ -27,14 +27,14 @@
 #ifndef __DRUMGIZMO_LV2_INSTANCE_H__
 #define __DRUMGIZMO_LV2_INSTANCE_H__
 
-#include <lv2.h>
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/lv2plug.in/ns/ext/uri-map/uri-map.h>
 
 #include "input_lv2.h"
 #include "output_lv2.h"
 
 #include <drumgizmo.h>
-
-#include "lv2_uri_map.h"
 
 typedef struct {
   InputLV2 *in;
@@ -42,7 +42,8 @@ typedef struct {
   DrumGizmo *dg;
   sample_t *buffer;
   size_t buffer_size;
-  LV2_URI_Map_Feature* urimap;
+  LV2_URI_Map_Feature *urimap;
+  LV2_State_Make_Path *makepath;
 } DGLV2;
 
 #endif/*__DRUMGIZMO_LV2_INSTANCE_H__*/

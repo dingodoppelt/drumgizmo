@@ -24,17 +24,16 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <lv2.h>
-
 #include "lv2_gui.h"
-#include "lv2_ui.h"
 
 #include <stdio.h>
 #include <string.h>
 
+#include <lv2/lv2plug.in/ns/ext/instance-access/instance-access.h>
+#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+
 #include "lv2_instance.h"
 
-#include "lv2_instance-access.h"
 // From: http://codesearch.google.com/#50sg5qT6WNE/src/lv2_ui_dssi.c
 // git://repo.or.cz/nekobee.git/src/lv2_ui_dssi.c
 
