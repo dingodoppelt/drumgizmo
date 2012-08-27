@@ -112,14 +112,33 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
   window = NULL;
   eventhandler = NULL;
  
+#ifdef USE_THREAD
+  run();
+#else
   init();
+#endif/*USE_THREAD*/
+}
+
+void PluginGUI::thread_main()
+{
+  init();
+
+  while(true) {
+    eventhandler->processEvents(window);
+#ifdef WIN32
+    SleepEx(50, FALSE);
+#else
+    usleep(50);
+#endif/*WIN32*/
+    //    printf("."); fflush(stdout);
+  }
 }
 
 void PluginGUI::init()
 {
   gctx = new GUI::GlobalContext();
   eventhandler = new GUI::EventHandler(gctx);
-  printf("%p\n", eventhandler);
+  //  printf("%p\n", eventhandler);
   window = new GUI::Window(gctx);
   window->resize(640, 200);
 
@@ -194,6 +213,8 @@ void PluginGUI::init()
   lbl3->setText("v"VERSION);
   lbl3->move(120, 180);
   lbl3->resize(70, 20);
+
+  window->show();
 }
 
 PluginGUI::~PluginGUI()
@@ -212,7 +233,7 @@ void PluginGUI::show()
   //  printf("PluginGUI::show()\n");
   if(!shown && window) {
     shown = true;
-    window->show();
+    //window->show();
   }
 }
 
@@ -224,8 +245,11 @@ void PluginGUI::hide()
 
 void PluginGUI::processEvents()
 {
-  //  printf("PluginGUI::processEvents()\n");
+#ifdef USE_THREAD
+#else
+  printf("PluginGUI::processEvents()\n");
   eventhandler->processEvents(window);
+#endif/*USE_THREAD*/
 }
 
 void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void *ptr)
@@ -256,16 +280,18 @@ int main()
   bool running = true;
 
   PluginGUI gui(NULL);
-  gui.setWindowClosedCallback(stop, &running);
+  //gui.setWindowClosedCallback(stop, &running);
 
-  gui.show();
+  // gui.show();
 
   while(running) {
-    gui.processEvents();
+    //    gui.processEvents();
 #ifdef WIN32
-    SleepEx(100, FALSE);
+    SleepEx(1000, FALSE);
+    printf("loop\n");
 #else
-    usleep(10000);
+    //    usleep(10000);
+    sleep(1);
 #endif
   }
 
