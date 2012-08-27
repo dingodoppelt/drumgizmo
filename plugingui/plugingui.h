@@ -37,12 +37,16 @@
 #include "button.h"
 #include "slider.h"
 
+#include "thread.h"
+
 class DrumGizmo;
 
-class PluginGUI {
+class PluginGUI : public Thread {
 public:
   PluginGUI(DrumGizmo *drumgizmo);
   ~PluginGUI();
+
+  void thread_main();
 
   void init();
 
