@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <midimap>
-	<map note="35" instr="kick"/>
-	<map note="36" instr="kick"/>
+	<map note="35" instr="kick-r"/>
+	<map note="36" instr="kick-l"/>
 
 	<map note="38" instr="snare"/>
 
@@ -15,8 +15,8 @@
 	<map note="51" instr="ride"/>
 	<map note="53" instr="ride-bell"/>
 
-	<map note="49" instr="crash-1"/>
-	<map note="57" instr="crash-2"/>
+	<map note="49" instr="crash1"/>
+	<map note="57" instr="crash2"/>
 
 	<map note="52" instr="china"/>
 
