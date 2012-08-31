@@ -2,7 +2,7 @@ bin_PROGRAMS = plugingui
 
 plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) -ldl -lX11
 
-plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -DSTANDALONE -DX11
+plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -DSTANDALONE -DX11 -DUSE_THREAD
 
 include Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
