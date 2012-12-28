@@ -284,8 +284,8 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       { // Copy GUI::PixelBuffer to framebuffer (move to window.cc)
 
         int i,j,k;
-        for (k=0,i=0;i<px.height;i++)
-          for (j=0;j<px.width;j++,k++)
+        for (k=0,i=0;i<(int)px.height;i++)
+          for (j=0;j<(int)px.width;j++,k++)
             *(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
                               px.buf[(j + i * px.width) * 3 + 1],
                               px.buf[(j + i * px.width) * 3 + 0]);
