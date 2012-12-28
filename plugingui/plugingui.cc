@@ -93,13 +93,7 @@ void closeClick(void *ptr)
 }
 
 #include "painter.h"
-
-#ifdef WIN32
-#define VERSION "0.snot"
-#else
-// For VERSION
-#include <config.h>
-#endif
+#include "../version.h"
 
 PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
 {
