@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            window.h
+ *            nativewindow.h
  *
- *  Sun Oct  9 13:11:52 CEST 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Fri Dec 28 18:46:01 CET 2012
+ *  Copyright 2012 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,70 +24,32 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_WINDOW_H__
-#define __DRUMGIZMO_WINDOW_H__
+#ifndef __DRUMGIZMO_NATIVEWINDOW_H__
+#define __DRUMGIZMO_NATIVEWINDOW_H__
 
-#include "widget.h"
+#include <string>
 
 #include "globalcontext.h"
 
-#include "pixelbuffer.h"
-#include "nativewindow.h"
-
 namespace GUI {
 
-class Window : public Widget {
+class NativeWindow {
 public:
-  Window(GlobalContext *gctx);
-  ~Window();
+  NativeWindow(GlobalContext *c) : gctx(c) {}
+  virtual ~NativeWindow() {}
 
-  void show();
-  void hide();
-
-  void resize(size_t width, size_t height);
-  void move(size_t x, size_t y);
-
-  size_t x();
-  size_t y();
-  size_t width();
-  size_t height();
-
-  void setCaption(std::string caption);
-
-  void addChild(Widget *widget);
-
-  void repaintEvent(GUI::RepaintEvent *e);
-
-  void beginPaint();
-  void endPaint();
-
-  Window *window();
-
-  // handlers
-  virtual void redraw();
-  void resized(size_t w, size_t h);
-
-  Widget *keyboardFocus();
-  void setKeyboardFocus(Widget *widget);
-
-  Widget *buttonDownFocus();
-  void setButtonDownFocus(Widget *widget);
-
-  GlobalContext *gctx;
-
-  PixelBuffer wpixbuf;
-  void updateBuffer();
+  virtual void resize(int width, int height) = 0;
+  virtual void move(int x, int y) = 0;
+  virtual void show() = 0;
+  virtual void setCaption(const std::string &caption) = 0;
+  virtual void hide() = 0;
+  virtual void handleBuffer() = 0;
+  virtual void redraw() = 0;
 
 protected:
-  size_t refcount;
-
-  Widget *_keyboardFocus;
-  Widget *_buttonDownFocus;
-
-  NativeWindow *native;
-
+  GlobalContext *gctx;
 };
 
 };
 
-#endif/*__DRUMGIZMO_WINDOW_H__*/
+#endif/*__DRUMGIZMO_NATIVEWINDOW_H__*/

@@ -33,6 +33,7 @@
 
 #ifdef X11
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #endif/*X11*/
 
 namespace GUI {
@@ -52,7 +53,7 @@ public:
   virtual Type type() = 0;
 
 #ifdef X11
-  Window window_id;
+  ::Window window_id;
 #endif/*X11*/
 };
 

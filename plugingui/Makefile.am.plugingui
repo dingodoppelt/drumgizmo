@@ -1,4 +1,6 @@
 PLUGIN_GUI_SOURCES = \
+	$(top_srcdir)/plugingui/nativewindow_x11.cc \
+	$(top_srcdir)/plugingui/nativewindow_win32.cc \
 	$(top_srcdir)/plugingui/plugingui.cc \
 	$(top_srcdir)/plugingui/globalcontext.cc \
 	$(top_srcdir)/plugingui/label.cc \

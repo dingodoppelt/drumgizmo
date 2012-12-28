@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            window.h
+ *            nativewindow_x11.h
  *
- *  Sun Oct  9 13:11:52 CEST 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Fri Dec 28 18:45:56 CET 2012
+ *  Copyright 2012 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,70 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_WINDOW_H__
-#define __DRUMGIZMO_WINDOW_H__
+#ifndef __DRUMGIZMO_NATIVEWINDOW_X11_H__
+#define __DRUMGIZMO_NATIVEWINDOW_X11_H__
+#endif/*__DRUMGIZMO_NATIVEWINDOW_X11_H__*/
 
-#include "widget.h"
+#ifdef X11
+#include <X11/Xlib.h>
 
-#include "globalcontext.h"
-
-#include "pixelbuffer.h"
 #include "nativewindow.h"
 
 namespace GUI {
 
-class Window : public Widget {
+class Window;
+class NativeWindowX11 : public NativeWindow {
 public:
-  Window(GlobalContext *gctx);
-  ~Window();
+  NativeWindowX11(GlobalContext *gctx, GUI::Window *window);
+  ~NativeWindowX11();
 
+  void resize(int width, int height);
+  void move(int x, int y);
   void show();
+  void setCaption(const std::string &caption);
   void hide();
+  void handleBuffer();
+  void redraw();
 
-  void resize(size_t width, size_t height);
-  void move(size_t x, size_t y);
+private:
+  ::Window xwindow;
+  GC gc;
+  XImage *buffer;
 
-  size_t x();
-  size_t y();
-  size_t width();
-  size_t height();
-
-  void setCaption(std::string caption);
-
-  void addChild(Widget *widget);
-
-  void repaintEvent(GUI::RepaintEvent *e);
-
-  void beginPaint();
-  void endPaint();
-
-  Window *window();
-
-  // handlers
-  virtual void redraw();
-  void resized(size_t w, size_t h);
-
-  Widget *keyboardFocus();
-  void setKeyboardFocus(Widget *widget);
-
-  Widget *buttonDownFocus();
-  void setButtonDownFocus(Widget *widget);
-
-  GlobalContext *gctx;
-
-  PixelBuffer wpixbuf;
-  void updateBuffer();
-
-protected:
-  size_t refcount;
-
-  Widget *_keyboardFocus;
-  Widget *_buttonDownFocus;
-
-  NativeWindow *native;
-
+  GUI::Window *window;
 };
 
 };
 
-#endif/*__DRUMGIZMO_WINDOW_H__*/
+#endif/*X11*/
