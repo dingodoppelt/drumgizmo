@@ -1,27 +1,9 @@
-#top_srcdir=..
-#include Makefile.am.plugingui
-
-PLUGIN_GUI_SOURCES = \
-	plugingui.cc \
-	globalcontext.cc \
-	label.cc \
-	eventhandler.cc \
-	font.cc \
-	window.cc \
-	widget.cc \
-	colour.cc \
-	painter.cc \
-	button.cc \
-	pixelbuffer.cc \
-	filelineedit.cc \
-	lineedit.cc \
-	led.cc \
-	checkbox.cc \
-	slider.cc \
-	thread.cc
+top_srcdir=..
+include Makefile.am.plugingui
 
 CFLAGS=-DSTANDALONE -DWIN32 -DUSE_THREAD
-LDFLAGS=-lgdi32
+LDFLAGS=-mwindows
+#-lgdi32
 
 OBJECTS=$(PLUGIN_GUI_SOURCES:.cc=.o)
 
@@ -31,7 +13,7 @@ plugingui.exe: $(OBJECTS)
 	g++ $(OBJECTS) $(LDFLAGS) -o $@
 
 %.o: %.cc
-	g++ -c $(CFLAGS) $< -o $@
+	g++ -O3 -c $(CFLAGS) $< -o $@
 
 clean:
 	del -rf *.o plugingui.exe
