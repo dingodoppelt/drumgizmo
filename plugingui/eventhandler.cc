@@ -251,14 +251,46 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       handler->event = e;
 
 
+#if 1
+      // Move to window.h (in class)
+      HDC pDC;
+      HBITMAP old;
+      HBITMAP ourbitmap;
+      int * framebuf;
+      GUI::PixelBuffer &px = gwindow->wpixbuf;
+
+      { // Create bitmap (move to window.cc)
+
+        HDC hDC;
+        BITMAPINFO bitmapinfo;
+        hDC=CreateCompatibleDC(NULL);
+        bitmapinfo.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
+        bitmapinfo.bmiHeader.biWidth=px.width;
+        bitmapinfo.bmiHeader.biHeight=-px.height; /* top-down */
+        bitmapinfo.bmiHeader.biPlanes=1;
+        bitmapinfo.bmiHeader.biBitCount=32;
+        bitmapinfo.bmiHeader.biCompression=BI_RGB;
+        bitmapinfo.bmiHeader.biSizeImage=0;
+        bitmapinfo.bmiHeader.biClrUsed=256;
+        bitmapinfo.bmiHeader.biClrImportant=256;
+        ourbitmap=CreateDIBSection(hDC,&bitmapinfo,DIB_RGB_COLORS,(void**)&framebuf,0,0);
+        pDC=CreateCompatibleDC(NULL);
+        old=(HBITMAP__*)SelectObject(pDC,ourbitmap);
+        DeleteDC(hDC);
+        
+      }
 
 
+      { // Copy GUI::PixelBuffer to framebuffer (move to window.cc)
 
-
-
-
-
-
+        int i,j,k;
+        for (k=0,i=0;i<px.height;i++)
+          for (j=0;j<px.width;j++,k++)
+            *(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
+                              px.buf[(j + i * px.width) * 3 + 1],
+                              px.buf[(j + i * px.width) * 3 + 0]);
+      }
+      
 	PAINTSTRUCT	ps;
   //	RECT		rect;
 	HDC			hdc;
@@ -267,8 +299,33 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
   //	HBRUSH	m_brush;
   //	HPEN	m_penh, m_pens;		//Outer
   //	HPEN	m_penih, m_penis;	//Inner
-
+  
 	hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
+  BitBlt(hdc,0,0,px.width,px.height,pDC,0,0,SRCCOPY);
+  EndPaint(handler->gctx->m_hwnd, &ps);
+
+
+
+
+  { // Destroy bitmap (move to window.cc)
+
+    SelectObject(pDC,old);
+    DeleteDC(pDC);
+    DeleteObject(ourbitmap);
+
+  }
+
+
+
+
+
+
+
+#else
+	PAINTSTRUCT	ps;
+  //	RECT		rect;
+	HDC			hdc;
+  hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
 	if(hdc) {
     //		GetClientRect(handler->gctx->m_hwnd, &rect);
 
@@ -306,7 +363,8 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     */
 		EndPaint(handler->gctx->m_hwnd, &ps);
 	}
-
+  //DeleteDC(hdc); 
+#endif
 
 
 
