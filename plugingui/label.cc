@@ -50,7 +50,7 @@ void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(1));
 
   Font font;
-  p.drawText(10, height() / 2 + 4, font, _text);
+  p.drawText(10, height() / 2 + 5, font, _text);
 }
 
 

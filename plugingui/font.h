@@ -52,6 +52,10 @@ public:
 
 private:
   GlobalContext *gctx;
+  std::map<char, int> character_offset;
+  std::map<char, size_t> character_width;
+  std::map<char, int> character_pre_bias;
+  std::map<char, int> character_post_bias;
 };
 
 };

@@ -111,7 +111,7 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(1,1,1));
   p.drawRectangle(0,0,width()-1,height()-1);
   p.drawRectangle(2,2,width()-3,height()-3);
-  p.drawText(BORDER, height()/2+4, font, _text);
+  p.drawText(BORDER, height()/2+5, font, _text);
 
   if(hasKeyboardFocus()) {
     size_t px = font.textWidth(_text.substr(0, pos));
