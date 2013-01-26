@@ -1,4 +1,6 @@
 PLUGIN_GUI_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/hugin/hugin_syslog.c \
 	$(top_srcdir)/plugingui/nativewindow_x11.cc \
 	$(top_srcdir)/plugingui/nativewindow_win32.cc \
 	$(top_srcdir)/plugingui/plugingui.cc \
@@ -16,8 +18,8 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/lineedit.cc \
 	$(top_srcdir)/plugingui/led.cc \
 	$(top_srcdir)/plugingui/checkbox.cc \
-	$(top_srcdir)/plugingui/slider.cc \
-	$(top_srcdir)/plugingui/thread.cc
+	$(top_srcdir)/plugingui/slider.cc
 
 PLUGIN_GUI_LIBS = -lX11
 
+PLUGIN_GUI_CFLAGS = -I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
