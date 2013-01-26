@@ -95,7 +95,7 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
   Font font;
   p.setColour(Colour(0.9, alpha));
   p.drawText(width()/2-(text.length()*3)+(state==up?0:1),
-             height()/2+4+(state==up?0:1), font, text);
+             height()/2+5+(state==up?0:1), font, text);
 }
 
 void GUI::Button::setText(std::string text)
