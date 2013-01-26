@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.h
+ *            drumkitloader.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Thu Jan 17 20:54:13 CET 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,33 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOFILE_H__
-#define __DRUMGIZMO_AUDIOFILE_H__
+#ifndef __DRUMGIZMO_DRUMKITLOADER_H__
+#define __DRUMGIZMO_DRUMKITLOADER_H__
 
 #include <string>
-#include <map>
 
+#include "thread.h"
+#include "semaphore.h"
 #include "mutex.h"
-#include "audio.h"
 
-class AudioFile {
+#include "drumkit.h"
+
+class DrumKitLoader : public Thread {
 public:
-  AudioFile(std::string filename);
-  ~AudioFile();
+  DrumKitLoader();
+  ~DrumKitLoader();
 
-  void load();
-  void unload();
+  void loadKit(DrumKit *kit);
 
-  bool isLoaded();
+  void thread_main();
 
-	sample_t *data;
-	size_t size;
-
-  std::string filename;
+  bool isDone();
 
 private:
+  Semaphore semaphore;
+  DrumKit *kit;
+  bool is_done;
   Mutex mutex;
-  bool is_loaded;
+  bool quitit;
 };
 
-#endif/*__DRUMGIZMO_AUDIOFILE_H__*/
+#endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/

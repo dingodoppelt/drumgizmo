@@ -5,6 +5,7 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/drumgizmo.cc \
 	$(top_srcdir)/src/drumkit.cc \
+	$(top_srcdir)/src/drumkitloader.cc \
 	$(top_srcdir)/src/drumkitparser.cc \
 	$(top_srcdir)/src/events.cc \
 	$(top_srcdir)/src/instrument.cc \
@@ -14,7 +15,9 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/path.cc \
 	$(top_srcdir)/src/sample.cc \
+	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/saxparser.cc \
+	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/velocity.cc
 
 DRUMGIZMO_LIBS = $(SNDFILE_LIBS) $(EXPAT_LIBS)

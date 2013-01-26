@@ -31,15 +31,18 @@
 
 #include <sndfile.h>
 
+#include <hugin.hpp>
+
 AudioFile::AudioFile(std::string filename)
 {
+  is_loaded = false;
   //printf("new AudioFile %p\n", this);
   this->filename = filename;
 
   data = NULL;
   size = 0;
 
-  load();
+  //load();
 }
 
 AudioFile::~AudioFile()
@@ -74,5 +77,21 @@ void AudioFile::load()
   sf_read_float(fh, data, size); 
   
   sf_close(fh);
+
+  mutex.lock();
+  is_loaded = true;
+  mutex.unlock();
+
+  DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
 }
 
+bool AudioFile::isLoaded()
+{
+  bool l;
+
+  mutex.lock();
+  l = is_loaded;
+  mutex.unlock();
+
+  return l;
+}

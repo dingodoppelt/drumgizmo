@@ -37,6 +37,10 @@
 #include "audiofile.h"
 #include "drumkit.h"
 
+#include "drumkitloader.h"
+
+#include "mutex.h"
+
 #define MAX_NUM_CHANNELS 512
 
 class DrumGizmo {
@@ -45,7 +49,7 @@ public:
             AudioInputEngine *inputengine);
   ~DrumGizmo();
 
-  bool loadkit(const std::string &kitfile);
+  bool loadkit(std::string kitfile);
   std::string drumkitfile();
 
   bool init(bool preload = true);
@@ -59,11 +63,15 @@ public:
   bool isRunning() { return is_running; }
 
   std::string configString();
-  void setConfigString(std::string cfg);
+  bool setConfigString(std::string cfg);
 
   std::string midimapfile;
+  std::string kitfile;
 
 private:
+  DrumKitLoader loader;
+
+  Mutex mutex;
   bool is_running;
   
   AudioOutputEngine *oe;
@@ -77,8 +85,6 @@ private:
 public:
 #endif
   DrumKit kit;
-
-  std::string kitfile;
 };
 
 

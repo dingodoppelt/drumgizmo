@@ -34,11 +34,14 @@
 
 #include <string.h>
 
+#include <hugin.hpp>
+
 #include "drumkitparser.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : oe(o), ie(i)
 {
+  loader.run(); // Start drumkit loader thread.
 }
 
 DrumGizmo::~DrumGizmo()
@@ -58,21 +61,20 @@ std::string DrumGizmo::drumkitfile()
   return kitfile;
 }
 
-bool DrumGizmo::loadkit(const std::string &kitfile)
+bool DrumGizmo::loadkit(std::string file)
 {
-  this->kitfile = kitfile;
-  kit = DrumKit();
+  this->kitfile = file;
+
+  DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
+
   DrumKitParser parser(kitfile, kit);
-  if(parser.parse()) return false;
-  /*
-  Instruments::iterator i = kit.instruments.begin();
-  while(i != kit.instruments.end()) {
-    Instrument &instr = i->second;
-    InstrumentParser iparser(instr.file, instr);
-    if(iparser.parse()) return false;
-    i++;
+  if(parser.parse()) {
+    ERR(drumgizmo, "Drumkit parser failed: %s\n", kitfile.c_str());
+    return false;
   }
-  */
+
+  loader.loadKit(&kit);
+
   return true;
 }
 
@@ -97,9 +99,29 @@ bool DrumGizmo::init(bool preload)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+#if 0
+  DEBUG(drumgizmo, "loader.isDone() = %d", (int)loader.isDone());
+  if(!loader.isDone()) {
+    /*
+    //    return false;
+    ie->pre();
+    oe->pre(nsamples);
+    size_t nev;
+    event_t *evs = ie->run(pos, nsamples, &nev);
+    free(evs);
+    //    memset(samples, 0, nsamples);
+    for(size_t i = 0; i < nsamples / 2; i++) samples[i] = sin(pos + i);
+    for(size_t c = 0; c < 16; c++) oe->run(c, samples, nsamples);
+    ie->post();
+    oe->post(nsamples);
+    pos += nsamples;
+    */
+    return true;
+  }
+#endif
+
   ie->pre();
   oe->pre(nsamples);
-
 
   //
   // Read new events
@@ -125,14 +147,14 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       }
       
       if(i == NULL) {
-        printf("Missing Instrument %d.\n", evs[e].instrument);
+        ERR(drumgizmo, "Missing Instrument %d.\n", evs[e].instrument);
         continue;
       }
       
       Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
       
       if(s == NULL) {
-        printf("Missing Sample.\n");
+        ERR(drumgizmo, "Missing Sample.\n");
         continue;
       }
       
@@ -143,7 +165,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         if(af == NULL) {
           //printf("Missing AudioFile.\n");
         } else {
-          //printf("Adding event %d.\n", evs[e].offset);
+          DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af);
           evt->offset = evs[e].offset + pos;
           activeevents[ch.num].push_back(evt);
@@ -222,7 +244,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
       {
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
-        af->load(); // Make sure it is loaded.
+        //af->load(); // Make sure it is loaded.
+        if(!af->isLoaded()) continue;
 
         size_t n = 0;
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
@@ -332,17 +355,29 @@ public:
     return values[name];
   }
 
+  void parseError(char *buf, size_t len, std::string error, int lineno)
+  {
+    std::string buffer;
+    buffer.append(buf, len);
+    ERR(configparser, "sax parser error '%s' at line %d. "
+        "Buffer: [%d bytes]<%s>\n",
+        error.c_str(), lineno, len, buffer.c_str());
+  }
+
   std::map<std::string, std::string> values;
   std::string *str;
 };
 
-void DrumGizmo::setConfigString(std::string cfg)
+bool DrumGizmo::setConfigString(std::string cfg)
 {
-  printf("Load config: %s\n", cfg.c_str());
+  DEBUG(config, "Load config: %s\n", cfg.c_str());
 
   std::string dkf;
   ConfigParser p;
-  p.parse(cfg);
+  if(p.parse(cfg)) {
+    ERR(drumgizmo, "Config parse error.\n");
+    return false;
+  }
 
   midimapfile = p.value("midimapfile");
 
@@ -372,9 +407,11 @@ void DrumGizmo::setConfigString(std::string cfg)
   }
 
   if(drumkitfile() != p.value("drumkitfile")) {
-    loadkit(p.values["drumkitfile"]);
+    if(!loadkit(p.values["drumkitfile"])) return false;
     init(true);
   }
+
+  return true;
 }
 
 #ifdef TEST_DRUMGIZMO

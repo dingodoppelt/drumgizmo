@@ -1,56 +1,44 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiofile.h
+ *            semaphore.h
  *
- *  Tue Jul 22 17:14:11 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat Oct  8 17:44:13 CEST 2005
+ *  Copyright  2005 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
 /*
- *  This file is part of DrumGizmo.
+ *  This file is part of Pracro.
  *
- *  DrumGizmo is free software; you can redistribute it and/or modify
+ *  Pracro is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  DrumGizmo is distributed in the hope that it will be useful,
+ *  Pracro is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with DrumGizmo; if not, write to the Free Software
+ *  along with Pracro; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOFILE_H__
-#define __DRUMGIZMO_AUDIOFILE_H__
+#ifndef __PRACRO_SEMAPHORE_H__
+#define __PRACRO_SEMAPHORE_H__
 
-#include <string>
-#include <map>
+struct semaphore_private_t;
 
-#include "mutex.h"
-#include "audio.h"
-
-class AudioFile {
+class Semaphore {
 public:
-  AudioFile(std::string filename);
-  ~AudioFile();
+  Semaphore();
+  ~Semaphore();
 
-  void load();
-  void unload();
-
-  bool isLoaded();
-
-	sample_t *data;
-	size_t size;
-
-  std::string filename;
+  void post();
+  void wait();
 
 private:
-  Mutex mutex;
-  bool is_loaded;
+  struct semaphore_private_t *prv;
 };
 
-#endif/*__DRUMGIZMO_AUDIOFILE_H__*/
+#endif/*__PRACRO_SEMAPHORE_H__*/
