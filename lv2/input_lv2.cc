@@ -28,6 +28,8 @@
 
 #include <midimapparser.h>
 
+#include <hugin.hpp>
+
 InputLV2::InputLV2()
 {
   eventPort = NULL;
@@ -76,21 +78,26 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 
     uint8_t* const data = (uint8_t* const)(ev + 1);
 
-    if ((data[0] & 0xF0) == 0x90) {
-
-    int key = data[1];
-    int velocity = data[2];
+    if ((data[0] & 0xF0) == 0x80) { // note off
+      int key = data[1];
     
-    printf("Event key:%d vel:%d\n", key, velocity);
-    
-    int i = mmap.lookup(key);
-    if(velocity && i != -1) {
-      list[listsize].type = TYPE_ONSET;
-      list[listsize].instrument = i;
-      list[listsize].velocity = velocity / 127.0;
-      list[listsize].offset = ev->frames;
-      listsize++;
+      DEBUG(lv2input, "Event (off) key:%d\n", key);
     }
+
+    if ((data[0] & 0xF0) == 0x90) { // note on
+      int key = data[1];
+      int velocity = data[2];
+    
+      DEBUG(lv2input, "Event key:%d vel:%d\n", key, velocity);
+    
+      int i = mmap.lookup(key);
+      if(velocity && i != -1) {
+        list[listsize].type = TYPE_ONSET;
+        list[listsize].instrument = i;
+        list[listsize].velocity = velocity / 127.0;
+        list[listsize].offset = ev->frames;
+        listsize++;
+      }
       /*
 				start_frame = ev->frames;
 				plugin->frame = 0;
