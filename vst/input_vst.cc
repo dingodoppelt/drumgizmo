@@ -27,6 +27,7 @@
 #include "input_vst.h"
 
 #include <midimapparser.h>
+#include <hugin.hpp>
 
 InputVST::InputVST()
 {
@@ -38,16 +39,10 @@ InputVST::~InputVST()
 {
 }
 
-bool InputVST::init(Instruments &instruments)
+bool InputVST::init(Instruments &i)
 {
-  MidiMapParser p(getenv("DRUMGIZMO_MIDIMAP"));
-  if(p.parse()) {/*return false;*/}
-  mmap.midimap = p.midimap;
-
-  for(size_t i = 0; i < instruments.size(); i++) {
-    mmap.instrmap[instruments[i].name()] = i;
-  }
-
+  DEBUG(inputvst, "init\n");
+  instruments = &i;
   return true;
 }
 
@@ -98,6 +93,7 @@ void InputVST::processEvents(VstEvents* ev)
 			VstInt32 velocity = midiData[2] & 0x7f;
 
       int i = mmap.lookup(note);
+      DEBUG(inputvst, "Note: %d -> %d\n", note, i);
       if(velocity && i != -1) {
         list[listsize].type = TYPE_ONSET;
         list[listsize].instrument = i;
@@ -109,4 +105,21 @@ void InputVST::processEvents(VstEvents* ev)
 		}
 		event++;
 	}
+}
+
+void InputVST::loadMidiMap(std::string f)
+{
+  DEBUG(inputvst, "load midi map %s\n", f.c_str());
+
+  MidiMapParser p(f);
+  if(p.parse()) {
+    ERR(inputvst, "Error loading midimap: %s\n", f.c_str());
+    return;
+  }
+  mmap.midimap = p.midimap;
+
+  for(size_t i = 0; i < instruments->size(); i++) {
+    DEBUG(inputvst, "Mapping %s to %d\n", (*instruments)[i]->name().c_str(), i);
+    mmap.instrmap[(*instruments)[i]->name()] = i;
+  }
 }

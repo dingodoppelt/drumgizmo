@@ -50,11 +50,14 @@ public:
 
   void processEvents(VstEvents* ev);
 
+  void loadMidiMap(std::string file);
   MidiMapper mmap;
 
 private:
   event_t *list;
   size_t listsize;
+
+  Instruments *instruments;
 };
 
 #endif/*__DRUMGIZMO_INPUT_VST_H__*/

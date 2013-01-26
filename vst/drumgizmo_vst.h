@@ -81,7 +81,12 @@ public:
 	bool hasMidiProgramsChanged(VstInt32 channel);
 	bool getMidiKeyName(VstInt32 channel, MidiKeyName* keyName);
 
+  VstInt32 getChunk(void **data, bool isPreset);
+  VstInt32 setChunk(void *data, VstInt32 byteSize, bool isPreset);
+
   DrumGizmo *drumgizmo;
+  InputVST *input;
+  OutputVST *output;
 
 private:
 	void initProcess();
@@ -89,8 +94,6 @@ private:
   //	void noteOff();
 	void fillProgram(VstInt32 channel, VstInt32 prg, MidiProgramName* mpn);
 
-  InputVST *input;
-  OutputVST *output;
   size_t pos;
   sample_t *buffer;
   size_t buffer_size;

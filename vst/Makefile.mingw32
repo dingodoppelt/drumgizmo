@@ -4,7 +4,9 @@ VST_SRC = \
 	${VST_SRC_BASE}/audioeffectx.cpp \
 	${VST_SRC_BASE}/audioeffect.cpp \
 	${VST_SRC_BASE}/vstplugmain.cpp
+VST_CFLAGS=-I$(VST_BASE)
 
+top_srcdir=..
 DG_BASE = ..
 DG_SRC = \
 	${DG_BASE}/src/audiofile.cc \
@@ -13,6 +15,7 @@ DG_SRC = \
 	${DG_BASE}/src/channelmixer.cc \
 	${DG_BASE}/src/drumgizmo.cc \
 	${DG_BASE}/src/drumkit.cc \
+	${DG_BASE}/src/drumkitloader.cc \
 	${DG_BASE}/src/drumkitparser.cc \
 	${DG_BASE}/src/events.cc \
 	${DG_BASE}/src/instrument.cc \
@@ -23,8 +26,10 @@ DG_SRC = \
 	${DG_BASE}/src/path.cc \
 	${DG_BASE}/src/sample.cc \
 	${DG_BASE}/src/saxparser.cc \
+	${DG_BASE}/src/semaphore.cc \
+	${DG_BASE}/src/thread.cc \
 	${DG_BASE}/src/velocity.cc
-DG_FLAGS = -I../include -I../src -DSSE -msse -msse2
+DG_CFLAGS = -I../include -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	$(DG_BASE)/plugingui/plugingui.cc \
@@ -33,6 +38,7 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/eventhandler.cc \
 	$(DG_BASE)/plugingui/font.cc \
 	$(DG_BASE)/plugingui/window.cc \
+	$(DG_BASE)/plugingui/nativewindow_win32.cc \
 	$(DG_BASE)/plugingui/widget.cc \
 	$(DG_BASE)/plugingui/colour.cc \
 	$(DG_BASE)/plugingui/painter.cc \
@@ -44,42 +50,67 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/checkbox.cc \
 	$(DG_BASE)/plugingui/slider.cc
 
-GUI_FLAGS=-lgdi32 -I../plugingui
+GUI_CFLAGS=-I../plugingui -DUSE_THREAD
+GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
 
+DBG_SRC = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/hugin/hugin_syslog.c
+
+DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
 #
 # http://old.nabble.com/using-VC%2B%2B-.lib-with-mingw-td23151303.html
 # Given `-lfoo', the win32 build of GNU ld will search for libfoo.a and foo.lib
 #
 
 EXPAT_BASE=c:/expat
-EXPAT_FLAGS=-I${EXPAT_BASE}/Source/lib -L${EXPAT_BASE}/Bin -llibexpat
+EXPAT_CFLAGS=-I${EXPAT_BASE}/Source/lib
+EXPAT_LIBS=-L${EXPAT_BASE}/Bin -llibexpat
 
 SNDFILE_BASE=c:/libsndfile
-SNDFILE_FLAGS=-I${SNDFILE_BASE}/include -L${SNDFILE_BASE}/lib -llibsndfile-1
+SNDFILE_CFLAGS=-I${SNDFILE_BASE}/include
+SNDFILE_LIBS=-L${SNDFILE_BASE}/lib -llibsndfile-1
 
 SRC = \
 	drumgizmo_vst.cc \
 	input_vst.cc \
 	output_vst.cc
 
-all:
-	g++ -g -Wall -DWIN32 ${DG_FLAGS} -I${VST_BASE} ${DG_SRC} ${VST_SRC} ${SRC} ${GUI_SRC} ${GUI_FLAGS} ${EXPAT_FLAGS} ${SNDFILE_FLAGS} -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
-
-clean:
-	rm -f drumgizmo_vst.dll libdrumgizmo_vst.a
-
-#LDFLAGS="-g -Wall -DWIN32 ${DG_FLAGS} ${EXPAT_FLAGS} ${SNDFILE_FLAGS} -I${VST_BASE}"
-#CFLAGS=$(LDFLAGS)
-#SOURCES="$(DG_SRC) $(VST_SRC) $(SRC)"
-#OBJECTS=$(SOURCES:.cc=.o)
+#######################
 #
-#all: drumgizmo_vst.dll
+#CXXFLAGS=-DWIN32 $(EXPAT_CFLAGS) $(SNDFILE_CFLAGS) $(DG_CFLAGS) $(GUI_CFLAGS) $(DBG_CFLAGS) $(VST_CFLAGS)
+#CFLAGS=$(CXXFLAGS)
+#LDFLAGS=$(EXPAT_LIBS) $(SNDFILE_LIBS) $(GUI_LIBS) $(DBG_LIBS)
+#
+#C_SOURCES=$(DBG_SRC)
+#CXX_SOURCES=$(GUI_SRC) $(DG_SRC)
+#CPP_SOURCES=$(VST_SRC) 
+#
+#OBJECTS=$(CXX_SOURCES:.cc=.o) $(CPP_SOURCES:.cpp=.o) $(C_SOURCES:.c=.o)
+#all: $(CXX_SOURCES) $(CPP_SOURCES) $(C_SOURCES) drumgizmo_vst.dll
 #
 #drumgizmo_vst.dll: $(OBJECTS)
-#	g++ $(OBJECTS) $(LDFLAGS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+#	g++ $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
 #
 #%.o: %.cc
-#	g++ -c $(CFLAGS) $< -o $@
+#	g++ -O3 -c $(CXXFLAGS) $(LDFLAGS) $< -o $(notdir $@)
+#
+#%.o: %.cpp
+#	g++ -O3 -c $(CXXFLAGS) $(LDFLAGS) $< -o $(notdir $@)
+#
+#%.o: %.c
+#	gcc -O3 -c $(CFLAGS) $(LDFLAGS) $< -o $@
 #
 #clean:
-#	del -rf *.o drumgizmo_vst.dll libdrumgizmo_vst.a
+#	del -f $(notdir $(OBJECTS)) drumgizmo_vst.dll libdrumgizmo_vst.a
+#
+########################
+
+ 
+all:
+	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin.c -c
+	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin_syslog.c -c
+	g++ -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+ 
+clean:
+	del -f drumgizmo_vst.dll libdrumgizmo_vst.a

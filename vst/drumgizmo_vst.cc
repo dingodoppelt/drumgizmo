@@ -29,12 +29,26 @@
 #include "constants.h"
 
 #include <time.h>
+#include <drumgizmo.h>
+
+#include <hugin.hpp>
 
 #define NUM_PROGRAMS 0
 #define NUM_PARAMS 0
 
+static void midimapHandler(void *ptr, const char* file)
+{
+  DEBUG(vst, "midimapHandler\n");
+  DrumGizmoVst* effect = (DrumGizmoVst*)ptr;
+  InputVST *input = effect->input;
+  DrumGizmo *drumgizmo = effect->drumgizmo;
+  drumgizmo->midimapfile = file;
+  input->loadMidiMap(file);
+}
+
 DGEditor::DGEditor(AudioEffect* effect) 
 {
+  DEBUG(dgeditor, "Create DGEditor\n");
   dgeff = (DrumGizmoVst*)effect;
   plugingui = NULL;
   drumgizmo = dgeff->drumgizmo;
@@ -42,44 +56,70 @@ DGEditor::DGEditor(AudioEffect* effect)
 
 bool DGEditor::open(void* ptr)
 {
-  if(!plugingui) plugingui = new PluginGUI(drumgizmo);
-  plugingui->show();
+  DEBUG(dgeditor, "open GUI (new PluginGUI)\n");
+  if(plugingui) delete plugingui;
+
+  plugingui = new PluginGUI(drumgizmo);
+  plugingui->setChangeMidimapCallback(midimapHandler, dgeff);
+  
+  //  plugingui->show();
   return true;
 }
 
 void DGEditor::close()
 {
-  plugingui->hide();
-  delete plugingui;
+  DEBUG(dgeditor, "close GUI (delete PluginGUI)\n");
+  //  plugingui->hide();
+  if(plugingui) delete plugingui;
   plugingui = NULL;
 }
 
 bool DGEditor::isOpen()
 {
-  return plugingui != NULL;;
+  DEBUG(vst, "isOpen\n");
+  return plugingui != NULL;
 }
 
 void DGEditor::idle()
 {
-  if(plugingui) plugingui->processEvents();
+  DEBUG(vst, "idle\n");
+  //  if(plugingui) plugingui->processEvents();
 }
 
 AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 {
+  DEBUG(vst, "createEffectInstance\n");
 	return new DrumGizmoVst(audioMaster);
 }
 
 DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
   : AudioEffectX(audioMaster, NUM_PROGRAMS, NUM_PARAMS)
 {
+  hug_status_t status = hug_init(HUG_FLAG_OUTPUT_TO_SYSLOG | HUG_FLAG_USE_MUTEX,
+                                 HUG_OPTION_SYSLOG_HOST, "192.168.0.10",
+                                 HUG_OPTION_SYSLOG_PORT, 514,
+                                 HUG_OPTION_END);
+
+  if(status != HUG_STATUS_OK) {
+    printf("Error: %d\n", status);
+  }
+
+  INFO(example, "We are up and running");
+
+  DEBUG(vst, "DrumGizmoVst()\n");
+
   pos = 0;
   buffer = NULL;
   buffer_size = 0;
 
+  output = NULL;
+  input = NULL;
+  drumgizmo = NULL;
+  
   output = new OutputVST();
   input = new InputVST();
   drumgizmo = new DrumGizmo(output, input);
-  
+
 	// initialize programs
 	//programs = new DrumGizmoVstProgram[kNumPrograms];
 	//for(VstInt32 i = 0; i < 16; i++) channelPrograms[i] = i;
@@ -92,7 +132,7 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		canProcessReplacing();
 		isSynth();
 
-    char id[] = "DGV4"; // Four bytes typecasted into an unsigned integer
+    char id[] = "DGV5"; // Four bytes typecasted into an unsigned integer
 		setUniqueID(*(unsigned int*)id);
 
     //    setUniqueID((unsigned int)time(NULL));
@@ -104,13 +144,62 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 
   editor = new DGEditor(this);
   setEditor(editor);
+
+  programsAreChunks(true);
+
+  // getChunk
+  // file:///home/deva/docs/c/drumgizmo/vst/vstsdk2.4/doc/html/class_audio_effect.html#42883c327783d7d31ed513b10c9204fc
+
+  // setChunk
+  // file:///home/deva/docs/c/drumgizmo/vst/vstsdk2.4/doc/html/class_audio_effect.html#b6e4c31c1acf8d1fc4046521912787b1
 }
 
 DrumGizmoVst::~DrumGizmoVst()
 {
-  delete drumgizmo;
-  delete input;
-  delete output;
+  DEBUG(vst, "~DrumGizmoVst(1)\n");
+  if(drumgizmo) delete drumgizmo;
+  DEBUG(vst, "~DrumGizmoVst(2)\n");
+  if(input) delete input;
+  DEBUG(vst, "~DrumGizmoVst(3)\n");
+  if(output) delete output;
+  DEBUG(vst, "~DrumGizmoVst(4)\n");
+
+  hug_close();
+}
+
+VstInt32 DrumGizmoVst::getChunk(void **data, bool isPreset)
+{
+  DEBUG(vst, "getChunk(data: %p isPreset: %d)\n", *data, isPreset?1:0);
+  std::string cfg = drumgizmo->configString();
+  DEBUG(vst, "drumgizmo->config := %s\n", cfg.c_str());
+  char *config = strdup(cfg.c_str());
+  *data = config;
+  return cfg.length();
+}
+
+VstInt32 DrumGizmoVst::setChunk(void *data, VstInt32 byteSize, bool isPreset)
+{
+  std::string config;
+  config.append((const char*)data, (size_t)byteSize);
+  DEBUG(vst, "setChunk(isPreset: %d): [%d] %s\n",
+        isPreset?1:0, byteSize, config.c_str());
+
+  if(!drumgizmo->setConfigString(config)) {
+    ERR(vst, "setConfigString failed...\n");
+    return 1;
+  }
+  DEBUG(vst, "Using Drumkit: %s\n", drumgizmo->kitfile.c_str());
+  DEBUG(vst, "Using Midimap: %s\n", drumgizmo->midimapfile.c_str());
+
+  input->loadMidiMap(drumgizmo->midimapfile);
+
+  /*
+  drumgizmo->loadkit("z:/c/drumgizmo/kits/test/test.xml");
+  drumgizmo->midimapfile = "z:/c/drumgizmo/kits/midimap.xml";
+  input->loadMidiMap(drumgizmo->midimapfile);
+  */
+
+  return 0;
 }
 
 void DrumGizmoVst::setProgram(VstInt32 program) {}
@@ -362,7 +451,7 @@ void DrumGizmoVst::setBlockSize(VstInt32 blockSize)
 
 void DrumGizmoVst::initProcess()
 {
-  drumgizmo->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
+  //  drumgizmo->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
   drumgizmo->init(true);
 }
 
