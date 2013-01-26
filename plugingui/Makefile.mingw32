@@ -1,19 +1,51 @@
 top_srcdir=..
 include Makefile.am.plugingui
 
-CFLAGS=-DSTANDALONE -DWIN32 -DUSE_THREAD
-LDFLAGS=-mwindows
+CFLAGS=-DSTANDALONE -DWIN32 -DUSE_THREAD ${PLUGIN_GUI_CFLAGS} \
+										-I$(top_srcdir)/src
+LDFLAGS=-mconsole -lgdi32 -lsetupapi -lws2_32
 #-lgdi32
 
-OBJECTS=$(PLUGIN_GUI_SOURCES:.cc=.o)
+C_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/hugin/hugin_syslog.c
 
-all: $(PLUGIN_GUI_SOURCES) plugingui.exe
+CXX_SOURCES = \
+	$(top_srcdir)/plugingui/nativewindow_x11.cc \
+	$(top_srcdir)/plugingui/nativewindow_win32.cc \
+	$(top_srcdir)/plugingui/plugingui.cc \
+	$(top_srcdir)/plugingui/globalcontext.cc \
+	$(top_srcdir)/plugingui/label.cc \
+	$(top_srcdir)/plugingui/eventhandler.cc \
+	$(top_srcdir)/plugingui/font.cc \
+	$(top_srcdir)/plugingui/window.cc \
+	$(top_srcdir)/plugingui/widget.cc \
+	$(top_srcdir)/plugingui/colour.cc \
+	$(top_srcdir)/plugingui/painter.cc \
+	$(top_srcdir)/plugingui/button.cc \
+	$(top_srcdir)/plugingui/pixelbuffer.cc \
+	$(top_srcdir)/plugingui/filelineedit.cc \
+	$(top_srcdir)/plugingui/lineedit.cc \
+	$(top_srcdir)/plugingui/led.cc \
+	$(top_srcdir)/plugingui/checkbox.cc \
+	$(top_srcdir)/plugingui/slider.cc \
+	$(top_srcdir)/src/thread.cc
+
+OBJECTS=$(CXX_SOURCES:.cc=.o) $(C_SOURCES:.c=.o)
+#OBJECTS=$(PLUGIN_GUI_SOURCES:.cc=.o)
+
+#$(PLUGIN_GUI_SOURCES:.c=.o)
+
+all: $(CXX_SOURCES) $(C_SOURCES) plugingui.exe
 
 plugingui.exe: $(OBJECTS)
-	g++ $(OBJECTS) $(LDFLAGS) -o $@
+	g++ $(OBJECTS) $(LDFLAGS) $(CFLAGS) -o $@
 
 %.o: %.cc
 	g++ -O3 -c $(CFLAGS) $< -o $@
+
+%.o: %.c
+	gcc -O3 -c $(CFLAGS) $< -o $@
 
 clean:
 	del -rf *.o plugingui.exe
