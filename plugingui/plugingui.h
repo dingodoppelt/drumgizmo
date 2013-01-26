@@ -87,6 +87,8 @@ public:
   void (*changeMidimapHandler)(void *, const char *);
   void *changeMidimapPtr;
 
+private:
+  volatile bool running;
 };
 
 #endif/*__DRUMGIZMO_PLUGINGUI_H__*/

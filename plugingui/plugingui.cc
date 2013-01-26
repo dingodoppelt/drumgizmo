@@ -26,6 +26,7 @@
  */
 #include "plugingui.h"
 
+#include <hugin.hpp>
 #include <stdio.h>
 
 #include "globalcontext.h"
@@ -106,6 +107,8 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
   window = NULL;
   eventhandler = NULL;
  
+  running = true;
+
 #ifdef USE_THREAD
   run();
 #else
@@ -113,11 +116,23 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
 #endif/*USE_THREAD*/
 }
 
+PluginGUI::~PluginGUI()
+{
+  printf("~PluginGUI()\n");
+
+  running = false;
+  wait_stop();
+
+  if(window) delete window;
+  if(eventhandler) delete eventhandler;
+  if(gctx) delete gctx;
+}
+
 void PluginGUI::thread_main()
 {
   init();
 
-  while(true) {
+  while(running) {
     eventhandler->processEvents(window);
 #ifdef WIN32
     SleepEx(50, FALSE);
@@ -130,6 +145,7 @@ void PluginGUI::thread_main()
 
 void PluginGUI::init()
 {
+  DEBUG(gui, "init");
   gctx = new GUI::GlobalContext();
   eventhandler = new GUI::EventHandler(gctx);
   //  printf("%p\n", eventhandler);
@@ -211,14 +227,6 @@ void PluginGUI::init()
   window->show();
 }
 
-PluginGUI::~PluginGUI()
-{
-  printf("~PluginGUI()\n");
-  if(window) delete window;
-  if(eventhandler) delete eventhandler;
-  if(gctx) delete gctx;
-}
-
 static bool shown = false;
 void PluginGUI::show()
 {
@@ -271,6 +279,18 @@ void stop(void *ptr)
 
 int main()
 {
+  hug_status_t status = hug_init(HUG_FLAG_OUTPUT_TO_SYSLOG,
+                                 HUG_OPTION_SYSLOG_HOST, "192.168.0.10",
+                                 HUG_OPTION_SYSLOG_PORT, 514,
+                                 HUG_OPTION_END);
+
+  if(status != HUG_STATUS_OK) {
+    printf("Error: %d\n", status);
+    return 1;
+  }
+
+  INFO(example, "We are up and running");
+
   bool running = true;
 
   PluginGUI gui(NULL);
