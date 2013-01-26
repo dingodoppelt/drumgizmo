@@ -500,7 +500,6 @@ GUI::Event *GUI::EventHandler::getNextEvent()
 
   if(xe.type == ClientMessage &&
      (unsigned int)xe.xclient.data.l[0] == gctx->wmDeleteMessage) {
-    printf("?\n");
     CloseEvent *e = new CloseEvent();
     event = e;
   }
