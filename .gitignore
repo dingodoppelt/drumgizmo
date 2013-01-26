@@ -19,3 +19,8 @@ stamp-h1
 *.o
 *.a
 *.la
+test_*
+*.exe
+Makefile.am.test
+.deps
+.libs
