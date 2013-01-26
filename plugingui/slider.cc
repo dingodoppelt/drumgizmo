@@ -28,6 +28,7 @@
 
 #include "painter.h"
 
+#include <hugin.hpp>
 #include <stdio.h>
 
 GUI::Slider::Slider(Widget *parent)
@@ -89,7 +90,7 @@ void GUI::Slider::buttonEvent(ButtonEvent *e)
 
 void GUI::Slider::repaintEvent(GUI::RepaintEvent *e)
 {
-  printf("Slider::repaintEvent (%f)\n", val);
+  DEBUG(slider, "Slider::repaintEvent (%f)\n", val);
 
   Painter p(this);
 
