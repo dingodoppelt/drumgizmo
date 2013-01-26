@@ -25,3 +25,4 @@ Makefile.am.test
 .deps
 .libs
 *.dll
+plugingui/plugingui
