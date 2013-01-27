@@ -6,6 +6,7 @@ VERSION="`cat version.h | cut -d'\"' -f2`"
 AM_INIT_AUTOMAKE( drumgizmo, $VERSION )
 
 AC_PROG_CXX
+#AM_PROG_CC_C_O
 
 AC_PROG_LIBTOOL
 AM_PROG_LIBTOOL

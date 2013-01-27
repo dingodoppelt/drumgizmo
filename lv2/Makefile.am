@@ -17,7 +17,8 @@ EXTRA_DIST = \
 	input_lv2.h \
 	output_lv2.h \
 	lv2_event.h \
-	event-helpers.h
+	lv2_gui.h \
+	lv2_instance.h
 
 drumgizmo_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \

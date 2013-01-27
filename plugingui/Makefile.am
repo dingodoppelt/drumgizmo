@@ -16,25 +16,29 @@ plugingui_SOURCES = \
 #	$(DRUMGIZMO_SOURCES)
 
 EXTRA_DIST = \
-	guievent.h \
-	eventhandler.h \
-	globalcontext.h \
-	plugingui.h \
-	pixelbuffer.h \
-	colour.h \
-	font.h \
-	filelineedit.h \
-	led.h \
-	window.h \
-	widget.h \
-	lineedit.h \
 	button.h \
-	label.h \
-	painter.h \
-	img_font.h \
-	img_back.h \
 	checkbox.h \
-	slider.h
+	colour.h \
+	eventhandler.h \
+	filelineedit.h \
+	font.h \
+	globalcontext.h \
+	guievent.h \
+	img_back.h \
+	img_font.h \
+	img_test.h \
+	label.h \
+	led.h \
+	lineedit.h \
+	nativewindow.h \
+	nativewindow_win32.h \
+	nativewindow_x11.h \
+	painter.h \
+	pixelbuffer.h \
+	plugingui.h \
+	slider.h \
+	widget.h \
+	window.h
 
 ################
 # Test Section #

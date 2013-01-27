@@ -1,22 +1,4 @@
 EXTRA_DIST = \
-	audiofile.cc \
-	channel.cc \
-	channelmixer.cc \
-	configuration.cc \
-	drumgizmo.cc \
-	drumkit.cc \
-	drumkitparser.cc \
-	events.cc \
-	instrument.cc \
-	instrumentparser.cc \
-	midimapparser.cc \
-	midimapper.cc \
-	mutex.cc \
-	path.cc \
-	sample.cc \
-	saxparser.cc \
-	velocity.cc \
-	\
 	audio.h \
 	audiofile.h \
 	audioinputengine.h \
@@ -27,6 +9,7 @@ EXTRA_DIST = \
 	configuration.h \
 	drumgizmo.h \
 	drumkit.h \
+	drumkitloader.h \
 	drumkitparser.h \
 	events.h \
 	instrument.h \
@@ -38,9 +21,33 @@ EXTRA_DIST = \
 	rangemap.h \
 	sample.h \
 	saxparser.h \
+	semaphore.h \
 	thread.h \
-	velocity.h
-
+	velocity.h \
+\
+	audiofile.cc \
+	audioinputengine.cc \
+	audiooutputengine.cc \
+	beatmapper.cc \
+	channel.cc \
+	channelmixer.cc \
+	configuration.cc \
+	drumgizmo.cc \
+	drumkit.cc \
+	drumkitloader.cc \
+	drumkitparser.cc \
+	events.cc \
+	instrument.cc \
+	instrumentparser.cc \
+	midimapparser.cc \
+	midimapper.cc \
+	mutex.cc \
+	path.cc \
+	sample.cc \
+	saxparser.cc \
+	semaphore.cc \
+	thread.cc \
+	velocity.cc
 
 ################
 # Test Section #
