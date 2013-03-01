@@ -2,35 +2,24 @@ DISTDIRS = input output
 
 if ENABLE_CLI
 
+include $(top_srcdir)/src/Makefile.am.drumgizmo
+
 SUBDIRS = input output
 
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) -ldl
+drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl
 
-drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src -DSSE -msse -msse2 -msse3
+drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
+	-I$(top_srcdir)/include -I$(top_srcdir)/src -DSSE -msse -msse2 -msse3 \
+	-I../hugin -DWITH_HUG_MUTEX
 
 drumgizmo_SOURCES = \
 	audioinputenginedl.cc \
 	audiooutputenginedl.cc \
 	drumgizmoc.cc \
-	$(top_srcdir)/src/audiofile.cc \
-	$(top_srcdir)/src/channel.cc \
-	$(top_srcdir)/src/channelmixer.cc \
-	$(top_srcdir)/src/configuration.cc \
-	$(top_srcdir)/src/drumgizmo.cc \
-	$(top_srcdir)/src/drumkit.cc \
-	$(top_srcdir)/src/drumkitparser.cc \
-	$(top_srcdir)/src/events.cc \
-	$(top_srcdir)/src/instrument.cc \
-	$(top_srcdir)/src/instrumentparser.cc \
-	$(top_srcdir)/src/midimapper.cc \
-	$(top_srcdir)/src/mutex.cc \
-	$(top_srcdir)/src/path.cc \
-	$(top_srcdir)/src/sample.cc \
-	$(top_srcdir)/src/saxparser.cc \
-	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/velocity.cc
+	$(DRUMGIZMO_SOURCES) \
+	$(top_srcdir)/hugin/hugin.c
 
 EXTRA_DIST = \
 	audioinputenginedl.h \
