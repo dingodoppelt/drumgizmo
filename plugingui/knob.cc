@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            slider.cc
+ *            knob.cc
  *
- *  Sat Nov 26 18:10:22 CET 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Thu Feb 28 07:37:27 CET 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,14 +24,15 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "slider.h"
+#include "knob.h"
 
 #include "painter.h"
 
 #include <hugin.hpp>
 #include <stdio.h>
+#include <math.h>
 
-GUI::Slider::Slider(Widget *parent)
+GUI::Knob::Knob(Widget *parent)
   : GUI::Widget(parent)
 {
   state = up;
@@ -39,108 +40,116 @@ GUI::Slider::Slider(Widget *parent)
   val = 0.0;
   maximum = 1.0;
   minimum = 0.0;
+  mouse_offset_x = 0;
 
   handler = NULL;
   ptr = NULL;
 }
 
-void GUI::Slider::setValue(float v)
+void GUI::Knob::setValue(float v)
 {
   val = v;
   if(handler) handler(ptr);
   repaintEvent(NULL);
 }
 
-float GUI::Slider::value()
+float GUI::Knob::value()
 {
   return val;
 }
 
-void GUI::Slider::registerClickHandler(void (*handler)(void *), void *ptr)
+void GUI::Knob::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   this->handler = handler;
   this->ptr = ptr;
 }
 
-void GUI::Slider::mouseMoveEvent(MouseMoveEvent *e)
+void GUI::Knob::mouseMoveEvent(MouseMoveEvent *e)
 {
   if(state == down) {
-    val = maximum / (float)width() * (float)e->x;
+    /*
+    DEBUG(slider, "Knob::mouseMoveEvent(mouse_offset_x: %d,  e->x: %d)\n",
+          mouse_offset_x, e->x);
+    */
+    if(mouse_offset_x == (e->x + -1*e->y)) return;
+
+    float dval = mouse_offset_x - (e->x + -1*e->y);
+    val -= dval / 300.0;
 
     if(val < 0) val = 0;
     if(val > 1) val = 1;
 
     if(handler) handler(ptr);
     repaintEvent(NULL);
+
+    mouse_offset_x = e->x + -1*e->y;
   }
 }
 
-void GUI::Slider::buttonEvent(ButtonEvent *e)
+void GUI::Knob::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == 1) {
     state = down;
-    val = maximum / (float)width() * (float)e->x;
-
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
-
+    mouse_offset_x = e->x + -1*e->y;
+    //val = maximum / (float)width() * (float)e->x;
     if(handler) handler(ptr);
     repaintEvent(NULL);
   }
   if(e->direction == -1) {
     state = up;
-    val = maximum / (float)width() * (float)e->x;
-    
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
-
+    mouse_offset_x = e->x + -1*e->y;
+    //val = maximum / (float)width() * (float)e->x;
     repaintEvent(NULL);
     clicked();
     if(handler) handler(ptr);
   }
 }
 
-void GUI::Slider::repaintEvent(GUI::RepaintEvent *e)
+void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
 {
-  //DEBUG(slider, "Slider::repaintEvent (%f)\n", val);
+  //  DEBUG(slider, "Knob::repaintEvent (%f)\n", val);
 
   Painter p(this);
 
   float alpha = 0.8;
 
-  int xpos = (int)((val / maximum) * (float)(width() - 1));
+  p.setColour(Colour(0, 0));
+  p.drawFilledRectangle(0,0,width()-1,height()-1);
 
   if(hasKeyboardFocus()) {
     p.setColour(Colour(0.6, alpha));
   } else {
     p.setColour(Colour(0.5, alpha));
   }
-  p.drawFilledRectangle(0,0,width(),height());
-  /*
-  p.setColour(Colour(0.1, alpha));
-  p.drawRectangle(0,0,width()-1,height()-1);
-  */
+  
+  int radius = (width()>height()?height():width()) / 2;
+  int center_x = width() / 2;
+  int center_y = height() / 2;
+
+  p.setColour(Colour(1, alpha));
+
+  char buf[64];
+  sprintf(buf, "%.2f", val * maximum);
+  Font font;
+  p.drawText(center_x - font.textWidth(buf) / 2,
+             center_y + font.textHeight(buf) / 2, font, buf);
+
+  p.setColour(Colour(0.5, 0.5, 1, alpha));
+
+  p.drawCircle(center_x, center_y, radius);
+
+  double padval = val * 0.8 + 0.1;
+  double border_x = sin((-1 * padval + 1) * 2 * M_PI);
+  double border_y = cos((-1 * padval + 1) * 2 * M_PI);
+
   p.setColour(Colour(1, 0, 0, alpha));
-  p.drawLine(xpos, 0, xpos, height()-1);
-  /*
-  p.setColour(Colour(0.8, alpha));
-  switch(state) {
-  case up:
-    p.drawLine(0,0,0,height()-1);
-    p.drawLine(0,0,width()-1,0);
-    break;
-  case down:
-    p.drawLine(width()-1,0, width()-1,height()-1);
-    p.drawLine(width()-1,height()-1,0, height()-1);
-    break;
-  }
-  */
-  p.setColour(Colour(0.3, alpha));
-  p.drawPoint(0,height()-1);
-  p.drawPoint(width()-1,0);
+  p.drawLine(border_x * (radius / 2) + center_x,
+             border_y * (radius / 2) + center_y,
+             border_x * radius + center_x,
+             border_y * radius + center_y);
 }
 
-#ifdef TEST_SLIDER
+#ifdef TEST_KNOB
 //Additional dependency files
 //deps:
 //Required cflags (autoconf vars may be used)
@@ -155,4 +164,4 @@ TEST_BEGIN;
 
 TEST_END;
 
-#endif/*TEST_SLIDER*/
+#endif/*TEST_KNOB*/

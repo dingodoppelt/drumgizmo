@@ -229,5 +229,11 @@ void GUI::NativeWindowX11::setCaption(const std::string &caption)
 {
 }
 
+void GUI::NativeWindowX11::grabMouse(bool grab)
+{
+  (void)grab;
+  // Don't need to do anything on this platoform...
+}
+
 #endif/*X11*/
 

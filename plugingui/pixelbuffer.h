@@ -63,6 +63,12 @@ public:
                 unsigned char blue,
                 unsigned char alpha);
 
+  void addPixel(size_t x, size_t y,
+                unsigned char red,
+                unsigned char green,
+                unsigned char blue,
+                unsigned char alpha);
+
   void pixel(size_t x, size_t y,
              unsigned char *red,
              unsigned char *green,

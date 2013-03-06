@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            nativewindow_x11.h
+ *            knob.h
  *
- *  Fri Dec 28 18:45:56 CET 2012
- *  Copyright 2012 Bent Bisballe Nyeng
+ *  Thu Feb 28 07:37:27 CET 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,40 +24,50 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#define __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#endif/*__DRUMGIZMO_NATIVEWINDOW_X11_H__*/
+#ifndef __DRUMGIZMO_KNOB_H__
+#define __DRUMGIZMO_KNOB_H__
 
-#ifdef X11
-#include <X11/Xlib.h>
-
-#include "nativewindow.h"
+#include "widget.h"
 
 namespace GUI {
 
-class Window;
-class NativeWindowX11 : public NativeWindow {
+class Knob : public Widget {
 public:
-  NativeWindowX11(GlobalContext *gctx, GUI::Window *window);
-  ~NativeWindowX11();
+  Knob(Widget *parent);
 
-  void resize(int width, int height);
-  void move(int x, int y);
-  void show();
-  void setCaption(const std::string &caption);
-  void hide();
-  void handleBuffer();
-  void redraw();
-  void grabMouse(bool grab);
+  bool catchMouse() { return true; }
+
+  void setValue(float value);
+  float value();
+
+  void registerClickHandler(void (*handler)(void *), void *ptr);
+
+  //protected:
+  virtual void clicked() {}
+
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
+  virtual void mouseMoveEvent(MouseMoveEvent *e);
 
 private:
-  ::Window xwindow;
-  GC gc;
-  XImage *buffer;
+  typedef enum {
+    up,
+    down
+  } state_t;
 
-  GUI::Window *window;
+  float val;
+  float maximum;
+  float minimum;
+
+  state_t state;
+
+  void (*handler)(void *);
+  void *ptr;
+
+  int mouse_offset_x;
+
 };
 
 };
 
-#endif/*X11*/
+#endif/*__DRUMGIZMO_KNOB_H__*/

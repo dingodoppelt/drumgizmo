@@ -30,6 +30,7 @@
 #include <stdio.h>
 
 #include "globalcontext.h"
+#include "knob.h"
 
 #ifndef STANDALONE
 #include <drumgizmo.h>
@@ -56,16 +57,40 @@ void checkClick(void *ptr)
   Conf::enable_velocity_modifier = gui->check->checked();
 }
 
-void sliderChange(void *ptr)
+void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
-  Conf::velocity_modifier_weight = gui->slider->value();
+  Conf::velocity_modifier_weight = gui->knob->value();
 }
 
-void sliderChange2(void *ptr)
+void knobChange2(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
-  Conf::velocity_modifier_falloff = gui->slider2->value();
+  Conf::velocity_modifier_falloff = gui->knob2->value();
+}
+
+GUI::FileBrowser *fb;
+void selectFile(void *ptr, std::string filename)
+{
+  GUI::LineEdit *le = (GUI::LineEdit *)ptr;
+  le->setText(filename);
+  fb->hide();
+}
+
+void kitBrowseClick(void *ptr)
+{
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  fb->registerFileSelectHandler(selectFile, gui->lineedit);
+  fb->show();
+}
+
+void midimapBrowseClick(void *ptr)
+{
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  fb->registerFileSelectHandler(selectFile, gui->lineedit2);
+  fb->show();
 }
 
 void loadKitClick(void *ptr)
@@ -152,66 +177,108 @@ void PluginGUI::init()
   window = new GUI::Window(gctx);
   window->resize(640, 200);
 
+  // Enable Velocity
+  GUI::Label *lbl_enable = new GUI::Label(window);
+  lbl_enable->setText("Enable Velocity Modifier");
+  lbl_enable->move(97, 81);
+  lbl_enable->resize(100, 20);
+
   check = new GUI::CheckBox(window);
   check->move(82,82);
   check->resize(16,16);
   check->setChecked(Conf::enable_velocity_modifier);
   check->registerClickHandler(checkClick, this);
 
-  slider = new GUI::Slider(window);
-  slider->move(100,80);
-  slider->resize(390, 20);
-  slider->setValue(Conf::velocity_modifier_weight);
-  slider->registerClickHandler(sliderChange, this);
+  // Velocity Weight Modifier:
+  {
+    int xpos = 180;
+    GUI::Label *lbl_weight = new GUI::Label(window);
+    lbl_weight->setText("Weight Modifier");
+    lbl_weight->move(xpos, 138);
+    lbl_weight->resize(100, 20);
 
-  slider2 = new GUI::Slider(window);
-  slider2->move(100,110);
-  slider2->resize(390, 20);
-  slider2->setValue(Conf::velocity_modifier_falloff);
-  slider2->registerClickHandler(sliderChange2, this);
+    knob = new GUI::Knob(window);
+    knob->move(xpos + 30, 100);
+    knob->resize(41, 41);
+    knob->setValue(Conf::velocity_modifier_weight);
+    knob->registerClickHandler(knobChange, this);
+  }
 
-  lbl = new GUI::Label(window);
-  lbl->setText("Drumkit:");
-  lbl->move(10, 10);
-  lbl->resize(70, 20);
+  // Velocity Falloff Modifier:
+  {
+    int xpos = 300;
+    GUI::Label *lbl_falloff = new GUI::Label(window);
+    lbl_falloff->setText("Falloff Modifier");
+    lbl_falloff->move(xpos, 138);
+    lbl_falloff->resize(100, 20);
+    
+    knob2 = new GUI::Knob(window);
+    knob2->move(xpos + 30, 100);
+    knob2->resize(41, 41);
+    knob2->setValue(Conf::velocity_modifier_falloff);
+    knob2->registerClickHandler(knobChange2, this);
+  }
 
-  led = new GUI::LED(window);
-  led->move(500,12);
-  led->resize(16, 16);
-  //  led->setState(false);
+  // Drumkit file
+  {
+    GUI::Label *lbl = new GUI::Label(window);
+    lbl->setText("Drumkit:");
+    lbl->move(10, 10);
+    lbl->resize(70, 20);
 
-  lineedit = new FileLineEdit(window, led);
-  if(drumgizmo) lineedit->setText(drumgizmo->drumkitfile());
-  else lineedit->setText("Missing DrumGizmo*");
-  lineedit->move(80, 10);
-  lineedit->resize(410, 20);
+    led = new GUI::LED(window);
+    led->move(500,12);
+    led->resize(16, 16);
+    //  led->setState(false);
 
-  btn_ok = new GUI::Button(window);
-  btn_ok->setText("Load Kit");
-  btn_ok->move(520, 10);
-  btn_ok->resize(100, 20);
-  btn_ok->registerClickHandler(loadKitClick, this);
+    lineedit = new FileLineEdit(window, led);
+    if(drumgizmo) lineedit->setText(drumgizmo->drumkitfile());
+    else lineedit->setText("Missing DrumGizmo*");
+    lineedit->move(70, 10);
+    lineedit->resize(408, 20);
+    
+    GUI::Button *btn_brw = new GUI::Button(window);
+    btn_brw->setText("...");
+    btn_brw->move(480, 10);
+    btn_brw->resize(20, 20);
+    btn_brw->registerClickHandler(kitBrowseClick, this);
 
-  lbl2 = new GUI::Label(window);
-  lbl2->setText("Midimap:");
-  lbl2->move(10, 45);
-  lbl2->resize(70, 20);
+    btn_ok = new GUI::Button(window);
+    btn_ok->setText("Load Kit");
+    btn_ok->move(520, 10);
+    btn_ok->resize(100, 20);
+    btn_ok->registerClickHandler(loadKitClick, this);
+  }
 
-  led2 = new GUI::LED(window);
-  led2->move(500,47);
-  led2->resize(16, 16);
-  //  led2->setState(false);
+  // Midimap file
+  {
+    lbl2 = new GUI::Label(window);
+    lbl2->setText("Midimap:");
+    lbl2->move(10, 45);
+    lbl2->resize(70, 20);
+    
+    led2 = new GUI::LED(window);
+    led2->move(500,47);
+    led2->resize(16, 16);
+    //  led2->setState(false);
+    
+    lineedit2 = new FileLineEdit(window, led2);
+    if(drumgizmo) lineedit2->setText(drumgizmo->midimapfile);
+    lineedit2->move(70, 45);
+    lineedit2->resize(408, 20);
+    
+    GUI::Button *btn_brw = new GUI::Button(window);
+    btn_brw->setText("...");
+    btn_brw->move(480, 45);
+    btn_brw->resize(20, 20);
+    btn_brw->registerClickHandler(midimapBrowseClick, this);
 
-  lineedit2 = new FileLineEdit(window, led2);
-  if(drumgizmo) lineedit2->setText(drumgizmo->midimapfile);
-  lineedit2->move(80, 45);
-  lineedit2->resize(410, 20);
-
-  btn_ok2 = new GUI::Button(window);
-  btn_ok2->setText("Load Map");
-  btn_ok2->move(520, 45);
-  btn_ok2->resize(100, 20);
-  btn_ok2->registerClickHandler(loadMidimapClick, this);
+    btn_ok2 = new GUI::Button(window);
+    btn_ok2->setText("Load Map");
+    btn_ok2->move(520, 45);
+    btn_ok2->resize(100, 20);
+    btn_ok2->registerClickHandler(loadMidimapClick, this);
+  }
 
   btn_cancel = new GUI::Button(window);
   btn_cancel->setText("Close");
@@ -223,6 +290,13 @@ void PluginGUI::init()
   lbl3->setText("v"VERSION);
   lbl3->move(120, 180);
   lbl3->resize(70, 20);
+
+  // Create filebrowser
+  filebrowser = new GUI::FileBrowser(window);
+  filebrowser->move(0, 0);
+  filebrowser->resize(window->width() - 1, window->height() - 1);
+  filebrowser->hide();
+  fb = filebrowser;
 
   window->show();
 }
@@ -279,6 +353,7 @@ void stop(void *ptr)
 
 int main()
 {
+/*
   hug_status_t status = hug_init(HUG_FLAG_OUTPUT_TO_SYSLOG,
                                  HUG_OPTION_SYSLOG_HOST, "192.168.0.10",
                                  HUG_OPTION_SYSLOG_PORT, 514,
@@ -288,7 +363,7 @@ int main()
     printf("Error: %d\n", status);
     return 1;
   }
-
+*/
   INFO(example, "We are up and running");
 
   bool running = true;

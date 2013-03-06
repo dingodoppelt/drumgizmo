@@ -52,7 +52,7 @@ GUI::NativeWindowWin32::NativeWindowWin32(GlobalContext *gctx,
   // object - we need this in the wndproc handler.
 	
 	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = 0;//class_style;
+	wcex.style = CS_DBLCLKS;//class_style;
 	wcex.lpfnWndProc = (WNDPROC)dialogProc;
   wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
   // Set data:
@@ -129,6 +129,12 @@ void GUI::NativeWindowWin32::redraw()
 
 void GUI::NativeWindowWin32::setCaption(const std::string &caption)
 {
+}
+
+void GUI::NativeWindowWin32::grabMouse(bool grab)
+{
+  if(grab) SetCapture(gctx->m_hwnd);
+  else ReleaseCapture();
 }
 
 #endif/*WIN32*/

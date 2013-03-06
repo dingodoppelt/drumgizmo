@@ -62,7 +62,7 @@ GUI::PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
 {
   this->idx = ::idx++;
   buf = NULL;
-  x = y = 0;
+  x = y = 10;
   realloc(width, height);
 }
 
@@ -84,10 +84,37 @@ void GUI::PixelBufferAlpha::setPixel(size_t x, size_t y,
 {
   //  printf("%d %d %d %d\n", red, green, blue, alpha);
   if(x >= width || y >= height) return;
+  /*
+  float a = alpha / 255.0;
+  buf[PX(0)] = (unsigned char)(red * a + buf[PX(0)] * (1-a));
+  buf[PX(1)] = (unsigned char)(green * a + buf[PX(1)] * (1-a));
+  buf[PX(2)] = (unsigned char)(blue * a + buf[PX(2)] * (1-a));
+  buf[PX(3)] = (unsigned char)(alpha * a + buf[PX(3)] * (1-a));
+  */
   buf[PX(0)] = red;
   buf[PX(1)] = green;
   buf[PX(2)] = blue;
   buf[PX(3)] = alpha;
+}
+
+void GUI::PixelBufferAlpha::addPixel(size_t x, size_t y,
+                                     unsigned char red,
+                                     unsigned char green,
+                                     unsigned char blue,
+                                     unsigned char alpha)
+{
+  //  printf("%d %d %d %d\n", red, green, blue, alpha);
+  if(x >= width || y >= height) return;
+
+  if(alpha == 0) return;
+
+  float a = (float)alpha / (float)(alpha + buf[PX(3)]);
+  buf[PX(0)] = (unsigned char)(red * a + buf[PX(0)] * (1-a));
+  buf[PX(1)] = (unsigned char)(green * a + buf[PX(1)] * (1-a));
+  buf[PX(2)] = (unsigned char)(blue * a + buf[PX(2)] * (1-a));
+
+  //buf[PX(3)] = (unsigned char)(alpha * a + buf[PX(3)] * (1-a));
+  buf[PX(3)] = alpha>buf[PX(3)]?alpha:buf[PX(3)];
 }
 
 void GUI::PixelBufferAlpha::pixel(size_t x, size_t y,

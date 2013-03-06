@@ -61,27 +61,28 @@ class MouseMoveEvent : public Event {
 public:
   Type type() { return MouseMove; }
 
-  size_t x;
-  size_t y;
+  int x;
+  int y;
 };
 
 class ButtonEvent : public Event {
 public:
   Type type() { return Button; }
 
-  size_t x;
-  size_t y;
+  int x;
+  int y;
 
   int direction;
   int button;
+  int doubleclick;
 };
 
 class RepaintEvent : public Event {
 public:
   Type type() { return Repaint; }
 
-  size_t x;
-  size_t y;
+  int x;
+  int y;
   size_t width;
   size_t height;
 };

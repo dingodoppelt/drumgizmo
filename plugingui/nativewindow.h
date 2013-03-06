@@ -45,6 +45,7 @@ public:
   virtual void hide() = 0;
   virtual void handleBuffer() = 0;
   virtual void redraw() = 0;
+  virtual void grabMouse(bool grab) = 0;
 
 protected:
   GlobalContext *gctx;

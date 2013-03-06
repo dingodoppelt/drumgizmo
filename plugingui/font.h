@@ -46,7 +46,7 @@ public:
   size_t size();
 
   size_t textWidth(std::string text);
-  size_t textHeight(std::string text);
+  size_t textHeight(std::string text = "");
 
   PixelBufferAlpha *render(GlobalContext *gctx, std::string text);
 

@@ -27,9 +27,7 @@
 #include "widget.h"
 
 #include "globalcontext.h"
-
 #include "painter.h"
-
 #include "window.h"
 
 #include <stdio.h>
@@ -37,29 +35,58 @@
 GUI::Widget::Widget(Widget *parent)
   : pixbuf(1, 1)
 {
+  _width = _height = 10;
+
   this->parent = parent;
   if(parent) {
     parent->addChild(this);
     _window = parent->window();
   }
   _width = _height = 0;
+  _visible = true;
 }
 
 GUI::Widget::~Widget()
 {
+  if(parent) parent->removeChild(this);
 }
 
 void GUI::Widget::show()
 {
+  setVisible(true);
 }
 
 void GUI::Widget::hide()
 {
+  setVisible(false);
+}
+
+void GUI::Widget::setVisible(bool v)
+{
+  _visible = v;
+  repaintEvent(NULL);
+}
+
+bool GUI::Widget::visible()
+{
+  return _visible;
 }
 
 void GUI::Widget::addChild(GUI::Widget *widget)
 {
   children.push_back(widget);
+}
+
+void GUI::Widget::removeChild(GUI::Widget *widget)
+{
+  std::vector<Widget *>::iterator i = children.begin();
+  while(i != children.end()) {
+    if(*i == widget) {
+      children.erase(i);
+      return;
+    }
+    i++;
+  }
 }
 
 void GUI::Widget::resize(size_t width, size_t height)
@@ -73,8 +100,16 @@ void GUI::Widget::move(size_t x, size_t y)
 {
   _x = x;
   _y = y;
-  pixbuf.x = x;
-  pixbuf.y = y;
+  /*
+  Widget *p = parent;
+  while(p) {
+    x += p->pixbuf.x;
+    y += p->pixbuf.y;
+    p = p->parent;
+  }
+  */
+  // pixbuf.x = x;
+  //  pixbuf.y = y;
 }
 
 size_t GUI::Widget::x() { return _x; }
@@ -82,14 +117,30 @@ size_t GUI::Widget::y() { return _y; }
 size_t GUI::Widget::width() { return _width; }
 size_t GUI::Widget::height() { return _height; }
 
+size_t GUI::Widget::windowX()
+{
+  size_t window_x = x();
+  if(parent) window_x += parent->windowX();
+  return window_x;
+}
+
+size_t GUI::Widget::windowY()
+{
+  size_t window_y = y();
+  if(parent) window_y += parent->windowY();
+  return window_y;
+}
+
 GUI::Widget *GUI::Widget::find(size_t x, size_t y)
 {
-  std::vector<Widget*>::iterator i = children.begin();
-  while(i != children.end()) {
+  std::vector<Widget*>::reverse_iterator i = children.rbegin();
+  while(i != children.rend()) {
     Widget *w = *i;
-    if(w->x() <= x && (w->x() + w->width()) >= x &&
-       w->y() <= y && w->y() + w->height() >= y)
-      return w->find(x - w->x(), y - w->y());
+    if(w->visible()) {
+      if(w->x() <= x && (w->x() + w->width()) >= x &&
+         w->y() <= y && w->y() + w->height() >= y)
+        return w->find(x - w->x(), y - w->y());
+    }
     i++;
   }
 
@@ -104,8 +155,10 @@ GUI::Window *GUI::Widget::window()
 
 void GUI::Widget::repaint_r(GUI::RepaintEvent *e)
 {
-  Painter p(this);
+  Painter p(this); // make sure pixbuf refcount is incremented.
+
   repaintEvent(e);
+
   std::vector<Widget*>::iterator i = children.begin();
   while(i != children.end()) {
     Widget *w = *i;
@@ -118,13 +171,18 @@ std::vector<GUI::PixelBufferAlpha *> GUI::Widget::getPixelBuffers()
 {
   std::vector<PixelBufferAlpha *> pbs;
 
+  pixbuf.x = windowX();
+  pixbuf.y = windowY();
+
   pbs.push_back(&pixbuf);
 
   std::vector<Widget*>::iterator i = children.begin();
   while(i != children.end()) {
     Widget *w = *i;
-    std::vector<PixelBufferAlpha *> pbs0 = w->getPixelBuffers();
-    pbs.insert(pbs.end(), pbs0.begin(), pbs0.end());
+    if(w->visible()) {
+      std::vector<PixelBufferAlpha *> pbs0 = w->getPixelBuffers();
+      pbs.insert(pbs.end(), pbs0.begin(), pbs0.end());
+    }
     i++;
   }
 

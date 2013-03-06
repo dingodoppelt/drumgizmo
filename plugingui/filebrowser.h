@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            nativewindow_x11.h
+ *            filebrowser.h
  *
- *  Fri Dec 28 18:45:56 CET 2012
- *  Copyright 2012 Bent Bisballe Nyeng
+ *  Mon Feb 25 21:09:43 CET 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,40 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#define __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#endif/*__DRUMGIZMO_NATIVEWINDOW_X11_H__*/
+#ifndef __DRUMGIZMO_FILEBROWSER_H__
+#define __DRUMGIZMO_FILEBROWSER_H__
 
-#ifdef X11
-#include <X11/Xlib.h>
+#include "widget.h"
 
-#include "nativewindow.h"
+#include "button.h"
+#include "listbox.h"
 
 namespace GUI {
 
-class Window;
-class NativeWindowX11 : public NativeWindow {
+class FileBrowser : public Widget {
 public:
-  NativeWindowX11(GlobalContext *gctx, GUI::Window *window);
-  ~NativeWindowX11();
+  struct private_data;
 
-  void resize(int width, int height);
-  void move(int x, int y);
-  void show();
-  void setCaption(const std::string &caption);
-  void hide();
-  void handleBuffer();
-  void redraw();
-  void grabMouse(bool grab);
+  FileBrowser(Widget *parent);
+  ~FileBrowser();
+
+  bool isFocusable() { return true; }
+
+  void registerFileSelectHandler(void (*handler)(void *, std::string),
+                                 void *ptr);
+
+  virtual void repaintEvent(RepaintEvent *e);
+
+  virtual void resize(size_t w, size_t h);
 
 private:
-  ::Window xwindow;
-  GC gc;
-  XImage *buffer;
+  struct private_data *prv;
 
-  GUI::Window *window;
+  GUI::ListBox *listbox;
+  GUI::Button *btn;
 };
 
 };
 
-#endif/*X11*/
+#endif/*__DRUMGIZMO_FILEBROWSER_H__*/

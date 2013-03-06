@@ -49,6 +49,8 @@ public:
 
   size_t x();
   size_t y();
+  size_t windowX();
+  size_t windowY();
   size_t width();
   size_t height();
 

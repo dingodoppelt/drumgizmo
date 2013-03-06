@@ -43,6 +43,7 @@ GUI::LineEdit::LineEdit(Widget *parent)
 void GUI::LineEdit::setText(std::string text)
 {
   _text = text;
+  repaintEvent(NULL);
   textChanged();
 }
 

@@ -46,6 +46,7 @@ public:
   void hide();
   void handleBuffer();
   void redraw();
+  void grabMouse(bool grab);
 
 private:
   GUI::Window *window;

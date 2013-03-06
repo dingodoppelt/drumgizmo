@@ -27,10 +27,9 @@
 #ifndef __DRUMGIZMO_WIDGET_H__
 #define __DRUMGIZMO_WIDGET_H__
 
-#include <vector>
-
 #include "guievent.h"
 #include "pixelbuffer.h"
+
 #include <vector>
 
 namespace GUI {
@@ -50,6 +49,8 @@ public:
 
   virtual size_t x();
   virtual size_t y();
+  virtual size_t windowX();
+  virtual size_t windowY();
   virtual size_t width();
   virtual size_t height();
 
@@ -57,6 +58,7 @@ public:
   virtual bool catchMouse() { return false; }
 
   void addChild(Widget *widget);
+  void removeChild(Widget *widget);
 
   virtual void repaintEvent(RepaintEvent *e) {}
   virtual void mouseMoveEvent(MouseMoveEvent *e) {}
@@ -74,11 +76,18 @@ public:
 
   bool hasKeyboardFocus();
 
+  Widget *parent;
+
+  bool visible();
+  void setVisible(bool visible);
+
 protected:
   std::vector<Widget*> children;
-  Widget *parent;
   Window *_window;
   size_t _x, _y, _width, _height;
+
+private:
+  bool _visible;
 };
 
 };

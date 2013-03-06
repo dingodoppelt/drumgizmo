@@ -35,7 +35,9 @@
 #include "filelineedit.h"
 #include "checkbox.h"
 #include "button.h"
-#include "slider.h"
+#include "knob.h"
+
+#include "filebrowser.h"
 
 #include "thread.h"
 
@@ -63,11 +65,13 @@ public:
   GUI::Window *window;
   GUI::EventHandler *eventhandler;
 
+  GUI::FileBrowser *filebrowser;
+
   DrumGizmo *drumgizmo;
 
   GUI::CheckBox *check;
-  GUI::Slider *slider;
-  GUI::Slider *slider2;
+  GUI::Knob *knob;
+  GUI::Knob *knob2;
 
   GUI::Button *btn_ok;
   GUI::Button *btn_ok2;

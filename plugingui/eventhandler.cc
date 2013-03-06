@@ -37,6 +37,7 @@
 GUI::EventHandler::EventHandler(GlobalContext *gctx)
 {
   this->gctx = gctx;
+  last_click = 0;
 #ifdef WIN32
   this->gctx->eventhandler = this;
   event = NULL;
@@ -65,7 +66,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
   GUI::EventHandler *handler =
     (GUI::EventHandler *) GetWindowLong(hwnd, GWL_USERDATA);
-
 
 	switch(msg) {
 	case WM_SIZE:
@@ -142,6 +142,8 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     //		fwKeys = wp;
 		break;
 
+	case WM_LBUTTONDBLCLK:
+    printf("LBUTTONDBLCLK\n");
 	case WM_LBUTTONDOWN:
     {
       GUI::ButtonEvent *e = new GUI::ButtonEvent();
@@ -149,6 +151,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->y = (int)(short) HIWORD(lp);
       e->button = 0;
       e->direction = 1;
+      e->doubleclick = (msg == WM_LBUTTONDBLCLK);
       handler->event = e;
     }
     //xPos = (int)(short) LOWORD(lp);
@@ -157,18 +160,29 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_MBUTTONUP:
+    {
+      GUI::ButtonEvent *e = new GUI::ButtonEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->button = 3;
+      e->direction = -1;
+      e->doubleclick = 0;
+      handler->event = e;
+    }
 		//xPos = (int)(short) LOWORD(lp);
 		//yPos = (int)(short) HIWORD(lp);
 		//fwKeys = wp;
 		break;
 
+  case WM_MBUTTONDBLCLK:
 	case WM_MBUTTONDOWN:
     {
       GUI::ButtonEvent *e = new GUI::ButtonEvent();
       e->x = (int)(short) LOWORD(lp);
       e->y = (int)(short) HIWORD(lp);
-      e->button = 1;
+      e->button = 3;
       e->direction = 1;
+      e->doubleclick = (msg == WM_MBUTTONDBLCLK);
       handler->event = e;
     }
     //		xPos = (int)(short) LOWORD(lp);
@@ -183,6 +197,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->y = (int)(short) HIWORD(lp);
       e->button = 1;
       e->direction = -1;
+      e->doubleclick = 0;
       handler->event = e;
     }
     //		xPos = (int)(short) LOWORD(lp);
@@ -190,6 +205,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     //		fwKeys = wp;
 		break;
 
+  case WM_RBUTTONDBLCLK:
 	case WM_RBUTTONDOWN:
     {
       GUI::ButtonEvent *e = new GUI::ButtonEvent();
@@ -197,6 +213,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->y = (int)(short) HIWORD(lp);
       e->button = 1;
       e->direction = 1;
+      e->doubleclick = (msg == WM_RBUTTONDBLCLK);
       handler->event = e;
     }
     //		xPos = (int)(short) LOWORD(lp);
@@ -469,6 +486,10 @@ GUI::Event *GUI::EventHandler::getNextEvent()
     e->y = xe.xbutton.y;
     e->button = 0;
     e->direction = xe.type == ButtonPress?1:-1;
+    e->doubleclick =
+      xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
+
+    if(xe.type == ButtonPress) last_click = xe.xbutton.time;
     event = e;
   }
 
@@ -542,14 +563,16 @@ void GUI::EventHandler::processEvents(Window *window)
       //      window->repaint((RepaintEvent*)event);
       window->redraw();
       break;
-    case Event::Resize:{
-      //      window->repaint((RepaintEvent*)event)
-      ResizeEvent *re = (ResizeEvent*)event;
-      if(re->width != window->width() || re->height != window->height()) {
-        window->resized(re->width, re->height);
-        window->repaint_r(NULL);
+    case Event::Resize:
+      {
+        //      window->repaint((RepaintEvent*)event)
+        ResizeEvent *re = (ResizeEvent*)event;
+        if(re->width != window->width() || re->height != window->height()) {
+          window->resized(re->width, re->height);
+          window->repaint_r(NULL);
+        }
       }
-    }      break;
+      break;
     case Event::MouseMove:
       {
         MouseMoveEvent *me = (MouseMoveEvent*)event;
@@ -558,21 +581,22 @@ void GUI::EventHandler::processEvents(Window *window)
 
         if(window->buttonDownFocus()) {
           Widget *w = window->buttonDownFocus();
+          /*
           if(me->x < w->x()) me->x = w->x();
           if(me->x > w->x() + w->width()) me->x = w->x() + w->width();
           if(me->y < w->y()) me->y = w->y();
           if(me->y > w->y() + w->height()) me->y = w->y() + w->height();
-
-          me->x -= w->x();
-          me->y -= w->y();
+          */
+          me->x -= w->windowX();
+          me->y -= w->windowY();
 
           window->buttonDownFocus()->mouseMoveEvent(me);
           break;
         }
 
         if(w) {
-          me->x -= w->x();
-          me->y -= w->y();
+          me->x -= w->windowX();
+          me->y -= w->windowY();
           w->mouseMoveEvent(me);
         }
       }
@@ -586,13 +610,14 @@ void GUI::EventHandler::processEvents(Window *window)
         if(window->buttonDownFocus()) {
           if(be->direction == -1) {
             Widget *w = window->buttonDownFocus();
+            /*
             if(be->x < w->x()) be->x = w->x();
             if(be->x > w->x() + w->width()) be->x = w->x() + w->width();
             if(be->y < w->y()) be->y = w->y();
             if(be->y > w->y() + w->height()) be->y = w->y() + w->height();
-            
-            be->x -= w->x();
-            be->y -= w->y();
+            */
+            be->x -= w->windowX();
+            be->y -= w->windowY();
 
             w->buttonEvent(be);
             break;
@@ -602,8 +627,8 @@ void GUI::EventHandler::processEvents(Window *window)
         }
 
         if(w) {
-          be->x -= w->x();
-          be->y -= w->y();
+          be->x -= w->windowX();
+          be->y -= w->windowY();
 
           w->buttonEvent(be);
 

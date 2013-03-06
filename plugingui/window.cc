@@ -104,6 +104,8 @@ size_t GUI::Window::x() { return _x; }
 size_t GUI::Window::y() { return _y; }
 size_t GUI::Window::width() { return _width; }
 size_t GUI::Window::height() { return _height; }
+size_t GUI::Window::windowX() { return 0; }
+size_t GUI::Window::windowY() { return 0; }
 
 void GUI::Window::show()
 {
@@ -200,5 +202,6 @@ GUI::Widget *GUI::Window::buttonDownFocus()
 void GUI::Window::setButtonDownFocus(GUI::Widget *widget)
 {
   _buttonDownFocus = widget;
+  native->grabMouse(widget != NULL);
   //  repaint_r(NULL);
 }

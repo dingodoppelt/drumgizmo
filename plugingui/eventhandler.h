@@ -52,7 +52,7 @@ public:
   GlobalContext *gctx;
 
 private:
-
+  int last_click;
   void (*closeHandler)(void *);
   void *closeHandlerPtr;
 };
