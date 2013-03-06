@@ -53,11 +53,16 @@ fi
 
 # Create testfiles
 TESTDIRS="src plugingui drumgizmo"
+echo "Creating unittest Makefiles:"
 for d in $TESTDIRS
 do
+		echo "Checking $d"
 		if [ ! -f $d/Makefile.am.test ]
 		then
+				echo "  didn't find it, touching."
 				touch $d/Makefile.am.test
+		else
+				echo "  found it."
 		fi
 done
 
