@@ -41,6 +41,8 @@ public:
   FileBrowser(Widget *parent);
   ~FileBrowser();
 
+  void setPath(std::string path);
+
   bool isFocusable() { return true; }
 
   void registerFileSelectHandler(void (*handler)(void *, std::string),

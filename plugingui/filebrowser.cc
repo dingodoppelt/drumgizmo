@@ -56,13 +56,19 @@ void changeDir(void *ptr)
   char filename[1024];
   char *c = getcwd(filename, sizeof(filename));
   (void)c;
-  strcat(filename, "/");
-  strcat(filename, value.c_str());
+  if(value != "") {
+#ifdef WIN32
+    strcat(filename, "\\");
+#else
+    strcat(filename, "/");
+#endif
+    strcat(filename, value.c_str());
+  }
 
   struct stat st;
   if(stat(filename, &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
-      //printf("'%s' is present and is a directory\n", filename);
+      //      printf("'%s' is present and is a directory\n", filename);
     }
     if((st.st_mode & S_IFREG) != 0) {
       //printf("'%s' is present and is a file\n", filename);
@@ -78,8 +84,12 @@ void changeDir(void *ptr)
   int i = chdir(value.c_str());
   (void)i;
   DIR *dir = opendir(".");
+  if(!dir) {
+    lb->addItem("[ Could not open dir ]", "");
+    return;
+  }
 
-  struct dirent *entry;
+ struct dirent *entry;
   while((entry = readdir(dir)) != NULL) {
     lb->addItem(entry->d_name, entry->d_name);
   }
@@ -97,8 +107,8 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
 #define btn_h 12
 
   listbox = new GUI::ListBox(this);
-  listbox->registerDblClickHandler(changeDir, prv);
   prv->listbox = listbox;
+  listbox->registerDblClickHandler(changeDir, prv);
 
   btn = new GUI::Button(this);
   btn->setText("Select");
@@ -113,6 +123,13 @@ GUI::FileBrowser::~FileBrowser()
 {
   delete prv->listbox;
   delete prv;
+}
+
+void GUI::FileBrowser::setPath(std::string path)
+{
+  int i = chdir(path.c_str());
+  (void)i;
+  changeDir(prv);
 }
 
 void GUI::FileBrowser::resize(size_t w, size_t h)
