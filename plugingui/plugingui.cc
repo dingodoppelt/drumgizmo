@@ -118,7 +118,6 @@ void closeClick(void *ptr)
   if(gui->windowClosedHandler) gui->windowClosedHandler(gui->windowClosedPtr);
 }
 
-#include "painter.h"
 #include "../version.h"
 
 PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
