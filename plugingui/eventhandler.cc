@@ -122,10 +122,17 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_MOUSEWHEEL:
-		//fwKeys = LOWORD(wp);
-		//zDelta = (short) HIWORD(wp);
-		//xPos = (short) LOWORD(lp);
-		//yPos = (short) HIWORD(lp);
+    {
+      GUI::ScrollEvent *e = new GUI::ScrollEvent();
+      e->x = (int)(short) LOWORD(lp);
+      e->y = (int)(short) HIWORD(lp);
+      e->delta = (int)(short) HIWORD(wp);
+      handler->event = e;
+      //fwKeys = LOWORD(wp);
+      //zDelta = (short) HIWORD(wp);
+      //xPos = (short) LOWORD(lp);
+      //yPos = (short) HIWORD(lp);
+    }
  		break;
 
 	case WM_LBUTTONUP:
@@ -480,17 +487,26 @@ GUI::Event *GUI::EventHandler::getNextEvent()
   }
 
   if(xe.type == ButtonPress || xe.type == ButtonRelease) {
-    ButtonEvent *e = new ButtonEvent();
-    e->window_id = xe.xbutton.window;
-    e->x = xe.xbutton.x;
-    e->y = xe.xbutton.y;
-    e->button = 0;
-    e->direction = xe.type == ButtonPress?1:-1;
-    e->doubleclick =
-      xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
-
-    if(xe.type == ButtonPress) last_click = xe.xbutton.time;
-    event = e;
+    if(xe.xbutton.button == 4 || xe.xbutton.button == 5) {
+      ScrollEvent *e = new ScrollEvent();
+      e->window_id = xe.xbutton.window;
+      e->x = xe.xbutton.x;
+      e->y = xe.xbutton.y;
+      e->delta = xe.xbutton.button==4?-1:1;
+      event = e;
+    } else {
+      ButtonEvent *e = new ButtonEvent();
+      e->window_id = xe.xbutton.window;
+      e->x = xe.xbutton.x;
+      e->y = xe.xbutton.y;
+      e->button = 0;
+      e->direction = xe.type == ButtonPress?1:-1;
+      e->doubleclick =
+        xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
+      
+      if(xe.type == ButtonPress) last_click = xe.xbutton.time;
+      event = e;
+    }
   }
 
   if(xe.type == KeyPress || xe.type == KeyRelease) {
@@ -637,6 +653,20 @@ void GUI::EventHandler::processEvents(Window *window)
           } else {
             if(w->isFocusable()) window->setKeyboardFocus(w);
           }
+        }
+      }
+      break;
+    case Event::Scroll:
+      {
+        ScrollEvent *se = (ScrollEvent *)event;
+
+        Widget *w = window->find(se->x, se->y);
+
+        if(w) {
+          se->x -= w->windowX();
+          se->y -= w->windowY();
+
+          w->scrollEvent(se);
         }
       }
       break;

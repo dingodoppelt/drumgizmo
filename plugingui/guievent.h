@@ -44,6 +44,7 @@ public:
     MouseMove,
     Repaint,
     Button,
+    Scroll,
     Key,
     Close,
     Resize
@@ -75,6 +76,16 @@ public:
   int direction;
   int button;
   int doubleclick;
+};
+
+class ScrollEvent : public Event {
+public:
+  Type type() { return Scroll; }
+
+  int x;
+  int y;
+
+  int delta;
 };
 
 class RepaintEvent : public Event {

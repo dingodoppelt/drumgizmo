@@ -53,6 +53,7 @@ public:
 
   virtual void repaintEvent(RepaintEvent *e);
   virtual void buttonEvent(ButtonEvent *e);
+  virtual void scrollEvent(ScrollEvent *e);
 
 private:
   std::map<std::string, std::string> items;

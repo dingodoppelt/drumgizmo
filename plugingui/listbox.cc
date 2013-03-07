@@ -125,6 +125,15 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
                   width() - 1, height() - 1);
 }
 
+void GUI::ListBox::scrollEvent(ScrollEvent *e)
+{
+  scroll_offset += e->delta;
+  if(scroll_offset < 0) scroll_offset = 0;
+  if(scroll_offset > (items.size() - 1))
+    scroll_offset = (items.size() - 1);
+  repaintEvent(NULL);
+}
+
 void GUI::ListBox::buttonEvent(ButtonEvent *e)
 {
   //printf("click %d %d [dc: %d]\n", e->x, e->y, e->doubleclick);

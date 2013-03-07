@@ -63,6 +63,7 @@ public:
   virtual void repaintEvent(RepaintEvent *e) {}
   virtual void mouseMoveEvent(MouseMoveEvent *e) {}
   virtual void buttonEvent(ButtonEvent *e) {}
+  virtual void scrollEvent(ScrollEvent *e) {}
   virtual void keyEvent(KeyEvent *e) {}
 
   Widget *find(size_t x, size_t y);
