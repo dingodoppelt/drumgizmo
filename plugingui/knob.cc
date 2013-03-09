@@ -64,6 +64,17 @@ void GUI::Knob::registerClickHandler(void (*handler)(void *), void *ptr)
   this->ptr = ptr;
 }
 
+void GUI::Knob::scrollEvent(ScrollEvent *e)
+{
+  val -= e->delta / 200.0;
+  if(val < 0) val = 0;
+  if(val > 1) val = 1;
+
+  if(handler) handler(ptr);
+
+  repaintEvent(NULL);
+}
+
 void GUI::Knob::mouseMoveEvent(MouseMoveEvent *e)
 {
   if(state == down) {

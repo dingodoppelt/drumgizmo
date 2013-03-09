@@ -48,6 +48,7 @@ public:
   virtual void repaintEvent(RepaintEvent *e);
   virtual void buttonEvent(ButtonEvent *e);
   virtual void mouseMoveEvent(MouseMoveEvent *e);
+  virtual void scrollEvent(ScrollEvent *e);
 
 private:
   typedef enum {
