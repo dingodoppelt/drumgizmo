@@ -134,9 +134,58 @@ void GUI::ListBox::scrollEvent(ScrollEvent *e)
   repaintEvent(NULL);
 }
 
+void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
+{
+  //  printf("!\n");
+
+  if(e->direction == -1) {
+    switch(e->keycode) {
+    case GUI::KeyEvent::KEY_UP:
+      {
+        std::map<std::string, std::string>::reverse_iterator i = items.rbegin();
+        while(i != items.rend()) {
+          if(i->second == selected) break;
+          i++;
+        }
+        i++;
+        scroll_offset--;
+        if(scroll_offset < 0) scroll_offset = 0;
+        selected = i->second;
+      }
+      break;
+    case GUI::KeyEvent::KEY_DOWN:
+      {
+        std::map<std::string, std::string>::iterator i = items.begin();
+        while(i != items.end()) {
+          if(i->second == selected) break;
+          i++;
+        }
+        i++;
+        scroll_offset++;
+        if(scroll_offset > (items.size() - 1))
+          scroll_offset = (items.size() - 1);
+        selected = i->second;
+      }
+      break;
+    case GUI::KeyEvent::KEY_HOME:
+      selected = items.begin()->second;
+      break;
+    case GUI::KeyEvent::KEY_END:
+      selected = items.rbegin()->second;
+      break;
+    default:
+      break;
+    }
+
+    //  printf("sel: %s\n", selected.c_str());
+
+    repaintEvent(NULL);
+  }
+
+}
+
 void GUI::ListBox::buttonEvent(ButtonEvent *e)
 {
-  //printf("click %d %d [dc: %d]\n", e->x, e->y, e->doubleclick);
   if(e->direction == 1) {
     if(e->x > (width() - btn_size) && e->y < (width() - 1)) {
       if(e->y > 0 && e->y < btn_size) {
@@ -173,7 +222,7 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
     }
 
     repaintEvent(NULL);
-
-    if(e->doubleclick && dblclk_handler) dblclk_handler(ptr);
   }
+
+  if(e->doubleclick && dblclk_handler) dblclk_handler(ptr);
 }

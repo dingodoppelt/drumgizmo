@@ -147,95 +147,46 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
  		break;
 
 	case WM_LBUTTONUP:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->button = 0;
-      e->direction = -1;
-      handler->event = e;
-    }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
-		break;
-
 	case WM_LBUTTONDBLCLK:
 	case WM_LBUTTONDOWN:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->button = 0;
-      e->direction = 1;
-      e->doubleclick = (msg == WM_LBUTTONDBLCLK);
-      handler->event = e;
-    }
-    //xPos = (int)(short) LOWORD(lp);
-		//yPos = (int)(short) HIWORD(lp);
-		//fwKeys = wp;
-		break;
-
+	case WM_RBUTTONUP:
+	case WM_RBUTTONDBLCLK:
+	case WM_RBUTTONDOWN:
 	case WM_MBUTTONUP:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->button = 3;
-      e->direction = -1;
-      e->doubleclick = 0;
-      handler->event = e;
-    }
-		//xPos = (int)(short) LOWORD(lp);
-		//yPos = (int)(short) HIWORD(lp);
-		//fwKeys = wp;
-		break;
-
-  case WM_MBUTTONDBLCLK:
+	case WM_MBUTTONDBLCLK:
 	case WM_MBUTTONDOWN:
     {
       GUI::ButtonEvent *e = new GUI::ButtonEvent();
       e->x = (int)(short) LOWORD(lp);
       e->y = (int)(short) HIWORD(lp);
-      e->button = 3;
-      e->direction = 1;
-      e->doubleclick = (msg == WM_MBUTTONDBLCLK);
-      handler->event = e;
-    }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
-		break;
 
-	case WM_RBUTTONUP:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->button = 1;
-      e->direction = -1;
-      e->doubleclick = 0;
-      handler->event = e;
-    }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
-		break;
+      if(msg == WM_LBUTTONUP ||
+         msg == WM_LBUTTONDBLCLK ||
+         msg == WM_LBUTTONDOWN) e->button = 0;
 
-  case WM_RBUTTONDBLCLK:
-	case WM_RBUTTONDOWN:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->button = 1;
-      e->direction = 1;
-      e->doubleclick = (msg == WM_RBUTTONDBLCLK);
+      if(msg == WM_RBUTTONUP ||
+         msg == WM_RBUTTONDBLCLK ||
+         msg == WM_RBUTTONDOWN) e->button = 1;
+
+      if(msg == WM_MBUTTONUP ||
+         msg == WM_MBUTTONDBLCLK ||
+         msg == WM_MBUTTONDOWN) e->button = 2;
+
+      e->direction = 0;
+      if(msg == WM_LBUTTONUP ||
+         msg == WM_RBUTTONUP ||
+         msg == WM_MBUTTONUP) e->direction = -1;
+
+      if(msg == WM_LBUTTONDOWN ||
+         msg == WM_RBUTTONDOWN ||
+         msg == WM_MBUTTONDOWN) e->direction = 1;
+
+      e->doubleclick = (msg == WM_LBUTTONDBLCLK ||
+                        msg == WM_RBUTTONDBLCLK ||
+                        msg == WM_MBUTTONDBLCLK);
+
       handler->event = e;
     }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
 		break;
 
 	case WM_KEYDOWN:
@@ -254,9 +205,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->direction = -1;
       handler->event = e;
     }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
 		break;
 
 	case WM_CHAR:
@@ -270,9 +218,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         handler->event = e;
       }
     }
-    //		xPos = (int)(short) LOWORD(lp);
-    //		yPos = (int)(short) HIWORD(lp);
-    //		fwKeys = wp;
 		break;
 
 	case WM_PAINT:
@@ -284,8 +229,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->height = 100;
       handler->event = e;
 
-
-#if 1
       // Move to window.h (in class)
       HDC pDC;
       HBITMAP old;
@@ -294,118 +237,47 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       GUI::PixelBuffer &px = gwindow->wpixbuf;
 
       { // Create bitmap (move to window.cc)
-
         HDC hDC;
         BITMAPINFO bitmapinfo;
-        hDC=CreateCompatibleDC(NULL);
-        bitmapinfo.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
-        bitmapinfo.bmiHeader.biWidth=px.width;
-        bitmapinfo.bmiHeader.biHeight=-px.height; /* top-down */
-        bitmapinfo.bmiHeader.biPlanes=1;
-        bitmapinfo.bmiHeader.biBitCount=32;
-        bitmapinfo.bmiHeader.biCompression=BI_RGB;
-        bitmapinfo.bmiHeader.biSizeImage=0;
-        bitmapinfo.bmiHeader.biClrUsed=256;
-        bitmapinfo.bmiHeader.biClrImportant=256;
-        ourbitmap=CreateDIBSection(hDC,&bitmapinfo,DIB_RGB_COLORS,(void**)&framebuf,0,0);
+        hDC = CreateCompatibleDC(NULL);
+        bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bitmapinfo.bmiHeader.biWidth = px.width;
+        bitmapinfo.bmiHeader.biHeight = -px.height; /* top-down */
+        bitmapinfo.bmiHeader.biPlanes = 1;
+        bitmapinfo.bmiHeader.biBitCount = 32;
+        bitmapinfo.bmiHeader.biCompression = BI_RGB;
+        bitmapinfo.bmiHeader.biSizeImage = 0;
+        bitmapinfo.bmiHeader.biClrUsed = 256;
+        bitmapinfo.bmiHeader.biClrImportant = 256;
+        ourbitmap=CreateDIBSection(hDC, &bitmapinfo,
+                                   DIB_RGB_COLORS, (void**)&framebuf, 0, 0);
         pDC=CreateCompatibleDC(NULL);
-        old=(HBITMAP__*)SelectObject(pDC,ourbitmap);
+        old = (HBITMAP__*)SelectObject(pDC, ourbitmap);
         DeleteDC(hDC);
-        
       }
 
-
       { // Copy GUI::PixelBuffer to framebuffer (move to window.cc)
-
         int i,j,k;
-        for (k=0,i=0;i<(int)px.height;i++)
-          for (j=0;j<(int)px.width;j++,k++)
+        for (k=0,i=0;i<(int)px.height;i++) {
+          for (j=0;j<(int)px.width;j++,k++) {
             *(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
                               px.buf[(j + i * px.width) * 3 + 1],
                               px.buf[(j + i * px.width) * 3 + 0]);
+          }
+        }
       }
       
-	PAINTSTRUCT	ps;
-  //	RECT		rect;
-	HDC			hdc;
+      PAINTSTRUCT	ps;
+      HDC	hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
+      BitBlt(hdc,0,0,px.width,px.height,pDC,0,0,SRCCOPY);
+      EndPaint(handler->gctx->m_hwnd, &ps);
 
-  //  bool m_state = true;
-  //	HBRUSH	m_brush;
-  //	HPEN	m_penh, m_pens;		//Outer
-  //	HPEN	m_penih, m_penis;	//Inner
-  
-	hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
-  BitBlt(hdc,0,0,px.width,px.height,pDC,0,0,SRCCOPY);
-  EndPaint(handler->gctx->m_hwnd, &ps);
-
-
-
-
-  { // Destroy bitmap (move to window.cc)
-
-    SelectObject(pDC,old);
-    DeleteDC(pDC);
-    DeleteObject(ourbitmap);
-
-  }
-
-
-
-
-
-
-
-#else
-	PAINTSTRUCT	ps;
-  //	RECT		rect;
-	HDC			hdc;
-  hdc = BeginPaint(handler->gctx->m_hwnd, &ps);
-	if(hdc) {
-    //		GetClientRect(handler->gctx->m_hwnd, &rect);
-
-    //Backgound
-    //		FillRect(hdc, &rect, m_brush);
-
-    /*
-    POINT p[2];
-    p[0].x = p[0].y = 10;
-    p[1].x = p[1].y = 10;
-    SelectObject(hdc, m_penis);
-    Polyline(hdc, p, 2);
-    */
-    GUI::PixelBuffer &px = gwindow->wpixbuf;
-    for(size_t y = 0; y < px.height; y++) {
-      for(size_t x = 0; x < px.width; x++) {
-        int col = *((int*)(&px.buf[(x + y * px.width) * 3])) & 0xffffff;
-        SetPixel(hdc, x, y, col);
+      { // Destroy bitmap (move to window.cc)
+        SelectObject(pDC,old);
+        DeleteDC(pDC);
+        DeleteObject(ourbitmap);
+        
       }
-    }
-
-    /*
-		//Edges
-		drawHilight(hdc, m_state ? m_pens : m_penh, &rect);
-		drawShadow(hdc, m_state ? m_penh : m_pens, &rect);
-
-		//Lav rect 1 mindre (shrink)
-		rect.left++;
-		rect.right--;
-		rect.top++;
-		rect.bottom--;
-
-		drawHilight(hdc, m_state ? m_penis : m_penih, &rect);
-		drawShadow(hdc, m_state ? m_penih : m_penis, &rect);
-    */
-		EndPaint(handler->gctx->m_hwnd, &ps);
-	}
-  //DeleteDC(hdc); 
-#endif
-
-
-
-
-
-
-
     }
 		return DefWindowProc(hwnd, msg, wp, lp);
 	}
@@ -520,13 +392,15 @@ GUI::Event *GUI::EventHandler::getNextEvent()
   }
 
   if(xe.type == KeyPress || xe.type == KeyRelease) {
-    //    printf("key: %d\n", e.xkey.keycode);
+    // printf("key: %d\n", xe.xkey.keycode);
     KeyEvent *e = new KeyEvent();
     e->window_id = xe.xkey.window;
 
     switch(xe.xkey.keycode) {
     case 113: e->keycode = KeyEvent::KEY_LEFT; break;
     case 114: e->keycode = KeyEvent::KEY_RIGHT; break;
+    case 111: e->keycode = KeyEvent::KEY_UP; break;
+    case 116: e->keycode = KeyEvent::KEY_DOWN; break;
     case 119: e->keycode = KeyEvent::KEY_DELETE; break;
     case 22: e->keycode = KeyEvent::KEY_BACKSPACE; break;
     case 110: e->keycode = KeyEvent::KEY_HOME; break;

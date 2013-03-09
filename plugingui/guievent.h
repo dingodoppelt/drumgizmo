@@ -108,12 +108,14 @@ public:
 
   enum {
     KEY_UNKNOWN   =-1,
-    KEY_LEFT      = 1,// if(e->keycode == 113) { // left key
-    KEY_RIGHT     = 2,//} else if(e->keycode == 114) { // right key
-    KEY_DELETE    = 3,//} else if(e->keycode == 119) { // delete
-    KEY_BACKSPACE = 4,//} else if(e->keycode == 22) { // backspace
-    KEY_HOME      = 5,
-    KEY_END       = 6,
+    KEY_LEFT      = 1,
+    KEY_RIGHT     = 2,
+    KEY_UP        = 3,
+    KEY_DOWN      = 4,
+    KEY_DELETE    = 5,
+    KEY_BACKSPACE = 6,
+    KEY_HOME      = 7,
+    KEY_END       = 8,
     KEY_CHARACTER = 0xffff // character data is stored in 'text'
   };
 };
