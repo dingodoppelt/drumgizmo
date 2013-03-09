@@ -46,6 +46,12 @@ void GUI::CheckBox::buttonEvent(ButtonEvent *e)
   }
 }
 
+void GUI::CheckBox::setText(std::string text)
+{
+  _text = text;
+  repaintEvent(NULL);
+}
+
 void GUI::CheckBox::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   this->handler = handler;
@@ -60,21 +66,27 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 
   float alpha = 0.8;
 
+  int box = width()<height()?width():height();
+
   p.setColour(Colour(0.5, alpha));
-  p.drawFilledRectangle(0,0,width()-1,height()-1);
+  p.drawFilledRectangle(0,0,box-1,box-1);
 
   p.setColour(Colour(0.1, alpha));
-  p.drawRectangle(0,0,width()-1,height()-1);
+  p.drawRectangle(0,0,box-1,box-1);
 
   if(state) {
     p.setColour(Colour(0.8, alpha));
-    p.drawLine(0,0,width()-1,height()-1);
-    p.drawLine(0,width()-1,height()-1,0);
+    p.drawLine(0,0,box-1,box-1);
+    p.drawLine(0,box-1,box-1,0);
   }
 
   p.setColour(Colour(0.3, alpha));
-  p.drawPoint(0,height()-1);
-  p.drawPoint(width()-1,0);
+  p.drawPoint(0,box-1);
+  p.drawPoint(box-1,0);
+
+  p.setColour(Colour(1));
+  Font font;
+  p.drawText(box + 8, height() / 2 + 5, font, _text);
 }
 
 bool GUI::CheckBox::checked()

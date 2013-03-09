@@ -35,6 +35,8 @@ class CheckBox : public Widget {
 public:
   CheckBox(Widget *parent);
 
+  void setText(std::string text);
+
   bool isFocusable() { return true; }
 
   bool checked();
@@ -53,6 +55,8 @@ private:
 
   void (*handler)(void *);
   void *ptr;
+
+  std::string _text;
 };
 
 };
