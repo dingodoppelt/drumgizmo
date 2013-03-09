@@ -64,6 +64,9 @@ extern GUI::Window *gwindow;
 #include "window.h"
 LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
+  static int last_x = 0;
+  static int last_y = 0;
+
   GUI::EventHandler *handler =
     (GUI::EventHandler *) GetWindowLong(hwnd, GWL_USERDATA);
 
@@ -95,6 +98,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       GUI::CloseEvent *e = new GUI::CloseEvent();
       handler->event = e;
     }
+    break;
 //		HWND child, old;
 //		old	= 0;
 
@@ -108,13 +112,17 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 //		if(numDialogs) EndDialog(hwnd, 0);
 //		else PostQuitMessage(0);
 //		return 0;
-
 	case WM_MOUSEMOVE:
     {
+      
       GUI::MouseMoveEvent *e = new GUI::MouseMoveEvent();
       e->x = (int)(short) LOWORD(lp);
       e->y = (int)(short) HIWORD(lp);
       handler->event = e;
+
+      last_x = e->x;
+      last_y = e->y;
+
       //		xPos = (int)(short) LOWORD(lp);
       //		yPos = (int)(short) HIWORD(lp);
       //		fwKeys = wp;
@@ -124,14 +132,17 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_MOUSEWHEEL:
     {
       GUI::ScrollEvent *e = new GUI::ScrollEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      e->delta = (int)(short) HIWORD(wp);
+
+      // NOTE: lp is coordinates in screen space, not client space.
+      POINT p;
+      p.x = (int)(short) LOWORD(lp);
+      p.y = (int)(short) HIWORD(lp);
+      ScreenToClient(hwnd, &p);
+
+      e->x = p.x;
+      e->y = p.y;
+      e->delta = -1 * (short)HIWORD(wp) / 60;
       handler->event = e;
-      //fwKeys = LOWORD(wp);
-      //zDelta = (short) HIWORD(wp);
-      //xPos = (short) LOWORD(lp);
-      //yPos = (short) HIWORD(lp);
     }
  		break;
 
@@ -150,7 +161,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_LBUTTONDBLCLK:
-    printf("LBUTTONDBLCLK\n");
 	case WM_LBUTTONDOWN:
     {
       GUI::ButtonEvent *e = new GUI::ButtonEvent();
@@ -661,6 +671,8 @@ void GUI::EventHandler::processEvents(Window *window)
         ScrollEvent *se = (ScrollEvent *)event;
 
         Widget *w = window->find(se->x, se->y);
+
+        //printf("scroller (%d,%d) %p\n", se->x, se->y, w);
 
         if(w) {
           se->x -= w->windowX();
