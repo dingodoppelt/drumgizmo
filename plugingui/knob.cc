@@ -78,10 +78,6 @@ void GUI::Knob::scrollEvent(ScrollEvent *e)
 void GUI::Knob::mouseMoveEvent(MouseMoveEvent *e)
 {
   if(state == down) {
-    /*
-    DEBUG(slider, "Knob::mouseMoveEvent(mouse_offset_x: %d,  e->x: %d)\n",
-          mouse_offset_x, e->x);
-    */
     if(mouse_offset_x == (e->x + -1*e->y)) return;
 
     float dval = mouse_offset_x - (e->x + -1*e->y);
@@ -97,19 +93,44 @@ void GUI::Knob::mouseMoveEvent(MouseMoveEvent *e)
   }
 }
 
+void GUI::Knob::keyEvent(KeyEvent *e)
+{
+  if(e->direction != -1) return;
+
+  switch(e->keycode) {
+  case GUI::KeyEvent::KEY_UP:
+    val += 0.01;
+    break;
+  case GUI::KeyEvent::KEY_DOWN:
+    val -= 0.01;
+    break;
+  case GUI::KeyEvent::KEY_HOME:
+    val = 0;
+    break;
+  case GUI::KeyEvent::KEY_END:
+    val = 1;
+    break;
+  default:
+    break;
+  }
+
+  if(val < 0) val = 0;
+  if(val > 1) val = 1;
+ 
+  repaintEvent(NULL);
+}
+
 void GUI::Knob::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == 1) {
     state = down;
     mouse_offset_x = e->x + -1*e->y;
-    //val = maximum / (float)width() * (float)e->x;
     if(handler) handler(ptr);
     repaintEvent(NULL);
   }
   if(e->direction == -1) {
     state = up;
     mouse_offset_x = e->x + -1*e->y;
-    //val = maximum / (float)width() * (float)e->x;
     repaintEvent(NULL);
     clicked();
     if(handler) handler(ptr);
@@ -118,8 +139,6 @@ void GUI::Knob::buttonEvent(ButtonEvent *e)
 
 void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
 {
-  //  DEBUG(slider, "Knob::repaintEvent (%f)\n", val);
-
   Painter p(this);
 
   float alpha = 0.8;

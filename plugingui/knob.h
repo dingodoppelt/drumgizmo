@@ -36,6 +36,7 @@ public:
   Knob(Widget *parent);
 
   bool catchMouse() { return true; }
+  bool isFocusable() { return true; }
 
   void setValue(float value);
   float value();
@@ -49,6 +50,7 @@ public:
   virtual void buttonEvent(ButtonEvent *e);
   virtual void mouseMoveEvent(MouseMoveEvent *e);
   virtual void scrollEvent(ScrollEvent *e);
+  virtual void keyEvent(KeyEvent *e);
 
 private:
   typedef enum {

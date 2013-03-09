@@ -498,9 +498,9 @@ void GUI::EventHandler::processEvents(Window *window)
 
           if(be->direction == 1) {
             if(w->catchMouse()) window->setButtonDownFocus(w);
-          } else {
-            if(w->isFocusable()) window->setKeyboardFocus(w);
           }
+
+          if(w->isFocusable()) window->setKeyboardFocus(w);
         }
       }
       break;
