@@ -38,7 +38,7 @@ GUI::ListBox::ListBox(GUI::Widget *parent)
   btn_size = 14;
 
   scroll_offset = 0;
-  selected = "";
+  selected = -1;
 
   dblclk_handler = NULL;
   ptr = NULL;
@@ -46,39 +46,60 @@ GUI::ListBox::ListBox(GUI::Widget *parent)
 
 GUI::ListBox::~ListBox()
 {
-  // printf("ListBox destroy\n");
 }
 
 void GUI::ListBox::addItem(std::string name, std::string value)
 {
-  items[name] = value;
-  if(selected == "") selected = value;
+  struct item i;
+  i.name = name;
+  i.value = value;
+ 
+  items.push_back(i);
+
+  // sort
+  for(int x = 0; x < (int)items.size() - 1; x++) {
+    for(int y = 0; y < (int)items.size() - 1; y++) {
+      if(items[x].name < items[y].name) {
+
+        if(x == selected) selected = y;
+        else if(selected == y) selected = x;
+
+        struct item tmp = items[x];
+        items[x] = items[y];
+        items[y] = tmp;
+      }
+    }
+  }
+
+  if(selected == -1) selected = items.size() - 1;
 }
 
 void GUI::ListBox::clear()
 {
   items.clear();
-  selected = "";
+  selected = -1;
   scroll_offset = 0;
   repaintEvent(NULL);
 }
 
-bool GUI::ListBox::selectItem(std::string name)
+bool GUI::ListBox::selectItem(int index)
 {
-  if(items.find(name) == items.end()) return false;
-  selected = items[name];
+  if(index < 0 || index > (int)items.size() - 1) return false;
+  selected = index;
   repaintEvent(NULL);
   return true;
 }
 
 std::string GUI::ListBox::selectedName()
 {
-  return selected;
+  if(selected < 0 || selected > (int)items.size() - 1) return "";
+  return items[selected].name;
 }
 
 std::string GUI::ListBox::selectedValue()
 {
-  return items[selected];
+  if(selected < 0 || selected > (int)items.size() - 1) return "";
+  return items[selected].value;
 }
 
 void GUI::ListBox::registerDblClickHandler(void (*handler)(void *), void *ptr)
@@ -99,14 +120,9 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
 
   int yoffset = padding / 2;
   int skip = scroll_offset;
-  std::map<std::string, std::string>::iterator i = items.begin();
-  while(i != items.end()) {
-    if(skip) {
-      skip--;
-      i++;
-      continue;
-    }
-    if(i->second == selected) {
+  for(int idx = skip; idx < (int)items.size(); idx++) {
+    struct item *i = &items[idx];
+    if(idx == selected) {
       p.setColour(Colour(1, 0.4));
       p.drawFilledRectangle(1,
                             yoffset - (padding / 2),
@@ -115,9 +131,8 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
     }
 
     p.setColour(Colour(1, 1));
-    p.drawText(2, yoffset + font.textHeight(), font, i->first);
+    p.drawText(2, yoffset + font.textHeight(), font, i->name);
     yoffset += font.textHeight() + padding;
-    i++;
   }
 
   p.drawRectangle(width() - btn_size, 0, width() - 1, btn_size);
@@ -136,52 +151,45 @@ void GUI::ListBox::scrollEvent(ScrollEvent *e)
 
 void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
 {
-  //  printf("!\n");
+  if(e->direction != -1) return;
 
-  if(e->direction == -1) {
-    switch(e->keycode) {
-    case GUI::KeyEvent::KEY_UP:
-      {
-        std::map<std::string, std::string>::reverse_iterator i = items.rbegin();
-        while(i != items.rend()) {
-          if(i->second == selected) break;
-          i++;
-        }
-        i++;
-        scroll_offset--;
+  switch(e->keycode) {
+  case GUI::KeyEvent::KEY_UP:
+    {
+      selected--;
+      if(selected < 0) selected = 0;
+      if(selected < scroll_offset) {
+        scroll_offset = selected;
         if(scroll_offset < 0) scroll_offset = 0;
-        selected = i->second;
       }
-      break;
-    case GUI::KeyEvent::KEY_DOWN:
-      {
-        std::map<std::string, std::string>::iterator i = items.begin();
-        while(i != items.end()) {
-          if(i->second == selected) break;
-          i++;
-        }
-        i++;
-        scroll_offset++;
+    }
+    break;
+  case GUI::KeyEvent::KEY_DOWN:
+    {
+      // Number of items that can be displayed at a time.
+      int numitems = height() / (font.textHeight() + padding);
+
+      selected++;
+      if(selected > (items.size() - 1))
+        selected = (items.size() - 1);
+      if(selected > (scroll_offset + numitems - 1)) {
+        scroll_offset = selected - numitems + 1;
         if(scroll_offset > (items.size() - 1))
           scroll_offset = (items.size() - 1);
-        selected = i->second;
       }
-      break;
-    case GUI::KeyEvent::KEY_HOME:
-      selected = items.begin()->second;
-      break;
-    case GUI::KeyEvent::KEY_END:
-      selected = items.rbegin()->second;
-      break;
-    default:
-      break;
     }
-
-    //  printf("sel: %s\n", selected.c_str());
-
-    repaintEvent(NULL);
+    break;
+  case GUI::KeyEvent::KEY_HOME:
+    selected = 0;
+    break;
+  case GUI::KeyEvent::KEY_END:
+    selected = items.size() - 1;
+    break;
+  default:
+    break;
   }
-
+  
+  repaintEvent(NULL);
 }
 
 void GUI::ListBox::buttonEvent(ButtonEvent *e)
@@ -206,19 +214,12 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
 
     int skip = scroll_offset;
     size_t yoffset = padding / 2;
-    std::map<std::string, std::string>::iterator i = items.begin();
-    while(i != items.end()) {
-      if(skip) {
-        skip--;
-        i++;
-        continue;
-      }
+    for(int idx = skip; idx < (int)items.size() - 1; idx++) {
       yoffset += font.textHeight() + padding;
       if(e->y < (int)yoffset - (padding / 2)) {
-        selected = i->second;
+        selected = idx;
         break;
       }
-      i++;
     }
 
     repaintEvent(NULL);

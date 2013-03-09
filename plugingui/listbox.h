@@ -28,7 +28,7 @@
 #define __DRUMGIZMO_LISTBOX_H__
 
 #include <string.h>
-#include <map>
+#include <vector>
 
 #include "widget.h"
 #include "font.h"
@@ -45,7 +45,7 @@ public:
   void addItem(std::string name, std::string value);
 
   void clear();
-  bool selectItem(std::string name);
+  bool selectItem(int index);
   std::string selectedName();
   std::string selectedValue();
 
@@ -57,8 +57,13 @@ public:
   virtual void keyEvent(KeyEvent *e);
 
 private:
-  std::map<std::string, std::string> items;
-  std::string selected;
+  struct item {
+    std::string name;
+    std::string value;
+  };
+
+  std::vector<struct item> items;
+  int selected;
   GUI::Font font;
   int padding;
   int btn_size;
