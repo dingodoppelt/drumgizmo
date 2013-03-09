@@ -58,6 +58,16 @@ void GUI::CheckBox::registerClickHandler(void (*handler)(void *), void *ptr)
   this->ptr = ptr;
 }
 
+void GUI::CheckBox::keyEvent(KeyEvent *e)
+{
+  if(e->direction != -1) return;
+    
+  if(e->keycode == GUI::KeyEvent::KEY_CHARACTER && e->text == " ") {
+    state = !state;
+    repaintEvent(NULL);
+  }
+}
+
 void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 {
   //  printf("CheckBox::repaintEvent\n");

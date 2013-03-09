@@ -49,6 +49,7 @@ public:
 
   virtual void repaintEvent(RepaintEvent *e);
   virtual void buttonEvent(ButtonEvent *e);
+  virtual void keyEvent(KeyEvent *e);
 
 private:
   bool state;
