@@ -104,6 +104,12 @@ void GUI::Knob::keyEvent(KeyEvent *e)
   case GUI::KeyEvent::KEY_DOWN:
     val -= 0.01;
     break;
+  case GUI::KeyEvent::KEY_RIGHT:
+    val += 0.01;
+    break;
+  case GUI::KeyEvent::KEY_LEFT:
+    val -= 0.01;
+    break;
   case GUI::KeyEvent::KEY_HOME:
     val = 0;
     break;
