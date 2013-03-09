@@ -177,14 +177,10 @@ void PluginGUI::init()
   window->resize(640, 200);
 
   // Enable Velocity
-  GUI::Label *lbl_enable = new GUI::Label(window);
-  lbl_enable->setText("Enable Velocity Modifier");
-  lbl_enable->move(97, 81);
-  lbl_enable->resize(100, 20);
-
   check = new GUI::CheckBox(window);
+  check->setText("Enable Velocity Modifier");
   check->move(82,82);
-  check->resize(16,16);
+  check->resize(200,16);
   check->setChecked(Conf::enable_velocity_modifier);
   check->registerClickHandler(checkClick, this);
 
