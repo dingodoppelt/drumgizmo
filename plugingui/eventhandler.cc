@@ -192,9 +192,12 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_KEYDOWN:
     {
       GUI::KeyEvent *e = new GUI::KeyEvent();
+      //printf("wp: %d\n", wp);
       switch(wp) {
       case 37: e->keycode = GUI::KeyEvent::KEY_LEFT; break;
       case 39: e->keycode = GUI::KeyEvent::KEY_RIGHT; break;
+      case 38: e->keycode = GUI::KeyEvent::KEY_UP; break;
+      case 40: e->keycode = GUI::KeyEvent::KEY_DOWN; break;
       case 8: e->keycode = GUI::KeyEvent::KEY_BACKSPACE; break;
       case 46: e->keycode = GUI::KeyEvent::KEY_DELETE; break;
       case 36: e->keycode = GUI::KeyEvent::KEY_HOME; break;
