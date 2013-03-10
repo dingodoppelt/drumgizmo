@@ -179,7 +179,7 @@ void PluginGUI::init()
   // Enable Velocity
   check = new GUI::CheckBox(window);
   check->setText("Enable Velocity Modifier");
-  check->move(82,82);
+  check->move(210,82);
   check->resize(200,16);
   check->setChecked(Conf::enable_velocity_modifier);
   check->registerClickHandler(checkClick, this);
@@ -189,11 +189,11 @@ void PluginGUI::init()
     int xpos = 180;
     GUI::Label *lbl_weight = new GUI::Label(window);
     lbl_weight->setText("Weight Modifier");
-    lbl_weight->move(xpos, 138);
+    lbl_weight->move(xpos, 138 + 15);
     lbl_weight->resize(100, 20);
 
     knob = new GUI::Knob(window);
-    knob->move(xpos + 30, 100);
+    knob->move(xpos + 30, 100 + 15);
     knob->resize(41, 41);
     knob->setValue(Conf::velocity_modifier_weight);
     knob->registerClickHandler(knobChange, this);
@@ -204,11 +204,11 @@ void PluginGUI::init()
     int xpos = 300;
     GUI::Label *lbl_falloff = new GUI::Label(window);
     lbl_falloff->setText("Falloff Modifier");
-    lbl_falloff->move(xpos, 138);
+    lbl_falloff->move(xpos, 138 + 15);
     lbl_falloff->resize(100, 20);
     
     knob2 = new GUI::Knob(window);
-    knob2->move(xpos + 30, 100);
+    knob2->move(xpos + 30, 100 + 15);
     knob2->resize(41, 41);
     knob2->setValue(Conf::velocity_modifier_falloff);
     knob2->registerClickHandler(knobChange2, this);

@@ -170,9 +170,10 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   p.drawText(center_x - font.textWidth(buf) / 2,
              center_y + font.textHeight(buf) / 2, font, buf);
 
-  p.setColour(Colour(0.5, 0.5, 1, alpha));
+  p.setColour(Colour(1, alpha));
 
   p.drawCircle(center_x, center_y, radius);
+  p.drawCircle(center_x, center_y, radius - 1);
 
   double padval = val * 0.8 + 0.1;
   double border_x = sin((-1 * padval + 1) * 2 * M_PI);
