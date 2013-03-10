@@ -45,7 +45,13 @@ struct GUI::FileBrowser::private_data {
   void *ptr;
 };
 
-void changeDir(void *ptr)
+static void cancel(void *ptr)
+{
+  GUI::FileBrowser *fp = (GUI::FileBrowser *)ptr;
+  fp->hide();
+}
+
+static void changeDir(void *ptr)
 {
   struct GUI::FileBrowser::private_data *prv =
     (struct GUI::FileBrowser::private_data *)ptr;
@@ -110,9 +116,13 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   prv->listbox = listbox;
   listbox->registerDblClickHandler(changeDir, prv);
 
-  btn = new GUI::Button(this);
-  btn->setText("Select");
-  btn->registerClickHandler(changeDir, prv);
+  btn_sel = new GUI::Button(this);
+  btn_sel->setText("Select");
+  btn_sel->registerClickHandler(changeDir, prv);
+
+  btn_esc = new GUI::Button(this);
+  btn_esc->setText("Cancel");
+  btn_esc->registerClickHandler(cancel, this);
 
   changeDir(prv);
 
@@ -139,8 +149,12 @@ void GUI::FileBrowser::resize(size_t w, size_t h)
   listbox->move(brd, brd);
   listbox->resize(w - 1 - 2*brd, h - btn_h -  3*brd);
 
-  btn->move(brd, h - btn_h - brd);
-  btn->resize(w - 1 - 2*brd, btn_h);
+
+  btn_esc->move(brd, h - btn_h - brd);
+  btn_esc->resize((w - 1 - 2*brd) / 2, btn_h);
+
+  btn_sel->move(brd + w / 2, h - btn_h - brd);
+  btn_sel->resize((w - 1 - 2*brd) / 2, btn_h);
 }
 
 

@@ -56,7 +56,8 @@ private:
   struct private_data *prv;
 
   GUI::ListBox *listbox;
-  GUI::Button *btn;
+  GUI::Button *btn_sel;
+  GUI::Button *btn_esc;
 };
 
 };
