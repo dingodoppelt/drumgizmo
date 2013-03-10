@@ -31,6 +31,7 @@
 #include <string>
 
 #include "widget.h"
+#include "font.h"
 
 namespace GUI {
 
@@ -44,13 +45,16 @@ public:
   void setText(std::string text);
 
   //protected:
-  void keyEvent(KeyEvent *e);
-  void repaintEvent(RepaintEvent *e);
+  virtual void keyEvent(KeyEvent *e);
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
 
 protected:
   virtual void textChanged() {}
 
 private:
+  Font font;
+
   std::string _text;
   size_t pos;
 };

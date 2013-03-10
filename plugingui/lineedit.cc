@@ -52,6 +52,19 @@ std::string GUI::LineEdit::text()
   return _text;
 }
 
+void GUI::LineEdit::buttonEvent(ButtonEvent *e)
+{
+  if(e->direction == 1) {
+    for(int i = 0; i < (int)_text.length(); i++) {
+      if(e->x < (int)(font.textWidth(_text.substr(0, i)) + BORDER)) {
+        pos = i;
+        break;
+      }
+    }
+    repaintEvent(NULL);
+  }
+}
+
 void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 {
   bool change = false;
@@ -108,7 +121,6 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(0, 0.4));
   p.drawFilledRectangle(3,3,width()-3,height()-3);
 
-  Font font;
   p.setColour(Colour(1,1,1));
   p.drawRectangle(0,0,width()-1,height()-1);
   p.drawRectangle(2,2,width()-3,height()-3);
