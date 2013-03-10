@@ -51,6 +51,7 @@ GUI::Font::Font()
     if(c == 'i') character_post_bias[c] = 1;
     if(c == 'w') character_post_bias[c] = -1;
     if(c == 'h') character_post_bias[c] = -1;
+    if(c == ' ') character_post_bias[c] = -3;
     if(c == '.') {
       character_pre_bias[c] = -1;
       character_post_bias[c] = -1;
