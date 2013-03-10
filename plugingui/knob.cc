@@ -162,6 +162,9 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   int center_x = width() / 2;
   int center_y = height() / 2;
 
+  p.setColour(Colour(0, 0.4));
+  p.drawFilledCircle(center_x, center_y, radius);
+
   p.setColour(Colour(1, alpha));
 
   char buf[64];
@@ -173,13 +176,13 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(1, alpha));
 
   p.drawCircle(center_x, center_y, radius);
-  p.drawCircle(center_x, center_y, radius - 1);
+  p.drawCircle(center_x, center_y, radius - 2);
 
   double padval = val * 0.8 + 0.1;
   double border_x = sin((-1 * padval + 1) * 2 * M_PI);
   double border_y = cos((-1 * padval + 1) * 2 * M_PI);
 
-  p.setColour(Colour(1, 0, 0, alpha));
+  p.setColour(Colour(1, 0, 0, 1));
   p.drawLine(border_x * (radius / 2) + center_x,
              border_y * (radius / 2) + center_y,
              border_x * radius + center_x,
