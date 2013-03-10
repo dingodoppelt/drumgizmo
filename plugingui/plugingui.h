@@ -73,10 +73,6 @@ public:
   GUI::Knob *knob;
   GUI::Knob *knob2;
 
-  GUI::Button *btn_ok;
-  GUI::Button *btn_ok2;
-  GUI::Button *btn_cancel;
-
   GUI::Label *lbl;
   FileLineEdit *lineedit;
   GUI::LED *led;

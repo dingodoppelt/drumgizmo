@@ -51,51 +51,32 @@ namespace Conf {
 };
 #endif
 
-void checkClick(void *ptr)
+static void checkClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::enable_velocity_modifier = gui->check->checked();
 }
 
-void knobChange(void *ptr)
+static void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_weight = gui->knob->value();
 }
 
-void knobChange2(void *ptr)
+static void knobChange2(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_falloff = gui->knob2->value();
 }
 
 GUI::FileBrowser *fb;
-void selectFile(void *ptr, std::string filename)
+static void selectKitFile(void *ptr, std::string filename)
 {
-  GUI::LineEdit *le = (GUI::LineEdit *)ptr;
-  le->setText(filename);
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  gui->lineedit->setText(filename);
   fb->hide();
-}
 
-void kitBrowseClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  fb->registerFileSelectHandler(selectFile, gui->lineedit);
-  fb->show();
-}
-
-void midimapBrowseClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  fb->registerFileSelectHandler(selectFile, gui->lineedit2);
-  fb->show();
-}
-
-void loadKitClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
   std::string drumkit = gui->lineedit->text();
   if(!gui->drumgizmo) return;
   gui->drumgizmo->loadkit(drumkit);
@@ -103,20 +84,42 @@ void loadKitClick(void *ptr)
   gui->led->setState(GUI::LED::green);
 }
 
-void loadMidimapClick(void *ptr)
+static void kitBrowseClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
+
+  fb->registerFileSelectHandler(selectKitFile, gui);
+  fb->show();
+}
+
+static void selectMapFile(void *ptr, std::string filename)
+{
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  gui->lineedit2->setText(filename);
+  fb->hide();
+
   std::string midimap = gui->lineedit2->text();
   if(gui->changeMidimapHandler)
     gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
   gui->led2->setState(GUI::LED::green);
 }
 
+static void midimapBrowseClick(void *ptr)
+{
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  fb->registerFileSelectHandler(selectMapFile, gui);
+  fb->show();
+}
+
+/*
 void closeClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   if(gui->windowClosedHandler) gui->windowClosedHandler(gui->windowClosedPtr);
 }
+*/
 
 #include "../version.h"
 
@@ -222,7 +225,7 @@ void PluginGUI::init()
     lbl->resize(70, 20);
 
     led = new GUI::LED(window);
-    led->move(500,12);
+    led->move(600,12);
     led->resize(16, 16);
     //  led->setState(false);
 
@@ -233,16 +236,10 @@ void PluginGUI::init()
     lineedit->resize(408, 20);
     
     GUI::Button *btn_brw = new GUI::Button(window);
-    btn_brw->setText("...");
-    btn_brw->move(480, 10);
-    btn_brw->resize(20, 20);
+    btn_brw->setText("Load Kit...");
+    btn_brw->move(490, 10);
+    btn_brw->resize(100, 20);
     btn_brw->registerClickHandler(kitBrowseClick, this);
-
-    btn_ok = new GUI::Button(window);
-    btn_ok->setText("Load Kit");
-    btn_ok->move(520, 10);
-    btn_ok->resize(100, 20);
-    btn_ok->registerClickHandler(loadKitClick, this);
   }
 
   // Midimap file
@@ -253,7 +250,7 @@ void PluginGUI::init()
     lbl2->resize(70, 20);
     
     led2 = new GUI::LED(window);
-    led2->move(500,47);
+    led2->move(600,47);
     led2->resize(16, 16);
     //  led2->setState(false);
     
@@ -263,23 +260,19 @@ void PluginGUI::init()
     lineedit2->resize(408, 20);
     
     GUI::Button *btn_brw = new GUI::Button(window);
-    btn_brw->setText("...");
-    btn_brw->move(480, 45);
-    btn_brw->resize(20, 20);
+    btn_brw->setText("Load Map...");
+    btn_brw->move(490, 45);
+    btn_brw->resize(100, 20);
     btn_brw->registerClickHandler(midimapBrowseClick, this);
-
-    btn_ok2 = new GUI::Button(window);
-    btn_ok2->setText("Load Map");
-    btn_ok2->move(520, 45);
-    btn_ok2->resize(100, 20);
-    btn_ok2->registerClickHandler(loadMidimapClick, this);
   }
 
+  /*
   btn_cancel = new GUI::Button(window);
   btn_cancel->setText("Close");
   btn_cancel->move(520, 160);
   btn_cancel->resize(100, 20);
   btn_cancel->registerClickHandler(closeClick, this);
+  */
 
   GUI::Label *lbl3 = new GUI::Label(window);
   lbl3->setText("v"VERSION);
