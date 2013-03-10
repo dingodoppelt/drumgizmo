@@ -98,8 +98,13 @@ GUI::NativeWindowWin32::~NativeWindowWin32()
 
 void GUI::NativeWindowWin32::resize(int width, int height)
 {
-  SetWindowPos(gctx->m_hwnd, NULL, -1, -1, (int)width, (int)height + 27,
-               SWP_NOMOVE);
+  SetWindowPos(gctx->m_hwnd, NULL, -1, -1, (int)width, (int)height, SWP_NOMOVE);
+  RECT r;
+  GetClientRect(gctx->m_hwnd, &r);
+  int w = width - r.right;
+  int h = height - r.bottom;
+
+  SetWindowPos(gctx->m_hwnd, NULL, -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
 void GUI::NativeWindowWin32::move(int x, int y)
