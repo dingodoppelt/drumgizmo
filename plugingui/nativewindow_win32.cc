@@ -134,6 +134,7 @@ void GUI::NativeWindowWin32::redraw()
 
 void GUI::NativeWindowWin32::setCaption(const std::string &caption)
 {
+  SetWindowText(gctx->m_hwnd, caption.c_str());
 }
 
 void GUI::NativeWindowWin32::grabMouse(bool grab)

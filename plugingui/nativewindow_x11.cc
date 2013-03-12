@@ -227,6 +227,7 @@ void GUI::NativeWindowX11::redraw()
 
 void GUI::NativeWindowX11::setCaption(const std::string &caption)
 {
+  XStoreName(gctx->display, xwindow, caption.c_str());
 }
 
 void GUI::NativeWindowX11::grabMouse(bool grab)
