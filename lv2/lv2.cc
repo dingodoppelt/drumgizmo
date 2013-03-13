@@ -32,6 +32,8 @@
 
 #include "lv2_instance.h"
 
+#include <hugin.hpp>
+
 #define MIDI_EVENT_URI "http://lv2plug.in/ns/ext/midi#MidiEvent"
 
 #define NS_ATOM "http://lv2plug.in/ns/ext/atom#"
@@ -142,7 +144,7 @@ dg_restore(LV2_Handle                  instance,
            const LV2_Feature *const *  features)
 {
   DGLV2 *dglv2 = (DGLV2 *)instance;
-  printf("dg_restore\n");
+  DEBUG(lv2, "dg_restore begin\n");
 
   size_t      size;
   uint32_t    type;
@@ -153,11 +155,14 @@ dg_restore(LV2_Handle                  instance,
                           dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
                                                    NULL, NS_DG "config"),
                           &size, &type, &flags);
-  std::string config;
-  config.append(data, size - 1);
-  dglv2->dg->setConfigString(config);
+  DEBUG(lv2, "Config string size: %d, data*: %p\n", size, data);
 
-  dglv2->in->loadMidiMap(dglv2->dg->midimapfile);
+  if(data) {
+    std::string config;
+    config.append(data, size - 1);
+    dglv2->dg->setConfigString(config);
+    dglv2->in->loadMidiMap(dglv2->dg->midimapfile);
+  }
  
   /*
     MyPlugin* plugin = (MyPlugin*)instance;
@@ -175,9 +180,9 @@ dg_restore(LV2_Handle                  instance,
         plugin->state->greeting = strdup(DEFAULT_GREETING);
     }
   */
-  printf("dg_restore\n");
+  DEBUG(lv2, "dg_restore done\n");
 
-    return LV2_STATE_SUCCESS;
+  return LV2_STATE_SUCCESS;
 }
 
 static LV2_State_Interface dg_persist = {
