@@ -29,7 +29,6 @@
 #include "painter.h"
 
 #include "button.h"
-#include "listbox.h"
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -39,10 +38,19 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef WIN32
+#include <direct.h>
+#endif
+
 struct GUI::FileBrowser::private_data {
+  GUI::LineEdit *lineedit;
   GUI::ListBox *listbox;
+  GUI::ComboBox *drives;
   void (*filesel_handler)(void *, std::string);
   void *ptr;
+#ifdef WIN32
+  int drvidx;
+#endif
 };
 
 static void cancel(void *ptr)
@@ -57,24 +65,39 @@ static void changeDir(void *ptr)
     (struct GUI::FileBrowser::private_data *)ptr;
 
   GUI::ListBox *lb = prv->listbox;
+  GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue();
+
+#ifdef WIN32
+    std::string drive = prv->drives->selectedValue();
+    int drvidx = atoi(drive.c_str());
+    /*if(prv->drvidx != drvidx)*/ _chdrive(drvidx + 1); // one based... sigh
+    //printf("DRV: [%d %s]\n", drvidx, drive.c_str());
+#endif
 
   char filename[1024];
   char *c = getcwd(filename, sizeof(filename));
   (void)c;
+
+  //printf("CWD: [%s]\n", filename);
+
   if(value != "") {
 #ifdef WIN32
-    strcat(filename, "\\");
+    if(prv->drvidx == drvidx) {
+      strcat(filename, "\\");
+      strcat(filename, value.c_str());
+    }
+    prv->drvidx = drvidx;
 #else
     strcat(filename, "/");
-#endif
     strcat(filename, value.c_str());
+#endif
   }
 
   struct stat st;
   if(stat(filename, &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
-      //      printf("'%s' is present and is a directory\n", filename);
+      //printf("'%s' is present and is a directory\n", filename);
     }
     if((st.st_mode & S_IFREG) != 0) {
       //printf("'%s' is present and is a file\n", filename);
@@ -83,12 +106,17 @@ static void changeDir(void *ptr)
     }
   } else {
     //printf("'%s' is not present or unreadable\n", filename);
+    //perror("!");
     return;
   }
 
   lb->clear();
   int i = chdir(value.c_str());
   (void)i;
+
+  c = getcwd(filename, sizeof(filename));
+  le->setText(filename);
+
   DIR *dir = opendir(".");
   if(!dir) {
     lb->addItem("[ Could not open dir ]", "");
@@ -112,9 +140,13 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
 #define brd 5 // border
 #define btn_h 12
 
+  lineedit = new GUI::LineEdit(this);
+  lineedit->setReadOnly(true);
+  prv->lineedit = lineedit;
+
   listbox = new GUI::ListBox(this);
   prv->listbox = listbox;
-  listbox->registerDblClickHandler(changeDir, prv);
+  listbox->registerSelectHandler(changeDir, prv);
 
   btn_sel = new GUI::Button(this);
   btn_sel->setText("Select");
@@ -123,6 +155,26 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   btn_esc = new GUI::Button(this);
   btn_esc->setText("Cancel");
   btn_esc->registerClickHandler(cancel, this);
+
+#ifdef WIN32
+  drv = new GUI::ComboBox(this);
+  drv->registerValueChangedHandler(changeDir, prv);
+
+  unsigned int d = GetLogicalDrives();
+  for(int i = 0; i < 32; i++) {
+    if(d & (1 << i)) {
+      
+      char name[] = "X:";
+      name[0] = i + 'A';
+
+      char num[32];
+      sprintf(num, "%d", i);
+      
+      drv->addItem(name, num);
+    }
+  }
+  prv->drives = drv;
+#endif
 
   changeDir(prv);
 
@@ -146,8 +198,21 @@ void GUI::FileBrowser::resize(size_t w, size_t h)
 {
   GUI::Widget::resize(w,h);
 
-  listbox->move(brd, brd);
-  listbox->resize(w - 1 - 2*brd, h - btn_h -  3*brd);
+  int offset = 0;
+
+  lineedit->move(0, 0);
+  offset += 16;
+  lineedit->resize(w, offset);
+
+#ifdef WIN32
+  drv->move(0,offset);
+
+  offset += 16;
+  drv->resize(w, offset);
+#endif
+
+  listbox->move(brd, brd + offset);
+  listbox->resize(w - 1 - 2*brd, h - btn_h -  3*brd - offset);
 
 
   btn_esc->move(brd, h - btn_h - brd);
@@ -155,6 +220,8 @@ void GUI::FileBrowser::resize(size_t w, size_t h)
 
   btn_sel->move(brd + w / 2, h - btn_h - brd);
   btn_sel->resize((w - 1 - 2*brd) / 2, btn_h);
+
+
 }
 
 
