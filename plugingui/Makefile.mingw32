@@ -46,10 +46,10 @@ plugingui.exe: $(OBJECTS)
 	g++ $(OBJECTS) $(LDFLAGS) $(CFLAGS) -o $@
 
 %.o: %.cc
-	g++ -O3 -c $(CFLAGS) $< -o $@
+	g++ -O2 -c $(CFLAGS) $< -o $@
 
 %.o: %.c
-	gcc -O3 -c $(CFLAGS) $< -o $@
+	gcc -O2 -c $(CFLAGS) $< -o $@
 
 clean:
 	del -rf *.o plugingui.exe

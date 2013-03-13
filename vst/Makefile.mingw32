@@ -114,7 +114,7 @@ SRC = \
 all:
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin_syslog.c -c
-	g++ -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ -O2 -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
  
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
