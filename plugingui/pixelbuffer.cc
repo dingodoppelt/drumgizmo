@@ -114,7 +114,11 @@ void GUI::PixelBufferAlpha::addPixel(size_t x, size_t y,
   buf[PX(2)] = (unsigned char)(blue * a + buf[PX(2)] * (1-a));
 
   //buf[PX(3)] = (unsigned char)(alpha * a + buf[PX(3)] * (1-a));
-  buf[PX(3)] = alpha>buf[PX(3)]?alpha:buf[PX(3)];
+  //buf[PX(3)] = alpha>buf[PX(3)]?alpha:buf[PX(3)];
+
+  float a1 = (float)buf[PX(3)] / 255.0;
+  float a2 = (float)alpha / 255.0;
+  buf[PX(3)] = (a1 + ((1 - a1) * a2)) * 255.0;
 }
 
 void GUI::PixelBufferAlpha::pixel(size_t x, size_t y,

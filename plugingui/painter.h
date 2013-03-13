@@ -68,6 +68,8 @@ public:
   void drawFilledCircle(int x, int y, int r);
   void drawImage(int x, int y, struct __img__ * img);
 
+  void clear();
+
 private:
   void plot(int x, int y, double c);
   double ipart(double x);
