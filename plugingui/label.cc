@@ -47,10 +47,11 @@ void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
 {
   //  printf("Label::repaintEvent\n");
   Painter p(this);
+
   p.setColour(Colour(1));
 
   Font font;
-  p.drawText(10, height() / 2 + 5, font, _text);
+  p.drawText(10, (height() + font.textHeight()) / 2, font, _text);
 }
 
 
