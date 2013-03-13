@@ -132,33 +132,33 @@ static void changeDir(void *ptr)
 }
 
 GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
-  : GUI::Widget(parent)
+  : GUI::Widget(parent),
+    lbl_path(this), lineedit(this), listbox(this), btn_sel(this), btn_esc(this)
+#ifdef WIN32
+  , drv(this), lbl_drive(this)
+#endif   
 {
   prv = new struct GUI::FileBrowser::private_data();
   prv->filesel_handler = NULL;
 
-#define brd 5 // border
-#define btn_h 12
+  lbl_path.setText("Path:");
 
-  lineedit = new GUI::LineEdit(this);
-  lineedit->setReadOnly(true);
-  prv->lineedit = lineedit;
+  lineedit.setReadOnly(true);
+  prv->lineedit = &lineedit;
 
-  listbox = new GUI::ListBox(this);
-  prv->listbox = listbox;
-  listbox->registerSelectHandler(changeDir, prv);
+  prv->listbox = &listbox;
+  listbox.registerSelectHandler(changeDir, prv);
 
-  btn_sel = new GUI::Button(this);
-  btn_sel->setText("Select");
-  btn_sel->registerClickHandler(changeDir, prv);
+  btn_sel.setText("Select");
+  btn_sel.registerClickHandler(changeDir, prv);
 
-  btn_esc = new GUI::Button(this);
-  btn_esc->setText("Cancel");
-  btn_esc->registerClickHandler(cancel, this);
+  btn_esc.setText("Cancel");
+  btn_esc.registerClickHandler(cancel, this);
 
 #ifdef WIN32
-  drv = new GUI::ComboBox(this);
-  drv->registerValueChangedHandler(changeDir, prv);
+  lbl_drive.setText("Drive:");
+
+  drv.registerValueChangedHandler(changeDir, prv);
 
   unsigned int d = GetLogicalDrives();
   for(int i = 0; i < 32; i++) {
@@ -170,10 +170,10 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
       char num[32];
       sprintf(num, "%d", i);
       
-      drv->addItem(name, num);
+      drv.addItem(name, num);
     }
   }
-  prv->drives = drv;
+  prv->drives = &drv;
 #endif
 
   changeDir(prv);
@@ -183,7 +183,7 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
 
 GUI::FileBrowser::~FileBrowser()
 {
-  delete prv->listbox;
+  //  delete prv->listbox;
   delete prv;
 }
 
@@ -199,27 +199,35 @@ void GUI::FileBrowser::resize(size_t w, size_t h)
   GUI::Widget::resize(w,h);
 
   int offset = 0;
+  int brd = 5; // border
+  int btn_h = 18;
 
-  lineedit->move(0, 0);
-  offset += 16;
-  lineedit->resize(w, offset);
+  lbl_path.move(0, offset);
+  lineedit.move(60, offset);
+
+  offset += btn_h;
+
+  lbl_path.resize(60, btn_h);
+  lineedit.resize(w - 60, btn_h);
 
 #ifdef WIN32
-  drv->move(0,offset);
+  lbl_drive.move(0, offset);
+  drv.move(60, offset);
 
-  offset += 16;
-  drv->resize(w, offset);
+  offset += btn_h;
+
+  lbl_drive.resize(60, btn_h);
+  drv.resize(w - 60, btn_h);
 #endif
 
-  listbox->move(brd, brd + offset);
-  listbox->resize(w - 1 - 2*brd, h - btn_h -  3*brd - offset);
+  listbox.move(brd, brd + offset);
+  listbox.resize(w - 1 - 2*brd, h - btn_h -  3*brd - offset);
 
+  btn_esc.move(brd, h - btn_h - brd);
+  btn_esc.resize((w - 1 - 2*brd) / 2, btn_h);
 
-  btn_esc->move(brd, h - btn_h - brd);
-  btn_esc->resize((w - 1 - 2*brd) / 2, btn_h);
-
-  btn_sel->move(brd + w / 2, h - btn_h - brd);
-  btn_sel->resize((w - 1 - 2*brd) / 2, btn_h);
+  btn_sel.move(brd + w / 2, h - btn_h - brd);
+  btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
 
 
 }
