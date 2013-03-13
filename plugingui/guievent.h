@@ -116,6 +116,9 @@ public:
     KEY_BACKSPACE = 6,
     KEY_HOME      = 7,
     KEY_END       = 8,
+    KEY_PGDOWN    = 9,
+    KEY_PGUP      = 10,
+    KEY_ENTER     = 11,
     KEY_CHARACTER = 0xffff // character data is stored in 'text'
   };
 };

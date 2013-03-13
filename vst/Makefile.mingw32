@@ -48,7 +48,11 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/lineedit.cc \
 	$(DG_BASE)/plugingui/led.cc \
 	$(DG_BASE)/plugingui/checkbox.cc \
-	$(DG_BASE)/plugingui/slider.cc
+	$(DG_BASE)/plugingui/slider.cc \
+	$(DG_BASE)/plugingui/listbox.cc \
+	$(DG_BASE)/plugingui/knob.cc \
+	$(DG_BASE)/plugingui/filebrowser.cc \
+	$(DG_BASE)/plugingui/combobox.cc
 
 GUI_CFLAGS=-I../plugingui -DUSE_THREAD
 GUI_LIBS=-lgdi32 -lsetupapi -lws2_32

@@ -31,6 +31,8 @@
 
 #include "button.h"
 #include "listbox.h"
+#include "combobox.h"
+#include "lineedit.h"
 
 namespace GUI {
 
@@ -55,9 +57,13 @@ public:
 private:
   struct private_data *prv;
 
+  GUI::LineEdit *lineedit;
   GUI::ListBox *listbox;
   GUI::Button *btn_sel;
   GUI::Button *btn_esc;
+
+  // Only used on win32
+  GUI::ComboBox *drv;
 };
 
 };

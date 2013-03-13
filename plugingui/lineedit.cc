@@ -38,6 +38,17 @@ GUI::LineEdit::LineEdit(Widget *parent)
   : GUI::Widget(parent)
 {
   pos = 0;
+  setReadOnly(false);
+}
+
+void GUI::LineEdit::setReadOnly(bool ro)
+{
+  readonly = ro;
+}
+
+bool GUI::LineEdit::readOnly()
+{
+  return readonly;
 }
 
 void GUI::LineEdit::setText(std::string text)
@@ -54,6 +65,8 @@ std::string GUI::LineEdit::text()
 
 void GUI::LineEdit::buttonEvent(ButtonEvent *e)
 {
+  if(readOnly()) return;
+
   if(e->direction == 1) {
     for(int i = 0; i < (int)_text.length(); i++) {
       if(e->x < (int)(font.textWidth(_text.substr(0, i)) + BORDER)) {
@@ -67,6 +80,8 @@ void GUI::LineEdit::buttonEvent(ButtonEvent *e)
 
 void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 {
+  if(readOnly()) return;
+
   bool change = false;
   
   if(e->direction == -1) {
@@ -124,12 +139,14 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(1,1,1));
   p.drawRectangle(0,0,width()-1,height()-1);
   p.drawRectangle(2,2,width()-3,height()-3);
-  p.drawText(BORDER, height()/2+5, font, _text);
+  p.drawText(BORDER - 4, height()/2+5 + 1, font, _text);
+
+  if(readOnly()) return;
 
   if(hasKeyboardFocus()) {
     size_t px = font.textWidth(_text.substr(0, pos));
     p.setColour(Colour(0.8));
-    p.drawLine(px + BORDER - 1, 4, px + BORDER - 1, height() - 5);
+    p.drawLine(px + BORDER - 1 - 4, 4, px + BORDER - 1 - 4, height() - 5);
   }
 }
 

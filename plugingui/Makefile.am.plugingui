@@ -21,7 +21,8 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/slider.cc \
 	$(top_srcdir)/plugingui/listbox.cc \
 	$(top_srcdir)/plugingui/knob.cc \
-	$(top_srcdir)/plugingui/filebrowser.cc
+	$(top_srcdir)/plugingui/filebrowser.cc \
+	$(top_srcdir)/plugingui/combobox.cc
 
 PLUGIN_GUI_LIBS = -lX11
 

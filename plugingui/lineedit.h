@@ -44,6 +44,9 @@ public:
   std::string text();
   void setText(std::string text);
 
+  void setReadOnly(bool readonly);
+  bool readOnly();
+
   //protected:
   virtual void keyEvent(KeyEvent *e);
   virtual void repaintEvent(RepaintEvent *e);
@@ -57,6 +60,8 @@ private:
 
   std::string _text;
   size_t pos;
+
+  bool readonly;
 };
 
 };

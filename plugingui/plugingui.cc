@@ -178,11 +178,12 @@ void PluginGUI::init()
   //  printf("%p\n", eventhandler);
   window = new GUI::Window(gctx);
   window->resize(640, 200);
-
+  window->setCaption("DrumGizmo v"VERSION);
+  
   // Enable Velocity
   check = new GUI::CheckBox(window);
   check->setText("Enable Velocity Modifier");
-  check->move(210,82);
+  check->move(215,82);
   check->resize(200,16);
   check->setChecked(Conf::enable_velocity_modifier);
   check->registerClickHandler(checkClick, this);
@@ -265,14 +266,6 @@ void PluginGUI::init()
     btn_brw->resize(100, 20);
     btn_brw->registerClickHandler(midimapBrowseClick, this);
   }
-
-  /*
-  btn_cancel = new GUI::Button(window);
-  btn_cancel->setText("Close");
-  btn_cancel->move(520, 160);
-  btn_cancel->resize(100, 20);
-  btn_cancel->registerClickHandler(closeClick, this);
-  */
 
   GUI::Label *lbl3 = new GUI::Label(window);
   lbl3->setText("v"VERSION);

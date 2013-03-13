@@ -32,6 +32,7 @@ FileLineEdit::FileLineEdit(GUI::Widget *parent, GUI::LED *led)
   : LineEdit(parent)
 {
   this->led = led;
+  setReadOnly(false);
 }
 
 void FileLineEdit::textChanged()

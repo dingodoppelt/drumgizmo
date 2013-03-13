@@ -170,8 +170,8 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   char buf[64];
   sprintf(buf, "%.2f", val * maximum);
   Font font;
-  p.drawText(center_x - font.textWidth(buf) / 2,
-             center_y + font.textHeight(buf) / 2, font, buf);
+  p.drawText(center_x - font.textWidth(buf) / 2 + 1,
+             center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
   p.setColour(Colour(1, alpha));
 
@@ -182,11 +182,15 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   double border_x = sin((-1 * padval + 1) * 2 * M_PI);
   double border_y = cos((-1 * padval + 1) * 2 * M_PI);
 
-  p.setColour(Colour(1, 0, 0, 1));
-  p.drawLine(border_x * (radius / 2) + center_x,
-             border_y * (radius / 2) + center_y,
-             border_x * radius + center_x,
-             border_y * radius + center_y);
+  p.setColour(Colour(1, 0, 0, 0.6));
+  for(int _x = -1; _x < 2; _x++) {
+    for(int _y = -1; _y < 2; _y++) {
+      p.drawLine(border_x * (radius / 2) + center_x + _x,
+                 border_y * (radius / 2) + center_y + _y,
+                 border_x * radius + center_x + _x,
+                 border_y * radius + center_y + _y);
+    }
+  }
 }
 
 #ifdef TEST_KNOB

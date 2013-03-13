@@ -26,4 +26,45 @@
  */
 #ifndef __DRUMGIZMO_COMBOBOX_H__
 #define __DRUMGIZMO_COMBOBOX_H__
+
+#include <string.h>
+#include <vector>
+
+#include "widget.h"
+#include "font.h"
+#include "listbox.h"
+
+namespace GUI {
+
+class ComboBox : public Widget {
+public:
+  ComboBox(Widget *parent);
+  ~ComboBox();
+
+  bool isFocusable() { return true; }
+
+  void addItem(std::string name, std::string value);
+
+  void clear();
+  bool selectItem(int index);
+  std::string selectedName();
+  std::string selectedValue();
+
+  void registerValueChangedHandler(void (*handler)(void *), void *ptr);
+
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
+  virtual void scrollEvent(ScrollEvent *e);
+  virtual void keyEvent(KeyEvent *e);
+
+private:
+  GUI::Font font;
+  GUI::ListBox *listbox;
+
+  void (*handler)(void *);
+  void *ptr;
+};
+
+};
+
 #endif/*__DRUMGIZMO_COMBOBOX_H__*/

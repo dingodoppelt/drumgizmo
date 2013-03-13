@@ -49,7 +49,9 @@ public:
   std::string selectedName();
   std::string selectedValue();
 
-  void registerDblClickHandler(void (*handler)(void *), void *ptr);
+  void registerSelectHandler(void (*handler)(void *), void *ptr);
+  void registerClickHandler(void (*handler)(void *), void *ptr);
+  void registerValueChangeHandler(void (*handler)(void *), void *ptr);
 
   virtual void repaintEvent(RepaintEvent *e);
   virtual void buttonEvent(ButtonEvent *e);
@@ -57,6 +59,8 @@ public:
   virtual void keyEvent(KeyEvent *e);
 
 private:
+  void setSelection(int index);
+
   struct item {
     std::string name;
     std::string value;
@@ -64,13 +68,20 @@ private:
 
   std::vector<struct item> items;
   int selected;
+  int marked;
   GUI::Font font;
   int padding;
   int btn_size;
   int scroll_offset;
 
-  void (*dblclk_handler)(void *);
-  void *ptr;
+  void (*sel_handler)(void *);
+  void *sel_ptr;
+
+  void (*clk_handler)(void *);
+  void *clk_ptr;
+
+  void (*valch_handler)(void *);
+  void *valch_ptr;
 };
 
 };

@@ -38,7 +38,12 @@ EXTRA_DIST = \
 	plugingui.h \
 	slider.h \
 	widget.h \
-	window.h
+	window.h \
+	listbox.h \
+	knob.h \
+	filebrowser.h \
+	combobox.h
+
 
 ################
 # Test Section #

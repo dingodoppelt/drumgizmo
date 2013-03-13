@@ -39,13 +39,26 @@ GUI::ListBox::ListBox(GUI::Widget *parent)
 
   scroll_offset = 0;
   selected = -1;
+  marked = -1;
 
-  dblclk_handler = NULL;
-  ptr = NULL;
+  clk_handler = NULL;
+  clk_ptr = NULL;
+
+  sel_handler = NULL;
+  sel_ptr = NULL;
+
+  valch_handler = NULL;
+  valch_ptr = NULL;
 }
 
 GUI::ListBox::~ListBox()
 {
+}
+
+void GUI::ListBox::setSelection(int index)
+{
+  selected = index;
+  if(valch_handler) valch_handler(valch_ptr);
 }
 
 void GUI::ListBox::addItem(std::string name, std::string value)
@@ -61,8 +74,8 @@ void GUI::ListBox::addItem(std::string name, std::string value)
     for(int y = 0; y < (int)items.size() - 1; y++) {
       if(items[x].name < items[y].name) {
 
-        if(x == selected) selected = y;
-        else if(selected == y) selected = x;
+        if(x == selected) setSelection(y);
+        else if(selected == y) setSelection(x);
 
         struct item tmp = items[x];
         items[x] = items[y];
@@ -71,13 +84,13 @@ void GUI::ListBox::addItem(std::string name, std::string value)
     }
   }
 
-  if(selected == -1) selected = items.size() - 1;
+  if(selected == -1) setSelection(items.size() - 1);
 }
 
 void GUI::ListBox::clear()
 {
   items.clear();
-  selected = -1;
+  setSelection(-1);
   scroll_offset = 0;
   repaintEvent(NULL);
 }
@@ -85,7 +98,7 @@ void GUI::ListBox::clear()
 bool GUI::ListBox::selectItem(int index)
 {
   if(index < 0 || index > (int)items.size() - 1) return false;
-  selected = index;
+  setSelection(index);
   repaintEvent(NULL);
   return true;
 }
@@ -102,17 +115,30 @@ std::string GUI::ListBox::selectedValue()
   return items[selected].value;
 }
 
-void GUI::ListBox::registerDblClickHandler(void (*handler)(void *), void *ptr)
+void GUI::ListBox::registerClickHandler(void (*handler)(void *), void *ptr)
 {
-  this->dblclk_handler = handler;
-  this->ptr = ptr;
+  this->clk_handler = handler;
+  this->clk_ptr = ptr;
+}
+
+void GUI::ListBox::registerSelectHandler(void (*handler)(void *), void *ptr)
+{
+  this->sel_handler = handler;
+  this->sel_ptr = ptr;
+}
+
+void GUI::ListBox::registerValueChangeHandler(void (*handler)(void *),
+                                              void *ptr)
+{
+  this->valch_handler = handler;
+  this->valch_ptr = ptr;
 }
 
 void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
 {
   GUI::Painter p(this);
 
-  p.setColour(Colour(0, 0.5));
+  p.setColour(Colour(0, 0.7));
   p.drawFilledRectangle(0, 0, width() - 1, height() - 1);
 
   p.setColour(Colour(0.5, 1));
@@ -128,6 +154,14 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
                             yoffset - (padding / 2),
                             width() - 1,
                             yoffset + (font.textHeight() + 1));
+    }
+
+    if(idx == marked) {
+      p.setColour(Colour(1, 0.9));
+      p.drawRectangle(1,
+                      yoffset - (padding / 2),
+                      width() - 1,
+                      yoffset + (font.textHeight() + 1));
     }
 
     p.setColour(Colour(1, 1));
@@ -156,10 +190,11 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
   switch(e->keycode) {
   case GUI::KeyEvent::KEY_UP:
     {
-      selected--;
-      if(selected < 0) selected = 0;
-      if(selected < scroll_offset) {
-        scroll_offset = selected;
+      marked--;
+      if(marked < 0) marked = 0;
+
+      if(marked < scroll_offset) {
+        scroll_offset = marked;
         if(scroll_offset < 0) scroll_offset = 0;
       }
     }
@@ -169,21 +204,45 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
       // Number of items that can be displayed at a time.
       int numitems = height() / (font.textHeight() + padding);
 
-      selected++;
-      if(selected > (items.size() - 1))
-        selected = (items.size() - 1);
-      if(selected > (scroll_offset + numitems - 1)) {
-        scroll_offset = selected - numitems + 1;
+      marked++;
+      if(marked > (items.size() - 1)) marked = items.size() - 1;
+
+      if(marked > (scroll_offset + numitems - 1)) {
+        scroll_offset = marked - numitems + 1;
         if(scroll_offset > (items.size() - 1))
           scroll_offset = (items.size() - 1);
       }
     }
     break;
   case GUI::KeyEvent::KEY_HOME:
-    selected = 0;
+    marked = 0;
+    if(marked < scroll_offset) {
+      scroll_offset = marked;
+      if(scroll_offset < 0) scroll_offset = 0;
+    }
     break;
   case GUI::KeyEvent::KEY_END:
-    selected = items.size() - 1;
+    {
+      // Number of items that can be displayed at a time.
+      int numitems = height() / (font.textHeight() + padding);
+
+      marked = items.size() - 1;
+      if(marked > (scroll_offset + numitems - 1)) {
+        scroll_offset = marked - numitems + 1;
+        if(scroll_offset > (items.size() - 1))
+          scroll_offset = (items.size() - 1);
+      }
+    }
+    break;
+  case GUI::KeyEvent::KEY_CHARACTER:
+    if(e->text == " ") {
+      setSelection(marked);
+      // if(sel_handler) sel_handler(sel_ptr);
+    }
+    break;
+  case GUI::KeyEvent::KEY_ENTER:
+    setSelection(marked);
+    if(sel_handler) sel_handler(sel_ptr);
     break;
   default:
     break;
@@ -214,10 +273,12 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
 
     int skip = scroll_offset;
     size_t yoffset = padding / 2;
-    for(int idx = skip; idx < (int)items.size() - 1; idx++) {
+    for(int idx = skip; idx < (int)items.size(); idx++) {
       yoffset += font.textHeight() + padding;
       if(e->y < (int)yoffset - (padding / 2)) {
-        selected = idx;
+        setSelection(idx);
+        marked = selected;
+        if(clk_handler) clk_handler(clk_ptr);
         break;
       }
     }
@@ -225,5 +286,5 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
     repaintEvent(NULL);
   }
 
-  if(e->doubleclick && dblclk_handler) dblclk_handler(ptr);
+  if(e->doubleclick && sel_handler) sel_handler(sel_ptr);
 }

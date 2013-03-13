@@ -122,10 +122,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       last_x = e->x;
       last_y = e->y;
-
-      //		xPos = (int)(short) LOWORD(lp);
-      //		yPos = (int)(short) HIWORD(lp);
-      //		fwKeys = wp;
     }
 		break;
 
@@ -202,6 +198,9 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       case 46: e->keycode = GUI::KeyEvent::KEY_DELETE; break;
       case 36: e->keycode = GUI::KeyEvent::KEY_HOME; break;
       case 35: e->keycode = GUI::KeyEvent::KEY_END; break;
+      case 33: e->keycode = GUI::KeyEvent::KEY_PGUP; break;
+      case 34: e->keycode = GUI::KeyEvent::KEY_PGDOWN; break;
+      case 13: e->keycode = GUI::KeyEvent::KEY_ENTER; break;
       default: e->keycode = GUI::KeyEvent::KEY_UNKNOWN; break;
       }
       e->text = "";
@@ -212,7 +211,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case WM_CHAR:
     {
-      printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
+      //printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
       if(wp >= ' ') { // Filter control chars.
         GUI::KeyEvent *e = new GUI::KeyEvent();
         e->keycode = GUI::KeyEvent::KEY_CHARACTER;
@@ -356,7 +355,7 @@ GUI::Event *GUI::EventHandler::getNextEvent()
   }
 
   if(xe.type == KeyPress || xe.type == KeyRelease) {
-    // printf("key: %d\n", xe.xkey.keycode);
+    //printf("key: %d\n", xe.xkey.keycode);
     KeyEvent *e = new KeyEvent();
     e->window_id = xe.xkey.window;
 
@@ -369,6 +368,9 @@ GUI::Event *GUI::EventHandler::getNextEvent()
     case 22: e->keycode = KeyEvent::KEY_BACKSPACE; break;
     case 110: e->keycode = KeyEvent::KEY_HOME; break;
     case 115: e->keycode = KeyEvent::KEY_END; break;
+    case 117: e->keycode = KeyEvent::KEY_PGDOWN; break;
+    case 112: e->keycode = KeyEvent::KEY_PGUP; break;
+    case 36: e->keycode = KeyEvent::KEY_ENTER; break;
     default: e->keycode = KeyEvent::KEY_UNKNOWN; break;
     }
 
