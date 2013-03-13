@@ -138,6 +138,8 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
 {
   GUI::Painter p(this);
 
+  p.clear();
+
   p.setColour(Colour(0, 0.7));
   p.drawFilledRectangle(0, 0, width() - 1, height() - 1);
 
@@ -149,7 +151,7 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
   for(int idx = skip; idx < (int)items.size(); idx++) {
     struct item *i = &items[idx];
     if(idx == selected) {
-      p.setColour(Colour(1, 0.4));
+      p.setColour(Colour(0.6, 0.9));
       p.drawFilledRectangle(1,
                             yoffset - (padding / 2),
                             width() - 1,
@@ -253,9 +255,9 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
 
 void GUI::ListBox::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == 1) {
     if(e->x > (width() - btn_size) && e->y < (width() - 1)) {
       if(e->y > 0 && e->y < btn_size) {
+        if(e->direction == -1) return;
         scroll_offset--;
         if(scroll_offset < 0) scroll_offset = 0;
         repaintEvent(NULL);
@@ -263,6 +265,7 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
       }
 
       if(e->y > (height() - btn_size) && e->y < (height() - 1)) {
+        if(e->direction == -1) return;
         scroll_offset++;
         if(scroll_offset > (items.size() - 1))
           scroll_offset = (items.size() - 1);
@@ -271,6 +274,8 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
       }
     }
 
+
+  if(e->direction == -1) {
     int skip = scroll_offset;
     size_t yoffset = padding / 2;
     for(int idx = skip; idx < (int)items.size(); idx++) {
@@ -279,6 +284,20 @@ void GUI::ListBox::buttonEvent(ButtonEvent *e)
         setSelection(idx);
         marked = selected;
         if(clk_handler) clk_handler(clk_ptr);
+        break;
+      }
+    }
+
+    repaintEvent(NULL);
+  }
+
+  if(e->direction != -1) {
+    int skip = scroll_offset;
+    size_t yoffset = padding / 2;
+    for(int idx = skip; idx < (int)items.size(); idx++) {
+      yoffset += font.textHeight() + padding;
+      if(e->y < (int)yoffset - (padding / 2)) {
+        marked = idx;
         break;
       }
     }

@@ -133,6 +133,8 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
   
+  p.clear();
+
   p.setColour(Colour(0, 0.4));
   p.drawFilledRectangle(3,3,width()-3,height()-3);
 

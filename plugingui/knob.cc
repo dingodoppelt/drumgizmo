@@ -147,6 +147,8 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
 
+  p.clear();
+
   float alpha = 0.8;
 
   p.setColour(Colour(0, 0));

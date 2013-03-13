@@ -74,6 +74,8 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 
   Painter p(this);
 
+  p.clear();
+
   float alpha = 0.8;
 
   int box = width()<height()?width():height();

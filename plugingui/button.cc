@@ -64,7 +64,9 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
 
   Painter p(this);
 
-  float alpha = 0.8;
+  p.clear();
+
+  float alpha = 0.9;
 
   if(hasKeyboardFocus()) {
     p.setColour(Colour(0.6, alpha));

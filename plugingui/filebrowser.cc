@@ -202,31 +202,36 @@ void GUI::FileBrowser::resize(size_t w, size_t h)
   int brd = 5; // border
   int btn_h = 18;
 
-  lbl_path.move(0, offset);
-  lineedit.move(60, offset);
-
-  offset += btn_h;
-
-  lbl_path.resize(60, btn_h);
-  lineedit.resize(w - 60, btn_h);
-
 #ifdef WIN32
+  offset += brd;
+
   lbl_drive.move(0, offset);
   drv.move(60, offset);
 
   offset += btn_h;
 
   lbl_drive.resize(60, btn_h);
-  drv.resize(w - 60, btn_h);
+  drv.resize(w - 60 - brd, btn_h);
 #endif
+  offset += brd;
 
-  listbox.move(brd, brd + offset);
-  listbox.resize(w - 1 - 2*brd, h - btn_h -  3*brd - offset);
+  lbl_path.move(0, offset);
+  lineedit.move(60, offset);
+
+  offset += btn_h;
+
+  lbl_path.resize(60, btn_h);
+  lineedit.resize(w - 60 - brd, btn_h);
+
+  offset += brd;
+
+  listbox.move(brd, offset);
+  listbox.resize(w - 1 - 2*brd, h - btn_h - 2*brd - offset);
 
   btn_esc.move(brd, h - btn_h - brd);
-  btn_esc.resize((w - 1 - 2*brd) / 2, btn_h);
+  btn_esc.resize((w - 1 - 2*brd) / 2 - brd / 2, btn_h);
 
-  btn_sel.move(brd + w / 2, h - btn_h - brd);
+  btn_sel.move(brd + w / 2 - brd / 2, h - btn_h - brd);
   btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
 
 

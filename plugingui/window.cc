@@ -82,6 +82,9 @@ void GUI::Window::setCaption(std::string caption)
 void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
+
+  p.clear();
+
   p.drawImage(0, 0, (struct __img__*)&img_back);
 }
 

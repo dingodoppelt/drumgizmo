@@ -95,18 +95,30 @@ void GUI::ComboBox::registerValueChangedHandler(void (*handler)(void *),
 void GUI::ComboBox::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
-  
-  int h = 16;
+
+  p.clear();
 
   std::string _text = selectedName();
 
   p.setColour(Colour(0, 0.4));
-  p.drawFilledRectangle(3,3,width()-3,h-3);
+  p.drawFilledRectangle(3, 3, width() - 3, height() - 3);
 
-  p.setColour(Colour(1,1,1));
-  p.drawRectangle(0,0,width()-1,h-1);
-  p.drawRectangle(2,2,width()-3,h-3);
-  p.drawText(BORDER - 4, h/2+5 + 1, font, _text);
+  p.setColour(Colour(1, 1, 1));
+  p.drawRectangle(0, 0, width() - 1, height() - 1);
+
+  p.setColour(Colour(0.6, 0.6, 0.6));
+  p.drawRectangle(2, 2, width() - 3, height() - 3);
+
+  p.setColour(Colour(1, 1, 1));
+  p.drawText(BORDER - 4, (height()+font.textHeight()) / 2 + 1, font, _text);
+
+  p.setColour(Colour(1, 1, 1, 0.8));
+  p.drawRectangle(width() - height() + 1, 1, width() - 2, height() - 2);
+
+  int n = height();
+  p.setColour(Colour(1, 1, 1, 1));
+  p.drawLine(width() - n, 1, width() - 1 - n/2, n);
+  p.drawLine(width() - n + n/2, n, width() - 1, 1);
 }
 
 void GUI::ComboBox::scrollEvent(ScrollEvent *e)
