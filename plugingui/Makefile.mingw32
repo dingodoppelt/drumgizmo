@@ -33,7 +33,8 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/filebrowser.cc \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/combobox.cc \
-	$(top_srcdir)/src/thread.cc
+	$(top_srcdir)/src/thread.cc \
+	$(top_srcdir)/src/semaphore.cc
 
 OBJECTS=$(CXX_SOURCES:.cc=.o) $(C_SOURCES:.c=.o)
 #OBJECTS=$(PLUGIN_GUI_SOURCES:.cc=.o)

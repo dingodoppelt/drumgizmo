@@ -141,11 +141,13 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
 #else
   init();
 #endif/*USE_THREAD*/
+
+  sem.wait();
 }
 
 PluginGUI::~PluginGUI()
 {
-  printf("~PluginGUI()\n");
+  DEBUG(plugingui, "~PluginGUI()\n");
 
   running = false;
   wait_stop();
@@ -280,6 +282,8 @@ void PluginGUI::init()
   fb = filebrowser;
 
   window->show();
+
+  sem.post();
 }
 
 static bool shown = false;
@@ -328,6 +332,7 @@ void PluginGUI::setChangeMidimapCallback(void (*handler)(void *, const char *),
 
 void stop(void *ptr)
 {
+  DEBUG(stop, "Stopping...\n");
   bool *running = (bool*)ptr;
   *running = false;
 }
@@ -350,7 +355,7 @@ int main()
   bool running = true;
 
   PluginGUI gui(NULL);
-  //gui.setWindowClosedCallback(stop, &running);
+  gui.setWindowClosedCallback(stop, &running);
 
   // gui.show();
 
@@ -358,7 +363,6 @@ int main()
     //    gui.processEvents();
 #ifdef WIN32
     SleepEx(1000, FALSE);
-    printf("loop\n");
 #else
     //    usleep(10000);
     sleep(1);

@@ -40,6 +40,7 @@
 #include "filebrowser.h"
 
 #include "thread.h"
+#include "semaphore.h"
 
 class DrumGizmo;
 
@@ -89,6 +90,8 @@ public:
 
 private:
   volatile bool running;
+
+  Semaphore sem;
 };
 
 #endif/*__DRUMGIZMO_PLUGINGUI_H__*/
