@@ -198,8 +198,8 @@ void GUI::Painter::drawFilledRectangle(int x1, int y1, int x2, int y2)
 
 void GUI::Painter::clear()
 {
-  for(int x = 0; x < pixbuf->width; x++) {
-    for(int y = 0; y < pixbuf->height; y++) {
+  for(int x = 0; x < (int)pixbuf->width; x++) {
+    for(int y = 0; y < (int)pixbuf->height; y++) {
       pixbuf->setPixel(x, y, 0, 0, 0, 0);
     }
   }
