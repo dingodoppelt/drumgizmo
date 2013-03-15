@@ -67,13 +67,16 @@ DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
 # Given `-lfoo', the win32 build of GNU ld will search for libfoo.a and foo.lib
 #
 
-EXPAT_BASE=c:/expat
-EXPAT_CFLAGS=-I${EXPAT_BASE}/Source/lib
-EXPAT_LIBS=-L${EXPAT_BASE}/Bin -llibexpat
+#MSYS="c:/mingw/msys/1.0/local"
+MSYS=/local
 
-SNDFILE_BASE=c:/libsndfile
+EXPAT_BASE=${MSYS}
+EXPAT_CFLAGS=-I${EXPAT_BASE}/include
+EXPAT_LIBS=-L${EXPAT_BASE}/lib -lexpat
+ 
+SNDFILE_BASE=${MSYS}
 SNDFILE_CFLAGS=-I${SNDFILE_BASE}/include
-SNDFILE_LIBS=-L${SNDFILE_BASE}/lib -llibsndfile-1
+SNDFILE_LIBS=-L${SNDFILE_BASE}/lib -lsndfile
 
 SRC = \
 	drumgizmo_vst.cc \
@@ -114,7 +117,7 @@ SRC = \
 all:
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin_syslog.c -c
-	g++ -O2 -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ -static -static-libgcc -O2 -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
  
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
