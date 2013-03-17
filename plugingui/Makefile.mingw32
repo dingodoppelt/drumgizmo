@@ -2,9 +2,8 @@ top_srcdir=..
 include Makefile.am.plugingui
 
 CFLAGS=-DSTANDALONE -DWIN32 -DUSE_THREAD ${PLUGIN_GUI_CFLAGS} \
-										-I$(top_srcdir)/src
-LDFLAGS=-mconsole -lgdi32 -lsetupapi -lws2_32
-#-lgdi32
+										-I$(top_srcdir)/src -I/local/include 
+LDFLAGS=-mconsole -lgdi32 -lsetupapi -lws2_32 -L/local/lib -lpng -lz -pthread
 
 C_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
@@ -33,6 +32,7 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/filebrowser.cc \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/combobox.cc \
+	$(top_srcdir)/plugingui/image.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc
 
@@ -44,13 +44,13 @@ OBJECTS=$(CXX_SOURCES:.cc=.o) $(C_SOURCES:.c=.o)
 all: $(CXX_SOURCES) $(C_SOURCES) plugingui.exe
 
 plugingui.exe: $(OBJECTS)
-	g++ $(OBJECTS) $(LDFLAGS) $(CFLAGS) -o $@
+	g++ -static -static-libgcc $(OBJECTS) $(LDFLAGS) $(CFLAGS) -o $@
 
 %.o: %.cc
-	g++ -O2 -c $(CFLAGS) $< -o $@
+	g++ -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
 
 %.o: %.c
-	gcc -O2 -c $(CFLAGS) $< -o $@
+	gcc -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
 
 clean:
-	del -rf *.o plugingui.exe
+	rm -rf $(OBJECTS) plugingui.exe

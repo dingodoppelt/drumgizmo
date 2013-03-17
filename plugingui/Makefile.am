@@ -3,9 +3,12 @@ bin_PROGRAMS = plugingui
 include Makefile.am.plugingui
 #include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) -ldl -lX11
+plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) \
+	 -ldl -lX11 $(PNG_LIBS)
 
-plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) -I$(top_srcdir)/include $(PLUGIN_GUI_CFLAGS) -I$(top_srcdir)/src -DSTANDALONE -DX11 -DUSE_THREAD
+plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
+	-I$(top_srcdir)/include $(PLUGIN_GUI_CFLAGS) -I$(top_srcdir)/src \
+	-DSTANDALONE -DX11 -DUSE_THREAD $(PNG_CFLAGS)
 
 plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
@@ -25,6 +28,7 @@ EXTRA_DIST = \
 	font.h \
 	globalcontext.h \
 	guievent.h \
+	image.h \
 	img_back.h \
 	img_font.h \
 	img_test.h \

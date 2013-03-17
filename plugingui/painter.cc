@@ -383,6 +383,19 @@ void GUI::Painter::drawImage(int x0, int y0, struct __img__ * img)
   }
 }
 
+void GUI::Painter::drawImage(int x0, int y0, GUI::Image *image)
+{
+  size_t fw = image->width();
+  size_t fh = image->height();
+
+  for(size_t x = 0; x < fw; x++) {
+    for(size_t y = 0; y < fh; y++) {
+      GUI::Colour c = image->getPixel(x, y);
+      pixbuf->setPixel(x0 + x, y0 + y, c.red, c.green, c.blue, c.alpha);
+    }
+  }
+}
+
 void GUI::Painter::flush()
 {
 #ifdef X11

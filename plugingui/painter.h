@@ -33,6 +33,7 @@
 #include "colour.h"
 #include "pixelbuffer.h"
 #include "font.h"
+#include "image.h"
 
 namespace GUI {
 
@@ -67,6 +68,7 @@ public:
   void drawCircle(int x, int y, double r);
   void drawFilledCircle(int x, int y, int r);
   void drawImage(int x, int y, struct __img__ * img);
+  void drawImage(int x, int y, Image *image);
 
   void clear();
 

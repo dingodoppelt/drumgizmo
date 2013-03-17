@@ -255,6 +255,11 @@ dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.21)
 
 dnl ======================
+dnl Check for sndfile
+dnl ======================
+PKG_CHECK_MODULES(PNG, libpng >= 1.5)
+
+dnl ======================
 dnl Check for the pthread library
 dnl ======================
 tmp_CXXFLAGS="$CXXFLAGS"
