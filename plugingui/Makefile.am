@@ -1,4 +1,4 @@
-bin_PROGRAMS = plugingui
+bin_PROGRAMS = plugingui rcgen
 
 include Makefile.am.plugingui
 #include $(top_srcdir)/src/Makefile.am.drumgizmo
@@ -18,6 +18,8 @@ plugingui_SOURCES = \
 	$(top_srcdir)/src/semaphore.cc
 
 #	$(DRUMGIZMO_SOURCES)
+
+rcgen_SOURCES = rcgen.cc
 
 EXTRA_DIST = \
 	button.h \
