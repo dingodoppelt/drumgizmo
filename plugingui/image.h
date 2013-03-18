@@ -31,6 +31,7 @@
 #include <string>
 
 #include "colour.h"
+#include "resource.h"
 
 namespace GUI {
 
@@ -49,6 +50,8 @@ public:
   unsigned int order;
 
 private:
+  void load(const char* data, size_t size);
+
   size_t w, h;
   png_byte color_type;
   png_byte bit_depth;

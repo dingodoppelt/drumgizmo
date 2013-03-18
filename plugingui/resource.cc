@@ -77,7 +77,7 @@ const char *GUI::Resource::data()
   if(is_internal) {
     return i_data;
   } else {
-    return e_data.c_str();
+    return e_data.data();
   }
   return NULL;
 }

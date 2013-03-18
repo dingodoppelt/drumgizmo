@@ -26,6 +26,8 @@
  */
 #include "image.h"
 
+#include "resource.h"
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,27 +44,49 @@ void abort_(const char * s, ...)
   abort();
 }
 
+// http://blog.hammerian.net/2009/reading-png-images-from-memory/
+
+typedef struct {
+  size_t p;
+  size_t size;
+  const char *data;
+} data_io_t;
+
+static void dio_reader(png_structp png_ptr, png_bytep buf, png_size_t size)
+{
+  data_io_t *dio = (data_io_t *)png_get_io_ptr(png_ptr);
+
+  if(size > dio->size - dio->p) png_error(png_ptr, "Could not read bytes.");
+
+  memcpy(buf, (dio->data + dio->p), size);
+  dio->p += size;
+}
+
 GUI::Image::Image(const char* data, size_t size)
 {
+  load(data, size);
 }
 
 GUI::Image::Image(std::string filename)
 {
-  char header[8];    // 8 is the maximum size that can be checked
+  GUI::Resource rc(filename);
+  load(rc.data(), rc.size());
+}
 
-  /* open file and test for it being a png */
-  FILE *fp = fopen(filename.c_str(), "rb");
-  if (!fp)
-    abort_("[read_png_file] File %s could not be opened for reading",
-           filename.c_str());
-  size_t r = fread(header, 1, 8, fp);
-  (void)r;
+GUI::Image::~Image()
+{
+}
+
+void GUI::Image::load(const char* data, size_t size)
+{
+  const char *header = data;
+
+  // test for it being a png:
   if(png_sig_cmp((const png_byte*)header, 0, 8)) {
-    abort_("[read_png_file] File %s is not recognized as a PNG file",
-           filename.c_str());
+    abort_("[read_png_file] File is not recognized as a PNG file");
   }
   
-  /* initialize stuff */
+  // initialize stuff
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   
   if(!png_ptr) {
@@ -78,7 +102,13 @@ GUI::Image::Image(std::string filename)
     abort_("[read_png_file] Error during init_io");
   }
   
-  png_init_io(png_ptr, fp);
+  //png_init_io(png_ptr, fp);
+  data_io_t dio;
+  dio.data = data;
+  dio.size = size;
+  dio.p = 8; // skip header
+  png_set_read_fn(png_ptr, &dio, dio_reader);
+
   png_set_sig_bytes(png_ptr, 8);
   
   png_read_info(png_ptr, info_ptr);
@@ -104,41 +134,6 @@ GUI::Image::Image(std::string filename)
   }
   
   png_read_image(png_ptr, row_pointers);
-  
-  fclose(fp);
-}
-#if 0
-void process_file(void)
-{
-  if(png_get_color_type(png_ptr, info_ptr) == PNG_COLOR_TYPE_RGB) {
-    abort_("[process_file] input file is PNG_COLOR_TYPE_RGB but must be"
-           " PNG_COLOR_TYPE_RGBA (lacks the alpha channel)");
-  }
-
-  if(png_get_color_type(png_ptr, info_ptr) != PNG_COLOR_TYPE_RGBA) {
-    abort_("[process_file] color_type of input file must be "
-           "PNG_COLOR_TYPE_RGBA (%d) (is %d)",
-           PNG_COLOR_TYPE_RGBA, png_get_color_type(png_ptr, info_ptr));
-  }
-
-  size_t x, y; 
-  for(y = 0; y < height(); y++) {
-    png_byte* row = row_pointers[y];
-    for(x = 0; x < width; x++) {
-      png_byte* ptr = &(row[x*4]);
-      printf("Pixel at position [%d - %d] has RGBA values: %d - %d - %d - %d\n",
-             x, y, ptr[0], ptr[1], ptr[2], ptr[3]);
-      
-      /* set red value to 0 and green value to the blue one */
-      ptr[0] = 0;
-      ptr[1] = ptr[2];
-    }
-  }
-}
-#endif
-
-GUI::Image::~Image()
-{
 }
 
 size_t GUI::Image::width()
