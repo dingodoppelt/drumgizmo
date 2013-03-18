@@ -68,8 +68,8 @@ private:
 
 #ifdef WIN32
   // Only used on win32
-  GUI::Label lbl_drive;
   GUI::ComboBox drv;
+  GUI::Label lbl_drive;
 #endif
 };
 

@@ -40,6 +40,8 @@ typedef unsigned int timepos_t;
 
 class Event {
 public:
+  virtual ~Event() {}
+
   typedef enum {
     sample
   } type_t;

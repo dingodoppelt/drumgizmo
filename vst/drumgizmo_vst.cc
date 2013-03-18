@@ -132,8 +132,13 @@ DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 		canProcessReplacing();
 		isSynth();
 
-    char id[] = "DGV5"; // Four bytes typecasted into an unsigned integer
-		setUniqueID(*(unsigned int*)id);
+    union {
+      char cid[4];
+      unsigned int iid;
+    } id;
+
+    memcpy(id.cid, "DGV5", 4); // Four bytes typecasted into an unsigned integer
+		setUniqueID(id.iid);
 
     //    setUniqueID((unsigned int)time(NULL));
     

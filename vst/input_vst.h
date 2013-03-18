@@ -35,7 +35,7 @@
 class InputVST : public AudioInputEngine {
 public:
   InputVST();
-  ~InputVST();
+  virtual ~InputVST();
 
   bool init(Instruments &instruments);
 

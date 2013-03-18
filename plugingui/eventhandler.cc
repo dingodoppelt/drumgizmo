@@ -64,9 +64,6 @@ extern GUI::Window *gwindow;
 #include "window.h"
 LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-  static int last_x = 0;
-  static int last_y = 0;
-
   GUI::EventHandler *handler =
     (GUI::EventHandler *) GetWindowLong(hwnd, GWL_USERDATA);
 
@@ -119,9 +116,6 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       e->x = (int)(short) LOWORD(lp);
       e->y = (int)(short) HIWORD(lp);
       handler->event = e;
-
-      last_x = e->x;
-      last_y = e->y;
     }
 		break;
 

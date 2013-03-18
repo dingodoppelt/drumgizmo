@@ -79,7 +79,7 @@ GUI::NativeWindowWin32::NativeWindowWin32(GlobalContext *gctx,
 		wndId = 0;
     //	}
 
-	gctx->m_hwnd = CreateWindowEx(NULL/*ex_style*/, gctx->m_className,
+	gctx->m_hwnd = CreateWindowEx(0/*ex_style*/, gctx->m_className,
                                 "DGBasisWidget",
                                 (WS_OVERLAPPEDWINDOW | WS_VISIBLE),
                                 window->x(), window->y(),

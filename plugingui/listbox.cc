@@ -84,7 +84,7 @@ void GUI::ListBox::addItem(std::string name, std::string value)
     }
   }
 
-  if(selected == -1) setSelection(items.size() - 1);
+  if(selected == -1) setSelection((int)items.size() - 1);
 }
 
 void GUI::ListBox::clear()
@@ -180,8 +180,8 @@ void GUI::ListBox::scrollEvent(ScrollEvent *e)
 {
   scroll_offset += e->delta;
   if(scroll_offset < 0) scroll_offset = 0;
-  if(scroll_offset > (items.size() - 1))
-    scroll_offset = (items.size() - 1);
+  if(scroll_offset > ((int)items.size() - 1))
+    scroll_offset = ((int)items.size() - 1);
   repaintEvent(NULL);
 }
 
@@ -207,12 +207,12 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
       int numitems = height() / (font.textHeight() + padding);
 
       marked++;
-      if(marked > (items.size() - 1)) marked = items.size() - 1;
+      if(marked > ((int)items.size() - 1)) marked = (int)items.size() - 1;
 
       if(marked > (scroll_offset + numitems - 1)) {
         scroll_offset = marked - numitems + 1;
-        if(scroll_offset > (items.size() - 1))
-          scroll_offset = (items.size() - 1);
+        if(scroll_offset > ((int)items.size() - 1))
+          scroll_offset = ((int)items.size() - 1);
       }
     }
     break;
@@ -228,11 +228,11 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
       // Number of items that can be displayed at a time.
       int numitems = height() / (font.textHeight() + padding);
 
-      marked = items.size() - 1;
+      marked = (int)items.size() - 1;
       if(marked > (scroll_offset + numitems - 1)) {
         scroll_offset = marked - numitems + 1;
-        if(scroll_offset > (items.size() - 1))
-          scroll_offset = (items.size() - 1);
+        if(scroll_offset > ((int)items.size() - 1))
+          scroll_offset = ((int)items.size() - 1);
       }
     }
     break;
@@ -255,25 +255,24 @@ void GUI::ListBox::keyEvent(GUI::KeyEvent *e)
 
 void GUI::ListBox::buttonEvent(ButtonEvent *e)
 {
-    if(e->x > (width() - btn_size) && e->y < (width() - 1)) {
-      if(e->y > 0 && e->y < btn_size) {
-        if(e->direction == -1) return;
-        scroll_offset--;
-        if(scroll_offset < 0) scroll_offset = 0;
-        repaintEvent(NULL);
-        return;
-      }
-
-      if(e->y > (height() - btn_size) && e->y < (height() - 1)) {
-        if(e->direction == -1) return;
-        scroll_offset++;
-        if(scroll_offset > (items.size() - 1))
-          scroll_offset = (items.size() - 1);
-        repaintEvent(NULL);
-        return;
-      }
+  if(e->x > ((int)width() - btn_size) && e->y < ((int)width() - 1)) {
+    if(e->y > 0 && e->y < btn_size) {
+      if(e->direction == -1) return;
+      scroll_offset--;
+      if(scroll_offset < 0) scroll_offset = 0;
+      repaintEvent(NULL);
+      return;
     }
-
+    
+    if(e->y > ((int)height() - btn_size) && e->y < ((int)height() - 1)) {
+      if(e->direction == -1) return;
+      scroll_offset++;
+      if(scroll_offset > ((int)items.size() - 1))
+        scroll_offset = ((int)items.size() - 1);
+      repaintEvent(NULL);
+      return;
+    }
+  }
 
   if(e->direction == -1) {
     int skip = scroll_offset;
