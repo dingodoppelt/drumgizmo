@@ -56,6 +56,31 @@ DrumGizmo::~DrumGizmo()
   */
 }
 
+/*
+ * Send a message to the engine. The engine takes over the memory.
+ */
+void DrumGizmo::sendMessage(Message *msg)
+{
+  message_mutex.lock();
+  message_queue.push_back(msg);
+  message_mutex.unlock();
+}
+
+/*
+ * Receive message from the engine. The caller takes over the memory.
+ */
+Message *DrumGizmo::receiveMessage()
+{
+  Message *msg = NULL;
+  message_mutex.lock();
+  if(message_queue.size()) {
+    msg = message_queue.front();
+    message_queue.pop_front();
+  }
+  message_mutex.unlock();
+  return msg;
+}
+
 std::string DrumGizmo::drumkitfile()
 {
   return kitfile;

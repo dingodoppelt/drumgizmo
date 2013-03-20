@@ -41,6 +41,8 @@
 
 #include "mutex.h"
 
+#include "message.h"
+
 #define MAX_NUM_CHANNELS 512
 
 class DrumGizmo {
@@ -68,7 +70,20 @@ public:
   std::string midimapfile;
   std::string kitfile;
 
+  /*
+   * Send a message to the engine. The engine takes over the memory.
+   */
+  void sendMessage(Message *msg);
+
+  /*
+   * Receive message from the engine. The caller takes over the memory.
+   */
+  Message *receiveMessage();
+
 private:
+  Mutex message_mutex;
+  std::list<Message *> message_queue;
+
   DrumKitLoader loader;
 
   Mutex mutex;
