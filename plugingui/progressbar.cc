@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumkitloader.h
+ *            progressbar.cc
  *
- *  Thu Jan 17 20:54:13 CET 2013
+ *  Fri Mar 22 22:07:57 CET 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,37 +24,54 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKITLOADER_H__
-#define __DRUMGIZMO_DRUMKITLOADER_H__
+#include "progressbar.h"
 
-#include <string>
+#include "painter.h"
 
-#include "thread.h"
-#include "semaphore.h"
-#include "mutex.h"
+GUI::ProgressBar::ProgressBar(GUI::Widget *parent) : GUI::Widget(parent)
+{
+  _progress = 0;
+}
 
-#include "drumkit.h"
+float GUI::ProgressBar::progress()
+{
+  return _progress;
+}
 
-class DrumGizmo;
+void GUI::ProgressBar::setProgress(float progress)
+{
+  _progress = progress;
+  repaintEvent(NULL);
+}
 
-class DrumKitLoader : public Thread {
-public:
-  DrumKitLoader(DrumGizmo *drumgizmo);
-  ~DrumKitLoader();
+void GUI::ProgressBar::repaintEvent(GUI::RepaintEvent *e)
+{
+  Painter p(this);
 
-  void loadKit(DrumKit *kit);
+  int max = width() - 1;
 
-  void thread_main();
+  p.clear();
 
-  bool isDone();
+  p.setColour(Colour(0, 0, 1, 0.3));
+  p.drawFilledRectangle(1, 1, max * _progress - 2, height() - 1);
 
-private:
-  DrumGizmo *drumgizmo;
-  Semaphore semaphore;
-  DrumKit *kit;
-  bool is_done;
-  Mutex mutex;
-  bool quitit;
-};
+  p.setColour(Colour(1));
+  p.drawRectangle(0,0,max,height()-1);
+}
 
-#endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/
+#ifdef TEST_PROGRESSBAR
+//Additional dependency files
+//deps:
+//Required cflags (autoconf vars may be used)
+//cflags:
+//Required link options (autoconf vars may be used)
+//libs:
+#include "test.h"
+
+TEST_BEGIN;
+
+// TODO: Put some testcode here (see test.h for usable macros).
+
+TEST_END;
+
+#endif/*TEST_PROGRESSBAR*/

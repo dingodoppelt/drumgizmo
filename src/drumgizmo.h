@@ -71,14 +71,19 @@ public:
   std::string kitfile;
 
   /*
-   * Send a message to the engine. The engine takes over the memory.
-   */
-  void sendMessage(Message *msg);
-
-  /*
    * Receive message from the engine. The caller takes over the memory.
    */
   Message *receiveMessage();
+
+  /*
+   * Receive message from the engine without removing it from the queue.
+   */
+  Message *peekMessage();
+
+  /*
+   * Add a message to the GUI message queue.
+   */
+  void sendMessage(Message *msg);
 
 private:
   Mutex message_mutex;

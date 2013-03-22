@@ -29,19 +29,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <hugin.hpp>
+
 #include "sample.h"
 #include "configuration.h"
 
 Instrument::Instrument()
 {
-  printf("new Instrument %p\n", this);
+  DEBUG(instrument, "new %p\n", this);
   mod = 1.0;
   lastpos = 0;
 }
 
 Instrument::~Instrument()
 {
-  printf("delete Instrument %p\n", this);
+  DEBUG(instrument, "delete %p\n", this);
   std::vector<AudioFile*>::iterator i = audiofiles.begin();
   while(i != audiofiles.end()) {
     delete *i;

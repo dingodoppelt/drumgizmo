@@ -82,7 +82,7 @@ void AudioFile::load()
   is_loaded = true;
   mutex.unlock();
 
-  DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
+  //DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
 }
 
 bool AudioFile::isLoaded()

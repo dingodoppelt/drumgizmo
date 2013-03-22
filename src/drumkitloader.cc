@@ -29,9 +29,11 @@
 #include <hugin.hpp>
 
 #include "drumkitparser.h"
+#include "drumgizmo.h"
 
-DrumKitLoader::DrumKitLoader()
+DrumKitLoader::DrumKitLoader(DrumGizmo *dg)
 {
+  drumgizmo = dg;
   is_done = false;
   quitit = false;
 }
@@ -75,19 +77,41 @@ void DrumKitLoader::thread_main()
 
     if(quitit) return;
 
-    Instruments::iterator i = kit->instruments.begin();
-    while(i != kit->instruments.end()) {
-      Instrument *instr = *i;
+    unsigned int count = 0;
+    { // Count total number of files that need loading:
+      Instruments::iterator i = kit->instruments.begin();
+      while(i != kit->instruments.end()) {
+        Instrument *instr = *i;
 
-      std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
-      while(a != instr->audiofiles.end()) {
-        //        usleep(10000);
-        AudioFile *af = *a;
-        af->load();
-        a++;
+        count += instr->audiofiles.size();
+        i++;
       }
+    }
 
-      i++;
+    { // Now actually load them:
+      unsigned int loaded = 0;
+      Instruments::iterator i = kit->instruments.begin();
+      while(i != kit->instruments.end()) {
+        Instrument *instr = *i;
+        
+        std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
+        while(a != instr->audiofiles.end()) {
+          //usleep(5000);
+          AudioFile *af = *a;
+          af->load();
+          loaded++;
+
+          LoadStatus *ls = new LoadStatus();
+          ls->number_of_files = count;
+          ls->numer_of_files_loaded = loaded;
+          ls->current_file = af->filename;
+          drumgizmo->sendMessage(ls);
+          
+          a++;
+        }
+        
+        i++;
+      }
     }
 
     mutex.lock();

@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumkitloader.h
+ *            progressbar.h
  *
- *  Thu Jan 17 20:54:13 CET 2013
+ *  Fri Mar 22 22:07:57 CET 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,37 +24,31 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKITLOADER_H__
-#define __DRUMGIZMO_DRUMKITLOADER_H__
+#ifndef __DRUMGIZMO_PROGRESSBAR_H__
+#define __DRUMGIZMO_PROGRESSBAR_H__
+
+#include "widget.h"
 
 #include <string>
 
-#include "thread.h"
-#include "semaphore.h"
-#include "mutex.h"
+#include "guievent.h"
 
-#include "drumkit.h"
+namespace GUI {
 
-class DrumGizmo;
-
-class DrumKitLoader : public Thread {
+class ProgressBar : public Widget {
 public:
-  DrumKitLoader(DrumGizmo *drumgizmo);
-  ~DrumKitLoader();
+  ProgressBar(Widget *parent);
 
-  void loadKit(DrumKit *kit);
+  float progress();
+  void setProgress(float progress);
 
-  void thread_main();
-
-  bool isDone();
+  //protected:
+  virtual void repaintEvent(RepaintEvent *e);
 
 private:
-  DrumGizmo *drumgizmo;
-  Semaphore semaphore;
-  DrumKit *kit;
-  bool is_done;
-  Mutex mutex;
-  bool quitit;
+  float _progress;
 };
 
-#endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/
+};
+
+#endif/*__DRUMGIZMO_PROGRESSBAR_H__*/

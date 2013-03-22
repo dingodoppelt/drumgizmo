@@ -38,6 +38,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <hugin.hpp>
+
 #ifdef WIN32
 #include <direct.h>
 #endif
@@ -189,9 +191,33 @@ GUI::FileBrowser::~FileBrowser()
 
 void GUI::FileBrowser::setPath(std::string path)
 {
-  int i = chdir(path.c_str());
-  (void)i;
-  changeDir(prv);
+  std::string dirname = path;
+
+  while(dirname != "") {
+
+    DEBUG(filebrowser, "dirname: %s\n", dirname.c_str());
+
+    struct stat st;
+    if(stat(dirname.c_str(), &st) == 0) {
+      if((st.st_mode & S_IFDIR) != 0) {
+        dirname += "/.";
+        int i = chdir(dirname.c_str());
+        (void)i;
+        changeDir(prv);
+
+        DEBUG(filebrowser, "chdir to: %s\n", dirname.c_str());
+
+        return;
+      }
+    }
+
+    dirname = dirname.substr(0, dirname.length() - 1);
+    while(dirname[dirname.length() - 1] != '/' &&
+          dirname[dirname.length() - 1] != '\\' &&
+          dirname != "") { 
+      dirname = dirname.substr(0, dirname.length() - 1);
+    }
+  }
 }
 
 void GUI::FileBrowser::resize(size_t w, size_t h)

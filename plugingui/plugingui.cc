@@ -36,6 +36,7 @@
 #include <drumgizmo.h>
 #include "../src/configuration.h"
 #else
+#include "../src/message.h"
 class DrumGizmo {
 public:
   void loadkit(std::string) {}
@@ -88,6 +89,7 @@ static void kitBrowseClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
 
+  fb->setPath(gui->lineedit->text());
   fb->registerFileSelectHandler(selectKitFile, gui);
   fb->show();
 }
@@ -109,6 +111,7 @@ static void midimapBrowseClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
 
+  fb->setPath(gui->lineedit2->text());
   fb->registerFileSelectHandler(selectMapFile, gui);
   fb->show();
 }
@@ -168,7 +171,32 @@ void PluginGUI::thread_main()
 #else
     usleep(50);
 #endif/*WIN32*/
-    //    printf("."); fflush(stdout);
+    Message *msg;
+    while((msg = drumgizmo->receiveMessage()) != NULL) {
+      switch(msg->type()) {
+      case Message::LoadStatus:
+        {
+          Message *pmsg;
+          while( (pmsg = drumgizmo->peekMessage()) != NULL) {
+            if(pmsg->type() != Message::LoadStatus) break;
+            delete msg;
+            msg = drumgizmo->receiveMessage();
+          } 
+          LoadStatus *ls = (LoadStatus*)msg;
+          DEBUG(gui, "%d of %d (%s)\n",
+                ls->numer_of_files_loaded,
+                ls->number_of_files,
+                ls->current_file.c_str());
+          progress->setProgress((float)ls->numer_of_files_loaded /
+                                (float)ls->number_of_files);
+        }
+        break;
+      default:
+        break;
+      }
+
+      delete msg;
+    }
   }
 }
 
@@ -273,6 +301,10 @@ void PluginGUI::init()
   lbl3->setText("v"VERSION);
   lbl3->move(120, 180);
   lbl3->resize(70, 20);
+
+  progress = new GUI::ProgressBar(window);
+  progress->move(200, window->height() - 17);
+  progress->resize(window->width() - 400, 16);
 
   // Create filebrowser
   filebrowser = new GUI::FileBrowser(window);

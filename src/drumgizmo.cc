@@ -39,7 +39,7 @@
 #include "drumkitparser.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
-  : oe(o), ie(i)
+  : loader(this), oe(o), ie(i)
 {
   loader.run(); // Start drumkit loader thread.
 }
@@ -57,13 +57,12 @@ DrumGizmo::~DrumGizmo()
 }
 
 /*
- * Send a message to the engine. The engine takes over the memory.
+ * Add a message to the GUI message queue.
  */
 void DrumGizmo::sendMessage(Message *msg)
 {
-  message_mutex.lock();
+  MutexAutolock l(message_mutex);
   message_queue.push_back(msg);
-  message_mutex.unlock();
 }
 
 /*
@@ -71,13 +70,25 @@ void DrumGizmo::sendMessage(Message *msg)
  */
 Message *DrumGizmo::receiveMessage()
 {
+  MutexAutolock l(message_mutex);
   Message *msg = NULL;
-  message_mutex.lock();
   if(message_queue.size()) {
     msg = message_queue.front();
     message_queue.pop_front();
   }
-  message_mutex.unlock();
+  return msg;
+}
+
+/*
+ * Receive message from the engine without removing it from the queue.
+ */
+Message *DrumGizmo::peekMessage()
+{
+  MutexAutolock l(message_mutex);
+  Message *msg = NULL;
+  if(message_queue.size()) {
+    msg = message_queue.front();
+  }
   return msg;
 }
 
