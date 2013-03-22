@@ -43,6 +43,8 @@ public:
   void init(bool) {}
   std::string drumkitfile() { return ""; }
   std::string midimapfile;
+  Message *receiveMessage() { return NULL; }
+  Message *peekMessage() { return NULL; }
 };
 
 namespace Conf {
