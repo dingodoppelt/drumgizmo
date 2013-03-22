@@ -327,11 +327,20 @@ GUI::Event *GUI::EventHandler::getNextEvent()
 
   if(xe.type == ButtonPress || xe.type == ButtonRelease) {
     if(xe.xbutton.button == 4 || xe.xbutton.button == 5) {
+      int scroll = 1;
+      while(true) { // Hack to make sure only the last event is played.
+        if(!hasEvent()) break;
+        XEvent nxe;
+        XPeekEvent(gctx->display, &nxe);
+        if(nxe.type != ButtonPress && nxe.type != ButtonRelease) break;
+        scroll += 1;
+        XNextEvent(gctx->display, &xe);
+      }
       ScrollEvent *e = new ScrollEvent();
       e->window_id = xe.xbutton.window;
       e->x = xe.xbutton.x;
       e->y = xe.xbutton.y;
-      e->delta = xe.xbutton.button==4?-1:1;
+      e->delta = scroll * (xe.xbutton.button==4?-1:1);
       event = e;
     } else {
       ButtonEvent *e = new ButtonEvent();
