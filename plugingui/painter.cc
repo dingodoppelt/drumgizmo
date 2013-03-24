@@ -53,8 +53,9 @@ void GUI::Painter::plot(int x, int y, double c)
 {
   // plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
 
-  //c += 0.5;
-  //if(c > 1) c = 1;
+  //c += 0.2;
+  //if(c > 0.6) c = 1;
+  //if(c < 0.4) c = 0;
 
   pixbuf->addPixel(x, y,
                    (unsigned char)(colour.red * 255.0),
@@ -110,13 +111,17 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
   double xgap = rfpart(x0 + 0.5);
   double xpxl1 = xend;   //this will be used in the main loop
   double ypxl1 = ipart(yend);
+
   if(steep) {
-    plot(ypxl1,   xpxl1, rfpart(yend) * xgap);
-    plot(ypxl1+1, xpxl1,  fpart(yend) * xgap);
+    plot(ypxl1, xpxl1, 1);
+    //plot(ypxl1,   xpxl1, rfpart(yend) * xgap);
+    //plot(ypxl1+1, xpxl1,  fpart(yend) * xgap);
   } else {
-    plot(xpxl1, ypxl1  , rfpart(yend) * xgap);
-    plot(xpxl1, ypxl1+1,  fpart(yend) * xgap);
+    plot(xpxl1, ypxl1, 1);
+    //plot(xpxl1, ypxl1  , rfpart(yend) * xgap);
+    //plot(xpxl1, ypxl1+1,  fpart(yend) * xgap);
   }
+
   double intery = yend + gradient; // first y-intersection for the main loop
  
   // handle second endpoint
@@ -126,14 +131,17 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
   xgap = fpart(x1 + 0.5);
   double xpxl2 = xend; //this will be used in the main loop
   double ypxl2 = ipart(yend);
+
   if(steep) {
-    plot(ypxl2  , xpxl2, rfpart(yend) * xgap);
-    plot(ypxl2+1, xpxl2,  fpart(yend) * xgap);
+    plot(ypxl2, xpxl2, 1);
+    //plot(ypxl2  , xpxl2, rfpart(yend) * xgap);
+    //plot(ypxl2+1, xpxl2,  fpart(yend) * xgap);
   } else {
-    plot(xpxl2, ypxl2,  rfpart(yend) * xgap);
-    plot(xpxl2, ypxl2+1, fpart(yend) * xgap);
+    plot(xpxl2, ypxl2, 1);
+    //plot(xpxl2, ypxl2,   rfpart(yend) * xgap);
+    //plot(xpxl2, ypxl2+1,  fpart(yend) * xgap);
   }
- 
+
   // main loop
   for(int x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
     if(steep) {
@@ -183,10 +191,10 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
 
 void GUI::Painter::drawRectangle(int x1, int y1, int x2, int y2)
 {
-  drawLine(x1, y1, x2, y1);
-  drawLine(x2, y1, x2, y2);
-  drawLine(x1, y2, x2, y2);
-  drawLine(x1, y1, x1, y2);
+  drawLine(x1, y1, x2 - 1, y1);
+  drawLine(x2, y1, x2, y2 - 1);
+  drawLine(x1 + 1, y2, x2, y2);
+  drawLine(x1, y1 + 1, x1, y2);
 }
 
 void GUI::Painter::drawFilledRectangle(int x1, int y1, int x2, int y2)
@@ -396,70 +404,56 @@ void GUI::Painter::drawImage(int x0, int y0, GUI::Image *image)
   }
 }
 
-/*
-  typedef struct {
-    Image *topleft;
-    Image *top;
-    Image *topright;
-    Image *left;
-    Image *right;
-    Image *bottomleft;
-    Image *bottom;
-    Image *bottomright;
-  } Box;
-*/
+void GUI::Painter::drawImageStretched(int x0, int y0, GUI::Image *image,
+                                      size_t w, size_t h)
+{
+  float fw = image->width();
+  float fh = image->height();
+
+  for(size_t x = 0; x < w; x++) {
+    for(size_t y = 0; y < h; y++) {
+      int lx = ((float)x/(float)w)*fw;
+      int ly = ((float)y/(float)h)*fh;
+      GUI::Colour c = image->getPixel(lx, ly);
+      pixbuf->setPixel(x0 + x, y0 + y, c.red, c.green, c.blue, c.alpha);
+    }
+  }
+}
+
 void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
 {
   int dx = x;
   int dy = y;
-
-  printf("%d %d %d %d %d %d %d %d\n",
-        box->topLeft->width(),
-        box->top->width(),
-        box->topRight->width(),
-        box->left->width(),
-        box->right->width(),
-        box->bottomLeft->width(),
-        box->bottom->width(),
-        box->bottomRight->width());
-
-  printf("%d %d %d %d %d %d %d %d\n",
-        box->topLeft->height(),
-        box->top->height(),
-        box->topRight->height(),
-        box->left->height(),
-        box->right->height(),
-        box->bottomLeft->height(),
-        box->bottom->height(),
-        box->bottomRight->height());
 
   // Top:
 
   drawImage(dx, dy, box->topLeft);
   dx += box->topLeft->width() - 1;
 
-  while(dx < (x + width - box->topRight->width())) {
-    drawImage(dx, dy, box->top);
-    dx += box->top->width();
-  }
+  drawImageStretched(dx, dy, box->top,
+                     width - box->topRight->width(),
+                     box->top->height());
 
   dx = x + width - box->topRight->width();
   drawImage(dx, dy, box->topRight);
 
+  // Center
+  dy = y + box->topLeft->height();
+  dx = x + box->left->width();
+  drawImageStretched(dx, dy, box->center,
+                     width - box->left->width() - box->right->width(),
+                     height - box->topLeft->height() - box->bottomLeft->height());
+
   // Mid:
   dx = x;
   dy = y + box->topLeft->height();
-  while(dy < (y + height - box->bottomLeft->height())) {
-    drawImage(dx, dy, box->left);
-    dy += box->left->height();
-  }
+  drawImageStretched(dx, dy, box->left, box->left->width(),
+                     height - box->bottomLeft->height());
 
   dx = x + width - box->right->width();
   dy = y + box->topRight->height();
-  while(dy < (y + height - box->bottomRight->height())) {
-    drawImage(dx, dy, box->right);
-    dy += box->right->height();
-  }
+  drawImageStretched(dx, dy, box->right, box->right->width(),
+                     height - box->bottomRight->height());
 
   // Bottom:
   dx = x;
@@ -467,10 +461,9 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   drawImage(dx, dy, box->bottomLeft);
   dx += box->bottomLeft->width() - 1;
 
-  while(dx < (x + width - box->bottomRight->width())) {
-    drawImage(dx, dy, box->bottom);
-    dx += box->bottom->width();
-  }
+  drawImageStretched(dx, dy, box->bottom,
+                     width - box->bottomRight->width(),
+                     box->bottom->height());
 
   dx = x + width - box->bottomRight->width();
   drawImage(dx, dy, box->bottomRight);

@@ -69,6 +69,8 @@ public:
   void drawFilledCircle(int x, int y, int r);
   void drawImage(int x, int y, struct __img__ * img);
   void drawImage(int x, int y, Image *image);
+  void drawImageStretched(int x0, int y0, GUI::Image *image,
+                          size_t width, size_t height);
 
   typedef struct {
     Image *topLeft;
@@ -79,6 +81,7 @@ public:
     Image *bottomLeft;
     Image *bottom;
     Image *bottomRight;
+    Image *center;
   } Box;
   void drawBox(int x, int y, Box *box, int width, int height);
 
