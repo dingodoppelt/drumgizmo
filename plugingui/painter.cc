@@ -396,6 +396,86 @@ void GUI::Painter::drawImage(int x0, int y0, GUI::Image *image)
   }
 }
 
+/*
+  typedef struct {
+    Image *topleft;
+    Image *top;
+    Image *topright;
+    Image *left;
+    Image *right;
+    Image *bottomleft;
+    Image *bottom;
+    Image *bottomright;
+  } Box;
+*/
+void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
+{
+  int dx = x;
+  int dy = y;
+
+  printf("%d %d %d %d %d %d %d %d\n",
+        box->topLeft->width(),
+        box->top->width(),
+        box->topRight->width(),
+        box->left->width(),
+        box->right->width(),
+        box->bottomLeft->width(),
+        box->bottom->width(),
+        box->bottomRight->width());
+
+  printf("%d %d %d %d %d %d %d %d\n",
+        box->topLeft->height(),
+        box->top->height(),
+        box->topRight->height(),
+        box->left->height(),
+        box->right->height(),
+        box->bottomLeft->height(),
+        box->bottom->height(),
+        box->bottomRight->height());
+
+  // Top:
+
+  drawImage(dx, dy, box->topLeft);
+  dx += box->topLeft->width() - 1;
+
+  while(dx < (x + width - box->topRight->width())) {
+    drawImage(dx, dy, box->top);
+    dx += box->top->width();
+  }
+
+  dx = x + width - box->topRight->width();
+  drawImage(dx, dy, box->topRight);
+
+  // Mid:
+  dx = x;
+  dy = y + box->topLeft->height();
+  while(dy < (y + height - box->bottomLeft->height())) {
+    drawImage(dx, dy, box->left);
+    dy += box->left->height();
+  }
+
+  dx = x + width - box->right->width();
+  dy = y + box->topRight->height();
+  while(dy < (y + height - box->bottomRight->height())) {
+    drawImage(dx, dy, box->right);
+    dy += box->right->height();
+  }
+
+  // Bottom:
+  dx = x;
+  dy = y + height - box->bottomLeft->height();
+  drawImage(dx, dy, box->bottomLeft);
+  dx += box->bottomLeft->width() - 1;
+
+  while(dx < (x + width - box->bottomRight->width())) {
+    drawImage(dx, dy, box->bottom);
+    dx += box->bottom->width();
+  }
+
+  dx = x + width - box->bottomRight->width();
+  drawImage(dx, dy, box->bottomRight);
+}
+
 void GUI::Painter::flush()
 {
 #ifdef X11

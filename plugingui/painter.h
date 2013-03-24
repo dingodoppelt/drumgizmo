@@ -70,6 +70,18 @@ public:
   void drawImage(int x, int y, struct __img__ * img);
   void drawImage(int x, int y, Image *image);
 
+  typedef struct {
+    Image *topLeft;
+    Image *top;
+    Image *topRight;
+    Image *left;
+    Image *right;
+    Image *bottomLeft;
+    Image *bottom;
+    Image *bottomRight;
+  } Box;
+  void drawBox(int x, int y, Box *box, int width, int height);
+
   void clear();
 
 private:
