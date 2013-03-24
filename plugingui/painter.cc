@@ -428,10 +428,10 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   // Top:
 
   drawImage(dx, dy, box->topLeft);
-  dx += box->topLeft->width() - 1;
+  dx += box->topLeft->width();
 
   drawImageStretched(dx, dy, box->top,
-                     width - box->topRight->width(),
+                     width - box->topRight->width() - box->topLeft->width(),
                      box->top->height());
 
   dx = x + width - box->topRight->width();
@@ -448,21 +448,22 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   dx = x;
   dy = y + box->topLeft->height();
   drawImageStretched(dx, dy, box->left, box->left->width(),
-                     height - box->bottomLeft->height());
+                     height - box->topLeft->height() - box->bottomLeft->height());
 
   dx = x + width - box->right->width();
   dy = y + box->topRight->height();
-  drawImageStretched(dx, dy, box->right, box->right->width(),
-                     height - box->bottomRight->height());
+  drawImageStretched(dx, dy, box->right,
+                     box->right->width(),
+                     height - box->topRight->height() - box->bottomRight->height());
 
   // Bottom:
   dx = x;
   dy = y + height - box->bottomLeft->height();
   drawImage(dx, dy, box->bottomLeft);
-  dx += box->bottomLeft->width() - 1;
+  dx += box->bottomLeft->width();
 
   drawImageStretched(dx, dy, box->bottom,
-                     width - box->bottomRight->width(),
+                     width - box->bottomRight->width() - box->bottomLeft->width(),
                      box->bottom->height());
 
   dx = x + width - box->bottomRight->width();
