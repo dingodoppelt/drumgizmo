@@ -50,6 +50,9 @@ public:
   virtual void repaintEvent(RepaintEvent *e);
   virtual void buttonEvent(ButtonEvent *e);
 
+  virtual void mouseLeaveEvent();
+  virtual void mouseEnterEvent();
+
 private:
   Painter::Box box_up;
   Painter::Box box_down;

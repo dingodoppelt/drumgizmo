@@ -66,6 +66,9 @@ public:
   virtual void scrollEvent(ScrollEvent *e) {}
   virtual void keyEvent(KeyEvent *e) {}
 
+  virtual void mouseLeaveEvent() {}
+  virtual void mouseEnterEvent() {}
+
   Widget *find(size_t x, size_t y);
 
   virtual Window *window();

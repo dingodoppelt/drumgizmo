@@ -447,6 +447,15 @@ void GUI::EventHandler::processEvents(Window *window)
         MouseMoveEvent *me = (MouseMoveEvent*)event;
 
         Widget *w = window->find(me->x, me->y);
+        Widget *oldw = window->mouseFocus();
+        if(w != oldw) {
+          // Send focus leave to oldw
+          if(oldw) oldw->mouseLeaveEvent();
+          // Send focus enter to w
+          if(w) w->mouseEnterEvent();
+
+          window->setMouseFocus(w);
+        }
 
         if(window->buttonDownFocus()) {
           Widget *w = window->buttonDownFocus();

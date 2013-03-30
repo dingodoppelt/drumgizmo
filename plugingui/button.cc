@@ -29,6 +29,7 @@
 #include "painter.h"
 
 #include <stdio.h>
+#include <hugin.hpp>
 
 GUI::Button::Button(Widget *parent)
   : GUI::Widget(parent)
@@ -109,6 +110,21 @@ void GUI::Button::setText(std::string text)
   this->text = text;
   repaintEvent(NULL);
 }
+
+void GUI::Button::mouseLeaveEvent()
+{
+  DEBUG(button, "Leave\n");
+  if(state == down) {
+    state = up;
+    repaintEvent(NULL);
+  }
+}
+
+void GUI::Button::mouseEnterEvent()
+{
+  DEBUG(button, "Enter\n");
+}
+
 
 #ifdef TEST_BUTTON
 //Additional dependency files
