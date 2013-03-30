@@ -29,6 +29,8 @@
 
 #include <stdlib.h>
 
+#include "colour.h"
+
 namespace GUI {
 
 class PixelBuffer {
@@ -68,6 +70,8 @@ public:
                 unsigned char green,
                 unsigned char blue,
                 unsigned char alpha);
+
+  void addPixel(size_t x, size_t y, Colour c);
 
   void pixel(size_t x, size_t y,
              unsigned char *red,
