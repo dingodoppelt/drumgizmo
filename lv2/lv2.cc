@@ -157,7 +157,7 @@ dg_restore(LV2_Handle                  instance,
                           &size, &type, &flags);
   DEBUG(lv2, "Config string size: %d, data*: %p\n", size, data);
 
-  if(data) {
+  if(data && size) {
     std::string config;
     config.append(data, size - 1);
     dglv2->dg->setConfigString(config);
