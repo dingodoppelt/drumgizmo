@@ -26,3 +26,4 @@ Makefile.am.test
 .libs
 *.dll
 plugingui/plugingui
+plugingui/rcgen
