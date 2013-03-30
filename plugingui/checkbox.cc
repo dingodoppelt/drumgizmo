@@ -31,8 +31,11 @@
 #include <stdio.h>
 
 GUI::CheckBox::CheckBox(Widget *parent)
-  : GUI::Widget(parent)
+  : GUI::Widget(parent),
+    bg_on(":switch_back_on.png"), bg_off(":switch_back_off.png"),
+    knob(":switch_front.png")
 {
+  middle = false;
   state = false;
   handler = NULL;
 }
@@ -41,9 +44,13 @@ void GUI::CheckBox::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == -1) {
     state = !state;
-    repaintEvent(NULL);
+    middle = false;
     if(handler) handler(ptr);
+  } else {
+    middle = true;
   }
+
+  repaintEvent(NULL);
 }
 
 void GUI::CheckBox::setText(std::string text)
@@ -60,10 +67,14 @@ void GUI::CheckBox::registerClickHandler(void (*handler)(void *), void *ptr)
 
 void GUI::CheckBox::keyEvent(KeyEvent *e)
 {
-  if(e->direction != -1) return;
-    
   if(e->keycode == GUI::KeyEvent::KEY_CHARACTER && e->text == " ") {
-    state = !state;
+    if(e->direction == -1) {
+      state = !state;
+      middle = false;
+    } else {
+      middle = true;
+    }
+
     repaintEvent(NULL);
   }
 }
@@ -76,9 +87,22 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 
   p.clear();
 
-  float alpha = 0.8;
+  if(state) {
+    p.drawImage(0, (knob.height() - bg_on.height()) / 2, &bg_on);
+    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2, 0, &knob);
+    else p.drawImage(bg_on.width() - 40, 0, &knob);
+  } else {
+    p.drawImage(0, (knob.height() - bg_off.height()) / 2, &bg_off);
+    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2, 0, &knob);
+    else p.drawImage(0, 0, &knob);
+  }
 
-  int box = width()<height()?width():height();
+  //  int box = width()<height()?width():height();
+
+  /*
+  p.clear();
+
+  float alpha = 0.8;
 
   p.setColour(Colour(0.5, alpha));
   p.drawFilledRectangle(0,0,box-1,box-1);
@@ -95,10 +119,12 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
   p.setColour(Colour(0.3, alpha));
   p.drawPoint(0,box-1);
   p.drawPoint(box-1,0);
-
+  */
+  /*
   p.setColour(Colour(1));
   Font font;
   p.drawText(box + 8, height() / 2 + 5, font, _text);
+  */
 }
 
 bool GUI::CheckBox::checked()

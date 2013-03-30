@@ -28,6 +28,7 @@
 #define __DRUMGIZMO_CHECKBOX_H__
 
 #include "widget.h"
+#include "image.h"
 
 namespace GUI {
 
@@ -52,7 +53,12 @@ public:
   virtual void keyEvent(KeyEvent *e);
 
 private:
+  Image bg_on;
+  Image bg_off;
+  Image knob;
+
   bool state;
+  bool middle;
 
   void (*handler)(void *);
   void *ptr;
