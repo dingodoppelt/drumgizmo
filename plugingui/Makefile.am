@@ -17,8 +17,6 @@ plugingui_SOURCES = \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc
 
-#	$(DRUMGIZMO_SOURCES)
-
 rcgen_SOURCES = rcgen.cc
 
 EXTRA_DIST = \
@@ -31,9 +29,6 @@ EXTRA_DIST = \
 	globalcontext.h \
 	guievent.h \
 	image.h \
-	img_back.h \
-	img_font.h \
-	img_test.h \
 	label.h \
 	led.h \
 	lineedit.h \
@@ -50,7 +45,6 @@ EXTRA_DIST = \
 	knob.h \
 	filebrowser.h \
 	combobox.h
-
 
 ################
 # Test Section #
