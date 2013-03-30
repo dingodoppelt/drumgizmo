@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <hugin.hpp>
 
 static void character_hndl(void *p, const XML_Char *s, int len)
 {
@@ -87,6 +88,8 @@ SAXParser::~SAXParser()
 
 int SAXParser::parse()
 {
+  DEBUG(sax, "parse()\n");
+
   char buf[32];
   int len;
   
@@ -110,6 +113,8 @@ int SAXParser::parse()
 
 int SAXParser::parse(std::string buffer)
 {
+  DEBUG(sax, "parse(buffer %d bytes)\n", buffer.length());
+
   if(!XML_Parse(p, buffer.c_str(), buffer.length(), true)) {
     parseError((char*)buffer.c_str(), buffer.length(),
                XML_ErrorString(XML_GetErrorCode(p)),
