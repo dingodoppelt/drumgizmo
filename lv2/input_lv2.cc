@@ -116,6 +116,7 @@ void InputLV2::post()
 
 void InputLV2::loadMidiMap(std::string f)
 {
+  if(f == "") return;
   MidiMapParser p(f);
   if(p.parse()) {/*return false;*/}
   mmap.midimap = p.midimap;
