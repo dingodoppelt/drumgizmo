@@ -148,8 +148,16 @@ size_t GUI::Image::height()
 
 GUI::Colour GUI::Image::getPixel(size_t x, size_t y)
 {
+  if(x > width() || y > height()) return GUI::Colour(0,0,0,0);
   png_byte* row = row_pointers[y];
   png_byte* ptr = &(row[x*4]);
-  GUI::Colour c(ptr[0], ptr[1], ptr[2], ptr[3]);
+  float r = ptr[0];
+  float g = ptr[1];
+  float b = ptr[2];
+  float a = ptr[3];
+  GUI::Colour c(r / 255.0,
+                g / 255.0,
+                b / 255.0,
+                a / 255.0);
   return c;
 }

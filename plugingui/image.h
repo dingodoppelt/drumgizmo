@@ -46,9 +46,6 @@ public:
 
   Colour getPixel(size_t x, size_t y);
 
-  unsigned int *pixels;
-  unsigned int order;
-
 private:
   void load(const char* data, size_t size);
 
