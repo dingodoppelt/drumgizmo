@@ -82,7 +82,7 @@ void GUI::Image::load(const char* data, size_t size)
   const char *header = data;
 
   // test for it being a png:
-  if(png_sig_cmp((const png_byte*)header, 0, 8)) {
+  if(png_sig_cmp((png_byte*)header, 0, 8)) {
     abort_("[read_png_file] File is not recognized as a PNG file");
   }
   
