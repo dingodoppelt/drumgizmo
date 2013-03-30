@@ -32,7 +32,7 @@ public:
   typedef enum {
     LoadStatus,
   } type_t;
-
+  virtual ~Message() {}
   virtual type_t type() = 0;
 };
 
