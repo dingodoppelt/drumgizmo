@@ -27,7 +27,7 @@
 #include "resource.h"
 
 #include <stdio.h>
-
+#include <hugin.hpp>
 #include "resource_data.h"
 
 GUI::Resource::Resource(std::string name)
@@ -52,7 +52,10 @@ GUI::Resource::Resource(std::string name)
     }
 
     // We did not find the named resource.
-    if(i_data == NULL) return;
+    if(i_data == NULL) {
+      ERR(rc, "Could not find '%s'\n", name.c_str());
+      return;
+    }
 
     is_internal = true;
   } else {

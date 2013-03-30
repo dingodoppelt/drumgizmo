@@ -32,6 +32,7 @@
 #include <string>
 
 #include "guievent.h"
+#include "painter.h"
 
 namespace GUI {
 
@@ -42,10 +43,26 @@ public:
   float progress();
   void setProgress(float progress);
 
+  typedef enum {
+    red,
+    green,
+    blue,
+    off
+  } state_t;
+  void setState(state_t state);
+
   //protected:
   virtual void repaintEvent(RepaintEvent *e);
 
 private:
+  state_t state;
+
+  Painter::Bar bar_bg;
+
+  Painter::Bar bar_green;
+  Painter::Bar bar_blue;
+  Painter::Bar bar_red;
+
   float _progress;
 };
 

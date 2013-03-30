@@ -47,6 +47,16 @@ GUI::ComboBox::ComboBox(GUI::Widget *parent)
   handler = NULL;
   ptr = NULL;
 
+  box.topLeft     = new Image(":widget_tl.png");
+  box.top         = new Image(":widget_t.png");
+  box.topRight    = new Image(":widget_tr.png");
+  box.left        = new Image(":widget_l.png");
+  box.right       = new Image(":widget_r.png");
+  box.bottomLeft  = new Image(":widget_bl.png");
+  box.bottom      = new Image(":widget_b.png");
+  box.bottomRight = new Image(":widget_br.png");
+  box.center      = new Image(":widget_c.png");
+
   listbox = new GUI::ListBox(parent);
   listbox->registerSelectHandler(listboxSelectHandler, this);
   listbox->registerClickHandler(listboxSelectHandler, this);
@@ -100,20 +110,13 @@ void GUI::ComboBox::repaintEvent(GUI::RepaintEvent *e)
 
   std::string _text = selectedName();
 
-  p.setColour(Colour(0, 0.4));
-  p.drawFilledRectangle(3, 3, width() - 3, height() - 3);
-
-  p.setColour(Colour(1, 1, 1));
-  p.drawRectangle(0, 0, width() - 1, height() - 1);
-
-  p.setColour(Colour(0.6, 0.6, 0.6));
-  p.drawRectangle(2, 2, width() - 3, height() - 3);
+   int w = width();
+  int h = height();
+  if(w == 0 || h == 0) return;
+  p.drawBox(0, 0, &box, w, h);
 
   p.setColour(Colour(1, 1, 1));
   p.drawText(BORDER - 4, (height()+font.textHeight()) / 2 + 1, font, _text);
-
-  p.setColour(Colour(1, 1, 1, 0.8));
-  p.drawRectangle(width() - height() + 1, 1, width() - 2, height() - 2);
 
   int n = height();
   p.setColour(Colour(1, 1, 1, 1));

@@ -44,7 +44,6 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/painter.cc \
 	$(DG_BASE)/plugingui/button.cc \
 	$(DG_BASE)/plugingui/pixelbuffer.cc \
-	$(DG_BASE)/plugingui/filelineedit.cc \
 	$(DG_BASE)/plugingui/lineedit.cc \
 	$(DG_BASE)/plugingui/led.cc \
 	$(DG_BASE)/plugingui/checkbox.cc \

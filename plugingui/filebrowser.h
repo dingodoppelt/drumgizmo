@@ -53,7 +53,7 @@ public:
 
   virtual void repaintEvent(RepaintEvent *e);
 
-  virtual void resize(size_t w, size_t h);
+  virtual void resize(int w, int h);
 
 private:
   struct private_data *prv;

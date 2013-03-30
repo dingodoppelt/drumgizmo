@@ -89,8 +89,9 @@ void GUI::Widget::removeChild(GUI::Widget *widget)
   }
 }
 
-void GUI::Widget::resize(size_t width, size_t height)
+void GUI::Widget::resize(int width, int height)
 {
+  if(width < 1 || height < 1) return;
   _width = width;
   _height = height;
   pixbuf.realloc(width, height);
@@ -100,16 +101,6 @@ void GUI::Widget::move(size_t x, size_t y)
 {
   _x = x;
   _y = y;
-  /*
-  Widget *p = parent;
-  while(p) {
-    x += p->pixbuf.x;
-    y += p->pixbuf.y;
-    p = p->parent;
-  }
-  */
-  // pixbuf.x = x;
-  //  pixbuf.y = y;
 }
 
 size_t GUI::Widget::x() { return _x; }

@@ -30,37 +30,27 @@
 #include <X11/Xlib.h>
 #endif/*X11*/
 
-#include "img_font.h"
-
 GUI::Font::Font()
+  : img_font(":font.png")
 {
   int px = 0;
   int c;
-  for(c = 0; c < 255 && px < (int)img_font.width; c++) {
+  for(c = 0; c < 255 && px < (int)img_font.width(); c++) {
     character_offset[c] = px + 1;
     character_pre_bias[c] = 0;
     character_post_bias[c] = 0;
-    if(c == 't') {
-      character_pre_bias[c] = -1;
-      character_post_bias[c] = -1;
-    }
-    if(c == 'L') character_post_bias[c] = -1;
-    if(c == 'o') character_post_bias[c] = -1;
-    if(c == 'K') character_post_bias[c] = -1;
-    if(c == 'r') character_post_bias[c] = -1;
-    if(c == 'i') character_post_bias[c] = 1;
-    if(c == 'w') character_post_bias[c] = -1;
-    if(c == 'h') character_post_bias[c] = -1;
-    if(c == ' ') character_post_bias[c] = -3;
-    if(c == '.') {
-      character_pre_bias[c] = -1;
-      character_post_bias[c] = -1;
-    }
     if(c > 0) {
-      character_width[c - 1] = character_offset[c] - character_offset[c - 1] - 1;
+      character_width[c - 1] =
+        character_offset[c] - character_offset[c - 1] - 1;
     }
     px++;
-    while(img_font.pixels[px] != 0xff00ffff) { px++; } 
+    GUI::Colour c;
+    while(px < (int)img_font.width()) {
+      c = img_font.getPixel(px, 0);
+      // Find next purple pixel in top row:
+      if(c.red == 1 && c.green == 0 && c.blue == 1 && c.alpha == 1) break;
+      px++;
+    } 
   }
   c++;
   character_width[c - 1] = character_offset[c] - character_offset[c - 1] - 1;
@@ -100,7 +90,7 @@ size_t GUI::Font::textWidth(std::string text)
 
 size_t GUI::Font::textHeight(std::string text)
 {
-  return img_font.height;
+  return img_font.height();
 }
 
 GUI::PixelBufferAlpha *GUI::Font::render(GlobalContext *gctx, std::string text)
@@ -108,22 +98,19 @@ GUI::PixelBufferAlpha *GUI::Font::render(GlobalContext *gctx, std::string text)
   int border = 1;
   PixelBufferAlpha *pb =
     new PixelBufferAlpha(textWidth(text), textHeight(text));
+
   int x_offset = 0;
   for(size_t i = 0; i < text.length(); i++) {
     unsigned int cha = text[i];
     for(size_t x = 0; x < character_width[(char)cha]; x++) {
-      for(size_t y = 0; y < img_font.height; y++) {
-        //unsigned int pixel = img_font.pixels[(x + (cha * fw)) + y * img_font.width];
-        unsigned int pixel = img_font.pixels[(x + (character_offset[(char)cha])) + y * img_font.width];
-        unsigned int order = img_font.order;
-        unsigned char *c = (unsigned char *)&pixel;
-        unsigned char *o = (unsigned char *)&order;
-
+      for(size_t y = 0; y < img_font.height(); y++) {
+        Colour c = img_font.getPixel(x + (character_offset[(char)cha]), y);
         pb->setPixel(x + x_offset + character_pre_bias[(char)cha], y,
-                     c[o[1]], c[o[2]], c[o[3]], c[o[0]]);
+                     c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
       }
     }
-    x_offset += character_width[(char)cha] + border + character_post_bias[(char)cha];
+    x_offset += character_width[(char)cha] + border +
+      character_post_bias[(char)cha];
   }
 
   return pb;

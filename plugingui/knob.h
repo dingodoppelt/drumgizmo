@@ -29,6 +29,8 @@
 
 #include "widget.h"
 
+#include "image.h"
+
 namespace GUI {
 
 class Knob : public Widget {
@@ -63,6 +65,8 @@ private:
   float minimum;
 
   state_t state;
+
+  GUI::Image img_knob;
 
   void (*handler)(void *);
   void *ptr;

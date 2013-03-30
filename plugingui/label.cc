@@ -28,11 +28,6 @@
 
 #include "painter.h"
 
-#include <stdio.h>
-//#include <arpa/inet.h>
-
-#include "img_test.h"
-
 GUI::Label::Label(GUI::Widget *parent) : GUI::Widget(parent)
 {
 }
@@ -45,8 +40,9 @@ void GUI::Label::setText(std::string text)
 
 void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
 {
-  //  printf("Label::repaintEvent\n");
   Painter p(this);
+
+  p.clear();
 
   p.setColour(Colour(1));
 

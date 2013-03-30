@@ -44,7 +44,7 @@ public:
   void show();
   void hide();
 
-  void resize(size_t width, size_t height);
+  void resize(int width, int height);
   void move(size_t x, size_t y);
 
   size_t x();

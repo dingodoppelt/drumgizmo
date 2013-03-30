@@ -44,7 +44,7 @@ public:
   virtual void show();
   virtual void hide();
 
-  virtual void resize(size_t width, size_t height);
+  virtual void resize(int width, int height);
   virtual void move(size_t x, size_t y);
 
   virtual size_t x();

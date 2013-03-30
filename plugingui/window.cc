@@ -28,8 +28,6 @@
 
 #include "painter.h"
 
-#include "img_back.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -46,7 +44,7 @@
 GUI::Window *gwindow = NULL;
 
 GUI::Window::Window(GlobalContext *gctx) 
-  : Widget(NULL), wpixbuf(640, 200)
+  : Widget(NULL), wpixbuf(1000, 1000)
 {
   gwindow = this;
   
@@ -85,12 +83,13 @@ void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 
   p.clear();
 
-  p.drawImage(0, 0, (struct __img__*)&img_back);
+  Image back(":bg.png");
+  p.drawImageStretched(0,0, &back, width(), height());
 }
 
-void GUI::Window::resize(size_t width, size_t height)
+void GUI::Window::resize(int width, int height)
 {
-  //  printf("Window::resize(%d, %d)\n", width, height);
+  if(width < 1 || height < 1) return;
   native->resize(width, height);
   Widget::resize(width, height);
 }
@@ -129,35 +128,26 @@ GUI::Window *GUI::Window::window()
 void GUI::Window::beginPaint()
 {
   refcount++;
-  //  printf("beginPaint(%d)\n", refcount);
 }
 
 void GUI::Window::endPaint()
 {
-  //  printf("endPaint(%d)\n", refcount);
   if(refcount) refcount--;
 
   if(!refcount) {
     updateBuffer();
-#ifdef X11
-    //XSendEvent(gctx->display, window, false, ExposureMask, event_send)
-#endif/*X11*/
     redraw();
   }
 }
 
 void GUI::Window::updateBuffer()
 {
-  //  printf("updateBuffer w:%d h:%d\n", width(), height());
-
   memset(wpixbuf.buf, 0, wpixbuf.width * wpixbuf.height * 3);
 
   std::vector<PixelBufferAlpha *> pl = getPixelBuffers();
   std::vector<PixelBufferAlpha *>::iterator pli = pl.begin();
   while(pli != pl.end()) {
     PixelBufferAlpha *pb = *pli;
-    //    printf("Buffer idx %d (%d %d) [%d %d]\n", pb->idx, pb->x, pb->y,
-    //       pb->width, pb->height);
     for(size_t x = 0; x < pb->width; x++) {
       for(size_t y = 0; y < pb->height; y++) {
         unsigned char r,g,b,a;
@@ -206,5 +196,4 @@ void GUI::Window::setButtonDownFocus(GUI::Widget *widget)
 {
   _buttonDownFocus = widget;
   native->grabMouse(widget != NULL);
-  //  repaint_r(NULL);
 }

@@ -33,7 +33,7 @@
 #include <math.h>
 
 GUI::Knob::Knob(Widget *parent)
-  : GUI::Widget(parent)
+  : GUI::Widget(parent), img_knob(":knob.png")
 {
   state = up;
 
@@ -145,29 +145,15 @@ void GUI::Knob::buttonEvent(ButtonEvent *e)
 
 void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
 {
-  Painter p(this);
-
-  p.clear();
-
-  float alpha = 0.8;
-
-  p.setColour(Colour(0, 0));
-  p.drawFilledRectangle(0,0,width()-1,height()-1);
-
-  if(hasKeyboardFocus()) {
-    p.setColour(Colour(0.6, alpha));
-  } else {
-    p.setColour(Colour(0.5, alpha));
-  }
-  
-  int radius = (width()>height()?height():width()) / 2;
+  int diameter = (width()>height()?height():width());
+  int radius = diameter / 2;
   int center_x = width() / 2;
   int center_y = height() / 2;
 
-  p.setColour(Colour(0, 0.4));
-  p.drawFilledCircle(center_x, center_y, radius);
+  Painter p(this);
 
-  p.setColour(Colour(1, alpha));
+  p.clear();
+  p.drawImageStretched(0, 0, &img_knob, diameter, diameter);
 
   char buf[64];
   sprintf(buf, "%.2f", val * maximum);
@@ -175,22 +161,23 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   p.drawText(center_x - font.textWidth(buf) / 2 + 1,
              center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
-  p.setColour(Colour(1, alpha));
+  double padval = val * 0.8 + 0.1; // Make it start from 20% and stop at 80%
 
-  p.drawCircle(center_x, center_y, radius);
-  p.drawCircle(center_x, center_y, radius - 2);
+  double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
+  double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
 
-  double padval = val * 0.8 + 0.1;
-  double border_x = sin((-1 * padval + 1) * 2 * M_PI);
-  double border_y = cos((-1 * padval + 1) * 2 * M_PI);
+  double to_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
+  double to_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
 
-  p.setColour(Colour(1, 0, 0, 0.6));
+  // Draw "fat" line by drawing 9 lines with moved start/ending points.
+  p.setColour(Colour(1, 0, 0, 1));
   for(int _x = -1; _x < 2; _x++) {
     for(int _y = -1; _y < 2; _y++) {
-      p.drawLine(border_x * (radius / 2) + center_x + _x,
-                 border_y * (radius / 2) + center_y + _y,
-                 border_x * radius + center_x + _x,
-                 border_y * radius + center_y + _y);
+      p.drawLine(from_x + center_x + _x,
+                 from_y + center_y + _y,
+                 to_x + center_x + _x,
+                 to_y + center_y + _y);
+
     }
   }
 }

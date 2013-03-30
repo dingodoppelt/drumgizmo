@@ -32,6 +32,7 @@
 
 #include "widget.h"
 #include "font.h"
+#include "painter.h"
 
 namespace GUI {
 
@@ -59,6 +60,8 @@ public:
   virtual void keyEvent(KeyEvent *e);
 
 private:
+  Painter::Box box;
+
   void setSelection(int index);
 
   struct item {

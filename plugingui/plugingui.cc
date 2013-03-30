@@ -64,12 +64,21 @@ static void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_weight = gui->knob->value();
+  int i = gui->knob->value() * 5;
+  switch(i) {
+  case 0: gui->progress->setState(GUI::ProgressBar::off); break;
+  case 1: gui->progress->setState(GUI::ProgressBar::blue); break;
+  case 2: gui->progress->setState(GUI::ProgressBar::green); break;
+  case 3: gui->progress->setState(GUI::ProgressBar::red); break;
+  default: break;
+  }
 }
 
 static void knobChange2(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_falloff = gui->knob2->value();
+  gui->progress->setProgress(gui->knob2->value());
 }
 
 GUI::FileBrowser *fb;
@@ -84,7 +93,7 @@ static void selectKitFile(void *ptr, std::string filename)
   if(!gui->drumgizmo) return;
   gui->drumgizmo->loadkit(drumkit);
   gui->drumgizmo->init(true);
-  gui->led->setState(GUI::LED::green);
+  gui->progress->setState(GUI::ProgressBar::green);
 }
 
 static void kitBrowseClick(void *ptr)
@@ -106,7 +115,7 @@ static void selectMapFile(void *ptr, std::string filename)
   std::string midimap = gui->lineedit2->text();
   if(gui->changeMidimapHandler)
     gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
-  gui->led2->setState(GUI::LED::green);
+  gui->progress2->setState(GUI::ProgressBar::green);
 }
 
 static void midimapBrowseClick(void *ptr)
@@ -209,43 +218,52 @@ void PluginGUI::init()
   eventhandler = new GUI::EventHandler(gctx);
   //  printf("%p\n", eventhandler);
   window = new GUI::Window(gctx);
-  window->resize(640, 200);
+  window->resize(370, 330);
   window->setCaption("DrumGizmo v"VERSION);
+
+  GUI::Label *lbl_title = new GUI::Label(window);
+  lbl_title->setText("DrumGizmo");
+  lbl_title->move(127, 7);
+  lbl_title->resize(200, 20);
   
+
   // Enable Velocity
+  GUI::Label *lbl_velocity = new GUI::Label(window);
+  lbl_velocity->resize(78 ,20);
+  lbl_velocity->move(19,206);
+  lbl_velocity->setText("Humanizer");
+
   check = new GUI::CheckBox(window);
-  check->setText("Enable Velocity Modifier");
-  check->move(215,82);
-  check->resize(200,16);
+  //check->setText("Enable Velocity Modifier");
+  check->move(24,227);
+  check->resize(59,38);
   check->setChecked(Conf::enable_velocity_modifier);
   check->registerClickHandler(checkClick, this);
 
   // Velocity Weight Modifier:
   {
-    int xpos = 180;
     GUI::Label *lbl_weight = new GUI::Label(window);
-    lbl_weight->setText("Weight Modifier");
-    lbl_weight->move(xpos, 138 + 15);
+    lbl_weight->setText("LABEL");
+    lbl_weight->move(114, 206);
     lbl_weight->resize(100, 20);
 
     knob = new GUI::Knob(window);
-    knob->move(xpos + 30, 100 + 15);
-    knob->resize(41, 41);
+    knob->move(114, 223);
+    knob->resize(57, 57);
     knob->setValue(Conf::velocity_modifier_weight);
     knob->registerClickHandler(knobChange, this);
   }
 
   // Velocity Falloff Modifier:
   {
-    int xpos = 300;
     GUI::Label *lbl_falloff = new GUI::Label(window);
-    lbl_falloff->setText("Falloff Modifier");
-    lbl_falloff->move(xpos, 138 + 15);
+    lbl_falloff->setText("LABEL");
+    lbl_falloff->move(202, 206);
     lbl_falloff->resize(100, 20);
     
     knob2 = new GUI::Knob(window);
-    knob2->move(xpos + 30, 100 + 15);
-    knob2->resize(41, 41);
+    knob2->move(202, 223);
+    knob2->resize(57, 57);
     knob2->setValue(Conf::velocity_modifier_falloff);
     knob2->registerClickHandler(knobChange2, this);
   }
@@ -253,61 +271,74 @@ void PluginGUI::init()
   // Drumkit file
   {
     GUI::Label *lbl = new GUI::Label(window);
-    lbl->setText("Drumkit:");
-    lbl->move(10, 10);
-    lbl->resize(70, 20);
-
+    lbl->setText("Drumkit file:");
+    lbl->move(19, 46);
+    lbl->resize(100, 20);
+    /*
     led = new GUI::LED(window);
-    led->move(600,12);
+    led->move(0,0);
     led->resize(16, 16);
     //  led->setState(false);
+    */
+    progress = new GUI::ProgressBar(window);
+    progress->move(19, 100);
+    progress->resize(336, 11);
 
-    lineedit = new FileLineEdit(window, led);
+    lineedit = new GUI::LineEdit(window);
     if(drumgizmo) lineedit->setText(drumgizmo->drumkitfile());
     else lineedit->setText("Missing DrumGizmo*");
-    lineedit->move(70, 10);
-    lineedit->resize(408, 20);
+    lineedit->move(19, 62);
+    lineedit->resize(243, 31);
     
     GUI::Button *btn_brw = new GUI::Button(window);
-    btn_brw->setText("Load Kit...");
-    btn_brw->move(490, 10);
-    btn_brw->resize(100, 20);
+    btn_brw->setText("Browse...");
+    btn_brw->move(266, 62 - 6);
+    btn_brw->resize(85, 35 + 6);
     btn_brw->registerClickHandler(kitBrowseClick, this);
   }
 
   // Midimap file
   {
     lbl2 = new GUI::Label(window);
-    lbl2->setText("Midimap:");
-    lbl2->move(10, 45);
-    lbl2->resize(70, 20);
-    
+    lbl2->setText("Midimap file:");
+    lbl2->move(19, 118);
+    lbl2->resize(100, 20);
+    /*
     led2 = new GUI::LED(window);
-    led2->move(600,47);
+    led2->move(0,0);
     led2->resize(16, 16);
     //  led2->setState(false);
+    */
+    progress2 = new GUI::ProgressBar(window);
+    progress2->move(19, 174);
+    progress2->resize(336, 11);
     
-    lineedit2 = new FileLineEdit(window, led2);
+    lineedit2 = new GUI::LineEdit(window);
     if(drumgizmo) lineedit2->setText(drumgizmo->midimapfile);
-    lineedit2->move(70, 45);
-    lineedit2->resize(408, 20);
+    lineedit2->move(19, 136);
+    lineedit2->resize(243, 31);
     
     GUI::Button *btn_brw = new GUI::Button(window);
-    btn_brw->setText("Load Map...");
-    btn_brw->move(490, 45);
-    btn_brw->resize(100, 20);
+    btn_brw->setText("Browse...");
+    btn_brw->move(266, 136 - 6);
+    btn_brw->resize(85, 35 + 6);
     btn_brw->registerClickHandler(midimapBrowseClick, this);
   }
 
-  GUI::Label *lbl3 = new GUI::Label(window);
-  lbl3->setText("v"VERSION);
-  lbl3->move(120, 180);
-  lbl3->resize(70, 20);
+  GUI::Label *lbl_version = new GUI::Label(window);
+  lbl_version->setText("v"VERSION);
+  lbl_version->move(270, 279);
+  lbl_version->resize(70, 20);
 
-  progress = new GUI::ProgressBar(window);
-  progress->move(200, window->height() - 17);
-  progress->resize(window->width() - 400, 16);
-
+  /*
+  {
+    GUI::ComboBox *cmb = new GUI::ComboBox(window);
+    cmb->addItem("Foo", "Bar");
+    cmb->addItem("Hello", "World");
+    cmb->move(10,100);
+    cmb->resize(70, 30);
+  }
+  */
   // Create filebrowser
   filebrowser = new GUI::FileBrowser(window);
   filebrowser->move(0, 0);

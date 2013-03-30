@@ -30,6 +30,7 @@
 #include <string>
 
 #include "widget.h"
+#include "painter.h"
 
 namespace GUI {
 
@@ -50,6 +51,9 @@ public:
   virtual void buttonEvent(ButtonEvent *e);
 
 private:
+  Painter::Box box_up;
+  Painter::Box box_down;
+
   typedef enum {
     up,
     down

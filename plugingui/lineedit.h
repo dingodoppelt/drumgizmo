@@ -32,6 +32,7 @@
 
 #include "widget.h"
 #include "font.h"
+#include "painter.h"
 
 namespace GUI {
 
@@ -56,6 +57,8 @@ protected:
   virtual void textChanged() {}
 
 private:
+  Painter::Box box;
+
   Font font;
 
   std::string _text;

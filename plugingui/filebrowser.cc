@@ -220,7 +220,7 @@ void GUI::FileBrowser::setPath(std::string path)
   }
 }
 
-void GUI::FileBrowser::resize(size_t w, size_t h)
+void GUI::FileBrowser::resize(int w, int h)
 {
   GUI::Widget::resize(w,h);
 

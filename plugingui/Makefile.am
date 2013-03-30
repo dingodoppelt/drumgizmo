@@ -24,7 +24,6 @@ EXTRA_DIST = \
 	checkbox.h \
 	colour.h \
 	eventhandler.h \
-	filelineedit.h \
 	font.h \
 	globalcontext.h \
 	guievent.h \

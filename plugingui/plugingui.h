@@ -32,7 +32,7 @@
 #include "globalcontext.h"
 
 #include "label.h"
-#include "filelineedit.h"
+#include "lineedit.h"
 #include "checkbox.h"
 #include "button.h"
 #include "knob.h"
@@ -76,14 +76,12 @@ public:
   GUI::Knob *knob2;
 
   GUI::Label *lbl;
-  FileLineEdit *lineedit;
-  GUI::LED *led;
+  GUI::LineEdit *lineedit;
+  GUI::ProgressBar *progress;
 
   GUI::Label *lbl2;
-  FileLineEdit *lineedit2;
-  GUI::LED *led2;
-
-  GUI::ProgressBar *progress;
+  GUI::LineEdit *lineedit2;
+  GUI::ProgressBar *progress2;
 
   void (*windowClosedHandler)(void *);
   void *windowClosedPtr;

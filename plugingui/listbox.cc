@@ -34,6 +34,16 @@
 GUI::ListBox::ListBox(GUI::Widget *parent)
   : GUI::Widget(parent)
 {
+  box.topLeft     = new Image(":widget_tl.png");
+  box.top         = new Image(":widget_t.png");
+  box.topRight    = new Image(":widget_tr.png");
+  box.left        = new Image(":widget_l.png");
+  box.right       = new Image(":widget_r.png");
+  box.bottomLeft  = new Image(":widget_bl.png");
+  box.bottom      = new Image(":widget_b.png");
+  box.bottomRight = new Image(":widget_br.png");
+  box.center      = new Image(":widget_c.png");
+
   padding = 4;
   btn_size = 14;
 
@@ -140,11 +150,10 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
 
   p.clear();
 
-  p.setColour(Colour(0, 0.7));
-  p.drawFilledRectangle(0, 0, width() - 1, height() - 1);
-
-  p.setColour(Colour(0.5, 1));
-  p.drawRectangle(0, 0, width() - 1, height() - 1);
+  int w = width();
+  int h = height();
+  if(w == 0 || h == 0) return;
+  p.drawBox(0, 0, &box, w, h);
 
   int yoffset = padding / 2;
   int skip = scroll_offset;

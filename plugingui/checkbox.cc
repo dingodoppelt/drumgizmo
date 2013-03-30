@@ -81,8 +81,6 @@ void GUI::CheckBox::keyEvent(KeyEvent *e)
 
 void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 {
-  //  printf("CheckBox::repaintEvent\n");
-
   Painter p(this);
 
   p.clear();
@@ -96,30 +94,6 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
     if(middle) p.drawImage((bg_on.width() - knob.width()) / 2, 0, &knob);
     else p.drawImage(0, 0, &knob);
   }
-
-  //  int box = width()<height()?width():height();
-
-  /*
-  p.clear();
-
-  float alpha = 0.8;
-
-  p.setColour(Colour(0.5, alpha));
-  p.drawFilledRectangle(0,0,box-1,box-1);
-
-  p.setColour(Colour(0.1, alpha));
-  p.drawRectangle(0,0,box-1,box-1);
-
-  if(state) {
-    p.setColour(Colour(0.8, alpha));
-    p.drawLine(0,0,box-1,box-1);
-    p.drawLine(0,box-1,box-1,0);
-  }
-
-  p.setColour(Colour(0.3, alpha));
-  p.drawPoint(0,box-1);
-  p.drawPoint(box-1,0);
-  */
   /*
   p.setColour(Colour(1));
   Font font;

@@ -52,11 +52,6 @@ void GUI::Painter::setColour(Colour colour)
 void GUI::Painter::plot(int x, int y, double c)
 {
   // plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
-
-  //c += 0.2;
-  //if(c > 0.6) c = 1;
-  //if(c < 0.4) c = 0;
-
   pixbuf->addPixel(x, y,
                    (unsigned char)(colour.red * 255.0),
                    (unsigned char)(colour.green * 255.0),
@@ -105,7 +100,7 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
   double dy = y1 - y0;
   double gradient = dy / dx;
  
-  // handle first endpoint
+  // Handle first endpoint:
   double xend = round(x0);
   double yend = y0 + gradient * (xend - x0);
   double xgap = rfpart(x0 + 0.5);
@@ -124,9 +119,8 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
 
   double intery = yend + gradient; // first y-intersection for the main loop
  
-  // handle second endpoint
- 
-  xend = round(x1);
+  // Handle second endpoint:
+   xend = round(x1);
   yend = y1 + gradient * (xend - x1);
   xgap = fpart(x1 + 0.5);
   double xpxl2 = xend; //this will be used in the main loop
@@ -154,40 +148,6 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
     intery += gradient;
   }
 }
-/////////////////////////////////////////////
-
-/*
-// No antialiasing
-void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
-{
-  int dx = abs(x1 - x0);
-  int dy = abs(y1 - y0);
-
-  int sx;
-  if(x0 < x1) sx = 1;
-  else sx = -1;
-
-  int sy;
-  if(y0 < y1) sy = 1;
-  else sy = -1;
-
-  int err = dx-dy;
- 
-  while(true) {
-    drawPoint(x0, y0);
-    if(x0 == x1 && y0 == y1) break;
-    int e2 = 2 * err;
-    if(e2 > -dy) {
-      err -= dy;
-      x0 += sx;
-    }
-    if(e2 < dx) {
-      err += dx;
-      y0 += sy;
-    }
-  }
-}
-*/
 
 void GUI::Painter::drawRectangle(int x1, int y1, int x2, int y2)
 {
@@ -221,18 +181,20 @@ void GUI::Painter::drawText(int x0, int y0, GUI::Font &font, std::string text)
     for(size_t y = 0; y < textbuf->height; y++) {
       unsigned char r,g,b,a;
       textbuf->pixel(x, y, &r, &g, &b, &a);
-      if(a) drawPoint(x + x0, y + y0 - textbuf->height);
+      pixbuf->addPixel(x + x0, y + y0 - textbuf->height,
+                       colour.red * 255,
+                       colour.green * 255,
+                       colour.blue * 255,
+                       colour.alpha * a);
     }
   }
 
   delete textbuf;
-  
 }
 
 #include <stdio.h>
 void GUI::Painter::drawPoint(int x, int y)
 {
-  //  printf("Painter::drawPoint: green %f\n", colour.green); fflush(stdout);
   pixbuf->setPixel(x, y,
                    (unsigned char)(colour.red * 255.0),
                    (unsigned char)(colour.green * 255.0),
@@ -375,22 +337,6 @@ void GUI::Painter::drawFilledCircle(int cx, int cy, int radius)
   }
 }
 
-void GUI::Painter::drawImage(int x0, int y0, struct __img__ * img)
-{
-  size_t fw = img->width;
-
-  for(size_t x = 0; x < fw; x++) {
-    for(size_t y = 0; y < img->height; y++) {
-      unsigned int pixel = img->pixels[x + y * fw];
-      unsigned int order = img->order;
-      unsigned char *c = (unsigned char *)&pixel;
-      unsigned char *o = (unsigned char *)&order;
-
-      pixbuf->setPixel(x0 + x, y0 + y, c[o[1]], c[o[2]], c[o[3]], c[o[0]]);
-    }
-  }
-}
-
 void GUI::Painter::drawImage(int x0, int y0, GUI::Image *image)
 {
   size_t fw = image->width();
@@ -399,23 +345,25 @@ void GUI::Painter::drawImage(int x0, int y0, GUI::Image *image)
   for(size_t x = 0; x < fw; x++) {
     for(size_t y = 0; y < fh; y++) {
       GUI::Colour c = image->getPixel(x, y);
-      pixbuf->setPixel(x0 + x, y0 + y, c.red, c.green, c.blue, c.alpha);
+      pixbuf->addPixel(x0 + x, y0 + y, c);
     }
   }
 }
 
 void GUI::Painter::drawImageStretched(int x0, int y0, GUI::Image *image,
-                                      size_t w, size_t h)
+                                      int w, int h)
 {
+  if(w < 1 || h < 1) return;
+
   float fw = image->width();
   float fh = image->height();
 
-  for(size_t x = 0; x < w; x++) {
-    for(size_t y = 0; y < h; y++) {
+  for(int x = 0; x < w; x++) {
+    for(int y = 0; y < h; y++) {
       int lx = ((float)x/(float)w)*fw;
       int ly = ((float)y/(float)h)*fh;
       GUI::Colour c = image->getPixel(lx, ly);
-      pixbuf->setPixel(x0 + x, y0 + y, c.red, c.green, c.blue, c.alpha);
+      pixbuf->addPixel(x0 + x, y0 + y, c);
     }
   }
 }
@@ -428,18 +376,24 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   // Top:
 
   drawImage(dx, dy, box->topLeft);
+
   dx += box->topLeft->width();
+  if(dx < 0 || dy < 0) return;
 
   drawImageStretched(dx, dy, box->top,
                      width - box->topRight->width() - box->topLeft->width(),
                      box->top->height());
 
   dx = x + width - box->topRight->width();
+  if(dx < 0 || dy < 0) return;
+
   drawImage(dx, dy, box->topRight);
 
   // Center
   dy = y + box->topLeft->height();
   dx = x + box->left->width();
+  if(dx < 0 || dy < 0) return;
+
   drawImageStretched(dx, dy, box->center,
                      width - box->left->width() - box->right->width(),
                      height - box->topLeft->height() - box->bottomLeft->height());
@@ -447,11 +401,15 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   // Mid:
   dx = x;
   dy = y + box->topLeft->height();
+  if(dx < 0 || dy < 0) return;
+
   drawImageStretched(dx, dy, box->left, box->left->width(),
                      height - box->topLeft->height() - box->bottomLeft->height());
 
   dx = x + width - box->right->width();
   dy = y + box->topRight->height();
+  if(dx < 0 || dy < 0) return;
+
   drawImageStretched(dx, dy, box->right,
                      box->right->width(),
                      height - box->topRight->height() - box->bottomRight->height());
@@ -459,15 +417,39 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
   // Bottom:
   dx = x;
   dy = y + height - box->bottomLeft->height();
+  if(dx < 0 || dy < 0) return;
+
   drawImage(dx, dy, box->bottomLeft);
+
   dx += box->bottomLeft->width();
+  if(dx < 0 || dy < 0) return;
 
   drawImageStretched(dx, dy, box->bottom,
                      width - box->bottomRight->width() - box->bottomLeft->width(),
                      box->bottom->height());
 
   dx = x + width - box->bottomRight->width();
+  if(dx < 0 || dy < 0) return;
+
   drawImage(dx, dy, box->bottomRight);
+}
+
+void GUI::Painter::drawBar(int x, int y, Bar *bar, int width, int height)
+{
+  if(width < (bar->left->width() + bar->right->width() + 1)) {
+    width = bar->left->width() + bar->right->width() + 1;
+  }
+  drawImageStretched(x, y,
+                     bar->left,
+                     bar->left->width(), height);
+
+  drawImageStretched(x + bar->left->width(), y,
+                     bar->center,
+                     width - bar->left->width() - bar->right->width(), height);
+
+  drawImageStretched(x + width - bar->left->width(), y,
+                     bar->right,
+                     bar->right->width(), height);
 }
 
 void GUI::Painter::flush()

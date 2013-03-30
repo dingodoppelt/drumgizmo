@@ -28,8 +28,6 @@
 
 #include <stdio.h>
 
-#include "painter.h"
-
 #include "window.h"
 
 #define BORDER 10
@@ -39,6 +37,16 @@ GUI::LineEdit::LineEdit(Widget *parent)
 {
   pos = 0;
   setReadOnly(false);
+
+  box.topLeft     = new Image(":widget_tl.png");
+  box.top         = new Image(":widget_t.png");
+  box.topRight    = new Image(":widget_tr.png");
+  box.left        = new Image(":widget_l.png");
+  box.right       = new Image(":widget_r.png");
+  box.bottomLeft  = new Image(":widget_bl.png");
+  box.bottom      = new Image(":widget_b.png");
+  box.bottomRight = new Image(":widget_br.png");
+  box.center      = new Image(":widget_c.png");
 }
 
 void GUI::LineEdit::setReadOnly(bool ro)
@@ -132,15 +140,15 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
-  
+
   p.clear();
 
-  p.setColour(Colour(0, 0.4));
-  p.drawFilledRectangle(3,3,width()-3,height()-3);
+  int w = width();
+  int h = height();
+  if(w == 0 || h == 0) return;
+  p.drawBox(0, 0, &box, w, h);
 
-  p.setColour(Colour(1,1,1));
-  p.drawRectangle(0,0,width()-1,height()-1);
-  p.drawRectangle(2,2,width()-3,height()-3);
+  p.setColour(GUI::Colour(1,1,1,1));
   p.drawText(BORDER - 4, height()/2+5 + 1, font, _text);
 
   if(readOnly()) return;

@@ -30,6 +30,7 @@
 #include "pixelbuffer.h"
 
 #include "globalcontext.h"
+#include "image.h"
 
 #include <string>
 
@@ -51,6 +52,8 @@ public:
   PixelBufferAlpha *render(GlobalContext *gctx, std::string text);
 
 private:
+  Image img_font;
+
   GlobalContext *gctx;
   std::map<char, int> character_offset;
   std::map<char, size_t> character_width;

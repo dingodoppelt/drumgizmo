@@ -33,6 +33,26 @@
 GUI::Button::Button(Widget *parent)
   : GUI::Widget(parent)
 {
+  box_up.topLeft     = new Image(":pushbutton_tl.png");
+  box_up.top         = new Image(":pushbutton_t.png");
+  box_up.topRight    = new Image(":pushbutton_tr.png");
+  box_up.left        = new Image(":pushbutton_l.png");
+  box_up.right       = new Image(":pushbutton_r.png");
+  box_up.bottomLeft  = new Image(":pushbutton_bl.png");
+  box_up.bottom      = new Image(":pushbutton_b.png");
+  box_up.bottomRight = new Image(":pushbutton_br.png");
+  box_up.center      = new Image(":pushbutton_c.png");
+
+  box_down.topLeft     = new Image(":pushbuttondown_tl.png");
+  box_down.top         = new Image(":pushbuttondown_t.png");
+  box_down.topRight    = new Image(":pushbuttondown_tr.png");
+  box_down.left        = new Image(":pushbuttondown_l.png");
+  box_down.right       = new Image(":pushbuttondown_r.png");
+  box_down.bottomLeft  = new Image(":pushbuttondown_bl.png");
+  box_down.bottom      = new Image(":pushbuttondown_b.png");
+  box_down.bottomRight = new Image(":pushbuttondown_br.png");
+  box_down.center      = new Image(":pushbuttondown_c.png");
+
   state = up;
   handler = NULL;
   ptr = NULL;
@@ -60,42 +80,26 @@ void GUI::Button::buttonEvent(ButtonEvent *e)
 
 void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
 {
-  //  printf("Button::repaintEvent\n");
-
   Painter p(this);
 
   p.clear();
 
-  float alpha = 0.9;
+  int w = width();
+  int h = height();
+  if(w == 0 || h == 0) return;
 
-  if(hasKeyboardFocus()) {
-    p.setColour(Colour(0.6, alpha));
-  } else {
-    p.setColour(Colour(0.5, alpha));
-  }
-  p.drawFilledRectangle(0,0,width()-1,height()-1);
 
-  p.setColour(Colour(0.1, alpha));
-  p.drawRectangle(0,0,width()-1,height()-1);
-
-  p.setColour(Colour(0.8, alpha));
   switch(state) {
   case up:
-    p.drawLine(0,0,0,height()-1);
-    p.drawLine(0,0,width()-1,0);
+    p.drawBox(0, 0, &box_up, w, h);
     break;
   case down:
-    p.drawLine(width()-1,0, width()-1,height()-1);
-    p.drawLine(width()-1,height()-1,0, height()-1);
+    p.drawBox(0, 0, &box_down, w, h);
     break;
-  }
-
-  p.setColour(Colour(0.3, alpha));
-  p.drawPoint(0,height()-1);
-  p.drawPoint(width()-1,0);
+  }    
 
   Font font;
-  p.setColour(Colour(0.9, alpha));
+  p.setColour(Colour(0.1));
   p.drawText(width()/2-(text.length()*3)+(state==up?0:1),
              height()/2+5+(state==up?0:1), font, text);
 }

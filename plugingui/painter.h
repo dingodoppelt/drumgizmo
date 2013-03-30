@@ -37,20 +37,6 @@
 
 namespace GUI {
 
-struct __img__ {
-  size_t width;
-  size_t height;
-  unsigned int pixels[128000];
-  unsigned int order;
-};
-/*
-struct __img__ {
-  size_t width;
-  size_t height;
-  unsigned int *pixels;
-  unsigned int order;
-};
-*/
 class Painter {
 public:
   Painter(Widget *widget);
@@ -67,10 +53,9 @@ public:
   void drawPoint(int x, int y);
   void drawCircle(int x, int y, double r);
   void drawFilledCircle(int x, int y, int r);
-  void drawImage(int x, int y, struct __img__ * img);
   void drawImage(int x, int y, Image *image);
   void drawImageStretched(int x0, int y0, GUI::Image *image,
-                          size_t width, size_t height);
+                          int width, int height);
 
   typedef struct {
     Image *topLeft;
@@ -84,6 +69,13 @@ public:
     Image *center;
   } Box;
   void drawBox(int x, int y, Box *box, int width, int height);
+
+  typedef struct {
+    Image *left;
+    Image *right;
+    Image *center;
+  } Bar;
+  void drawBar(int x, int y, Bar *bar, int width, int height);
 
   void clear();
 

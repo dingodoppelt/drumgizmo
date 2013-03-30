@@ -33,6 +33,7 @@
 #include "widget.h"
 #include "font.h"
 #include "listbox.h"
+#include "painter.h"
 
 namespace GUI {
 
@@ -58,6 +59,8 @@ public:
   virtual void keyEvent(KeyEvent *e);
 
 private:
+  Painter::Box box;
+
   GUI::Font font;
   GUI::ListBox *listbox;
 

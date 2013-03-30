@@ -14,7 +14,6 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/painter.cc \
 	$(top_srcdir)/plugingui/button.cc \
 	$(top_srcdir)/plugingui/pixelbuffer.cc \
-	$(top_srcdir)/plugingui/filelineedit.cc \
 	$(top_srcdir)/plugingui/lineedit.cc \
 	$(top_srcdir)/plugingui/led.cc \
 	$(top_srcdir)/plugingui/checkbox.cc \
