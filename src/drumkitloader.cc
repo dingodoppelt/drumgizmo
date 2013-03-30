@@ -96,7 +96,13 @@ void DrumKitLoader::thread_main()
         
         std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
         while(a != instr->audiofiles.end()) {
-          //usleep(5000);
+#if 0
+#ifdef WIN32
+          SleepEx(5000, FALSE);
+#else
+          usleep(5000);
+#endif/*WIN32*/
+#endif
           AudioFile *af = *a;
           af->load();
           loaded++;
