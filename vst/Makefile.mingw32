@@ -53,6 +53,9 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/knob.cc \
 	$(DG_BASE)/plugingui/filebrowser.cc \
 	$(DG_BASE)/plugingui/combobox.cc \
+	$(DG_BASE)/plugingui/progressbar.cc \
+	$(DG_BASE)/plugingui/resource.cc \
+	$(DG_BASE)/plugingui/resource_data.cc \
 	$(DG_BASE)/plugingui/image.cc
 
 GUI_CFLAGS=-I../plugingui -DUSE_THREAD
