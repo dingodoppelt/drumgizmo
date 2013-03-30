@@ -442,7 +442,8 @@ bool DrumGizmo::setConfigString(std::string cfg)
       str2float(p.value("velocity_randomiser_weight"));
   }
 
-  if(drumkitfile() != p.value("drumkitfile")) {
+  std::string newkit = p.value("drumkitfile");
+  if(newkit != "" && drumkitfile() != newkit) {
     if(!loadkit(p.values["drumkitfile"])) return false;
     init(true);
   }
