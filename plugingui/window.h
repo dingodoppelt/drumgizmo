@@ -75,6 +75,9 @@ public:
   Widget *buttonDownFocus();
   void setButtonDownFocus(Widget *widget);
 
+  Widget *mouseFocus();
+  void setMouseFocus(Widget *widget);
+
   GlobalContext *gctx;
 
   PixelBuffer wpixbuf;
@@ -85,6 +88,7 @@ protected:
 
   Widget *_keyboardFocus;
   Widget *_buttonDownFocus;
+  Widget *_mouseFocus;
 
   NativeWindow *native;
 

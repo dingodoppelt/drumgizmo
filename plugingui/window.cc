@@ -57,6 +57,7 @@ GUI::Window::Window(GlobalContext *gctx)
   refcount = 0;
   _keyboardFocus = this;
   _buttonDownFocus = NULL;
+  _mouseFocus = NULL;
 
 #ifdef X11
   native = new NativeWindowX11(gctx, this);
@@ -196,4 +197,14 @@ void GUI::Window::setButtonDownFocus(GUI::Widget *widget)
 {
   _buttonDownFocus = widget;
   native->grabMouse(widget != NULL);
+}
+
+GUI::Widget *GUI::Window::mouseFocus()
+{
+  return _mouseFocus;
+}
+
+void GUI::Window::setMouseFocus(GUI::Widget *widget)
+{
+  _mouseFocus = widget;
 }
