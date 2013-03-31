@@ -281,7 +281,10 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
         //af->load(); // Make sure it is loaded.
-        if(!af->isLoaded()) continue;
+        if(!af->isLoaded()) {
+          removeevent = true;
+          break;
+        }
 
         size_t n = 0;
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
