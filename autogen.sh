@@ -52,7 +52,7 @@ if [ "$DIE" -eq 1 ]; then
 fi
 
 # Create testfiles
-TESTDIRS="src plugingui drumgizmo"
+TESTDIRS="src plugingui drumgizmo lv2"
 echo "Creating unittest Makefiles:"
 for d in $TESTDIRS
 do
