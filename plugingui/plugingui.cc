@@ -39,8 +39,8 @@
 #include "../src/message.h"
 class DrumGizmo {
 public:
-  void loadkit(std::string) {}
-  void init(bool) {}
+  bool loadkit(std::string) { return true; }
+  bool init(bool) { return true; }
   std::string drumkitfile() { return ""; }
   std::string midimapfile;
   Message *receiveMessage() { return NULL; }
@@ -64,6 +64,7 @@ static void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_weight = gui->knob->value();
+#ifdef STANDALONE
   int i = gui->knob->value() * 5;
   switch(i) {
   case 0: gui->progress->setState(GUI::ProgressBar::off); break;
@@ -72,13 +73,16 @@ static void knobChange(void *ptr)
   case 3: gui->progress->setState(GUI::ProgressBar::red); break;
   default: break;
   }
+#endif
 }
 
 static void knobChange2(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_falloff = gui->knob2->value();
+#ifdef STANDALONE
   gui->progress->setProgress(gui->knob2->value());
+#endif
 }
 
 GUI::FileBrowser *fb;
@@ -90,10 +94,16 @@ static void selectKitFile(void *ptr, std::string filename)
   fb->hide();
 
   std::string drumkit = gui->lineedit->text();
-  if(!gui->drumgizmo) return;
-  gui->drumgizmo->loadkit(drumkit);
-  gui->drumgizmo->init(true);
-  gui->progress->setState(GUI::ProgressBar::green);
+
+  gui->progress->setProgress(1);
+
+  if(!gui->drumgizmo ||
+     !gui->drumgizmo->loadkit(drumkit) ||
+     !gui->drumgizmo->init(true)) {
+    gui->progress->setState(GUI::ProgressBar::red);
+  } else {
+    gui->progress->setState(GUI::ProgressBar::blue);
+  }
 }
 
 static void kitBrowseClick(void *ptr)
@@ -200,6 +210,9 @@ void PluginGUI::thread_main()
                 ls->current_file.c_str());
           progress->setProgress((float)ls->numer_of_files_loaded /
                                 (float)ls->number_of_files);
+          if(ls->numer_of_files_loaded == ls->number_of_files) {
+            progress->setState(GUI::ProgressBar::green);
+          }
         }
         break;
       default:
