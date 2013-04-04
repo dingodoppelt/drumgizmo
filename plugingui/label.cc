@@ -46,8 +46,8 @@ void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
 
   p.setColour(Colour(1));
 
-  Font font;
-  p.drawText(10, (height() + font.textHeight()) / 2, font, _text);
+  Font font(":fontemboss.png");
+  p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
 }
 
 

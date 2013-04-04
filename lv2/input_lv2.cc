@@ -61,6 +61,7 @@ void InputLV2::stop()
 void InputLV2::pre()
 {
 }
+
 event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 {
   event_t *list;
@@ -112,18 +113,6 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 
 void InputLV2::post()
 {
-}
-
-void InputLV2::loadMidiMap(std::string f)
-{
-  if(f == "") return;
-  MidiMapParser p(f);
-  if(p.parse()) {/*return false;*/}
-  mmap.midimap = p.midimap;
-
-  for(size_t i = 0; i < instruments->size(); i++) {
-    mmap.instrmap[(*instruments)[i]->name()] = i;
-  }
 }
 
 #ifdef TEST_INPUT_LV2

@@ -151,6 +151,7 @@ static void closeHandler(void *ptr)
 
 static void midimapHandler(void *ptr, const char* file)
 {
+  /*
   printf("> midimapHandler %s\n", file);
   struct DG_GUI *gui = (struct DG_GUI *)ptr;
   gui->instance->midimapfile = file;
@@ -159,6 +160,7 @@ static void midimapHandler(void *ptr, const char* file)
   dglv2->in->loadMidiMap(file);
 
   printf("< midimapHandler\n");
+  */
 }
 
 static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,

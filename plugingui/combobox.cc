@@ -57,7 +57,7 @@ GUI::ComboBox::ComboBox(GUI::Widget *parent)
   box.bottomRight = new Image(":widget_br.png");
   box.center      = new Image(":widget_c.png");
 
-  listbox = new GUI::ListBox(parent);
+  listbox = new GUI::ListBoxBasic(parent);
   listbox->registerSelectHandler(listboxSelectHandler, this);
   listbox->registerClickHandler(listboxSelectHandler, this);
   listbox->hide();

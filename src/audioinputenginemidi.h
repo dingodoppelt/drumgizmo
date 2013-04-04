@@ -29,9 +29,16 @@
 
 #include "audioinputengine.h"
 
-class AudioInputEngineMidi {
+#include <string>
+
+#include "midimapper.h"
+#include "instrument.h"
+
+class AudioInputEngineMidi : public AudioInputEngine {
 public:
   virtual ~AudioInputEngineMidi() {}
+
+  bool isMidiEngine() { return true; } 
 
   virtual bool init(Instruments &instruments) = 0;
 
@@ -44,10 +51,9 @@ public:
   virtual event_t *run(size_t pos, size_t len, size_t *nevents) = 0;
   virtual void post() = 0;
 
-  void loadMidiMap(std::string file);
+  void loadMidiMap(std::string file, Instruments &i);
 
 protected:
-
   MidiMapper mmap;
 };
 

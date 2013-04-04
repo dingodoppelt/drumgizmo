@@ -35,6 +35,8 @@ typedef std::map<std::string, int> instrmap_t;
 
 class MidiMapper {
 public:
+  void clear();
+
   int lookup(int note);
 
   instrmap_t instrmap;

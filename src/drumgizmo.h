@@ -73,21 +73,41 @@ public:
   /*
    * Receive message from the engine. The caller takes over the memory.
    */
-  Message *receiveMessage();
+  Message *receiveGUIMessage();
 
   /*
    * Receive message from the engine without removing it from the queue.
    */
-  Message *peekMessage();
+  Message *peekGUIMessage();
 
   /*
    * Add a message to the GUI message queue.
    */
-  void sendMessage(Message *msg);
+  void sendEngineMessage(Message *msg);
+
+  /*
+   * Receive message from the engine. The caller takes over the memory.
+   */
+  Message *receiveEngineMessage();
+
+  /*
+   * Receive message from the engine without removing it from the queue.
+   */
+  Message *peekEngineMessage();
+
+  /*
+   * Add a message to the GUI message queue.
+   */
+  void sendGUIMessage(Message *msg);
 
 private:
-  Mutex message_mutex;
-  std::list<Message *> message_queue;
+  void handleEngineEvents();
+
+  Mutex gui_message_mutex;
+  std::list<Message *> gui_message_queue;
+
+  Mutex engine_message_mutex;
+  std::list<Message *> engine_message_queue;
 
   DrumKitLoader loader;
 

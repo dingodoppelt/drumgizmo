@@ -161,7 +161,7 @@ dg_restore(LV2_Handle                  instance,
     std::string config;
     config.append(data, size - 1);
     dglv2->dg->setConfigString(config);
-    dglv2->in->loadMidiMap(dglv2->dg->midimapfile);
+    //dglv2->in->loadMidiMap(dglv2->dg->midimapfile);
   }
  
   /*

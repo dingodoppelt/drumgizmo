@@ -99,10 +99,10 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
     break;
   }    
 
-  Font font;
+  Font font(":fontemboss.png");
   p.setColour(Colour(0.1));
   p.drawText(width()/2-(text.length()*3)+(state==up?0:1),
-             height()/2+5+(state==up?0:1), font, text);
+             height()/2+5+(state==up?0:1), font, text, true);
 }
 
 void GUI::Button::setText(std::string text)

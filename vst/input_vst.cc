@@ -106,20 +106,3 @@ void InputVST::processEvents(VstEvents* ev)
 		event++;
 	}
 }
-
-void InputVST::loadMidiMap(std::string f)
-{
-  DEBUG(inputvst, "load midi map %s\n", f.c_str());
-
-  MidiMapParser p(f);
-  if(p.parse()) {
-    ERR(inputvst, "Error loading midimap: %s\n", f.c_str());
-    return;
-  }
-  mmap.midimap = p.midimap;
-
-  for(size_t i = 0; i < instruments->size(); i++) {
-    DEBUG(inputvst, "Mapping %s to %d\n", (*instruments)[i]->name().c_str(), i);
-    mmap.instrmap[(*instruments)[i]->name()] = i;
-  }
-}

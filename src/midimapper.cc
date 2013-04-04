@@ -33,3 +33,9 @@ int MidiMapper::lookup(int note)
   if(instrmap.find(instr) == instrmap.end()) return -1;
   return instrmap[instr];
 }
+
+void MidiMapper::clear()
+{
+  midimap.clear();
+  instrmap.clear();
+}

@@ -26,15 +26,23 @@
  */
 #include "audioinputenginemidi.h"
 
-void InputLV2::loadMidiMap(std::string f)
+#include "midimapparser.h"
+
+#include <hugin.hpp>
+
+void AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
 {
+  DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
+        instruments.size());
   if(f == "") return;
   MidiMapParser p(f);
   if(p.parse()) {/*return false;*/}
+
+  mmap.clear();
   mmap.midimap = p.midimap;
 
-  for(size_t i = 0; i < instruments->size(); i++) {
-    mmap.instrmap[(*instruments)[i]->name()] = i;
+  for(size_t i = 0; i < instruments.size(); i++) {
+    mmap.instrmap[instruments[i]->name()] = i;
   }
 }
 

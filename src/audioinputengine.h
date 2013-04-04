@@ -37,6 +37,8 @@ class AudioInputEngine {
 public:
   virtual ~AudioInputEngine() {}
 
+  virtual bool isMidiEngine() { return false; } 
+
   virtual bool init(Instruments &instruments) = 0;
 
   virtual void setParm(std::string parm, std::string value) = 0;

@@ -27,12 +27,11 @@
 #ifndef __DRUMGIZMO_INPUT_LV2_H__
 #define __DRUMGIZMO_INPUT_LV2_H__
 
-#include <audioinputengine.h>
-#include <midimapper.h>
+#include <audioinputenginemidi.h>
 
 #include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
 
-class InputLV2 : public AudioInputEngine {
+class InputLV2 : public AudioInputEngineMidi {
 public:
   InputLV2();
   ~InputLV2();
@@ -48,11 +47,7 @@ public:
   event_t *run(size_t pos, size_t len, size_t *nevents);
   void post();
 
-  void loadMidiMap(std::string file);
-
   LV2_Event_Buffer *eventPort;
-
-  MidiMapper mmap;
 
 private:
   Instruments *instruments;

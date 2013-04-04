@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            listbox.h
+ *            listboxbasic.h
  *
- *  Mon Feb 25 21:21:40 CET 2013
+ *  Thu Apr  4 20:28:10 CEST 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,22 +24,24 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LISTBOX_H__
-#define __DRUMGIZMO_LISTBOX_H__
+#ifndef __DRUMGIZMO_LISTBOXBASIC_H__
+#define __DRUMGIZMO_LISTBOXBASIC_H__
 
 #include <string.h>
 #include <vector>
 
 #include "widget.h"
+#include "font.h"
 #include "painter.h"
-#include "listboxbasic.h"
 
 namespace GUI {
 
-class ListBox : public Widget {
+class ListBoxBasic : public Widget {
 public:
-  ListBox(Widget *parent);
-  ~ListBox();
+  ListBoxBasic(Widget *parent);
+  ~ListBoxBasic();
+
+  bool isFocusable() { return true; }
 
   void addItem(std::string name, std::string value);
 
@@ -52,15 +54,39 @@ public:
   void registerClickHandler(void (*handler)(void *), void *ptr);
   void registerValueChangeHandler(void (*handler)(void *), void *ptr);
 
-  virtual void repaintEvent(GUI::RepaintEvent *e);
-  virtual void resize(int w, int h);
+  virtual void repaintEvent(RepaintEvent *e);
+  virtual void buttonEvent(ButtonEvent *e);
+  virtual void scrollEvent(ScrollEvent *e);
+  virtual void keyEvent(KeyEvent *e);
 
 private:
-  ListBoxBasic *basic;
+  Image *bg_img;
 
-  Painter::Box box;
+  void setSelection(int index);
+
+  struct item {
+    std::string name;
+    std::string value;
+  };
+
+  std::vector<struct item> items;
+  int selected;
+  int marked;
+  GUI::Font font;
+  int padding;
+  int btn_size;
+  int scroll_offset;
+
+  void (*sel_handler)(void *);
+  void *sel_ptr;
+
+  void (*clk_handler)(void *);
+  void *clk_ptr;
+
+  void (*valch_handler)(void *);
+  void *valch_ptr;
 };
 
 };
 
-#endif/*__DRUMGIZMO_LISTBOX_H__*/
+#endif/*__DRUMGIZMO_LISTBOXBASIC_H__*/

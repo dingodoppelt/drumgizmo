@@ -74,6 +74,7 @@ void DrumKitLoader::thread_main()
     DEBUG(loader, "before sem\n");
     semaphore.wait();
     DEBUG(loader, "after sem\n");
+    fflush(stdout);
 
     if(quitit) return;
 
@@ -107,11 +108,11 @@ void DrumKitLoader::thread_main()
           af->load();
           loaded++;
 
-          LoadStatus *ls = new LoadStatus();
+          LoadStatusMessage *ls = new LoadStatusMessage();
           ls->number_of_files = count;
           ls->numer_of_files_loaded = loaded;
           ls->current_file = af->filename;
-          drumgizmo->sendMessage(ls);
+          drumgizmo->sendGUIMessage(ls);
           
           a++;
         }

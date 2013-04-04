@@ -103,7 +103,7 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
   // Handle first endpoint:
   double xend = round(x0);
   double yend = y0 + gradient * (xend - x0);
-  double xgap = rfpart(x0 + 0.5);
+  //double xgap = rfpart(x0 + 0.5);
   double xpxl1 = xend;   //this will be used in the main loop
   double ypxl1 = ipart(yend);
 
@@ -122,7 +122,7 @@ void GUI::Painter::drawLine(int x0, int y0, int x1, int y1)
   // Handle second endpoint:
    xend = round(x1);
   yend = y1 + gradient * (xend - x1);
-  xgap = fpart(x1 + 0.5);
+  //xgap = fpart(x1 + 0.5);
   double xpxl2 = xend; //this will be used in the main loop
   double ypxl2 = ipart(yend);
 
@@ -173,19 +173,29 @@ void GUI::Painter::clear()
   }
 }
 
-void GUI::Painter::drawText(int x0, int y0, GUI::Font &font, std::string text)
+void GUI::Painter::drawText(int x0, int y0, GUI::Font &font, std::string text,
+                            bool nocolour)
 {
   PixelBufferAlpha *textbuf = font.render(widget->window()->gctx, text);
-
-  for(size_t x = 0; x < textbuf->width; x++) {
-    for(size_t y = 0; y < textbuf->height; y++) {
-      unsigned char r,g,b,a;
-      textbuf->pixel(x, y, &r, &g, &b, &a);
-      pixbuf->addPixel(x + x0, y + y0 - textbuf->height,
-                       colour.red * 255,
-                       colour.green * 255,
-                       colour.blue * 255,
-                       colour.alpha * a);
+  if(nocolour) {
+    for(size_t x = 0; x < textbuf->width; x++) {
+      for(size_t y = 0; y < textbuf->height; y++) {
+        unsigned char r,g,b,a;
+        textbuf->pixel(x, y, &r, &g, &b, &a);
+        pixbuf->addPixel(x + x0, y + y0 - textbuf->height, r,g,b,a);
+      }
+    }
+  } else {
+    for(size_t x = 0; x < textbuf->width; x++) {
+      for(size_t y = 0; y < textbuf->height; y++) {
+        unsigned char r,g,b,a;
+        textbuf->pixel(x, y, &r, &g, &b, &a);
+        pixbuf->addPixel(x + x0, y + y0 - textbuf->height,
+                         colour.red * 255,
+                         colour.green * 255,
+                         colour.blue * 255,
+                         colour.alpha * a);
+      }
     }
   }
 
@@ -436,7 +446,7 @@ void GUI::Painter::drawBox(int x, int y, Box *box, int width, int height)
 
 void GUI::Painter::drawBar(int x, int y, Bar *bar, int width, int height)
 {
-  if(width < (bar->left->width() + bar->right->width() + 1)) {
+  if(width < ((int)bar->left->width() + (int)bar->right->width() + 1)) {
     width = bar->left->width() + bar->right->width() + 1;
   }
   drawImageStretched(x, y,

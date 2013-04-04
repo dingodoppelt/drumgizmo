@@ -1,4 +1,5 @@
 DRUMGIZMO_SOURCES = \
+	$(top_srcdir)/src/audioinputenginemidi.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/channel.cc \
 	$(top_srcdir)/src/channelmixer.cc \

@@ -37,6 +37,7 @@
 #include <hugin.hpp>
 
 #include "drumkitparser.h"
+#include "audioinputenginemidi.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : loader(this), oe(o), ie(i)
@@ -59,22 +60,22 @@ DrumGizmo::~DrumGizmo()
 /*
  * Add a message to the GUI message queue.
  */
-void DrumGizmo::sendMessage(Message *msg)
+void DrumGizmo::sendGUIMessage(Message *msg)
 {
-  MutexAutolock l(message_mutex);
-  message_queue.push_back(msg);
+  MutexAutolock l(gui_message_mutex);
+  gui_message_queue.push_back(msg);
 }
 
 /*
  * Receive message from the engine. The caller takes over the memory.
  */
-Message *DrumGizmo::receiveMessage()
+Message *DrumGizmo::receiveGUIMessage()
 {
-  MutexAutolock l(message_mutex);
+  MutexAutolock l(gui_message_mutex);
   Message *msg = NULL;
-  if(message_queue.size()) {
-    msg = message_queue.front();
-    message_queue.pop_front();
+  if(gui_message_queue.size()) {
+    msg = gui_message_queue.front();
+    gui_message_queue.pop_front();
   }
   return msg;
 }
@@ -82,12 +83,48 @@ Message *DrumGizmo::receiveMessage()
 /*
  * Receive message from the engine without removing it from the queue.
  */
-Message *DrumGizmo::peekMessage()
+Message *DrumGizmo::peekGUIMessage()
 {
-  MutexAutolock l(message_mutex);
+  MutexAutolock l(gui_message_mutex);
   Message *msg = NULL;
-  if(message_queue.size()) {
-    msg = message_queue.front();
+  if(gui_message_queue.size()) {
+    msg = gui_message_queue.front();
+  }
+  return msg;
+}
+
+/*
+ * Add a message to the GUI message queue.
+ */
+void DrumGizmo::sendEngineMessage(Message *msg)
+{
+  MutexAutolock l(engine_message_mutex);
+  engine_message_queue.push_back(msg);
+}
+
+/*
+ * Receive message from the engine. The caller takes over the memory.
+ */
+Message *DrumGizmo::receiveEngineMessage()
+{
+  MutexAutolock l(engine_message_mutex);
+  Message *msg = NULL;
+  if(engine_message_queue.size()) {
+    msg = engine_message_queue.front();
+    engine_message_queue.pop_front();
+  }
+  return msg;
+}
+
+/*
+ * Receive message from the engine without removing it from the queue.
+ */
+Message *DrumGizmo::peekEngineMessage()
+{
+  MutexAutolock l(engine_message_mutex);
+  Message *msg = NULL;
+  if(engine_message_queue.size()) {
+    msg = engine_message_queue.front();
   }
   return msg;
 }
@@ -99,6 +136,9 @@ std::string DrumGizmo::drumkitfile()
 
 bool DrumGizmo::loadkit(std::string file)
 {
+  if(file == this->kitfile) return 1;
+  if(file == "") return 1;
+
   this->kitfile = file;
 
   DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
@@ -110,6 +150,8 @@ bool DrumGizmo::loadkit(std::string file)
   }
 
   loader.loadKit(&kit);
+
+  DEBUG(loadkit, "loadkit: Success\n");
 
   return true;
 }
@@ -131,6 +173,38 @@ bool DrumGizmo::init(bool preload)
   if(!oe->init(kit.channels)) return false;
 
   return true;
+}
+
+void DrumGizmo::handleEngineEvents()
+{
+  // DEBUG(msg, "handle?");
+
+  Message *msg = receiveEngineMessage();
+  if(msg) {
+    DEBUG(msg, "got message.");
+    switch(msg->type()) {
+    case Message::LoadDrumKit:
+      {
+        DEBUG(msg, "got LoadDrumKitMessage message.");
+        LoadDrumKitMessage *m = (LoadDrumKitMessage*)msg;
+        loadkit(m->drumkitfile);
+        //init(true);
+      }
+      break;
+    case Message::LoadMidimap:
+      DEBUG(msg, "got LoadMidimapMessage message.");
+      if(!ie->isMidiEngine()) break;
+      {
+        AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
+        LoadMidimapMessage *m = (LoadMidimapMessage*)msg;
+        aim->loadMidiMap(m->midimapfile, kit.instruments);
+      }
+      break;
+    default:
+      break;
+    }
+    // delete msg;
+  }
 }
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
@@ -155,6 +229,9 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     return true;
   }
 #endif
+
+  // Handle engine messages, at most one in each iteration:
+  handleEngineEvents();
 
   ie->pre();
   oe->pre(nsamples);
@@ -418,8 +495,6 @@ bool DrumGizmo::setConfigString(std::string cfg)
     return false;
   }
 
-  midimapfile = p.value("midimapfile");
-
   if(p.value("enable_velocity_modifier") != "") {
     Conf::enable_velocity_modifier =
       p.value("enable_velocity_modifier") == "true";
@@ -447,8 +522,21 @@ bool DrumGizmo::setConfigString(std::string cfg)
 
   std::string newkit = p.value("drumkitfile");
   if(newkit != "" && drumkitfile() != newkit) {
+    /*
     if(!loadkit(p.values["drumkitfile"])) return false;
     init(true);
+    */
+    LoadDrumKitMessage *msg = new LoadDrumKitMessage();
+    msg->drumkitfile = newkit;
+    sendEngineMessage(msg);
+  }
+
+  std::string newmidimap = p.value("midimapfile");
+  if(midimapfile != newmidimap && newmidimap != "") {
+    midimapfile = newmidimap;
+    LoadMidimapMessage *msg = new LoadMidimapMessage();
+    msg->midimapfile = midimapfile;
+    sendEngineMessage(msg);
   }
 
   return true;

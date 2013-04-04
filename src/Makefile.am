@@ -28,6 +28,7 @@ EXTRA_DIST = \
 	audiofile.cc \
 	audioinputengine.cc \
 	audiooutputengine.cc \
+	audioinputenginemidi.cc \
 	beatmapper.cc \
 	channel.cc \
 	channelmixer.cc \

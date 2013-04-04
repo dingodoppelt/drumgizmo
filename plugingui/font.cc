@@ -30,8 +30,8 @@
 #include <X11/Xlib.h>
 #endif/*X11*/
 
-GUI::Font::Font()
-  : img_font(":font.png")
+GUI::Font::Font(std::string fontfile)
+  : img_font(fontfile)
 {
   int px = 0;
   int c;

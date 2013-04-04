@@ -43,8 +43,9 @@ public:
   bool init(bool) { return true; }
   std::string drumkitfile() { return ""; }
   std::string midimapfile;
-  Message *receiveMessage() { return NULL; }
-  Message *peekMessage() { return NULL; }
+  Message *receiveGUIMessage() { return NULL; }
+  Message *peekGUIMessage() { return NULL; }
+  void sendEngineMessage(Message *msg) { delete msg; }
 };
 
 namespace Conf {
@@ -95,8 +96,12 @@ static void selectKitFile(void *ptr, std::string filename)
 
   std::string drumkit = gui->lineedit->text();
 
-  gui->progress->setProgress(1);
+  gui->progress->setProgress(0);
 
+  LoadDrumKitMessage *msg = new LoadDrumKitMessage();
+  msg->drumkitfile = drumkit;
+  gui->drumgizmo->sendEngineMessage(msg);
+  /*
   if(!gui->drumgizmo ||
      !gui->drumgizmo->loadkit(drumkit) ||
      !gui->drumgizmo->init(true)) {
@@ -104,6 +109,7 @@ static void selectKitFile(void *ptr, std::string filename)
   } else {
     gui->progress->setState(GUI::ProgressBar::blue);
   }
+  */
 }
 
 static void kitBrowseClick(void *ptr)
@@ -123,9 +129,16 @@ static void selectMapFile(void *ptr, std::string filename)
   fb->hide();
 
   std::string midimap = gui->lineedit2->text();
+
+  LoadMidimapMessage *msg = new LoadMidimapMessage();
+  msg->midimapfile = midimap;
+  gui->drumgizmo->sendEngineMessage(msg);
+
+  /*
   if(gui->changeMidimapHandler)
     gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
   gui->progress2->setState(GUI::ProgressBar::green);
+  */
 }
 
 static void midimapBrowseClick(void *ptr)
@@ -193,17 +206,17 @@ void PluginGUI::thread_main()
     usleep(50);
 #endif/*WIN32*/
     Message *msg;
-    while((msg = drumgizmo->receiveMessage()) != NULL) {
+    while((msg = drumgizmo->receiveGUIMessage()) != NULL) {
       switch(msg->type()) {
       case Message::LoadStatus:
         {
           Message *pmsg;
-          while( (pmsg = drumgizmo->peekMessage()) != NULL) {
+          while( (pmsg = drumgizmo->peekGUIMessage()) != NULL) {
             if(pmsg->type() != Message::LoadStatus) break;
             delete msg;
-            msg = drumgizmo->receiveMessage();
+            msg = drumgizmo->receiveGUIMessage();
           } 
-          LoadStatus *ls = (LoadStatus*)msg;
+          LoadStatusMessage *ls = (LoadStatusMessage*)msg;
           DEBUG(gui, "%d of %d (%s)\n",
                 ls->numer_of_files_loaded,
                 ls->number_of_files,
@@ -343,7 +356,6 @@ void PluginGUI::init()
   lbl_version->move(270, 279);
   lbl_version->resize(70, 20);
 
-  /*
   {
     GUI::ComboBox *cmb = new GUI::ComboBox(window);
     cmb->addItem("Foo", "Bar");
@@ -351,7 +363,7 @@ void PluginGUI::init()
     cmb->move(10,100);
     cmb->resize(70, 30);
   }
-  */
+
   // Create filebrowser
   filebrowser = new GUI::FileBrowser(window);
   filebrowser->move(0, 0);

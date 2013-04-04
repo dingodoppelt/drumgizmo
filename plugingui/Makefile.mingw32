@@ -28,6 +28,7 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/checkbox.cc \
 	$(top_srcdir)/plugingui/slider.cc \
 	$(top_srcdir)/plugingui/listbox.cc \
+	$(top_srcdir)/plugingui/listboxbasic.cc \
 	$(top_srcdir)/plugingui/filebrowser.cc \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/combobox.cc \

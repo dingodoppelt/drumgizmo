@@ -38,7 +38,7 @@ namespace GUI {
 
 class Font {
 public:
-  Font();
+  Font(std::string fontfile = ":font.png");
   
   void setFace(std::string face);
   std::string face();

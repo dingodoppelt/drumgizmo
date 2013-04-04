@@ -30,18 +30,36 @@
 class Message {
 public:
   typedef enum {
-    LoadStatus,
+    // Engine -> GUI Messages:
+    LoadStatus, // Signal GUI the current load status.
+
+    // GUI -> Engine, Engine -> Engine Messages:
+    LoadDrumKit, // Signal engine to load drumkit.
+    LoadMidimap, // Signal engine to load midimap.
   } type_t;
+
   virtual ~Message() {}
   virtual type_t type() = 0;
 };
 
-class LoadStatus : public Message {
+class LoadStatusMessage : public Message {
 public:
   type_t type() { return Message::LoadStatus; }
   unsigned int number_of_files;
   unsigned int numer_of_files_loaded;
   std::string current_file;
+};
+
+class LoadDrumKitMessage : public Message {
+public:
+  type_t type() { return Message::LoadDrumKit; }
+  std::string drumkitfile;
+};
+
+class LoadMidimapMessage : public Message {
+public:
+  type_t type() { return Message::LoadMidimap; }
+  std::string midimapfile;
 };
 
 #endif/*__DRUMGIZMO_MESSAGE_H__*/

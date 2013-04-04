@@ -27,12 +27,11 @@
 #ifndef __DRUMGIZMO_INPUT_VST_H__
 #define __DRUMGIZMO_INPUT_VST_H__
 
-#include <audioinputengine.h>
-#include <midimapper.h>
+#include <audioinputenginemidi.h>
 
 #include <public.sdk/source/vst2.x/audioeffectx.h>
 
-class InputVST : public AudioInputEngine {
+class InputVST : public AudioInputEngineMidi {
 public:
   InputVST();
   virtual ~InputVST();
@@ -49,9 +48,6 @@ public:
   void post();
 
   void processEvents(VstEvents* ev);
-
-  void loadMidiMap(std::string file);
-  MidiMapper mmap;
 
 private:
   event_t *list;
