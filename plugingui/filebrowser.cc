@@ -81,7 +81,7 @@ static void changeDir(void *ptr)
   char *c = getcwd(filename, sizeof(filename));
   (void)c;
 
-  //printf("CWD: [%s]\n", filename);
+  DEBUG(cwd, "CWD1: [%s]\n", filename);
 
   if(value != "") {
 #ifdef WIN32
@@ -99,15 +99,15 @@ static void changeDir(void *ptr)
   struct stat st;
   if(stat(filename, &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
-      //printf("'%s' is present and is a directory\n", filename);
+      DEBUG(cwd, "'%s' is present and is a directory\n", filename);
     }
     if((st.st_mode & S_IFREG) != 0) {
-      //printf("'%s' is present and is a file\n", filename);
+      DEBUG(cwd, "'%s' is present and is a file\n", filename);
       if(prv->filesel_handler) prv->filesel_handler(prv->ptr, filename);
       return;
     }
   } else {
-    //printf("'%s' is not present or unreadable\n", filename);
+    DEBUG(cwd, "'%s' is not present or unreadable\n", filename);
     //perror("!");
     return;
   }
@@ -118,6 +118,8 @@ static void changeDir(void *ptr)
 
   c = getcwd(filename, sizeof(filename));
   le->setText(filename);
+
+  DEBUG(cwd, "CWD2: [%s]\n", filename);
 
   DIR *dir = opendir(".");
   if(!dir) {
@@ -135,7 +137,8 @@ static void changeDir(void *ptr)
 
 GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   : GUI::Widget(parent),
-    lbl_path(this), lineedit(this), listbox(this), btn_sel(this), btn_esc(this)
+    lbl_path(this), lineedit(this), listbox(this), btn_sel(this), btn_esc(this),
+    back(":bg.png")
 #ifdef WIN32
   , drv(this), lbl_drive(this)
 #endif   
@@ -189,8 +192,41 @@ GUI::FileBrowser::~FileBrowser()
   delete prv;
 }
 
+#include <libgen.h>
+
+static bool isDir(std::string d)
+{
+  DEBUG(dir, "Is '%s' a dir?\n", d.c_str());
+  struct stat st;
+  if(stat(d.c_str(), &st) == 0) {
+    if((st.st_mode & S_IFDIR) != 0) {
+      DEBUG(dir, "Yes\n");
+      return true;
+    }
+  }
+
+  DEBUG(dir, "No\n");
+  return false;
+}
+
 void GUI::FileBrowser::setPath(std::string path)
 {
+  std::string dir;
+  if(isDir(path)) {
+    dir = path;
+  } else {
+    char *d = strdup(path.c_str());
+    std::string _dirname = dirname(d);
+    free(d);
+    if(isDir(_dirname)) dir = _dirname;
+    else return;
+  }
+
+  if(chdir(dir.c_str()) == -1) return;
+  prv->listbox->clear();
+  changeDir(prv);
+
+  /*
   std::string dirname = path;
 
   while(dirname != "") {
@@ -218,6 +254,7 @@ void GUI::FileBrowser::setPath(std::string path)
       dirname = dirname.substr(0, dirname.length() - 1);
     }
   }
+  */
 }
 
 void GUI::FileBrowser::resize(int w, int h)
@@ -226,7 +263,7 @@ void GUI::FileBrowser::resize(int w, int h)
 
   int offset = 0;
   int brd = 5; // border
-  int btn_h = 18;
+  int btn_h = 30;
 
 #ifdef WIN32
   offset += brd;
@@ -275,14 +312,5 @@ void GUI::FileBrowser::registerFileSelectHandler(void (*handler)(void *,
 void GUI::FileBrowser::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
-  p.setColour(Colour(0, 0.8));
-
-  p.drawFilledRectangle(0, 0, width(), height());
-
-  p.setColour(Colour(1, 1));
-
-  for(int i = 1; i < 10; i++) {
-    p.drawLine(0,0,width() / i, height() - 1);
-    p.drawLine(width()-1,0,width() / i, height() - 1);
-  }
+  p.drawImageStretched(0,0, &back, width(), height());
 }
