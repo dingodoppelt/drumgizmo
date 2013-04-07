@@ -143,6 +143,8 @@ bool DrumGizmo::loadkit(std::string file)
 
   DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
 
+  kit.clear();
+
   DrumKitParser parser(kitfile, kit);
   if(parser.parse()) {
     ERR(drumgizmo, "Drumkit parser failed: %s\n", kitfile.c_str());
@@ -233,6 +235,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   // Handle engine messages, at most one in each iteration:
   handleEngineEvents();
 
+  if(!samples) return true;
+
   ie->pre();
   oe->pre(nsamples);
 
@@ -255,9 +259,13 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         }
       */
       
+      if(!kit.isValid()) continue;
+
       if(d < (int)kit.instruments.size()) {
         i = kit.instruments[d];
       }
+
+      if(!i->isValid()) continue;
       
       if(i == NULL) {
         ERR(drumgizmo, "Missing Instrument %d.\n", evs[e].instrument);

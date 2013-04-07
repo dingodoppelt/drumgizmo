@@ -26,13 +26,30 @@
  */
 #include "drumkit.h"
 
+DrumKit::DrumKit()
+{
+  magic = this;
+}
+
 DrumKit::~DrumKit()
+{
+  magic = NULL;
+  clear();
+}
+
+void DrumKit::clear()
 {
   Instruments::iterator i = instruments.begin();
   while(i != instruments.end()) {
     delete *i;
     i++;
   }
+  instruments.clear();
+}
+
+bool DrumKit::isValid()
+{
+  return this == magic;
 }
 
 std::string DrumKit::name()

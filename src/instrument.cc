@@ -39,16 +39,25 @@ Instrument::Instrument()
   DEBUG(instrument, "new %p\n", this);
   mod = 1.0;
   lastpos = 0;
+
+  magic = this;
 }
 
 Instrument::~Instrument()
 {
+  magic = NULL;
+
   DEBUG(instrument, "delete %p\n", this);
   std::vector<AudioFile*>::iterator i = audiofiles.begin();
   while(i != audiofiles.end()) {
     delete *i;
     i++;
   }
+}
+
+bool Instrument::isValid()
+{
+  return this == magic;
 }
 
 Sample *Instrument::sample(level_t level, size_t pos)

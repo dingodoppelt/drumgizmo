@@ -37,6 +37,7 @@ class DrumKitParser;
 class DrumKit {
   friend class DrumKitParser;
 public:
+  DrumKit();
   ~DrumKit();
 
   std::string name();
@@ -45,7 +46,13 @@ public:
   Instruments instruments;
   Channels channels;
  
+  void clear();
+
+  bool isValid();
+
 private:
+  void *magic;
+
   std::string _name;
   std::string _description;
 };

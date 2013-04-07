@@ -48,7 +48,10 @@ public:
 
   std::string filename;
 
+  bool isValid();
+
 private:
+  void *magic;
   Mutex mutex;
   bool is_loaded;
 };

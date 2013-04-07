@@ -50,7 +50,11 @@ public:
 
   std::vector<AudioFile*> audiofiles;
 
+  bool isValid();
+
 private:
+  void *magic;
+
   std::string _name;
   std::string _description;
   RangeMap<level_t, Sample*> samples;

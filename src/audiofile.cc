@@ -42,13 +42,21 @@ AudioFile::AudioFile(std::string filename)
   data = NULL;
   size = 0;
 
+  magic = this;
+
   //load();
 }
 
 AudioFile::~AudioFile()
 {
+  magic = NULL;
   //printf("delete AudioFile %p\n", this);
   unload();
+}
+
+bool AudioFile::isValid()
+{
+  return this == magic;
 }
 
 void AudioFile::unload()

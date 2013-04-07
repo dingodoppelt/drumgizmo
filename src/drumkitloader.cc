@@ -68,6 +68,7 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 }
 
 
+
 void DrumKitLoader::thread_main()
 {
   while(1) {
@@ -79,10 +80,14 @@ void DrumKitLoader::thread_main()
     if(quitit) return;
 
     unsigned int count = 0;
+
+    if(!kit->isValid()) goto finish;
+
     { // Count total number of files that need loading:
       Instruments::iterator i = kit->instruments.begin();
       while(i != kit->instruments.end()) {
         Instrument *instr = *i;
+        if(!instr->isValid()) goto finish;
 
         count += instr->audiofiles.size();
         i++;
@@ -95,6 +100,8 @@ void DrumKitLoader::thread_main()
       while(i != kit->instruments.end()) {
         Instrument *instr = *i;
         
+        if(!instr->isValid()) goto finish;
+
         std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
         while(a != instr->audiofiles.end()) {
 #if 0
@@ -105,6 +112,9 @@ void DrumKitLoader::thread_main()
 #endif/*WIN32*/
 #endif
           AudioFile *af = *a;
+
+          if(!af->isValid()) goto finish;
+
           af->load();
           loaded++;
 
@@ -124,6 +134,9 @@ void DrumKitLoader::thread_main()
     mutex.lock();
     is_done = true;
     mutex.unlock();
+
+  finish:
+    continue;
   }
 }
 
