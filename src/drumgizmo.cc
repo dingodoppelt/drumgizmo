@@ -235,8 +235,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   // Handle engine messages, at most one in each iteration:
   handleEngineEvents();
 
-  if(!samples) return true;
-
   ie->pre();
   oe->pre(nsamples);
 
@@ -283,7 +281,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       while(j != kit.channels.end()) {
         Channel &ch = *j;
         AudioFile *af = s->getAudioFile(&ch);
-        if(af == NULL) {
+        if(af == NULL || !af->isValid()) {
           //printf("Missing AudioFile.\n");
         } else {
           DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
@@ -366,7 +364,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
         //af->load(); // Make sure it is loaded.
-        if(!af->isLoaded()) {
+        if(!af->isLoaded() || s == NULL) {
           removeevent = true;
           break;
         }
