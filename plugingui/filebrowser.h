@@ -34,6 +34,7 @@
 #include "combobox.h"
 #include "lineedit.h"
 #include "label.h"
+#include "image.h"
 
 namespace GUI {
 
@@ -65,6 +66,8 @@ private:
 
   GUI::Button btn_sel;
   GUI::Button btn_esc;
+
+  Image back;
 
 #ifdef WIN32
   // Only used on win32
