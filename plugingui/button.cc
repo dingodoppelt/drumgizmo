@@ -54,7 +54,9 @@ GUI::Button::Button(Widget *parent)
   box_down.bottomRight = new Image(":pushbuttondown_br.png");
   box_down.center      = new Image(":pushbuttondown_c.png");
 
-  state = up;
+  draw_state = up;
+  button_state = up;
+
   handler = NULL;
   ptr = NULL;
 }
@@ -68,14 +70,19 @@ void GUI::Button::registerClickHandler(void (*handler)(void *), void *ptr)
 void GUI::Button::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == 1) {
-    state = down;
+    draw_state = down;
+    button_state = down;
+    in_button = true;
     repaintEvent(NULL);
   }
   if(e->direction == -1) {
-    state = up;
+    draw_state = up;
+    button_state = up;
     repaintEvent(NULL);
-    clicked();
-    if(handler) handler(ptr);
+    if(in_button) {
+      clicked();
+      if(handler) handler(ptr);
+    }
   }
 }
 
@@ -89,8 +96,7 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
   int h = height();
   if(w == 0 || h == 0) return;
 
-
-  switch(state) {
+  switch(draw_state) {
   case up:
     p.drawBox(0, 0, &box_up, w, h);
     break;
@@ -101,8 +107,8 @@ void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
 
   Font font(":fontemboss.png");
   p.setColour(Colour(0.1));
-  p.drawText(width()/2-(text.length()*3)+(state==up?0:1),
-             height()/2+5+(state==up?0:1), font, text, true);
+  p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1),
+             height()/2+5+1+(draw_state==up?0:1), font, text, true);
 }
 
 void GUI::Button::setText(std::string text)
@@ -113,18 +119,25 @@ void GUI::Button::setText(std::string text)
 
 void GUI::Button::mouseLeaveEvent()
 {
-  DEBUG(button, "Leave\n");
-  if(state == down) {
-    state = up;
+  in_button = false;
+  if(button_state == down) {
+    draw_state = up;
     repaintEvent(NULL);
   }
 }
 
 void GUI::Button::mouseEnterEvent()
 {
-  DEBUG(button, "Enter\n");
+  in_button = true;
+  if(button_state == down) {
+    draw_state = down;
+    repaintEvent(NULL);
+  }
 }
 
+void GUI::Button::mouseMoveEvent(MouseMoveEvent *e)
+{
+}
 
 #ifdef TEST_BUTTON
 //Additional dependency files

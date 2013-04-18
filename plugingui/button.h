@@ -39,6 +39,7 @@ public:
   Button(Widget *parent);
 
   bool isFocusable() { return true; }
+  bool catchMouse() { return true; }
 
   void setText(std::string text);
 
@@ -52,8 +53,11 @@ public:
 
   virtual void mouseLeaveEvent();
   virtual void mouseEnterEvent();
+  virtual void mouseMoveEvent(MouseMoveEvent *e);
 
 private:
+  bool in_button;
+
   Painter::Box box_up;
   Painter::Box box_down;
 
@@ -63,7 +67,9 @@ private:
   } state_t;
 
   std::string text;
-  state_t state;
+
+  state_t draw_state;
+  state_t button_state;
 
   void (*handler)(void *);
   void *ptr;
