@@ -57,7 +57,7 @@ GUI::ComboBox::ComboBox(GUI::Widget *parent)
   box.bottomRight = new Image(":widget_br.png");
   box.center      = new Image(":widget_c.png");
 
-  listbox = new GUI::ListBoxBasic(parent);
+  listbox = new GUI::ListBoxThin(parent);
   listbox->registerSelectHandler(listboxSelectHandler, this);
   listbox->registerClickHandler(listboxSelectHandler, this);
   listbox->hide();
@@ -102,6 +102,16 @@ void GUI::ComboBox::registerValueChangedHandler(void (*handler)(void *),
   this->ptr = ptr;
 }
 
+static void drawArrow(GUI::Painter &p, int x, int y, int w, int h)
+{
+  p.drawLine(x, y, x+(w/2), y+h);
+  p.drawLine(x+(w/2), y+h, x+w, y);
+
+  y++;
+  p.drawLine(x, y, x+(w/2), y+h);
+  p.drawLine(x+(w/2), y+h, x+w, y);
+}
+
 void GUI::ComboBox::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
@@ -115,13 +125,22 @@ void GUI::ComboBox::repaintEvent(GUI::RepaintEvent *e)
   if(w == 0 || h == 0) return;
   p.drawBox(0, 0, &box, w, h);
 
-  p.setColour(Colour(1, 1, 1));
-  p.drawText(BORDER - 4, (height()+font.textHeight()) / 2 + 1, font, _text);
+  p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+  p.drawText(BORDER - 4 + 3, height()/2+5 + 1 + 1, font, _text);
 
-  int n = height();
-  p.setColour(Colour(1, 1, 1, 1));
-  p.drawLine(width() - n, 1, width() - 1 - n/2, n);
-  p.drawLine(width() - n + n/2, n, width() - 1, 1);
+  //  p.setColour(Colour(1, 1, 1));
+  //  p.drawText(BORDER - 4, (height()+font.textHeight()) / 2 + 1, font, _text);
+
+  //int n = height() / 2;
+
+  //  p.drawLine(width() - n - 6, 1 + 6, width() - 1 - 6, 1 + 6);
+  {
+    int w = 10;
+    int h = 6;
+    drawArrow(p, width() - 6 - 4 - w, (height() - h) / 2, w, h);
+    p.drawLine(width() - 6 - 4 - w - 4, 7,
+               width() - 6 - 4 - w - 4, height() - 8);
+  }
 }
 
 void GUI::ComboBox::scrollEvent(ScrollEvent *e)
@@ -185,8 +204,8 @@ void GUI::ComboBox::buttonEvent(ButtonEvent *e)
   if(e->direction != 1) return;
 
   if(!listbox->visible()) {
-    listbox->resize(width() - 1, 100);
-    listbox->move(x(), y() + 16);
+    listbox->resize(width() - 10, 100);
+    listbox->move(x() + 5, y() + height() - 7);
   } else {
     if(handler) handler(ptr);
   }

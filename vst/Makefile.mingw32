@@ -50,6 +50,9 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/checkbox.cc \
 	$(DG_BASE)/plugingui/slider.cc \
 	$(DG_BASE)/plugingui/listbox.cc \
+	$(DG_BASE)/plugingui/listboxthin.cc \
+	$(DG_BASE)/plugingui/listboxbasic.cc \
+	$(DG_BASE)/plugingui/verticalline.cc \
 	$(DG_BASE)/plugingui/knob.cc \
 	$(DG_BASE)/plugingui/filebrowser.cc \
 	$(DG_BASE)/plugingui/combobox.cc \

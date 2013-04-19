@@ -18,16 +18,19 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/led.cc \
 	$(top_srcdir)/plugingui/checkbox.cc \
 	$(top_srcdir)/plugingui/slider.cc \
+	$(top_srcdir)/plugingui/scrollbar.cc \
 	$(top_srcdir)/plugingui/listbox.cc \
+	$(top_srcdir)/plugingui/listboxthin.cc \
 	$(top_srcdir)/plugingui/listboxbasic.cc \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/filebrowser.cc \
 	$(top_srcdir)/plugingui/image.cc \
 	$(top_srcdir)/plugingui/combobox.cc \
 	$(top_srcdir)/plugingui/progressbar.cc \
+	$(top_srcdir)/plugingui/verticalline.cc \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc 
 
 PLUGIN_GUI_LIBS = -lX11
 
-PLUGIN_GUI_CFLAGS = -I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+PLUGIN_GUI_CFLAGS = -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX

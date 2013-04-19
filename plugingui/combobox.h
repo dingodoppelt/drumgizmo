@@ -32,7 +32,7 @@
 
 #include "widget.h"
 #include "font.h"
-#include "listboxbasic.h"
+#include "listboxthin.h"
 #include "painter.h"
 
 namespace GUI {
@@ -62,7 +62,7 @@ private:
   Painter::Box box;
 
   GUI::Font font;
-  GUI::ListBoxBasic *listbox;
+  GUI::ListBoxThin *listbox;
 
   void (*handler)(void *);
   void *ptr;

@@ -127,10 +127,15 @@ static void changeDir(void *ptr)
     return;
   }
 
- struct dirent *entry;
+  std::vector<GUI::ListBoxBasic::Item> items;
+  struct dirent *entry;
   while((entry = readdir(dir)) != NULL) {
-    lb->addItem(entry->d_name, entry->d_name);
+    GUI::ListBoxBasic::Item item;
+    item.name = entry->d_name;
+    item.value = entry->d_name;
+    items.push_back(item);
   }
+  lb->addItems(items);
 
   closedir(dir);
 }

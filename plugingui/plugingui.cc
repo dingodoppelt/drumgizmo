@@ -32,6 +32,8 @@
 #include "globalcontext.h"
 #include "knob.h"
 
+#include "verticalline.h"
+
 #ifndef STANDALONE
 #include <drumgizmo.h>
 #include "../src/configuration.h"
@@ -66,7 +68,7 @@ static void knobChange(void *ptr)
   PluginGUI *gui = (PluginGUI*)ptr;
   Conf::velocity_modifier_weight = gui->knob->value();
 #ifdef STANDALONE
-  int i = gui->knob->value() * 5;
+  int i = gui->knob->value() * 4;
   switch(i) {
   case 0: gui->progress->setState(GUI::ProgressBar::off); break;
   case 1: gui->progress->setState(GUI::ProgressBar::blue); break;
@@ -97,6 +99,7 @@ static void selectKitFile(void *ptr, std::string filename)
   std::string drumkit = gui->lineedit->text();
 
   gui->progress->setProgress(0);
+  gui->progress->setState(GUI::ProgressBar::blue);
 
   LoadDrumKitMessage *msg = new LoadDrumKitMessage();
   msg->drumkitfile = drumkit;
@@ -252,115 +255,139 @@ void PluginGUI::init()
   lbl_title->move(127, 7);
   lbl_title->resize(200, 20);
   
+  GUI::VerticalLine *l1 = new GUI::VerticalLine(window);
+  l1->move(20, 30);
+  l1->resize(window->width() - 40, 2);
 
-  // Enable Velocity
-  GUI::Label *lbl_velocity = new GUI::Label(window);
-  lbl_velocity->resize(78 ,20);
-  lbl_velocity->move(19,206);
-  lbl_velocity->setText("Humanizer");
+#define OFFSET1 17
+#define OFFSET2 38
+#define OFFSET3 20
 
-  check = new GUI::CheckBox(window);
-  //check->setText("Enable Velocity Modifier");
-  check->move(24,227);
-  check->resize(59,38);
-  check->setChecked(Conf::enable_velocity_modifier);
-  check->registerClickHandler(checkClick, this);
-
-  // Velocity Weight Modifier:
-  {
-    GUI::Label *lbl_weight = new GUI::Label(window);
-    lbl_weight->setText("LABEL");
-    lbl_weight->move(114, 206);
-    lbl_weight->resize(100, 20);
-
-    knob = new GUI::Knob(window);
-    knob->move(114, 223);
-    knob->resize(57, 57);
-    knob->setValue(Conf::velocity_modifier_weight);
-    knob->registerClickHandler(knobChange, this);
-  }
-
-  // Velocity Falloff Modifier:
-  {
-    GUI::Label *lbl_falloff = new GUI::Label(window);
-    lbl_falloff->setText("LABEL");
-    lbl_falloff->move(202, 206);
-    lbl_falloff->resize(100, 20);
-    
-    knob2 = new GUI::Knob(window);
-    knob2->move(202, 223);
-    knob2->resize(57, 57);
-    knob2->setValue(Conf::velocity_modifier_falloff);
-    knob2->registerClickHandler(knobChange2, this);
-  }
-
+#define XOFFSET 20
   // Drumkit file
   {
+    int y = 37;
     GUI::Label *lbl = new GUI::Label(window);
     lbl->setText("Drumkit file:");
-    lbl->move(19, 46);
+    lbl->move(XOFFSET - 4, y);
     lbl->resize(100, 20);
-    /*
-    led = new GUI::LED(window);
-    led->move(0,0);
-    led->resize(16, 16);
-    //  led->setState(false);
-    */
-    progress = new GUI::ProgressBar(window);
-    progress->move(19, 100);
-    progress->resize(336, 11);
 
+    y += OFFSET1;
     lineedit = new GUI::LineEdit(window);
     if(drumgizmo) lineedit->setText(drumgizmo->drumkitfile());
-    else lineedit->setText("Missing DrumGizmo*");
-    lineedit->move(19, 62);
-    lineedit->resize(243, 31);
+    else lineedit->setText("/home/deva/aasimonster/aasimonster.xml");
+    //else lineedit->setText("Missing DrumGizmo*");
+    lineedit->move(XOFFSET, y);
+    lineedit->resize(243, 29);
     
     GUI::Button *btn_brw = new GUI::Button(window);
     btn_brw->setText("Browse...");
-    btn_brw->move(266, 62 - 6);
-    btn_brw->resize(85, 35 + 6);
+    btn_brw->move(266, y - 6 + 4);
+    btn_brw->resize(85, 35 + 6 - 4);
     btn_brw->registerClickHandler(kitBrowseClick, this);
+
+    y += OFFSET2;
+    progress = new GUI::ProgressBar(window);
+    progress->move(XOFFSET, y);
+    progress->resize(window->width() - 2*XOFFSET, 11);
+
+    y += OFFSET3;
+    GUI::VerticalLine *l = new GUI::VerticalLine(window);
+    l->move(XOFFSET, y);
+    l->resize(window->width() - 2*XOFFSET, 2);
   }
 
   // Midimap file
   {
+    int y = 120;
     lbl2 = new GUI::Label(window);
     lbl2->setText("Midimap file:");
-    lbl2->move(19, 118);
+    lbl2->move(XOFFSET - 4, y);
     lbl2->resize(100, 20);
-    /*
-    led2 = new GUI::LED(window);
-    led2->move(0,0);
-    led2->resize(16, 16);
-    //  led2->setState(false);
-    */
-    progress2 = new GUI::ProgressBar(window);
-    progress2->move(19, 174);
-    progress2->resize(336, 11);
     
+    y += OFFSET1;
     lineedit2 = new GUI::LineEdit(window);
     if(drumgizmo) lineedit2->setText(drumgizmo->midimapfile);
-    lineedit2->move(19, 136);
-    lineedit2->resize(243, 31);
+    lineedit2->move(XOFFSET, y);
+    lineedit2->resize(243, 29);
     
     GUI::Button *btn_brw = new GUI::Button(window);
     btn_brw->setText("Browse...");
-    btn_brw->move(266, 136 - 6);
-    btn_brw->resize(85, 35 + 6);
+    btn_brw->move(266, y - 6 + 4);
+    btn_brw->resize(85, 35 + 6 - 4);
     btn_brw->registerClickHandler(midimapBrowseClick, this);
+
+    y += OFFSET2;
+    progress2 = new GUI::ProgressBar(window);
+    progress2->move(XOFFSET, y);
+    progress2->resize(window->width() - 2*XOFFSET, 11);
+
+    y += OFFSET3;
+    GUI::VerticalLine *l = new GUI::VerticalLine(window);
+    l->move(XOFFSET, y);
+    l->resize(window->width() - 2*XOFFSET, 2);
   }
 
+  {
+    int y = 203;
+#define OFFSET4 21
+
+    // Enable Velocity
+    GUI::Label *lbl_velocity = new GUI::Label(window);
+    lbl_velocity->resize(78 ,20);
+    lbl_velocity->move(16, y);
+    lbl_velocity->setText("Humanizer");
+
+    check = new GUI::CheckBox(window);
+    //check->setText("Enable Velocity Modifier");
+    check->move(26, y + OFFSET4);
+    check->resize(59,38);
+    check->setChecked(Conf::enable_velocity_modifier);
+    check->registerClickHandler(checkClick, this);
+
+    // Velocity Weight Modifier:
+    {
+      GUI::Label *lbl_weight = new GUI::Label(window);
+      lbl_weight->setText("Attack");
+      lbl_weight->move(107, y);
+      lbl_weight->resize(100, 20);
+      
+      knob = new GUI::Knob(window);
+      knob->move(109, y + OFFSET4 - 4);
+      knob->resize(57, 57);
+      knob->setValue(Conf::velocity_modifier_weight);
+      knob->registerClickHandler(knobChange, this);
+    }
+    
+    // Velocity Falloff Modifier:
+    {
+      GUI::Label *lbl_falloff = new GUI::Label(window);
+      lbl_falloff->setText("Release");
+      lbl_falloff->move(202 - 17 - 7, y);
+      lbl_falloff->resize(100, 20);
+      
+      knob2 = new GUI::Knob(window);
+      knob2->move(202 - 13 - 5,  y + OFFSET4 - 4);
+      knob2->resize(57, 57);
+      knob2->setValue(Conf::velocity_modifier_falloff);
+      knob2->registerClickHandler(knobChange2, this);
+    }
+  }
+
+  GUI::VerticalLine *l2 = new GUI::VerticalLine(window);
+  l2->move(20, 310 - 15 - 9);
+  l2->resize(window->width() - 40, 2);
+
   GUI::Label *lbl_version = new GUI::Label(window);
-  lbl_version->setText("v"VERSION);
-  lbl_version->move(270, 279);
-  lbl_version->resize(70, 20);
+  lbl_version->setText(".::. v"VERSION"  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
+  lbl_version->move(16, 300);
+  lbl_version->resize(window->width(), 20);
 
   {
     GUI::ComboBox *cmb = new GUI::ComboBox(window);
     cmb->addItem("Foo", "Bar");
     cmb->addItem("Hello", "World");
-    cmb->move(10,100);
+    cmb->move(10,10);
     cmb->resize(70, 30);
   }
 

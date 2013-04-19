@@ -148,15 +148,16 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
   if(w == 0 || h == 0) return;
   p.drawBox(0, 0, &box, w, h);
 
-  p.setColour(GUI::Colour(1,1,1,1));
-  p.drawText(BORDER - 4, height()/2+5 + 1, font, _text);
+  p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+  p.drawText(BORDER - 4 + 3, height()/2+5 + 1 + 1 + 1, font, _text);
 
   if(readOnly()) return;
 
   if(hasKeyboardFocus()) {
     size_t px = font.textWidth(_text.substr(0, pos));
-    p.setColour(Colour(0.8));
-    p.drawLine(px + BORDER - 1 - 4, 4, px + BORDER - 1 - 4, height() - 5);
+    //p.setColour(Colour(0.8));
+    p.drawLine(px + BORDER - 1 - 4 + 3, 6,
+               px + BORDER - 1 - 4 + 3, height() - 7);
   }
 }
 

@@ -33,6 +33,7 @@
 
 #include "pixelbuffer.h"
 #include "nativewindow.h"
+#include "image.h"
 
 namespace GUI {
 
@@ -92,6 +93,8 @@ protected:
 
   NativeWindow *native;
 
+  Image back;
+  Image logo;
 };
 
 };

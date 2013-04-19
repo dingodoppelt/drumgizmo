@@ -87,11 +87,11 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
 
   if(state) {
     p.drawImage(0, (knob.height() - bg_on.height()) / 2, &bg_on);
-    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2, 0, &knob);
-    else p.drawImage(bg_on.width() - 40, 0, &knob);
+    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
+    else p.drawImage(bg_on.width() - 40 + 2, 0, &knob);
   } else {
     p.drawImage(0, (knob.height() - bg_off.height()) / 2, &bg_off);
-    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2, 0, &knob);
+    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
     else p.drawImage(0, 0, &knob);
   }
   /*

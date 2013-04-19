@@ -44,7 +44,7 @@
 GUI::Window *gwindow = NULL;
 
 GUI::Window::Window(GlobalContext *gctx) 
-  : Widget(NULL), wpixbuf(1000, 1000)
+  : Widget(NULL), wpixbuf(1000, 1000), back(":bg.png"), logo(":logo.png")
 {
   gwindow = this;
   
@@ -81,11 +81,9 @@ void GUI::Window::setCaption(std::string caption)
 void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
-
-  p.clear();
-
-  Image back(":bg.png");
   p.drawImageStretched(0,0, &back, width(), height());
+  p.drawImage(width() - logo.width(),
+              height() - logo.height(), &logo);
 }
 
 void GUI::Window::resize(int width, int height)
