@@ -263,9 +263,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         i = kit.instruments[d];
       }
 
-      if(!i->isValid()) continue;
-      
-      if(i == NULL) {
+      if(i == NULL || !i->isValid()) {
         ERR(drumgizmo, "Missing Instrument %d.\n", evs[e].instrument);
         continue;
       }
