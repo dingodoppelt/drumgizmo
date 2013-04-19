@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            listbox.h
+ *            listboxthin.h
  *
- *  Mon Feb 25 21:21:40 CET 2013
+ *  Sun Apr  7 19:39:35 CEST 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,8 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LISTBOX_H__
-#define __DRUMGIZMO_LISTBOX_H__
+#ifndef __DRUMGIZMO_LISTBOXTHIN_H__
+#define __DRUMGIZMO_LISTBOXTHIN_H__
 
 #include <string.h>
 #include <vector>
@@ -36,10 +36,10 @@
 
 namespace GUI {
 
-class ListBox : public Widget {
+class ListBoxThin : public Widget {
 public:
-  ListBox(Widget *parent);
-  ~ListBox();
+  ListBoxThin(Widget *parent);
+  ~ListBoxThin();
 
   void addItem(std::string name, std::string value);
   void addItems(std::vector<ListBoxBasic::Item> &items);
@@ -64,4 +64,4 @@ private:
 
 };
 
-#endif/*__DRUMGIZMO_LISTBOX_H__*/
+#endif/*__DRUMGIZMO_LISTBOXTHIN_H__*/

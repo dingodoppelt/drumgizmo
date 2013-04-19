@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            listbox.cc
+ *            listboxthin.cc
  *
- *  Mon Feb 25 21:21:41 CET 2013
+ *  Sun Apr  7 19:39:36 CEST 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,81 +24,81 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "listbox.h"
+#include "listboxthin.h"
 
 #include "painter.h"
 #include "font.h"
 
 #include <stdio.h>
 
-GUI::ListBox::ListBox(GUI::Widget *parent)
+GUI::ListBoxThin::ListBoxThin(GUI::Widget *parent)
   : GUI::Widget(parent)
 {
-  box.topLeft     = new Image(":widget_tl.png");
-  box.top         = new Image(":widget_t.png");
-  box.topRight    = new Image(":widget_tr.png");
-  box.left        = new Image(":widget_l.png");
-  box.right       = new Image(":widget_r.png");
-  box.bottomLeft  = new Image(":widget_bl.png");
-  box.bottom      = new Image(":widget_b.png");
-  box.bottomRight = new Image(":widget_br.png");
-  box.center      = new Image(":widget_c.png");
+  box.topLeft     = new Image(":thinlistbox_tl.png");
+  box.top         = new Image(":thinlistbox_t.png");
+  box.topRight    = new Image(":thinlistbox_tr.png");
+  box.left        = new Image(":thinlistbox_l.png");
+  box.right       = new Image(":thinlistbox_r.png");
+  box.bottomLeft  = new Image(":thinlistbox_bl.png");
+  box.bottom      = new Image(":thinlistbox_b.png");
+  box.bottomRight = new Image(":thinlistbox_br.png");
+  box.center      = new Image(":thinlistbox_c.png");
 
   basic = new GUI::ListBoxBasic(this);
   basic->move(box.left->width(), box.top->height());
 }
 
-GUI::ListBox::~ListBox()
+GUI::ListBoxThin::~ListBoxThin()
 {
 }
 
-void GUI::ListBox::addItem(std::string name, std::string value)
+void GUI::ListBoxThin::addItem(std::string name, std::string value)
 {
   basic->addItem(name, value);
 }
 
-void GUI::ListBox::addItems(std::vector<ListBoxBasic::Item> &items)
+void GUI::ListBoxThin::addItems(std::vector<ListBoxBasic::Item> &items)
 {
   basic->addItems(items);
 }
 
-void GUI::ListBox::clear()
+void GUI::ListBoxThin::clear()
 {
   basic->clear();
 }
 
-bool GUI::ListBox::selectItem(int index)
+bool GUI::ListBoxThin::selectItem(int index)
 {
   return basic->selectItem(index);
 }
 
-std::string GUI::ListBox::selectedName()
+std::string GUI::ListBoxThin::selectedName()
 {
   return basic->selectedName();
 }
 
-std::string GUI::ListBox::selectedValue()
+std::string GUI::ListBoxThin::selectedValue()
 {
   return basic->selectedValue();
 }
 
-void GUI::ListBox::registerClickHandler(void (*handler)(void *), void *ptr)
+void GUI::ListBoxThin::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   basic->registerClickHandler(handler, ptr);
 }
 
-void GUI::ListBox::registerSelectHandler(void (*handler)(void *), void *ptr)
+void GUI::ListBoxThin::registerSelectHandler(void (*handler)(void *), void *ptr)
 { 
   basic->registerSelectHandler(handler, ptr);
 }
 
-void GUI::ListBox::registerValueChangeHandler(void (*handler)(void *),
+void GUI::ListBoxThin::registerValueChangeHandler(void (*handler)(void *),
                                               void *ptr)
 {
   basic->registerValueChangeHandler(handler, ptr);
 }
 
-void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
+void GUI::ListBoxThin::repaintEvent(GUI::RepaintEvent *e)
 {
   GUI::Painter p(this);
 
@@ -110,7 +110,7 @@ void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
   p.drawBox(0, 0, &box, w, h);
 }
 
-void GUI::ListBox::resize(int width, int height)
+void GUI::ListBoxThin::resize(int width, int height)
 {
   GUI::Widget::resize(width, height);
   basic->resize(width - (box.left->width() + box.right->width()),

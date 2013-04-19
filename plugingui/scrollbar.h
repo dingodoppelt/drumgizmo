@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            listbox.h
+ *            scrollbar.h
  *
- *  Mon Feb 25 21:21:40 CET 2013
+ *  Sun Apr 14 12:54:58 CEST 2013
  *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,44 +24,52 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LISTBOX_H__
-#define __DRUMGIZMO_LISTBOX_H__
-
-#include <string.h>
-#include <vector>
+#ifndef __DRUMGIZMO_SCROLLBAR_H__
+#define __DRUMGIZMO_SCROLLBAR_H__
 
 #include "widget.h"
-#include "painter.h"
-#include "listboxbasic.h"
+#include "image.h"
 
 namespace GUI {
 
-class ListBox : public Widget {
+class ScrollBar : public Widget {
 public:
-  ListBox(Widget *parent);
-  ~ListBox();
+  ScrollBar(Widget *parent);
 
-  void addItem(std::string name, std::string value);
-  void addItems(std::vector<ListBoxBasic::Item> &items);
+  bool catchMouse() { return true; }
 
-  void clear();
-  bool selectItem(int index);
-  std::string selectedName();
-  std::string selectedValue();
+  void setRange(int range);
+  int range();
 
-  void registerSelectHandler(void (*handler)(void *), void *ptr);
-  void registerClickHandler(void (*handler)(void *), void *ptr);
+  void setMaximum(int max);
+  int maximum();
+
+  void setValue(int value);
+  int value();
+
   void registerValueChangeHandler(void (*handler)(void *), void *ptr);
 
-  virtual void repaintEvent(GUI::RepaintEvent *e);
-  virtual void resize(int w, int h);
+  void repaintEvent(RepaintEvent *e);
+  void scrollEvent(ScrollEvent *e);
+  void buttonEvent(ButtonEvent *e);
+  void mouseMoveEvent(MouseMoveEvent *e);
 
 private:
-  ListBoxBasic *basic;
+  int max;
+  int val;
+  int ran;
 
-  Painter::Box box;
+  int yoffset;
+  int value_offset;
+  bool dragging;
+
+  Image bg_img;
+
+  void (*handler)(void *);
+  void *ptr;
 };
 
 };
 
-#endif/*__DRUMGIZMO_LISTBOX_H__*/
+
+#endif/*__DRUMGIZMO_SCROLLBAR_H__*/

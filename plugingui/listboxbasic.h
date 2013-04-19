@@ -34,16 +34,25 @@
 #include "font.h"
 #include "painter.h"
 
+#include "scrollbar.h"
+
 namespace GUI {
 
 class ListBoxBasic : public Widget {
 public:
+  class Item {
+  public:
+    std::string name;
+    std::string value;
+  };
+
   ListBoxBasic(Widget *parent);
   ~ListBoxBasic();
 
   bool isFocusable() { return true; }
 
   void addItem(std::string name, std::string value);
+  void addItems(std::vector<Item> &items);
 
   void clear();
   bool selectItem(int index);
@@ -58,24 +67,22 @@ public:
   virtual void buttonEvent(ButtonEvent *e);
   virtual void scrollEvent(ScrollEvent *e);
   virtual void keyEvent(KeyEvent *e);
+  virtual void resize(int w, int h);
 
 private:
-  Image *bg_img;
+  ScrollBar scroll;
+
+  Image bg_img;
 
   void setSelection(int index);
 
-  struct item {
-    std::string name;
-    std::string value;
-  };
+  std::vector<Item> items;
 
-  std::vector<struct item> items;
   int selected;
   int marked;
   GUI::Font font;
   int padding;
   int btn_size;
-  int scroll_offset;
 
   void (*sel_handler)(void *);
   void *sel_ptr;
