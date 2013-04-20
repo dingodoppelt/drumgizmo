@@ -38,6 +38,7 @@
 
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
+#include "configuration.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : loader(this), oe(o), ie(i)
@@ -179,8 +180,6 @@ bool DrumGizmo::init(bool preload)
 
 void DrumGizmo::handleEngineEvents()
 {
-  // DEBUG(msg, "handle?");
-
   Message *msg = receiveEngineMessage();
   if(msg) {
     DEBUG(msg, "got message.");
@@ -202,36 +201,47 @@ void DrumGizmo::handleEngineEvents()
         aim->loadMidiMap(m->midimapfile, kit.instruments);
       }
       break;
+    case Message::EngineSettingsMessage:
+      {
+        DEBUG(msg, "got EngineSettingsMessage message.");
+        EngineSettingsMessage *msg = new EngineSettingsMessage();
+        msg->midimapfile = midimapfile;
+        msg->midimap_loaded = true;
+        msg->drumkitfile = drumkitfile();
+        msg->drumkit_loaded = true;
+        msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
+        msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
+        msg->velocity_modifier_weight = Conf::velocity_modifier_weight;
+        msg->enable_velocity_randomiser = Conf::enable_velocity_randomiser;
+        msg->velocity_randomiser_weight = Conf::velocity_randomiser_weight;
+        sendGUIMessage(msg);
+      }
+      break;
+    case Message::ChangeSettingMessage:
+      {
+        ChangeSettingMessage *ch = (ChangeSettingMessage*)msg;
+        switch(ch->name) {
+        case ChangeSettingMessage::enable_velocity_modifier:
+          Conf::enable_velocity_modifier = ch->value;
+          break;
+        case ChangeSettingMessage::velocity_modifier_weight:
+          Conf::velocity_modifier_weight = ch->value;
+          break;
+        case ChangeSettingMessage::velocity_modifier_falloff:
+          Conf::velocity_modifier_falloff = ch->value;
+          break;
+        }
+      }
+      break;
     default:
       break;
     }
-    // delete msg;
+    delete msg;
   }
 }
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
-#if 0
-  DEBUG(drumgizmo, "loader.isDone() = %d", (int)loader.isDone());
-  if(!loader.isDone()) {
-    /*
-    //    return false;
-    ie->pre();
-    oe->pre(nsamples);
-    size_t nev;
-    event_t *evs = ie->run(pos, nsamples, &nev);
-    free(evs);
-    //    memset(samples, 0, nsamples);
-    for(size_t i = 0; i < nsamples / 2; i++) samples[i] = sin(pos + i);
-    for(size_t c = 0; c < 16; c++) oe->run(c, samples, nsamples);
-    ie->post();
-    oe->post(nsamples);
-    pos += nsamples;
-    */
-    return true;
-  }
-#endif
-
   // Handle engine messages, at most one in each iteration:
   handleEngineEvents();
 
@@ -434,8 +444,6 @@ void DrumGizmo::stop()
 {
   // engine.stop();
 }
-
-#include "configuration.h"
 
 std::string float2str(float a)
 {

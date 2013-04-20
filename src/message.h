@@ -36,6 +36,8 @@ public:
     // GUI -> Engine, Engine -> Engine Messages:
     LoadDrumKit, // Signal engine to load drumkit.
     LoadMidimap, // Signal engine to load midimap.
+    EngineSettingsMessage, // Request or receive engine settings.
+    ChangeSettingMessage, // Update named setting in engine.
   } type_t;
 
   virtual ~Message() {}
@@ -60,6 +62,41 @@ class LoadMidimapMessage : public Message {
 public:
   type_t type() { return Message::LoadMidimap; }
   std::string midimapfile;
+};
+
+class EngineSettingsMessage : public Message {
+public:
+  type_t type() { return Message::EngineSettingsMessage; }
+  std::string midimapfile;
+  bool midimap_loaded;
+
+  std::string drumkitfile;
+  bool drumkit_loaded;
+
+  float enable_velocity_modifier;
+  float velocity_modifier_falloff;
+  float velocity_modifier_weight;
+  float enable_velocity_randomiser;
+  float velocity_randomiser_weight;
+};
+
+class ChangeSettingMessage : public Message {
+public:
+  typedef enum {
+    enable_velocity_modifier,
+    velocity_modifier_weight,
+    velocity_modifier_falloff,
+  } setting_name_t;
+
+  ChangeSettingMessage(setting_name_t n, float v) {
+    name = n;
+    value = v;
+  }
+
+  type_t type() { return Message::ChangeSettingMessage; }
+
+  setting_name_t name;
+  float value;
 };
 
 #endif/*__DRUMGIZMO_MESSAGE_H__*/

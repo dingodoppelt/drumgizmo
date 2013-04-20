@@ -60,13 +60,22 @@ namespace Conf {
 static void checkClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
-  Conf::enable_velocity_modifier = gui->check->checked();
+
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
+                             gui->check->checked());
+  gui->drumgizmo->sendEngineMessage(msg);
 }
 
 static void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
-  Conf::velocity_modifier_weight = gui->knob->value();
+
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
+                             gui->knob->value());
+  gui->drumgizmo->sendEngineMessage(msg);
+
 #ifdef STANDALONE
   int i = gui->knob->value() * 4;
   switch(i) {
@@ -82,7 +91,12 @@ static void knobChange(void *ptr)
 static void knobChange2(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
-  Conf::velocity_modifier_falloff = gui->knob2->value();
+
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
+                             gui->knob2->value());
+  gui->drumgizmo->sendEngineMessage(msg);
+
 #ifdef STANDALONE
   gui->progress->setProgress(gui->knob2->value());
 #endif
@@ -201,6 +215,11 @@ void PluginGUI::thread_main()
 {
   init();
 
+  { // Request all engine settings
+    EngineSettingsMessage *msg = new EngineSettingsMessage();
+    drumgizmo->sendEngineMessage(msg);
+  }
+
   while(running) {
     eventhandler->processEvents(window);
 #ifdef WIN32
@@ -231,6 +250,16 @@ void PluginGUI::thread_main()
           }
         }
         break;
+      case Message::EngineSettingsMessage:
+        {
+          EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
+          lineedit->setText(settings->drumkitfile);
+          lineedit2->setText(settings->midimapfile);
+          check->setChecked(settings->enable_velocity_modifier);
+          knob->setValue(settings->velocity_modifier_weight);
+          knob2->setValue(settings->velocity_modifier_falloff);
+      
+        }
       default:
         break;
       }
@@ -274,9 +303,6 @@ void PluginGUI::init()
 
     y += OFFSET1;
     lineedit = new GUI::LineEdit(window);
-    if(drumgizmo) lineedit->setText(drumgizmo->drumkitfile());
-    else lineedit->setText("/home/deva/aasimonster/aasimonster.xml");
-    //else lineedit->setText("Missing DrumGizmo*");
     lineedit->move(XOFFSET, y);
     lineedit->resize(243, 29);
     
@@ -307,7 +333,6 @@ void PluginGUI::init()
     
     y += OFFSET1;
     lineedit2 = new GUI::LineEdit(window);
-    if(drumgizmo) lineedit2->setText(drumgizmo->midimapfile);
     lineedit2->move(XOFFSET, y);
     lineedit2->resize(243, 29);
     
@@ -342,7 +367,6 @@ void PluginGUI::init()
     //check->setText("Enable Velocity Modifier");
     check->move(26, y + OFFSET4);
     check->resize(59,38);
-    check->setChecked(Conf::enable_velocity_modifier);
     check->registerClickHandler(checkClick, this);
 
     // Velocity Weight Modifier:
@@ -355,7 +379,6 @@ void PluginGUI::init()
       knob = new GUI::Knob(window);
       knob->move(109, y + OFFSET4 - 4);
       knob->resize(57, 57);
-      knob->setValue(Conf::velocity_modifier_weight);
       knob->registerClickHandler(knobChange, this);
     }
     
@@ -369,7 +392,6 @@ void PluginGUI::init()
       knob2 = new GUI::Knob(window);
       knob2->move(202 - 13 - 5,  y + OFFSET4 - 4);
       knob2->resize(57, 57);
-      knob2->setValue(Conf::velocity_modifier_falloff);
       knob2->registerClickHandler(knobChange2, this);
     }
   }
