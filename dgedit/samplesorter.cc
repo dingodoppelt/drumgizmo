@@ -112,13 +112,13 @@ Levels SampleSorter::levels()
     if(i == threshold.size() - 1) next = 1.0;
     else next = threshold[i+1];
 
-    QMap<float, Selection>::iterator i = sorted.begin();
-    while(i != sorted.end()) {
-      float val = (i.key()/max);
+    QMap<float, Selection>::iterator si = sorted.begin();
+    while(si != sorted.end()) {
+      float val = (si.key()/max);
       if(val >= lvl.velocity && val <= next) {
-        lvl.selections[i.key()] = i.value();
+        lvl.selections[si.key()] = si.value();
       }
-      i++;
+      si++;
     }
 
     lvls.push_back(lvl);

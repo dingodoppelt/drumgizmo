@@ -243,6 +243,11 @@ if test "x$enable_editor" = "xyes"; then
    if (test "$QT_UIC" = ""); then
      AC_MSG_ERROR([QT4 uic is required.])
    fi
+
+   dnl ======================
+   dnl Check for libao
+   dnl ======================
+   PKG_CHECK_MODULES(AO, ao >= 1.1.0)
 else
 	 AC_MSG_RESULT([*** Qt Drumkit Editor disabled per user request ***])
    have_editor=no
