@@ -52,23 +52,31 @@ public:
   timepos_t offset;
 };
 
+#define NO_RAMPDOWN -1
 class EventSample : public Event {
 public:
-  EventSample(channel_t c, float g, AudioFile *af)
+  EventSample(channel_t c, float g, AudioFile *af, std::string grp,
+              void *instr)
   {
     channel = c;
     gain = g;
     t = 0;
     file = af;
+    group = grp;
+    instrument = instr;
+    rampdown = NO_RAMPDOWN;
+    ramp_start = 0;
   }
 
   Event::type_t type() { return Event::sample; }
 
   float gain;
-
   unsigned int t;
-
   AudioFile *file;
+  std::string group;
+  void *instrument;
+  int rampdown;
+  int ramp_start;
 };
 
 class EventQueue {

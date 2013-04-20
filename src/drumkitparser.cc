@@ -51,7 +51,7 @@ DrumKitParser::~DrumKitParser()
 }
 
 void DrumKitParser::startTag(std::string name,
-                             std::map< std::string, std::string> attr)
+                             std::map<std::string, std::string> attr)
 {
   if(name == "drumkit") {
     if(attr.find("name") != attr.end())
@@ -88,6 +88,8 @@ void DrumKitParser::startTag(std::string name,
 
     instr_name = attr["name"];
     instr_file = attr["file"];
+    if(attr.find("group") != attr.end()) instr_group = attr["group"];
+    else instr_group = "";
   }
 
   if(name == "channelmap") {
@@ -109,6 +111,7 @@ void DrumKitParser::endTag(std::string name)
 {
   if(name == "instrument") {
     Instrument *i = new Instrument();
+    i->setGroup(instr_group);
     //    Instrument &i = kit.instruments[kit.instruments.size() - 1];
     InstrumentParser parser(path + "/" + instr_file, *i);
     parser.parse();

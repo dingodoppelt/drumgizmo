@@ -268,6 +268,29 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         continue;
       }
       
+      if(i->group() != "") {
+        // Add event to ramp down all existing events with the same groupname.
+        Channels::iterator j = kit.channels.begin();
+        while(j != kit.channels.end()) {
+          Channel &ch = *j;
+          std::list< Event* >::iterator evs = activeevents[ch.num].begin();
+          while(evs != activeevents[ch.num].end()) {
+            Event *ev = *evs;
+            if(ev->type() == Event::sample) {
+              EventSample *sev = (EventSample*)ev;
+              if(sev->group == i->group() && sev->instrument != i) {
+                sev->rampdown = 3000; // Ramp down 3000 samples
+                // TODO: This must be configurable at some point...
+                // ... perhaps even by instrument (ie. in the xml file)
+                sev->ramp_start = sev->rampdown;
+              }
+            }
+            evs++;
+          }
+          j++;
+        }
+      }
+        
       Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
       
       if(s == NULL) {
@@ -283,7 +306,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
           //printf("Missing AudioFile.\n");
         } else {
           DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
-          Event *evt = new EventSample(ch.num, 1.0, af);
+          Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
           evt->offset = evs[e].offset + pos;
           activeevents[ch.num].push_back(evt);
         }
@@ -361,7 +384,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
       {
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
-        //af->load(); // Make sure it is loaded.
+
         if(!af->isLoaded() || s == NULL) {
           removeevent = true;
           break;
@@ -372,17 +395,26 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         size_t end = sz;
         if(evt->t + end - n > af->size) end = af->size - evt->t + n;
 
+        if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
-        size_t optend = ((end - n) / N) * N + n;
-        for(; n < optend; n += N) {
-          *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);
-          evt->t += N;
-        }
+          size_t optend = ((end - n) / N) * N + n;
+          for(; n < optend; n += N) {
+            *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);
+            evt->t += N;
+          }
 #endif
-        //printf("n: %d end: %d, diff: %d", n, end, end - n); fflush(stdout);
-        for(; n < end; n++) {
-          s[n] += af->data[evt->t];
-          evt->t++;
+          for(; n < end; n++) {
+            s[n] += af->data[evt->t];
+            evt->t++;
+          }
+        } else { // Ramp down in progress.
+          for(; n < end && evt->rampdown; n++) {
+            float scale = (float)evt->rampdown/(float)evt->ramp_start;
+            s[n] += af->data[evt->t] * scale;
+            evt->t++;
+            evt->rampdown--;
+          }
+          
         }
 
         if(evt->t > af->size) removeevent = true;

@@ -51,6 +51,7 @@ private:
   std::map<std::string, std::string> channelmap;
   std::string instr_file;
   std::string instr_name;
+  std::string instr_group;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/

@@ -45,6 +45,9 @@ public:
 
   std::string name();
   std::string description();
+  std::string group();
+
+  void setGroup(std::string group);
 
   //  std::map<std::string, std::string> channelmap;
 
@@ -55,6 +58,7 @@ public:
 private:
   void *magic;
 
+  std::string _group;
   std::string _name;
   std::string _description;
   RangeMap<level_t, Sample*> samples;
