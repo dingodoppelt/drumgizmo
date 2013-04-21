@@ -279,7 +279,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         ERR(drumgizmo, "Missing Instrument %d.\n", evs[e].instrument);
         continue;
       }
-      
+
+#if 1
       if(i->group() != "") {
         // Add event to ramp down all existing events with the same groupname.
         Channels::iterator j = kit.channels.begin();
@@ -291,7 +292,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
             if(ev->type() == Event::sample) {
               EventSample *sev = (EventSample*)ev;
               if(sev->group == i->group() && sev->instrument != i) {
-                sev->rampdown = 3000; // Ramp down 3000 samples
+                sev->rampdown = 10000; // Ramp down 10000 samples
                 // TODO: This must be configurable at some point...
                 // ... perhaps even by instrument (ie. in the xml file)
                 sev->ramp_start = sev->rampdown;
@@ -302,7 +303,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
           j++;
         }
       }
-        
+#endif   
+
       Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
       
       if(s == NULL) {
@@ -383,9 +385,8 @@ typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 {
-  for(std::list< Event* >::iterator i = activeevents[ch].begin();
-      i != activeevents[ch].end();
-      i++) {
+  std::list< Event* >::iterator i = activeevents[ch].begin();
+  while(i != activeevents[ch].end()) {
     bool removeevent = false;
 
     Event *event = *i;
@@ -437,8 +438,9 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
     if(removeevent) {
       delete event;
       i = activeevents[ch].erase(i);
+      continue;
     }
-
+    i++;
   }
 }
 
