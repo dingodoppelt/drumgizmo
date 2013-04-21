@@ -39,6 +39,7 @@
 #include <QToolBar>
 #include <QAction>
 #include <QMenuBar>
+#include <QSlider>
 
 #include "canvastool.h"
 #include "canvastoolselections.h"
@@ -147,6 +148,13 @@ MainWindow::MainWindow()
   QVBoxLayout *configs = new QVBoxLayout();
   
   configs->addLayout(btns);
+
+  configs->addWidget(new QLabel("Attack length:"));
+  QSlider *slider = new QSlider(Qt::Horizontal);
+  slider->setRange(10, 10000);
+  slider->setValue(666);
+  connect(slider, SIGNAL(sliderMoved(int)), sorter, SLOT(setAttackLength(int)));
+  configs->addWidget(slider); 
 
   configs->addWidget(new QLabel("Prefix:"));
   QLineEdit *prefix = new QLineEdit();

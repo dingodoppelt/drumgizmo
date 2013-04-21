@@ -215,7 +215,9 @@ void SampleSorter::paintEvent(QPaintEvent *event)
     if(sel.to == i.value().to && sel.from == i.value().from)
       painter.setPen(colPtSel);
     else painter.setPen(colPt);
-    float x = (i.key()/max)*(float)width();
+    float x = (i.key()/max);
+    x = sqrt(x);
+    x *= (float)width();
     drawCircle(painter, x, MAP(x));
     i++;
   }
