@@ -252,6 +252,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   // Read new events
   //
 
+  //DEBUG(engine, "Number of active events: %d\n", activeevents[0].size());
+
   size_t nev;
   event_t *evs = ie->run(pos, nsamples, &nev);
 
@@ -315,7 +317,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         if(af == NULL || !af->isValid()) {
           //printf("Missing AudioFile.\n");
         } else {
-          DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
+          //DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
           evt->offset = evs[e].offset + pos;
           activeevents[ch.num].push_back(evt);
@@ -427,7 +429,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           
         }
 
-        if(evt->t > af->size) removeevent = true;
+        if(evt->t >= af->size) removeevent = true;
       }
       break;
     }
