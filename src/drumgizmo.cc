@@ -292,7 +292,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
             if(ev->type() == Event::sample) {
               EventSample *sev = (EventSample*)ev;
               if(sev->group == i->group() && sev->instrument != i) {
-                sev->rampdown = 10000; // Ramp down 10000 samples
+                sev->rampdown = 3000; // Ramp down 3000 samples
                 // TODO: This must be configurable at some point...
                 // ... perhaps even by instrument (ie. in the xml file)
                 sev->ramp_start = sev->rampdown;
