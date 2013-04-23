@@ -404,7 +404,7 @@ void PluginGUI::init()
   lbl_version->setText(".::. v"VERSION"  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
   lbl_version->move(16, 300);
   lbl_version->resize(window->width(), 20);
-
+  /*
   {
     GUI::ComboBox *cmb = new GUI::ComboBox(window);
     cmb->addItem("Foo", "Bar");
@@ -412,7 +412,7 @@ void PluginGUI::init()
     cmb->move(10,10);
     cmb->resize(70, 30);
   }
-
+  */
   // Create filebrowser
   filebrowser = new GUI::FileBrowser(window);
   filebrowser->move(0, 0);
