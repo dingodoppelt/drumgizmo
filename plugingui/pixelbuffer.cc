@@ -47,14 +47,6 @@ void GUI::PixelBuffer::realloc(size_t width, size_t height)
   this->height = height;
 }
 
-// http://en.wikipedia.org/wiki/Alpha_compositing
-static void getAlpha(unsigned char _a, unsigned char _b, float &a, float &b)
-{
-  a = _a / 255.0;
-  b = _b / 255.0;
-  b *= (1-a);
-}
-
 #define PX(k) (x + y * width) * 3 + k
 void GUI::PixelBuffer::setPixel(size_t x, size_t y,
                                 unsigned char red,
@@ -63,7 +55,7 @@ void GUI::PixelBuffer::setPixel(size_t x, size_t y,
                                 unsigned char alpha)
 {
   if(x >= width || y >= height) return;
-
+  /*
   float a,b;
   getAlpha(alpha, 255, a, b);
 
@@ -73,6 +65,14 @@ void GUI::PixelBuffer::setPixel(size_t x, size_t y,
   buf[PX(1)] /= (a + b);
   buf[PX(2)] = (unsigned char)((float)blue  * a + (float)buf[PX(2)] * b);
   buf[PX(2)] /= (a + b);
+  */
+  unsigned int a = alpha;
+  unsigned int b = 255 - alpha;
+  
+  buf[PX(0)] = (unsigned char)(((int)red   * a + (int)buf[PX(0)] * b) / 255);
+  buf[PX(1)] = (unsigned char)(((int)green * a + (int)buf[PX(1)] * b) / 255);
+  buf[PX(2)] = (unsigned char)(((int)blue  * a + (int)buf[PX(2)] * b) / 255);
+
 }
 
 static int idx = 0;
@@ -111,6 +111,14 @@ void GUI::PixelBufferAlpha::setPixel(size_t x, size_t y,
   buf[PX(1)] = green;
   buf[PX(2)] = blue;
   buf[PX(3)] = alpha;
+}
+
+// http://en.wikipedia.org/wiki/Alpha_compositing
+static void getAlpha(unsigned char _a, unsigned char _b, float &a, float &b)
+{
+  a = _a / 255.0;
+  b = _b / 255.0;
+  b *= (1-a);
 }
 
 void GUI::PixelBufferAlpha::addPixel(size_t x, size_t y,
