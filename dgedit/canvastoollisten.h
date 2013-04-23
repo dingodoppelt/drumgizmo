@@ -46,9 +46,12 @@ public:
   volatile bool playing;
   volatile size_t pos;
 
+  void setVolume(double v);
+
 private:
   ao_device *dev;  
   Canvas *canvas;
+  double volume;
 };
 
 class CanvasToolListen : public CanvasTool {
@@ -63,6 +66,7 @@ public:
 
 public slots:
   void update();
+  void setVolume(int v);
 
 private:
   Canvas *canvas;

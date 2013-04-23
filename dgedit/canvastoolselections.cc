@@ -194,6 +194,17 @@ void CanvasToolSelections::thresholdChanged(double t)
   threshold = t;
 }
 
+void CanvasToolSelections::noiseFloorChanged(int t)
+{
+  double div = 666.0 / 0.00003;
+  noise_floor = (double)t/div;
+}
+
+void CanvasToolSelections::fadeoutChanged(int t)
+{
+  fadeout = (double)t/1000.0;
+}
+
 void CanvasToolSelections::autoCreateSelections()
 {
   float *data = canvas->data;
@@ -218,17 +229,16 @@ void CanvasToolSelections::autoCreateSelections()
       }
 
       int minsize = 100; // attack.
-      float minval = 0.00003; // noise floor
       int to = i;
       float runavg = fabs(data[from]);
-      while((runavg > minval ||
+      while((runavg > noise_floor ||
              to < from + minsize) &&
             to < (int)size) {
         double p = 0.9;
         runavg = runavg * p + fabs(data[to]) * (1 - p);
         to++;
       }
-      _selections[from] = Selection(from, to, 2, (to - from) / 3);
+      _selections[from] = Selection(from, to, 2, ((to - from) / 3) * fadeout);
 
       i = to+1;
     }

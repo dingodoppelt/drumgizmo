@@ -43,6 +43,8 @@ Player::Player(Canvas *c)
   sf.byte_format = AO_FMT_NATIVE;
 
   dev = ao_open_live(ao_default_driver_id(), &sf, 0);
+
+  volume = 1000;
 }
 
 Player::~Player()
@@ -57,7 +59,7 @@ void Player::run()
     if(playing) {
       short s[BUFSZ];
       for(size_t i = 0; i < BUFSZ; i++) {
-        if(i + pos < canvas->size) s[i] = canvas->data[pos + i] * ((2<<16) - 1);
+        if(i + pos < canvas->size) s[i] = canvas->data[pos + i] * volume;
         else {
           s[i] = 0;
           playing = false;
@@ -73,6 +75,11 @@ void Player::run()
       msleep(22);
     }
   }
+}
+
+void Player::setVolume(double v)
+{
+  volume = v;
 }
 
 CanvasToolListen::CanvasToolListen(Canvas *c)
@@ -127,4 +134,9 @@ void CanvasToolListen::update()
   
   canvas->update(r);
   lastpos = pos;
+}
+
+void CanvasToolListen::setVolume(int v)
+{
+  player.setVolume(v);
 }

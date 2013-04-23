@@ -57,6 +57,8 @@ public slots:
   void autoCreateSelections();
   void clearSelections();
   void thresholdChanged(double threshold);
+  void noiseFloorChanged(int t);
+  void fadeoutChanged(int t);
 
 private:
   bool selection_is_moving_left;
@@ -67,7 +69,9 @@ private:
   Canvas *canvas;
 
   double threshold;
-
+  double noise_floor;
+  double fadeout;
+  
   QColor colSelBg;
   QColor colSel;
   QColor colActiveSelBg;

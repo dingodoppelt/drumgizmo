@@ -151,10 +151,34 @@ MainWindow::MainWindow()
 
   configs->addWidget(new QLabel("Attack length:"));
   QSlider *slider = new QSlider(Qt::Horizontal);
-  slider->setRange(10, 10000);
+  slider->setRange(10, 1000);
   slider->setValue(666);
   connect(slider, SIGNAL(sliderMoved(int)), sorter, SLOT(setAttackLength(int)));
   configs->addWidget(slider); 
+
+  configs->addWidget(new QLabel("Falloff:"));
+  QSlider *slider2 = new QSlider(Qt::Horizontal);
+  slider2->setRange(1, 10000);
+  slider2->setValue(666);
+  connect(slider2, SIGNAL(sliderMoved(int)),
+          selections, SLOT(noiseFloorChanged(int)));
+  configs->addWidget(slider2); 
+
+  configs->addWidget(new QLabel("Fadelength:"));
+  QSlider *slider3 = new QSlider(Qt::Horizontal);
+  slider3->setRange(1, 2000);
+  slider3->setValue(666);
+  connect(slider3, SIGNAL(sliderMoved(int)),
+          selections, SLOT(fadeoutChanged(int)));
+  configs->addWidget(slider3); 
+
+  configs->addWidget(new QLabel("Player volume:"));
+  QSlider *slider4 = new QSlider(Qt::Horizontal);
+  slider4->setRange(0, 1000000);
+  slider4->setValue(100000);
+  connect(slider4, SIGNAL(sliderMoved(int)),
+          listen, SLOT(setVolume(int)));
+  configs->addWidget(slider4); 
 
   configs->addWidget(new QLabel("Prefix:"));
   QLineEdit *prefix = new QLineEdit();
