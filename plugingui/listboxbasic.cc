@@ -84,15 +84,12 @@ void GUI::ListBoxBasic::addItem(std::string name, std::string value)
 
 void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
 {
+  DEBUG(list, "addItems %d\n", is.size());
   std::vector<GUI::ListBoxBasic::Item>::iterator i = is.begin();
   while(i != is.end()) {
     items.push_back(*i);
     i++;
   }
-
-  int numitems = height() / (font.textHeight() + padding);
-  scroll.setRange(numitems);
-  scroll.setMaximum(items.size());
 
   // sort
   for(int x = 0; x < (int)items.size() - 1; x++) {
@@ -110,6 +107,10 @@ void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
   }
 
   if(selected == -1) setSelection((int)items.size() - 1);
+
+  int numitems = height() / (font.textHeight() + padding);
+  scroll.setRange(numitems);
+  scroll.setMaximum(items.size());
 }
 
 void GUI::ListBoxBasic::clear()
@@ -161,6 +162,7 @@ void GUI::ListBoxBasic::registerValueChangeHandler(void (*handler)(void *),
 
 void GUI::ListBoxBasic::repaintEvent(GUI::RepaintEvent *e)
 {
+  DEBUG(list, "repaint\n");
   GUI::Painter p(this);
 
   p.clear();
@@ -175,7 +177,8 @@ void GUI::ListBoxBasic::repaintEvent(GUI::RepaintEvent *e)
 
   int yoffset = padding / 2;
   int skip = scroll.value();
-  for(int idx = skip; idx < (int)items.size(); idx++) {
+  int numitems = height() / (font.textHeight() + padding) + 1;
+  for(int idx = skip; idx < (int)items.size() && idx < skip + numitems; idx++) {
     GUI::ListBoxBasic::Item *i = &items[idx];
     if(idx == selected) {
       p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 0.5));
