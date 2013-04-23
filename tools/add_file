@@ -9,8 +9,21 @@ function allfile() {
   echo " *  `date`" >> $1;
   echo -n " *  Copyright " >> $1
   echo -n `date +%Y | xargs` >> $1
-  echo " Bent Bisballe Nyeng" >> $1;
-  echo " *  deva@aasimon.org" >> $1;
+  if [ "$WHO" == "nemo" ];
+  then
+      echo " Jonas Suhr Christensen" >> $1;
+      echo " *  jsc@umbraculum.org" >> $1;
+  fi
+  if [ "$WHO" == "deva" ];
+  then
+      echo " Bent Bisballe Nyeng" >> $1;
+      echo " *  deva@aasimon.org" >> $1;
+  fi
+  if [ "$WHO" == "senator" ];
+  then
+      echo " Lars Bisballe Jensen" >> $1;
+      echo " *  elsenator@gmail.com" >> $1;
+  fi
   echo " ****************************************************************************/" >> $1;
   echo "" >> $1;
   echo "/*" >> $1;
