@@ -469,10 +469,16 @@ float str2float(std::string a)
 
 std::string DrumGizmo::configString()
 {
+  std::string mmapfile;
+  if(ie->isMidiEngine()) {
+    AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
+    mmapfile = aim->midimapFile();
+  }
+
   return
     "<config>\n"
     "  <value name=\"drumkitfile\">" + kitfile + "</value>\n"
-    "  <value name=\"midimapfile\">" + midimapfile + "</value>\n"
+    "  <value name=\"midimapfile\">" + mmapfile + "</value>\n"
     "  <value name=\"enable_velocity_modifier\">" +
     bool2str(Conf::enable_velocity_modifier) + "</value>\n"
     "  <value name=\"velocity_modifier_falloff\">" +
@@ -581,9 +587,9 @@ bool DrumGizmo::setConfigString(std::string cfg)
 
   std::string newmidimap = p.value("midimapfile");
   if(midimapfile != newmidimap && newmidimap != "") {
-    midimapfile = newmidimap;
+    //midimapfile = newmidimap;
     LoadMidimapMessage *msg = new LoadMidimapMessage();
-    msg->midimapfile = midimapfile;
+    msg->midimapfile = newmidimap;
     sendEngineMessage(msg);
   }
 

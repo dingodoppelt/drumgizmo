@@ -53,8 +53,11 @@ public:
 
   void loadMidiMap(std::string file, Instruments &i);
 
+  std::string midimapFile();
+
 protected:
   MidiMapper mmap;
+  std::string file;
 };
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__*/
