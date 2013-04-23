@@ -34,6 +34,11 @@ GUI::PixelBuffer::PixelBuffer(size_t width, size_t height)
   realloc(width, height);
 }
 
+GUI::PixelBuffer::~PixelBuffer()
+{
+  if(buf) free(buf);
+}
+
 void GUI::PixelBuffer::realloc(size_t width, size_t height)
 {
   if(buf) free(buf);
@@ -77,6 +82,11 @@ GUI::PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
   buf = NULL;
   x = y = 10;
   realloc(width, height);
+}
+
+GUI::PixelBufferAlpha::~PixelBufferAlpha()
+{
+  if(buf) free(buf);
 }
 
 void GUI::PixelBufferAlpha::realloc(size_t width, size_t height)

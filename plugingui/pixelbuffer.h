@@ -36,6 +36,7 @@ namespace GUI {
 class PixelBuffer {
 public:
   PixelBuffer(size_t width, size_t height);
+  ~PixelBuffer();
 
   void realloc(size_t width, size_t height);
 
@@ -53,6 +54,7 @@ public:
 class PixelBufferAlpha {
 public:
   PixelBufferAlpha(size_t width, size_t height);
+  ~PixelBufferAlpha();
 
   int idx;
   size_t x, y;
