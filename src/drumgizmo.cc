@@ -204,8 +204,15 @@ void DrumGizmo::handleEngineEvents()
     case Message::EngineSettingsMessage:
       {
         DEBUG(msg, "got EngineSettingsMessage message.");
+
+        std::string mmapfile;
+        if(ie->isMidiEngine()) {
+          AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
+          mmapfile = aim->midimapFile();
+        }
+
         EngineSettingsMessage *msg = new EngineSettingsMessage();
-        msg->midimapfile = midimapfile;
+        msg->midimapfile = mmapfile;
         msg->midimap_loaded = true;
         msg->drumkitfile = drumkitfile();
         msg->drumkit_loaded = true;
@@ -586,7 +593,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
   }
 
   std::string newmidimap = p.value("midimapfile");
-  if(midimapfile != newmidimap && newmidimap != "") {
+  if(newmidimap != "") {
     //midimapfile = newmidimap;
     LoadMidimapMessage *msg = new LoadMidimapMessage();
     msg->midimapfile = newmidimap;

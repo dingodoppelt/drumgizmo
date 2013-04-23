@@ -67,7 +67,6 @@ public:
   std::string configString();
   bool setConfigString(std::string cfg);
 
-  std::string midimapfile;
   std::string kitfile;
 
   /*
