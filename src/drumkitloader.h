@@ -49,14 +49,17 @@ public:
   bool isDone();
 
   void stop();
+  void skip();
 
 private:
   DrumGizmo *drumgizmo;
   Semaphore semaphore;
+  Semaphore skip_semaphore;
   DrumKit *kit;
   bool is_done;
   Mutex mutex;
-  bool quitit;
+  volatile bool quitit;
+  volatile bool skipit;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/

@@ -145,6 +145,8 @@ bool DrumGizmo::loadkit(std::string file)
 
   DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
 
+  loader.skip();
+
   kit.clear();
 
   DrumKitParser parser(kitfile, kit);
@@ -288,7 +290,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         continue;
       }
 
-#if 1
       if(i->group() != "") {
         // Add event to ramp down all existing events with the same groupname.
         Channels::iterator j = kit.channels.begin();
@@ -311,7 +312,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
           j++;
         }
       }
-#endif   
 
       Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
       
@@ -348,7 +348,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   //
   // Write audio
   //
-  
   for(size_t c = 0; c < kit.channels.size(); c++) {
     sample_t *buf = samples;
     bool internal = false;
@@ -356,9 +355,11 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       buf = oe->getBuffer(c);
       internal = true;
     }
-    memset(buf, 0, nsamples * sizeof(sample_t));
-    getSamples(c, pos, buf, nsamples);
-    if(!internal) oe->run(c, samples, nsamples);
+    if(buf) {
+      memset(buf, 0, nsamples * sizeof(sample_t));
+      getSamples(c, pos, buf, nsamples);
+      if(!internal) oe->run(c, samples, nsamples);
+    }
   }
   
   ie->post();
