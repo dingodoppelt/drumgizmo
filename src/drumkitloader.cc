@@ -40,6 +40,13 @@ DrumKitLoader::DrumKitLoader(DrumGizmo *dg)
 
 DrumKitLoader::~DrumKitLoader()
 {
+  if(!quitit) {
+    stop();
+  }
+}
+
+void DrumKitLoader::stop()
+{
   quitit = true;
   semaphore.post();
   wait_stop();
@@ -125,6 +132,8 @@ void DrumKitLoader::thread_main()
           drumgizmo->sendGUIMessage(ls);
           
           a++;
+
+          if(quitit) return;
         }
         
         i++;

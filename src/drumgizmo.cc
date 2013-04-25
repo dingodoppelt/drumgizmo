@@ -56,6 +56,7 @@ DrumGizmo::~DrumGizmo()
     i++;
   }
   */
+  loader.stop();
 }
 
 /*

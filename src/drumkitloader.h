@@ -48,6 +48,8 @@ public:
 
   bool isDone();
 
+  void stop();
+
 private:
   DrumGizmo *drumgizmo;
   Semaphore semaphore;
