@@ -32,9 +32,11 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/listboxthin.cc \
 	$(top_srcdir)/plugingui/listboxbasic.cc \
 	$(top_srcdir)/plugingui/filebrowser.cc \
+	$(top_srcdir)/plugingui/directory.cc \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/combobox.cc \
 	$(top_srcdir)/plugingui/image.cc \
+	$(top_srcdir)/plugingui/scrollbar.cc \
 	$(top_srcdir)/plugingui/progressbar.cc \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
@@ -52,10 +54,10 @@ plugingui.exe: $(OBJECTS)
 	g++ -static -static-libgcc $(OBJECTS) $(LDFLAGS) $(CFLAGS) -o $@
 
 %.o: %.cc
-	g++ -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
+	g++ -g -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
 
 %.o: %.c
-	gcc -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
+	gcc -g -static -static-libgcc -O2 -c $(CFLAGS) $< -o $@
 
 clean:
 	rm -rf $(OBJECTS) plugingui.exe
