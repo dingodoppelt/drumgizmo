@@ -30,13 +30,25 @@
 
 #include <hugin.hpp>
 
-void AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
+AudioInputEngineMidi::AudioInputEngineMidi()
 {
+  is_valid = false;
+}
+
+bool AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
+{
+  file = "";
+  is_valid = false;
+
   DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
         instruments.size());
-  if(f == "") return;
+
+  if(f == "") return false;
+
   MidiMapParser p(f);
-  if(p.parse()) {/*return false;*/}
+  if(p.parse()) {
+    return false;
+  }
 
   mmap.clear();
   mmap.midimap = p.midimap;
@@ -46,11 +58,19 @@ void AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
   }
 
   file = f;
+  is_valid = true;
+
+  return true;
 }
 
 std::string AudioInputEngineMidi::midimapFile()
 {
   return file;
+}
+
+bool AudioInputEngineMidi::isValid()
+{
+  return is_valid;
 }
 
 #ifdef TEST_AUDIOINPUTENGINEMIDI

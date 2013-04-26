@@ -32,6 +32,7 @@ public:
   typedef enum {
     // Engine -> GUI Messages:
     LoadStatus, // Signal GUI the current load status.
+    LoadStatusMidimap, // Signal GUI the current load status of the midimap.
 
     // GUI -> Engine, Engine -> Engine Messages:
     LoadDrumKit, // Signal engine to load drumkit.
@@ -50,6 +51,12 @@ public:
   unsigned int number_of_files;
   unsigned int numer_of_files_loaded;
   std::string current_file;
+};
+
+class LoadStatusMessageMidimap : public Message {
+public:
+  type_t type() { return Message::LoadStatusMidimap; }
+  bool success;
 };
 
 class LoadDrumKitMessage : public Message {

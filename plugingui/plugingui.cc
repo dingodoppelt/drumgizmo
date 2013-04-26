@@ -250,11 +250,31 @@ void PluginGUI::thread_main()
           }
         }
         break;
+      case Message::LoadStatusMidimap:
+        {
+          LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
+          DEBUG(gui, "Midimap status (%d)\n",
+                ls->success);
+          progress2->setProgress(1);
+          if(ls->success) {
+            progress2->setState(GUI::ProgressBar::green);
+          } else {
+            progress2->setState(GUI::ProgressBar::red);
+          }
+        }
+        break;
       case Message::EngineSettingsMessage:
         {
           EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
           lineedit->setText(settings->drumkitfile);
           lineedit2->setText(settings->midimapfile);
+          if(settings->midimap_loaded) {
+            progress2->setProgress(1);
+            progress2->setState(GUI::ProgressBar::green);
+          } else {
+            progress2->setProgress(0);
+            progress2->setState(GUI::ProgressBar::blue);
+          }
           check->setChecked(settings->enable_velocity_modifier);
           knob->setValue(settings->velocity_modifier_weight);
           knob2->setValue(settings->velocity_modifier_falloff);

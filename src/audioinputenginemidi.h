@@ -36,6 +36,7 @@
 
 class AudioInputEngineMidi : public AudioInputEngine {
 public:
+  AudioInputEngineMidi();
   virtual ~AudioInputEngineMidi() {}
 
   bool isMidiEngine() { return true; } 
@@ -51,13 +52,16 @@ public:
   virtual event_t *run(size_t pos, size_t len, size_t *nevents) = 0;
   virtual void post() = 0;
 
-  void loadMidiMap(std::string file, Instruments &i);
+  bool loadMidiMap(std::string file, Instruments &i);
 
   std::string midimapFile();
+
+  bool isValid();
 
 protected:
   MidiMapper mmap;
   std::string file;
+  bool is_valid;
 };
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__*/

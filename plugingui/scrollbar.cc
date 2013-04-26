@@ -141,7 +141,9 @@ void GUI::ScrollBar::mouseMoveEvent(MouseMoveEvent *e)
 
   int h = height() - 2 * width() - 3;
   delta /= (float)h / (float)max;
-  setValue(value_offset - delta);
+
+  int newval = value_offset - delta;
+  if(newval != value()) setValue(newval);
 }
 
 void GUI::ScrollBar::buttonEvent(ButtonEvent *e)
