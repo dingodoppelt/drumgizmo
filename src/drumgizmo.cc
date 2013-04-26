@@ -201,22 +201,28 @@ void DrumGizmo::handleEngineEvents()
       {
         AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
         LoadMidimapMessage *m = (LoadMidimapMessage*)msg;
-        aim->loadMidiMap(m->midimapfile, kit.instruments);
+        bool ret = aim->loadMidiMap(m->midimapfile, kit.instruments);
+        
+        LoadStatusMessageMidimap *ls = new LoadStatusMessageMidimap();
+        ls->success = ret;
+        sendGUIMessage(ls);
       }
       break;
     case Message::EngineSettingsMessage:
       {
         DEBUG(msg, "got EngineSettingsMessage message.");
-
+        bool mmap_loaded = false;
         std::string mmapfile;
         if(ie->isMidiEngine()) {
           AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
           mmapfile = aim->midimapFile();
+          mmap_loaded = aim->isValid();
+          
         }
 
         EngineSettingsMessage *msg = new EngineSettingsMessage();
         msg->midimapfile = mmapfile;
-        msg->midimap_loaded = true;
+        msg->midimap_loaded = mmap_loaded;
         msg->drumkitfile = drumkitfile();
         msg->drumkit_loaded = true;
         msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
