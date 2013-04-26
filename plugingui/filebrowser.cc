@@ -75,7 +75,7 @@ static void changeDir(void *ptr) {
   
   INFO(filebrowser, "Changing dir to '%s'\n", (dir->path() + "/" + value).c_str());
   
-  if(!value.empty() && dir->exists(value)) {
+  if(!value.empty() && dir->fileExists(value)) {
     std::string file = dir->path() + "/" + value;
     DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
     if(prv->filesel_handler) prv->filesel_handler(prv->ptr, file);
@@ -271,10 +271,13 @@ static bool isDir(std::string d)
 
 void GUI::FileBrowser::setPath(std::string path)
 {
-  // TODO: Remove this check to directoy.cc
-  if(path.empty()) return;
+  WARN(filebrowser, "Not implemented yet!");
+   // TODO: Remove this check to directoy.cc
+//  INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
+//  if(path.empty()) return;
 
-  prv->dir->setPath(path);
+  // TODO: Strip path to set path to a directory
+//  prv->dir->setPath(path);
 /*
   std::string dir;
   if(prv->dir->isDir()) {

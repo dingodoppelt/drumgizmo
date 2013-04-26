@@ -53,8 +53,7 @@ void Directory::refresh() {
 
 bool Directory::cd(std::string dir) {
   DEBUG(directory, "Changing to '%s'\n", dir.c_str());
-  int r = chdir( (path() + "/" + dir).c_str() );
-  if(!r) { 
+  if(exists(path() + "/" + dir)) {
     _path += "/" + dir;
     refresh();
     return true;
@@ -114,9 +113,12 @@ std::string Directory::cleanPath(std::string path) {
 }
 
 Directory::EntryList Directory::listFiles(std::string path) {
+  DEBUG(directory, "Listing files in '%s'\n", path.c_str());
+
   Directory::EntryList entries;
-  DIR *dir = opendir(".");
+  DIR *dir = opendir(path.c_str());
   if(!dir) {
+    DEBUG(directory, "Couldn't open directory '%s\n", path.c_str()); 
     return entries;
   }
 
@@ -129,6 +131,8 @@ Directory::EntryList Directory::listFiles(std::string path) {
 }
 
 bool Directory::isRoot(std::string path) {
+  //TODO: Handle WIN32
+
   if(path == "/") return true;
   else return false;
 }
@@ -160,8 +164,16 @@ bool Directory::isDir()
   return isDir(path());
 }
 
-bool Directory::exists(std::string filename) {
+bool Directory::fileExists(std::string filename) {
   return !isDir(path() + "/" + filename);
+}
+
+bool Directory::exists(std::string path) {
+  struct stat st;
+  if(stat(path.c_str(), &st) == 0) {
+    return true;
+  }
+  else return false;
 }
 
 bool Directory::isDir(std::string path) {

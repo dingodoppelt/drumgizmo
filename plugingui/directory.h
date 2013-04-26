@@ -57,7 +57,7 @@ class Directory {
     bool cd(std::string dir);
     bool isDir();
     void setPath(std::string path);
-    bool exists(std::string file);
+    bool fileExists(std::string file);
 
     // Add filter, ie. directories or files only
     EntryList entryList();
@@ -70,6 +70,7 @@ class Directory {
     static bool isRoot(std::string path);
     static Directory::DriveList drives();
     static bool isDir(std::string path);
+    static bool exists(std::string file);
      
   private:
     std::string _path;
