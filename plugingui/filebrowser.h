@@ -35,6 +35,7 @@
 #include "lineedit.h"
 #include "label.h"
 #include "image.h"
+#include "directory.h"
 
 namespace GUI {
 

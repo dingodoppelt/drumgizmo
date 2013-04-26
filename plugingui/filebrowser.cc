@@ -27,8 +27,9 @@
 #include "filebrowser.h"
 
 #include "painter.h"
-
 #include "button.h"
+
+#include "directory.h"
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -50,9 +51,10 @@ struct GUI::FileBrowser::private_data {
   GUI::ComboBox *drives;
   void (*filesel_handler)(void *, std::string);
   void *ptr;
-#ifdef WIN32
-  int drvidx;
-#endif
+  Directory *dir;
+//#ifdef WIN32
+//  int drvidx;
+//#endif
 };
 
 static void cancel(void *ptr)
@@ -61,6 +63,48 @@ static void cancel(void *ptr)
   fp->hide();
 }
 
+static void changeDir(void *ptr) {
+  struct GUI::FileBrowser::private_data *prv =
+    (struct GUI::FileBrowser::private_data *) ptr;
+  
+  
+  GUI::ListBox *lb = prv->listbox;
+  GUI::LineEdit *le = prv->lineedit;
+  std::string value = lb->selectedValue(); 
+  Directory* dir = prv->dir;
+  
+  INFO(filebrowser, "Changing dir to '%s'\n", (dir->path() + "/" + value).c_str());
+  
+  if(!value.empty() && dir->exists(value)) {
+    std::string file = dir->path() + "/" + value;
+    DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
+    if(prv->filesel_handler) prv->filesel_handler(prv->ptr, file);
+    return;
+  }
+
+  if(!value.empty() && !dir->cd(value)) {
+    DEBUG(filebrowser, "Error changing to '%s'\n", 
+            (dir->path() + "/" + value).c_str());
+    return;
+  }
+
+  //TODO: If root and windows show drives instead of files
+
+  lb->clear();
+  std::vector<GUI::ListBoxBasic::Item> items;
+  Directory::EntryList entries = dir->entryList();
+  for(Directory::EntryList::iterator it = entries.begin();
+      it != entries.end(); it++) {  
+    GUI::ListBoxBasic::Item item;
+    std::string name = *it;
+    item.name = name;
+    item.value = name;
+    items.push_back(item);
+  }
+  lb->addItems(items);
+}
+
+#if 0
 static void changeDir(void *ptr)
 {
   struct GUI::FileBrowser::private_data *prv =
@@ -139,6 +183,7 @@ static void changeDir(void *ptr)
 
   closedir(dir);
 }
+#endif/*0*/
 
 GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   : GUI::Widget(parent),
@@ -150,6 +195,8 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
 {
   prv = new struct GUI::FileBrowser::private_data();
   prv->filesel_handler = NULL;
+
+  prv->dir = new Directory(Directory::cwd());
 
   lbl_path.setText("Path:");
 
@@ -165,6 +212,8 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   btn_esc.setText("Cancel");
   btn_esc.registerClickHandler(cancel, this);
 
+  changeDir(prv);
+/*
 #ifdef WIN32
   lbl_drive.setText("Drive:");
 
@@ -185,8 +234,9 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   }
   prv->drives = &drv;
 #endif
+*/
 
-  changeDir(prv);
+//  changeDir(prv);
 
   resize(200, 190);
 }
@@ -197,6 +247,7 @@ GUI::FileBrowser::~FileBrowser()
   delete prv;
 }
 
+#if 0
 #include <libgen.h>
 
 static bool isDir(std::string d)
@@ -213,23 +264,26 @@ static bool isDir(std::string d)
   DEBUG(dir, "No\n");
   return false;
 }
+#endif
 
 void GUI::FileBrowser::setPath(std::string path)
 {
+//  prv->dir->setPath(path);
+/*
   std::string dir;
-  if(isDir(path)) {
+  if(prv->dir->isDir()) {
     dir = path;
   } else {
     char *d = strdup(path.c_str());
     std::string _dirname = dirname(d);
     free(d);
-    if(isDir(_dirname)) dir = _dirname;
+    if(prv->dir->isDir(_dirname)) dir = _dirname;
     else return;
   }
-
-  if(chdir(dir.c_str()) == -1) return;
-  prv->listbox->clear();
-  changeDir(prv);
+*/
+//  if(chdir(dir.c_str()) == -1) return;
+//  prv->listbox->clear();
+//  changeDir(prv);
 
   /*
   std::string dirname = path;

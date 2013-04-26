@@ -14,6 +14,7 @@ plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
 plugingui_SOURCES = \
 	$(PLUGIN_GUI_SOURCES) \
+  directory.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc
 
@@ -23,7 +24,8 @@ EXTRA_DIST = \
 	button.h \
 	checkbox.h \
 	colour.h \
-	eventhandler.h \
+	directory.h \
+  eventhandler.h \
 	font.h \
 	globalcontext.h \
 	guievent.h \
