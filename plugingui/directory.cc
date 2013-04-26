@@ -92,22 +92,7 @@ std::string Directory::cleanPath(std::string path) {
   WARN(directory, "Cleaning path '%s'\n", path.c_str());
 
   Directory::Path pathlst = parsePath(path);
-  
-  std::string cleaned_path;
-  DEBUG(directory, "Number of directories in path %d\n", pathlst.size());
-
-  for(Directory::Path::iterator it = pathlst.begin();
-      it != pathlst.end(); it++) {
-    std::string dir = *it;
-    DEBUG(directory, "\tDir '%s'\n", dir.c_str());
-    cleaned_path += "/" + dir;
-  }
-
-  DEBUG(directory, "Cleaned path '%s'\n", cleaned_path.c_str());
-
-  if(cleaned_path.empty()) cleaned_path = "/";
-
-  return cleaned_path; 
+  return Directory::pathToStr(pathlst);  
 }
 
 Directory::EntryList Directory::listFiles(std::string path) {
@@ -232,6 +217,33 @@ Directory::Path Directory::parsePath(std::string path_str) {
   if(!dir.empty()) path.push_back(dir);
 
   return path;
+}
+
+std::string Directory::pathToStr(Directory::Path& path) {
+  std::string cleaned_path;
+  DEBUG(directory, "Number of directories in path %d\n", path.size());
+
+  for(Directory::Path::iterator it = path.begin();
+      it != path.end(); it++) {
+    std::string dir = *it;
+    DEBUG(directory, "\tDir '%s'\n", dir.c_str());
+    cleaned_path += "/" + dir;
+  }
+
+  DEBUG(directory, "Cleaned path '%s'\n", cleaned_path.c_str());
+
+  if(cleaned_path.empty()) cleaned_path = "/";
+
+  return cleaned_path; 
+}
+
+std::string Directory::pathDirectory(std::string filepath) {
+  if(Directory::isDir(filepath)) return filepath;
+
+  Directory::Path path = parsePath(filepath);
+  if(path.size() > 0) path.pop_back();
+
+  return Directory::pathToStr(path);
 }
 
 #ifdef TEST_DIRECTORY

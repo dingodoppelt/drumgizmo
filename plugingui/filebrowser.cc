@@ -72,6 +72,8 @@ static void changeDir(void *ptr) {
   GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
+ 
+  lb->clear();
   
   INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
   
@@ -271,13 +273,16 @@ static bool isDir(std::string d)
 
 void GUI::FileBrowser::setPath(std::string path)
 {
-  WARN(filebrowser, "Not implemented yet!");
+//  WARN(filebrowser, "Not implemented yet!");
    // TODO: Remove this check to directoy.cc
-//  INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
-//  if(path.empty()) return;
+  INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
+  if(path.empty()) path = Directory::cwd();
 
   // TODO: Strip path to set path to a directory
-//  prv->dir->setPath(path);
+  prv->dir->setPath(Directory::pathDirectory(path));
+  prv->listbox->clear();
+
+  changeDir(prv);
 /*
   std::string dir;
   if(prv->dir->isDir()) {

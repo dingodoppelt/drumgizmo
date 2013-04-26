@@ -70,7 +70,8 @@ class Directory {
     static bool isRoot(std::string path);
     static Directory::DriveList drives();
     static bool isDir(std::string path);
-    static bool exists(std::string file);
+    static bool exists(std::string path);
+    static std::string pathDirectory(std::string filepath);
      
   private:
     std::string _path;
@@ -79,6 +80,7 @@ class Directory {
 
     typedef std::list<std::string> Path;
     static Path parsePath(std::string path);
+    static std::string pathToStr(Path &path);
 };
 
 #endif/*__DRUMGIZMO_DIRECTORY_H__*/
