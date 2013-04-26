@@ -268,7 +268,7 @@ static bool isDir(std::string d)
 
 void GUI::FileBrowser::setPath(std::string path)
 {
-//  prv->dir->setPath(path);
+  prv->dir->setPath(path);
 /*
   std::string dir;
   if(prv->dir->isDir()) {
