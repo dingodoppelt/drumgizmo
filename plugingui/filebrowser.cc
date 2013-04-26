@@ -69,7 +69,7 @@ static void changeDir(void *ptr) {
   
   
   GUI::ListBox *lb = prv->listbox;
-//  GUI::LineEdit *le = prv->lineedit;
+  GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
   
@@ -89,6 +89,9 @@ static void changeDir(void *ptr) {
   }
 
   //TODO: If root and windows show drives instead of files
+ 
+  DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir->path().c_str()); 
+  le->setText(Directory::cleanPath(dir->path()));
 
   lb->clear();
   std::vector<GUI::ListBoxBasic::Item> items;
@@ -268,6 +271,9 @@ static bool isDir(std::string d)
 
 void GUI::FileBrowser::setPath(std::string path)
 {
+  // TODO: Remove this check to directoy.cc
+  if(path.empty()) return;
+
   prv->dir->setPath(path);
 /*
   std::string dir;

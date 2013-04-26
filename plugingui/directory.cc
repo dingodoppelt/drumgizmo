@@ -53,9 +53,12 @@ void Directory::refresh() {
 
 bool Directory::cd(std::string dir) {
   DEBUG(directory, "Changing to '%s'\n", dir.c_str());
-  int r = chdir(dir.c_str());
-  refresh();
-  if(!r) return true;
+  int r = chdir( (path() + "/" + dir).c_str() );
+  if(!r) { 
+    _path += "/" + dir;
+    refresh();
+    return true;
+  }
   else return false;
 }
 
@@ -81,7 +84,32 @@ std::string Directory::cwd() {
 }
 
 std::string Directory::cleanPath(std::string path) {
-  // TODO!
+/*
+  size_t c = 0;
+  std::string current_char;
+  std::string prev_char;
+
+  for(; c < path.size(); c++) {
+    current_char = path.at(c);
+    prev_char = current_char;
+  }
+*/
+/*
+  
+  size_t current_pos;
+  size_t prev_pos = 1;
+  DEBUG(directory, "Looking at path '%s'\n", path.c_str());
+  while( (current_pos = path.find("/", prev_pos + 1)) != std::string::npos) {
+    DEBUG(directory, "%d - %d", prev_pos, current_pos);
+    std::string dir = path.substr(prev_pos, current_pos - prev_pos + 1);
+    DEBUG(directory, "Dir '%s'\n", dir.c_str());
+    prev_pos = current_pos;
+  }
+
+  std::string dir = path.substr(prev_pos, current_pos - prev_pos + 1);
+  DEBUG(directory, "Dir '%s'\n", dir.c_str());
+*/
+
   return path;
 }
 
