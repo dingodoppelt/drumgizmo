@@ -76,6 +76,9 @@ class Directory {
     std::string _path;
     EntryList _files;
     DriveList _drives;
+
+    typedef std::list<std::string> Path;
+    static Path parsePath(std::string path);
 };
 
 #endif/*__DRUMGIZMO_DIRECTORY_H__*/

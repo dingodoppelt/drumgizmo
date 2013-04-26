@@ -73,7 +73,7 @@ static void changeDir(void *ptr) {
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
   
-  INFO(filebrowser, "Changing dir to '%s'\n", (dir->path() + "/" + value).c_str());
+  INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
   
   if(!value.empty() && dir->fileExists(value)) {
     std::string file = dir->path() + "/" + value;
@@ -91,7 +91,7 @@ static void changeDir(void *ptr) {
   //TODO: If root and windows show drives instead of files
  
   DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir->path().c_str()); 
-  le->setText(Directory::cleanPath(dir->path()));
+  le->setText(dir->path());
 
   lb->clear();
   std::vector<GUI::ListBoxBasic::Item> items;

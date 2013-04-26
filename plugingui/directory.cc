@@ -48,13 +48,17 @@ size_t Directory::count() {
 }
 
 void Directory::refresh() {
-  _files = listFiles(this->_path);
+  _files = listFiles(_path);
 }
 
 bool Directory::cd(std::string dir) {
+  //TODO: Should this return true or false?
+  if(dir.empty() || dir == ".") return true;
+
   DEBUG(directory, "Changing to '%s'\n", dir.c_str());
-  if(exists(path() + "/" + dir)) {
-    _path += "/" + dir;
+  if(exists(_path + "/" + dir)) {
+    std::string path = _path + "/" + dir;
+    setPath(path);
     refresh();
     return true;
   }
@@ -66,6 +70,7 @@ bool Directory::cdUp() {
 }
 
 std::string Directory::path() {
+  setPath(cleanPath(_path));
   return _path;
 }
 
@@ -82,34 +87,27 @@ std::string Directory::cwd() {
   else return "";
 }
 
+
 std::string Directory::cleanPath(std::string path) {
-/*
-  size_t c = 0;
-  std::string current_char;
-  std::string prev_char;
+  WARN(directory, "Cleaning path '%s'\n", path.c_str());
 
-  for(; c < path.size(); c++) {
-    current_char = path.at(c);
-    prev_char = current_char;
-  }
-*/
-/*
+  Directory::Path pathlst = parsePath(path);
   
-  size_t current_pos;
-  size_t prev_pos = 1;
-  DEBUG(directory, "Looking at path '%s'\n", path.c_str());
-  while( (current_pos = path.find("/", prev_pos + 1)) != std::string::npos) {
-    DEBUG(directory, "%d - %d", prev_pos, current_pos);
-    std::string dir = path.substr(prev_pos, current_pos - prev_pos + 1);
-    DEBUG(directory, "Dir '%s'\n", dir.c_str());
-    prev_pos = current_pos;
+  std::string cleaned_path;
+  DEBUG(directory, "Number of directories in path %d\n", pathlst.size());
+
+  for(Directory::Path::iterator it = pathlst.begin();
+      it != pathlst.end(); it++) {
+    std::string dir = *it;
+    DEBUG(directory, "\tDir '%s'\n", dir.c_str());
+    cleaned_path += "/" + dir;
   }
 
-  std::string dir = path.substr(prev_pos, current_pos - prev_pos + 1);
-  DEBUG(directory, "Dir '%s'\n", dir.c_str());
-*/
+  DEBUG(directory, "Cleaned path '%s'\n", cleaned_path.c_str());
 
-  return path;
+  if(cleaned_path.empty()) cleaned_path = "/";
+
+  return cleaned_path; 
 }
 
 Directory::EntryList Directory::listFiles(std::string path) {
@@ -124,6 +122,9 @@ Directory::EntryList Directory::listFiles(std::string path) {
 
   struct dirent *entry;
   while((entry = readdir(dir)) != NULL) {
+    std::string name = entry->d_name;
+    if(name == ".") continue;
+    if(Directory::isRoot(path) && name == "..") continue;
     entries.push_back(entry->d_name);
   }
 
@@ -161,11 +162,11 @@ Directory::DriveList Directory::drives() {
 
 bool Directory::isDir()
 {
-  return isDir(path());
+  return isDir(_path);
 }
 
 bool Directory::fileExists(std::string filename) {
-  return !isDir(path() + "/" + filename);
+  return !isDir(_path + "/" + filename);
 }
 
 bool Directory::exists(std::string path) {
@@ -187,6 +188,50 @@ bool Directory::isDir(std::string path) {
   }
   DEBUG(directory, "No\n");
   return false;
+}
+
+Directory::Path Directory::parsePath(std::string path_str) {
+  //TODO: Handle "." input and propably other special cases
+
+  DEBUG(directory, "Parsing path '%s'", path_str.c_str());
+  Directory::Path path;
+  
+  std::string current_char;
+  std::string prev_char;
+  std::string dir;
+  for(size_t c = 0; c < path_str.size(); c++) {
+    current_char = path_str.at(c);
+
+    if(current_char == "/") {
+      if(prev_char == "/") {
+        dir.clear();
+        prev_char = current_char;
+        continue;
+      }
+      else if(prev_char == ".") {
+        prev_char = current_char;
+        continue;
+      }
+      
+      if(!dir.empty()) path.push_back(dir);
+      dir.clear();
+      continue;
+    }
+    else if(current_char == ".") {
+      if(prev_char == ".") {
+        dir.clear();
+        if(!path.empty()) path.pop_back();
+        continue;
+      }
+    }
+    
+    dir += current_char;
+    prev_char = current_char;
+  }
+
+  if(!dir.empty()) path.push_back(dir);
+
+  return path;
 }
 
 #ifdef TEST_DIRECTORY
