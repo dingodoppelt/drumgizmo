@@ -69,7 +69,7 @@ static void changeDir(void *ptr) {
   
   
   GUI::ListBox *lb = prv->listbox;
-  GUI::LineEdit *le = prv->lineedit;
+//  GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
   
