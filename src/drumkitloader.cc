@@ -36,13 +36,28 @@ DrumKitLoader::DrumKitLoader(DrumGizmo *dg)
   drumgizmo = dg;
   is_done = false;
   quitit = false;
+  skipit = false;
 }
 
 DrumKitLoader::~DrumKitLoader()
 {
+  if(!quitit) {
+    stop();
+  }
+}
+
+void DrumKitLoader::stop()
+{
   quitit = true;
   semaphore.post();
   wait_stop();
+}
+
+void DrumKitLoader::skip()
+{
+  skipit = true;
+  semaphore.post();
+  skip_semaphore.wait();
 }
 
 bool DrumKitLoader::isDone()
@@ -67,8 +82,6 @@ void DrumKitLoader::loadKit(DrumKit *kit)
   semaphore.post();
 }
 
-
-
 void DrumKitLoader::thread_main()
 {
   while(1) {
@@ -78,6 +91,12 @@ void DrumKitLoader::thread_main()
     fflush(stdout);
 
     if(quitit) return;
+
+    if(skipit) {
+      skip_semaphore.post();
+      skipit = false;
+      continue;
+    }
 
     unsigned int count = 0;
 
@@ -125,6 +144,8 @@ void DrumKitLoader::thread_main()
           drumgizmo->sendGUIMessage(ls);
           
           a++;
+
+          if(skipit) goto finish;
         }
         
         i++;
