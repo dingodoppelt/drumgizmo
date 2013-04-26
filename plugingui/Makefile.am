@@ -14,7 +14,6 @@ plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
 plugingui_SOURCES = \
 	$(PLUGIN_GUI_SOURCES) \
-  directory.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc
 
