@@ -60,7 +60,7 @@ bool Directory::cd(std::string dir) {
 }
 
 bool Directory::cdUp() {
-  this->cd("..");
+  return this->cd("..");
 }
 
 std::string Directory::path() {
