@@ -27,6 +27,12 @@
 #include "directory.h"
 
 #include <dirent.h>
+#include <stdio.h>
+
+#ifdef WIN32
+#include <direct.h>
+#include <windows.h>
+#endif
 
 #include <hugin.hpp>
 
@@ -133,11 +139,8 @@ Directory::DriveList Directory::drives() {
       char name[] = "X:";
       name[0] = i + 'A';
 
-      char num[32];
-      sprintf(num, "%d", i);
-
       drive.name = name;
-      drive.number = num;
+      drive.number = i;
       drives.push_back(drive);
     }
   }
