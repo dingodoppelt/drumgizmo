@@ -210,7 +210,8 @@ void DrumGizmo::handleEngineEvents()
       break;
     case Message::EngineSettingsMessage:
       {
-        DEBUG(msg, "got EngineSettingsMessage message.");
+        DEBUG(msg, "--------------- Send: EngineSettingsMessage --------------- \n");
+
         bool mmap_loaded = false;
         std::string mmapfile;
         if(ie->isMidiEngine()) {
@@ -224,7 +225,7 @@ void DrumGizmo::handleEngineEvents()
         msg->midimapfile = mmapfile;
         msg->midimap_loaded = mmap_loaded;
         msg->drumkitfile = drumkitfile();
-        msg->drumkit_loaded = true;
+        msg->drumkit_loaded = loader.isDone();
         msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
         msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
         msg->velocity_modifier_weight = Conf::velocity_modifier_weight;
