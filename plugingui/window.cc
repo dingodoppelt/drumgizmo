@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 #include <string.h>
+#include <hugin.hpp>
 
 #ifdef X11
 #include "nativewindow_x11.h"
@@ -44,7 +45,7 @@
 GUI::Window *gwindow = NULL;
 
 GUI::Window::Window(GlobalContext *gctx) 
-  : Widget(NULL), wpixbuf(1000, 1000), back(":bg.png"), logo(":logo.png")
+  : Widget(NULL), wpixbuf(100, 100), back(":bg.png"), logo(":logo.png")
 {
   gwindow = this;
   
@@ -80,6 +81,8 @@ void GUI::Window::setCaption(std::string caption)
 
 void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 {
+  if(!visible()) return;
+
   Painter p(this);
   p.drawImageStretched(0,0, &back, width(), height());
   p.drawImage(width() - logo.width(),
@@ -89,6 +92,14 @@ void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 void GUI::Window::resize(int width, int height)
 {
   if(width < 1 || height < 1) return;
+
+#ifdef WIN32
+  // Fix to force buffer size reallocation
+  // FIXME: This should've been done indirectly through a WM_SIZE message in the
+  //  EventHandler...
+  resized(width, height);
+#endif
+
   native->resize(width, height);
   Widget::resize(width, height);
 }
@@ -161,6 +172,8 @@ void GUI::Window::updateBuffer()
 
 void GUI::Window::resized(size_t w, size_t h)
 {
+  if(_width == w && _height == h) return;
+
   _width = w;
   _height = h;
   wpixbuf.realloc(w, h);
