@@ -224,7 +224,7 @@ void PluginGUI::thread_main()
 
   while(1) {
 #ifdef WIN32
-    SleepEx(50000, FALSE);
+    SleepEx(50, FALSE);
 #else
     usleep(50000);
 #endif/*WIN32*/
