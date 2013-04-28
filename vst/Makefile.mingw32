@@ -56,6 +56,8 @@ GUI_SRC = \
 	$(DG_BASE)/plugingui/knob.cc \
 	$(DG_BASE)/plugingui/directory.cc \
 	$(DG_BASE)/plugingui/filebrowser.cc \
+	$(DG_BASE)/plugingui/directory.cc \
+	$(DG_BASE)/plugingui/scrollbar.cc \
 	$(DG_BASE)/plugingui/combobox.cc \
 	$(DG_BASE)/plugingui/progressbar.cc \
 	$(DG_BASE)/plugingui/resource.cc \
