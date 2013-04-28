@@ -35,17 +35,7 @@
 
 #define NUM_PROGRAMS 0
 #define NUM_PARAMS 0
-/*
-static void midimapHandler(void *ptr, const char* file)
-{
-  DEBUG(vst, "midimapHandler\n");
-  DrumGizmoVst* effect = (DrumGizmoVst*)ptr;
-  InputVST *input = effect->input;
-  DrumGizmo *drumgizmo = effect->drumgizmo;
-  drumgizmo->midimapfile = file;
-  input->loadMidiMap(file);
-}
-*/
+
 DGEditor::DGEditor(AudioEffect* effect) 
 {
   DEBUG(dgeditor, "Create DGEditor\n");
@@ -193,16 +183,6 @@ VstInt32 DrumGizmoVst::setChunk(void *data, VstInt32 byteSize, bool isPreset)
     ERR(vst, "setConfigString failed...\n");
     return 1;
   }
-  DEBUG(vst, "Using Drumkit: %s\n", drumgizmo->kitfile.c_str());
-  DEBUG(vst, "Using Midimap: %s\n", drumgizmo->midimapfile.c_str());
-
-  //  input->loadMidiMap(drumgizmo->midimapfile);
-
-  /*
-  drumgizmo->loadkit("z:/c/drumgizmo/kits/test/test.xml");
-  drumgizmo->midimapfile = "z:/c/drumgizmo/kits/midimap.xml";
-  input->loadMidiMap(drumgizmo->midimapfile);
-  */
 
   return 0;
 }
