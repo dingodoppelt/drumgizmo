@@ -189,6 +189,7 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
   eventhandler = NULL;
  
   running = true;
+  closing = false;
 
 #ifdef USE_THREAD
   run();
@@ -201,14 +202,15 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
 
 PluginGUI::~PluginGUI()
 {
-  DEBUG(plugingui, "~PluginGUI()\n");
+  stopThread();
+}
 
-  running = false;
-  wait_stop();
-
-  if(window) delete window;
-  if(eventhandler) delete eventhandler;
-  if(gctx) delete gctx;
+void PluginGUI::stopThread()
+{
+  if(running) {
+    running = false;
+    wait_stop();
+  }
 }
 
 void PluginGUI::thread_main()
@@ -220,15 +222,19 @@ void PluginGUI::thread_main()
     drumgizmo->sendEngineMessage(msg);
   }
 
-  while(running) {
-    eventhandler->processEvents(window);
+  while(1) {
 #ifdef WIN32
-    SleepEx(50, FALSE);
+    SleepEx(50000, FALSE);
 #else
-    usleep(50);
+    usleep(50000);
 #endif/*WIN32*/
+
+    if(!running) break;
+
+    eventhandler->processEvents(window);
+
     Message *msg;
-    while((msg = drumgizmo->receiveGUIMessage()) != NULL) {
+    if((msg = drumgizmo->receiveGUIMessage()) != NULL) {
       switch(msg->type()) {
       case Message::LoadStatus:
         {
@@ -239,10 +245,6 @@ void PluginGUI::thread_main()
             msg = drumgizmo->receiveGUIMessage();
           } 
           LoadStatusMessage *ls = (LoadStatusMessage*)msg;
-          DEBUG(gui, "%d of %d (%s)\n",
-                ls->numer_of_files_loaded,
-                ls->number_of_files,
-                ls->current_file.c_str());
           progress->setProgress((float)ls->numer_of_files_loaded /
                                 (float)ls->number_of_files);
           if(ls->numer_of_files_loaded == ls->number_of_files) {
@@ -253,8 +255,6 @@ void PluginGUI::thread_main()
       case Message::LoadStatusMidimap:
         {
           LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
-          DEBUG(gui, "Midimap status (%d)\n",
-                ls->success);
           progress2->setProgress(1);
           if(ls->success) {
             progress2->setState(GUI::ProgressBar::green);
@@ -267,6 +267,13 @@ void PluginGUI::thread_main()
         {
           EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
           lineedit->setText(settings->drumkitfile);
+          if(settings->drumkit_loaded) {
+            progress->setProgress(1);
+            progress->setState(GUI::ProgressBar::green);
+          } else {
+            progress->setProgress(0);
+            progress->setState(GUI::ProgressBar::blue);
+          }
           lineedit2->setText(settings->midimapfile);
           if(settings->midimap_loaded) {
             progress2->setProgress(1);
@@ -287,6 +294,21 @@ void PluginGUI::thread_main()
       delete msg;
     }
   }
+
+  deinit();
+}
+
+void PluginGUI::deinit()
+{
+  if(window) delete window;
+  if(eventhandler) delete eventhandler;
+  if(gctx) delete gctx;
+}
+
+void closeEventHandler(void *ptr)
+{
+  volatile bool *closing = (volatile bool*)ptr;
+  *closing = true;
 }
 
 void PluginGUI::init()
@@ -294,7 +316,8 @@ void PluginGUI::init()
   DEBUG(gui, "init");
   gctx = new GUI::GlobalContext();
   eventhandler = new GUI::EventHandler(gctx);
-  //  printf("%p\n", eventhandler);
+  eventhandler->registerCloseHandler(closeEventHandler, (void*)&closing);
+
   window = new GUI::Window(gctx);
   window->resize(370, 330);
   window->setCaption("DrumGizmo v"VERSION);
@@ -445,29 +468,26 @@ void PluginGUI::init()
   sem.post();
 }
 
-static bool shown = false;
 void PluginGUI::show()
 {
   if(!gctx) init();
 
-  //  printf("PluginGUI::show()\n");
-  if(!shown && window) {
-    shown = true;
-    //window->show();
-  }
+  window->show();
 }
 
 void PluginGUI::hide()
 {
-  //  printf("PluginGUI::hide()\n");
   if(window) window->hide();
 }
 
 void PluginGUI::processEvents()
 {
-#ifdef USE_THREAD
-#else
-  printf("PluginGUI::processEvents()\n");
+  if(closing) {
+    if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
+    closing = false;
+  }
+
+#ifndef USE_THREAD
   eventhandler->processEvents(window);
 #endif/*USE_THREAD*/
 }
@@ -476,15 +496,6 @@ void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void *ptr)
 {
   windowClosedHandler = handler;
   windowClosedPtr = ptr;
-  eventhandler->registerCloseHandler(handler, ptr);
-}
-
-
-void PluginGUI::setChangeMidimapCallback(void (*handler)(void *, const char *),
-                                         void *ptr)
-{
-  changeMidimapHandler = handler;
-  changeMidimapPtr = ptr;
 }
 
 #ifdef STANDALONE

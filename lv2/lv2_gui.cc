@@ -120,47 +120,32 @@ struct DG_GUI {
 
 static void ui_run(struct lv2_external_ui * _this_)
 {
-  printf("run() called\n");
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   dggui->gui->processEvents();
 }
 
 static void ui_show(struct lv2_external_ui * _this_)
 {
-  printf("show() called\n");
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   dggui->gui->show();
 }
 
 static void ui_hide(struct lv2_external_ui * _this_)
 {
-  printf("hide() called\n");
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   dggui->gui->hide();
 }
 
 static void closeHandler(void *ptr)
 {
-  printf("> closeHandler\n");
   struct DG_GUI *gui = (struct DG_GUI *)ptr;
-  if(gui->ui_host_ptr && gui->ui_host_ptr->ui_closed)
+
+  if(gui->ui_host_ptr && gui->ui_host_ptr->ui_closed) {
     gui->ui_host_ptr->ui_closed(gui->controller);
-  gui->gui->hide();
-  printf("< closeHandler\n");
-}
+  }
 
-static void midimapHandler(void *ptr, const char* file)
-{
-  /*
-  printf("> midimapHandler %s\n", file);
-  struct DG_GUI *gui = (struct DG_GUI *)ptr;
-  gui->instance->midimapfile = file;
-  
-  DGLV2 *dglv2 = (DGLV2 *)gui->instance_handle;
-  dglv2->in->loadMidiMap(file);
-
-  printf("< midimapHandler\n");
-  */
+  delete gui->gui;
+  gui->gui = NULL;
 }
 
 static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
@@ -207,8 +192,6 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
   pt->virt.hide = ui_hide;
   pt->gui = new PluginGUI(pt->instance);
   pt->gui->setWindowClosedCallback(closeHandler, pt);
-  pt->gui->setChangeMidimapCallback(midimapHandler, pt);
-  //  pt->gui->show();
 
   *widget = (LV2UI_Widget)pt;
 
@@ -217,7 +200,6 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
 
 static void ui_cleanup(LV2UI_Handle ui)
 {
-  printf("ui_cleanup\n");
   struct DG_GUI* pt = (struct DG_GUI*)ui;
   delete pt->gui;
   delete pt;
@@ -229,7 +211,6 @@ static void ui_port_event(LV2UI_Handle ui,
                           uint32_t format,
                           const void * buffer)
 {
-  printf("ui_cport_event\n");
 }
 
 #ifdef __cplusplus
@@ -246,8 +227,6 @@ static LV2UI_Descriptor descriptor = {
 
 const LV2UI_Descriptor *lv2ui_descriptor(uint32_t index)
 {
-  printf("lv2ui_descriptor\n");
-
   if(index == 0) return &descriptor;
   return NULL;
 }

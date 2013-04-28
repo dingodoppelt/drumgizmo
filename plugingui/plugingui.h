@@ -51,16 +51,15 @@ public:
   ~PluginGUI();
 
   void thread_main();
+  void stopThread();
 
   void init();
+  void deinit();
 
   void show();
   void hide();
   void processEvents();
   void setWindowClosedCallback(void (*handler)(void *), void *ptr);
-
-  void setChangeMidimapCallback(void (*handler)(void *, const char *),
-                                void *ptr);
 
   //private:
   GUI::GlobalContext *gctx;
@@ -91,6 +90,7 @@ public:
 
 private:
   volatile bool running;
+  volatile bool closing;
 
   Semaphore sem;
 };
