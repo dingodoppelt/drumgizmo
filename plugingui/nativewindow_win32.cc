@@ -87,7 +87,7 @@ GUI::NativeWindowWin32::NativeWindowWin32(GlobalContext *gctx,
                                 wndId, NULL,
                                 GetModuleHandle(NULL), NULL);
 
-	SetWindowLong(gctx->m_hwnd, GWL_USERDATA, (LONG)gctx->eventhandler);
+	SetWindowLongPtr(gctx->m_hwnd, GWL_USERDATA, (LONG_PTR)gctx->eventhandler);
 }
 
 GUI::NativeWindowWin32::~NativeWindowWin32()
