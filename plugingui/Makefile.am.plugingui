@@ -32,6 +32,6 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc 
 
-PLUGIN_GUI_LIBS = -lX11
+PLUGIN_GUI_LIBS = $(X11_LIBS)
 
-PLUGIN_GUI_CFLAGS = -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+PLUGIN_GUI_CFLAGS = $(X11_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX

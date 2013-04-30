@@ -37,6 +37,11 @@ if test "x$enable_lv2" = "xyes"; then
    dnl Check for lv2core
    dnl ======================
    PKG_CHECK_MODULES(LV2, lv2 >= 1.0)
+
+   dnl ======================
+   dnl Check for Xlib
+   dnl ======================
+   PKG_CHECK_MODULES(X11, x11 >= 1.0)
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    enable_lv2=no
