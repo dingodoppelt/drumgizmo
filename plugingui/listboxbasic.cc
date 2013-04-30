@@ -92,16 +92,25 @@ void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
   }
 
   // sort
-  for(int x = 0; x < (int)items.size() - 1; x++) {
-    for(int y = 0; y < (int)items.size() - 1; y++) {
-      if(items[x].name < items[y].name) {
+  if(items.size() == 2) {
+    DEBUG(list, "Sorting special case with two items\n");
+    if(items[0].name > items[1].name) {
+      GUI::ListBoxBasic::Item tmp = items[0];
+      items[0] = items[1];
+      items[1] = tmp; 
+    }
+  } 
+  else {
+    for(int x = 0; x < (int)items.size() - 1; x++) {
+      for(int y = 0; y < (int)items.size() - 1; y++) {
+        if(items[x].name < items[y].name) {
+          if(x == selected) setSelection(y);
+          else if(selected == y) setSelection(x);
 
-        if(x == selected) setSelection(y);
-        else if(selected == y) setSelection(x);
-
-        GUI::ListBoxBasic::Item tmp = items[x];
-        items[x] = items[y];
-        items[y] = tmp;
+          GUI::ListBoxBasic::Item tmp = items[x];
+          items[x] = items[y];
+          items[y] = tmp;
+        }
       }
     }
   }
