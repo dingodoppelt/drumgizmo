@@ -55,6 +55,9 @@ private:
   int last_click;
   void (*closeHandler)(void *);
   void *closeHandlerPtr;
+
+  // Used to ignore mouse button release after a double click.
+  bool last_was_dbl_click;
 };
 
 };

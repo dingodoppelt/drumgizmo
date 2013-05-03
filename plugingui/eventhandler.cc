@@ -38,6 +38,7 @@ GUI::EventHandler::EventHandler(GlobalContext *gctx)
 {
   this->gctx = gctx;
   last_click = 0;
+  last_was_dbl_click = false;
 #ifdef WIN32
   this->gctx->eventhandler = this;
   event = NULL;
@@ -481,7 +482,13 @@ void GUI::EventHandler::processEvents(Window *window)
       break;
     case Event::Button:
       {
+        if(last_was_dbl_click) {
+          last_was_dbl_click = false;
+          continue;
+        }
         ButtonEvent *be = (ButtonEvent *)event;
+
+        last_was_dbl_click = be->doubleclick;
 
         Widget *w = window->find(be->x, be->y);
 
