@@ -91,6 +91,7 @@ Levels SampleSorter::levels()
 {
   Levels lvls;
 
+  // Sort the segmentation lines:
   for(int i = 0; i < threshold.size(); i++) {
     for(int j = 0; j < threshold.size(); j++) {
       if(threshold[i] < threshold[j]) {
@@ -101,16 +102,16 @@ Levels SampleSorter::levels()
     }
   }
   
-
+  // 
   for(int i = -1; i < threshold.size(); i++) {
     Level lvl;
     
     if(i == -1) lvl.velocity = 0;
-    else lvl.velocity = threshold[i];
+    else lvl.velocity = threshold[i] * threshold[i];
     
     float next;
     if(i == threshold.size() - 1) next = 1.0;
-    else next = threshold[i+1];
+    else next = threshold[i+1] * threshold[i+1];
 
     QMap<float, Selection>::iterator si = sorted.begin();
     while(si != sorted.end()) {
@@ -203,7 +204,7 @@ void SampleSorter::paintEvent(QPaintEvent *event)
     else painter.setPen(colPt);
     painter.drawLine(mapX(threshold[i]), 0, mapX(threshold[i]), height());
     char valstr[32];
-    sprintf(valstr, "%.3f", threshold[i]);
+    sprintf(valstr, "%.3f", threshold[i] * threshold[i]);
     painter.setPen(colVel);
     painter.drawText(mapX(threshold[i]), height(), valstr);
   }
