@@ -47,6 +47,8 @@ public:
   Colour getPixel(size_t x, size_t y);
 
 private:
+  void setError(int err);
+
   void load(const char* data, size_t size);
 
   size_t w, h;

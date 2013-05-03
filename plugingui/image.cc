@@ -26,24 +26,15 @@
  */
 #include "image.h"
 
-#include "resource.h"
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
-void abort_(const char * s, ...)
-{
-  va_list args;
-  va_start(args, s);
-  vfprintf(stderr, s, args);
-  fprintf(stderr, "\n");
-  va_end(args);
-  abort();
-}
+#include <hugin.hpp>
 
+#include "resource.h"
 // http://blog.hammerian.net/2009/reading-png-images-from-memory/
 
 typedef struct {
@@ -77,29 +68,59 @@ GUI::Image::~Image()
 {
 }
 
+void GUI::Image::setError(int err)
+{
+  GUI::Resource rc(":png_error");
+
+  const char *p = rc.data();
+
+  memcpy(&w, p, 4); p += 4;
+  memcpy(&h, p, 4); p += 4;
+
+  DEBUG(image, "w:%d, h:%d\n", w, h);
+
+  row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
+  for(unsigned int y = 0; y < h; y++) {
+    size_t size = w * sizeof(unsigned int);
+    DEBUG(image, "rc.size:%d >= p:%d (rowsize: %d)\n",
+          rc.size(), p - rc.data(), size);
+    row_pointers[y] = (png_byte*)malloc(size);
+    memcpy(row_pointers[y], p, size);
+    p += size;
+  }
+}
+
 void GUI::Image::load(const char* data, size_t size)
 {
   const char *header = data;
 
   // test for it being a png:
   if(png_sig_cmp((png_byte*)header, 0, 8)) {
-    abort_("[read_png_file] File is not recognized as a PNG file");
+    ERR(image, "[read_png_file] File is not recognized as a PNG file");
+    setError(0);
+    return;
   }
   
   // initialize stuff
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   
   if(!png_ptr) {
-    abort_("[read_png_file] png_create_read_struct failed");
+    ERR(image, "[read_png_file] png_create_read_struct failed");
+    setError(1);
+    return;
   }
   
   info_ptr = png_create_info_struct(png_ptr);
   if(!info_ptr) {
-    abort_("[read_png_file] png_create_info_struct failed");
+    ERR(image, "[read_png_file] png_create_info_struct failed");
+    setError(2);
+    return;
   }
   
   if(setjmp(png_jmpbuf(png_ptr))) {
-    abort_("[read_png_file] Error during init_io");
+    ERR(image, "[read_png_file] Error during init_io");
+    setError(3);
+    return;
   }
   
   //png_init_io(png_ptr, fp);
@@ -122,9 +143,11 @@ void GUI::Image::load(const char* data, size_t size)
   png_read_update_info(png_ptr, info_ptr);
   
   
-  /* read file */
+  // read file
   if (setjmp(png_jmpbuf(png_ptr))) {
-    abort_("[read_png_file] Error during read_image");
+    ERR(image, "[read_png_file] Error during read_image");
+    setError(4);
+    return;
   }
   
   row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * h);
