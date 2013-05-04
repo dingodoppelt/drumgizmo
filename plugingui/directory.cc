@@ -125,8 +125,10 @@ Directory::EntryList Directory::listFiles(std::string path) {
     std::string name = entry->d_name;
     if(name == ".") continue;
 
+#ifndef WIN32
     if(Directory::isRoot(path) && name == "..") continue;
-    
+#endif
+
     entries.push_back(entry->d_name);
   }
 
@@ -134,7 +136,8 @@ Directory::EntryList Directory::listFiles(std::string path) {
 }
 
 bool Directory::isRoot(std::string path) {
-#ifdef WIN32  
+#ifdef WIN32
+  std::transform(data.begin(), data.end(), data.begin(), ::tolower);
   // TODO: This is not a correct root calculation, but works with partitions
   if(path.size() == 2) {
     if(path == root()) return true;
