@@ -76,7 +76,14 @@ static void changeDir(void *ptr) {
   lb->clear();
   
   INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
-  
+ 
+#ifdef WIN32
+  if(!value.empty() && dir->isRoot()) {
+    dir->chdir(value);
+    return;
+  }
+#endif
+
   if(!value.empty() && dir->fileExists(value)) {
     std::string file = dir->path() + "/" + value;
     DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
@@ -90,8 +97,6 @@ static void changeDir(void *ptr) {
     return;
   }
 
-  //TODO: If root and windows show drives instead of files
- 
   DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir->path().c_str()); 
   le->setText(dir->path());
 
