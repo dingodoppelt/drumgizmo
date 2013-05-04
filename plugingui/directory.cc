@@ -272,7 +272,12 @@ std::string Directory::pathToStr(Directory::Path& path) {
       it != path.end(); it++) {
     std::string dir = *it;
     DEBUG(directory, "\tDir '%s'\n", dir.c_str());
+#ifdef WIN32
+    if(it != path.begin()) cleaned_path += SEP;
+    cleaned_path += dir;
+#else
     cleaned_path += SEP + dir;
+#endif
   }
 
   DEBUG(directory, "Cleaned path '%s'\n", cleaned_path.c_str());
