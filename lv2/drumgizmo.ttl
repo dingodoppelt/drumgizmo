@@ -28,7 +28,7 @@
 	a lv2:InstrumentPlugin ;
 	doap:name "DrumGizmo" ;
 	doap:maintainer [
-		foaf:name "Bent Bisballe Nyeng / Jonas Suhr Christensen";
+		foaf:name "Bent Bisballe Nyeng / Lars Bisballe Jensen / Jonas Suhr Christensen";
 		foaf:homepage <http://www.drumgizmo.org> ;
 	] ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
