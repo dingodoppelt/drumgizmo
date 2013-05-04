@@ -52,9 +52,9 @@ struct GUI::FileBrowser::private_data {
   void (*filesel_handler)(void *, std::string);
   void *ptr;
   Directory *dir;
-//#ifdef WIN32
-//  int drvidx;
-//#endif
+#ifdef WIN32
+  bool above_root;
+#endif
 };
 
 static void cancel(void *ptr)
@@ -78,9 +78,10 @@ static void changeDir(void *ptr) {
   INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
  
 #ifdef WIN32
-  if(!value.empty() && Directory::isRoot(dir->path())) {
+  if(prv->above_root && !value.empty()) {
     dir->setPath(value);
-    return;
+    value.clear();
+    prv->above_root = false;
   }
 #endif
 
@@ -115,6 +116,7 @@ static void changeDir(void *ptr) {
       item.value = name;
       items.push_back(item);
     } 
+    prv->above_root = true;
   }
   else {
 #endif
@@ -226,6 +228,9 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   prv->filesel_handler = NULL;
 
   prv->dir = new Directory(Directory::cwd());
+#ifdef WIN32  
+  prv->above_root = false;
+#endif
 
   lbl_path.setText("Path:");
 
