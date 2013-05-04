@@ -27,6 +27,11 @@
 <http://drumgizmo.org/lv2>
 	a lv2:InstrumentPlugin ;
 	doap:name "DrumGizmo" ;
+	doap:maintainer [
+		foaf:name "Bent Bisballe Nyeng / Jonas Suhr Christensen";
+		foaf:homepage <http://www.drumgizmo.org> ;
+	] ;
+	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
 	uiext:ui <http://drumgizmo.org/lv2-gui> ;
 	doap:license <http://opensource.org/licenses/gpl-3.0> ;
 	lv2:optionalFeature <http://lv2plug.in/ns/ext/uri-map> ;
