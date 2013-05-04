@@ -78,7 +78,7 @@ static void changeDir(void *ptr) {
   INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
  
 #ifdef WIN32
-  if(!value.empty() && dir->isRoot()) {
+  if(!value.empty() && Directory::isRoot(dir->path())) {
     dir->setPath(value);
     return;
   }
