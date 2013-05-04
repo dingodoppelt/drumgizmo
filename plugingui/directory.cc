@@ -36,6 +36,15 @@
 
 #include <hugin.hpp>
 
+// http://en.wikipedia.org/wiki/Path_(computing)
+#ifdef WIN32
+  #define SEP "\\"
+#else
+  #define SEP "/"
+#endif
+
+
+
 Directory::Directory(std::string path) {
   setPath(path);
 }
@@ -62,8 +71,8 @@ bool Directory::cd(std::string dir) {
   if(dir.empty() || dir == ".") return true;
 
   DEBUG(directory, "Changing to '%s'\n", dir.c_str());
-  if(exists(_path + "/" + dir)) {
-    std::string path = _path + "/" + dir;
+  if(exists(_path + SEP + dir)) {
+    std::string path = _path + SEP + dir;
     setPath(path);
     refresh();
     return true;
@@ -95,7 +104,7 @@ std::string Directory::cwd() {
 
 
 std::string Directory::cleanPath(std::string path) {
-  WARN(directory, "Cleaning path '%s'\n", path.c_str());
+  DEBUG(directory, "Cleaning path '%s'\n", path.c_str());
 
   Directory::Path pathlst = parsePath(path);
   return Directory::pathToStr(pathlst);  
@@ -115,7 +124,9 @@ Directory::EntryList Directory::listFiles(std::string path) {
   while((entry = readdir(dir)) != NULL) {
     std::string name = entry->d_name;
     if(name == ".") continue;
+
     if(Directory::isRoot(path) && name == "..") continue;
+    
     entries.push_back(entry->d_name);
   }
 
@@ -123,10 +134,41 @@ Directory::EntryList Directory::listFiles(std::string path) {
 }
 
 bool Directory::isRoot(std::string path) {
-  //TODO: Handle WIN32
-
+#ifdef WIN32  
+  // TODO: This is not a correct root calculation, but works with partitions
+  if(path.size() == 2) {
+    if(path == root()) return true;
+    else return false;
+  }
+  else if (path.size() == 3) {
+    if(path == root() + SEP) return true;
+    return false;
+  }
+  else {
+    return false;
+  }
+#else
   if(path == "/") return true;
   else return false;
+#endif
+}
+
+std::string Directory::root() {
+  return root(cwd());
+}
+
+// TODO: Handle windows root 
+std::string Directory::root(std::string path) {
+#ifdef WIN32
+  if(path.size() < 3) {
+    return "c:"; // just something default when input is bad
+  }
+  else {
+    return path.substr(0, 2);
+  }
+#else
+  return "/";
+#endif
 }
 
 Directory::DriveList Directory::drives() {
@@ -154,7 +196,7 @@ bool Directory::isDir()
 }
 
 bool Directory::fileExists(std::string filename) {
-  return !isDir(_path + "/" + filename);
+  return !isDir(_path + SEP + filename);
 }
 
 bool Directory::exists(std::string path) {
@@ -190,8 +232,8 @@ Directory::Path Directory::parsePath(std::string path_str) {
   for(size_t c = 0; c < path_str.size(); c++) {
     current_char = path_str.at(c);
 
-    if(current_char == "/") {
-      if(prev_char == "/") {
+    if(current_char == SEP) {
+      if(prev_char == SEP) {
         dir.clear();
         prev_char = current_char;
         continue;
@@ -224,18 +266,20 @@ Directory::Path Directory::parsePath(std::string path_str) {
 
 std::string Directory::pathToStr(Directory::Path& path) {
   std::string cleaned_path;
-  DEBUG(directory, "Number of directories in path %d\n", path.size());
+  DEBUG(directory, "Number of directories in path is %d\n", path.size());
 
   for(Directory::Path::iterator it = path.begin();
       it != path.end(); it++) {
     std::string dir = *it;
     DEBUG(directory, "\tDir '%s'\n", dir.c_str());
-    cleaned_path += "/" + dir;
+    cleaned_path += SEP + dir;
   }
 
   DEBUG(directory, "Cleaned path '%s'\n", cleaned_path.c_str());
 
-  if(cleaned_path.empty()) cleaned_path = "/";
+  if(cleaned_path.empty()) { 
+    cleaned_path = Directory::root();
+  }
 
   return cleaned_path; 
 }

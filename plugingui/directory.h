@@ -65,6 +65,8 @@ class Directory {
     //void setSorting();
 
     static std::string cwd();
+    static std::string root();
+    static std::string root(std::string path); 
     static std::string cleanPath(std::string path);
     static Directory::EntryList listFiles(std::string path);
     static bool isRoot(std::string path);

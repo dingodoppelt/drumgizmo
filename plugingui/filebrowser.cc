@@ -97,15 +97,34 @@ static void changeDir(void *ptr) {
 
   lb->clear();
   std::vector<GUI::ListBoxBasic::Item> items;
-  Directory::EntryList entries = dir->entryList();
-  for(Directory::EntryList::iterator it = entries.begin();
-      it != entries.end(); it++) {  
-    GUI::ListBoxBasic::Item item;
-    std::string name = *it;
-    item.name = name;
-    item.value = name;
-    items.push_back(item);
+
+#ifdef WIN32
+  if(Directory::isRoot(dir->path()) && value == "..") {
+   DEBUG(filebrowser, "Showing partitions...\n");
+   Directory::DriveList entries = dir->drives();
+   for(Directory::DriveList::iterator it = entries.begin();
+       it != entries.end(); it++) {  
+      GUI::ListBoxBasic::Item item;
+      std::string name = (*it).name;
+      item.name = name;
+      item.value = name;
+      items.push_back(item);
+    } 
   }
+  else {
+#endif
+    Directory::EntryList entries = dir->entryList();
+    for(Directory::EntryList::iterator it = entries.begin();
+        it != entries.end(); it++) {  
+      GUI::ListBoxBasic::Item item;
+      std::string name = *it;
+      item.name = name;
+      item.value = name;
+      items.push_back(item);
+    }
+#ifdef WIN32
+  }
+#endif
   lb->addItems(items);
 }
 
