@@ -79,7 +79,7 @@ static void changeDir(void *ptr) {
  
 #ifdef WIN32
   if(!value.empty() && dir->isRoot()) {
-    dir->chdir(value);
+    dir->setPath(value);
     return;
   }
 #endif
