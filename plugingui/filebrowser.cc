@@ -121,6 +121,7 @@ static void changeDir(void *ptr) {
   else {
 #endif
     Directory::EntryList entries = dir->entryList();
+    DEBUG(filebrowser, "Showing entries in dir. %d entries\n", dir->size());
     for(Directory::EntryList::iterator it = entries.begin();
         it != entries.end(); it++) {  
       GUI::ListBoxBasic::Item item;
