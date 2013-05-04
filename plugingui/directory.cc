@@ -28,6 +28,8 @@
 
 #include <dirent.h>
 #include <stdio.h>
+#include <string> 
+#include <algorithm>
 
 #ifdef WIN32
 #include <direct.h>
@@ -137,7 +139,7 @@ Directory::EntryList Directory::listFiles(std::string path) {
 
 bool Directory::isRoot(std::string path) {
 #ifdef WIN32
-  std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+  std::transform(path.begin(), path.end(), path.begin(), ::tolower);
   // TODO: This is not a correct root calculation, but works with partitions
   if(path.size() == 2) {
     if(path == root()) return true;
@@ -181,8 +183,8 @@ Directory::DriveList Directory::drives() {
   for(int i = 0; i < 32; i++) {
     if(d & (1 << i)) {
       drive_t drive;
-      char name[] = "X:";
-      name[0] = i + 'A';
+      char name[] = "x:";
+      name[0] = i + 'a';
 
       drive.name = name;
       drive.number = i;
