@@ -40,7 +40,7 @@
 class JackMidi : public JackProcess {
 public:
   JackMidi();
-  ~JackMidi();
+  virtual ~JackMidi();
 
   bool init(int instruments, char *inames[]);
 
