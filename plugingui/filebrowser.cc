@@ -54,6 +54,7 @@ struct GUI::FileBrowser::private_data {
   Directory *dir;
 #ifdef WIN32
   bool above_root;
+  bool in_root;
 #endif
 };
 
@@ -72,14 +73,15 @@ static void changeDir(void *ptr) {
   GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
- 
+
   lb->clear();
   
   INFO(filebrowser, "Changing path to '%s'\n", (dir->path() + "/" + value).c_str());
  
 #ifdef WIN32
   if(prv->above_root && !value.empty()) {
-    dir->setPath(value);
+DEBUG(filebrowser, "AAAA"); 
+   dir->setPath(value+"\\");
     value.clear();
     prv->above_root = false;
   }
@@ -92,16 +94,7 @@ static void changeDir(void *ptr) {
     return;
   }
 
-  if(!value.empty() && !dir->cd(value)) {
-    DEBUG(filebrowser, "Error changing to '%s'\n", 
-            (dir->path() + "/" + value).c_str());
-    return;
-  }
 
-  DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir->path().c_str()); 
-  le->setText(dir->path());
-
-  lb->clear();
   std::vector<GUI::ListBoxBasic::Item> items;
 
 #ifdef WIN32
@@ -120,7 +113,17 @@ static void changeDir(void *ptr) {
   }
   else {
 #endif
-    Directory::EntryList entries = dir->entryList();
+    
+  if(!value.empty() && !dir->cd(value)) {
+    DEBUG(filebrowser, "Error changing to '%s'\n", 
+            (dir->path() + "/" + value).c_str());
+    return;
+  }
+
+  DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir->path().c_str()); 
+  le->setText(dir->path());
+
+Directory::EntryList entries = dir->entryList();
     for(Directory::EntryList::iterator it = entries.begin();
         it != entries.end(); it++) {  
       GUI::ListBoxBasic::Item item;

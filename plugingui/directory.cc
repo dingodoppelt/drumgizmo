@@ -127,26 +127,34 @@ Directory::EntryList Directory::listFiles(std::string path) {
     std::string name = entry->d_name;
     if(name == ".") continue;
 
-#ifndef WIN32
-    if(Directory::isRoot(path) && name == "..") continue;
-#endif
+  if(Directory::isRoot(path) && name == "..") continue;
 
     entries.push_back(entry->d_name);
   }
+
+#ifdef WIN32
+	DEBUG(directory, "root is %s\n", Directory::root(path).c_str()); 
+	DEBUG(directory, "current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
+if(Directory::isRoot(path)) entries.push_back(".."); 
+#endif
 
   return entries;
 }
 
 bool Directory::isRoot(std::string path) {
+//	DEBUG(directory, "Is root %s\n", path.c_str());
 #ifdef WIN32
   std::transform(path.begin(), path.end(), path.begin(), ::tolower);
+  std::string root_str = Directory::root(path); 
+  std::transform(root_str.begin(), root_str.end(), root_str.begin(), ::tolower);
   // TODO: This is not a correct root calculation, but works with partitions
   if(path.size() == 2) {
-    if(path == root()) return true;
+    if(path == root_str) return true;
     else return false;
   }
   else if (path.size() == 3) {
-    if(path == root() + SEP) return true;
+//    DEBUG(directory, "Comparing %s and %s\n", path.c_str(), (root_str + SEP).c_str()); 
+    if(path == root_str + SEP) return true;
     return false;
   }
   else {
@@ -165,7 +173,7 @@ std::string Directory::root() {
 // TODO: Handle windows root 
 std::string Directory::root(std::string path) {
 #ifdef WIN32
-  if(path.size() < 3) {
+  if(path.size() < 2) {
     return "c:"; // just something default when input is bad
   }
   else {
@@ -289,7 +297,14 @@ std::string Directory::pathToStr(Directory::Path& path) {
 
   if(cleaned_path.empty()) { 
     cleaned_path = Directory::root();
-  }
+#ifdef WIN32
+  cleaned_path += SEP;
+#endif  
+}
+
+#ifdef WIN32
+  if(cleaned_path.size() == 2) cleaned_path += SEP;
+#endif
 
   return cleaned_path; 
 }
