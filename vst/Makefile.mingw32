@@ -30,7 +30,7 @@ DG_SRC = \
 	${DG_BASE}/src/semaphore.cc \
 	${DG_BASE}/src/thread.cc \
 	${DG_BASE}/src/velocity.cc
-DG_CFLAGS = -I../include -I../src -DSSE -msse -msse2
+DG_CFLAGS = -DDISABLE_HUGIN -I../include -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	$(DG_BASE)/plugingui/plugingui.cc \
@@ -70,7 +70,7 @@ DBG_SRC = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_syslog.c
 
-DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+DBG_CFLAGS=-DDISABLE_HUGIN -I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
 #
 # http://old.nabble.com/using-VC%2B%2B-.lib-with-mingw-td23151303.html
 # Given `-lfoo', the win32 build of GNU ld will search for libfoo.a and foo.lib
