@@ -31,7 +31,6 @@
 
 #include "button.h"
 #include "listbox.h"
-#include "combobox.h"
 #include "lineedit.h"
 #include "label.h"
 #include "image.h"
@@ -69,12 +68,6 @@ private:
   GUI::Button btn_esc;
 
   Image back;
-
-#ifdef WIN32
-  // Only used on win32
-  GUI::ComboBox drv;
-  GUI::Label lbl_drive;
-#endif
 };
 
 };

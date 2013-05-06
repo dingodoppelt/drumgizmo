@@ -45,30 +45,34 @@
   #define SEP "/"
 #endif
 
-
-
-Directory::Directory(std::string path) {
+Directory::Directory(std::string path)
+{
   setPath(path);
 }
 
-Directory::~Directory() {
+Directory::~Directory()
+{
 }
 
-void Directory::setPath(std::string path) {
+void Directory::setPath(std::string path)
+{
   DEBUG(directory, "Setting path to '%s'\n", path.c_str());
   this->_path = path;
   refresh();
 }
 
-size_t Directory::count() {
+size_t Directory::count()
+{
   return _files.size();
 }
 
-void Directory::refresh() {
+void Directory::refresh()
+{
   _files = listFiles(_path);
 }
 
-bool Directory::cd(std::string dir) {
+bool Directory::cd(std::string dir)
+{
   //TODO: Should this return true or false?
   if(dir.empty() || dir == ".") return true;
 
@@ -78,20 +82,24 @@ bool Directory::cd(std::string dir) {
     setPath(path);
     refresh();
     return true;
+  } else {
+    return false;
   }
-  else return false;
 }
 
-bool Directory::cdUp() {
+bool Directory::cdUp()
+{
   return this->cd("..");
 }
 
-std::string Directory::path() {
+std::string Directory::path()
+{
   setPath(cleanPath(_path));
   return _path;
 }
 
-Directory::EntryList Directory::entryList() {
+Directory::EntryList Directory::entryList()
+{
   return _files;
 }
 
@@ -104,15 +112,16 @@ std::string Directory::cwd() {
   else return "";
 }
 
-
-std::string Directory::cleanPath(std::string path) {
+std::string Directory::cleanPath(std::string path)
+{
   DEBUG(directory, "Cleaning path '%s'\n", path.c_str());
 
   Directory::Path pathlst = parsePath(path);
   return Directory::pathToStr(pathlst);  
 }
 
-Directory::EntryList Directory::listFiles(std::string path) {
+Directory::EntryList Directory::listFiles(std::string path)
+{
   DEBUG(directory, "Listing files in '%s'\n", path.c_str());
 
   Directory::EntryList entries;
@@ -127,7 +136,7 @@ Directory::EntryList Directory::listFiles(std::string path) {
     std::string name = entry->d_name;
     if(name == ".") continue;
 
-  if(Directory::isRoot(path) && name == "..") continue;
+    if(Directory::isRoot(path) && name == "..") continue;
 
     entries.push_back(entry->d_name);
   }
@@ -141,8 +150,8 @@ if(Directory::isRoot(path)) entries.push_back("..");
   return entries;
 }
 
-bool Directory::isRoot(std::string path) {
-//	DEBUG(directory, "Is root %s\n", path.c_str());
+bool Directory::isRoot(std::string path)
+{
 #ifdef WIN32
   std::transform(path.begin(), path.end(), path.begin(), ::tolower);
   std::string root_str = Directory::root(path); 
@@ -151,13 +160,10 @@ bool Directory::isRoot(std::string path) {
   if(path.size() == 2) {
     if(path == root_str) return true;
     else return false;
-  }
-  else if (path.size() == 3) {
-//    DEBUG(directory, "Comparing %s and %s\n", path.c_str(), (root_str + SEP).c_str()); 
+  } else if (path.size() == 3) {
     if(path == root_str + SEP) return true;
     return false;
-  }
-  else {
+  } else {
     return false;
   }
 #else
@@ -166,17 +172,17 @@ bool Directory::isRoot(std::string path) {
 #endif
 }
 
-std::string Directory::root() {
+std::string Directory::root()
+{
   return root(cwd());
 }
 
-// TODO: Handle windows root 
-std::string Directory::root(std::string path) {
+std::string Directory::root(std::string path)
+{
 #ifdef WIN32
   if(path.size() < 2) {
     return "c:"; // just something default when input is bad
-  }
-  else {
+  } else {
     return path.substr(0, 2);
   }
 #else
@@ -184,7 +190,8 @@ std::string Directory::root(std::string path) {
 #endif
 }
 
-Directory::DriveList Directory::drives() {
+Directory::DriveList Directory::drives()
+{
   Directory::DriveList drives;
 #ifdef WIN32
   unsigned int d = GetLogicalDrives();
@@ -208,19 +215,23 @@ bool Directory::isDir()
   return isDir(_path);
 }
 
-bool Directory::fileExists(std::string filename) {
+bool Directory::fileExists(std::string filename)
+{
   return !isDir(_path + SEP + filename);
 }
 
-bool Directory::exists(std::string path) {
+bool Directory::exists(std::string path)
+{
   struct stat st;
   if(stat(path.c_str(), &st) == 0) {
     return true;
+  } else {
+    return false;
   }
-  else return false;
 }
 
-bool Directory::isDir(std::string path) {
+bool Directory::isDir(std::string path)
+{
   DEBUG(directory, "Is '%s' dir?\n", path.c_str());
   struct stat st;
   if(stat(path.c_str(), &st) == 0) {
@@ -233,7 +244,8 @@ bool Directory::isDir(std::string path) {
   return false;
 }
 
-Directory::Path Directory::parsePath(std::string path_str) {
+Directory::Path Directory::parsePath(std::string path_str)
+{
   //TODO: Handle "." input and propably other special cases
 
   DEBUG(directory, "Parsing path '%s'", path_str.c_str());
@@ -250,8 +262,7 @@ Directory::Path Directory::parsePath(std::string path_str) {
         dir.clear();
         prev_char = current_char;
         continue;
-      }
-      else if(prev_char == ".") {
+      } else if(prev_char == ".") {
         prev_char = current_char;
         continue;
       }
@@ -259,8 +270,7 @@ Directory::Path Directory::parsePath(std::string path_str) {
       if(!dir.empty()) path.push_back(dir);
       dir.clear();
       continue;
-    }
-    else if(current_char == ".") {
+    } else if(current_char == ".") {
       if(prev_char == ".") {
         dir.clear();
         if(!path.empty()) path.pop_back();
@@ -277,7 +287,8 @@ Directory::Path Directory::parsePath(std::string path_str) {
   return path;
 }
 
-std::string Directory::pathToStr(Directory::Path& path) {
+std::string Directory::pathToStr(Directory::Path& path)
+{
   std::string cleaned_path;
   DEBUG(directory, "Number of directories in path is %d\n", path.size());
 
@@ -298,9 +309,9 @@ std::string Directory::pathToStr(Directory::Path& path) {
   if(cleaned_path.empty()) { 
     cleaned_path = Directory::root();
 #ifdef WIN32
-  cleaned_path += SEP;
+    cleaned_path += SEP;
 #endif  
-}
+  }
 
 #ifdef WIN32
   if(cleaned_path.size() == 2) cleaned_path += SEP;
@@ -309,7 +320,8 @@ std::string Directory::pathToStr(Directory::Path& path) {
   return cleaned_path; 
 }
 
-std::string Directory::pathDirectory(std::string filepath) {
+std::string Directory::pathDirectory(std::string filepath)
+{
   if(Directory::isDir(filepath)) return filepath;
 
   Directory::Path path = parsePath(filepath);
@@ -317,20 +329,3 @@ std::string Directory::pathDirectory(std::string filepath) {
 
   return Directory::pathToStr(path);
 }
-
-#ifdef TEST_DIRECTORY
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_DIRECTORY*/
