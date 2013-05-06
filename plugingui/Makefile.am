@@ -23,28 +23,35 @@ EXTRA_DIST = \
 	button.h \
 	checkbox.h \
 	colour.h \
+	combobox.h \
 	directory.h \
-  eventhandler.h \
+	eventhandler.h \
+	filebrowser.h \
 	font.h \
 	globalcontext.h \
 	guievent.h \
 	image.h \
+	knob.h \
 	label.h \
 	led.h \
 	lineedit.h \
+	listbox.h \
+	listboxbasic.h \
+	listboxthin.h \
 	nativewindow.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \
 	painter.h \
 	pixelbuffer.h \
 	plugingui.h \
+	progressbar.h \
+	resource.h \
+	resource_data.h \
+	scrollbar.h \
 	slider.h \
+	verticalline.h \
 	widget.h \
-	window.h \
-	listbox.h \
-	knob.h \
-	filebrowser.h \
-	combobox.h
+	window.h
 
 ################
 # Test Section #
