@@ -28,36 +28,33 @@
 #define __DRUMGIZMO_EVENTHANDLER_H__
 
 #include "guievent.h"
-#include "globalcontext.h"
-
-#include "window.h"
+#include "nativewindow.h"
+//#include "window.h"
 
 namespace GUI {
+class Window;
 
 class EventHandler {
 public:
-  EventHandler(GlobalContext *gctx);
+  EventHandler(NativeWindow *native, Window *window);
 
-  void processEvents(Window *window);
+  void processEvents();
 
   bool hasEvent();
   Event *getNextEvent();
 
   void registerCloseHandler(void (*handler)(void *), void *ptr);
 
-#ifdef WIN32
-  Event *event;
-#endif/*WIN32*/
-
-  GlobalContext *gctx;
-
 private:
+  Window *window;
   int last_click;
   void (*closeHandler)(void *);
   void *closeHandlerPtr;
 
   // Used to ignore mouse button release after a double click.
   bool last_was_dbl_click;
+
+  NativeWindow *native;
 };
 
 };

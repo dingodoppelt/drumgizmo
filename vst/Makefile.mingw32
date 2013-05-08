@@ -34,7 +34,6 @@ DG_CFLAGS = -DDISABLE_HUGIN -I../include -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	$(DG_BASE)/plugingui/plugingui.cc \
-	$(DG_BASE)/plugingui/globalcontext.cc \
 	$(DG_BASE)/plugingui/label.cc \
 	$(DG_BASE)/plugingui/eventhandler.cc \
 	$(DG_BASE)/plugingui/font.cc \

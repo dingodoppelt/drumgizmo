@@ -93,7 +93,7 @@ size_t GUI::Font::textHeight(std::string text)
   return img_font.height();
 }
 
-GUI::PixelBufferAlpha *GUI::Font::render(GlobalContext *gctx, std::string text)
+GUI::PixelBufferAlpha *GUI::Font::render(std::string text)
 {
   int border = 1;
   PixelBufferAlpha *pb =

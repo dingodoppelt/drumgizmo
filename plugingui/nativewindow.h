@@ -29,13 +29,13 @@
 
 #include <string>
 
-#include "globalcontext.h"
+#include "guievent.h"
 
 namespace GUI {
 
 class NativeWindow {
 public:
-  NativeWindow(GlobalContext *c) : gctx(c) {}
+  NativeWindow() {}
   virtual ~NativeWindow() {}
 
   virtual void resize(int width, int height) = 0;
@@ -47,8 +47,8 @@ public:
   virtual void redraw() = 0;
   virtual void grabMouse(bool grab) = 0;
 
-protected:
-  GlobalContext *gctx;
+  virtual bool hasEvent() = 0;
+  virtual Event *getNextEvent() = 0;
 };
 
 };

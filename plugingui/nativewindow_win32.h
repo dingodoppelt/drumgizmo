@@ -31,12 +31,17 @@
 
 #include "nativewindow.h"
 
+#include <windows.h>
+typedef HWND WNDID;
+
 namespace GUI {
 
 class Window;
+class Event;
+
 class NativeWindowWin32 : public NativeWindow {
 public:
-  NativeWindowWin32(GlobalContext *gctx, GUI::Window *window);
+  NativeWindowWin32(GUI::Window *window);
   ~NativeWindowWin32();
 
   void resize(int width, int height);
@@ -48,8 +53,14 @@ public:
   void redraw();
   void grabMouse(bool grab);
 
-private:
+  bool hasEvent();
+  Event *getNextEvent();
+
+  // Needed by dialogProc
   GUI::Window *window;
+	WNDID	m_hwnd;
+	char *m_className;
+  Event *event;
 };
 
 };

@@ -26,7 +26,6 @@
  */
 #include "widget.h"
 
-#include "globalcontext.h"
 #include "painter.h"
 #include "window.h"
 

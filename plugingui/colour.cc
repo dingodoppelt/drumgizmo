@@ -26,8 +26,6 @@
  */
 #include "colour.h"
 
-#include "globalcontext.h"
-
 GUI::Colour::Colour()
 {
   red = blue = green = alpha = 1.0;

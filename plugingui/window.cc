@@ -42,15 +42,9 @@
 #include "nativewindow_win32.h"
 #endif/*WIN32*/
 
-GUI::Window *gwindow = NULL;
-
-GUI::Window::Window(GlobalContext *gctx) 
+GUI::Window::Window() 
   : Widget(NULL), wpixbuf(100, 100), back(":bg.png"), logo(":logo.png")
 {
-  gwindow = this;
-  
-  this->gctx = gctx;
-
   _x = _y = 100;
   _width = wpixbuf.width;
   _height = wpixbuf.height;
@@ -61,17 +55,25 @@ GUI::Window::Window(GlobalContext *gctx)
   _mouseFocus = NULL;
 
 #ifdef X11
-  native = new NativeWindowX11(gctx, this);
+  native = new NativeWindowX11(this);
 #endif/*X11*/
 
 #ifdef WIN32
-  native = new NativeWindowWin32(gctx, this);
+  native = new NativeWindowWin32(this);
 #endif/*WIN32*/
+
+  eventhandler = new GUI::EventHandler(native, this);
 }
 
 GUI::Window::~Window()
 {
   delete native;
+  delete eventhandler;
+}
+
+GUI::EventHandler *GUI::Window::eventHandler()
+{
+  return eventhandler;
 }
 
 void GUI::Window::setCaption(std::string caption)

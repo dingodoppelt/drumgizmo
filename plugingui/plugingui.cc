@@ -29,7 +29,6 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
-#include "globalcontext.h"
 #include "knob.h"
 
 #include "verticalline.h"
@@ -184,9 +183,7 @@ PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
 
   this->drumgizmo = drumgizmo;
 
-  gctx = NULL;
   window = NULL;
-  eventhandler = NULL;
  
   running = true;
   closing = false;
@@ -231,7 +228,7 @@ void PluginGUI::thread_main()
 
     if(!running) break;
 
-    eventhandler->processEvents(window);
+    window->eventHandler()->processEvents();
 
     Message *msg;
     if((msg = drumgizmo->receiveGUIMessage()) != NULL) {
@@ -301,8 +298,6 @@ void PluginGUI::thread_main()
 void PluginGUI::deinit()
 {
   if(window) delete window;
-  if(eventhandler) delete eventhandler;
-  if(gctx) delete gctx;
 }
 
 void closeEventHandler(void *ptr)
@@ -314,11 +309,10 @@ void closeEventHandler(void *ptr)
 void PluginGUI::init()
 {
   DEBUG(gui, "init");
-  gctx = new GUI::GlobalContext();
-  eventhandler = new GUI::EventHandler(gctx);
-  eventhandler->registerCloseHandler(closeEventHandler, (void*)&closing);
+  window = new GUI::Window();
+  window->eventHandler()->registerCloseHandler(closeEventHandler,
+                                               (void*)&closing);
 
-  window = new GUI::Window(gctx);
   window->resize(370, 330);
   window->setCaption("DrumGizmo v"VERSION);
 
@@ -470,7 +464,7 @@ void PluginGUI::init()
 
 void PluginGUI::show()
 {
-  if(!gctx) init();
+  if(!window) init();
 
   window->show();
 }
@@ -488,7 +482,7 @@ void PluginGUI::processEvents()
   }
 
 #ifndef USE_THREAD
-  eventhandler->processEvents(window);
+  window->eventHandler()->processEvents(window);
 #endif/*USE_THREAD*/
 }
 

@@ -176,7 +176,7 @@ void GUI::Painter::clear()
 void GUI::Painter::drawText(int x0, int y0, GUI::Font &font, std::string text,
                             bool nocolour)
 {
-  PixelBufferAlpha *textbuf = font.render(widget->window()->gctx, text);
+  PixelBufferAlpha *textbuf = font.render(text);
   if(nocolour) {
     for(size_t x = 0; x < textbuf->width; x++) {
       for(size_t y = 0; y < textbuf->height; y++) {

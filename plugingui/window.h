@@ -29,17 +29,16 @@
 
 #include "widget.h"
 
-#include "globalcontext.h"
-
 #include "pixelbuffer.h"
 #include "nativewindow.h"
 #include "image.h"
+#include "eventhandler.h"
 
 namespace GUI {
 
 class Window : public Widget {
 public:
-  Window(GlobalContext *gctx);
+  Window();
   ~Window();
 
   void show();
@@ -66,6 +65,8 @@ public:
 
   Window *window();
 
+  EventHandler *eventHandler();
+
   // handlers
   virtual void redraw();
   void resized(size_t w, size_t h);
@@ -79,8 +80,6 @@ public:
   Widget *mouseFocus();
   void setMouseFocus(Widget *widget);
 
-  GlobalContext *gctx;
-
   PixelBuffer wpixbuf;
   void updateBuffer();
 
@@ -92,6 +91,7 @@ protected:
   Widget *_mouseFocus;
 
   NativeWindow *native;
+  EventHandler *eventhandler;
 
   Image back;
   Image logo;

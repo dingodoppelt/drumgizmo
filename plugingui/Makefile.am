@@ -26,7 +26,6 @@ EXTRA_DIST = \
 	directory.h \
   eventhandler.h \
 	font.h \
-	globalcontext.h \
 	guievent.h \
 	image.h \
 	label.h \

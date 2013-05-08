@@ -32,26 +32,28 @@
 
 #include "window.h"
 
-GUI::NativeWindowX11::NativeWindowX11(GlobalContext *gctx, GUI::Window *window)
-  : GUI::NativeWindow(gctx)
+GUI::NativeWindowX11::NativeWindowX11(GUI::Window *window)
+  : GUI::NativeWindow()
 {
+  display = XOpenDisplay(NULL);
+
   this->window = window;
   buffer = NULL;
 
   // Get some colors
-  int blackColor = BlackPixel(gctx->display, DefaultScreen(gctx->display));
+  int blackColor = BlackPixel(display, DefaultScreen(display));
   
-  ::Window w = DefaultRootWindow(gctx->display);
+  ::Window w = DefaultRootWindow(display);
 
   // Create the window
-  xwindow = XCreateSimpleWindow(gctx->display,
+  xwindow = XCreateSimpleWindow(display,
                                 w,
                                 window->x(), window->y(),
                                 window->width(), window->height(),
                                 0,
                                 blackColor, blackColor);
 
-  XSelectInput(gctx->display, xwindow,
+  XSelectInput(display, xwindow,
                StructureNotifyMask |
                PointerMotionMask |
                ButtonPressMask |
@@ -63,40 +65,41 @@ GUI::NativeWindowX11::NativeWindowX11(GlobalContext *gctx, GUI::Window *window)
                SubstructureNotifyMask);
 
   // register interest in the delete window message
-  gctx->wmDeleteMessage = XInternAtom(gctx->display, "WM_DELETE_WINDOW", false);
-  XSetWMProtocols(gctx->display, xwindow, &gctx->wmDeleteMessage, 1);
+  wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
+  XSetWMProtocols(display, xwindow, &wmDeleteMessage, 1);
 
   // "Map" the window (that is, make it appear on the screen)
-  XMapWindow(gctx->display, xwindow);
+  XMapWindow(display, xwindow);
 
   // Create a "Graphics Context"
-  gc = XCreateGC(gctx->display, xwindow, 0, NULL);
+  gc = XCreateGC(display, xwindow, 0, NULL);
 }
 
 GUI::NativeWindowX11::~NativeWindowX11()
 {
-  XDestroyWindow(gctx->display, xwindow);
-  //gctx->widgets.erase(window);
+  XDestroyWindow(display, xwindow);
+  //widgets.erase(window);
+  XCloseDisplay(display);
 }
 
 void GUI::NativeWindowX11::resize(int width, int height)
 {
-  XResizeWindow(gctx->display, xwindow, width, height);
+  XResizeWindow(display, xwindow, width, height);
 }
 
 void GUI::NativeWindowX11::move(int x, int y)
 {
-  XMoveWindow(gctx->display, xwindow, x, y);
+  XMoveWindow(display, xwindow, x, y);
 }
 
 void GUI::NativeWindowX11::show()
 {
-  XMapWindow(gctx->display, xwindow);
+  XMapWindow(display, xwindow);
 }
 
 void GUI::NativeWindowX11::hide()
 {
-  XUnmapWindow(gctx->display, xwindow);
+  XUnmapWindow(display, xwindow);
 }
 
 static int get_byte_order (void)
@@ -210,7 +213,7 @@ void GUI::NativeWindowX11::handleBuffer()
 {
   if(buffer) XDestroyImage(buffer);
   buffer =
-    create_image_from_buffer(gctx->display, DefaultScreen(gctx->display),
+    create_image_from_buffer(display, DefaultScreen(display),
                              window->wpixbuf.buf,
                              window->wpixbuf.width,
                              window->wpixbuf.height);
@@ -220,20 +223,140 @@ void GUI::NativeWindowX11::redraw()
 {
   // http://stackoverflow.com/questions/6384987/load-image-onto-a-window-using-xlib
   if(buffer == NULL) window->updateBuffer();
-  XPutImage(gctx->display, xwindow, gc, buffer, 0, 0, 0, 0,
+  XPutImage(display, xwindow, gc, buffer, 0, 0, 0, 0,
             window->width(), window->height());
-  XFlush(gctx->display);
+  XFlush(display);
 }
 
 void GUI::NativeWindowX11::setCaption(const std::string &caption)
 {
-  XStoreName(gctx->display, xwindow, caption.c_str());
+  XStoreName(display, xwindow, caption.c_str());
 }
 
 void GUI::NativeWindowX11::grabMouse(bool grab)
 {
   (void)grab;
   // Don't need to do anything on this platoform...
+}
+
+bool GUI::NativeWindowX11::hasEvent()
+{
+  return XPending(display);
+}
+
+GUI::Event *GUI::NativeWindowX11::getNextEvent()
+{
+  Event *event = NULL;
+
+  XEvent xe;
+  XNextEvent(display, &xe);
+
+  if(xe.type == MotionNotify) {
+    while(true) { // Hack to make sure only the last event is played.
+      if(!hasEvent()) break;
+      XEvent nxe;
+      XPeekEvent(display, &nxe);
+      if(nxe.type != MotionNotify) break;
+      XNextEvent(display, &xe);
+    }
+
+    MouseMoveEvent *e = new MouseMoveEvent();
+    e->window_id = xe.xmotion.window;
+    e->x = xe.xmotion.x;
+    e->y = xe.xmotion.y;
+    event = e;
+  }
+
+  if(xe.type == Expose && xe.xexpose.count == 0) {
+    RepaintEvent *e = new RepaintEvent();
+    e->window_id = xe.xexpose.window;
+    e->x = xe.xexpose.x;
+    e->y = xe.xexpose.y;
+    e->width = xe.xexpose.width;
+    e->height = xe.xexpose.height;
+    event = e;
+  }
+
+  if(xe.type == ConfigureNotify) {
+    ResizeEvent *e = new ResizeEvent();
+    e->window_id = xe.xconfigure.window;
+    //    e->x = xe.xconfigure.x;
+    //    e->y = xe.xconfigure.y;
+    e->width = xe.xconfigure.width;
+    e->height = xe.xconfigure.height;
+    event = e;
+  }
+
+  if(xe.type == ButtonPress || xe.type == ButtonRelease) {
+    if(xe.xbutton.button == 4 || xe.xbutton.button == 5) {
+      int scroll = 1;
+      while(true) { // Hack to make sure only the last event is played.
+        if(!hasEvent()) break;
+        XEvent nxe;
+        XPeekEvent(display, &nxe);
+        if(nxe.type != ButtonPress && nxe.type != ButtonRelease) break;
+        scroll += 1;
+        XNextEvent(display, &xe);
+      }
+      ScrollEvent *e = new ScrollEvent();
+      e->window_id = xe.xbutton.window;
+      e->x = xe.xbutton.x;
+      e->y = xe.xbutton.y;
+      e->delta = scroll * (xe.xbutton.button==4?-1:1);
+      event = e;
+    } else {
+      ButtonEvent *e = new ButtonEvent();
+      e->window_id = xe.xbutton.window;
+      e->x = xe.xbutton.x;
+      e->y = xe.xbutton.y;
+      e->button = 0;
+      e->direction = xe.type == ButtonPress?1:-1;
+      e->doubleclick =
+        xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
+      
+      if(xe.type == ButtonPress) last_click = xe.xbutton.time;
+      event = e;
+    }
+  }
+
+  if(xe.type == KeyPress || xe.type == KeyRelease) {
+    //printf("key: %d\n", xe.xkey.keycode);
+    KeyEvent *e = new KeyEvent();
+    e->window_id = xe.xkey.window;
+
+    switch(xe.xkey.keycode) {
+    case 113: e->keycode = KeyEvent::KEY_LEFT; break;
+    case 114: e->keycode = KeyEvent::KEY_RIGHT; break;
+    case 111: e->keycode = KeyEvent::KEY_UP; break;
+    case 116: e->keycode = KeyEvent::KEY_DOWN; break;
+    case 119: e->keycode = KeyEvent::KEY_DELETE; break;
+    case 22: e->keycode = KeyEvent::KEY_BACKSPACE; break;
+    case 110: e->keycode = KeyEvent::KEY_HOME; break;
+    case 115: e->keycode = KeyEvent::KEY_END; break;
+    case 117: e->keycode = KeyEvent::KEY_PGDOWN; break;
+    case 112: e->keycode = KeyEvent::KEY_PGUP; break;
+    case 36: e->keycode = KeyEvent::KEY_ENTER; break;
+    default: e->keycode = KeyEvent::KEY_UNKNOWN; break;
+    }
+
+    char buf[1024];
+    int sz = XLookupString(&xe.xkey, buf, sizeof(buf),  NULL, NULL);
+    if(sz && e->keycode == KeyEvent::KEY_UNKNOWN) {
+      e->keycode = KeyEvent::KEY_CHARACTER;
+    }
+    e->text.append(buf, sz);
+
+    e->direction = xe.type == KeyPress?1:-1;
+    event = e;
+  }
+
+  if(xe.type == ClientMessage &&
+     (unsigned int)xe.xclient.data.l[0] == wmDeleteMessage) {
+    CloseEvent *e = new CloseEvent();
+    event = e;
+  }
+
+  return event;
 }
 
 #endif/*X11*/

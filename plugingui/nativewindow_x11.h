@@ -38,7 +38,7 @@ namespace GUI {
 class Window;
 class NativeWindowX11 : public NativeWindow {
 public:
-  NativeWindowX11(GlobalContext *gctx, GUI::Window *window);
+  NativeWindowX11(GUI::Window *window);
   ~NativeWindowX11();
 
   void resize(int width, int height);
@@ -50,12 +50,20 @@ public:
   void redraw();
   void grabMouse(bool grab);
 
+  bool hasEvent();
+  Event *getNextEvent();
+
 private:
   ::Window xwindow;
   GC gc;
   XImage *buffer;
 
   GUI::Window *window;
+
+  int last_click;
+
+  Display *display;
+  Atom wmDeleteMessage;
 };
 
 };

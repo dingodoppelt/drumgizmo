@@ -29,7 +29,6 @@
 
 #include "window.h"
 #include "eventhandler.h"
-#include "globalcontext.h"
 
 #include "label.h"
 #include "lineedit.h"
@@ -62,7 +61,6 @@ public:
   void setWindowClosedCallback(void (*handler)(void *), void *ptr);
 
   //private:
-  GUI::GlobalContext *gctx;
   GUI::Window *window;
   GUI::EventHandler *eventhandler;
 

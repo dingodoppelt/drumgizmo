@@ -27,12 +27,11 @@
 #ifndef __DRUMGIZMO_FONT_H__
 #define __DRUMGIZMO_FONT_H__
 
-#include "pixelbuffer.h"
-
-#include "globalcontext.h"
-#include "image.h"
-
 #include <string>
+#include <map>
+
+#include "pixelbuffer.h"
+#include "image.h"
 
 namespace GUI {
 
@@ -49,12 +48,11 @@ public:
   size_t textWidth(std::string text);
   size_t textHeight(std::string text = "");
 
-  PixelBufferAlpha *render(GlobalContext *gctx, std::string text);
+  PixelBufferAlpha *render(std::string text);
 
 private:
   Image img_font;
 
-  GlobalContext *gctx;
   std::map<char, int> character_offset;
   std::map<char, size_t> character_width;
   std::map<char, int> character_pre_bias;
