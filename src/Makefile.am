@@ -2,6 +2,7 @@ EXTRA_DIST = \
 	audio.h \
 	audiofile.h \
 	audioinputengine.h \
+	audioinputenginemidi.h \
 	audiooutputengine.h \
 	beatmapper.h \
 	channel.h \
@@ -14,6 +15,7 @@ EXTRA_DIST = \
 	events.h \
 	instrument.h \
 	instrumentparser.h \
+	message.h \
 	midimapparser.h \
 	midimapper.h \
 	mutex.h \
@@ -24,11 +26,11 @@ EXTRA_DIST = \
 	semaphore.h \
 	thread.h \
 	velocity.h \
-\
+ \
 	audiofile.cc \
 	audioinputengine.cc \
-	audiooutputengine.cc \
 	audioinputenginemidi.cc \
+	audiooutputengine.cc \
 	beatmapper.cc \
 	channel.cc \
 	channelmixer.cc \
