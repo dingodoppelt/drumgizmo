@@ -26,6 +26,7 @@
  */
 #include "audiofile.h"
 
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -38,27 +39,18 @@
 AudioFile::AudioFile(std::string filename)
 {
   is_loaded = false;
-  //printf("new AudioFile %p\n", this);
   this->filename = filename;
 
-  locked = false;
   data = NULL;
   size = 0;
-//#ifdef LAZY_LOAD  
-  fh = NULL;
   preloaded_data = NULL;
-  completely_loaded = false;
-//#endif/*LAZYLOAD*/
   ref_count = 0;
   magic = this;
-
-  //load();
 }
 
 AudioFile::~AudioFile()
 {
   magic = NULL;
-  //printf("delete AudioFile %p\n", this);
   unload();
 }
 
@@ -81,14 +73,13 @@ void AudioFile::unload()
     delete preloaded_data;
     preloaded_data = NULL;
   }
-  sf_close(this->fh);
 }
 
 #define SIZE 512*4 
 void AudioFile::init() {
-  printf("Initializing %p\n", this);
+//  printf("Initializing %p\n", this);
   if(data) { 
-    printf("\t already initialized\n");
+//    printf("\t already initialized\n");
     return;
   }
 
@@ -105,7 +96,7 @@ void AudioFile::init() {
   
   size = sf_read_float(fh, data, size); 
   
-  printf("Lazy loaded %d samples\n", size);
+//  printf("Lazy loaded %d samples\n", size);
   sf_close(fh);
 
   mutex.lock();
@@ -113,72 +104,73 @@ void AudioFile::init() {
   this->size = size;
   this->preloaded_data = data;
   this->is_loaded = true;
-  this->fh = fh;
-//  if(sf_info.frames <= size) {
-//    printf("Sample completely loaded\n");
-//    completely_loaded = true;
-//  }
   mutex.unlock();
 }
 
 void AudioFile::loadNext()
 {
   if(this->data != this->preloaded_data) {
-    printf("Already completely loaded %p\n", this);
+//    printf("Already completely loaded %p\n", this);
     return;
   }
 
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-//  SF_INFO sf_info = this->sf_info;
-//  SNDFILE *fh = this->fh;
   if(!fh) {
     printf("SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(fh));
     return;
   }
 
-//  sf_seek(fh, 0, SEEK_SET) ;
- 
-  int size = sf_info.frames;
-
-  sample_t* data = new sample_t[size];
+  int r;
+//  int size_accum = 0;
+  sample_t* data = new sample_t[sf_info.frames];
+  memcpy(data, this->preloaded_data, this->size * sizeof(sample_t));
+  this->data = data;
+  sf_seek(fh, this->size, SEEK_SET);
+//  sample_t* data_buf = new sample_t[SIZE];
+  while(this->size < sf_info.frames) {
+//    printf("Accumulated %d of %llu\n", size_accum, sf_info.frames);
+//    if( (r = sf_read_float(fh, data_buf, SIZE)) < 0) {
+    if( (r = sf_read_float(fh, &data[this->size], SIZE)) < 0) {
+      printf("Error reading sound file\n");
+      break;
+    }
+//    size_accum += r;
+//    memcpy(data+size_accum, data_buf, sizeof(sample_t) * r);
+    this->size += r;
+  }
+//  delete data_buf;
   
-  size = sf_read_float(fh, data, size); 
-  
-  printf("Finished loading %d samples %p\n", size, this);
+//  printf("Finished loading %d samples %p\n", size, this);
   sf_close(fh);
 
-  mutex.lock();
-  this->data = data;
-  this->size = size;
-  mutex.unlock();
+//  mutex.lock();
+//  this->data = data;
+//  this->size = size;
+//  mutex.unlock();
 }
 
 void AudioFile::reset() {
-  printf("Resetting audio file %p\n", this);
+//  printf("Resetting audio file %p\n", this);
   if(this->data == this->preloaded_data) {
-     printf("\tNot completely loaded - skipping %p\n", this);
+//     printf("\tNot completely loaded - skipping %p\n", this);
      return;
   }
 
   mutex.lock();
-  sample_t* old_data = data;
+  volatile sample_t* old_data = data;
   this->size = SIZE;
   this->data = this->preloaded_data;
-//  if() {
-    printf("Deleting data %p\n", this);
-    delete old_data; 
-//  }
+//  printf("Deleting data %p\n", this);
+  delete old_data; 
   mutex.unlock();
 }
 
 void AudioFile::load()
 {
-#ifdef LAZYLOAD
   init();
   return;
-#endif
-
+/*
   if(data) return;
 
   SF_INFO sf_info;
@@ -201,7 +193,7 @@ void AudioFile::load()
   mutex.lock();
   is_loaded = true;
   mutex.unlock();
-
+*/
   //DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
 }
 

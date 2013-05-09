@@ -77,17 +77,15 @@ public:
 
   bool isLoaded();
 
-	size_t size;
-	
-  sample_t *data;
+  volatile size_t size;
+  volatile sample_t *data;
 
   std::string filename;
 
-  bool locked;
 #ifdef LAZYLOAD
-  SF_INFO sf_info;
-  SNDFILE *fh;
-  bool completely_loaded;
+//  SF_INFO sf_info;
+//  SNDFILE *fh;
+//  bool completely_loaded;
   void init();
   void reset();
   void loadNext();
