@@ -53,6 +53,19 @@ CanvasToolSelections::CanvasToolSelections(Canvas *c)
 
 }
 
+void CanvasToolSelections::setActiveSelection(Selection s)
+{
+  QMap<int, Selection>::iterator i = _selections.begin();
+  while(i != _selections.end()) {
+    if(s.from == i.value().from &&
+       s.to == i.value().to) active_selection = &i.value();
+    i++;
+  }
+
+  canvas->update();
+  emit activeSelectionChanged(s);
+}
+
 bool CanvasToolSelections::mouseMoveEvent(QMouseEvent *event)
 {
   if(selection_is_moving_left) {

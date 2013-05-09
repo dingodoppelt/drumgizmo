@@ -117,6 +117,9 @@ MainWindow::MainWindow()
   connect(selections, SIGNAL(activeSelectionChanged(Selection)),
           sorter, SLOT(setActiveSelection(Selection)));
 
+  connect(sorter, SIGNAL(activeSelectionChanged(Selection)),
+          selections, SLOT(setActiveSelection(Selection)));
+
   lh->addWidget(canvas);
   lh->addWidget(yscale);
   lh->addWidget(yoffset);

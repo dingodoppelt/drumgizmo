@@ -61,7 +61,12 @@ protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
+signals:
+  void activeSelectionChanged(Selection selection);
+
 private:
+  Selection *getSelectionByCoordinate(int x, int y);
+
   Selections _selections;
   QMap<float, Selection> sorted;
   float min;
