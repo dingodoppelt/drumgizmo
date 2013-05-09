@@ -176,10 +176,10 @@ void SampleSorter::setActiveSelection(Selection s)
 #define mapX(x) (((double)x)*(width()-1))
 #define mapY(x) x
 
-
+#define C_RADIUS 2
 static void drawCircle(QPainter &p, int x, int y)
 {
-  p.drawEllipse(x-2, y-2, 4, 4);
+  p.drawEllipse(x - C_RADIUS, y - C_RADIUS, 2 * C_RADIUS, 2 * C_RADIUS);
 }
 
 void SampleSorter::paintEvent(QPaintEvent *event)
@@ -224,6 +224,26 @@ void SampleSorter::paintEvent(QPaintEvent *event)
   }
 }
 
+Selection *SampleSorter::getSelectionByCoordinate(int px, int py)
+{
+  py -= C_RADIUS;
+
+  QMap<float, Selection>::iterator i = sorted.begin();
+  while(i != sorted.end()) {
+    float x = (i.key()/max);
+    x = sqrt(x);
+    x *= (float)width();
+    if(px < (x + C_RADIUS) && px > (x - C_RADIUS) &&
+       py < (MAP(x) + C_RADIUS) && py > (MAP(x) - C_RADIUS)) {
+      return &i.value();
+    }
+    i++;
+  }
+
+  return NULL;
+}
+
+
 void SampleSorter::mouseMoveEvent(QMouseEvent *event)
 {
   if(cur_thr != -1 && cur_thr < threshold.size()) {
@@ -249,6 +269,12 @@ void SampleSorter::mouseMoveEvent(QMouseEvent *event)
 void SampleSorter::mousePressEvent(QMouseEvent *event)
 {
   if(event->button() == Qt::LeftButton) {
+
+    Selection *psel = getSelectionByCoordinate(event->x(), event->y());
+    if(psel) {
+      emit activeSelectionChanged(*psel);
+      return;
+    }
 
     // Check if threshold is being dragged.
     for(size_t i = 0; i < (size_t)threshold.size(); i++) {

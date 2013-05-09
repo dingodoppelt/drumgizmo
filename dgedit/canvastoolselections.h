@@ -59,6 +59,7 @@ public slots:
   void thresholdChanged(double threshold);
   void noiseFloorChanged(int t);
   void fadeoutChanged(int t);
+  void setActiveSelection(Selection s);
 
 private:
   bool selection_is_moving_left;
