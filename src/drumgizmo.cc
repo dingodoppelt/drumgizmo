@@ -331,6 +331,10 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       while(j != kit.channels.end()) {
         Channel &ch = *j;
         AudioFile *af = s->getAudioFile(&ch);
+        if(af) {
+          printf("Requesting preparing of audio file\n");
+          loader.prepare(af);
+        }
         if(af == NULL || !af->isValid()) {
           //printf("Missing AudioFile.\n");
         } else {
@@ -364,6 +368,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     }
     if(buf) {
       memset(buf, 0, nsamples * sizeof(sample_t));
+      
       getSamples(c, pos, buf, nsamples);
       if(!internal) oe->run(c, samples, nsamples);
     }
@@ -426,8 +431,9 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
-          size_t optend = ((end - n) / N) * N + n;
-          for(; n < optend; n += N) {
+//          printf("%d\n", evt->t); fflush(stdout);
+         size_t optend = ((end - n) / N) * N + n;
+         for(; n < optend; n += N) {
             *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);
             evt->t += N;
           }
@@ -446,7 +452,10 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           
         }
 
-        if(evt->t >= af->size) removeevent = true;
+        if(evt->t >= af->size) { 
+          removeevent = true;
+          loader.reset(af);
+        }
       }
       break;
     }

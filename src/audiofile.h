@@ -29,9 +29,43 @@
 
 #include <string>
 #include <map>
+#include <vector>
+
+#include <sndfile.h>
 
 #include "mutex.h"
 #include "audio.h"
+
+#if 0
+  Plan for lazy loading of audio (Brainstorming)
+    * Encapsulate data array?
+      - Speed issues?
+      - Other suggestion
+        * Trigger on read begin and read done
+          - readnext(instrument)?
+        * size_t current latest loaded sample
+        * run in own thread? threads in drumgizmo??
+          - Add soundfile-loader-class which run in its own thread
+    * Add pre-loading constant
+    * Pointer to pos in audio stream (maybe just last position read)
+    * Strategy for how to handle pre-loading of remaining file
+      - Is it acceptable only to handle sequential reading of data (no random access)?
+
+   Thread A                                                  Thread B
+
+   :preload constant (user defined)
+   :speed modifier constant (in which time must 
+    sample n be loaded relative to trigger time) 
+  ----------                                                           ------
+  | Loader |   <------- Trigger load of InstrumentSample n  --------- | DG   | 
+  ----------                                                           ------
+    Load                  (int- right most loaded sample --> If current sample pos loaded
+      |            --------- |                                   |
+    Wave Into --> | SndFile | <----- Read data (directly from array)
+                   ---------  
+#endif/*0*/
+
+#define LAZYLOAD
 
 class AudioFile {
 public:
@@ -43,12 +77,25 @@ public:
 
   bool isLoaded();
 
-	sample_t *data;
 	size_t size;
+	
+  sample_t *data;
 
   std::string filename;
 
+  bool locked;
+#ifdef LAZYLOAD
+  SF_INFO sf_info;
+  SNDFILE *fh;
+  bool completely_loaded;
+  void init();
+  void reset();
+  void loadNext();
+  sample_t* preloaded_data; 
+#endif/*LAZYLOAD*/
+
   bool isValid();
+  int ref_count;
 
 private:
   void *magic;

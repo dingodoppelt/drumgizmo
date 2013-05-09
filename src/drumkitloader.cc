@@ -82,13 +82,39 @@ void DrumKitLoader::loadKit(DrumKit *kit)
   semaphore.post();
 }
 
+void DrumKitLoader::prepare(AudioFile* af) {
+  printf("Preparing audiofile %p (%d in queue)\n", af, load_queue.size());
+  mutex.lock();
+  af->ref_count++;
+  load_queue.push_back(af);
+//  if(ref_count.find(af) == ref_count.end()) {
+//    ref_count[af]++;
+//  }
+//  else {
+//    ref_count[af] = 0;
+//  }
+  mutex.unlock(); 
+  semaphore.post();
+}
+
+void DrumKitLoader::reset(AudioFile* af) {
+  mutex.lock();
+  af->ref_count--;
+  reset_queue.push_back(af);
+  mutex.unlock();
+  semaphore.post();
+}
+
 void DrumKitLoader::thread_main()
 {
   while(1) {
     DEBUG(loader, "before sem\n");
+
     semaphore.wait();
+
     DEBUG(loader, "after sem\n");
     fflush(stdout);
+
 
     if(quitit) return;
 
@@ -98,66 +124,88 @@ void DrumKitLoader::thread_main()
       continue;
     }
 
-    unsigned int count = 0;
-
-    if(kit && !kit->isValid()) goto finish;
-
-    { // Count total number of files that need loading:
-      Instruments::iterator i = kit->instruments.begin();
-      while(i != kit->instruments.end()) {
-        Instrument *instr = *i;
-        if(instr && !instr->isValid()) goto finish;
-
-        count += instr->audiofiles.size();
-        i++;
-      }
+    if(!load_queue.empty()) {
+      printf("Loading remaining of audio file\n"); 
+      AudioFile* af = load_queue.front();
+      mutex.lock();
+      load_queue.pop_front();
+      mutex.unlock();
+      af->loadNext();
     }
+    else if(!reset_queue.empty()) {
+      AudioFile* af = reset_queue.front();
+      mutex.lock();
+      if(af->ref_count <= 0) {
+        af->reset();
+        af->ref_count = 0;
+      }
+      reset_queue.pop_front();
+      mutex.unlock();
+    }
+    else { // Initialize drum kit
+      printf("Initializing drum kit\n");
+      unsigned int count = 0;
 
-    { // Now actually load them:
-      unsigned int loaded = 0;
-      Instruments::iterator i = kit->instruments.begin();
-      while(i != kit->instruments.end()) {
-        Instrument *instr = *i;
+      if(kit && !kit->isValid()) goto finish;
+
+      { // Count total number of files that need loading:
+        Instruments::iterator i = kit->instruments.begin();
+        while(i != kit->instruments.end()) {
+          Instrument *instr = *i;
+          if(instr && !instr->isValid()) goto finish;
+
+          count += instr->audiofiles.size();
+          i++;
+        }
+      }
+
+      { // Now actually load them:
+        unsigned int loaded = 0;
+        Instruments::iterator i = kit->instruments.begin();
+        while(i != kit->instruments.end()) {
+          Instrument *instr = *i;
         
-        if(instr && !instr->isValid()) goto finish;
+          if(instr && !instr->isValid()) goto finish;
 
-        std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
-        while(a != instr->audiofiles.end()) {
+          std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
+          while(a != instr->audiofiles.end()) {
 #if 0
 #ifdef WIN32
-          SleepEx(5000, FALSE);
+            SleepEx(5000, FALSE);
 #else
-          usleep(5000);
+            usleep(5000);
 #endif/*WIN32*/
 #endif
-          AudioFile *af = *a;
+            AudioFile *af = *a;
 
-          if(af && !af->isValid()) goto finish;
+            if(af && !af->isValid()) goto finish;
 
-          af->load();
-          loaded++;
-
-          LoadStatusMessage *ls = new LoadStatusMessage();
-          ls->number_of_files = count;
-          ls->numer_of_files_loaded = loaded;
-          ls->current_file = af->filename;
-          drumgizmo->sendGUIMessage(ls);
+            af->load();
           
-          a++;
+            loaded++;
 
-          if(skipit) goto finish;
-        }
+            LoadStatusMessage *ls = new LoadStatusMessage();
+            ls->number_of_files = count;
+            ls->numer_of_files_loaded = loaded;
+            ls->current_file = af->filename;
+            drumgizmo->sendGUIMessage(ls);
+          
+            a++;
+
+            if(skipit) goto finish;
+          }
         
-        i++;
+          i++;
+        }
       }
+
+      mutex.lock();
+      is_done = true;
+      mutex.unlock();
+
+    finish:
+      continue;
     }
-
-    mutex.lock();
-    is_done = true;
-    mutex.unlock();
-
-  finish:
-    continue;
   }
 }
 

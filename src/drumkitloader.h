@@ -28,6 +28,7 @@
 #define __DRUMGIZMO_DRUMKITLOADER_H__
 
 #include <string>
+#include <list>
 
 #include "thread.h"
 #include "semaphore.h"
@@ -43,6 +44,9 @@ public:
   ~DrumKitLoader();
 
   void loadKit(DrumKit *kit);
+  
+  void prepare(AudioFile* af);
+  void reset(AudioFile* af);
 
   void thread_main();
 
@@ -60,6 +64,9 @@ private:
   Mutex mutex;
   volatile bool quitit;
   volatile bool skipit;
+  std::list<AudioFile*> load_queue;
+  std::list<AudioFile*> reset_queue;
+  std::map<AudioFile*, int> ref_count;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/
