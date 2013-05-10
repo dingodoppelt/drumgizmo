@@ -55,17 +55,25 @@ static void dio_reader(png_structp png_ptr, png_bytep buf, png_size_t size)
 
 GUI::Image::Image(const char* data, size_t size)
 {
+  row_pointers = NULL;
   load(data, size);
 }
 
 GUI::Image::Image(std::string filename)
 {
+  row_pointers = NULL;
   GUI::Resource rc(filename);
   load(rc.data(), rc.size());
 }
 
 GUI::Image::~Image()
 {
+  if(!row_pointers) return;
+
+  for(unsigned int y = 0; y < h; y++) {
+    free(row_pointers[y]);
+  }
+  free(row_pointers);
 }
 
 void GUI::Image::setError(int err)
@@ -92,6 +100,16 @@ void GUI::Image::setError(int err)
 
 void GUI::Image::load(const char* data, size_t size)
 {
+  // Don't ever read image twice.
+  if(row_pointers) return;
+
+  png_structp png_ptr = NULL;
+  png_infop info_ptr = NULL;
+  //png_byte color_type;
+  //png_byte bit_depth;
+
+  if(!size) setError(0);
+
   const char *header = data;
 
   // test for it being a png:
@@ -114,12 +132,14 @@ void GUI::Image::load(const char* data, size_t size)
   if(!info_ptr) {
     ERR(image, "[read_png_file] png_create_info_struct failed");
     setError(2);
+    png_destroy_read_struct(&png_ptr, NULL, NULL);
     return;
   }
   
   if(setjmp(png_jmpbuf(png_ptr))) {
     ERR(image, "[read_png_file] Error during init_io");
     setError(3);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     return;
   }
   
@@ -136,27 +156,28 @@ void GUI::Image::load(const char* data, size_t size)
   
   w = png_get_image_width(png_ptr, info_ptr);
   h = png_get_image_height(png_ptr, info_ptr);
-  color_type = png_get_color_type(png_ptr, info_ptr);
-  bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+  //color_type = png_get_color_type(png_ptr, info_ptr);
+  //bit_depth = png_get_bit_depth(png_ptr, info_ptr);
   
   number_of_passes = png_set_interlace_handling(png_ptr);
   png_read_update_info(png_ptr, info_ptr);
   
-  
   // read file
-  if (setjmp(png_jmpbuf(png_ptr))) {
+  if(setjmp(png_jmpbuf(png_ptr))) {
     ERR(image, "[read_png_file] Error during read_image");
     setError(4);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     return;
   }
   
   row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * h);
-  size_t y;
-  for(y = 0; y < h; y++) {
-    row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr,info_ptr));
+  for(size_t y = 0; y < h; y++) {
+    row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr, info_ptr));
   }
   
   png_read_image(png_ptr, row_pointers);
+
+  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 }
 
 size_t GUI::Image::width()
