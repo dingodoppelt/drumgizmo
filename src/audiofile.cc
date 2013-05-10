@@ -168,9 +168,12 @@ void AudioFile::reset() {
 
 void AudioFile::load()
 {
+  /*
+  Lazy load of drum kits
   init();
   return;
-/*
+  */
+
   if(data) return;
 
   SF_INFO sf_info;
@@ -182,8 +185,7 @@ void AudioFile::load()
  
   size = sf_info.frames;
 
-  data = new sample_t[size];
-  
+  sample_t* data = new sample_t[size]; 
   size = sf_read_float(fh, data, size); 
   
   printf("Loaded %d samples %p\n", size, this);
@@ -191,9 +193,10 @@ void AudioFile::load()
   sf_close(fh);
 
   mutex.lock();
+  this->data = data;
   is_loaded = true;
   mutex.unlock();
-*/
+
   //DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
 }
 
