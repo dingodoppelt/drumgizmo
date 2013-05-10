@@ -332,8 +332,9 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         Channel &ch = *j;
         AudioFile *af = s->getAudioFile(&ch);
         if(af) {
-          printf("Requesting preparing of audio file\n");
-          loader.prepare(af);
+//      LAZYLOAD:
+//          printf("Requesting preparing of audio file\n");
+//          loader.prepare(af);
         }
         if(af == NULL || !af->isValid()) {
           //printf("Missing AudioFile.\n");
@@ -454,7 +455,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->t >= af->size) { 
           removeevent = true;
-          loader.reset(af);
+//        LAZYLOAD:
+//          loader.reset(af);
         }
       }
       break;
