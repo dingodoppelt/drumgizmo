@@ -119,7 +119,7 @@ dg_save(LV2_Handle                 instance,
         config.c_str(),
         config.length() + 1, // Careful!  Need space for terminator
         dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
-                                 NULL, NS_ATOM "String"),
+                                 NULL, NS_ATOM "chunk"),
         LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE);
 /*
     MyPlugin*   plugin   = (MyPlugin*)instance;
