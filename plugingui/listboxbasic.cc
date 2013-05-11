@@ -84,7 +84,7 @@ void GUI::ListBoxBasic::addItem(std::string name, std::string value)
 
 void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
 {
-  DEBUG(list, "addItems %d\n", is.size());
+  DEBUG(list, "addItems %lu\n", is.size());
   std::vector<GUI::ListBoxBasic::Item>::iterator i = is.begin();
   while(i != is.end()) {
     items.push_back(*i);
