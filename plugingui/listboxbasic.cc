@@ -1,3 +1,4 @@
+
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
  *            listboxbasic.cc
@@ -84,7 +85,7 @@ void GUI::ListBoxBasic::addItem(std::string name, std::string value)
 
 void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
 {
-  DEBUG(list, "addItems %lu\n", is.size());
+  //  DEBUG(list, "addItems %lu\n", is.size());
   std::vector<GUI::ListBoxBasic::Item>::iterator i = is.begin();
   while(i != is.end()) {
     items.push_back(*i);
