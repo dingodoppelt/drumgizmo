@@ -202,6 +202,7 @@ static void ui_cleanup(LV2UI_Handle ui)
 {
   struct DG_GUI* pt = (struct DG_GUI*)ui;
   delete pt->gui;
+  pr->gui = NULL;
   delete pt;
 }
 
