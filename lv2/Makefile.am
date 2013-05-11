@@ -9,7 +9,7 @@ INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	$(PLUGIN_GUI_CFLAGS) -DX11 -DSSE -msse -msse2 -msse3 \
 	-DUSE_THREAD
 
-plugindir = $(libdir)/lv2/drumgizmo.lv2
+plugindir = $(prefix)/lib/lv2/drumgizmo.lv2
 plugin_LTLIBRARIES = drumgizmo.la
 plugin_DATA = manifest.ttl drumgizmo.ttl
 
