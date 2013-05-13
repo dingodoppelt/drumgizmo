@@ -133,7 +133,7 @@ static void ui_show(struct lv2_external_ui * _this_)
 static void ui_hide(struct lv2_external_ui * _this_)
 {
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
-  dggui->gui->hide();
+  if(dggui->gui) dggui->gui->hide();
 }
 
 static void closeHandler(void *ptr)
