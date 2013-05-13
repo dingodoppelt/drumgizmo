@@ -1,2 +1,54 @@
-Fee hegn!
-Mer fee hegn!
+Version 0.9.3
+==============
+Released on May 7th 2013, ie. LAC 2013 version
+ - Make filebrowser use strings instead of chdir. (suhr)
+ - Set "Creator" in the LV2 config. (deva)
+ - Prevent mouse button up events from propagating after a double click if the window if closed. (deva)
+ - libpng error handling (especially ubuntu libpng version mismatch vs. ardour, 12.49 vs. 1.6). (deva)
+ - Optimise GUI rendering so that it doesn't feel sluggish to work with. (deva)
+ - Fix bug, where the plugin starts using 100% cpu even with no notes playing. (deva)
+ - Make midifile load send load status to GUI. (deva)
+ - Make DrumKitLoader stop loading on plugin deletion and if a new drumkit is being loaded. (deva)
+ - Make listview scrollbar knob work. (deva)
+ - Make "give me all parameter value" message with engine respons for GUI initialisation. (deva)
+ - Make humaniser parameters value set/get work using messages. (deva)
+ - Create GUI::ProgressBar class for use in load feedback. (deva)
+ - Implement engine -> GUI signaling mechanism (for load status, etc). (deva)
+ - Implement GUI -> engine signaling mechanism (reload drumkit, read parameter, etc). (deva)
+ - Make layout engine classes (Painter::Box/Painter::Bar). (deva)
+ - Refactor GUI::Font. (deva)
+ - Design and render as png-pixmaps new fonts. (muldjord)
+ - Design new layout widgets. (muldjord)
+   * Pushbutton
+   * Knob
+   * On/off switch
+   * Lineedit
+   * Combobox
+   * Item view with scrollbars
+ - Implement new layout as a new layout engine. (deva)
+ - Create PNG loader. (deva)
+ - Make GUI::Image class able to use libpng 1.2. (nemo)
+ - Create RC handler (embed PNG images and fonts directly in the binary). (deva)
+ - Make 'instrument group' feature that can stop an open hihat, when a closed hihat is played. (deva)
+ - Check for x11 lib and headers in configure. (deva)
+
+Version 0.9.2 and older (prehistoric)
+=====================================
+Released on March 25th 2013.
+ - Make autotools project.
+ - Make event interface.
+ - Make midi-node -> sample mapping.
+ - Make drumkit xml file format spec.
+ - Make xml reader/parser.
+ - Make alternative audio backends work
+   * ALSA (output)
+   * ALSA Midi (input)
+   * Jack (output)
+   * JackMidi (input)
+   * SndFile (output)
+   * Midifile (input)
+ - Make Win32 port.
+ - Make plugin-able
+   * LV2
+   * VST
+ - Make basic drumkit editor.
