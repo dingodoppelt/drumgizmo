@@ -132,7 +132,10 @@ static void kitBrowseClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
 
-  fb->setPath(gui->lineedit->text());
+  std::string path = gui->lineedit->text();
+  if(path == "") path = gui->lineedit2->text();
+
+  fb->setPath(path);
   fb->registerFileSelectHandler(selectKitFile, gui);
   fb->show();
 }
@@ -161,7 +164,10 @@ static void midimapBrowseClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
 
-  fb->setPath(gui->lineedit2->text());
+  std::string path = gui->lineedit2->text();
+  if(path == "") path = gui->lineedit->text();
+
+  fb->setPath(path);
   fb->registerFileSelectHandler(selectMapFile, gui);
   fb->show();
 }
