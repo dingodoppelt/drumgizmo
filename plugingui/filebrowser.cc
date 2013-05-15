@@ -86,7 +86,7 @@ static void changeDir(void *ptr)
   }
 #endif
 
-  if(value.empty() && !dir->isDir()) {
+  if(value.empty() && !dir->isDir() && Directory::exists(dir->path())) {
     DEBUG(filebrowser, "Selecting file '%s'\n", dir->path().c_str());
     if(prv->filesel_handler) prv->filesel_handler(prv->ptr, dir->path().c_str());
     return;
