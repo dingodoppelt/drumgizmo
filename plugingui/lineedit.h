@@ -48,6 +48,8 @@ public:
   void setReadOnly(bool readonly);
   bool readOnly();
 
+  void registerEnterPressedHandler(void (*handler)(void *), void *ptr);
+
   //protected:
   virtual void keyEvent(KeyEvent *e);
   virtual void repaintEvent(RepaintEvent *e);
@@ -65,6 +67,9 @@ private:
   size_t pos;
 
   bool readonly;
+
+  void (*handler)(void *);
+  void *ptr;
 };
 
 };

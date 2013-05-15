@@ -30,6 +30,8 @@
 
 #include "window.h"
 
+#include <hugin.hpp>
+
 #define BORDER 10
 
 GUI::LineEdit::LineEdit(Widget *parent)
@@ -47,6 +49,14 @@ GUI::LineEdit::LineEdit(Widget *parent)
   box.bottom      = new Image(":widget_b.png");
   box.bottomRight = new Image(":widget_br.png");
   box.center      = new Image(":widget_c.png");
+
+  handler = NULL;
+}
+
+void GUI::LineEdit::registerEnterPressedHandler(void (*handler)(void *), void *ptr)
+{
+  this->handler = handler;
+  this->ptr = ptr;
 }
 
 void GUI::LineEdit::setReadOnly(bool ro)
@@ -62,6 +72,8 @@ bool GUI::LineEdit::readOnly()
 void GUI::LineEdit::setText(std::string text)
 {
   _text = text;
+  if(_text.size() < pos) pos = text.size();
+  
   repaintEvent(NULL);
   textChanged();
 }
@@ -90,6 +102,8 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 {
   if(readOnly()) return;
 
+  DEBUG(lineedit, "Handling keyevent with text '%s'\n", _text.c_str());
+
   bool change = false;
   
   if(e->direction == -1) {
@@ -108,6 +122,7 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 
     } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
       if(pos < _text.length()) {
+        printf("AAA: %d\n", pos);
         std::string t = _text.substr(0, pos);
         t += _text.substr(pos + 1, std::string::npos);
         _text = t;
@@ -129,8 +144,9 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
       _text = pre + e->text + post;
       change = true;
       pos++;
+    } else if(e->keycode == GUI::KeyEvent::KEY_ENTER) {
+      if(handler) handler(ptr);
     }
-
     repaintEvent(NULL);
   }
 
