@@ -153,6 +153,7 @@ Directory::EntryList Directory::listFiles(std::string path)
     }
     else {
       int drumkit_suffix_length = strlen(DRUMKIT_SUFFIX);
+      if((int)name.size() < drumkit_suffix_length) continue;
       if(name.substr(name.length() - drumkit_suffix_length, 
           drumkit_suffix_length) != DRUMKIT_SUFFIX) {
         continue;
