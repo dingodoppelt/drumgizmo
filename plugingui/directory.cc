@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- M(de: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
  *            directory.cc
  *
@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <string> 
 #include <algorithm>
+#include <vector>
+#include <string.h>
 
 #ifdef WIN32
 #include <direct.h>
@@ -37,6 +39,8 @@
 #endif
 
 #include <hugin.hpp>
+
+#define DRUMKIT_SUFFIX ".xml"
 
 // http://en.wikipedia.org/wiki/Path_(computing)
 #ifdef WIN32
@@ -94,8 +98,7 @@ bool Directory::cdUp()
 
 std::string Directory::path()
 {
-  setPath(cleanPath(_path));
-  return _path;
+  return cleanPath(_path);
 }
 
 Directory::EntryList Directory::entryList()
@@ -131,21 +134,73 @@ Directory::EntryList Directory::listFiles(std::string path)
     return entries;
   }
 
+  std::vector<std::string> directories;
+  std::vector<std::string> files;
+
   struct dirent *entry;
   while((entry = readdir(dir)) != NULL) {
     std::string name = entry->d_name;
     if(name == ".") continue;
 
     if(Directory::isRoot(path) && name == "..") continue;
+    
+    std::string entrypath = path;
+    entrypath += SEP;
+    entrypath += entry->d_name;
+    if(Directory::isDir(entrypath)) {
+      if(name == "..") directories.push_back(entry->d_name);
+      else directories.push_back(std::string("/") + entry->d_name);
+    }
+    else {
+      int drumkit_suffix_length = strlen(DRUMKIT_SUFFIX);
+      if(name.substr(name.length() - drumkit_suffix_length, 
+          drumkit_suffix_length) != DRUMKIT_SUFFIX) {
+        continue;
+      }
 
-    entries.push_back(entry->d_name);
+      files.push_back(entry->d_name);
+    }
   }
+
 
 #ifdef WIN32
 	DEBUG(directory, "root is %s\n", Directory::root(path).c_str()); 
 	DEBUG(directory, "current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
 if(Directory::isRoot(path)) entries.push_back(".."); 
 #endif
+
+  // sort
+  for(int x = 0; x < (int)directories.size(); x++) {
+    for(int y = 0; y < (int)directories.size(); y++) {
+      if(directories[x] < directories[y]) {
+        
+        std::string tmp = directories[x];
+        directories[x] = directories[y];
+        directories[y] = tmp;
+      }
+    }
+  }
+
+  for(int x = 0; x < (int)files.size(); x++) {
+    for(int y = 0; y < (int)files.size(); y++) {
+      if(files[x] < files[y]) {
+        
+        std::string tmp = files[x];
+        files[x] = files[y];
+        files[y] = tmp;
+      }
+    }
+  }
+
+
+  for(std::vector<std::string>::iterator it = directories.begin(); it != directories.end(); it++) {
+    entries.push_back(*it);
+  }
+
+  for(std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++) {
+    entries.push_back(*it);
+  }
+
 
   return entries;
 }

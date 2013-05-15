@@ -92,6 +92,7 @@ void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
     i++;
   }
 
+/*
   // sort
   for(int x = 0; x < (int)items.size(); x++) {
     for(int y = 0; y < (int)items.size(); y++) {
@@ -105,8 +106,10 @@ void GUI::ListBoxBasic::addItems(std::vector<GUI::ListBoxBasic::Item> &is)
       }
     }
   }
+*/
 
   if(selected == -1) setSelection((int)items.size() - 1);
+  setSelection(0);
 
   int numitems = height() / (font.textHeight() + padding);
   scroll.setRange(numitems);
