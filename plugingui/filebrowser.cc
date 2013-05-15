@@ -68,7 +68,6 @@ static void changeDir(void *ptr)
   struct GUI::FileBrowser::private_data *prv =
     (struct GUI::FileBrowser::private_data *) ptr;
   
-  
   GUI::ListBox *lb = prv->listbox;
   GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
@@ -86,6 +85,12 @@ static void changeDir(void *ptr)
     prv->above_root = false;
   }
 #endif
+
+  if(value.empty() && !dir->isDir()) {
+    DEBUG(filebrowser, "Selecting file '%s'\n", dir->path().c_str());
+    if(prv->filesel_handler) prv->filesel_handler(prv->ptr, dir->path().c_str());
+    return;
+  }
 
   if(!value.empty() && dir->fileExists(value)) {
     std::string file = dir->path() + "/" + value;
@@ -137,6 +142,19 @@ static void changeDir(void *ptr)
   lb->addItems(items);
 }
 
+static void handleKeyEvent(void *ptr) {
+  struct GUI::FileBrowser::private_data *prv =
+    (struct GUI::FileBrowser::private_data *) ptr;
+
+  GUI::ListBox *lb = prv->listbox;
+  lb->clearSelectedValue();  
+  GUI::LineEdit *le = prv->lineedit;
+
+  printf("AAA: %s\n", le->text().c_str());
+  prv->dir->setPath(le->text());
+  changeDir(ptr);
+}
+
 GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   : GUI::Widget(parent),
     lbl_path(this), lineedit(this), listbox(this), btn_sel(this), btn_esc(this),
@@ -152,8 +170,9 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
 
   lbl_path.setText("Path:");
 
-  lineedit.setReadOnly(true);
+//  lineedit.setReadOnly(true);
   prv->lineedit = &lineedit;
+  prv->lineedit->registerEnterPressedHandler(handleKeyEvent, prv);
 
   prv->listbox = &listbox;
   listbox.registerSelectHandler(changeDir, prv);

@@ -59,6 +59,8 @@ public:
   std::string selectedName();
   std::string selectedValue();
 
+  void clearSelectedValue();
+
   void registerSelectHandler(void (*handler)(void *), void *ptr);
   void registerClickHandler(void (*handler)(void *), void *ptr);
   void registerValueChangeHandler(void (*handler)(void *), void *ptr);

@@ -144,6 +144,11 @@ std::string GUI::ListBoxBasic::selectedValue()
   return items[selected].value;
 }
 
+void GUI::ListBoxBasic::clearSelectedValue()
+{
+  setSelection(-1);
+}
+
 void GUI::ListBoxBasic::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   this->clk_handler = handler;

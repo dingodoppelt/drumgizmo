@@ -61,7 +61,7 @@ Directory::~Directory()
 void Directory::setPath(std::string path)
 {
   DEBUG(directory, "Setting path to '%s'\n", path.c_str());
-  this->_path = path;
+  this->_path = cleanPath(path);
   refresh();
 }
 

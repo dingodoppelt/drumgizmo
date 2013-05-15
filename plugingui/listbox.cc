@@ -82,6 +82,11 @@ std::string GUI::ListBox::selectedValue()
   return basic->selectedValue();
 }
 
+void GUI::ListBox::clearSelectedValue() 
+{
+  basic->clearSelectedValue();
+}
+
 void GUI::ListBox::registerClickHandler(void (*handler)(void *), void *ptr)
 {
   basic->registerClickHandler(handler, ptr);
