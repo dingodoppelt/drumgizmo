@@ -76,17 +76,19 @@ void AudioFile::unload()
 }
 
 #define SIZE 512*4 
-void AudioFile::init() {
-//  printf("Initializing %p\n", this);
+void AudioFile::init()
+{
+  //DEBUG(audiofile,"Initializing %p\n", this);
   if(data) { 
-//    printf("\t already initialized\n");
+    //DEBUG(audiofile,"\t already initialized\n");
     return;
   }
 
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
   if(!fh) {
-    printf("SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(fh));
+    ERR(audiofile,"SNDFILE Error (%s): %s\n",
+        filename.c_str(), sf_strerror(fh));
     return;
   }
  
@@ -96,7 +98,7 @@ void AudioFile::init() {
   
   size = sf_read_float(fh, data, size); 
   
-//  printf("Lazy loaded %d samples\n", size);
+  //DEBUG(audiofile,"Lazy loaded %d samples\n", size);
   sf_close(fh);
 
   mutex.lock();
@@ -110,14 +112,15 @@ void AudioFile::init() {
 void AudioFile::loadNext()
 {
   if(this->data != this->preloaded_data) {
-//    printf("Already completely loaded %p\n", this);
+    //DEBUG(audiofile,"Already completely loaded %p\n", this);
     return;
   }
 
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
   if(!fh) {
-    printf("SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(fh));
+    ERR(audiofile,"SNDFILE Error (%s): %s\n",
+        filename.c_str(), sf_strerror(fh));
     return;
   }
 
@@ -129,39 +132,40 @@ void AudioFile::loadNext()
   sf_seek(fh, this->size, SEEK_SET);
 //  sample_t* data_buf = new sample_t[SIZE];
   while(this->size < sf_info.frames) {
-//    printf("Accumulated %d of %llu\n", size_accum, sf_info.frames);
-//    if( (r = sf_read_float(fh, data_buf, SIZE)) < 0) {
+    //DEBUG(audiofile,"Accumulated %d of %llu\n", size_accum, sf_info.frames);
+    //if( (r = sf_read_float(fh, data_buf, SIZE)) < 0) {
     if( (r = sf_read_float(fh, &data[this->size], SIZE)) < 0) {
-      printf("Error reading sound file\n");
+      ERR(audiofile,"Error reading sound file\n");
       break;
     }
-//    size_accum += r;
-//    memcpy(data+size_accum, data_buf, sizeof(sample_t) * r);
+    //size_accum += r;
+    //memcpy(data+size_accum, data_buf, sizeof(sample_t) * r);
     this->size += r;
   }
-//  delete data_buf;
+  //delete data_buf;
   
-//  printf("Finished loading %d samples %p\n", size, this);
+  //DEBUG(audiofile,"Finished loading %d samples %p\n", size, this);
   sf_close(fh);
 
-//  mutex.lock();
-//  this->data = data;
-//  this->size = size;
-//  mutex.unlock();
+  //mutex.lock();
+  //this->data = data;
+  //this->size = size;
+  //mutex.unlock();
 }
 
-void AudioFile::reset() {
-//  printf("Resetting audio file %p\n", this);
+void AudioFile::reset()
+{
+  //DEBUG(audiofile,"Resetting audio file %p\n", this);
   if(this->data == this->preloaded_data) {
-//     printf("\tNot completely loaded - skipping %p\n", this);
-     return;
+    //DEBUG(audiofile,"\tNot completely loaded - skipping %p\n", this);
+    return;
   }
 
   mutex.lock();
   volatile sample_t* old_data = data;
   this->size = SIZE;
   this->data = this->preloaded_data;
-//  printf("Deleting data %p\n", this);
+  //DEBUG(audiofile,"Deleting data %p\n", this);
   delete old_data; 
   mutex.unlock();
 }
@@ -179,7 +183,8 @@ void AudioFile::load()
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
   if(!fh) {
-    printf("SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(fh));
+    ERR(audiofile,"SNDFILE Error (%s): %s\n",
+        filename.c_str(), sf_strerror(fh));
     return;
   }
  
@@ -188,7 +193,7 @@ void AudioFile::load()
   sample_t* data = new sample_t[size]; 
   size = sf_read_float(fh, data, size); 
   
-  printf("Loaded %d samples %p\n", size, this);
+  DEBUG(audiofile,"Loaded %d samples %p\n", size, this);
   
   sf_close(fh);
 

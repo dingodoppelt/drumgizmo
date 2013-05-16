@@ -332,12 +332,12 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         Channel &ch = *j;
         AudioFile *af = s->getAudioFile(&ch);
         if(af) {
-//      LAZYLOAD:
-//          printf("Requesting preparing of audio file\n");
-//          loader.prepare(af);
+          // LAZYLOAD:
+          // DEBUG(drumgizmo,"Requesting preparing of audio file\n");
+          // loader.prepare(af);
         }
         if(af == NULL || !af->isValid()) {
-          //printf("Missing AudioFile.\n");
+          //DEBUG(drumgizmo,"Missing AudioFile.\n");
         } else {
           //DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
@@ -432,7 +432,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
-//          printf("%d\n", evt->t); fflush(stdout);
+//          DEBUG(drumgizmo,"%d\n", evt->t); fflush(stdout);
          size_t optend = ((end - n) / N) * N + n;
          for(; n < optend; n += N) {
             *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);

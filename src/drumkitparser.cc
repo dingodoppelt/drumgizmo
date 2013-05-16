@@ -28,6 +28,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <hugin.hpp>
 
 #include "instrumentparser.h"
 #include "path.h"
@@ -40,7 +41,7 @@ DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
 
   fd = fopen(kitfile.c_str(), "r");
 
-  //  printf("Parsing drumkit in %s\n", kitfile.c_str());
+  //  DEBUG(kitparser, "Parsing drumkit in %s\n", kitfile.c_str());
 
   if(!fd) return;
 }
@@ -65,7 +66,7 @@ void DrumKitParser::startTag(std::string name,
 
   if(name == "channel") {
     if(attr.find("name") == attr.end()) {
-      printf("Missing channel name.\n");
+      DEBUG(kitparser, "Missing channel name.\n");
       return;
     }
     Channel c(attr["name"]);
@@ -78,11 +79,11 @@ void DrumKitParser::startTag(std::string name,
 
   if(name == "instrument") {
     if(attr.find("name") == attr.end()) {
-      printf("Missing name in instrument tag.\n");
+      DEBUG(kitparser, "Missing name in instrument tag.\n");
       return;
     }
     if(attr.find("file") == attr.end()) {
-      printf("Missing file in instrument tag.\n");
+      DEBUG(kitparser, "Missing file in instrument tag.\n");
       return;
     }
 
@@ -94,12 +95,12 @@ void DrumKitParser::startTag(std::string name,
 
   if(name == "channelmap") {
     if(attr.find("in") == attr.end()) {
-      printf("Missing 'in' in channelmap tag.\n");
+      DEBUG(kitparser, "Missing 'in' in channelmap tag.\n");
       return;
     }
 
     if(attr.find("out") == attr.end()) {
-      printf("Missing 'out' in channelmap tag.\n");
+      DEBUG(kitparser, "Missing 'out' in channelmap tag.\n");
       return;
     }
 
@@ -129,11 +130,11 @@ void DrumKitParser::endTag(std::string name)
         if(kit.channels[cnt].name == cname) c->num = kit.channels[cnt].num;
       }
       if(c->num == NO_CHANNEL) {
-        printf("Missing channel '%s' in instrument '%s'\n",
+        DEBUG(kitparser, "Missing channel '%s' in instrument '%s'\n",
                c->name.c_str(), i->name().c_str());
       } else {
         /*
-          printf("Assigned channel '%s' to number %d in instrument '%s'\n",
+          DEBUG(kitparser, "Assigned channel '%s' to number %d in instrument '%s'\n",
              c->name.c_str(), c->num, i.name().c_str());
         */
       }

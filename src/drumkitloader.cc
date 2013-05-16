@@ -82,8 +82,10 @@ void DrumKitLoader::loadKit(DrumKit *kit)
   semaphore.post();
 }
 
-void DrumKitLoader::prepare(AudioFile* af) {
-  printf("Preparing audiofile %p (%d in queue)\n", af, load_queue.size());
+void DrumKitLoader::prepare(AudioFile* af)
+{
+  DEBUG(loader, "Preparing audiofile %p (%d in queue)\n",
+        af, load_queue.size());
   mutex.lock();
   af->ref_count++;
   load_queue.push_back(af);
@@ -97,7 +99,8 @@ void DrumKitLoader::prepare(AudioFile* af) {
   semaphore.post();
 }
 
-void DrumKitLoader::reset(AudioFile* af) {
+void DrumKitLoader::reset(AudioFile* af)
+{
   mutex.lock();
   af->ref_count--;
   reset_queue.push_back(af);
@@ -125,7 +128,7 @@ void DrumKitLoader::thread_main()
     }
 
     if(!load_queue.empty()) {
-      printf("Loading remaining of audio file\n"); 
+      DEBUG(loader, "Loading remaining of audio file\n"); 
       AudioFile* af = load_queue.front();
       mutex.lock();
       load_queue.pop_front();
@@ -143,7 +146,7 @@ void DrumKitLoader::thread_main()
       mutex.unlock();
     }
     else { // Initialize drum kit
-      printf("Initializing drum kit\n");
+      DEBUG(loader, "Initializing drum kit\n");
       unsigned int count = 0;
 
       if(kit && !kit->isValid()) goto finish;

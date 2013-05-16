@@ -29,13 +29,15 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <hugin.hpp>
+
 #include "path.h"
 
 InstrumentParser::InstrumentParser(const std::string &file, Instrument &i)
   : instrument(i)
 {
   s = NULL;
-  //  printf("Parsing instrument in %s\n", file.c_str());
+  //  DEBUG(instrparser,"Parsing instrument in %s\n", file.c_str());
   path = getPath(file);
   fd = fopen(file.c_str(), "r");
   if(!fd) return;
@@ -62,7 +64,7 @@ void InstrumentParser::startTag(std::string name,
 
   if(name == "sample") {
     if(attr.find("name") == attr.end()) {
-      printf("Missing required attribute 'name'.\n");
+      DEBUG(instrparser,"Missing required attribute 'name'.\n");
       return;
     }
     s = new Sample(attr["name"]);
@@ -70,17 +72,17 @@ void InstrumentParser::startTag(std::string name,
 
   if(name == "audiofile") {
     if(s == NULL) {
-      printf("Missing Sample!\n");
+      DEBUG(instrparser,"Missing Sample!\n");
       return;
     }
     
     if(attr.find("file") == attr.end()) {
-      printf("Missing required attribute 'file'.\n");
+      DEBUG(instrparser,"Missing required attribute 'file'.\n");
       return;
     }
 
     if(attr.find("channel") == attr.end()) {
-      printf("Missing required attribute 'channel'.\n");
+      DEBUG(instrparser,"Missing required attribute 'channel'.\n");
       return;
     }
 
@@ -96,12 +98,12 @@ void InstrumentParser::startTag(std::string name,
 
   if(name == "velocity") {
     if(attr.find("lower") == attr.end()) {
-      printf("Missing required attribute 'lower'.\n");
+      DEBUG(instrparser,"Missing required attribute 'lower'.\n");
       return;
     }
 
     if(attr.find("upper") == attr.end()) {
-      printf("Missing required attribute 'upper'.\n");
+      DEBUG(instrparser,"Missing required attribute 'upper'.\n");
       return;
     }
 
@@ -111,7 +113,7 @@ void InstrumentParser::startTag(std::string name,
 
   if(name == "sampleref") {
     if(attr.find("name") == attr.end()) {
-      printf("Missing required attribute 'name'.\n");
+      DEBUG(instrparser,"Missing required attribute 'name'.\n");
       return;
     }
 
@@ -126,7 +128,7 @@ void InstrumentParser::startTag(std::string name,
     }
 
     if(sample == NULL) {
-      printf("Samplref pointed at non-existing sample.\n");
+      DEBUG(instrparser,"Samplref pointed at non-existing sample.\n");
       return;
     }
 
@@ -138,7 +140,7 @@ void InstrumentParser::endTag(std::string name)
 {
   if(name == "sample") {
     if(s == NULL) {
-      printf("Missing Sample.\n");
+      DEBUG(instrparser,"Missing Sample.\n");
       return;
     }
 
