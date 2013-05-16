@@ -94,6 +94,7 @@ void GUI::LineEdit::buttonEvent(ButtonEvent *e)
         break;
       }
     }
+    if(e->x >= (int)(font.textWidth(_text) + BORDER)) pos = _text.length();
     repaintEvent(NULL);
   }
 }
