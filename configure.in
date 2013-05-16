@@ -45,6 +45,37 @@ if test "x$enable_lv2" = "xyes"; then
    dnl Check for Xlib
    dnl ======================
    PKG_CHECK_MODULES(X11, x11 >= 1.0)
+
+   dnl ===========================
+   dnl Check for SSE instructions
+   dnl ===========================
+   AC_MSG_CHECKING([for sse3 instructions])
+   if grep -q "sse3" /proc/cpuinfo
+   then
+     AC_MSG_RESULT([yes])
+     CXXFLAGS="$CXXFLAGS -msse3"
+     AC_SUBST(CXXFLAGS)
+   else
+     AC_MSG_RESULT([no])
+   fi
+   AC_MSG_CHECKING([for sse2 instructions])
+     if grep -q "sse2" /proc/cpuinfo
+   then
+     AC_MSG_RESULT([yes])
+     CXXFLAGS="$CXXFLAGS -msse2"
+     AC_SUBST(CXXFLAGS)
+   else
+     AC_MSG_RESULT([no])
+   fi
+   AC_MSG_CHECKING([for sse instructions])
+   if grep -q "sse" /proc/cpuinfo
+   then
+     AC_MSG_RESULT([yes])
+     CXXFLAGS="$CXXFLAGS -DSSE -msse"
+     AC_SUBST(CXXFLAGS)
+   else
+     AC_MSG_RESULT([no])
+   fi
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    enable_lv2=no

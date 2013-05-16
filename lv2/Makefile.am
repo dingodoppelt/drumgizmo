@@ -6,7 +6,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS) \
-	$(PLUGIN_GUI_CFLAGS) -DX11 -DSSE -msse -msse2 -msse3 \
+	$(PLUGIN_GUI_CFLAGS) -DX11 \
 	-DUSE_THREAD
 
 plugindir = $(prefix)/lib/lv2/drumgizmo.lv2
