@@ -51,21 +51,6 @@ if [ "$DIE" -eq 1 ]; then
         exit 1
 fi
 
-# Create testfiles
-TESTDIRS="src plugingui drumgizmo lv2"
-echo "Creating unittest Makefiles:"
-for d in $TESTDIRS
-do
-		echo "Checking $d"
-		if [ ! -f $d/Makefile.am.test ]
-		then
-				echo "  didn't find it, touching."
-				touch $d/Makefile.am.test
-		else
-				echo "  found it."
-		fi
-done
-
 aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
     aclocal $aclocalinclude; \
@@ -84,11 +69,3 @@ aclocalinclude="$ACLOCAL_FLAGS"; \
  echo "done.")
 
 rm -f config.cache
-
-for d in $TESTDIRS
-do
-		if [ -f $d/Makefile.am.test ]
-		then
-				rm $d/Makefile.am.test
-		fi
-done
