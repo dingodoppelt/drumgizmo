@@ -45,37 +45,6 @@ if test "x$enable_lv2" = "xyes"; then
    dnl Check for Xlib
    dnl ======================
    PKG_CHECK_MODULES(X11, x11 >= 1.0)
-
-   dnl ===========================
-   dnl Check for SSE instructions
-   dnl ===========================
-   AC_MSG_CHECKING([for sse3 instructions])
-   if grep -q "sse3" /proc/cpuinfo
-   then
-     AC_MSG_RESULT([yes])
-     LV2FLAGS="-msse3"
-     AC_SUBST(LV2FLAGS)
-   else
-     AC_MSG_RESULT([no])
-   fi
-   AC_MSG_CHECKING([for sse2 instructions])
-     if grep -q "sse2" /proc/cpuinfo
-   then
-     AC_MSG_RESULT([yes])
-     LV2FLAGS="$LV2FLAGS -msse2"
-     AC_SUBST(LV2FLAGS)
-   else
-     AC_MSG_RESULT([no])
-   fi
-   AC_MSG_CHECKING([for sse instructions])
-   if grep -q "sse" /proc/cpuinfo
-   then
-     AC_MSG_RESULT([yes])
-     LV2FLAGS="$LV2FLAGS -DSSE -msse"
-     AC_SUBST(LV2FLAGS)
-   else
-     AC_MSG_RESULT([no])
-   fi
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    enable_lv2=no
@@ -353,10 +322,44 @@ LIBS="$tmp_LIBS"
 AC_SUBST(EXPAT_CFLAGS)
 AC_SUBST(EXPAT_LIBS)
 
+dnl ===========================
+dnl Check for SSE instructions
+dnl ===========================
+AC_MSG_CHECKING([for sse3 instructions])
+if grep -q "sse3" /proc/cpuinfo
+then
+  AC_MSG_RESULT([yes])
+  SSEFLAGS="-msse3"
+  AC_SUBST(SSEFLAGS)
+else
+  AC_MSG_RESULT([no])
+fi
+AC_MSG_CHECKING([for sse2 instructions])
+if grep -q "sse2" /proc/cpuinfo
+then
+  AC_MSG_RESULT([yes])
+  SSEFLAGS="$SSEFLAGS -msse2"
+  AC_SUBST(SSEFLAGS)
+else
+  AC_MSG_RESULT([no])
+fi
+AC_MSG_CHECKING([for sse instructions])
+if grep -q "sse" /proc/cpuinfo
+then
+  AC_MSG_RESULT([yes])
+  SSEFLAGS="$SSEFLAGS -DSSE -msse"
+  AC_SUBST(SSEFLAGS)
+else
+  AC_MSG_RESULT([no])
+fi
+
+
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
+
+
 
 #	au/Makefile
 
