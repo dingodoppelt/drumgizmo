@@ -11,5 +11,3 @@ EXTRA_DIST = \
 	hugin/hugin_syslog.h \
 	hugin/hugin_syslog.c
 
-test:
-	$(MAKE) -C src test

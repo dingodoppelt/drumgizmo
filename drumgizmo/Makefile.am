@@ -25,15 +25,4 @@ EXTRA_DIST = \
 	audioinputenginedl.h \
 	audiooutputenginedl.h
 
-################
-# Test Section #
-################
-
-TEST_SOURCE_DEPS = ${drumgizmo_SOURCES} ${EXTRA_DIST}
-TEST_SCRIPT_DIR = $(top_srcdir)/tools
-
-include ${TEST_SCRIPT_DIR}/Makefile.am.test
-
-include Makefile.am.test
-
 endif
