@@ -53,8 +53,8 @@ if test "x$enable_lv2" = "xyes"; then
    if grep -q "sse3" /proc/cpuinfo
    then
      AC_MSG_RESULT([yes])
-     CXXFLAGS="$CXXFLAGS -msse3"
-     AC_SUBST(CXXFLAGS)
+     LV2FLAGS="-msse3"
+     AC_SUBST(LV2FLAGS)
    else
      AC_MSG_RESULT([no])
    fi
@@ -62,8 +62,8 @@ if test "x$enable_lv2" = "xyes"; then
      if grep -q "sse2" /proc/cpuinfo
    then
      AC_MSG_RESULT([yes])
-     CXXFLAGS="$CXXFLAGS -msse2"
-     AC_SUBST(CXXFLAGS)
+     LV2FLAGS="$LV2FLAGS -msse2"
+     AC_SUBST(LV2FLAGS)
    else
      AC_MSG_RESULT([no])
    fi
@@ -71,8 +71,8 @@ if test "x$enable_lv2" = "xyes"; then
    if grep -q "sse" /proc/cpuinfo
    then
      AC_MSG_RESULT([yes])
-     CXXFLAGS="$CXXFLAGS -DSSE -msse"
-     AC_SUBST(CXXFLAGS)
+     LV2FLAGS="$LV2FLAGS -DSSE -msse"
+     AC_SUBST(LV2FLAGS)
    else
      AC_MSG_RESULT([no])
    fi
