@@ -325,34 +325,54 @@ AC_SUBST(EXPAT_LIBS)
 dnl ===========================
 dnl Check for SSE instructions
 dnl ===========================
-AC_MSG_CHECKING([for sse3 instructions])
-if grep -q "sse3" /proc/cpuinfo
-then
-  AC_MSG_RESULT([yes])
-  SSEFLAGS="-msse3"
-  AC_SUBST(SSEFLAGS)
-else
-  AC_MSG_RESULT([no])
+AC_ARG_ENABLE([sse],
+[  --enable-sse[=level]   Enable SSE Level 1, 2, 3 or auto [default=auto]],,
+        [enable_sse="auto"])
+if test "x$enable_sse" = "xyes"; then
+  enable_sse="auto"
 fi
-AC_MSG_CHECKING([for sse2 instructions])
-if grep -q "sse2" /proc/cpuinfo
-then
-  AC_MSG_RESULT([yes])
-  SSEFLAGS="$SSEFLAGS -msse2"
-  AC_SUBST(SSEFLAGS)
-else
-  AC_MSG_RESULT([no])
+#AC_MSG_RESULT([SSE: $enable_sse])
+if test "x$enable_sse" = "x3"; then
+  AC_MSG_RESULT([Setting sse level 3])
+  SSE_FLAGS="-DSSE -msse -msse2 -mss3"
+elif test "x$enable_sse" = "x2"; then
+  AC_MSG_RESULT([Setting sse level 2])
+  SSE_FLAGS="-DSSE -msse -msse2"
+elif test "x$enable_sse" = "x1"; then
+  AC_MSG_RESULT([Setting sse level 1])
+  SSE_FLAGS="-DSSE -msse"
+elif test "x$enable_sse" = "xauto"; then
+  AC_MSG_RESULT([Auto setting sse level])
+  AC_MSG_CHECKING([for sse3 instructions])
+  if grep -q "sse3" /proc/cpuinfo
+  then
+    AC_MSG_RESULT([yes])
+    SSEFLAGS="-msse3"
+    AC_SUBST(SSEFLAGS)
+  else
+    AC_MSG_RESULT([no])
+  fi
+  AC_MSG_CHECKING([for sse2 instructions])
+  if grep -q "sse2" /proc/cpuinfo
+  then
+    AC_MSG_RESULT([yes])
+    SSEFLAGS="$SSEFLAGS -msse2"
+    AC_SUBST(SSEFLAGS)
+  else
+    AC_MSG_RESULT([no])
+  fi
+  AC_MSG_CHECKING([for sse instructions])
+  if grep -q "sse" /proc/cpuinfo
+  then
+    AC_MSG_RESULT([yes])
+    SSEFLAGS="$SSEFLAGS -DSSE -msse"
+    AC_SUBST(SSEFLAGS)
+  else
+    AC_MSG_RESULT([no])
+  fi
+else 
+  AC_MSG_RESULT([*** Disabling SSE ***])
 fi
-AC_MSG_CHECKING([for sse instructions])
-if grep -q "sse" /proc/cpuinfo
-then
-  AC_MSG_RESULT([yes])
-  SSEFLAGS="$SSEFLAGS -DSSE -msse"
-  AC_SUBST(SSEFLAGS)
-else
-  AC_MSG_RESULT([no])
-fi
-
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
