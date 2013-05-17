@@ -334,13 +334,13 @@ fi
 #AC_MSG_RESULT([SSE: $enable_sse])
 if test "x$enable_sse" = "x3"; then
   AC_MSG_RESULT([Setting sse level 3])
-  SSE_FLAGS="-DSSE -msse -msse2 -mss3"
+  SSEFLAGS="-DSSE -msse -msse2 -mss3"
 elif test "x$enable_sse" = "x2"; then
   AC_MSG_RESULT([Setting sse level 2])
-  SSE_FLAGS="-DSSE -msse -msse2"
+  SSEFLAGS="-DSSE -msse -msse2"
 elif test "x$enable_sse" = "x1"; then
   AC_MSG_RESULT([Setting sse level 1])
-  SSE_FLAGS="-DSSE -msse"
+  SSEFLAGS="-DSSE -msse"
 elif test "x$enable_sse" = "xauto"; then
   AC_MSG_RESULT([Auto setting sse level])
   AC_MSG_CHECKING([for sse3 instructions])
