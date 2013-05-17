@@ -172,6 +172,21 @@ if test "x$enable_cli" = "xyes"; then
       have_output_dummy=no
    fi
    
+   dnl *** Jackaudio
+   AC_ARG_ENABLE([output_jackaudio],
+   [  --disable-output-jackaudio   Disable output jack plugin [default=enabled]],,
+           [enable_output_jackaudio="yes"])
+   if test "x$enable_output_jackaudio" = "xyes"; then
+   	 have_output_jackaudio=yes 
+   	 dnl ======================
+   	 dnl Check for jack
+   	 dnl ======================
+   	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
+   else
+   	 AC_MSG_RESULT([*** output jack plugin disabled per user request ***])
+      have_output_jackaudio=no
+   fi
+
    dnl *** alsa
    AC_ARG_ENABLE([output_alsa],
    [  --disable-output-alsa   Disable output alsa plugin [default=enabled]],,
@@ -198,7 +213,7 @@ if test "x$enable_cli" = "xyes"; then
       have_output_wavfile=no
    fi
    
-   OUTPUT_PLUGINS="dummy alsa wavfile"
+   OUTPUT_PLUGINS="dummy alsa wavfile jackaudio"
    AC_SUBST(OUTPUT_PLUGINS)
    
    dnl
@@ -228,6 +243,7 @@ AM_CONDITIONAL([HAVE_INPUT_MIDIFILE], [test "x$have_input_midifile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_DUMMY], [test "x$have_output_dummy" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_ALSA], [test "x$have_output_alsa" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
+AM_CONDITIONAL([HAVE_OUTPUT_JACKAUDIO], [test "x$have_output_jackaudio" = "xyes"])
 
 
 AC_ARG_ENABLE([editor],
@@ -346,6 +362,7 @@ AC_OUTPUT(
 	drumgizmo/output/Makefile
 	drumgizmo/output/dummy/Makefile
 	drumgizmo/output/alsa/Makefile
+	drumgizmo/output/jackaudio/Makefile
 	drumgizmo/output/wavfile/Makefile
   dgedit/Makefile)
 

@@ -20,7 +20,7 @@ lib_LTLIBRARIES = $(testltlibs)
 
 libdir = $(INPUT_PLUGIN_DIR)
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 libtest_la_LDFLAGS =
 libtest_la_LIBADD =
 libtest_la_SOURCES = $(testbuildsources)

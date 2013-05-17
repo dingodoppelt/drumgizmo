@@ -33,7 +33,7 @@
 
 #define NOTE_ON 0x90
 
-#include "jackclient.h"
+#include "../../jackclient.h"
 
 #include <jack/midiport.h>
 

@@ -25,7 +25,7 @@ lib_LTLIBRARIES = $(midifileltlibs)
 
 libdir = $(INPUT_PLUGIN_DIR)
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SMF_CFLAGS) \
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SMF_CFLAGS) \
 	$(EXPAT_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_MUTEX
 libmidifile_la_LDFLAGS = $(SMF_LIBS) $(EXPAT_LIBS)
 libmidifile_la_LIBADD =

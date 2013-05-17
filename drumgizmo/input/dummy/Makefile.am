@@ -20,7 +20,7 @@ lib_LTLIBRARIES = $(dummyltlibs)
 
 libdir = $(INPUT_PLUGIN_DIR)
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
 libdummy_la_SOURCES = $(dummybuildsources)

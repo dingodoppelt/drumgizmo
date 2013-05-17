@@ -3,7 +3,7 @@ if ENABLE_LV2
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS) \
 	$(PLUGIN_GUI_CFLAGS) -DX11 -DSSE -msse -msse2 -msse3 \

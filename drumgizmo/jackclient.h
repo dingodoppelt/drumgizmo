@@ -56,8 +56,6 @@ private:
   bool active;
 };
 
-extern JackClient *jackclient;
-
 JackClient *init_jack_client();
 void close_jack_client();
 

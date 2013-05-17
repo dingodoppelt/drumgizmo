@@ -20,7 +20,7 @@ lib_LTLIBRARIES = $(wavfileltlibs)
 
 libdir = $(OUTPUT_PLUGIN_DIR)
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CFLAGS)
 libwavfile_la_LDFLAGS = $(SNDFILE_LIBS)
 libwavfile_la_LIBADD =
 libwavfile_la_SOURCES = $(wavfilebuildsources)
