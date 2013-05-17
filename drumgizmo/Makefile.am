@@ -2,7 +2,7 @@ DISTDIRS = input output
 
 if ENABLE_CLI
 
-include $(top_srcdir)/src/Makefile.am.drumgizmo
+include $(top_srcdir)/src/Makefile.am.drumgizmo 
 
 SUBDIRS = input output
 
@@ -11,8 +11,8 @@ bin_PROGRAMS = drumgizmo
 drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS)
 
 drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
-	-I$(top_srcdir)/include -I$(top_srcdir)/src -DSSE -msse -msse2 -msse3 \
-	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX $(JACK_CFLAGS)
+	-I$(top_srcdir)/include -I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX $(JACK_CFLAGS) $(SSEFLAGS) 
 
 drumgizmo_SOURCES = \
 	audioinputenginedl.cc \
