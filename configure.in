@@ -103,7 +103,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** Dummy
    AC_ARG_ENABLE([input_dummy],
-   [  --disable-input-dummy   Disable input dummy plugin [default=enabled]],,
+   [  --disable-input-dummy       Disable input dummy plugin [default=enabled]],,
            [enable_input_dummy="yes"])
    if test "x$enable_input_dummy" = "xyes"; then
    	 have_input_dummy=yes 
@@ -114,7 +114,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** Test
    AC_ARG_ENABLE([input_test],
-   [  --disable-input-test   Disable input test plugin [default=enabled]],,
+   [  --disable-input-test        Disable input test plugin [default=enabled]],,
            [enable_input_test="yes"])
    if test "x$enable_input_test" = "xyes"; then
    	 have_input_test=yes 
@@ -125,7 +125,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** Jackmidi
    AC_ARG_ENABLE([input_jackmidi],
-   [  --disable-input-jackmidi   Disable input jackmidi plugin [default=enabled]],,
+   [  --disable-input-jackmidi    Disable input jackmidi plugin [default=enabled]],,
            [enable_input_jackmidi="yes"])
    if test "x$enable_input_jackmidi" = "xyes"; then
    	 have_input_jackmidi=yes 
@@ -140,7 +140,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** Midifile
    AC_ARG_ENABLE([input_midifile],
-   [  --disable-input-midifile   Disable input midifile plugin [default=enabled]],,
+   [  --disable-input-midifile    Disable input midifile plugin [default=enabled]],,
            [enable_input_midifile="yes"])
    if test "x$enable_input_midifile" = "xyes"; then
    	 have_input_midifile=yes
@@ -163,7 +163,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** dummy
    AC_ARG_ENABLE([output_dummy],
-   [  --disable-output-dummy   Disable output dummy plugin [default=enabled]],,
+   [  --disable-output-dummy      Disable output dummy plugin [default=enabled]],,
            [enable_output_dummy="yes"])
    if test "x$enable_output_dummy" = "xyes"; then
    	 have_output_dummy=yes 
@@ -174,7 +174,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** Jackaudio
    AC_ARG_ENABLE([output_jackaudio],
-   [  --disable-output-jackaudio   Disable output jack plugin [default=enabled]],,
+   [  --disable-output-jackaudio  Disable output jack plugin [default=enabled]],,
            [enable_output_jackaudio="yes"])
    if test "x$enable_output_jackaudio" = "xyes"; then
    	 have_output_jackaudio=yes 
@@ -189,7 +189,7 @@ if test "x$enable_cli" = "xyes"; then
 
    dnl *** alsa
    AC_ARG_ENABLE([output_alsa],
-   [  --disable-output-alsa   Disable output alsa plugin [default=enabled]],,
+   [  --disable-output-alsa       Disable output alsa plugin [default=enabled]],,
            [enable_output_alsa="yes"])
    if test "x$enable_output_alsa" = "xyes"; then
    	 have_output_alsa=yes 
@@ -204,7 +204,7 @@ if test "x$enable_cli" = "xyes"; then
    
    dnl *** wavfile
    AC_ARG_ENABLE([output_wavfile],
-   [  --disable-output-wavfile   Disable output wavfile plugin [default=enabled]],,
+   [  --disable-output-wavfile    Disable output wavfile plugin [default=enabled]],,
            [enable_output_wavfile="yes"])
    if test "x$enable_output_wavfile" = "xyes"; then
    	 have_output_wavfile=yes 
