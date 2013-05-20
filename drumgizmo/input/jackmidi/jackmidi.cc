@@ -105,7 +105,7 @@ bool JackMidi::init(int instruments, char *inames[])
 
 void JackMidi::setParm(std::string parm, std::string value)
 {
-  if(parm == "map") midimapfile = value;
+  if(parm == "midimap") midimapfile = value;
   if(parm == "jack_client") {
     sscanf(value.c_str(), "%p", &jackclient);
     if(jackclient) jackclient->addJackProcess(this);
