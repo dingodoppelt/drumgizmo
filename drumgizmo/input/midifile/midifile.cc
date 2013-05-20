@@ -63,6 +63,8 @@ private:
   float speed;
   int track;
   std::string midimapfile;
+  bool loop;
+  double offset;
 };
 
 MidiFile::MidiFile()
@@ -70,17 +72,36 @@ MidiFile::MidiFile()
  cur_event = NULL;
  smf = NULL;
  
- filename = "";
  speed = 1.0;
- track = 0;
+ track = -1; // -1 is OMNI/all tracks
+ loop = false;
+ offset = 0;
 }
  
 bool MidiFile::init(int instruments, char *inames[])
 {
+  if(filename == "") {
+    fprintf(stderr, "Missing midifile argument 'file'\n");
+    return false;
+  }
+
+  if(midimapfile == "") {
+    fprintf(stderr, "Missing midimapfile argument 'midimap'.\n");
+    return false;
+  }
+
   smf = smf_load(filename.c_str());
 
+  if(!smf) {
+    fprintf(stderr, "Could not open midifile '%s'.\n", filename.c_str());
+    return false;
+  }
+
   MidiMapParser p(midimapfile);
-  if(p.parse()) return false;
+  if(p.parse()) {
+    fprintf(stderr, "Could not parse midimapfile '%s'.\n", midimapfile.c_str());
+    return false;
+  }
   mmap.midimap = p.midimap;
 
   for(int i = 0; i < instruments; i++) {
@@ -96,6 +117,7 @@ void MidiFile::setParm(std::string parm, std::string value)
   if(parm == "speed") speed = atof(value.c_str());
   if(parm == "track") track = atoi(value.c_str());
   if(parm == "midimap") midimapfile = value;
+  if(parm == "loop") loop = true;
 }
 
 bool MidiFile::start()
@@ -117,6 +139,7 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
   size_t nevs = 0;
 
   double cur_max_time = (double)(pos + len) / (44100.0 / speed);
+  cur_max_time -= offset;
   //  double cur_min_time = (double)(pos) / (44100.0 / speed);
 
   if(!cur_event) cur_event = smf_get_next_event(smf);
@@ -125,7 +148,8 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
     if(!smf_event_is_metadata(cur_event)) {
       if( (cur_event->midi_buffer_length == 3) &&
           ((cur_event->midi_buffer[0] & NOTE_ON) == NOTE_ON) &&
-          cur_event->track_number == track && cur_event->midi_buffer[2] > 0) {
+          (track == -1 || cur_event->track_number == track) &&
+          cur_event->midi_buffer[2] > 0) {
         
         if(evs == NULL) evs = (event_t *)malloc(sizeof(event_t) * 1000);
 
@@ -135,10 +159,7 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
         evs[nevs].type = TYPE_ONSET;
         size_t evpos = cur_event->time_seconds * (44100.0 / speed);
         evs[nevs].offset = evpos - pos;
-        /*
-        printf("evpos: %d, sec: %f, pos: %d, len: %d, max_time: %f\n",
-               evpos, cur_event->time_seconds, pos, len, cur_max_time);
-        */
+
         int i = mmap.lookup(key);
         if(i != -1) {
           evs[nevs].instrument = i;
@@ -146,7 +167,7 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
         
           nevs++;
           if(nevs > 999) {
-            printf("PANIC!\n");
+            fprintf(stderr, "PANIC!\n");
             break;
           }
         }
@@ -157,10 +178,15 @@ event_t *MidiFile::run(size_t pos, size_t len, size_t *nevents)
   }
 
   if(!cur_event) {
-    if(evs == NULL) evs = (event_t *)malloc(sizeof(event_t) * 1000);
-    evs[nevs].type = TYPE_STOP;
-    evs[nevs].offset = len - 1;
-    nevs++;
+    if(loop) {
+       smf_rewind(smf);
+       offset += cur_max_time;
+    } else {
+      if(evs == NULL) evs = (event_t *)malloc(sizeof(event_t) * 1000);
+      evs[nevs].type = TYPE_STOP;
+      evs[nevs].offset = len - 1;
+      nevs++;
+    }
   }
 
   *nevents = nevs;
