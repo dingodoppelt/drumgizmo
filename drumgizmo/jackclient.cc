@@ -40,6 +40,8 @@ JackClient::JackClient()
 	jack_client = jack_client_open("DrumGizmo", JackNullOption, &status);
 
   jack_set_process_callback(jack_client, _wrap_jack_process, this);
+
+  active = false;
 }
 
 JackClient::~JackClient()
