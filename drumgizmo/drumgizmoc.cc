@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
   }
 
   if(!gizmo.init(preload)) {
-    printf("Failed init drumkit.\n");
+    printf("Failed init engine.\n");
     return 1;
   }
 
