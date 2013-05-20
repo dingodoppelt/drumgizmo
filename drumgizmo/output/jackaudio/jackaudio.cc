@@ -28,6 +28,8 @@
 
 #include <string>
 #include <audiotypes.h>
+#include <semaphore.h>
+#include <stdlib.h>
 
 #define NOTE_ON 0x90
 
@@ -56,6 +58,7 @@ private:
   jack_port_t *output_port[64];
   size_t nchannels;
   sample_t **channels;
+  Semaphore sem;
 };
 
 JackAudio::JackAudio()
@@ -82,7 +85,7 @@ bool JackAudio::init(int nchannels, char *cnames[])
                                         name.c_str(),
                                         JACK_DEFAULT_AUDIO_TYPE,
                                         JackPortIsOutput, 0);
-    channels[i] = (sample_t*)malloc(2048 * sizeof(sample_t));
+    channels[i] = (sample_t*)malloc(1024 * sizeof(sample_t));
   }
   return true;
 }
@@ -97,6 +100,7 @@ void JackAudio::setParm(std::string parm, std::string value)
 
 bool JackAudio::start()
 {
+  //jackclient->activate();
   return true;
 }
 
@@ -109,28 +113,36 @@ void JackAudio::pre(size_t size)
 }
 
 void JackAudio::run(int channel, sample_t* data, size_t size)
-{
+{ 
   // Copy engine data to ringbuffer.
-  for(int i = 0; i < size; i++) {
+  for(size_t i = 0; i < size; i++) {
     channels[channel][i] = data[i];
   }
 }
 
 void JackAudio::post(size_t size)
 {
+  sem.wait();
 }
 
 void JackAudio::jack_process(jack_nframes_t nframes)
 {
+  if(nframes != 1024) {
+    fprintf(stderr, "jackaudio output module currently only works with a"
+            " bufferszie of 1024 samples!\n");
+    exit(1);
+  }
+
   printf("o"); fflush(stdout);
-  for(int c = 0; c < nchannels; c++) {
+  for(size_t c = 0; c < nchannels; c++) {
     jack_default_audio_sample_t *out =
       (jack_default_audio_sample_t *) jack_port_get_buffer(output_port[c],
                                                            nframes);
-    for(int i = 0; i < nframes; i++) {
+    for(size_t i = 0; i < nframes; i++) {
       out[i] = channels[c][i];
     }
   }
+  sem.post();
 }
 
 extern "C" {
