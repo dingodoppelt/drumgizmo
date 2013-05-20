@@ -389,7 +389,7 @@ void DrumGizmo::run()
   oe->start();
 
   size_t pos = 0;
-  size_t nsamples = 512;
+  size_t nsamples = 2048;
   sample_t samples[nsamples];
 
   while(run(pos, samples, nsamples) == true) {

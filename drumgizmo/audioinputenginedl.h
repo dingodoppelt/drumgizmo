@@ -28,6 +28,7 @@
 #define __DRUMGIZMO_AUDIOINPUTENGINEDL_H__
 
 #include "audioinputengine.h"
+#include "jackclient.h"
 
 typedef void* (*input_create_func_t)(void);
 typedef void (*input_destroy_func_t)(void*);
@@ -66,6 +67,9 @@ private:
   input_pre_func_t i_pre;
   input_run_func_t i_run;
   input_post_func_t i_post;
+
+  bool is_jack_plugin;
+  JackClient *jackclient;
 };
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINEDL_H__*/

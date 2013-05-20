@@ -34,6 +34,7 @@
 #include "channel.h"
 
 #include "audiooutputengine.h"
+#include "jackclient.h"
 
 typedef void* (*output_create_func_t)(void);
 typedef void (*output_destroy_func_t)(void*);
@@ -72,6 +73,9 @@ private:
   output_pre_func_t o_pre;
   output_run_func_t o_run;
   output_post_func_t o_post;
+
+  bool is_jack_plugin;
+  JackClient *jackclient;
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINEDL_H__*/

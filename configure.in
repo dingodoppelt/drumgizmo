@@ -14,6 +14,8 @@ AM_PROG_LIBTOOL
 AM_CONFIG_HEADER(config.h)
 AC_STDC_HEADERS
 
+need_jack=no
+
 dnl ======================
 dnl Init pkg-config
 dnl ======================
@@ -129,10 +131,7 @@ if test "x$enable_cli" = "xyes"; then
            [enable_input_jackmidi="yes"])
    if test "x$enable_input_jackmidi" = "xyes"; then
    	 have_input_jackmidi=yes 
-   	 dnl ======================
-   	 dnl Check for jack
-   	 dnl ======================
-   	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
+		 need_jack=yes
    else
    	 AC_MSG_RESULT([*** input jackmidi plugin disabled per user request ***])
       have_input_jackmidi=no
@@ -178,10 +177,7 @@ if test "x$enable_cli" = "xyes"; then
            [enable_output_jackaudio="yes"])
    if test "x$enable_output_jackaudio" = "xyes"; then
    	 have_output_jackaudio=yes 
-   	 dnl ======================
-   	 dnl Check for jack
-   	 dnl ======================
-   	 PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
+		 need_jack=yes
    else
    	 AC_MSG_RESULT([*** output jack plugin disabled per user request ***])
       have_output_jackaudio=no
@@ -388,6 +384,14 @@ elif test "x$enable_sse" = "xauto"; then
   fi
 else 
   AC_MSG_RESULT([*** Disabling SSE ***])
+fi
+
+if test "x$need_jack" = "xyes"
+then
+  dnl ======================
+  dnl Check for jack
+  dnl ======================
+  PKG_CHECK_MODULES(JACK, jack >= 0.120.1)
 fi
 
 AC_SUBST(CFLAGS)

@@ -33,6 +33,8 @@
 
 AudioOutputEngineDL::AudioOutputEngineDL(std::string name)
 {
+  is_jack_plugin = strstr(name.c_str(), "jack");
+
   std::string plugin = OUTPUT_PLUGIN_DIR"/lib" + name + ".so";
   void *lib = dlopen(plugin.c_str(), RTLD_LAZY);
   if(!lib) {
@@ -104,11 +106,19 @@ AudioOutputEngineDL::AudioOutputEngineDL(std::string name)
   }
 
   ptr = o_create();
+
+  if(is_jack_plugin) {
+    char ptrbuf[32];
+    jackclient = init_jack_client();
+    sprintf(ptrbuf, "%p", jackclient);
+    setParm("jack_client", ptrbuf);
+  }
 }
 
 AudioOutputEngineDL::~AudioOutputEngineDL()
 {
   o_destroy(ptr);
+  if(is_jack_plugin) close_jack_client();
 }
 
 bool AudioOutputEngineDL::init(Channels channels)
@@ -135,6 +145,7 @@ void AudioOutputEngineDL::setParm(std::string parm, std::string value)
 
 bool AudioOutputEngineDL::start()
 {
+  if(is_jack_plugin) jackclient->activate();
   return o_start(ptr);
 }
 

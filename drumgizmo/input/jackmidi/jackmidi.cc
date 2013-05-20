@@ -30,6 +30,8 @@
 #include <string>
 
 #include <stdio.h>
+#include <midimapper.h>
+#include <midimapparser.h>
 
 #define NOTE_ON 0x90
 
@@ -65,12 +67,13 @@ private:
 
   event_t *list;
   size_t listsize;
+
+  std::string midimapfile;
+  MidiMapper mmap;
 };
 
 JackMidi::JackMidi()
 {
-  jackclient = init_jack_client();
-  jackclient->addJackProcess(this);
   pos = 0;
 
   list = (event_t *)malloc(sizeof(event_t) * 1000);
@@ -79,8 +82,6 @@ JackMidi::JackMidi()
 
 JackMidi::~JackMidi()
 {
-  jackclient->removeJackProcess(this);
-  close_jack_client();
 }
 
 bool JackMidi::init(int instruments, char *inames[])
@@ -91,17 +92,29 @@ bool JackMidi::init(int instruments, char *inames[])
                                  JackPortIsInput,// | JackPortIsTerminal,
                                  0);
 
+  MidiMapParser p(midimapfile);
+  if(p.parse()) return false;
+  mmap.midimap = p.midimap;
+
+  for(int i = 0; i < instruments; i++) {
+    mmap.instrmap[inames[i]] = i;
+  }
+
   return true;
 }
 
 void JackMidi::setParm(std::string parm, std::string value)
 {
-  if(parm == "map") loadMap(value);
+  if(parm == "map") midimapfile = value;
+  if(parm == "jack_client") {
+    sscanf(value.c_str(), "%p", &jackclient);
+    if(jackclient) jackclient->addJackProcess(this);
+  }
 }
 
 bool JackMidi::start()
 {
-  jackclient->activate();
+  // jackclient->activate();
   return true;
 }
 
@@ -124,6 +137,8 @@ event_t *JackMidi::run(size_t pos, size_t len, size_t *nevents)
 
 void JackMidi::jack_process(jack_nframes_t nframes)
 {
+  printf("i"); fflush(stdout);
+
   void *midibuffer = jack_port_get_buffer(midi_port, nframes);
 
   jack_nframes_t midievents = jack_midi_get_event_count(midibuffer);
@@ -139,13 +154,17 @@ void JackMidi::jack_process(jack_nframes_t nframes)
     int velocity = event.buffer[2];
     
     printf("Event key:%d vel:%d\n", key, velocity);
-    
-    if(velocity) {
-      list[listsize].type = TYPE_ONSET;
-      list[listsize].instrument = key;
-      list[listsize].velocity = velocity / 127.0;
-      list[listsize].offset = event.time;
-      listsize++;
+
+    int i = mmap.lookup(key);
+    if(i != -1) {
+
+      if(velocity) {
+        list[listsize].type = TYPE_ONSET;
+        list[listsize].instrument = i;
+        list[listsize].velocity = velocity / 127.0;
+        list[listsize].offset = event.time;
+        listsize++;
+      }
     }
   }
   
@@ -153,7 +172,6 @@ void JackMidi::jack_process(jack_nframes_t nframes)
     
   pos += nframes;
 }
-
 
 void JackMidi::post()
 {

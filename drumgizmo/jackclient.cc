@@ -47,10 +47,12 @@ JackClient::~JackClient()
 	jack_client_close(jack_client);
 }
 
+/*
 void JackClient::addJackProcess(JackProcess *process)
 {
   jack_processes.insert(process);
 }
+*/
 
 void JackClient::removeJackProcess(JackProcess *process)
 {

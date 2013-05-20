@@ -40,7 +40,11 @@ public:
   JackClient();
   ~JackClient();
 
-  void addJackProcess(JackProcess *process);
+  void addJackProcess(JackProcess *process)
+  {
+    jack_processes.insert(process);
+  }
+
   void removeJackProcess(JackProcess *process);
 
   void activate();

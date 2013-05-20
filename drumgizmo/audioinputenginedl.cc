@@ -34,8 +34,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "jackclient.h"
+
 AudioInputEngineDL::AudioInputEngineDL(std::string name)
 {
+  is_jack_plugin = strstr(name.c_str(), "jack");
+
   std::string plugin = INPUT_PLUGIN_DIR"/lib" + name + ".so";
   void *lib = dlopen(plugin.c_str(), RTLD_LAZY);
   if(!lib) {
@@ -60,58 +64,66 @@ AudioInputEngineDL::AudioInputEngineDL(std::string name)
   i_init = (input_init_func_t) dlsym(lib, "init");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol init: %s\n", dlsym_error);
     return;
   }
 
   i_setparm = (input_setparm_func_t) dlsym(lib, "setparm");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol setparm: %s\n", dlsym_error);
     return;
   }
 
   i_start = (input_start_func_t) dlsym(lib, "start");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol start: %s\n", dlsym_error);
     return;
   }
 
   i_stop = (input_stop_func_t) dlsym(lib, "stop");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol stop: %s\n", dlsym_error);
     return;
   }
 
   i_pre = (input_pre_func_t) dlsym(lib, "pre");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol pre: %s\n", dlsym_error);
     return;
   }
 
   i_run = (input_run_func_t) dlsym(lib, "run");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol run: %s\n", dlsym_error);
     return;
   }
 
   i_post = (input_post_func_t) dlsym(lib, "post");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
+    printf("Cannot load symbol post: %s\n", dlsym_error);
     return;
   }
 
   ptr = i_create();
+
+  if(is_jack_plugin) {
+    char ptrbuf[32];
+    jackclient = init_jack_client();
+    sprintf(ptrbuf, "%p", jackclient);
+    setParm("jack_client", ptrbuf);
+  }
 }
 
 AudioInputEngineDL::~AudioInputEngineDL()
 {
   i_destroy(ptr);
+  if(is_jack_plugin) close_jack_client();
 }
 
 bool AudioInputEngineDL::init(Instruments &instruments)
@@ -138,6 +150,7 @@ void AudioInputEngineDL::setParm(std::string parm, std::string value)
 
 bool AudioInputEngineDL::start()
 {
+  if(is_jack_plugin) jackclient->activate();
   return i_start(ptr);
 }
 
