@@ -42,7 +42,7 @@ GUI::CheckBox::CheckBox(Widget *parent)
 
 void GUI::CheckBox::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == -1) {
+  if(e->direction == -1 || e->doubleclick) {
     state = !state;
     middle = false;
     if(handler) handler(ptr);
