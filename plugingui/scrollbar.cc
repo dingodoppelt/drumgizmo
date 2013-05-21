@@ -54,6 +54,7 @@ void GUI::ScrollBar::setMaximum(int m)
 {
   DEBUG(scroll, "%d\n", m);
   max = m;
+  if(max < ran) ran = max;
   setValue(value());
   repaintEvent(NULL);
 }
