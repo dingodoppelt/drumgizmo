@@ -50,6 +50,8 @@ class Directory {
     Directory(std::string path);
     ~Directory();
 
+    std::string seperator();
+
     size_t count();
     void refresh();
     std::string path();

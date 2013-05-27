@@ -58,6 +58,11 @@ Directory::~Directory()
 {
 }
 
+std::string Directory::seperator()
+{
+  return SEP;
+}
+
 void Directory::setPath(std::string path)
 {
   DEBUG(directory, "Setting path to '%s'\n", path.c_str());
@@ -149,7 +154,7 @@ Directory::EntryList Directory::listFiles(std::string path)
     entrypath += entry->d_name;
     if(Directory::isDir(entrypath)) {
       if(name == "..") directories.push_back(entry->d_name);
-      else directories.push_back(std::string("/") + entry->d_name);
+      else directories.push_back(std::string(SEP) + entry->d_name);
     }
     else {
       int drumkit_suffix_length = strlen(DRUMKIT_SUFFIX);
@@ -223,7 +228,7 @@ bool Directory::isRoot(std::string path)
     return false;
   }
 #else
-  if(path == "/") return true;
+  if(path == SEP) return true;
   else return false;
 #endif
 }
@@ -242,7 +247,7 @@ std::string Directory::root(std::string path)
     return path.substr(0, 2);
   }
 #else
-  return "/";
+  return SEP;
 #endif
 }
 

@@ -76,11 +76,11 @@ static void changeDir(void *ptr)
   lb->clear();
   
   INFO(filebrowser, "Changing path to '%s'\n",
-       (dir->path() + "/" + value).c_str());
+       (dir->path() + dir->seperator() + value).c_str());
  
 #ifdef WIN32
   if(prv->above_root && !value.empty()) {
-    dir->setPath(value+"\\");
+    dir->setPath(value + dir->seperator());
     value.clear();
     prv->above_root = false;
   }
@@ -93,7 +93,7 @@ static void changeDir(void *ptr)
   }
 
   if(!value.empty() && dir->fileExists(value)) {
-    std::string file = dir->path() + "/" + value;
+    std::string file = dir->path() + dir->seperator() + value;
     DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
     if(prv->filesel_handler) prv->filesel_handler(prv->ptr, file);
     return;
@@ -119,7 +119,7 @@ static void changeDir(void *ptr)
     
     if(!value.empty() && !dir->cd(value)) {
       DEBUG(filebrowser, "Error changing to '%s'\n", 
-            (dir->path() + "/" + value).c_str());
+            (dir->path() + dir->seperator() + value).c_str());
       return;
     }
     
