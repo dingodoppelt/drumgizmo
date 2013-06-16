@@ -73,6 +73,10 @@ static void changeDir(void *ptr)
   std::string value = lb->selectedValue(); 
   Directory* dir = prv->dir;
 
+//  if(!Directory::isDir(dir->path() + dir->seperator())) {
+//    return;
+//  }
+
   lb->clear();
   
   INFO(filebrowser, "Changing path to '%s'\n",
@@ -123,13 +127,19 @@ static void changeDir(void *ptr)
       return;
     }
     
+    Directory::EntryList entries = dir->entryList();
+
+    if(entries.empty()) {
+      dir->cdUp();
+      entries = dir->entryList();
+    }
+
     DEBUG(filebrowser, "Setting path of lineedit to %s\n",
           dir->path().c_str()); 
     le->setText(dir->path());
 
-    Directory::EntryList entries = dir->entryList();
     for(Directory::EntryList::iterator it = entries.begin();
-        it != entries.end(); it++) {  
+        it != entries.end(); it++) { 
       GUI::ListBoxBasic::Item item;
       std::string name = *it;
       item.name = name;
@@ -150,7 +160,6 @@ static void handleKeyEvent(void *ptr) {
   lb->clearSelectedValue();  
   GUI::LineEdit *le = prv->lineedit;
 
-  printf("AAA: %s\n", le->text().c_str());
   prv->dir->setPath(le->text());
   changeDir(ptr);
 }
