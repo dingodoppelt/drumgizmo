@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	channel.h \
 	channelmixer.h \
 	configuration.h \
+	configparser.h \
 	drumgizmo.h \
 	drumkit.h \
 	drumkitloader.h \
@@ -37,6 +38,7 @@ EXTRA_DIST = \
 	channel.cc \
 	channelmixer.cc \
 	configuration.cc \
+	configparser.cc \
 	drumgizmo.cc \
 	drumkit.cc \
 	drumkitloader.cc \
