@@ -95,9 +95,10 @@ public:
   bool isValid();
   int ref_count;
 
+  Mutex mutex;
+
 private:
   void *magic;
-  Mutex mutex;
   bool is_loaded;
 };
 

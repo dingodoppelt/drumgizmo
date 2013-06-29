@@ -351,10 +351,13 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         EventSample *evt = (EventSample *)event;
         AudioFile *af = evt->file;
 
-        if(!af->isLoaded() || s == NULL) {
+        if(!af->isLoaded() || !af->isValid() || s == NULL) {
           removeevent = true;
           break;
         }
+
+        {
+        MutexAutolock l(af->mutex);
 
         size_t n = 0;
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
@@ -388,6 +391,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           removeevent = true;
 //        LAZYLOAD:
 //          loader.reset(af);
+        }
+
         }
       }
       break;
