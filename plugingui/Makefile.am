@@ -15,7 +15,9 @@ plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 plugingui_SOURCES = \
 	$(PLUGIN_GUI_SOURCES) \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc
+	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/mutex.cc \
+	$(top_srcdir)/src/messagehandler.cc
 
 rcgen_SOURCES = rcgen.cc
 

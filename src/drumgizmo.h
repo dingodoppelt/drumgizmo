@@ -43,9 +43,11 @@
 
 #include "message.h"
 
+#include "messagereceiver.h"
+
 #define MAX_NUM_CHANNELS 512
 
-class DrumGizmo {
+class DrumGizmo : public MessageReceiver {
 public:
   DrumGizmo(AudioOutputEngine *outputengine,
             AudioInputEngine *inputengine);
@@ -69,50 +71,14 @@ public:
 
   std::string kitfile;
 
-  /*
-   * Receive message from the engine. The caller takes over the memory.
-   */
-  Message *receiveGUIMessage();
-
-  /*
-   * Receive message from the engine without removing it from the queue.
-   */
-  Message *peekGUIMessage();
-
-  /*
-   * Add a message to the GUI message queue.
-   */
-  void sendEngineMessage(Message *msg);
-
-  /*
-   * Receive message from the engine. The caller takes over the memory.
-   */
-  Message *receiveEngineMessage();
-
-  /*
-   * Receive message from the engine without removing it from the queue.
-   */
-  Message *peekEngineMessage();
-
-  /*
-   * Add a message to the GUI message queue.
-   */
-  void sendGUIMessage(Message *msg);
+  void handleMessage(Message *msg);
 
 private:
-  void handleEngineEvents();
-
-  Mutex gui_message_mutex;
-  std::list<Message *> gui_message_queue;
-
-  Mutex engine_message_mutex;
-  std::list<Message *> engine_message_queue;
-
   DrumKitLoader loader;
 
   Mutex mutex;
   bool is_running;
-  
+
   AudioOutputEngine *oe;
   AudioInputEngine *ie;
 

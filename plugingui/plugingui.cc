@@ -30,31 +30,10 @@
 #include <stdio.h>
 
 #include "knob.h"
-
 #include "verticalline.h"
+#include "../version.h"
 
-#ifndef STANDALONE
-#include <drumgizmo.h>
-#include "../src/configuration.h"
-#else
-#include "../src/message.h"
-class DrumGizmo {
-public:
-  bool loadkit(std::string) { return true; }
-  bool init(bool) { return true; }
-  std::string drumkitfile() { return ""; }
-  std::string midimapfile;
-  Message *receiveGUIMessage() { return NULL; }
-  Message *peekGUIMessage() { return NULL; }
-  void sendEngineMessage(Message *msg) { delete msg; }
-};
-
-namespace Conf {
-  bool enable_velocity_modifier;
-  float velocity_modifier_weight;
-  float velocity_modifier_falloff;
-};
-#endif
+#include "messagehandler.h"
 
 static void checkClick(void *ptr)
 {
@@ -63,7 +42,7 @@ static void checkClick(void *ptr)
   ChangeSettingMessage *msg =
     new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
                              gui->check->checked());
-  gui->drumgizmo->sendEngineMessage(msg);
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 }
 
 static void knobChange(void *ptr)
@@ -73,7 +52,8 @@ static void knobChange(void *ptr)
   ChangeSettingMessage *msg =
     new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
                              gui->knob->value());
-  gui->drumgizmo->sendEngineMessage(msg);
+
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 
 #ifdef STANDALONE
   int i = gui->knob->value() * 4;
@@ -94,7 +74,7 @@ static void knobChange2(void *ptr)
   ChangeSettingMessage *msg =
     new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
                              gui->knob2->value());
-  gui->drumgizmo->sendEngineMessage(msg);
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 
 #ifdef STANDALONE
   gui->progress->setProgress(gui->knob2->value());
@@ -116,16 +96,8 @@ static void selectKitFile(void *ptr, std::string filename)
 
   LoadDrumKitMessage *msg = new LoadDrumKitMessage();
   msg->drumkitfile = drumkit;
-  gui->drumgizmo->sendEngineMessage(msg);
-  /*
-  if(!gui->drumgizmo ||
-     !gui->drumgizmo->loadkit(drumkit) ||
-     !gui->drumgizmo->init(true)) {
-    gui->progress->setState(GUI::ProgressBar::red);
-  } else {
-    gui->progress->setState(GUI::ProgressBar::blue);
-  }
-  */
+
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 }
 
 static void kitBrowseClick(void *ptr)
@@ -151,7 +123,7 @@ static void selectMapFile(void *ptr, std::string filename)
 
   LoadMidimapMessage *msg = new LoadMidimapMessage();
   msg->midimapfile = midimap;
-  gui->drumgizmo->sendEngineMessage(msg);
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 
   /*
   if(gui->changeMidimapHandler)
@@ -180,14 +152,11 @@ void closeClick(void *ptr)
 }
 */
 
-#include "../version.h"
-
-PluginGUI::PluginGUI(DrumGizmo *drumgizmo)
+PluginGUI::PluginGUI()
+  : MessageReceiver(MSGRCV_UI)
 {
   windowClosedHandler = NULL;
   changeMidimapHandler = NULL;
-
-  this->drumgizmo = drumgizmo;
 
   window = NULL;
  
@@ -216,13 +185,67 @@ void PluginGUI::stopThread()
   }
 }
 
+
+void PluginGUI::handleMessage(Message *msg)
+{
+  switch(msg->type()) {
+  case Message::LoadStatus:
+    {
+      LoadStatusMessage *ls = (LoadStatusMessage*)msg;
+      progress->setProgress((float)ls->numer_of_files_loaded /
+                            (float)ls->number_of_files);
+      if(ls->numer_of_files_loaded == ls->number_of_files) {
+        progress->setState(GUI::ProgressBar::green);
+      }
+    }
+    break;
+  case Message::LoadStatusMidimap:
+    {
+      LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
+      progress2->setProgress(1);
+      if(ls->success) {
+        progress2->setState(GUI::ProgressBar::green);
+      } else {
+        progress2->setState(GUI::ProgressBar::red);
+      }
+    }
+    break;
+  case Message::EngineSettingsMessage:
+    {
+      EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
+      lineedit->setText(settings->drumkitfile);
+      if(settings->drumkit_loaded) {
+        progress->setProgress(1);
+        progress->setState(GUI::ProgressBar::green);
+      } else {
+        progress->setProgress(0);
+        progress->setState(GUI::ProgressBar::blue);
+      }
+      lineedit2->setText(settings->midimapfile);
+      if(settings->midimap_loaded) {
+        progress2->setProgress(1);
+        progress2->setState(GUI::ProgressBar::green);
+      } else {
+        progress2->setProgress(0);
+        progress2->setState(GUI::ProgressBar::blue);
+      }
+      check->setChecked(settings->enable_velocity_modifier);
+      knob->setValue(settings->velocity_modifier_weight);
+      knob2->setValue(settings->velocity_modifier_falloff);
+      
+    }
+  default:
+    break;
+  }
+}
+
 void PluginGUI::thread_main()
 {
   init();
 
   { // Request all engine settings
     EngineSettingsMessage *msg = new EngineSettingsMessage();
-    drumgizmo->sendEngineMessage(msg);
+    msghandler.sendMessage(MSGRCV_ENGINE, msg);
   }
 
   while(1) {
@@ -235,67 +258,7 @@ void PluginGUI::thread_main()
     if(!running) break;
 
     window->eventHandler()->processEvents();
-
-    Message *msg;
-    if((msg = drumgizmo->receiveGUIMessage()) != NULL) {
-      switch(msg->type()) {
-      case Message::LoadStatus:
-        {
-          Message *pmsg;
-          while( (pmsg = drumgizmo->peekGUIMessage()) != NULL) {
-            if(pmsg->type() != Message::LoadStatus) break;
-            delete msg;
-            msg = drumgizmo->receiveGUIMessage();
-          } 
-          LoadStatusMessage *ls = (LoadStatusMessage*)msg;
-          progress->setProgress((float)ls->numer_of_files_loaded /
-                                (float)ls->number_of_files);
-          if(ls->numer_of_files_loaded == ls->number_of_files) {
-            progress->setState(GUI::ProgressBar::green);
-          }
-        }
-        break;
-      case Message::LoadStatusMidimap:
-        {
-          LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
-          progress2->setProgress(1);
-          if(ls->success) {
-            progress2->setState(GUI::ProgressBar::green);
-          } else {
-            progress2->setState(GUI::ProgressBar::red);
-          }
-        }
-        break;
-      case Message::EngineSettingsMessage:
-        {
-          EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
-          lineedit->setText(settings->drumkitfile);
-          if(settings->drumkit_loaded) {
-            progress->setProgress(1);
-            progress->setState(GUI::ProgressBar::green);
-          } else {
-            progress->setProgress(0);
-            progress->setState(GUI::ProgressBar::blue);
-          }
-          lineedit2->setText(settings->midimapfile);
-          if(settings->midimap_loaded) {
-            progress2->setProgress(1);
-            progress2->setState(GUI::ProgressBar::green);
-          } else {
-            progress2->setProgress(0);
-            progress2->setState(GUI::ProgressBar::blue);
-          }
-          check->setChecked(settings->enable_velocity_modifier);
-          knob->setValue(settings->velocity_modifier_weight);
-          knob2->setValue(settings->velocity_modifier_falloff);
-      
-        }
-      default:
-        break;
-      }
-
-      delete msg;
-    }
+    handleMessages();
   }
 
   deinit();
@@ -500,6 +463,12 @@ void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void *ptr)
 
 #ifdef STANDALONE
 
+class Engine : public MessageHandler {
+public:
+  void handleMessage(Message *msg) {}
+};
+
+
 void stop(void *ptr)
 {
   DEBUG(stop, "Stopping...\n");
@@ -524,7 +493,7 @@ int main()
 
   bool running = true;
 
-  PluginGUI gui(NULL);
+  PluginGUI gui;
   gui.setWindowClosedCallback(stop, &running);
 
   // gui.show();

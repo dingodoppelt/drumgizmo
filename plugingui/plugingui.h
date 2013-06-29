@@ -42,11 +42,11 @@
 #include "thread.h"
 #include "semaphore.h"
 
-class DrumGizmo;
+#include "messagereceiver.h"
 
-class PluginGUI : public Thread {
+class PluginGUI : public Thread, public MessageReceiver {
 public:
-  PluginGUI(DrumGizmo *drumgizmo);
+  PluginGUI();
   ~PluginGUI();
 
   void thread_main();
@@ -60,13 +60,13 @@ public:
   void processEvents();
   void setWindowClosedCallback(void (*handler)(void *), void *ptr);
 
+  void handleMessage(Message *msg);
+
   //private:
   GUI::Window *window;
   GUI::EventHandler *eventhandler;
 
   GUI::FileBrowser *filebrowser;
-
-  DrumGizmo *drumgizmo;
 
   GUI::CheckBox *check;
   GUI::Knob *knob;

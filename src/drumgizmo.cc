@@ -41,7 +41,8 @@
 #include "configuration.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
-  : loader(this), oe(o), ie(i)
+  : MessageReceiver(MSGRCV_ENGINE),
+    loader(this), oe(o), ie(i)
 {
   loader.run(); // Start drumkit loader thread.
 }
@@ -57,78 +58,6 @@ DrumGizmo::~DrumGizmo()
   }
   */
   loader.stop();
-}
-
-/*
- * Add a message to the GUI message queue.
- */
-void DrumGizmo::sendGUIMessage(Message *msg)
-{
-  MutexAutolock l(gui_message_mutex);
-  gui_message_queue.push_back(msg);
-}
-
-/*
- * Receive message from the engine. The caller takes over the memory.
- */
-Message *DrumGizmo::receiveGUIMessage()
-{
-  MutexAutolock l(gui_message_mutex);
-  Message *msg = NULL;
-  if(gui_message_queue.size()) {
-    msg = gui_message_queue.front();
-    gui_message_queue.pop_front();
-  }
-  return msg;
-}
-
-/*
- * Receive message from the engine without removing it from the queue.
- */
-Message *DrumGizmo::peekGUIMessage()
-{
-  MutexAutolock l(gui_message_mutex);
-  Message *msg = NULL;
-  if(gui_message_queue.size()) {
-    msg = gui_message_queue.front();
-  }
-  return msg;
-}
-
-/*
- * Add a message to the GUI message queue.
- */
-void DrumGizmo::sendEngineMessage(Message *msg)
-{
-  MutexAutolock l(engine_message_mutex);
-  engine_message_queue.push_back(msg);
-}
-
-/*
- * Receive message from the engine. The caller takes over the memory.
- */
-Message *DrumGizmo::receiveEngineMessage()
-{
-  MutexAutolock l(engine_message_mutex);
-  Message *msg = NULL;
-  if(engine_message_queue.size()) {
-    msg = engine_message_queue.front();
-    engine_message_queue.pop_front();
-  }
-  return msg;
-}
-
-/*
- * Receive message from the engine without removing it from the queue.
- */
-Message *DrumGizmo::peekEngineMessage()
-{
-  MutexAutolock l(engine_message_mutex);
-  Message *msg = NULL;
-  if(engine_message_queue.size()) {
-    msg = engine_message_queue.front();
-  }
-  return msg;
 }
 
 std::string DrumGizmo::drumkitfile()
@@ -181,86 +110,88 @@ bool DrumGizmo::init(bool preload)
   return true;
 }
 
-void DrumGizmo::handleEngineEvents()
+void DrumGizmo::handleMessage(Message *msg)
 {
-  Message *msg = receiveEngineMessage();
-  if(msg) {
-    DEBUG(msg, "got message.");
-    switch(msg->type()) {
-    case Message::LoadDrumKit:
-      {
-        DEBUG(msg, "got LoadDrumKitMessage message.");
-        LoadDrumKitMessage *m = (LoadDrumKitMessage*)msg;
-        loadkit(m->drumkitfile);
-        //init(true);
-      }
-      break;
-    case Message::LoadMidimap:
-      DEBUG(msg, "got LoadMidimapMessage message.");
-      if(!ie->isMidiEngine()) break;
-      {
-        AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-        LoadMidimapMessage *m = (LoadMidimapMessage*)msg;
-        bool ret = aim->loadMidiMap(m->midimapfile, kit.instruments);
-        
-        LoadStatusMessageMidimap *ls = new LoadStatusMessageMidimap();
-        ls->success = ret;
-        sendGUIMessage(ls);
-      }
-      break;
-    case Message::EngineSettingsMessage:
-      {
-        DEBUG(msg, "--------------- Send: EngineSettingsMessage --------------- \n");
-
-        bool mmap_loaded = false;
-        std::string mmapfile;
-        if(ie->isMidiEngine()) {
-          AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-          mmapfile = aim->midimapFile();
-          mmap_loaded = aim->isValid();
-          
-        }
-
-        EngineSettingsMessage *msg = new EngineSettingsMessage();
-        msg->midimapfile = mmapfile;
-        msg->midimap_loaded = mmap_loaded;
-        msg->drumkitfile = drumkitfile();
-        msg->drumkit_loaded = loader.isDone();
-        msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
-        msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
-        msg->velocity_modifier_weight = Conf::velocity_modifier_weight;
-        msg->enable_velocity_randomiser = Conf::enable_velocity_randomiser;
-        msg->velocity_randomiser_weight = Conf::velocity_randomiser_weight;
-        sendGUIMessage(msg);
-      }
-      break;
-    case Message::ChangeSettingMessage:
-      {
-        ChangeSettingMessage *ch = (ChangeSettingMessage*)msg;
-        switch(ch->name) {
-        case ChangeSettingMessage::enable_velocity_modifier:
-          Conf::enable_velocity_modifier = ch->value;
-          break;
-        case ChangeSettingMessage::velocity_modifier_weight:
-          Conf::velocity_modifier_weight = ch->value;
-          break;
-        case ChangeSettingMessage::velocity_modifier_falloff:
-          Conf::velocity_modifier_falloff = ch->value;
-          break;
-        }
-      }
-      break;
-    default:
-      break;
+  DEBUG(msg, "got message.");
+  switch(msg->type()) {
+  case Message::RegisterUIMessage:
+    {
+      DEBUG(msg, "got RegisterUIMessage message.");
+      RegisterUIMessage *m = (RegisterUIMessage*)msg;
+      ui = m->messagehandler;
     }
-    delete msg;
+    break;
+  case Message::LoadDrumKit:
+    {
+      DEBUG(msg, "got LoadDrumKitMessage message.");
+      LoadDrumKitMessage *m = (LoadDrumKitMessage*)msg;
+      loadkit(m->drumkitfile);
+      //init(true);
+    }
+    break;
+  case Message::LoadMidimap:
+    DEBUG(msg, "got LoadMidimapMessage message.");
+    if(!ie->isMidiEngine()) break;
+    {
+      AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
+      LoadMidimapMessage *m = (LoadMidimapMessage*)msg;
+      bool ret = aim->loadMidiMap(m->midimapfile, kit.instruments);
+      
+      LoadStatusMessageMidimap *ls = new LoadStatusMessageMidimap();
+      ls->success = ret;
+      msghandler.sendMessage(MSGRCV_UI, ls);
+    }
+    break;
+  case Message::EngineSettingsMessage:
+    {
+      DEBUG(msg, "--------------- Send: EngineSettingsMessage ------------ \n");
+      
+      bool mmap_loaded = false;
+      std::string mmapfile;
+      if(ie->isMidiEngine()) {
+        AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
+        mmapfile = aim->midimapFile();
+        mmap_loaded = aim->isValid();
+      }
+      
+      EngineSettingsMessage *msg = new EngineSettingsMessage();
+      msg->midimapfile = mmapfile;
+      msg->midimap_loaded = mmap_loaded;
+      msg->drumkitfile = drumkitfile();
+      msg->drumkit_loaded = loader.isDone();
+      msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
+      msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
+      msg->velocity_modifier_weight = Conf::velocity_modifier_weight;
+      msg->enable_velocity_randomiser = Conf::enable_velocity_randomiser;
+      msg->velocity_randomiser_weight = Conf::velocity_randomiser_weight;
+      msghandler.sendMessage(MSGRCV_UI, msg);
+    }
+    break;
+  case Message::ChangeSettingMessage:
+    {
+      ChangeSettingMessage *ch = (ChangeSettingMessage*)msg;
+      switch(ch->name) {
+      case ChangeSettingMessage::enable_velocity_modifier:
+        Conf::enable_velocity_modifier = ch->value;
+        break;
+      case ChangeSettingMessage::velocity_modifier_weight:
+        Conf::velocity_modifier_weight = ch->value;
+        break;
+      case ChangeSettingMessage::velocity_modifier_falloff:
+        Conf::velocity_modifier_falloff = ch->value;
+        break;
+      }
+    }
+    break;
+  default:
+    break;
   }
 }
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
   // Handle engine messages, at most one in each iteration:
-  handleEngineEvents();
+  handleMessages(1);
 
   ie->pre();
   oe->pre(nsamples);
@@ -609,7 +540,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
     */
     LoadDrumKitMessage *msg = new LoadDrumKitMessage();
     msg->drumkitfile = newkit;
-    sendEngineMessage(msg);
+    msghandler.sendMessage(MSGRCV_ENGINE, msg);
   }
 
   std::string newmidimap = p.value("midimapfile");
@@ -617,7 +548,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
     //midimapfile = newmidimap;
     LoadMidimapMessage *msg = new LoadMidimapMessage();
     msg->midimapfile = newmidimap;
-    sendEngineMessage(msg);
+    msghandler.sendMessage(MSGRCV_ENGINE, msg);
   }
 
   return true;

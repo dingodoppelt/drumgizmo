@@ -16,6 +16,8 @@ EXTRA_DIST = \
 	instrument.h \
 	instrumentparser.h \
 	message.h \
+	messagehandler.h \
+	messagereceiver.h \
 	midimapparser.h \
 	midimapper.h \
 	mutex.h \
@@ -42,6 +44,8 @@ EXTRA_DIST = \
 	events.cc \
 	instrument.cc \
 	instrumentparser.cc \
+	messagehandler.cc \
+	messagereceiver.cc \
 	midimapparser.cc \
 	midimapper.cc \
 	mutex.cc \

@@ -27,6 +27,10 @@
 #ifndef __DRUMGIZMO_MESSAGE_H__
 #define __DRUMGIZMO_MESSAGE_H__
 
+#include <string>
+
+class MessageHandler;
+
 class Message {
 public:
   typedef enum {
@@ -39,15 +43,24 @@ public:
     LoadMidimap, // Signal engine to load midimap.
     EngineSettingsMessage, // Request or receive engine settings.
     ChangeSettingMessage, // Update named setting in engine.
+    RegisterUIMessage, // Register new UI message handler
   } type_t;
+
+  typedef enum {
+    NormalProcessing, // Just add to the queue
+    FilterMultiple, // Ignore top message if it has the same type.
+    // SyncWait, // Block the send call until the message has been handled by the receiver.
+  } processing_mode_t;
 
   virtual ~Message() {}
   virtual type_t type() = 0;
+  virtual processing_mode_t processing_mode() { return NormalProcessing; }
 };
 
 class LoadStatusMessage : public Message {
 public:
   type_t type() { return Message::LoadStatus; }
+  processing_mode_t processing_mode() { return FilterMultiple; }
   unsigned int number_of_files;
   unsigned int numer_of_files_loaded;
   std::string current_file;
@@ -104,6 +117,12 @@ public:
 
   setting_name_t name;
   float value;
+};
+
+class RegisterUIMessage : public Message {
+public:
+  type_t type() { return Message::RegisterUIMessage; }
+  MessageHandler *messagehandler;
 };
 
 #endif/*__DRUMGIZMO_MESSAGE_H__*/

@@ -191,7 +191,7 @@ void DrumKitLoader::thread_main()
             ls->number_of_files = count;
             ls->numer_of_files_loaded = loaded;
             ls->current_file = af->filename;
-            drumgizmo->sendGUIMessage(ls);
+            msghandler.sendMessage(MSGRCV_UI, ls);
           
             a++;
 
