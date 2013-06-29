@@ -114,13 +114,6 @@ void DrumGizmo::handleMessage(Message *msg)
 {
   DEBUG(msg, "got message.");
   switch(msg->type()) {
-  case Message::RegisterUIMessage:
-    {
-      DEBUG(msg, "got RegisterUIMessage message.");
-      RegisterUIMessage *m = (RegisterUIMessage*)msg;
-      ui = m->messagehandler;
-    }
-    break;
   case Message::LoadDrumKit:
     {
       DEBUG(msg, "got LoadDrumKitMessage message.");

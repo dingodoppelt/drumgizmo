@@ -43,7 +43,6 @@ public:
     LoadMidimap, // Signal engine to load midimap.
     EngineSettingsMessage, // Request or receive engine settings.
     ChangeSettingMessage, // Update named setting in engine.
-    RegisterUIMessage, // Register new UI message handler
   } type_t;
 
   typedef enum {
@@ -117,12 +116,6 @@ public:
 
   setting_name_t name;
   float value;
-};
-
-class RegisterUIMessage : public Message {
-public:
-  type_t type() { return Message::RegisterUIMessage; }
-  MessageHandler *messagehandler;
 };
 
 #endif/*__DRUMGIZMO_MESSAGE_H__*/
