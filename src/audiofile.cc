@@ -61,6 +61,7 @@ bool AudioFile::isValid()
 
 void AudioFile::unload()
 {
+  MutexAutolock l(mutex);
   if(data == preloaded_data) {
     delete data;
     data = NULL;
