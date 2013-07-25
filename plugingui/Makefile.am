@@ -17,7 +17,8 @@ plugingui_SOURCES = \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/mutex.cc \
-	$(top_srcdir)/src/messagehandler.cc
+	$(top_srcdir)/src/messagehandler.cc \
+	$(top_srcdir)/src/messagereceiver.cc
 
 rcgen_SOURCES = rcgen.cc
 

@@ -155,12 +155,12 @@ void JackMidi::jack_process(jack_nframes_t nframes)
     
     printf("Event key:%d vel:%d\n", key, velocity);
 
-    int i = mmap.lookup(key);
-    if(i != -1) {
+    int k = mmap.lookup(key);
+    if(k != -1) {
 
       if(velocity) {
         list[listsize].type = TYPE_ONSET;
-        list[listsize].instrument = i;
+        list[listsize].instrument = k;
         list[listsize].velocity = velocity / 127.0;
         list[listsize].offset = event.time;
         listsize++;
