@@ -26,48 +26,45 @@
  */
 #include "configparser.h"
 
+#include <hugin.hpp>
+
 #include "saxparser.h"
 
-class ConfigParser : public SAXParser {
-public:
-  ConfigParser()
-  {
-    str = NULL;
-  }
+ConfigParser::ConfigParser()
+{
+  str = NULL;
+}
 
-  void characterData(std::string &data)
-  {
-    if(str) str->append(data);
-  }
+void ConfigParser::characterData(std::string &data)
+{
+  if(str) str->append(data);
+}
 
-  void startTag(std::string name, attr_t attr)
-  {
-    if(name == "value" && attr.find("name") != attr.end()) {
-      values[attr["name"]] = "";
-      str = &values[attr["name"]];
-    }
+void ConfigParser::startTag(std::string name, attr_t attr)
+{
+  if(name == "value" && attr.find("name") != attr.end()) {
+    values[attr["name"]] = "";
+    str = &values[attr["name"]];
   }
+}
 
-  void endTag(std::string name)
-  {
-    if(name == "value") str = NULL;
-  }
+void ConfigParser::endTag(std::string name)
+{
+  if(name == "value") str = NULL;
+}
 
-  std::string value(std::string name, std::string def = "")
-  {
-    if(values.find(name) == values.end()) return def;
-    return values[name];
-  }
+std::string ConfigParser::value(std::string name, std::string def)
+{
+  if(values.find(name) == values.end()) return def;
+  return values[name];
+}
 
-  void parseError(char *buf, size_t len, std::string error, int lineno)
-  {
-    std::string buffer;
-    buffer.append(buf, len);
-    ERR(configparser, "sax parser error '%s' at line %d. "
-        "Buffer: [%d bytes]<%s>\n",
-        error.c_str(), lineno, len, buffer.c_str());
-  }
-
-  std::map<std::string, std::string> values;
-  std::string *str;
-};
+void ConfigParser::parseError(char *buf, size_t len, std::string error,
+                              int lineno)
+{
+  std::string buffer;
+  buffer.append(buf, len);
+  ERR(configparser, "sax parser error '%s' at line %d. "
+      "Buffer: [%d bytes]<%s>\n",
+      error.c_str(), lineno, len, buffer.c_str());
+}
