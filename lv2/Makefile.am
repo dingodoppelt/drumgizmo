@@ -29,7 +29,7 @@ drumgizmo_la_SOURCES = \
 	input_lv2.cc \
 	output_lv2.cc
 
-drumgizmo_la_LDFLAGS = -module -avoid-version -Wl,-Bstatic,-lpng,-Bdynamic
+drumgizmo_la_LDFLAGS = -module -avoid-version
 drumgizmo_la_LIBADD = $(LV2_LIBS) $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
 endif
