@@ -49,7 +49,7 @@ bool DGEditor::open(void* ptr)
   DEBUG(dgeditor, "open GUI (new PluginGUI)\n");
   if(plugingui) delete plugingui;
 
-  plugingui = new PluginGUI(drumgizmo);
+  plugingui = new PluginGUI();
   //  plugingui->setChangeMidimapCallback(midimapHandler, dgeff);
   
   //  plugingui->show();
