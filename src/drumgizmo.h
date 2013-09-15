@@ -51,7 +51,7 @@ class DrumGizmo : public MessageReceiver {
 public:
   DrumGizmo(AudioOutputEngine *outputengine,
             AudioInputEngine *inputengine);
-  ~DrumGizmo();
+  virtual ~DrumGizmo();
 
   bool loadkit(std::string kitfile);
   std::string drumkitfile();

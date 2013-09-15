@@ -47,7 +47,7 @@
 class PluginGUI : public Thread, public MessageReceiver {
 public:
   PluginGUI();
-  ~PluginGUI();
+  virtual ~PluginGUI();
 
   void thread_main();
   void stopThread();
