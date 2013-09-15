@@ -77,7 +77,7 @@ DBG_SRC = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_syslog.c
 
-DBG_CFLAGS=-DDISABLE_HUGIN -I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+DBG_CFLAGS=-DDISABLE_HUGIN -I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX -DEXPERIMENTAL
 #
 # http://old.nabble.com/using-VC%2B%2B-.lib-with-mingw-td23151303.html
 # Given `-lfoo', the win32 build of GNU ld will search for libfoo.a and foo.lib
