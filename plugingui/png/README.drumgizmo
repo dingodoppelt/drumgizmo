@@ -1,0 +1,6 @@
+This folder contains a selection of files from the libpng project.
+They are included directly in the source tree in order to avoid version
+conflicts at loadtime when the plugin host is using a bundled version of
+libpng with a different version than the one shipped with the OS.
+
+See README and LICENSE files for more details on the libpng project.

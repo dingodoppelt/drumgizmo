@@ -29,8 +29,18 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/progressbar.cc \
 	$(top_srcdir)/plugingui/verticalline.cc \
 	$(top_srcdir)/plugingui/resource.cc \
-	$(top_srcdir)/plugingui/resource_data.cc 
+	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/plugingui/png/png.c \
+	$(top_srcdir)/plugingui/png/pngerror.c \
+	$(top_srcdir)/plugingui/png/pngmem.c \
+	$(top_srcdir)/plugingui/png/pngread.c \
+	$(top_srcdir)/plugingui/png/pngget.c \
+	$(top_srcdir)/plugingui/png/pngtrans.c \
+	$(top_srcdir)/plugingui/png/pngrutil.c \
+	$(top_srcdir)/plugingui/png/pngset.c \
+	$(top_srcdir)/plugingui/png/pngrio.c \
+	$(top_srcdir)/plugingui/png/pngrtran.c
 
-PLUGIN_GUI_LIBS = $(X11_LIBS) $(PTHREAD_LIBS)
+PLUGIN_GUI_LIBS = $(X11_LIBS) $(PTHREAD_LIBS) -lz
 
-PLUGIN_GUI_CFLAGS = $(X11_CFLAGS) $(PNG_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX $(PNG_LIBS) $(PTHREAD_CFLAGS)
+PLUGIN_GUI_CFLAGS = $(X11_CFLAGS) $(PNG_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX $(PTHREAD_CFLAGS)

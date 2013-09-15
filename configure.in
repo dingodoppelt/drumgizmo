@@ -286,9 +286,9 @@ dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.21)
 
 dnl ======================
-dnl Check for sndfile
+dnl Check for libpng
 dnl ======================
-PKG_CHECK_MODULES(PNG, libpng >= 1.2)
+#PKG_CHECK_MODULES(PNG, libpng >= 1.2)
 
 dnl ======================
 dnl Check for the pthread library
