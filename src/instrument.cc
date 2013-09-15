@@ -118,7 +118,7 @@ void Instrument::finalise()
 #ifdef NEW_ALGORITHM
   powerlist.finalise();
 #endif/*NEW_ALGORITHM*/
-}}
+}
 
 std::string Instrument::name()
 {
