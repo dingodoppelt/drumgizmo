@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumkit.h
+ *            powerlist.h
  *
- *  Wed Mar  9 15:27:26 CET 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Sun Jul 28 19:45:47 CEST 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,40 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKIT_H__
-#define __DRUMGIZMO_DRUMKIT_H__
+#ifndef __DRUMGIZMO_POWERLIST_H__
+#define __DRUMGIZMO_POWERLIST_H__
 
-#include <map>
-#include <string>
+#include <vector>
 
-#include "channel.h"
-#include "instrument.h"
-#include "versionstr.h"
+#include "sample.h"
 
-class DrumKitParser;
-class DrumKit {
-  friend class DrumKitParser;
+class PowerList {
 public:
-  DrumKit();
-  ~DrumKit();
+  PowerList();
 
-  std::string name();
-  std::string description();
-  
-  Instruments instruments;
-  Channels channels;
- 
-  void clear();
+  void add(Sample *s);
+  void finalise(); ///< Call this when no more samples will be added.
 
-  bool isValid();
+  Sample *get(level_t velocity);
 
 private:
-  void *magic;
+  class PowerListItem {
+  public:
+    Sample *sample;
+    float power;
+  };
 
-  std::string _name;
-  std::string _description;
+  std::vector<PowerListItem> samples;
+  float power_max;
+  float power_min;
 
-  VersionStr _version;
+  Channel *getMasterChannel();
 };
 
-#endif/*__DRUMGIZMO_DRUMKIT_H__*/
+#endif/*__DRUMGIZMO_POWERLIST_H__*/

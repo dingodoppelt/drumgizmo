@@ -34,6 +34,10 @@
 #include "sample.h"
 #include "configuration.h"
 
+#ifdef EXPERIMENTAL
+#define NEW_ALGORITHM
+#endif
+
 Instrument::Instrument()
 {
   DEBUG(instrument, "new %p\n", this);
@@ -62,6 +66,8 @@ bool Instrument::isValid()
 
 Sample *Instrument::sample(level_t level, size_t pos)
 {
+  Sample *sample = NULL;
+
   if(Conf::enable_velocity_modifier == false) {
     mod = 1.0;
     lastpos = 0;
@@ -81,23 +87,38 @@ Sample *Instrument::sample(level_t level, size_t pos)
     if(mod > 1.0) mod = 1.0;
   }
 
+#ifdef NEW_ALGORITHM
+  sample = powerlist.get(level * mod);
+#else
   //  printf("Find level %f\n", level);
   std::vector<Sample*> s = samples.get(level * mod);
   if(s.size() == 0) return NULL;
   size_t idx = rand()%(s.size());
+  sample = s[idx];
+#endif/*NEW_ALGORITHM*/
 
   if(Conf::enable_velocity_modifier) {
     lastpos = pos;
     mod *= Conf::velocity_modifier_weight;
   }
 
-  return s[idx];
+  return sample;
 }
 
 void Instrument::addSample(level_t a, level_t b, Sample *s)
 {
   samples.insert(a, b, s);
+#ifdef NEW_ALGORITHM
+  powerlist.add(s);
+#endif/*NEW_ALGORITHM*/
 }
+
+void Instrument::finalise()
+{
+#ifdef NEW_ALGORITHM
+  powerlist.finalise();
+#endif/*NEW_ALGORITHM*/
+}}
 
 std::string Instrument::name()
 {

@@ -31,8 +31,10 @@
 #include <vector>
 
 #include "rangemap.h"
+#include "powerlist.h"
 
 #include "sample.h"
+#include "versionstr.h"
 
 class InstrumentParser;
 class Instrument {
@@ -61,8 +63,14 @@ private:
   std::string _group;
   std::string _name;
   std::string _description;
+
+  VersionStr _version;
+
   RangeMap<level_t, Sample*> samples;
+  PowerList powerlist;
+
   void addSample(level_t a, level_t b, Sample *s);
+  void finalise(); ///< Signal instrument that no more samples will be added.
 
   std::vector<Sample*> samplelist;
 

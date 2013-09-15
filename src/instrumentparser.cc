@@ -57,6 +57,18 @@ void InstrumentParser::startTag(std::string name,
 
     if(attr.find("description") != attr.end())
       instrument._description = attr["description"];
+
+    if(attr.find("version") != attr.end()) {
+      try {
+        instrument._version = VersionStr(attr["version"]);
+      } catch(const char *err) {
+        ERR(instrparser, "Error parsing version number: %s, using 1.0\n", err);
+        instrument._version = VersionStr(1,0,0);
+      } 
+    } else {
+      WARN(instrparser, "Missing version number, assuming 1.0\n");
+      instrument._version = VersionStr(1,0,0);
+    }
   }
 
   if(name == "samples") {
@@ -146,6 +158,10 @@ void InstrumentParser::endTag(std::string name)
 
     instrument.samplelist.push_back(s);
     s = NULL;
+  }
+
+  if(name == "instrument") {
+    instrument.finalise();
   }
 }
 

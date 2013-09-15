@@ -67,12 +67,14 @@
 
 #define LAZYLOAD
 
+#define ALL_SAMPLES -1
+
 class AudioFile {
 public:
   AudioFile(std::string filename);
   ~AudioFile();
 
-  void load();
+  void load(int num_samples = ALL_SAMPLES);
   void unload();
 
   bool isLoaded();

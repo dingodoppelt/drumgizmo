@@ -60,6 +60,18 @@ void DrumKitParser::startTag(std::string name,
 
     if(attr.find("description") != attr.end())
       kit._description = attr["description"];
+
+    if(attr.find("version") != attr.end()) {
+      try {
+        kit._version = VersionStr(attr["version"]);
+      } catch(const char *err) {
+        ERR(kitparser, "Error parsing version number: %s, using 1.0\n", err);
+        kit._version = VersionStr(1,0,0);
+      } 
+    } else {
+      WARN(kitparser, "Missing version number, assuming 1.0\n");
+      kit._version = VersionStr(1,0,0);
+    }
   }
 
   if(name == "channels") {}

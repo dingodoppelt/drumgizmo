@@ -38,6 +38,7 @@ typedef std::map< Channel*, AudioFile* > AudioFiles;
 class InstrumentParser;
 class Sample {
   friend class InstrumentParser;
+  friend class PowerList;
 public:
   Sample(std::string name);
   ~Sample();

@@ -29,6 +29,7 @@ EXTRA_DIST = \
 	semaphore.h \
 	thread.h \
 	velocity.h \
+	versionstr.h \
  \
 	audiofile.cc \
 	audioinputengine.cc \
@@ -56,4 +57,5 @@ EXTRA_DIST = \
 	saxparser.cc \
 	semaphore.cc \
 	thread.cc \
-	velocity.cc
+	velocity.cc \
+	versionstr.cc

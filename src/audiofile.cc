@@ -171,7 +171,7 @@ void AudioFile::reset()
   mutex.unlock();
 }
 
-void AudioFile::load()
+void AudioFile::load(int num_samples)
 {
   /*
   Lazy load of drum kits
@@ -190,6 +190,8 @@ void AudioFile::load()
   }
  
   size = sf_info.frames;
+
+  if(num_samples != ALL_SAMPLES && (int)size > num_samples) size = num_samples;
 
   sample_t* data = new sample_t[size]; 
   size = sf_read_float(fh, data, size); 
