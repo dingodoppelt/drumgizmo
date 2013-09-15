@@ -36,7 +36,7 @@ png_default_warning PNGARG((png_structp png_ptr,
  */
 #ifdef PNG_ERROR_TEXT_SUPPORTED
 PNG_FUNCTION(void,PNGAPI
-png_error,(png_structp png_ptr, png_const_charp error_message),PNG_NORETURN)
+dg_png_error,(png_structp png_ptr, png_const_charp error_message),PNG_NORETURN)
 {
 #ifdef PNG_ERROR_NUMBERS_SUPPORTED
    char msg[16];
@@ -361,7 +361,7 @@ png_benign_error(png_structp png_ptr, png_const_charp error_message)
   if (png_ptr->flags & PNG_FLAG_BENIGN_ERRORS_WARN)
      png_warning(png_ptr, error_message);
   else
-     png_error(png_ptr, error_message);
+     dg_png_error(png_ptr, error_message);
 }
 #endif
 
@@ -431,12 +431,12 @@ png_chunk_error,(png_structp png_ptr, png_const_charp error_message),
 {
    char msg[18+PNG_MAX_ERROR_TEXT];
    if (png_ptr == NULL)
-      png_error(png_ptr, error_message);
+      dg_png_error(png_ptr, error_message);
 
    else
    {
       png_format_buffer(png_ptr, msg, error_message);
-      png_error(png_ptr, msg);
+      dg_png_error(png_ptr, msg);
    }
 }
 #endif /* PNG_READ_SUPPORTED && PNG_ERROR_TEXT_SUPPORTED */
@@ -488,7 +488,7 @@ png_fixed_error,(png_structp png_ptr, png_const_charp name),PNG_NORETURN)
       ++iin;
    }
    msg[fixed_message_ln + iin] = 0;
-   png_error(png_ptr, msg);
+   dg_png_error(png_ptr, msg);
 }
 #endif
 #endif
@@ -498,7 +498,7 @@ png_fixed_error,(png_structp png_ptr, png_const_charp name),PNG_NORETURN)
  * otherwise it is necessary for png_default_error to be overridden.
  */
 jmp_buf* PNGAPI
-png_set_longjmp_fn(png_structp png_ptr, png_longjmp_ptr longjmp_fn,
+dg_png_set_longjmp_fn(png_structp png_ptr, png_longjmp_ptr longjmp_fn,
     size_t jmp_buf_size)
 {
    if (png_ptr == NULL || jmp_buf_size != png_sizeof(jmp_buf))

@@ -24,7 +24,7 @@ typedef png_libpng_version_1_5_13 Your_png_h_is_not_version_1_5_13;
 
 #ifdef PNG_READ_SUPPORTED
 void PNGAPI
-png_set_sig_bytes(png_structp png_ptr, int num_bytes)
+dg_png_set_sig_bytes(png_structp png_ptr, int num_bytes)
 {
    png_debug(1, "in png_set_sig_bytes");
 
@@ -32,7 +32,7 @@ png_set_sig_bytes(png_structp png_ptr, int num_bytes)
       return;
 
    if (num_bytes > 8)
-      png_error(png_ptr, "Too many bytes for PNG signature");
+      dg_png_error(png_ptr, "Too many bytes for PNG signature");
 
    png_ptr->sig_bytes = (png_byte)(num_bytes < 0 ? 0 : num_bytes);
 }
@@ -46,7 +46,7 @@ png_set_sig_bytes(png_structp png_ptr, int num_bytes)
  * PNG signature (this is the same behavior as strcmp, memcmp, etc).
  */
 int PNGAPI
-png_sig_cmp(png_const_bytep sig, png_size_t start, png_size_t num_to_check)
+dg_png_sig_cmp(png_const_bytep sig, png_size_t start, png_size_t num_to_check)
 {
    png_byte png_signature[8] = {137, 80, 78, 71, 13, 10, 26, 10};
 
@@ -227,7 +227,7 @@ png_user_version_check(png_structp png_ptr, png_const_charp user_png_ver)
  * libpng don't have to be recompiled if png_info changes size.
  */
 PNG_FUNCTION(png_infop,PNGAPI
-png_create_info_struct,(png_structp png_ptr),PNG_ALLOCATED)
+dg_png_create_info_struct,(png_structp png_ptr),PNG_ALLOCATED)
 {
    png_infop info_ptr;
 
@@ -557,7 +557,7 @@ png_info_destroy(png_structp png_ptr, png_infop info_ptr)
  * pointer before png_write_destroy() or png_read_destroy() are called.
  */
 png_voidp PNGAPI
-png_get_io_ptr(png_structp png_ptr)
+dg_png_get_io_ptr(png_structp png_ptr)
 {
    if (png_ptr == NULL)
       return (NULL);
@@ -1156,7 +1156,7 @@ int png_XYZ_from_xy_checked(png_structp png_ptr, png_XYZ *XYZ, png_xy xy)
          /* libpng is broken; this should be a warning but if it happens we
           * want error reports so for the moment it is an error.
           */
-         png_error(png_ptr, "internal error in png_XYZ_from_xy");
+         dg_png_error(png_ptr, "internal error in png_XYZ_from_xy");
          break;
    }
 
@@ -1305,7 +1305,7 @@ png_check_IHDR(png_structp png_ptr,
 #  endif
 
    if (error == 1)
-      png_error(png_ptr, "Invalid IHDR data");
+      dg_png_error(png_ptr, "Invalid IHDR data");
 }
 
 #if defined(PNG_sCAL_SUPPORTED) || defined(PNG_pCAL_SUPPORTED)
@@ -1810,7 +1810,7 @@ png_ascii_from_fp(png_structp png_ptr, png_charp ascii, png_size_t size,
    }
 
    /* Here on buffer too small. */
-   png_error(png_ptr, "ASCII conversion buffer too small");
+   dg_png_error(png_ptr, "ASCII conversion buffer too small");
 }
 
 #  endif /* FLOATING_POINT */
@@ -1884,7 +1884,7 @@ png_ascii_from_fixed(png_structp png_ptr, png_charp ascii, png_size_t size,
    }
 
    /* Here on buffer too small. */
-   png_error(png_ptr, "ASCII conversion buffer too small");
+   dg_png_error(png_ptr, "ASCII conversion buffer too small");
 }
 #   endif /* FIXED_POINT */
 #endif /* READ_SCAL */

@@ -996,14 +996,14 @@ PNG_EXPORT(1, png_uint_32, png_access_version_number, (void));
 /* Tell lib we have already handled the first <num_bytes> magic bytes.
  * Handling more than 8 bytes from the beginning of the file is an error.
  */
-PNG_EXPORT(2, void, png_set_sig_bytes, (png_structp png_ptr, int num_bytes));
+PNG_EXPORT(2, void, dg_png_set_sig_bytes, (png_structp png_ptr, int num_bytes));
 
 /* Check sig[start] through sig[start + num_to_check - 1] to see if it's a
  * PNG file.  Returns zero if the supplied bytes match the 8-byte PNG
  * signature, and non-zero otherwise.  Having num_to_check == 0 or
  * start > 7 will always fail (ie return non-zero).
  */
-PNG_EXPORT(3, int, png_sig_cmp, (png_const_bytep sig, png_size_t start,
+PNG_EXPORT(3, int, dg_png_sig_cmp, (png_const_bytep sig, png_size_t start,
     png_size_t num_to_check));
 
 /* Simple signature checking function.  This is the same as calling
@@ -1012,7 +1012,7 @@ PNG_EXPORT(3, int, png_sig_cmp, (png_const_bytep sig, png_size_t start,
 #define png_check_sig(sig, n) !png_sig_cmp((sig), 0, (n))
 
 /* Allocate and initialize png_ptr struct for reading, and any other memory. */
-PNG_EXPORTA(4, png_structp, png_create_read_struct,
+PNG_EXPORTA(4, png_structp, dg_png_create_read_struct,
     (png_const_charp user_png_ver, png_voidp error_ptr,
     png_error_ptr error_fn, png_error_ptr warn_fn),
     PNG_ALLOCATED);
@@ -1040,12 +1040,12 @@ PNG_EXPORT(7, void, png_set_compression_buffer_size, (png_structp png_ptr,
  * allocated by the library - the call will return NULL on a mismatch
  * indicating an ABI mismatch.
  */
-PNG_EXPORT(8, jmp_buf*, png_set_longjmp_fn, (png_structp png_ptr,
+PNG_EXPORT(8, jmp_buf*, dg_png_set_longjmp_fn, (png_structp png_ptr,
     png_longjmp_ptr longjmp_fn, size_t jmp_buf_size));
-#  define png_jmpbuf(png_ptr) \
-      (*png_set_longjmp_fn((png_ptr), longjmp, sizeof (jmp_buf)))
+#  define dg_png_jmpbuf(png_ptr) \
+      (*dg_png_set_longjmp_fn((png_ptr), longjmp, sizeof (jmp_buf)))
 #else
-#  define png_jmpbuf(png_ptr) \
+#  define dg_png_jmpbuf(png_ptr) \
       (LIBPNG_WAS_COMPILED_WITH__PNG_NO_SETJMP)
 #endif
 /* This function should be used by libpng applications in place of
@@ -1094,7 +1094,7 @@ PNG_EXPORT(16, void, png_write_chunk_data, (png_structp png_ptr,
 PNG_EXPORT(17, void, png_write_chunk_end, (png_structp png_ptr));
 
 /* Allocate and initialize the info structure */
-PNG_EXPORTA(18, png_infop, png_create_info_struct, (png_structp png_ptr),
+PNG_EXPORTA(18, png_infop, dg_png_create_info_struct, (png_structp png_ptr),
     PNG_ALLOCATED);
 
 PNG_EXPORT(19, void, png_info_init_3, (png_infopp info_ptr,
@@ -1108,7 +1108,7 @@ PNG_EXPORT(21, void, png_write_info,
 
 #ifdef PNG_SEQUENTIAL_READ_SUPPORTED
 /* Read the information before the actual image data. */
-PNG_EXPORT(22, void, png_read_info,
+PNG_EXPORT(22, void, dg_png_read_info,
     (png_structp png_ptr, png_infop info_ptr));
 #endif
 
@@ -1440,7 +1440,7 @@ PNG_EXPORT(44, void, png_set_shift, (png_structp png_ptr, png_const_color_8p
  * necessary to call png_read_row or png_read_rows png_get_image_height
  * times for each pass.
 */
-PNG_EXPORT(45, int, png_set_interlace_handling, (png_structp png_ptr));
+PNG_EXPORT(45, int, dg_png_set_interlace_handling, (png_structp png_ptr));
 #endif
 
 #if defined(PNG_READ_INVERT_SUPPORTED) || defined(PNG_WRITE_INVERT_SUPPORTED)
@@ -1524,7 +1524,7 @@ PNG_EXPORT(52, void, png_write_flush, (png_structp png_ptr));
 PNG_EXPORT(53, void, png_start_read_image, (png_structp png_ptr));
 
 /* Optional call to update the users info structure */
-PNG_EXPORT(54, void, png_read_update_info,
+PNG_EXPORT(54, void, dg_png_read_update_info,
     (png_structp png_ptr, png_infop info_ptr));
 
 #ifdef PNG_SEQUENTIAL_READ_SUPPORTED
@@ -1541,7 +1541,7 @@ PNG_EXPORT(56, void, png_read_row, (png_structp png_ptr, png_bytep row,
 
 #ifdef PNG_SEQUENTIAL_READ_SUPPORTED
 /* Read the whole image into memory at once. */
-PNG_EXPORT(57, void, png_read_image, (png_structp png_ptr, png_bytepp image));
+PNG_EXPORT(57, void, dg_png_read_image, (png_structp png_ptr, png_bytepp image));
 #endif
 
 /* Write a row of image data */
@@ -1574,7 +1574,7 @@ PNG_EXPORT(63, void, png_destroy_info_struct, (png_structp png_ptr,
     png_infopp info_ptr_ptr));
 
 /* Free any memory associated with the png_struct and the png_info_structs */
-PNG_EXPORT(64, void, png_destroy_read_struct, (png_structpp png_ptr_ptr,
+PNG_EXPORT(64, void, dg_png_destroy_read_struct, (png_structpp png_ptr_ptr,
     png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr));
 
 /* Free any memory associated with the png_struct and the png_info_structs */
@@ -1776,11 +1776,11 @@ PNG_EXPORT(77, void, png_set_write_fn, (png_structp png_ptr, png_voidp io_ptr,
     png_rw_ptr write_data_fn, png_flush_ptr output_flush_fn));
 
 /* Replace the default data input function with a user supplied one. */
-PNG_EXPORT(78, void, png_set_read_fn, (png_structp png_ptr, png_voidp io_ptr,
+PNG_EXPORT(78, void, dg_png_set_read_fn, (png_structp png_ptr, png_voidp io_ptr,
     png_rw_ptr read_data_fn));
 
 /* Return the user pointer associated with the I/O functions */
-PNG_EXPORT(79, png_voidp, png_get_io_ptr, (png_structp png_ptr));
+PNG_EXPORT(79, png_voidp, dg_png_get_io_ptr, (png_structp png_ptr));
 
 PNG_EXPORT(80, void, png_set_read_status_fn, (png_structp png_ptr,
     png_read_status_ptr read_row_fn));
@@ -1932,7 +1932,7 @@ PNG_EXPORT(101, void, png_free_default, (png_structp png_ptr, png_voidp ptr));
 
 #ifdef PNG_ERROR_TEXT_SUPPORTED
 /* Fatal error in PNG image of libpng - can't continue */
-PNG_EXPORTA(102, void, png_error,
+PNG_EXPORTA(102, void, dg_png_error,
     (png_structp png_ptr, png_const_charp error_message),
     PNG_NORETURN);
 
@@ -1997,7 +1997,7 @@ PNG_EXPORT(110, png_uint_32, png_get_valid,
     png_uint_32 flag));
 
 /* Returns number of bytes needed to hold a transformed row. */
-PNG_EXPORT(111, png_size_t, png_get_rowbytes, (png_const_structp png_ptr,
+PNG_EXPORT(111, png_size_t, dg_png_get_rowbytes, (png_const_structp png_ptr,
     png_const_infop info_ptr));
 
 #ifdef PNG_INFO_IMAGE_SUPPORTED
@@ -2019,11 +2019,11 @@ PNG_EXPORT(114, png_byte, png_get_channels,
 
 #ifdef PNG_EASY_ACCESS_SUPPORTED
 /* Returns image width in pixels. */
-PNG_EXPORT(115, png_uint_32, png_get_image_width, (png_const_structp png_ptr,
+PNG_EXPORT(115, png_uint_32, dg_png_get_image_width, (png_const_structp png_ptr,
     png_const_infop info_ptr));
 
 /* Returns image height in pixels. */
-PNG_EXPORT(116, png_uint_32, png_get_image_height, (png_const_structp png_ptr,
+PNG_EXPORT(116, png_uint_32, dg_png_get_image_height, (png_const_structp png_ptr,
     png_const_infop info_ptr));
 
 /* Returns image bit_depth. */

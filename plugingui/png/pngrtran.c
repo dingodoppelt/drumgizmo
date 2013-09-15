@@ -260,7 +260,7 @@ png_set_alpha_mode_fixed(png_structp png_ptr, int mode,
     * values are reasonable this may have to be changed.
     */
    if (output_gamma < 70000 || output_gamma > 300000)
-      png_error(png_ptr, "output gamma out of expected range");
+      dg_png_error(png_ptr, "output gamma out of expected range");
 
    /* The default file gamma is the inverse of the output gamma; the output
     * gamma may be changed below so get the file value first:
@@ -313,7 +313,7 @@ png_set_alpha_mode_fixed(png_structp png_ptr, int mode,
          break;
 
       default:
-         png_error(png_ptr, "invalid alpha mode");
+         dg_png_error(png_ptr, "invalid alpha mode");
    }
 
    /* Only set the default gamma if the file gamma has not been set (this has
@@ -338,7 +338,7 @@ png_set_alpha_mode_fixed(png_structp png_ptr, int mode,
       png_ptr->transformations &= ~PNG_BACKGROUND_EXPAND;
 
       if (png_ptr->transformations & PNG_COMPOSE)
-         png_error(png_ptr,
+         dg_png_error(png_ptr,
             "conflicting calls to set alpha mode and background");
 
       png_ptr->transformations |= PNG_COMPOSE;
@@ -790,10 +790,10 @@ png_set_gamma_fixed(png_structp png_ptr, png_fixed_point scrn_gamma,
     * undocumented API feature) it will not be made until libpng-1.6.0.
     */
    if (file_gamma <= 0)
-      png_error(png_ptr, "invalid file gamma in png_set_gamma");
+      dg_png_error(png_ptr, "invalid file gamma in png_set_gamma");
 
    if (scrn_gamma <= 0)
-      png_error(png_ptr, "invalid screen gamma in png_set_gamma");
+      dg_png_error(png_ptr, "invalid screen gamma in png_set_gamma");
 #endif
 
    /* Set the gamma values unconditionally - this overrides the value in the PNG
@@ -949,7 +949,7 @@ png_set_rgb_to_gray_fixed(png_structp png_ptr, int error_action,
          break;
 
       default:
-         png_error(png_ptr, "invalid error action to rgb_to_gray");
+         dg_png_error(png_ptr, "invalid error action to rgb_to_gray");
          break;
    }
    if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
@@ -1696,7 +1696,7 @@ png_init_read_transformations(png_structp png_ptr)
                   break;
 
                default:
-                  png_error(png_ptr, "invalid background gamma type");
+                  dg_png_error(png_ptr, "invalid background gamma type");
             }
 
             g_sig = png_gamma_significant(g);
@@ -2087,7 +2087,7 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
        * error is incredibly rare and incredibly easy to debug without this
        * information.
        */
-      png_error(png_ptr, "NULL row buffer");
+      dg_png_error(png_ptr, "NULL row buffer");
    }
 
    /* The following is debugging; prior to 1.5.4 the code was never compiled in;
@@ -2102,7 +2102,7 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
        * png_read_update_info() after setting transforms that expand pixels.
        * This check added to libpng-1.2.19 (but not enabled until 1.5.4).
        */
-      png_error(png_ptr, "Uninitialized row");
+      dg_png_error(png_ptr, "Uninitialized row");
    }
 
 #ifdef PNG_READ_EXPAND_SUPPORTED
@@ -2153,7 +2153,7 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
 
          if ((png_ptr->transformations & PNG_RGB_TO_GRAY) ==
              PNG_RGB_TO_GRAY_ERR)
-            png_error(png_ptr, "png_do_rgb_to_gray found nongray pixel");
+            dg_png_error(png_ptr, "png_do_rgb_to_gray found nongray pixel");
       }
    }
 #endif
@@ -2262,7 +2262,7 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
           png_ptr->palette_lookup, png_ptr->quantize_index);
 
       if (row_info->rowbytes == 0)
-         png_error(png_ptr, "png_do_quantize returned rowbytes=0");
+         dg_png_error(png_ptr, "png_do_quantize returned rowbytes=0");
    }
 #endif /* PNG_READ_QUANTIZE_SUPPORTED */
 

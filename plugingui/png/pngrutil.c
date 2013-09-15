@@ -26,7 +26,7 @@ png_get_uint_31(png_structp png_ptr, png_const_bytep buf)
    png_uint_32 uval = png_get_uint_32(buf);
 
    if (uval > PNG_UINT_31_MAX)
-      png_error(png_ptr, "PNG unsigned integer out of range");
+      dg_png_error(png_ptr, "PNG unsigned integer out of range");
 
    return (uval);
 }
@@ -133,13 +133,13 @@ png_read_sig(png_structp png_ptr, png_infop info_ptr)
    png_read_data(png_ptr, &(info_ptr->signature[num_checked]), num_to_check);
    png_ptr->sig_bytes = 8;
 
-   if (png_sig_cmp(info_ptr->signature, num_checked, num_to_check))
+   if (dg_png_sig_cmp(info_ptr->signature, num_checked, num_to_check))
    {
       if (num_checked < 4 &&
-          png_sig_cmp(info_ptr->signature, num_checked, num_to_check - 4))
-         png_error(png_ptr, "Not a PNG file");
+          dg_png_sig_cmp(info_ptr->signature, num_checked, num_to_check - 4))
+         dg_png_error(png_ptr, "Not a PNG file");
       else
-         png_error(png_ptr, "PNG file corrupted by ASCII conversion");
+         dg_png_error(png_ptr, "PNG file corrupted by ASCII conversion");
    }
    if (num_checked < 3)
       png_ptr->mode |= PNG_HAVE_PNG_SIGNATURE;
@@ -528,11 +528,11 @@ png_handle_IHDR(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_IHDR");
 
    if (png_ptr->mode & PNG_HAVE_IHDR)
-      png_error(png_ptr, "Out of place IHDR");
+      dg_png_error(png_ptr, "Out of place IHDR");
 
    /* Check the length */
    if (length != 13)
-      png_error(png_ptr, "Invalid IHDR chunk");
+      dg_png_error(png_ptr, "Invalid IHDR chunk");
 
    png_ptr->mode |= PNG_HAVE_IHDR;
 
@@ -604,7 +604,7 @@ png_handle_PLTE(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_PLTE");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before PLTE");
+      dg_png_error(png_ptr, "Missing IHDR before PLTE");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -614,7 +614,7 @@ png_handle_PLTE(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    }
 
    else if (png_ptr->mode & PNG_HAVE_PLTE)
-      png_error(png_ptr, "Duplicate PLTE chunk");
+      dg_png_error(png_ptr, "Duplicate PLTE chunk");
 
    png_ptr->mode |= PNG_HAVE_PLTE;
 
@@ -645,7 +645,7 @@ png_handle_PLTE(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 
       else
       {
-         png_error(png_ptr, "Invalid palette chunk");
+         dg_png_error(png_ptr, "Invalid palette chunk");
       }
    }
 
@@ -747,7 +747,7 @@ png_handle_IEND(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR) || !(png_ptr->mode & PNG_HAVE_IDAT))
    {
-      png_error(png_ptr, "No image in file");
+      dg_png_error(png_ptr, "No image in file");
    }
 
    png_ptr->mode |= (PNG_AFTER_IDAT | PNG_HAVE_IEND);
@@ -772,7 +772,7 @@ png_handle_gAMA(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_gAMA");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before gAMA");
+      dg_png_error(png_ptr, "Missing IHDR before gAMA");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -854,7 +854,7 @@ png_handle_sBIT(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    buf[0] = buf[1] = buf[2] = buf[3] = 0;
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before sBIT");
+      dg_png_error(png_ptr, "Missing IHDR before sBIT");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -926,7 +926,7 @@ png_handle_cHRM(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_cHRM");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before cHRM");
+      dg_png_error(png_ptr, "Missing IHDR before cHRM");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1077,7 +1077,7 @@ png_handle_cHRM(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 
                /* Check for an internal error. */
                if (r+g+b != 32768)
-                  png_error(png_ptr,
+                  dg_png_error(png_ptr,
                      "internal error handling cHRM coefficients");
 
                png_ptr->rgb_to_gray_red_coeff   = (png_uint_16)r;
@@ -1089,7 +1089,7 @@ png_handle_cHRM(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
              * bug is fixed.
              */
             else
-               png_error(png_ptr, "internal error handling cHRM->XYZ");
+               dg_png_error(png_ptr, "internal error handling cHRM->XYZ");
          }
       }
    }
@@ -1110,7 +1110,7 @@ png_handle_sRGB(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_sRGB");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before sRGB");
+      dg_png_error(png_ptr, "Missing IHDR before sRGB");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1244,7 +1244,7 @@ png_handle_iCCP(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_iCCP");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before iCCP");
+      dg_png_error(png_ptr, "Missing IHDR before iCCP");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1403,7 +1403,7 @@ png_handle_sPLT(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 #endif
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before sPLT");
+      dg_png_error(png_ptr, "Missing IHDR before sPLT");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1562,7 +1562,7 @@ png_handle_tRNS(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_tRNS");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before tRNS");
+      dg_png_error(png_ptr, "Missing IHDR before tRNS");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1668,7 +1668,7 @@ png_handle_bKGD(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_bKGD");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before bKGD");
+      dg_png_error(png_ptr, "Missing IHDR before bKGD");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1773,7 +1773,7 @@ png_handle_hIST(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_hIST");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before hIST");
+      dg_png_error(png_ptr, "Missing IHDR before hIST");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1832,7 +1832,7 @@ png_handle_pHYs(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_pHYs");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before pHYs");
+      dg_png_error(png_ptr, "Missing IHDR before pHYs");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1878,7 +1878,7 @@ png_handle_oFFs(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_oFFs");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before oFFs");
+      dg_png_error(png_ptr, "Missing IHDR before oFFs");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -1928,7 +1928,7 @@ png_handle_pCAL(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_pCAL");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before pCAL");
+      dg_png_error(png_ptr, "Missing IHDR before pCAL");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -2068,7 +2068,7 @@ png_handle_sCAL(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_sCAL");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before sCAL");
+      dg_png_error(png_ptr, "Missing IHDR before sCAL");
 
    else if (png_ptr->mode & PNG_HAVE_IDAT)
    {
@@ -2172,7 +2172,7 @@ png_handle_tIME(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_debug(1, "in png_handle_tIME");
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Out of place tIME chunk");
+      dg_png_error(png_ptr, "Out of place tIME chunk");
 
    else if (info_ptr != NULL && (info_ptr->valid & PNG_INFO_tIME))
    {
@@ -2240,7 +2240,7 @@ png_handle_tEXt(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 #endif
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before tEXt");
+      dg_png_error(png_ptr, "Missing IHDR before tEXt");
 
    if (png_ptr->mode & PNG_HAVE_IDAT)
       png_ptr->mode |= PNG_AFTER_IDAT;
@@ -2346,7 +2346,7 @@ png_handle_zTXt(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 #endif
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before zTXt");
+      dg_png_error(png_ptr, "Missing IHDR before zTXt");
 
    if (png_ptr->mode & PNG_HAVE_IDAT)
       png_ptr->mode |= PNG_AFTER_IDAT;
@@ -2440,7 +2440,7 @@ png_handle_zTXt(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_ptr->chunkdata = NULL;
 
    if (ret)
-      png_error(png_ptr, "Insufficient memory to store zTXt chunk");
+      dg_png_error(png_ptr, "Insufficient memory to store zTXt chunk");
 }
 #endif
 
@@ -2477,7 +2477,7 @@ png_handle_iTXt(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
 #endif
 
    if (!(png_ptr->mode & PNG_HAVE_IHDR))
-      png_error(png_ptr, "Missing IHDR before iTXt");
+      dg_png_error(png_ptr, "Missing IHDR before iTXt");
 
    if (png_ptr->mode & PNG_HAVE_IDAT)
       png_ptr->mode |= PNG_AFTER_IDAT;
@@ -2610,7 +2610,7 @@ png_handle_iTXt(png_structp png_ptr, png_infop info_ptr, png_uint_32 length)
    png_ptr->chunkdata = NULL;
 
    if (ret)
-      png_error(png_ptr, "Insufficient memory to store iTXt chunk");
+      dg_png_error(png_ptr, "Insufficient memory to store iTXt chunk");
 }
 #endif
 
@@ -2798,7 +2798,7 @@ png_combine_row(png_structp png_ptr, png_bytep dp, int display)
     * least one row has been read from the PNG data and transformed.
     */
    if (pixel_depth == 0)
-      png_error(png_ptr, "internal row logic error");
+      dg_png_error(png_ptr, "internal row logic error");
 
    /* Added in 1.5.4: the pixel depth should match the information returned by
     * any call to png_read_update_info at this point.  Do not continue if we got
@@ -2806,11 +2806,11 @@ png_combine_row(png_structp png_ptr, png_bytep dp, int display)
     */
    if (png_ptr->info_rowbytes != 0 && png_ptr->info_rowbytes !=
           PNG_ROWBYTES(pixel_depth, row_width))
-      png_error(png_ptr, "internal row size calculation error");
+      dg_png_error(png_ptr, "internal row size calculation error");
 
    /* Don't expect this to ever happen: */
    if (row_width == 0)
-      png_error(png_ptr, "internal row width error");
+      dg_png_error(png_ptr, "internal row width error");
 
    /* Preserve the last byte in cases where only part of it will be overwritten,
     * the multiply below may overflow, we don't care because ANSI-C guarantees
@@ -3031,7 +3031,7 @@ png_combine_row(png_structp png_ptr, png_bytep dp, int display)
 
          /* Validate the depth - it must be a multiple of 8 */
          if (pixel_depth & 7)
-            png_error(png_ptr, "invalid user transform pixel depth");
+            dg_png_error(png_ptr, "invalid user transform pixel depth");
 
          pixel_depth >>= 3; /* now in bytes */
          row_width *= pixel_depth;
@@ -3832,7 +3832,7 @@ png_read_finish_row(png_structp png_ptr)
                png_crc_finish(png_ptr, 0);
                png_ptr->idat_size = png_read_chunk_header(png_ptr);
                if (png_ptr->chunk_name != png_IDAT)
-                  png_error(png_ptr, "Not enough image data");
+                  dg_png_error(png_ptr, "Not enough image data");
             }
 
             png_ptr->zstream.avail_in = (uInt)png_ptr->zbuf_size;
@@ -3859,7 +3859,7 @@ png_read_finish_row(png_structp png_ptr)
          }
 
          if (ret != Z_OK)
-            png_error(png_ptr, png_ptr->zstream.msg ? png_ptr->zstream.msg :
+            dg_png_error(png_ptr, png_ptr->zstream.msg ? png_ptr->zstream.msg :
                 "Decompression Error");
 
          if (!(png_ptr->zstream.avail_out))
@@ -4093,7 +4093,7 @@ defined(PNG_USER_TRANSFORM_PTR_SUPPORTED)
 
 #ifdef PNG_MAX_MALLOC_64K
    if (row_bytes > (png_uint_32)65536L)
-      png_error(png_ptr, "This image requires a row greater than 64KB");
+      dg_png_error(png_ptr, "This image requires a row greater than 64KB");
 #endif
 
    if (row_bytes + 48 > png_ptr->old_big_row_buf_size)
@@ -4138,11 +4138,11 @@ defined(PNG_USER_TRANSFORM_PTR_SUPPORTED)
 
 #ifdef PNG_MAX_MALLOC_64K
    if (png_ptr->rowbytes > 65535)
-      png_error(png_ptr, "This image requires a row greater than 64KB");
+      dg_png_error(png_ptr, "This image requires a row greater than 64KB");
 
 #endif
    if (png_ptr->rowbytes > (PNG_SIZE_MAX - 1))
-      png_error(png_ptr, "Row has too many bytes to allocate in memory");
+      dg_png_error(png_ptr, "Row has too many bytes to allocate in memory");
 
    png_memset(png_ptr->prev_row, 0, png_ptr->rowbytes + 1);
 

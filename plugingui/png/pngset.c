@@ -91,7 +91,7 @@ png_set_cHRM_XYZ_fixed(png_structp png_ptr, png_infop info_ptr,
    XYZ.blueZ = int_blue_Z;
 
    if (png_xy_from_XYZ(&xy, XYZ))
-      png_error(png_ptr, "XYZ values out of representable range");
+      dg_png_error(png_ptr, "XYZ values out of representable range");
 
    png_set_cHRM_fixed(png_ptr, info_ptr, xy.whitex, xy.whitey, xy.redx, xy.redy,
       xy.greenx, xy.greeny, xy.bluex, xy.bluey);
@@ -303,12 +303,12 @@ png_set_pCAL(png_structp png_ptr, png_infop info_ptr,
 
    /* Check that the type matches the specification. */
    if (type < 0 || type > 3)
-      png_error(png_ptr, "Invalid pCAL equation type");
+      dg_png_error(png_ptr, "Invalid pCAL equation type");
 
    /* Validate params[nparams] */
    for (i=0; i<nparams; ++i)
       if (!png_check_fp_string(params[i], png_strlen(params[i])))
-         png_error(png_ptr, "Invalid format for pCAL parameter");
+         dg_png_error(png_ptr, "Invalid format for pCAL parameter");
 
    info_ptr->pcal_purpose = (png_charp)png_malloc_warn(png_ptr, length);
 
@@ -389,15 +389,15 @@ png_set_sCAL_s(png_structp png_ptr, png_infop info_ptr,
     * unit unless this is an API call.)
     */
    if (unit != 1 && unit != 2)
-      png_error(png_ptr, "Invalid sCAL unit");
+      dg_png_error(png_ptr, "Invalid sCAL unit");
 
    if (swidth == NULL || (lengthw = png_strlen(swidth)) == 0 ||
        swidth[0] == 45 /* '-' */ || !png_check_fp_string(swidth, lengthw))
-      png_error(png_ptr, "Invalid sCAL width");
+      dg_png_error(png_ptr, "Invalid sCAL width");
 
    if (sheight == NULL || (lengthh = png_strlen(sheight)) == 0 ||
        sheight[0] == 45 /* '-' */ || !png_check_fp_string(sheight, lengthh))
-      png_error(png_ptr, "Invalid sCAL height");
+      dg_png_error(png_ptr, "Invalid sCAL height");
 
    info_ptr->scal_unit = (png_byte)unit;
 
@@ -525,7 +525,7 @@ png_set_PLTE(png_structp png_ptr, png_infop info_ptr,
    if (num_palette < 0 || num_palette > PNG_MAX_PALETTE_LENGTH)
    {
       if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
-         png_error(png_ptr, "Invalid palette length");
+         dg_png_error(png_ptr, "Invalid palette length");
 
       else
       {
@@ -672,7 +672,7 @@ png_set_text(png_structp png_ptr, png_infop info_ptr, png_const_textp text_ptr,
    ret = png_set_text_2(png_ptr, info_ptr, text_ptr, num_text);
 
    if (ret)
-      png_error(png_ptr, "Insufficient memory to store text");
+      dg_png_error(png_ptr, "Insufficient memory to store text");
 }
 
 int /* PRIVATE */

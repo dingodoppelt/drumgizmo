@@ -27,7 +27,7 @@ png_get_valid(png_const_structp png_ptr, png_const_infop info_ptr,
 }
 
 png_size_t PNGAPI
-png_get_rowbytes(png_const_structp png_ptr, png_const_infop info_ptr)
+dg_png_get_rowbytes(png_const_structp png_ptr, png_const_infop info_ptr)
 {
    if (png_ptr != NULL && info_ptr != NULL)
       return(info_ptr->rowbytes);
@@ -49,7 +49,7 @@ png_get_rows(png_const_structp png_ptr, png_const_infop info_ptr)
 #ifdef PNG_EASY_ACCESS_SUPPORTED
 /* Easy access to info, added in libpng-0.99 */
 png_uint_32 PNGAPI
-png_get_image_width(png_const_structp png_ptr, png_const_infop info_ptr)
+dg_png_get_image_width(png_const_structp png_ptr, png_const_infop info_ptr)
 {
    if (png_ptr != NULL && info_ptr != NULL)
       return info_ptr->width;
@@ -58,7 +58,7 @@ png_get_image_width(png_const_structp png_ptr, png_const_infop info_ptr)
 }
 
 png_uint_32 PNGAPI
-png_get_image_height(png_const_structp png_ptr, png_const_infop info_ptr)
+dg_png_get_image_height(png_const_structp png_ptr, png_const_infop info_ptr)
 {
    if (png_ptr != NULL && info_ptr != NULL)
       return info_ptr->height;

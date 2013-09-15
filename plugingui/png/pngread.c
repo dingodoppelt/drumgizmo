@@ -20,7 +20,7 @@
 
 /* Create a PNG structure for reading, and allocate any memory needed. */
 PNG_FUNCTION(png_structp,PNGAPI
-png_create_read_struct,(png_const_charp user_png_ver, png_voidp error_ptr,
+dg_png_create_read_struct,(png_const_charp user_png_ver, png_voidp error_ptr,
     png_error_ptr error_fn, png_error_ptr warn_fn),PNG_ALLOCATED)
 {
 
@@ -82,7 +82,7 @@ png_create_read_struct_2,(png_const_charp user_png_ver, png_voidp error_ptr,
 #ifdef USE_FAR_KEYWORD
    if (setjmp(tmp_jmpbuf))
 #else
-   if (setjmp(png_jmpbuf(png_ptr))) /* Sets longjmp to match setjmp */
+   if (setjmp(dg_png_jmpbuf(png_ptr))) /* Sets longjmp to match setjmp */
 #endif
       PNG_ABORT();
 #ifdef USE_FAR_KEYWORD
@@ -158,7 +158,7 @@ png_create_read_struct_2,(png_const_charp user_png_ver, png_voidp error_ptr,
    png_ptr->zstream.next_out = png_ptr->zbuf;
    png_ptr->zstream.avail_out = (uInt)png_ptr->zbuf_size;
 
-   png_set_read_fn(png_ptr, NULL, NULL);
+   dg_png_set_read_fn(png_ptr, NULL, NULL);
 
 
    return (png_ptr);
@@ -175,7 +175,7 @@ png_create_read_struct_2,(png_const_charp user_png_ver, png_voidp error_ptr,
  * read if it is determined that this isn't a valid PNG file.
  */
 void PNGAPI
-png_read_info(png_structp png_ptr, png_infop info_ptr)
+dg_png_read_info(png_structp png_ptr, png_infop info_ptr)
 {
    png_debug(1, "in png_read_info");
 
@@ -218,11 +218,11 @@ png_read_info(png_structp png_ptr, png_infop info_ptr)
          else if (chunk_name == png_IDAT)
          {
             if (!(png_ptr->mode & PNG_HAVE_IHDR))
-               png_error(png_ptr, "Missing IHDR before IDAT");
+               dg_png_error(png_ptr, "Missing IHDR before IDAT");
 
             else if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE &&
                 !(png_ptr->mode & PNG_HAVE_PLTE))
-               png_error(png_ptr, "Missing PLTE before IDAT");
+               dg_png_error(png_ptr, "Missing PLTE before IDAT");
 
             break;
          }
@@ -234,11 +234,11 @@ png_read_info(png_structp png_ptr, png_infop info_ptr)
       else if (chunk_name == png_IDAT)
       {
          if (!(png_ptr->mode & PNG_HAVE_IHDR))
-            png_error(png_ptr, "Missing IHDR before IDAT");
+            dg_png_error(png_ptr, "Missing IHDR before IDAT");
 
          else if (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE &&
              !(png_ptr->mode & PNG_HAVE_PLTE))
-            png_error(png_ptr, "Missing PLTE before IDAT");
+            dg_png_error(png_ptr, "Missing PLTE before IDAT");
 
          png_ptr->idat_size = length;
          png_ptr->mode |= PNG_HAVE_IDAT;
@@ -338,7 +338,7 @@ png_read_info(png_structp png_ptr, png_infop info_ptr)
 
 /* Optional call to update the users info_ptr structure */
 void PNGAPI
-png_read_update_info(png_structp png_ptr, png_infop info_ptr)
+dg_png_read_update_info(png_structp png_ptr, png_infop info_ptr)
 {
    png_debug(1, "in png_read_update_info");
 
@@ -526,7 +526,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
 #endif
 
    if (!(png_ptr->mode & PNG_HAVE_IDAT))
-      png_error(png_ptr, "Invalid attempt to read row data");
+      dg_png_error(png_ptr, "Invalid attempt to read row data");
 
    png_ptr->zstream.next_out = png_ptr->row_buf;
    png_ptr->zstream.avail_out =
@@ -543,7 +543,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
 
             png_ptr->idat_size = png_read_chunk_header(png_ptr);
             if (png_ptr->chunk_name != png_IDAT)
-               png_error(png_ptr, "Not enough image data");
+               dg_png_error(png_ptr, "Not enough image data");
          }
          png_ptr->zstream.avail_in = (uInt)png_ptr->zbuf_size;
          png_ptr->zstream.next_in = png_ptr->zbuf;
@@ -567,7 +567,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
       }
 
       if (ret != Z_OK)
-         png_error(png_ptr, png_ptr->zstream.msg ? png_ptr->zstream.msg :
+         dg_png_error(png_ptr, png_ptr->zstream.msg ? png_ptr->zstream.msg :
              "Decompression error");
 
    } while (png_ptr->zstream.avail_out);
@@ -578,7 +578,7 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
          png_read_filter_row(png_ptr, &row_info, png_ptr->row_buf + 1,
             png_ptr->prev_row + 1, png_ptr->row_buf[0]);
       else
-         png_error(png_ptr, "bad adaptive filter value");
+         dg_png_error(png_ptr, "bad adaptive filter value");
    }
 
    /* libpng 1.5.6: the following line was copying png_ptr->rowbytes before
@@ -608,11 +608,11 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
    {
       png_ptr->transformed_pixel_depth = row_info.pixel_depth;
       if (row_info.pixel_depth > png_ptr->maximum_pixel_depth)
-         png_error(png_ptr, "sequential row overflow");
+         dg_png_error(png_ptr, "sequential row overflow");
    }
 
    else if (png_ptr->transformed_pixel_depth != row_info.pixel_depth)
-      png_error(png_ptr, "internal sequential row size calculation error");
+      dg_png_error(png_ptr, "internal sequential row size calculation error");
 
 #ifdef PNG_READ_INTERLACING_SUPPORTED
    /* Blow up interlaced rows to full size */
@@ -727,7 +727,7 @@ png_read_rows(png_structp png_ptr, png_bytepp row,
  * [*] png_handle_alpha() does not exist yet, as of this version of libpng
  */
 void PNGAPI
-png_read_image(png_structp png_ptr, png_bytepp image)
+dg_png_read_image(png_structp png_ptr, png_bytepp image)
 {
    png_uint_32 i, image_height;
    int pass, j;
@@ -741,7 +741,7 @@ png_read_image(png_structp png_ptr, png_bytepp image)
 #ifdef PNG_READ_INTERLACING_SUPPORTED
    if (!(png_ptr->flags & PNG_FLAG_ROW_INIT))
    {
-      pass = png_set_interlace_handling(png_ptr);
+      pass = dg_png_set_interlace_handling(png_ptr);
       /* And make sure transforms are initialized. */
       png_start_read_image(png_ptr);
    }
@@ -762,11 +762,11 @@ png_read_image(png_structp png_ptr, png_bytepp image)
       /* Obtain the pass number, which also turns on the PNG_INTERLACE flag in
        * the above error case.
        */
-      pass = png_set_interlace_handling(png_ptr);
+      pass = dg_png_set_interlace_handling(png_ptr);
    }
 #else
    if (png_ptr->interlaced)
-      png_error(png_ptr,
+      dg_png_error(png_ptr,
           "Cannot read interlaced image -- interlace handler disabled");
 
    pass = 1;
@@ -940,7 +940,7 @@ png_read_end(png_structp png_ptr, png_infop info_ptr)
 
 /* Free all memory used by the read */
 void PNGAPI
-png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr,
+dg_png_destroy_read_struct(png_structpp png_ptr_ptr, png_infopp info_ptr_ptr,
     png_infopp end_info_ptr_ptr)
 {
    png_structp png_ptr = NULL;
@@ -1131,9 +1131,9 @@ png_read_png(png_structp png_ptr, png_infop info_ptr,
    /* png_read_info() gives us all of the information from the
     * PNG file before the first IDAT (image data chunk).
     */
-   png_read_info(png_ptr, info_ptr);
+   dg_png_read_info(png_ptr, info_ptr);
    if (info_ptr->height > PNG_UINT_32_MAX/png_sizeof(png_bytep))
-      png_error(png_ptr, "Image is too high to process with png_read_png()");
+      dg_png_error(png_ptr, "Image is too high to process with png_read_png()");
 
    /* -------------- image transformations start here ------------------- */
 
@@ -1263,13 +1263,13 @@ png_read_png(png_structp png_ptr, png_infop info_ptr,
    /* We use png_read_image and rely on that for interlace handling, but we also
     * call png_read_update_info therefore must turn on interlace handling now:
     */
-   (void)png_set_interlace_handling(png_ptr);
+   (void)dg_png_set_interlace_handling(png_ptr);
 
    /* Optional call to gamma correct and add the background to the palette
     * and update info structure.  REQUIRED if you are expecting libpng to
     * update the palette for you (i.e., you selected such a transform above).
     */
-   png_read_update_info(png_ptr, info_ptr);
+   dg_png_read_update_info(png_ptr, info_ptr);
 
    /* -------------- image transformations end here ------------------- */
 
@@ -1287,10 +1287,10 @@ png_read_png(png_structp png_ptr, png_infop info_ptr,
 
       for (row = 0; row < (int)info_ptr->height; row++)
          info_ptr->row_pointers[row] = (png_bytep)png_malloc(png_ptr,
-            png_get_rowbytes(png_ptr, info_ptr));
+            dg_png_get_rowbytes(png_ptr, info_ptr));
    }
 
-   png_read_image(png_ptr, info_ptr->row_pointers);
+   dg_png_read_image(png_ptr, info_ptr->row_pointers);
    info_ptr->valid |= PNG_INFO_IDAT;
 
    /* Read rest of file, and get additional chunks in info_ptr - REQUIRED */

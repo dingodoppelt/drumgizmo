@@ -149,7 +149,7 @@ png_malloc,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
       ret = (png_malloc_default(png_ptr, size));
 
    if (ret == NULL && (png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-       png_error(png_ptr, "Out of memory");
+       dg_png_error(png_ptr, "Out of memory");
 
    return (ret);
 }
@@ -225,7 +225,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
             {
 #  ifndef PNG_USER_MEM_SUPPORTED
                if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-                  png_error(png_ptr, "Out Of Memory"); /* Note "O", "M" */
+                  dg_png_error(png_ptr, "Out Of Memory"); /* Note "O", "M" */
 
                else
                   png_warning(png_ptr, "Out Of Memory");
@@ -237,7 +237,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
             {
 #  ifndef PNG_USER_MEM_SUPPORTED
                if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-                  png_error(png_ptr,
+                  dg_png_error(png_ptr,
                     "Farmalloc didn't return normalized pointer");
 
                else
@@ -255,7 +255,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
             {
 #  ifndef PNG_USER_MEM_SUPPORTED
                if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-                  png_error(png_ptr, "Out Of memory"); /* Note "O", "m" */
+                  dg_png_error(png_ptr, "Out Of memory"); /* Note "O", "m" */
 
                else
                   png_warning(png_ptr, "Out Of memory");
@@ -286,7 +286,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
       {
 #  ifndef PNG_USER_MEM_SUPPORTED
          if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-            png_error(png_ptr, "Out of Memory"); /* Note "O" and "M" */
+            dg_png_error(png_ptr, "Out of Memory"); /* Note "O" and "M" */
 
          else
             png_warning(png_ptr, "Out of Memory");
@@ -304,7 +304,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
    if (ret == NULL)
    {
       if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-         png_error(png_ptr, "Out of memory"); /* Note "o" and "m" */
+         dg_png_error(png_ptr, "Out of memory"); /* Note "o" and "m" */
 
       else
          png_warning(png_ptr, "Out of memory"); /* Note "o" and "m" */
@@ -510,7 +510,7 @@ png_malloc,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
       ret = (png_malloc_default(png_ptr, size));
 
    if (ret == NULL && (png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-       png_error(png_ptr, "Out of Memory");
+       dg_png_error(png_ptr, "Out of Memory");
 
    return (ret);
 }
@@ -529,7 +529,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
    {
 #    ifndef PNG_USER_MEM_SUPPORTED
       if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-         png_error(png_ptr, "Cannot Allocate > 64K");
+         dg_png_error(png_ptr, "Cannot Allocate > 64K");
 
       else
 #    endif
@@ -565,7 +565,7 @@ png_malloc_default,(png_structp png_ptr, png_alloc_size_t size),PNG_ALLOCATED)
 
 #  ifndef PNG_USER_MEM_SUPPORTED
    if (ret == NULL && (png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
-      png_error(png_ptr, "Out of Memory");
+      dg_png_error(png_ptr, "Out of Memory");
 #  endif
 
    return (ret);

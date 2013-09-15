@@ -94,7 +94,7 @@ png_set_shift(png_structp png_ptr, png_const_color_8p true_bits)
 #if defined(PNG_READ_INTERLACING_SUPPORTED) || \
     defined(PNG_WRITE_INTERLACING_SUPPORTED)
 int PNGAPI
-png_set_interlace_handling(png_structp png_ptr)
+dg_png_set_interlace_handling(png_structp png_ptr)
 {
    png_debug(1, "in png_set_interlace handling");
 

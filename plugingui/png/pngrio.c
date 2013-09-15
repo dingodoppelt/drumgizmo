@@ -37,7 +37,7 @@ png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
       (*(png_ptr->read_data_fn))(png_ptr, data, length);
 
    else
-      png_error(png_ptr, "Call to NULL read function");
+      dg_png_error(png_ptr, "Call to NULL read function");
 }
 
 #ifdef PNG_STDIO_SUPPORTED
@@ -61,7 +61,7 @@ png_default_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
    check = fread(data, 1, length, (png_FILE_p)png_ptr->io_ptr);
 
    if (check != length)
-      png_error(png_ptr, "Read Error");
+      dg_png_error(png_ptr, "Read Error");
 }
 #  else
 /* This is the model-independent version. Since the standard I/O library
@@ -117,7 +117,7 @@ png_default_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
    }
 
    if ((png_uint_32)check != (png_uint_32)length)
-      png_error(png_ptr, "read Error");
+      dg_png_error(png_ptr, "read Error");
 }
 #  endif
 #endif
@@ -142,7 +142,7 @@ png_default_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
  *                be used.
  */
 void PNGAPI
-png_set_read_fn(png_structp png_ptr, png_voidp io_ptr,
+dg_png_set_read_fn(png_structp png_ptr, png_voidp io_ptr,
    png_rw_ptr read_data_fn)
 {
    if (png_ptr == NULL)

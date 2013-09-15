@@ -37,6 +37,9 @@
 #include "resource.h"
 // http://blog.hammerian.net/2009/reading-png-images-from-memory/
 
+#define PNG_PREFIX(x) dg_##x
+//#define PNG_PREFIX(x) x
+
 typedef struct {
   size_t p;
   size_t size;
@@ -45,9 +48,11 @@ typedef struct {
 
 static void dio_reader(png_structp png_ptr, png_bytep buf, png_size_t size)
 {
-  data_io_t *dio = (data_io_t *)png_get_io_ptr(png_ptr);
+  data_io_t *dio = (data_io_t *)PNG_PREFIX(png_get_io_ptr(png_ptr));
 
-  if(size > dio->size - dio->p) png_error(png_ptr, "Could not read bytes.");
+  if(size > dio->size - dio->p) {
+    PNG_PREFIX(png_error(png_ptr, "Could not read bytes."));
+  }
 
   memcpy(buf, (dio->data + dio->p), size);
   dio->p += size;
@@ -113,14 +118,15 @@ void GUI::Image::load(const char* data, size_t size)
   const char *header = data;
 
   // test for it being a png:
-  if(png_sig_cmp((png_byte*)header, 0, 8)) {
+  if(PNG_PREFIX(png_sig_cmp((png_byte*)header, 0, 8))) {
     ERR(image, "[read_png_file] File is not recognized as a PNG file");
     setError(0);
     return;
   }
   
   // initialize stuff
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_ptr =
+    PNG_PREFIX(png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL));
   
   if(!png_ptr) {
     ERR(image, "[read_png_file] png_create_read_struct failed");
@@ -128,18 +134,18 @@ void GUI::Image::load(const char* data, size_t size)
     return;
   }
   
-  info_ptr = png_create_info_struct(png_ptr);
+  info_ptr = PNG_PREFIX(png_create_info_struct(png_ptr));
   if(!info_ptr) {
     ERR(image, "[read_png_file] png_create_info_struct failed");
     setError(2);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
+    PNG_PREFIX(png_destroy_read_struct(&png_ptr, NULL, NULL));
     return;
   }
   
-  if(setjmp(png_jmpbuf(png_ptr))) {
+  if(setjmp(PNG_PREFIX(png_jmpbuf(png_ptr)))) {
     ERR(image, "[read_png_file] Error during init_io");
     setError(3);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    PNG_PREFIX(png_destroy_read_struct(&png_ptr, &info_ptr, NULL));
     return;
   }
   
@@ -148,36 +154,37 @@ void GUI::Image::load(const char* data, size_t size)
   dio.data = data;
   dio.size = size;
   dio.p = 8; // skip header
-  png_set_read_fn(png_ptr, &dio, dio_reader);
+  PNG_PREFIX(png_set_read_fn(png_ptr, &dio, dio_reader));
 
-  png_set_sig_bytes(png_ptr, 8);
+  PNG_PREFIX(png_set_sig_bytes(png_ptr, 8));
   
-  png_read_info(png_ptr, info_ptr);
+  PNG_PREFIX(png_read_info(png_ptr, info_ptr));
   
-  w = png_get_image_width(png_ptr, info_ptr);
-  h = png_get_image_height(png_ptr, info_ptr);
+  w = PNG_PREFIX(png_get_image_width(png_ptr, info_ptr));
+  h = PNG_PREFIX(png_get_image_height(png_ptr, info_ptr));
   //color_type = png_get_color_type(png_ptr, info_ptr);
   //bit_depth = png_get_bit_depth(png_ptr, info_ptr);
   
-  number_of_passes = png_set_interlace_handling(png_ptr);
-  png_read_update_info(png_ptr, info_ptr);
+  number_of_passes = PNG_PREFIX(png_set_interlace_handling(png_ptr));
+  PNG_PREFIX(png_read_update_info(png_ptr, info_ptr));
   
   // read file
-  if(setjmp(png_jmpbuf(png_ptr))) {
+  if(setjmp(PNG_PREFIX(png_jmpbuf(png_ptr)))) {
     ERR(image, "[read_png_file] Error during read_image");
     setError(4);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    PNG_PREFIX(png_destroy_read_struct(&png_ptr, &info_ptr, NULL));
     return;
   }
   
   row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * h);
   for(size_t y = 0; y < h; y++) {
-    row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(png_ptr, info_ptr));
+    row_pointers[y] =
+      (png_byte*) malloc(PNG_PREFIX(png_get_rowbytes(png_ptr, info_ptr)));
   }
   
-  png_read_image(png_ptr, row_pointers);
+  PNG_PREFIX(png_read_image(png_ptr, row_pointers));
 
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+  PNG_PREFIX(png_destroy_read_struct(&png_ptr, &info_ptr, NULL));
 }
 
 size_t GUI::Image::width()
