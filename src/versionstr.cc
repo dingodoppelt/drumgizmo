@@ -78,12 +78,10 @@ void VersionStr::set(std::string v) throw(const char *)
 VersionStr::operator std::string() const
 {
   std::string v;
-  char *buf;
-  size_t sz;
-  if(patch()) sz = asprintf(&buf, "%d.%d.%d", major(), minor(), patch());
-  else sz = asprintf(&buf, "%d.%d", major(), minor());
-  if(sz) v = buf;
-  free(buf);
+  char buf[64];
+  if(patch()) sprintf(buf, "%d.%d.%d", major(), minor(), patch());
+  else sprintf(buf, "%d.%d", major(), minor());
+  v = buf;
   return v;
 }
   
