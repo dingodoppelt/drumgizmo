@@ -427,6 +427,7 @@ bool DrumGizmoVst::getMidiKeyName(VstInt32 channel, MidiKeyName* key)
 void DrumGizmoVst::setSampleRate(float sampleRate)
 {
 	AudioEffectX::setSampleRate(sampleRate);
+  drumgizmo->setSamplerate(sampleRate);
 }
 
 void DrumGizmoVst::setBlockSize(VstInt32 blockSize)
