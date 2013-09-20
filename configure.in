@@ -285,10 +285,15 @@ dnl Check for sndfile
 dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.21)
 
+dnl ======================
+dnl Check for libsamplerate
+dnl ======================
+PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7)
+
 #dnl ======================
 #dnl Check for libpng
 #dnl ======================
-#PKG_CHECK_MODULES(PNG, libpng >= 1.2)
+PKG_CHECK_MODULES(PNG, libpng >= 1.2)
 
 dnl ======================
 dnl Check for zlib

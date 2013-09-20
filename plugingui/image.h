@@ -27,7 +27,7 @@
 #ifndef __DRUMGIZMO_IMAGE_H__
 #define __DRUMGIZMO_IMAGE_H__
 
-#include "png/png.h"
+#include <png.h>
 #include <string>
 
 #include "colour.h"
