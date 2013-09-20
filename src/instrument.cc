@@ -83,7 +83,8 @@ Sample *Instrument::sample(level_t level, size_t pos)
   }
 
   if(Conf::enable_velocity_modifier) {
-    mod += (pos - lastpos) / (44100.0 * Conf::velocity_modifier_falloff);
+    mod += (pos - lastpos) /
+      (Conf::samplerate * Conf::velocity_modifier_falloff);
     if(mod > 1.0) mod = 1.0;
   }
 

@@ -33,6 +33,8 @@ float Conf::velocity_modifier_weight = 0.25;
 bool Conf::enable_velocity_randomiser = false;
 float Conf::velocity_randomiser_weight = 0.1;
 
+int Conf::samplerate = 44100;
+
 #ifdef TEST_CONFIGURATION
 //Additional dependency files
 //deps:

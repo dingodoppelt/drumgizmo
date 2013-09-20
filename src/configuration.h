@@ -34,6 +34,8 @@ namespace Conf {
 
   extern bool enable_velocity_randomiser;
   extern float velocity_randomiser_weight;
+
+  extern int samplerate;
 };
 
 

@@ -261,6 +261,7 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
   */
 
   dglv2->dg = new DrumGizmo(dglv2->out, dglv2->in);
+  dglv2->dg->setSamplerate(sample_rate);
   //  dglv2->dg->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
   //  dglv2->dg->init(true);
 

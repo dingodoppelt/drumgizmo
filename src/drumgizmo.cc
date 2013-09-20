@@ -406,6 +406,16 @@ void DrumGizmo::stop()
   // engine.stop();
 }
 
+int DrumGizmo::samplerate()
+{
+  return Conf::samplerate;
+}
+
+void DrumGizmo::setSamplerate(int samplerate)
+{
+  Conf::samplerate = samplerate;
+}
+
 std::string float2str(float a)
 {
   char buf[256];

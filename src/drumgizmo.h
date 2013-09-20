@@ -73,6 +73,9 @@ public:
 
   void handleMessage(Message *msg);
 
+  int samplerate();
+  void setSamplerate(int samplerate);
+  
 private:
   DrumKitLoader loader;
 

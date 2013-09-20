@@ -31,8 +31,11 @@
 #include <unistd.h>
 
 #include <sndfile.h>
+#include <samplerate.h>
 
 #include <hugin.hpp>
+
+#include "configuration.h"
 
 #define LAZYLOAD
 
@@ -63,13 +66,13 @@ void AudioFile::unload()
 {
   MutexAutolock l(mutex);
   if(data == preloaded_data) {
-    delete data;
+    delete[] data;
     data = NULL;
     size = 0;
   }
   else {
     size = 0;
-    delete data;
+    delete[] data;
     data = NULL;
     delete preloaded_data;
     preloaded_data = NULL;
@@ -98,7 +101,7 @@ void AudioFile::init()
   sample_t* data = new sample_t[size];
   
   size = sf_read_float(fh, data, size); 
-  
+
   //DEBUG(audiofile,"Lazy loaded %d samples\n", size);
   sf_close(fh);
 
@@ -191,7 +194,13 @@ void AudioFile::load(int num_samples)
  
   size = sf_info.frames;
 
-  if(num_samples != ALL_SAMPLES && (int)size > num_samples) size = num_samples;
+  double ratio = (double)Conf::samplerate / (double)sf_info.samplerate;
+
+  if(num_samples != ALL_SAMPLES) {
+    // Make sure we read enough samples, even after conversion.
+    num_samples /= ratio;
+    if((int)size > num_samples) size = num_samples;
+  }
 
   sample_t* data = new sample_t[size]; 
   size = sf_read_float(fh, data, size); 
@@ -199,6 +208,31 @@ void AudioFile::load(int num_samples)
   DEBUG(audiofile,"Loaded %d samples %p\n", size, this);
   
   sf_close(fh);
+
+  if(Conf::samplerate != sf_info.samplerate) {
+    // Resample data...
+    size_t osize = size * ratio;
+    sample_t *odata = new sample_t[osize];
+
+    SRC_DATA src;
+    src.data_in = data;
+    src.input_frames = size;
+
+    src.data_out = odata;
+    src.output_frames = osize;
+
+    src.src_ratio = ratio;
+
+    // Do the conversion
+    src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
+
+    delete[] data;
+    data = odata;
+    size = src.output_frames;
+
+    DEBUG(audiofile,"Converted into %d samples %p\n", size, this);
+  }
+
 
   mutex.lock();
   this->data = data;
