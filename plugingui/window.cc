@@ -50,6 +50,7 @@ GUI::Window::Window()
   _height = wpixbuf.height;
 
   refcount = 0;
+  max_refcount = 0;
   _keyboardFocus = this;
   _buttonDownFocus = NULL;
   _mouseFocus = NULL;
@@ -140,6 +141,7 @@ GUI::Window *GUI::Window::window()
 void GUI::Window::beginPaint()
 {
   refcount++;
+  if(refcount > max_refcount) max_refcount = refcount;
 }
 
 void GUI::Window::endPaint()
@@ -147,8 +149,11 @@ void GUI::Window::endPaint()
   if(refcount) refcount--;
 
   if(!refcount) {
-    updateBuffer();
-    redraw();
+    if(max_refcount > 1) { // Did we go deep enough for a buffer update?
+      updateBuffer();
+      redraw();
+    }
+    max_refcount = 0;
   }
 }
 
@@ -197,8 +202,11 @@ GUI::Widget *GUI::Window::keyboardFocus()
 
 void GUI::Window::setKeyboardFocus(GUI::Widget *widget)
 {
+  GUI::Widget *old_focus = _keyboardFocus;
   _keyboardFocus = widget;
-  repaint_r(NULL);
+
+  if(old_focus) old_focus->repaintEvent(NULL);
+  if(_keyboardFocus) _keyboardFocus->repaintEvent(NULL);
 }
 
 GUI::Widget *GUI::Window::buttonDownFocus()

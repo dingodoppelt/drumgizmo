@@ -40,7 +40,10 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc
+	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/mutex.cc \
+	$(top_srcdir)/src/messagehandler.cc \
+	$(top_srcdir)/src/messagereceiver.cc
 
 OBJECTS=$(CXX_SOURCES:.cc=.o) $(C_SOURCES:.c=.o)
 #OBJECTS=$(PLUGIN_GUI_SOURCES:.cc=.o)

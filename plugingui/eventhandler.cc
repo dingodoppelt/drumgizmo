@@ -27,6 +27,7 @@
 #include "eventhandler.h"
 
 #include "window.h"
+#include "painter.h"
 
 GUI::EventHandler::EventHandler(GUI::NativeWindow *n, GUI::Window *w)
 {
@@ -56,6 +57,8 @@ void GUI::EventHandler::registerCloseHandler(void (*handler)(void *), void *ptr)
 void GUI::EventHandler::processEvents()
 {
   while(hasEvent()) {
+    Painter p(window); // Make sure we only redraw buffer one time.
+
     Event *event = getNextEvent();
 
     if(event == NULL) continue;
@@ -72,7 +75,7 @@ void GUI::EventHandler::processEvents()
         ResizeEvent *re = (ResizeEvent*)event;
         if(re->width != window->width() || re->height != window->height()) {
           window->resized(re->width, re->height);
-          window->repaint_r(NULL);
+          //window->repaint_r(NULL);
         }
       }
       break;

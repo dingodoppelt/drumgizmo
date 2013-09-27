@@ -95,6 +95,8 @@ protected:
 
   Image back;
   Image logo;
+
+  size_t max_refcount;
 };
 
 };
