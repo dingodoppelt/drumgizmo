@@ -45,6 +45,11 @@ void DrumKit::clear()
     i++;
   }
   instruments.clear();
+
+  channels.clear();
+
+  _name = "";
+  _description = "";
 }
 
 bool DrumKit::isValid()
