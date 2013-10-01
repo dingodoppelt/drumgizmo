@@ -188,6 +188,8 @@ void PluginGUI::stopThread()
 
 void PluginGUI::handleMessage(Message *msg)
 {
+  GUI::Painter p(window);// Make sure we only redraw buffer one time.
+
   switch(msg->type()) {
   case Message::LoadStatus:
     {
@@ -248,14 +250,14 @@ void PluginGUI::thread_main()
     msghandler.sendMessage(MSGRCV_ENGINE, msg);
   }
 
-  while(1) {
+  while(running) {
 #ifdef WIN32
     SleepEx(50, FALSE);
 #else
     usleep(50000);
 #endif/*WIN32*/
 
-    if(!running) break;
+    //    DEBUG(gui, "loop");
 
     window->eventHandler()->processEvents();
     handleMessages();
