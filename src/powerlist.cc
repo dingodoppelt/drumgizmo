@@ -191,7 +191,7 @@ Sample *PowerList::get(level_t level)
   float power = 0;
 
   float mean = level * power_max;
-  float stddev = power_max / samples.size() * 2;
+  float stddev = power_max / samples.size() * 1.5;
 
   float lvl = box_muller_transform(mean, stddev);
 
