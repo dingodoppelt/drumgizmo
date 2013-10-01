@@ -65,12 +65,12 @@ bool MessageHandler::sendMessage(message_receiver_id_t id, Message* msg)
   MutexAutolock l(mutex);
 
   if(receivers.find(id) == receivers.end()) {
-    WARN(msghandler, "Could not find id %d\n", id);
+    //WARN(msghandler, "Could not find id %d\n", id);
     delete msg;
     return false;
   }
 
-  DEBUG(msghandler, "Sending message to id %d\n", id);
+  //DEBUG(msghandler, "Sending message to id %d\n", id);
 
   MessageReceiver *receiver = receivers[id];
 
@@ -78,8 +78,8 @@ bool MessageHandler::sendMessage(message_receiver_id_t id, Message* msg)
     Message *pmsg;
     while( (pmsg = receiver->peekMessage()) != NULL) {
       if(pmsg->type() != Message::LoadStatus) break;
-      delete msg;
-      msg = receiver->receiveMessage();
+      // Remove all old messages with same type.
+      delete receiver->receiveMessage();
     }
   }
 
