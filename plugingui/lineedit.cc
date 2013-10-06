@@ -123,7 +123,6 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 
     } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
       if(pos < _text.length()) {
-        printf("AAA: %d\n", pos);
         std::string t = _text.substr(0, pos);
         t += _text.substr(pos + 1, std::string::npos);
         _text = t;
