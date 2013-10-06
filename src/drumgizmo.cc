@@ -43,21 +43,13 @@
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : MessageReceiver(MSGRCV_ENGINE),
-    loader(this), oe(o), ie(i)
+    loader(), oe(o), ie(i)
 {
-  loader.run(); // Start drumkit loader thread.
 }
 
 DrumGizmo::~DrumGizmo()
 {
-  /*
-  AudioFiles::iterator i = audiofiles.begin();
-  while(i != audiofiles.end()) {
-    AudioFile *audiofile = i->second;
-    delete audiofile;
-    i++;
-  }
-  */
+  DEBUG(drumgizmo, "!");
   loader.stop();
 }
 
@@ -75,8 +67,10 @@ bool DrumGizmo::loadkit(std::string file)
 
   DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
 
+  // Remove all queue AudioFiles from loader before we actually delete them.
   loader.skip();
 
+  // Delete all Channels, Instruments, Samples and AudioFiles.
   kit.clear();
 
   DrumKitParser parser(kitfile, kit);
@@ -94,16 +88,7 @@ bool DrumGizmo::loadkit(std::string file)
 
 bool DrumGizmo::init(bool preload)
 {
-  if(preload) {
-    /*
-    AudioFiles::iterator i = audiofiles.begin();
-    while(i != audiofiles.end()) {
-      AudioFile *audiofile = i->second;
-      audiofile->load();
-      i++;
-    }
-    */
-  }
+  (void)preload;
 
   if(!ie->init(kit.instruments)) return false;
   if(!oe->init(kit.channels)) return false;

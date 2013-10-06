@@ -31,7 +31,7 @@ struct semaphore_private_t;
 
 class Semaphore {
 public:
-  Semaphore();
+  Semaphore(const char *name = "");
   ~Semaphore();
 
   void post();
@@ -39,6 +39,7 @@ public:
 
 private:
   struct semaphore_private_t *prv;
+  const char *name;
 };
 
 #endif/*__PRACRO_SEMAPHORE_H__*/

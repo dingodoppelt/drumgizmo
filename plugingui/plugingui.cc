@@ -153,7 +153,7 @@ void closeClick(void *ptr)
 */
 
 PluginGUI::PluginGUI()
-  : MessageReceiver(MSGRCV_UI)
+  : MessageReceiver(MSGRCV_UI), sem("plugingui")
 {
   windowClosedHandler = NULL;
   changeMidimapHandler = NULL;

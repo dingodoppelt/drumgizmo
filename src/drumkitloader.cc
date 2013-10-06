@@ -31,185 +31,129 @@
 #include "drumkitparser.h"
 #include "drumgizmo.h"
 
-DrumKitLoader::DrumKitLoader(DrumGizmo *dg)
+DrumKitLoader::DrumKitLoader()
+  : semaphore("drumkitloader")
 {
-  drumgizmo = dg;
-  is_done = false;
-  quitit = false;
-  skipit = false;
+  running = true;
+  run();
 }
 
 DrumKitLoader::~DrumKitLoader()
 {
-  if(!quitit) {
+  if(running) {
     stop();
   }
 }
 
 void DrumKitLoader::stop()
 {
-  quitit = true;
+  {
+    MutexAutolock l(mutex);
+    load_queue.clear();
+  }
+
+  running = false;
   semaphore.post();
   wait_stop();
 }
 
 void DrumKitLoader::skip()
 {
-  skipit = true;
-  semaphore.post();
-  skip_semaphore.wait();
+  MutexAutolock l(mutex);  
+  load_queue.clear();
 }
 
 bool DrumKitLoader::isDone()
 {
-  bool done;
-
-  mutex.lock();
-  done = is_done;
-  mutex.unlock();
-
-  return done;
+  MutexAutolock l(mutex);
+  return load_queue.size() == 0;
 }
 
 void DrumKitLoader::loadKit(DrumKit *kit)
 {
-  this->kit = kit;
+  MutexAutolock l(mutex);
 
-  mutex.lock();
-  is_done = false;
-  mutex.unlock();
+  DEBUG(loader, "Create AudioFile queue from DrumKit\n");
 
-  semaphore.post();
-}
+  total_num_audiofiles = 0;// For UI Progress Messages
 
-void DrumKitLoader::prepare(AudioFile* af)
-{
-  DEBUG(loader, "Preparing audiofile %p (%d in queue)\n",
-        af, load_queue.size());
-  mutex.lock();
-  af->ref_count++;
-  load_queue.push_back(af);
-//  if(ref_count.find(af) == ref_count.end()) {
-//    ref_count[af]++;
-//  }
-//  else {
-//    ref_count[af] = 0;
-//  }
-  mutex.unlock(); 
-  semaphore.post();
-}
+  { // Count total number of files that need loading:
+    Instruments::iterator i = kit->instruments.begin();
+    while(i != kit->instruments.end()) {
+      Instrument *instr = *i;
+      total_num_audiofiles += instr->audiofiles.size();
+      i++;
+    }
+  }
 
-void DrumKitLoader::reset(AudioFile* af)
-{
-  mutex.lock();
-  af->ref_count--;
-  reset_queue.push_back(af);
-  mutex.unlock();
-  semaphore.post();
+  { // Now actually queue them for loading:
+    Instruments::iterator i = kit->instruments.begin();
+    while(i != kit->instruments.end()) {
+      Instrument *instr = *i;
+      
+      std::vector<AudioFile*>::iterator af = instr->audiofiles.begin();
+      while(af != instr->audiofiles.end()) {
+        AudioFile *audiofile = *af;
+        load_queue.push_back(audiofile);
+        af++;
+      }
+  
+      i++;
+    }
+  }
+
+  loaded = 0; // For UI Progress Messages
+
+  DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
+        total_num_audiofiles, load_queue.size());
+
+  semaphore.post(); // Start loader loop.
 }
 
 void DrumKitLoader::thread_main()
 {
-  while(1) {
-    DEBUG(loader, "before sem\n");
-
-    semaphore.wait();
-
-    DEBUG(loader, "after sem\n");
-    fflush(stdout);
-
-
-    if(quitit) return;
-
-    if(skipit) {
-      skip_semaphore.post();
-      skipit = false;
-      continue;
+  while(running) {
+    size_t size;
+    {
+      MutexAutolock l(mutex);
+      size = load_queue.size();
     }
 
-    if(!load_queue.empty()) {
-      DEBUG(loader, "Loading remaining of audio file\n"); 
-      AudioFile* af = load_queue.front();
-      mutex.lock();
+    // Only sleep if queue is empty.
+    if(size == 0) {
+      //DEBUG(loader, "Wait for sem");
+      semaphore.wait();
+      //DEBUG(loader, "Sem enter");
+    }
+
+    AudioFile *audiofile = NULL;
+
+    {
+      MutexAutolock l(mutex);
+      if(load_queue.size() == 0) continue;
+      audiofile = load_queue.front();
       load_queue.pop_front();
-      mutex.unlock();
-      af->loadNext();
     }
-    else if(!reset_queue.empty()) {
-      AudioFile* af = reset_queue.front();
-      mutex.lock();
-      if(af->ref_count <= 0) {
-        af->reset();
-        af->ref_count = 0;
-      }
-      reset_queue.pop_front();
-      mutex.unlock();
-    }
-    else { // Initialize drum kit
-      DEBUG(loader, "Initializing drum kit\n");
-      unsigned int count = 0;
 
-      if(kit && !kit->isValid()) goto finish;
-
-      { // Count total number of files that need loading:
-        Instruments::iterator i = kit->instruments.begin();
-        while(i != kit->instruments.end()) {
-          Instrument *instr = *i;
-          if(instr && !instr->isValid()) goto finish;
-
-          count += instr->audiofiles.size();
-          i++;
-        }
-      }
-
-      { // Now actually load them:
-        unsigned int loaded = 0;
-        Instruments::iterator i = kit->instruments.begin();
-        while(i != kit->instruments.end()) {
-          Instrument *instr = *i;
-        
-          if(instr && !instr->isValid()) goto finish;
-
-          std::vector<AudioFile*>::iterator a = instr->audiofiles.begin();
-          while(a != instr->audiofiles.end()) {
 #if 0
 #ifdef WIN32
-            SleepEx(5000, FALSE);
+    SleepEx(5000, FALSE);
 #else
-            usleep(5000);
+    usleep(5000);
 #endif/*WIN32*/
 #endif
-            AudioFile *af = *a;
 
-            if(af && !af->isValid()) goto finish;
+    audiofile->load();
+    loaded++;
 
-            af->load();
-          
-            loaded++;
-
-            LoadStatusMessage *ls = new LoadStatusMessage();
-            ls->number_of_files = count;
-            ls->numer_of_files_loaded = loaded;
-            ls->current_file = af->filename;
-            msghandler.sendMessage(MSGRCV_UI, ls);
-          
-            a++;
-
-            if(skipit) goto finish;
-          }
-        
-          i++;
-        }
-      }
-
-      mutex.lock();
-      is_done = true;
-      mutex.unlock();
-
-    finish:
-      continue;
-    }
+    LoadStatusMessage *ls = new LoadStatusMessage();
+    ls->number_of_files = total_num_audiofiles;
+    ls->numer_of_files_loaded = loaded;
+    ls->current_file = audiofile->filename;
+    msghandler.sendMessage(MSGRCV_UI, ls);
   }
+
+  DEBUG(loader, "Loader thread finished.");
 }
 
 #ifdef TEST_DRUMKITLOADER

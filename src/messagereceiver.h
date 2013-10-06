@@ -34,6 +34,7 @@
 #include "messagehandler.h"
 
 class MessageReceiver {
+  friend class MessageHandler;
 public:
   MessageReceiver(message_receiver_id_t id);
   ~MessageReceiver();

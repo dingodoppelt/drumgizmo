@@ -47,7 +47,6 @@ void MessageReceiver::sendMessage(Message *msg)
 
 Message *MessageReceiver::receiveMessage()
 {
-  MutexAutolock l(message_mutex);
   Message *msg = NULL;
   if(message_queue.size()) {
     msg = message_queue.front();
@@ -58,7 +57,6 @@ Message *MessageReceiver::receiveMessage()
 
 Message *MessageReceiver::peekMessage()
 {
-  MutexAutolock l(message_mutex);
   Message *msg = NULL;
   if(message_queue.size()) {
     msg = message_queue.front();
@@ -68,6 +66,7 @@ Message *MessageReceiver::peekMessage()
 
 void MessageReceiver::handleMessages(size_t max)
 {
+  MutexAutolock l(message_mutex);
   bool process_all = false;
   if(max == 0) process_all = true;
 

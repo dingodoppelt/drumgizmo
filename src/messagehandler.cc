@@ -73,16 +73,17 @@ bool MessageHandler::sendMessage(message_receiver_id_t id, Message* msg)
   //DEBUG(msghandler, "Sending message to id %d\n", id);
 
   MessageReceiver *receiver = receivers[id];
-
+  /* // This code causes sporadic segfaults on windows.
   if(msg->processing_mode() == Message::FilterMultiple) {
     Message *pmsg;
+    MutexAutolock lock(receiver->message_mutex); // Make peek/receive atomic.
     while( (pmsg = receiver->peekMessage()) != NULL) {
-      if(pmsg->type() != Message::LoadStatus) break;
+      if(pmsg->type() != msg->type()) break;
       // Remove all old messages with same type.
       delete receiver->receiveMessage();
     }
   }
-
+  */
   receiver->sendMessage(msg);
   return true;
 }

@@ -36,7 +36,7 @@
 #include "mutex.h"
 #include "audio.h"
 
-#if 0
+/*
   Plan for lazy loading of audio (Brainstorming)
     * Encapsulate data array?
       - Speed issues?
@@ -63,9 +63,9 @@
       |            --------- |                                   |
     Wave Into --> | SndFile | <----- Read data (directly from array)
                    ---------  
-#endif/*0*/
+*/
 
-#define LAZYLOAD
+//#define LAZYLOAD
 
 #define ALL_SAMPLES -1
 
@@ -95,13 +95,12 @@ public:
 #endif/*LAZYLOAD*/
 
   bool isValid();
-  int ref_count;
 
   Mutex mutex;
 
 private:
   void *magic;
-  bool is_loaded;
+  volatile bool is_loaded;
 };
 
 #endif/*__DRUMGIZMO_AUDIOFILE_H__*/

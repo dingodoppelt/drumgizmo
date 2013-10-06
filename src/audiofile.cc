@@ -37,8 +37,6 @@
 
 #include "configuration.h"
 
-#define LAZYLOAD
-
 AudioFile::AudioFile(std::string filename)
 {
   is_loaded = false;
@@ -46,8 +44,11 @@ AudioFile::AudioFile(std::string filename)
 
   data = NULL;
   size = 0;
+
+#ifdef LAZYLOAD
   preloaded_data = NULL;
-  ref_count = 0;
+#endif/*LAZYLOAD*/
+
   magic = this;
 }
 
@@ -64,21 +65,104 @@ bool AudioFile::isValid()
 
 void AudioFile::unload()
 {
+  // Make sure we don't unload the object while loading it...
   MutexAutolock l(mutex);
+
+  is_loaded = false;
+
+#ifdef LAZYLOAD
   if(data == preloaded_data) {
     delete[] data;
     data = NULL;
     size = 0;
-  }
-  else {
+  } else {
     size = 0;
     delete[] data;
     data = NULL;
     delete preloaded_data;
     preloaded_data = NULL;
   }
+#else
+  delete[] data;
+  data = NULL;
+  size = 0;
+#endif/*LAZYLOAD*/
 }
 
+void AudioFile::load(int num_samples)
+{
+  // Make sure we don't unload the object while loading it...
+  MutexAutolock l(mutex);
+
+ /*
+  Lazy load of drum kits
+  init();
+  return;
+  */
+
+  if(data) return;
+
+  SF_INFO sf_info;
+  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
+  if(!fh) {
+    ERR(audiofile,"SNDFILE Error (%s): %s\n",
+        filename.c_str(), sf_strerror(fh));
+    return;
+  }
+ 
+  size = sf_info.frames;
+
+  double ratio = (double)Conf::samplerate / (double)sf_info.samplerate;
+
+  if(num_samples != ALL_SAMPLES) {
+    // Make sure we read enough samples, even after conversion.
+    num_samples /= ratio;
+    if((int)size > num_samples) size = num_samples;
+  }
+
+  sample_t* data = new sample_t[size]; 
+  size = sf_read_float(fh, data, size); 
+  
+  DEBUG(audiofile,"Loaded %d samples %p\n", size, this);
+  
+  sf_close(fh);
+
+  if(Conf::samplerate != sf_info.samplerate) {
+    // Resample data...
+    size_t osize = size * ratio;
+    sample_t *odata = new sample_t[osize];
+
+    SRC_DATA src;
+    src.data_in = data;
+    src.input_frames = size;
+
+    src.data_out = odata;
+    src.output_frames = osize;
+
+    src.src_ratio = ratio;
+
+    // Do the conversion
+    src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
+
+    delete[] data;
+    data = odata;
+    size = src.output_frames;
+
+    DEBUG(audiofile,"Converted into %d samples %p\n", size, this);
+  }
+  
+  this->data = data;
+  is_loaded = true;
+
+  //DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
+}
+
+bool AudioFile::isLoaded()
+{
+  return is_loaded;
+}
+
+#ifdef LAZYLOAD
 #define SIZE 512*4 
 void AudioFile::init()
 {
@@ -173,82 +257,4 @@ void AudioFile::reset()
   delete old_data; 
   mutex.unlock();
 }
-
-void AudioFile::load(int num_samples)
-{
-  /*
-  Lazy load of drum kits
-  init();
-  return;
-  */
-
-  if(data) return;
-
-  SF_INFO sf_info;
-  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    ERR(audiofile,"SNDFILE Error (%s): %s\n",
-        filename.c_str(), sf_strerror(fh));
-    return;
-  }
- 
-  size = sf_info.frames;
-
-  double ratio = (double)Conf::samplerate / (double)sf_info.samplerate;
-
-  if(num_samples != ALL_SAMPLES) {
-    // Make sure we read enough samples, even after conversion.
-    num_samples /= ratio;
-    if((int)size > num_samples) size = num_samples;
-  }
-
-  sample_t* data = new sample_t[size]; 
-  size = sf_read_float(fh, data, size); 
-  
-  DEBUG(audiofile,"Loaded %d samples %p\n", size, this);
-  
-  sf_close(fh);
-
-  if(Conf::samplerate != sf_info.samplerate) {
-    // Resample data...
-    size_t osize = size * ratio;
-    sample_t *odata = new sample_t[osize];
-
-    SRC_DATA src;
-    src.data_in = data;
-    src.input_frames = size;
-
-    src.data_out = odata;
-    src.output_frames = osize;
-
-    src.src_ratio = ratio;
-
-    // Do the conversion
-    src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
-
-    delete[] data;
-    data = odata;
-    size = src.output_frames;
-
-    DEBUG(audiofile,"Converted into %d samples %p\n", size, this);
-  }
-
-
-  mutex.lock();
-  this->data = data;
-  is_loaded = true;
-  mutex.unlock();
-
-  //DEBUG(audiofile, "Loading of %s completed.\n", filename.c_str());
-}
-
-bool AudioFile::isLoaded()
-{
-  bool l;
-
-  mutex.lock();
-  l = is_loaded;
-  mutex.unlock();
-
-  return l;
-}
+#endif

@@ -36,37 +36,62 @@
 
 #include "drumkit.h"
 
-class DrumGizmo;
-
+/**
+ * This class is responsible for loading the drumkits in its own thread.
+ * All interaction calls are simply modifying queues and not doing any
+ * work in-sync with the caller.
+ * This means that if loadKit(...) is called, one cannot assume that the
+ * drumkit has actually been loaded when the call returns.
+ */
 class DrumKitLoader : public Thread {
 public:
-  DrumKitLoader(DrumGizmo *drumgizmo);
+  /**
+   * The constrcutor starts the loader thread.
+   */
+  DrumKitLoader();
+
+  /**
+   * The destructor signals the thread to stop and waits to merge before
+   * returning (ie. deleting the object will garantuee that the thread has
+   * been stopped).
+   */
   ~DrumKitLoader();
 
+  /**
+   * Signal the loader to start loading all audio files contained in kit.
+   * All other AudioFiles in queue will be removed before the new ones are
+   * scheduled.
+   */
   void loadKit(DrumKit *kit);
   
-  void prepare(AudioFile* af);
-  void reset(AudioFile* af);
+  // I have no idea what this does..
+  //void reset(AudioFile* af);
 
   void thread_main();
 
+  /**
+   * Simply reports if the load queue is empty (i.e. all AudioFiles has been
+   * loaded).
+   */
   bool isDone();
 
+  /**
+   * Signal the loader to stop and wait until it has.
+   */
   void stop();
+
+  /**
+   * Skip all queued AudioFiles.
+   */
   void skip();
 
 private:
-  DrumGizmo *drumgizmo;
   Semaphore semaphore;
-  Semaphore skip_semaphore;
-  DrumKit *kit;
-  bool is_done;
   Mutex mutex;
-  volatile bool quitit;
-  volatile bool skipit;
+  volatile bool running;
   std::list<AudioFile*> load_queue;
-  std::list<AudioFile*> reset_queue;
-  std::map<AudioFile*, int> ref_count;
+  size_t total_num_audiofiles;
+  size_t loaded;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/
