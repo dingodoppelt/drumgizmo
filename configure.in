@@ -295,10 +295,10 @@ PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7)
 #dnl ======================
 PKG_CHECK_MODULES(PNG, libpng >= 1.2)
 
-dnl ======================
-dnl Check for zlib
-dnl ======================
-PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.7)
+#dnl ======================
+#dnl Check for zlib
+#dnl ======================
+#PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.7)
 
 dnl ======================
 dnl Check for the pthread library
