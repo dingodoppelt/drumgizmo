@@ -86,6 +86,8 @@ void DrumKitLoader::loadKit(DrumKit *kit)
     }
   }
 
+  fraction = total_num_audiofiles / 200;
+
   { // Now actually queue them for loading:
     Instruments::iterator i = kit->instruments.begin();
     while(i != kit->instruments.end()) {
@@ -146,11 +148,13 @@ void DrumKitLoader::thread_main()
     audiofile->load();
     loaded++;
 
-    LoadStatusMessage *ls = new LoadStatusMessage();
-    ls->number_of_files = total_num_audiofiles;
-    ls->numer_of_files_loaded = loaded;
-    ls->current_file = audiofile->filename;
-    msghandler.sendMessage(MSGRCV_UI, ls);
+    if(loaded % fraction == 0 || loaded == total_num_audiofiles) {
+      LoadStatusMessage *ls = new LoadStatusMessage();
+      ls->number_of_files = total_num_audiofiles;
+      ls->numer_of_files_loaded = loaded;
+      ls->current_file = audiofile->filename;
+      msghandler.sendMessage(MSGRCV_UI, ls);
+    }
   }
 
   DEBUG(loader, "Loader thread finished.");

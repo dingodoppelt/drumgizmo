@@ -91,6 +91,7 @@ private:
   volatile bool running;
   std::list<AudioFile*> load_queue;
   size_t total_num_audiofiles;
+  size_t fraction;
   size_t loaded;
 };
 
