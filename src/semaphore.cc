@@ -31,7 +31,8 @@
 #ifdef WIN32
 #include <windows.h>
 #else
-#include </usr/include/semaphore.h>
+// Make sure we don't include /this/ file...
+#include <../include/semaphore.h>
 #endif
 
 struct semaphore_private_t {
@@ -52,7 +53,7 @@ Semaphore::Semaphore(const char *name)
 #ifdef WIN32
   prv->semaphore = CreateSemaphore(NULL,  // default security attributes
                                    0, // initial count
-                                   100000, // maximum count
+                                   2147483647, // maximum count (Max LONG)
                                    NULL); // unnamed semaphore
 #else
   sem_init(&prv->semaphore, 0, 0);
