@@ -44,6 +44,7 @@ public:
   NativeWindowWin32(GUI::Window *window);
   ~NativeWindowWin32();
 
+  void setFixedSize(int width, int height);
   void resize(int width, int height);
   void move(int x, int y);
   void show();

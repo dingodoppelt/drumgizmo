@@ -44,6 +44,7 @@ public:
   void show();
   void hide();
 
+  void setFixedSize(int width, int height);
   void resize(int width, int height);
   void move(size_t x, size_t y);
 

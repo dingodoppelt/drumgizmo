@@ -82,6 +82,31 @@ GUI::NativeWindowX11::~NativeWindowX11()
   XCloseDisplay(display);
 }
 
+void GUI::NativeWindowX11::setFixedSize(int width, int height)
+{
+  resize(width, height);
+
+  XSizeHints *size_hints;
+  size_hints = XAllocSizeHints();
+
+  if(size_hints == NULL) {
+    //fprintf(stderr,"XMallocSizeHints() failed\n");
+    //exit(1);
+    return;
+  }
+
+  size_hints->flags = USPosition | PMinSize | PMaxSize;
+  size_hints->min_width = size_hints->max_width = width;
+  size_hints->min_height = size_hints->max_height = height;
+  /*
+    size_hints->min_aspect.x = window->width()/window->height();
+    size_hints->max_aspect.x = window->width()/window->height();
+    size_hints->min_aspect.y = window->width()/window->height();
+    size_hints->max_aspect.y = size_hints->min_aspect.y;
+  */
+  XSetWMNormalHints(display, xwindow, size_hints);
+}
+
 void GUI::NativeWindowX11::resize(int width, int height)
 {
   XResizeWindow(display, xwindow, width, height);

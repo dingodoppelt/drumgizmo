@@ -320,6 +320,14 @@ GUI::NativeWindowWin32::~NativeWindowWin32()
 	free(m_className);
 }
 
+void GUI::NativeWindowWin32::setFixedSize(int width, int height)
+{
+  resize(width, height);
+  LONG style =  GetWindowLong(m_hwnd, GWL_STYLE);
+  style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+  SetWindowLong(m_hwnd, GWL_STYLE, style);
+}
+
 void GUI::NativeWindowWin32::resize(int width, int height)
 {
   SetWindowPos(m_hwnd, NULL, -1, -1, (int)width, (int)height, SWP_NOMOVE);

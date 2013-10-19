@@ -284,7 +284,7 @@ void PluginGUI::init()
   window->eventHandler()->registerCloseHandler(closeEventHandler,
                                                (void*)&closing);
 
-  window->resize(370, 330);
+  window->setFixedSize(370, 330);
   window->setCaption("DrumGizmo v"VERSION);
 
   GUI::Label *lbl_title = new GUI::Label(window);

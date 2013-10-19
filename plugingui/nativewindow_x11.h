@@ -41,6 +41,7 @@ public:
   NativeWindowX11(GUI::Window *window);
   ~NativeWindowX11();
 
+  void setFixedSize(int width, int height);
   void resize(int width, int height);
   void move(int x, int y);
   void show();

@@ -92,16 +92,23 @@ void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
               height() - logo.height(), &logo);
 }
 
+void GUI::Window::setFixedSize(int w, int h)
+{
+  native->setFixedSize(w, h);
+  resize(w,h);
+}
+
 void GUI::Window::resize(int width, int height)
 {
   if(width < 1 || height < 1) return;
 
-#ifdef WIN32
+  // This needs to be done on all platoforms when setFixedSize is introduced.
+  //#ifdef WIN32
   // Fix to force buffer size reallocation
   // FIXME: This should've been done indirectly through a WM_SIZE message in the
   //  EventHandler...
   resized(width, height);
-#endif
+  //#endif
 
   native->resize(width, height);
   Widget::resize(width, height);
