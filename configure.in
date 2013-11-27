@@ -36,6 +36,15 @@ if test x$with_experimental == xyes; then
     CXXFLAGS="$CXXFLAGS -DEXPERIMENTAL"
 fi 
 
+AC_ARG_WITH(pugl,  [  --with-pugl             Build with Pugl support])
+if test x$with_pugl == xyes; then
+    AC_MSG_WARN([*** Building with pugl support!])
+    PUGL_LIBS="-lGL -lGLU -lX11"
+    PUGL_CFLAGS=""
+		AC_SUBST(PUGL_CFLAGS)
+		AC_SUBST(PUGL_LIBS)
+fi 
+
 dnl ======================
 dnl Compile LV2 plugin
 dnl ======================
@@ -283,7 +292,7 @@ AM_CONDITIONAL([HAVE_EDITOR], [test "x$have_editor" = "xyes"])
 dnl ======================
 dnl Check for sndfile
 dnl ======================
-PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.21)
+PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
 dnl ======================
 dnl Check for libsamplerate
