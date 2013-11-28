@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     }
     fclose(fp);
 
-    printf("%d,\n   \"", data.length());
+    printf("%d,\n   \"", (int)data.length());
     for(size_t j = 0; j < data.length(); j++) {
       if(j != 0 && j % 16 == 0) printf("\"\n   \"");
       printf("\\%o", (unsigned char)data[j]);
