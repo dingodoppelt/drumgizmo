@@ -66,5 +66,5 @@ void ConfigParser::parseError(char *buf, size_t len, std::string error,
   buffer.append(buf, len);
   ERR(configparser, "sax parser error '%s' at line %d. "
       "Buffer: [%d bytes]<%s>\n",
-      error.c_str(), lineno, len, buffer.c_str());
+      error.c_str(), lineno, (int)len, buffer.c_str());
 }
