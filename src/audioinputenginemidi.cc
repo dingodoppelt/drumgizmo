@@ -41,7 +41,7 @@ bool AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
   is_valid = false;
 
   DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
-        instruments.size());
+        (int)instruments.size());
 
   if(f == "") return false;
 
