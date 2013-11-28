@@ -79,8 +79,11 @@ VersionStr::operator std::string() const
 {
   std::string v;
   char buf[64];
-  if(patch()) sprintf(buf, "%d.%d.%d", major(), minor(), patch());
-  else sprintf(buf, "%d.%d", major(), minor());
+  if(patch()) {
+    sprintf(buf, "%d.%d.%d", (int)major(), (int)minor(), (int)patch());
+  } else {
+    sprintf(buf, "%d.%d", (int)major(), (int)minor());
+  }
   v = buf;
   return v;
 }
