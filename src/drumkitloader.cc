@@ -34,8 +34,8 @@
 DrumKitLoader::DrumKitLoader()
   : semaphore("drumkitloader")
 {
-  running = true;
   run();
+  run_semaphore.wait(); // Wait for the thread to actually start.
 }
 
 DrumKitLoader::~DrumKitLoader()
@@ -107,13 +107,17 @@ void DrumKitLoader::loadKit(DrumKit *kit)
   loaded = 0; // For UI Progress Messages
 
   DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
-        total_num_audiofiles, load_queue.size());
+        (int)total_num_audiofiles, (int)load_queue.size());
 
   semaphore.post(); // Start loader loop.
 }
 
 void DrumKitLoader::thread_main()
 {
+  running = true;
+
+  run_semaphore.post(); // Signal that the thread has been started.
+
   while(running) {
     size_t size;
     {
@@ -122,11 +126,7 @@ void DrumKitLoader::thread_main()
     }
 
     // Only sleep if queue is empty.
-    if(size == 0) {
-      //DEBUG(loader, "Wait for sem");
-      semaphore.wait();
-      //DEBUG(loader, "Sem enter");
-    }
+    if(size == 0) semaphore.wait();
 
     AudioFile *audiofile = NULL;
 
