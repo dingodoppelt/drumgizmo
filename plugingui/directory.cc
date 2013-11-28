@@ -351,7 +351,7 @@ Directory::Path Directory::parsePath(std::string path_str)
 std::string Directory::pathToStr(Directory::Path& path)
 {
   std::string cleaned_path;
-  DEBUG(directory, "Number of directories in path is %d\n", path.size());
+  DEBUG(directory, "Number of directories in path is %d\n", (int)path.size());
 
   for(Directory::Path::iterator it = path.begin();
       it != path.end(); it++) {
