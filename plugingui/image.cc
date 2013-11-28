@@ -87,13 +87,13 @@ void GUI::Image::setError(int err)
   memcpy(&w, p, 4); p += 4;
   memcpy(&h, p, 4); p += 4;
 
-  DEBUG(image, "w:%d, h:%d\n", w, h);
+  DEBUG(image, "w:%d, h:%d\n", (int)w, (int)h);
 
   row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
   for(unsigned int y = 0; y < h; y++) {
     size_t size = w * sizeof(unsigned int);
     DEBUG(image, "rc.size:%d >= p:%d (rowsize: %d)\n",
-          rc.size(), p - rc.data(), size);
+          (int)rc.size(), (int)(p - rc.data()), (int)size);
     row_pointers[y] = (png_byte*)malloc(size);
     memcpy(row_pointers[y], p, size);
     p += size;
