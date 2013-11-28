@@ -123,7 +123,7 @@ void AudioFile::load(int num_samples)
   sample_t* data = new sample_t[size]; 
   size = sf_read_float(fh, data, size); 
   
-  DEBUG(audiofile,"Loaded %d samples %p\n", size, this);
+  DEBUG(audiofile,"Loaded %d samples %p\n", (int)size, this);
   
   sf_close(fh);
 
@@ -148,7 +148,7 @@ void AudioFile::load(int num_samples)
     data = odata;
     size = src.output_frames;
 
-    DEBUG(audiofile,"Converted into %d samples %p\n", size, this);
+    DEBUG(audiofile,"Converted into %d samples %p\n", (int)size, this);
   }
   
   this->data = data;
