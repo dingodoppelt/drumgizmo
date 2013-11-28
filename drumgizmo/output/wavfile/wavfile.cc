@@ -86,7 +86,7 @@ bool WavFile::init(int channels, char *cnames[])
   for(size_t i = 0; i < this->channels; i++) {
     char fname[512];
 
-    sprintf(fname, "%s%s-%d.wav", filename.c_str(), cnames[i], i);
+    sprintf(fname, "%s%s-%d.wav", filename.c_str(), cnames[i], (int)i);
     //    printf("[%s]\n", fname);
 
     fh[i] = sf_open(fname, SFM_WRITE, &sf_info);
