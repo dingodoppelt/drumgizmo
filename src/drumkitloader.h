@@ -86,6 +86,7 @@ public:
   void skip();
 
 private:
+  Semaphore run_semaphore;
   Semaphore semaphore;
   Mutex mutex;
   volatile bool running;
