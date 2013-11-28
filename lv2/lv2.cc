@@ -155,7 +155,7 @@ dg_restore(LV2_Handle                  instance,
                           dglv2->urimap->uri_to_id(dglv2->urimap->callback_data,
                                                    NULL, NS_DG "config"),
                           &size, &type, &flags);
-  DEBUG(lv2, "Config string size: %d, data*: %p\n", size, data);
+  DEBUG(lv2, "Config string size: %d, data*: %p\n", (int)size, data);
 
   if(data && size) {
     std::string config;
