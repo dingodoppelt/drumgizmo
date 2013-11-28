@@ -113,7 +113,7 @@ int SAXParser::parse()
 
 int SAXParser::parse(std::string buffer)
 {
-  DEBUG(sax, "parse(buffer %d bytes)\n", buffer.length());
+  DEBUG(sax, "parse(buffer %d bytes)\n", (int)buffer.length());
 
   if(!XML_Parse(p, buffer.c_str(), buffer.length(), true)) {
     parseError((char*)buffer.c_str(), buffer.length(),
@@ -128,7 +128,7 @@ int SAXParser::parse(std::string buffer)
 void SAXParser::parseError(char *buf, size_t len, std::string error, int lineno)
 {
   fprintf(stderr, "SAXParser error at line %d: %s\n", lineno, error.c_str());
-  fprintf(stderr, "\tBuffer %u bytes: [", len);
+  fprintf(stderr, "\tBuffer %u bytes: [", (int)len);
   if(fwrite(buf, len, 1, stderr) != len) {}
   fprintf(stderr, "]\n");
   fflush(stderr);
