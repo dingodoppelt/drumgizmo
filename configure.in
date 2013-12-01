@@ -45,6 +45,13 @@ if test x$with_pugl == xyes; then
 		AC_SUBST(PUGL_LIBS)
 fi 
 
+AC_ARG_WITH(test,  [  --with-test             Build unit tests])
+if test x$with_test == xyes; then
+    AC_MSG_WARN([*** Building unittests!])
+		AM_PATH_CPPUNIT(1.9.6)
+		AC_OUTPUT(test/Makefile)
+fi 
+
 dnl ======================
 dnl Compile LV2 plugin
 dnl ======================
