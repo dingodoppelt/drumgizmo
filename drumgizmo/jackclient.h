@@ -32,6 +32,7 @@
 
 class JackProcess {
 public:
+  virtual ~JackProcess();
   virtual void jack_process(jack_nframes_t nframes) = 0;
 };
 
