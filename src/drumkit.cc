@@ -57,6 +57,11 @@ bool DrumKit::isValid()
   return this == magic;
 }
 
+std::string DrumKit::file()
+{
+  return _file;
+}
+
 std::string DrumKit::name()
 {
   return _name;

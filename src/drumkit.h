@@ -41,6 +41,8 @@ public:
   DrumKit();
   ~DrumKit();
 
+  std::string file();
+
   std::string name();
   std::string description();
   
@@ -53,6 +55,8 @@ public:
 
 private:
   void *magic;
+
+  std::string _file;
 
   std::string _name;
   std::string _description;
