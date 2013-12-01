@@ -54,11 +54,13 @@ public:
   virtual ~DrumGizmo();
 
   bool loadkit(std::string kitfile);
-  std::string drumkitfile();
 
   bool init(bool preload = true);
-
-  void run();
+  
+  /**
+   * @param endpos number of samples to process, -1 := never stop.
+   */
+  void run(int endpos);
   bool run(size_t pos, sample_t *samples, size_t nsamples);
   void stop();
 
@@ -68,8 +70,6 @@ public:
 
   std::string configString();
   bool setConfigString(std::string cfg);
-
-  std::string kitfile;
 
   void handleMessage(Message *msg);
 

@@ -59,6 +59,7 @@ static const char usage_str[] =
 "  -I, --inputparms parmlist  Set input engine parameters.\n"
 "  -o, --outputengine dummy|alsa|jack|sndfile  Use said audio output engine.\n"
 "  -O, --outputparms parmlist  Set output engine parameters.\n"
+"  -e, --endpos Number of samples to process, -1: infinite.\n"
 "  -v, --version          Print version information and exit.\n"
 "  -h, --help             Print this message and exit.\n"
 ;
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
   std::string iparms;
   std::string oparms;
   bool preload = false;
+  int endpos = -1;
 
   int option_index = 0;
   while(1) {
@@ -81,12 +83,13 @@ int main(int argc, char *argv[])
       {"inputparms", required_argument, 0, 'I'},
       {"outputengine", required_argument, 0, 'o'},
       {"outputparms", required_argument, 0, 'O'},
-      {"help", no_argument, 0, 'h'},
+      {"endpos", required_argument, 0, 'e'},
       {"version", no_argument, 0, 'v'},
+      {"help", no_argument, 0, 'h'},
       {0, 0, 0, 0}
     };
     
-    c = getopt_long (argc, argv, "hvpo:O:i:I:", long_options, &option_index);
+    c = getopt_long (argc, argv, "hvpo:O:i:I:e:", long_options, &option_index);
     
     if (c == -1)
       break;
@@ -120,6 +123,10 @@ int main(int argc, char *argv[])
       preload = true;
       break;
  
+    case 'e':
+      endpos = atoi(optarg);
+      break;
+
     case '?':
     case 'h':
       printf("%s", version_str);
@@ -246,7 +253,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  gizmo.run();
+  gizmo.run(endpos);
 
   printf("Quit.\n"); fflush(stdout);
 

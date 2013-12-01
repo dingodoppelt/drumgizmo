@@ -49,23 +49,14 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
 
 DrumGizmo::~DrumGizmo()
 {
-  DEBUG(drumgizmo, "!");
-  loader.stop();
-}
-
-std::string DrumGizmo::drumkitfile()
-{
-  return kitfile;
 }
 
 bool DrumGizmo::loadkit(std::string file)
 {
-  if(file == this->kitfile) return 1;
+  if(file == kit.file()) return 1;
   if(file == "") return 1;
 
-  this->kitfile = file;
-
-  DEBUG(drumgizmo, "loadkit(%s)\n", kitfile.c_str());
+  DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
 
   // Remove all queue AudioFiles from loader before we actually delete them.
   loader.skip();
@@ -73,9 +64,9 @@ bool DrumGizmo::loadkit(std::string file)
   // Delete all Channels, Instruments, Samples and AudioFiles.
   kit.clear();
 
-  DrumKitParser parser(kitfile, kit);
+  DrumKitParser parser(file, kit);
   if(parser.parse()) {
-    ERR(drumgizmo, "Drumkit parser failed: %s\n", kitfile.c_str());
+    ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
     return false;
   }
 
@@ -123,8 +114,6 @@ void DrumGizmo::handleMessage(Message *msg)
     break;
   case Message::EngineSettingsMessage:
     {
-      DEBUG(msg, "--------------- Send: EngineSettingsMessage ------------ \n");
-      
       bool mmap_loaded = false;
       std::string mmapfile;
       if(ie->isMidiEngine()) {
@@ -136,7 +125,7 @@ void DrumGizmo::handleMessage(Message *msg)
       EngineSettingsMessage *msg = new EngineSettingsMessage();
       msg->midimapfile = mmapfile;
       msg->midimap_loaded = mmap_loaded;
-      msg->drumkitfile = drumkitfile();
+      msg->drumkitfile = kit.file();
       msg->drumkit_loaded = loader.isDone();
       msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
       msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
@@ -293,7 +282,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   return true;
 }
 
-void DrumGizmo::run()
+void DrumGizmo::run(int endpos)
 {
   ie->start();
   oe->start();
@@ -304,6 +293,7 @@ void DrumGizmo::run()
 
   while(run(pos, samples, nsamples) == true) {
     pos += nsamples;
+    if(endpos != -1 && pos >= (size_t)endpos) break;
   }
 
   ie->stop();
@@ -429,7 +419,7 @@ std::string DrumGizmo::configString()
 
   return
     "<config>\n"
-    "  <value name=\"drumkitfile\">" + kitfile + "</value>\n"
+    "  <value name=\"drumkitfile\">" + kit.file() + "</value>\n"
     "  <value name=\"midimapfile\">" + mmapfile + "</value>\n"
     "  <value name=\"enable_velocity_modifier\">" +
     bool2str(Conf::enable_velocity_modifier) + "</value>\n"
@@ -482,7 +472,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
   }
 
   std::string newkit = p.value("drumkitfile");
-  if(newkit != "" && drumkitfile() != newkit) {
+  if(newkit != "" && kit.file() != newkit) {
     /*
     if(!loadkit(p.values["drumkitfile"])) return false;
     init(true);
