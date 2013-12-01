@@ -87,6 +87,7 @@ void DrumKitLoader::loadKit(DrumKit *kit)
   }
 
   fraction = total_num_audiofiles / 200;
+  if(fraction == 0) fraction = 1;
 
   { // Now actually queue them for loading:
     Instruments::iterator i = kit->instruments.begin();
@@ -128,51 +129,26 @@ void DrumKitLoader::thread_main()
     // Only sleep if queue is empty.
     if(size == 0) semaphore.wait();
 
-    AudioFile *audiofile = NULL;
-
+    std::string filename;
     {
       MutexAutolock l(mutex);
       if(load_queue.size() == 0) continue;
-      audiofile = load_queue.front();
+      AudioFile *audiofile = load_queue.front();
       load_queue.pop_front();
+      filename = audiofile->filename;
+      audiofile->load();
     }
 
-#if 0
-#ifdef WIN32
-    SleepEx(5000, FALSE);
-#else
-    usleep(5000);
-#endif/*WIN32*/
-#endif
-
-    audiofile->load();
     loaded++;
 
     if(loaded % fraction == 0 || loaded == total_num_audiofiles) {
       LoadStatusMessage *ls = new LoadStatusMessage();
       ls->number_of_files = total_num_audiofiles;
       ls->numer_of_files_loaded = loaded;
-      ls->current_file = audiofile->filename;
+      ls->current_file = filename;
       msghandler.sendMessage(MSGRCV_UI, ls);
     }
   }
 
   DEBUG(loader, "Loader thread finished.");
 }
-
-#ifdef TEST_DRUMKITLOADER
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_DRUMKITLOADER*/
