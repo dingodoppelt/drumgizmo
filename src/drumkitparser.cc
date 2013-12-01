@@ -44,6 +44,8 @@ DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
   //  DEBUG(kitparser, "Parsing drumkit in %s\n", kitfile.c_str());
 
   if(!fd) return;
+
+  kit._file = kitfile;
 }
 
 DrumKitParser::~DrumKitParser()
