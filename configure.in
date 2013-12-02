@@ -289,7 +289,7 @@ if test "x$enable_editor" = "xyes"; then
    dnl ======================
    dnl Check for libao
    dnl ======================
-   PKG_CHECK_MODULES(AO, ao >= 1.1.0)
+   PKG_CHECK_MODULES(AO, ao >= 0.8.8)
 else
 	 AC_MSG_RESULT([*** Qt Drumkit Editor disabled per user request ***])
    have_editor=no
