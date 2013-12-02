@@ -66,7 +66,7 @@ void AudioExtractor::exportSelection(QString filename,
                                      Selection sel)
 {
   printf("Writing: %s (sz: %d, from %d to %d)\n",
-         filename.toStdString().c_str(), size, sel.from, sel.to);
+         filename.toStdString().c_str(), (int)size, sel.from, sel.to);
   
   if(sel.from > (int)size ||
      sel.to > (int)size ||
