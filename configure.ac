@@ -1,9 +1,8 @@
 # Filename: configure.in
 
-AC_INIT(src/drumgizmo.cc)
-
-VERSION="`cat version.h | cut -d'\"' -f2`"
-AM_INIT_AUTOMAKE( drumgizmo, $VERSION )
+AC_INIT([drumgizmo], m4_esyscmd_s([cat version.h | cut -d'"' -f2]))
+AC_CONFIG_SRCDIR([src/drumgizmo.cc])
+AM_INIT_AUTOMAKE
 
 AC_PROG_CXX
 #AM_PROG_CC_C_O
