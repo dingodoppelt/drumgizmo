@@ -1,6 +1,6 @@
 # Filename: configure.in
 
-AC_INIT([drumgizmo], m4_esyscmd_s([cat version.h | cut -d'"' -f2]))
+AC_INIT([drumgizmo], m4_esyscmd([cat version.h | cut -d'"' -f2 | xargs echo -n]))
 AC_CONFIG_SRCDIR([src/drumgizmo.cc])
 AM_INIT_AUTOMAKE
 
