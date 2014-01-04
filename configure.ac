@@ -301,10 +301,16 @@ dnl Check for sndfile
 dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
-dnl ======================
-dnl Check for libsamplerate
-dnl ======================
-PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7)
+AC_ARG_WITH(resample,  [  --with-resample             Build with resample support])
+if test x$with_resample == xyes; then
+   AC_MSG_WARN([*** Building resample support!])
+   AC_DEFINE(WITH_RESAMPLE, [], [Use resample])
+
+   dnl ======================
+   dnl Check for libsamplerate
+   dnl ======================
+   PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7)
+fi 
 
 #dnl ======================
 #dnl Check for libpng

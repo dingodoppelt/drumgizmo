@@ -37,6 +37,8 @@
 
 #include "configuration.h"
 
+#include <config.h>
+
 AudioFile::AudioFile(std::string filename)
 {
   is_loaded = false;
@@ -127,7 +129,15 @@ void AudioFile::load(int num_samples)
   
   sf_close(fh);
 
-  if(Conf::samplerate != sf_info.samplerate) {
+#ifdef WITH_RESAMPLE
+
+  // Check environment to see if resample should be disabled.
+  // Defaults to "1" which is 'enable'. All other values are 'disabled'.
+  char *env_res = getenv("DRUMGIZMO_RESAMPLE");
+  if(env_res == NULL) env_res = "1";
+
+  if( (strcmp(env_res, "1") == 0) &&
+      Conf::samplerate != sf_info.samplerate) {
     // Resample data...
     size_t osize = size * ratio;
     sample_t *odata = new sample_t[osize];
@@ -150,7 +160,8 @@ void AudioFile::load(int num_samples)
 
     DEBUG(audiofile,"Converted into %d samples %p\n", (int)size, this);
   }
-  
+#endif/*WITH_RESAMPLE*/
+
   this->data = data;
   is_loaded = true;
 
