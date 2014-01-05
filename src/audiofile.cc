@@ -133,7 +133,7 @@ void AudioFile::load(int num_samples)
 
   // Check environment to see if resample should be disabled.
   // Defaults to "1" which is 'enable'. All other values are 'disabled'.
-  char *env_res = getenv("DRUMGIZMO_RESAMPLE");
+  const char *env_res = getenv("DRUMGIZMO_RESAMPLE");
   if(env_res == NULL) env_res = "1";
 
   if( (strcmp(env_res, "1") == 0) &&
