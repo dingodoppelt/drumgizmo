@@ -64,7 +64,7 @@ GUI::Resource::Resource(std::string name)
     if(!fp) return;
     char buf[32];
     while(!feof(fp)) {
-      ssize_t sz = fread(buf, 1, sizeof(buf), fp);
+      size_t sz = fread(buf, 1, sizeof(buf), fp);
       e_data.append(buf, sz);
     }
     fclose(fp);
