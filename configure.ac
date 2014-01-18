@@ -36,11 +36,12 @@ if test x$with_experimental == xyes; then
     CXXFLAGS="$CXXFLAGS -DEXPERIMENTAL"
 fi 
 
-AC_ARG_WITH(pugl,  [  --with-pugl             Build with Pugl support])
-if test x$with_pugl == xyes; then
+AC_ARG_ENABLE(pugl,  [  --enable-pugl             Build with Pugl support])
+if test x$enable_pugl == xyes; then
     AC_MSG_WARN([*** Building with pugl support!])
     CXXFLAGS="$CXXFLAGS -DPUGL -lGL -lGLU -lglut"
 fi 
+AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_pugl" = "xyes"])
 
 AC_ARG_WITH(test,  [  --with-test             Build unit tests])
 if test x$with_test == xyes; then
