@@ -41,6 +41,7 @@ EXTRA_DIST = \
 	listboxbasic.h \
 	listboxthin.h \
 	nativewindow.h \
+	nativewindow.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \
 	painter.h \

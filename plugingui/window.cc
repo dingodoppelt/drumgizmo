@@ -34,13 +34,16 @@
 #include <string.h>
 #include <hugin.hpp>
 
+#ifndef PUGL
 #ifdef X11
 #include "nativewindow_x11.h"
 #endif/*X11*/
-
 #ifdef WIN32
 #include "nativewindow_win32.h"
 #endif/*WIN32*/
+#else
+#include "nativewindow_pugl.h"
+#endif
 
 GUI::Window::Window() 
   : Widget(NULL), wpixbuf(100, 100), back(":bg.png"), logo(":logo.png")
@@ -55,13 +58,16 @@ GUI::Window::Window()
   _buttonDownFocus = NULL;
   _mouseFocus = NULL;
 
+#ifndef PUGL
 #ifdef X11
   native = new NativeWindowX11(this);
 #endif/*X11*/
-
 #ifdef WIN32
   native = new NativeWindowWin32(this);
 #endif/*WIN32*/
+#else/*Use pugl*/
+  native = new NativeWindowPugl(this);
+#endif
 
   eventhandler = new GUI::EventHandler(native, this);
 }
@@ -110,8 +116,8 @@ void GUI::Window::resize(int width, int height)
   resized(width, height);
   //#endif
 
-  native->resize(width, height);
   Widget::resize(width, height);
+  native->resize(width, height);
 }
 
 void GUI::Window::move(size_t x, size_t y)
@@ -166,6 +172,7 @@ void GUI::Window::endPaint()
 
 void GUI::Window::updateBuffer()
 {
+  DEBUG(window, "Updating buffer\n");
   memset(wpixbuf.buf, 0, wpixbuf.width * wpixbuf.height * 3);
 
   std::vector<PixelBufferAlpha *> pl = getPixelBuffers();

@@ -39,10 +39,7 @@ fi
 AC_ARG_WITH(pugl,  [  --with-pugl             Build with Pugl support])
 if test x$with_pugl == xyes; then
     AC_MSG_WARN([*** Building with pugl support!])
-    PUGL_LIBS="-lGL -lGLU -lX11"
-    PUGL_CFLAGS=""
-		AC_SUBST(PUGL_CFLAGS)
-		AC_SUBST(PUGL_LIBS)
+    CXXFLAGS="$CXXFLAGS -DPUGL -lGL -lGLU -lglut"
 fi 
 
 AC_ARG_WITH(test,  [  --with-test             Build unit tests])
