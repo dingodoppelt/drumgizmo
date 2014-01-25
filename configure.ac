@@ -84,7 +84,7 @@ if test "x$enable_gui" = "xx11"; then
   GUI_CFLAGS="-DX11 $X11_CFLAGS"
   GUI_LDFLAGS="$X11_LIBS"
 
-elif test "x$enable_gui" = "win32"; then
+elif test "x$enable_gui" = "xwin32"; then
 
   AC_MSG_RESULT([Setting gui backend to Win32])
   GUI_CFLAGS="-DWIN32"
