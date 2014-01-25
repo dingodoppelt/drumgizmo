@@ -4,11 +4,11 @@ include Makefile.am.plugingui
 #include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) \
-	 -ldl -lX11 $(PNG_LIBS) -lz
+	 -ldl $(PLUGIN_GUI_LIBS) $(PNG_LIBS) -lz
 
 plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include $(PLUGIN_GUI_CFLAGS) -I$(top_srcdir)/src \
-	-DSTANDALONE -DX11 -DUSE_THREAD $(PNG_CFLAGS)
+	-DSTANDALONE -DUSE_THREAD $(PNG_CFLAGS)
 
 plugingui_CFLAGS = $(plugingui_CXXFLAGS) -I$(top_srcdir)/plugingui/png
 
