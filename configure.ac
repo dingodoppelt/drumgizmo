@@ -56,7 +56,7 @@ if test "x$enable_gui" = "xyes"; then
 fi
 
 if test "x$enable_gui" = "xauto"; then
-  AC_MSG_RESULT([Auto setting gui $host_os])
+  AC_MSG_RESULT([Auto setting gui based on host: $host_os])
   case $host_os in
     darwin* )
 					enable_gui=""					
@@ -64,7 +64,7 @@ if test "x$enable_gui" = "xauto"; then
     linux*|*BSD*)
 					enable_gui="x11"
           ;;
-    mingw*|windows*|winnt)
+    mingw*|windows*|winnt|cygwin)
 					enable_gui="win32"
           ;;
 		*)
