@@ -6,7 +6,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS) \
-	$(PLUGIN_GUI_CFLAGS) -DX11 $(SSEFLAGS)\
+	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS)\
 	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
 
 plugindir = $(prefix)/lib/lv2/drumgizmo.lv2

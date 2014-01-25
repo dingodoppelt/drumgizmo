@@ -36,12 +36,86 @@ if test x$with_experimental == xyes; then
     CXXFLAGS="$CXXFLAGS -DEXPERIMENTAL"
 fi 
 
-AC_ARG_ENABLE(pugl,  [  --enable-pugl             Build with Pugl support])
-if test x$enable_pugl == xyes; then
-    AC_MSG_WARN([*** Building with pugl support!])
-    CXXFLAGS="$CXXFLAGS -DPUGL -lGL -lGLU -lglut"
-fi 
-AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_pugl" = "xyes"])
+#AC_ARG_ENABLE(pugl,  [  --enable-pugl             Build with Pugl support])
+#if test x$enable_pugl == xyes; then
+#    AC_MSG_WARN([*** Building with pugl support!])
+#    CXXFLAGS="$CXXFLAGS -DPUGL -lGL -lGLU -lglut"
+#fi 
+#AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_pugl" = "xyes"])
+
+dnl ===========================
+dnl Check for GUI backend
+dnl ===========================
+AC_CANONICAL_HOST
+AC_ARG_ENABLE([gui],
+[  --enable-gui[=backend]   Use specified gui backend. Can be win32, x11, pugl or auto [default=auto]],,
+        [enable_gui="auto"])
+
+if test "x$enable_gui" = "xyes"; then
+  enable_gui="auto"
+fi
+
+if test "x$enable_gui" = "xauto"; then
+  AC_MSG_RESULT([Auto setting gui $host_os])
+  case $host_os in
+    darwin* )
+					enable_gui=""					
+          ;;
+    linux*|*BSD*)
+					enable_gui="x11"
+          ;;
+    mingw*|windows*|winnt)
+					enable_gui="win32"
+          ;;
+		*)
+          AC_MSG_ERROR([Your platform is not currently supported])
+          ;;
+  esac
+fi
+
+if test "x$enable_gui" = "xx11"; then
+  AC_MSG_RESULT([Setting gui backend to X11])
+
+	dnl ======================
+  dnl Check for Xlib
+  dnl ======================
+  PKG_CHECK_MODULES(X11, x11 >= 1.0)
+
+  GUI_CFLAGS="-DX11 $X11_CFLAGS"
+  GUI_LDFLAGS="$X11_LIBS"
+
+elif test "x$enable_gui" = "win32"; then
+
+  AC_MSG_RESULT([Setting gui backend to Win32])
+  GUI_CFLAGS="-DWIN32"
+  GUI_LDFLAGS="-lgdi32 -lsetupapi -lws2_32"
+
+elif test "x$enable_gui" = "xpugl"; then
+
+  AC_MSG_RESULT([Setting gui backend to Pugl])
+  GUI_CFLAGS="-DPUGL"
+  GUI_LDFLAGS="-lGLU -lGL -lglut"
+
+else 
+  AC_MSG_ERROR([*** No GUI backend has been selected ***])
+fi
+
+AC_SUBST(GUI_CFLAGS)
+AC_SUBST(GUI_LIBS)
+
+AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
+
+
+
+
+
+
+
+
+
+
+
+
 
 AC_ARG_WITH(test,  [  --with-test             Build unit tests])
 if test x$with_test == xyes; then
@@ -62,11 +136,6 @@ if test "x$enable_lv2" = "xyes"; then
    dnl Check for lv2core
    dnl ======================
    PKG_CHECK_MODULES(LV2, lv2 >= 1.0)
-
-   dnl ======================
-   dnl Check for Xlib
-   dnl ======================
-   PKG_CHECK_MODULES(X11, x11 >= 1.0)
 else
 	 AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    enable_lv2=no
