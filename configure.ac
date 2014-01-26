@@ -82,19 +82,19 @@ if test "x$enable_gui" = "xx11"; then
   PKG_CHECK_MODULES(X11, x11 >= 1.0)
 
   GUI_CFLAGS="-DX11 $X11_CFLAGS"
-  GUI_LDFLAGS="$X11_LIBS"
+  GUI_LIBS="$X11_LIBS"
 
 elif test "x$enable_gui" = "xwin32"; then
 
   AC_MSG_RESULT([Setting gui backend to Win32])
   GUI_CFLAGS="-DWIN32"
-  GUI_LDFLAGS="-lgdi32 -lsetupapi -lws2_32"
+  GUI_LIBS="-lgdi32 -lsetupapi -lws2_32"
 
 elif test "x$enable_gui" = "xpugl"; then
 
   AC_MSG_RESULT([Setting gui backend to Pugl])
   GUI_CFLAGS="-DPUGL"
-  GUI_LDFLAGS="-lGLU -lGL -lglut"
+  GUI_LIBS="-lGLU -lGL -lglut"
 
 else 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
