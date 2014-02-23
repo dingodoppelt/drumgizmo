@@ -71,7 +71,7 @@
 
 class AudioFile {
 public:
-  AudioFile(std::string filename);
+  AudioFile(std::string filename, int filechannel);
   ~AudioFile();
 
   void load(int num_samples = ALL_SAMPLES);
@@ -101,6 +101,7 @@ public:
 private:
   void *magic;
   volatile bool is_loaded;
+  int filechannel;
 };
 
 #endif/*__DRUMGIZMO_AUDIOFILE_H__*/

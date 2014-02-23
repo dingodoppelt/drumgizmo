@@ -23,6 +23,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ *
+ *  Multichannel feature by John Hammen copyright 2014
  */
 #include "audiofile.h"
 
@@ -39,10 +41,11 @@
 
 #include <config.h>
 
-AudioFile::AudioFile(std::string filename)
+AudioFile::AudioFile(std::string filename, int filechannel)
 {
   is_loaded = false;
   this->filename = filename;
+  this->filechannel = filechannel;
 
   data = NULL;
   size = 0;
@@ -91,6 +94,8 @@ void AudioFile::unload()
 #endif/*LAZYLOAD*/
 }
 
+#define	BUFFER_SIZE	4092
+
 void AudioFile::load(int num_samples)
 {
   // Make sure we don't unload the object while loading it...
@@ -123,7 +128,27 @@ void AudioFile::load(int num_samples)
   }
 
   sample_t* data = new sample_t[size]; 
-  size = sf_read_float(fh, data, size); 
+  if(sf_info.channels == 1) {
+    size = sf_read_float(fh, data, size);
+  }
+  else {
+    // check filechannel exists
+    if(filechannel >= sf_info.channels) {
+        filechannel = sf_info.channels - 1;
+    }
+    sample_t buffer[BUFFER_SIZE];
+    int readsize = BUFFER_SIZE / sf_info.channels;
+    int totalread = 0;
+    int read;
+    do {
+      read = sf_readf_float(fh, buffer, readsize);
+      for (int i = 0; i < read; i++) {
+        data[totalread++] = buffer[i * sf_info.channels + filechannel];
+      }
+    } while(read > 0 && totalread < (int)size);
+    // set data size to total bytes read
+    size = totalread;
+  }
   
   DEBUG(audiofile,"Loaded %d samples %p\n", (int)size, this);
   

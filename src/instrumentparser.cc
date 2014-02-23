@@ -97,8 +97,16 @@ void InstrumentParser::startTag(std::string name,
       DEBUG(instrparser,"Missing required attribute 'channel'.\n");
       return;
     }
-
-    AudioFile *af = new AudioFile(path + "/" + attr["file"]);
+    int filechannel = 1; // default, override with optional attribute
+    if(attr.find("filechannel") != attr.end()) {
+        filechannel = atoi(attr["filechannel"].c_str());
+        if(filechannel < 1) {
+            DEBUG(instrparser,"Invalid value for attribute 'filechannel'.\n");
+            filechannel = 1;
+        }
+    }
+    filechannel = filechannel - 1; // 1-based in file, but zero-based internally
+    AudioFile *af = new AudioFile(path + "/" + attr["file"], filechannel);
     InstrumentChannel *ch = new InstrumentChannel(attr["channel"]);
     channellist.push_back(ch);
     s->addAudioFile(ch, af);
