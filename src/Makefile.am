@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	midimapper.h \
 	mutex.h \
 	path.h \
+	powerlist.h \
 	rangemap.h \
 	sample.h \
 	saxparser.h \
@@ -53,6 +54,7 @@ EXTRA_DIST = \
 	midimapper.cc \
 	mutex.cc \
 	path.cc \
+	powerlist.cc \
 	sample.cc \
 	saxparser.cc \
 	semaphore.cc \
