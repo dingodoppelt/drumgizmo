@@ -36,13 +36,6 @@ if test x$with_experimental == xyes; then
     CXXFLAGS="$CXXFLAGS -DEXPERIMENTAL"
 fi 
 
-#AC_ARG_ENABLE(pugl,  [  --enable-pugl             Build with Pugl support])
-#if test x$enable_pugl == xyes; then
-#    AC_MSG_WARN([*** Building with pugl support!])
-#    CXXFLAGS="$CXXFLAGS -DPUGL -lGL -lGLU -lglut"
-#fi 
-#AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_pugl" = "xyes"])
-
 dnl ===========================
 dnl Check for GUI backend
 dnl ===========================
@@ -93,7 +86,7 @@ elif test "x$enable_gui" = "xwin32"; then
 elif test "x$enable_gui" = "xpugl"; then
 
   AC_MSG_RESULT([Setting gui backend to Pugl])
-  GUI_CFLAGS="-DPUGL"
+  GUI_CFLAGS="-DPUGL -I../../pugl"
   GUI_LIBS="-lGLU -lGL -lglut"
 
 else 
@@ -105,18 +98,9 @@ AC_SUBST(GUI_LIBS)
 
 AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
 
-
-
-
-
-
-
-
-
-
-
-
-
+dnl ======================
+dnl Compile unit tests
+dnl ======================
 AC_ARG_WITH(test,  [  --with-test             Build unit tests])
 if test x$with_test == xyes; then
     AC_MSG_WARN([*** Building unittests!])
@@ -527,5 +511,5 @@ AC_OUTPUT(
 	drumgizmo/output/alsa/Makefile
 	drumgizmo/output/jackaudio/Makefile
 	drumgizmo/output/wavfile/Makefile
-  dgedit/Makefile)
-
+  dgedit/Makefile
+  dgedit/icons/Makefile)

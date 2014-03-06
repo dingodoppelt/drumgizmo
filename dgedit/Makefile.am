@@ -1,3 +1,6 @@
+SUBDIRS = icons
+DISTDIRS = icons
+
 if HAVE_EDITOR
 
 bin_PROGRAMS = dgedit
