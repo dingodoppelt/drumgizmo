@@ -23,8 +23,6 @@ dgedit_SOURCES = \
 	samplesorter.cc \
 	dgedit.qrc
 
-#	dgedit_qrc.cpp $(shell ../tools/MocList cc ) 
-
 EXTRA_DIST = \
 	audioextractor.h \
 	canvas.h \
