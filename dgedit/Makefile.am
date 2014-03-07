@@ -1,3 +1,6 @@
+SUBDIRS = icons
+DISTDIRS = icons
+
 if HAVE_EDITOR
 
 bin_PROGRAMS = dgedit
@@ -8,7 +11,7 @@ dgedit_LDADD = $(SNDFILE_LIBS) $(QT_LIBS) $(shell ../tools/MocList o ) \
 dgedit_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(QT_CFLAGS) $(AO_CFLAGS)
 AM_CXXFLAGS = $(QT_CFLAGS)
 
-dgedit_SOURCES = $(shell ../tools/MocList cc ) \
+dgedit_SOURCES = \
 	dgedit.cc \
 	audioextractor.cc \
 	canvas.cc \
@@ -21,8 +24,7 @@ dgedit_SOURCES = $(shell ../tools/MocList cc ) \
 	mainwindow.cc \
 	mipmap.cc \
 	samplesorter.cc \
-	dgedit.qrc \
-	dgedit_qrc.cpp
+	dgedit.qrc
 
 EXTRA_DIST = \
 	audioextractor.h \

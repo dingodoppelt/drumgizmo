@@ -35,7 +35,7 @@ DG_SRC = \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/velocity.cc \
 	$(top_srcdir)/src/versionstr.cc
-DG_CFLAGS = -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
+DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
 
 GUI_SRC = \
 	$(top_srcdir)/plugingui/nativewindow_x11.cc \
