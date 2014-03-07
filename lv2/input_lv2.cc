@@ -26,6 +26,8 @@
  */
 #include "input_lv2.h"
 
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+
 #include <midimapparser.h>
 
 #include <hugin.hpp>
@@ -70,14 +72,12 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
   list = (event_t *)malloc(sizeof(event_t) * 1000);
   listsize = 0;
 
-  LV2_Event_Iterator iterator;
-	for(lv2_event_begin(&iterator, eventPort);
-      lv2_event_is_valid(&iterator);
-      lv2_event_increment(&iterator)) {
+  LV2_Atom_Event* ev = lv2_atom_sequence_begin(&eventPort->body);
 
-    LV2_Event* ev = lv2_event_get(&iterator, NULL);
-
-    uint8_t* const data = (uint8_t* const)(ev + 1);
+  while(!lv2_atom_sequence_is_end(&eventPort->body,
+                                  eventPort->atom.size, 
+                                  ev)) {
+    uint8_t* const data = (uint8_t*)(ev+1);
 
     if ((data[0] & 0xF0) == 0x80) { // note off
       int key = data[1];
@@ -96,7 +96,7 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
         list[listsize].type = TYPE_ONSET;
         list[listsize].instrument = i;
         list[listsize].velocity = velocity / 127.0;
-        list[listsize].offset = ev->frames;
+        list[listsize].offset = ev->time.frames;
         listsize++;
       }
       /*
@@ -105,6 +105,7 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 				plugin->play  = true;
       */
     }
+    ev = lv2_atom_sequence_next(ev);
   }
 
   *nevents = listsize;

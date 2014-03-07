@@ -29,7 +29,7 @@
 
 #include <audioinputenginemidi.h>
 
-#include <lv2/lv2plug.in/ns/ext/event/event-helpers.h>
+#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 
 class InputLV2 : public AudioInputEngineMidi {
 public:
@@ -47,7 +47,7 @@ public:
   event_t *run(size_t pos, size_t len, size_t *nevents);
   void post();
 
-  LV2_Event_Buffer *eventPort;
+  LV2_Atom_Sequence *eventPort;
 
 private:
   Instruments *instruments;

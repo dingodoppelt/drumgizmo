@@ -27,6 +27,7 @@
 #include <lv2/lv2plug.in/ns/lv2core/lv2.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "lv2_gui.h"
 
@@ -34,7 +35,7 @@
 
 #include <hugin.hpp>
 
-#define MIDI_EVENT_URI "http://lv2plug.in/ns/ext/midi#MidiEvent"
+#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 
 #define NS_ATOM "http://lv2plug.in/ns/ext/atom#"
 #define NS_DG "http://drumgizmo.org/lv2/atom#"
@@ -310,7 +311,7 @@ void connect_port(LV2_Handle instance,
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
   if(port == 0) {// MIDI in
-    dglv2->in->eventPort = (LV2_Event_Buffer*)data_location;
+    dglv2->in->eventPort = (LV2_Atom_Sequence*)data_location;
   } else {// Audio Port
     if(port - 1 < NUM_OUTPUTS) {
       dglv2->out->outputPorts[port - 1].samples = (sample_t*)data_location;
