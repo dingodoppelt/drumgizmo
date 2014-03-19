@@ -139,7 +139,7 @@ void SampleSorter::resort()
   QMap<int, Selection>::iterator i = _selections.begin();
   while(i != _selections.end()) {
     float energy = 0.0;
-    Selection s = i.value();
+    Selection &s = i.value();
 
     for(size_t idx = s.from;
         (idx < (size_t)s.from + (size_t)attackLength()) &&
@@ -151,6 +151,8 @@ void SampleSorter::resort()
     while(sorted.find(energy) != sorted.end()) {
       energy += 1; // Make sure that the key is unique.
     }
+
+    s.energy = energy;
 
     sorted[energy] = i.value();
     

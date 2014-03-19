@@ -161,6 +161,7 @@ void AudioExtractor::exportSelections(Selections selections,
 
     QDomElement sample = doc.createElement("sample");
     sample.setAttribute("name", i->name);
+    sample.setAttribute("power", QString::number(i->energy));
     samples.appendChild(sample);
 
     AudioFileList::iterator j = audiofiles.begin();
