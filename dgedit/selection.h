@@ -42,6 +42,8 @@ public:
   int fadein;
   int fadeout;
 
+  double energy;
+
   QString name;
 };
 
