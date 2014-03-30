@@ -168,16 +168,22 @@ void PowerList::finalise()
     master->load();
 
     float power = 0;
-    size_t s = 0;
-    for(; s < SIZE && s < master->size; s++) {
-      power += master->data[s] * master->data[s];
-    }
+    if(sample->power == -1) { // Power not defined. Calculate it!
+      DEBUG(powerlist, "Calculating power\n");
+      size_t s = 0;
+      for(; s < SIZE && s < master->size; s++) {
+        power += master->data[s] * master->data[s];
+      }
     
-    power = sqrt(power);
+      power = sqrt(power);
 
-    if(power > power_max) power_max = power;
+      if(power > power_max) power_max = power;
 
-    item.power = power;
+      item.power = power;
+    } else { // Power defined in xml
+      DEBUG(powerlist, "Using power from xml\n");
+      power = sample->power;
+    }
 
     DEBUG(rand, " - power: %f\n", power);
     

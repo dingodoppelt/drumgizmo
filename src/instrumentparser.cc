@@ -79,7 +79,16 @@ void InstrumentParser::startTag(std::string name,
       DEBUG(instrparser,"Missing required attribute 'name'.\n");
       return;
     }
-    s = new Sample(attr["name"]);
+   
+    float power; 
+    if(attr.find("power") == attr.end()) {
+      power = -1; 
+    } else {
+      power = atof(attr["power"].c_str());  
+      DEBUG(instrparser, "Instrument power set to %f\n", power);
+    }
+    
+    s = new Sample(attr["name"], power);
   }
 
   if(name == "audiofile") {
