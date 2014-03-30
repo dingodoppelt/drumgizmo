@@ -52,8 +52,6 @@ public slots:
   void setOutputPrefix(const QString &prefix);
 
 private:
-  float *load(QString file, size_t *size);
-  void exportSelection(QString name, int index, float *data, size_t size, Selection sel);
   AudioFileList audiofiles;
   QString exportpath;
   QString prefix;

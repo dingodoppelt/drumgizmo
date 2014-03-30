@@ -32,111 +32,121 @@
 
 #include <sndfile.h>
 
+typedef struct {
+  SNDFILE *fh;
+  float *data;
+} audiodata_t;
+
 AudioExtractor::AudioExtractor(QObject *parent)
   : QObject(parent)
 {
 }
 
-float *AudioExtractor::load(QString file, size_t *size)
-{
-  float *data;
-
-  SF_INFO sf_info;
-	SNDFILE *fh = sf_open(file.toStdString().c_str(), SFM_READ, &sf_info);
-  if(!fh) {
-    printf("Load error...\n");
-    *size = 0;
-    return NULL;
-  }
-
-  *size = sf_info.frames;
-
-  data = new float[*size];
-
-	sf_read_float(fh, data, *size); 
-
-	sf_close(fh);
-
-  return data;
-}
-
-void AudioExtractor::exportSelection(QString filename,
-                                     int index,
-                                     float *data, size_t size,
-                                     Selection sel)
-{
-  printf("Writing: %s (sz: %d, from %d to %d)\n",
-         filename.toStdString().c_str(), (int)size, sel.from, sel.to);
-  
-  if(sel.from > (int)size ||
-     sel.to > (int)size ||
-     sel.to < 0 ||
-     sel.from < 0 ||
-     sel.to < sel.from) {
-    printf("Out of bounds\n");
-    return;
-  }
-
-  // Apply linear fadein
-  for(int i = 0; i < sel.fadein; i++) {
-    float val = ((float)i / (float)sel.fadein);
-    data[i + sel.from] *= val;
-  }
-
-  // Apply fadeout
-  for(int i = 0; i < sel.fadeout; i++) {
-    float val = ((float)i / (float)sel.fadeout);
-    data[sel.to - i] *= val;
-  }
-
-  SF_INFO sf_info;
-  sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-  sf_info.samplerate = 44100;
-  sf_info.channels = 1;
-
-  SNDFILE *fh = sf_open(filename.toStdString().c_str(), SFM_WRITE, &sf_info);
-  if(!fh) {
-    printf("Open for write error...\n");
-    return;
-  }
-  sf_write_float(fh, data + sel.from, sel.to - sel.from); 
-  sf_close(fh);
-}
-
 void AudioExtractor::exportSelections(Selections selections,
                                       Levels levels)
 {
-  // Do the actual exporting one file at the time.
+  // Open all input audio files:
+  audiodata_t audiodata[audiofiles.size()];
+
+  int idx = 0;
   AudioFileList::iterator j = audiofiles.begin();
   while(j != audiofiles.end()) {
-
     QString file = j->first;
-    QString name = j->second;
-    size_t size;
 
-    // TODO: Use sf_seek instead...
-    float *data = load(file, &size);
-    if(!data) continue;
-
-    int index = 0;
-    QMap<int, Selection>::iterator i = selections.begin();
-    while(i != selections.end()) {
-      index++;
-
-      QString path = exportpath + "/" + prefix + "/samples";
-      QString file = path + "/" + QString::number(index) +
-        "-" + prefix + "-" + name + ".wav";
-
-      QDir d;
-      d.mkpath(path);
-
-      exportSelection(file, index, data, size, i.value());
-      i++;
+    SF_INFO sf_info;
+    audiodata[idx].fh = sf_open(file.toStdString().c_str(), SFM_READ, &sf_info);
+    if(!audiodata[idx].fh) {
+      printf("Load error '%s'\n", file.toStdString().c_str());
+      return;
     }
 
-    delete[] data;
-    
+    audiodata[idx].data = NULL;
+
     j++;
+    idx++;
+  }
+  
+  idx = 0;
+  QMap<int, Selection>::iterator si = selections.begin();
+  while(si != selections.end()) {
+    Selection &sel = *si;
+    size_t offset = sel.from;
+    size_t size = sel.to - sel.from;
+    size_t fadein = sel.fadein;
+    size_t fadeout = sel.fadeout;
+
+
+    // Read all input audio file chunks:
+    for(int i = 0; i < audiofiles.size(); i++) {
+
+      // Clear out old buffer (if one exists)
+      if(audiodata[i].data) {
+        delete audiodata[i].data;
+        audiodata[i].data = NULL;
+      }
+
+      SNDFILE *fh = audiodata[i].fh;
+
+      sf_seek(fh, offset, SEEK_SET);
+
+      float *data = new float[size];
+      sf_read_float(fh, data, size); 
+
+      // Apply linear fadein
+      for(size_t fi = 0; fi < fadein; fi++) {
+        float val = ((float)fi / (float)fadein);
+        data[fi] *= val;
+      }
+
+      // Apply fadeout
+      for(size_t fo = 0; fo < fadeout; fo++) {
+        float val = ((float)fo / (float)fadeout);
+        data[size - fo] *= val;
+      }
+
+      audiodata[i].data = data;
+    }
+
+    // Create output path:
+    QString path = exportpath + "/" + prefix + "/samples";
+    QDir d;
+    d.mkpath(path);
+
+    // Write all sample chunks to single output file:
+    QString file = path + "/" + QString::number(idx) + "-" + prefix + ".wav";
+    
+    SF_INFO sf_info;
+    sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
+    sf_info.samplerate = 44100;
+    sf_info.channels = audiofiles.size();
+
+    SNDFILE *ofh = sf_open(file.toStdString().c_str(), SFM_WRITE, &sf_info);
+    if(!ofh) {
+      printf("Open for write error...\n");
+      return;
+    }
+
+    for(size_t ob = 0; ob < size; ob++) {
+      float obuf[audiofiles.size()];
+      for(int ai = 0; ai < audiofiles.size(); ai++) {
+        obuf[ai] = audiodata[ai].data[ob];
+      }
+      sf_write_float(ofh, obuf, audiofiles.size()); 
+    }
+    sf_close(ofh);
+
+    idx++;
+    si++;
+  }
+
+  // Close all input audio files:
+  for(int i = 0; i < audiofiles.size(); i++) {
+    if(audiodata[i].data) {
+      delete audiodata[i].data;
+      audiodata[i].data = NULL;
+    }
+
+    sf_close(audiodata[i].fh);
   }
 
   QDomDocument doc;
@@ -164,6 +174,7 @@ void AudioExtractor::exportSelections(Selections selections,
     sample.setAttribute("power", QString::number(i->energy));
     samples.appendChild(sample);
 
+    int channelnum = 1; // Filechannel numbers are 1-based.
     AudioFileList::iterator j = audiofiles.begin();
     while(j != audiofiles.end()) {
 
@@ -172,11 +183,11 @@ void AudioExtractor::exportSelections(Selections selections,
 
       QDomElement audiofile = doc.createElement("audiofile");
       audiofile.setAttribute("file", "samples/" + 
-                             QString::number(index) + "-" + prefix +
-                             "-" + name + ".wav");
+                             QString::number(index) + "-" + prefix + ".wav");
       audiofile.setAttribute("channel", name);
+      audiofile.setAttribute("filechannel", QString::number(channelnum));
       sample.appendChild(audiofile);
-
+      channelnum++;
       j++;
     }
 
