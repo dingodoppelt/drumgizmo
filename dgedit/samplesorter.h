@@ -85,6 +85,7 @@ private:
   bool selection_is_moving_right;
   int cur_thr;
 
+  Selection *sel_moving;
 };
 
 #endif/*__DRUMGIZMO_SAMPLESORTER_H__*/
