@@ -248,6 +248,30 @@ Selection *SampleSorter::getSelectionByCoordinate(int px, int py)
 
 void SampleSorter::mouseMoveEvent(QMouseEvent *event)
 {
+  if(sel_moving) {
+    QMap<float, Selection>::iterator i = sorted.begin();
+    while(i != sorted.end()) {
+      Selection &sel = i.value();
+      if(sel_moving == &sel) {
+        float power = unmapX(event->x());
+        power *= power;
+        power *= max;
+        printf("power: %f => %f\n", i.key(), power);
+        sorted.erase(i);
+        while(sorted.find(power) != sorted.end()) power += 0.000001;
+        sorted[power] = sel;
+        emit activeSelectionChanged(sorted[power]);
+        sel_moving = &sorted[power];
+        printf("Found it!\n");
+        break;
+      }
+      i++;
+    }
+    update();
+    return;
+  }
+
+
   if(cur_thr != -1 && cur_thr < threshold.size()) {
     float val = unmapX(event->x());
     if(val < 0.0) val = 0.0;
@@ -275,6 +299,7 @@ void SampleSorter::mousePressEvent(QMouseEvent *event)
     Selection *psel = getSelectionByCoordinate(event->x(), event->y());
     if(psel) {
       emit activeSelectionChanged(*psel);
+      sel_moving = psel;
       return;
     }
 
@@ -302,6 +327,8 @@ void SampleSorter::mousePressEvent(QMouseEvent *event)
 void SampleSorter::mouseReleaseEvent(QMouseEvent *event)
 {
   if(event->button() == Qt::LeftButton) {
+    sel_moving = NULL;
+
     if(threshold_is_moving) {
       if(threshold[cur_thr] == 0.0 || threshold[cur_thr] == 1.0) {
         threshold.remove(cur_thr);
