@@ -41,7 +41,7 @@
 
 class Preset {
 public:  
-  QString name;
+  QString prefix;
   int attacklength;
   int falloff;
   int fadelength;

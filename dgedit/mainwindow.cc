@@ -235,7 +235,7 @@ MainWindow::MainWindow()
     QString presetname = list.at(i);
     Preset p;
     settings.beginGroup(presetname);
-    p.name = presetname;
+    p.prefix = settings.value("prefix", "unknown").toString();
     p.attacklength = settings.value("attacklength", 0).toInt();
     p.falloff = settings.value("falloff", 0).toInt();
     p.fadelength = settings.value("fadelength", 0).toInt();
@@ -329,7 +329,7 @@ void MainWindow::setPreset(int index)
   slider_attacklength->setValue(p.attacklength);
   slider_falloff->setValue(p.falloff);
   slider_fadelength->setValue(p.fadelength);
-  prefix->setText(p.name);
+  prefix->setText(p.prefix);
 //  sorter->setAttackLength(p.attacklength);  
 //  selections->noiseFloorChanged(p.falloff);
 //  selections->fadeoutChanged(p.fadeout);
