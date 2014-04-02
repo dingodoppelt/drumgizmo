@@ -31,6 +31,7 @@
 #include <QScrollBar>
 #include <QComboBox>
 #include <QSlider>
+#include <QLineEdit>
 
 #include "canvas.h"
 #include "audioextractor.h"
@@ -40,6 +41,7 @@
 
 class Preset {
 public:  
+  QString name;
   int attacklength;
   int falloff;
   int fadelength;
@@ -80,6 +82,7 @@ private:
   QSlider *slider_attacklength;
   QSlider *slider_falloff;
   QSlider *slider_fadelength;
+  QLineEdit *prefix;
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

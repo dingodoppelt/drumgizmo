@@ -30,7 +30,6 @@
 #include <QVBoxLayout>
 
 #include <QPushButton>
-#include <QLineEdit>
 #include <QLabel>
 #include <QStatusBar>
 #include <QApplication>
@@ -187,7 +186,7 @@ MainWindow::MainWindow()
   configs->addWidget(slider4); 
 
   configs->addWidget(new QLabel("Prefix:"));
-  QLineEdit *prefix = new QLineEdit();
+  prefix = new QLineEdit();
   connect(prefix, SIGNAL(textChanged(const QString &)),
           extractor, SLOT(setOutputPrefix(const QString &)));
   prefix->setText("kick-r");
@@ -236,6 +235,7 @@ MainWindow::MainWindow()
     QString presetname = list.at(i);
     Preset p;
     settings.beginGroup(presetname);
+    p.name = presetname;
     p.attacklength = settings.value("attacklength", 0).toInt();
     p.falloff = settings.value("falloff", 0).toInt();
     p.fadelength = settings.value("fadelength", 0).toInt();
@@ -329,6 +329,7 @@ void MainWindow::setPreset(int index)
   slider_attacklength->setValue(p.attacklength);
   slider_falloff->setValue(p.falloff);
   slider_fadelength->setValue(p.fadelength);
+  prefix->setText(p.name);
 //  sorter->setAttackLength(p.attacklength);  
 //  selections->noiseFloorChanged(p.falloff);
 //  selections->fadeoutChanged(p.fadeout);
