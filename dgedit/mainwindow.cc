@@ -38,6 +38,7 @@
 #include <QToolBar>
 #include <QAction>
 #include <QMenuBar>
+#include <QFileDialog>
 
 #include "canvastool.h"
 #include "canvastoolthreshold.h"
@@ -193,11 +194,16 @@ MainWindow::MainWindow()
   configs->addWidget(prefix);
 
   configs->addWidget(new QLabel("Export path:"));
-  QLineEdit *exportp = new QLineEdit();
+  QHBoxLayout *lo_exportp = new QHBoxLayout();
+  exportp = new QLineEdit();
   connect(exportp, SIGNAL(textChanged(const QString &)),
           extractor, SLOT(setExportPath(const QString &)));
   exportp->setText("/home/deva/tmp/drumgizmoexport");
-  configs->addWidget(exportp);
+  lo_exportp->addWidget(exportp);
+  QPushButton *btn_browse = new QPushButton("...");
+  connect(btn_browse, SIGNAL(clicked()), this, SLOT(browse()));
+  lo_exportp->addWidget(btn_browse);
+  configs->addLayout(lo_exportp);
 
   QPushButton *loadbtn = new QPushButton();
   loadbtn->setText("Add files...");
@@ -330,7 +336,9 @@ void MainWindow::setPreset(int index)
   slider_falloff->setValue(p.falloff);
   slider_fadelength->setValue(p.fadelength);
   prefix->setText(p.prefix);
-//  sorter->setAttackLength(p.attacklength);  
-//  selections->noiseFloorChanged(p.falloff);
-//  selections->fadeoutChanged(p.fadeout);
+}
+
+void MainWindow::browse() {
+  QString path = QFileDialog::getExistingDirectory(this, "Select export path", exportp->text());
+  exportp->setText(path);
 }

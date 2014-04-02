@@ -61,6 +61,7 @@ public slots:
   void doExport();
   void loadFile(QString filename);
   void setPreset(int);
+  void browse();
 
 protected:
   void closeEvent(QCloseEvent*);
@@ -83,6 +84,7 @@ private:
   QSlider *slider_falloff;
   QSlider *slider_fadelength;
   QLineEdit *prefix;
+  QLineEdit *exportp;
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/
