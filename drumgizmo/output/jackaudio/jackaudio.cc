@@ -85,7 +85,7 @@ bool JackAudio::init(int nchannels, char *cnames[])
                                         name.c_str(),
                                         JACK_DEFAULT_AUDIO_TYPE,
                                         JackPortIsOutput, 0);
-    channels[i] = (sample_t*)malloc(1024 * sizeof(sample_t));
+    channels[i] = (sample_t*)malloc(16 * sizeof(sample_t));
   }
   return true;
 }
@@ -127,9 +127,9 @@ void JackAudio::post(size_t size)
 
 void JackAudio::jack_process(jack_nframes_t nframes)
 {
-  if(nframes != 1024) {
+  if(nframes != 128) {
     fprintf(stderr, "jackaudio output module currently only works with a"
-            " bufferszie of 1024 samples!\n");
+            " buffersize of 64 samples!\n");
     exit(1);
   }
 
