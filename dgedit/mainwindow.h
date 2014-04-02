@@ -29,11 +29,22 @@
 
 #include <QMainWindow>
 #include <QScrollBar>
+#include <QComboBox>
+#include <QSlider>
 
 #include "canvas.h"
 #include "audioextractor.h"
 #include "samplesorter.h"
 #include "filelist.h"
+#include "canvastoolselections.h"
+
+class Preset {
+public:  
+  int attacklength;
+  int falloff;
+  int fadelength;
+};
+Q_DECLARE_METATYPE(Preset)
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -47,6 +58,7 @@ public slots:
   void setYOffset(int);
   void doExport();
   void loadFile(QString filename);
+  void setPreset(int);
 
 protected:
   void closeEvent(QCloseEvent*);
@@ -57,12 +69,17 @@ private:
 
   SampleSorter *sorter;
   Canvas *canvas;
+  CanvasToolSelections *selections;
   AudioExtractor *extractor;
   FileList *filelist;
   QScrollBar *yoffset;
   QScrollBar *yscale;
   QScrollBar *xscale;
   QScrollBar *xoffset;
+  QComboBox *presets;
+  QSlider *slider_attacklength;
+  QSlider *slider_falloff;
+  QSlider *slider_fadelength;
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

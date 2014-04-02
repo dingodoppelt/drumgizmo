@@ -39,10 +39,8 @@
 #include <QToolBar>
 #include <QAction>
 #include <QMenuBar>
-#include <QSlider>
 
 #include "canvastool.h"
-#include "canvastoolselections.h"
 #include "canvastoolthreshold.h"
 #include "canvastoollisten.h"
 
@@ -76,7 +74,7 @@ MainWindow::MainWindow()
   addTool(toolbar, canvas, listen);
   CanvasTool *threshold = new CanvasToolThreshold(canvas);
   addTool(toolbar, canvas, threshold);
-  CanvasTool *selections = new CanvasToolSelections(canvas);
+  selections = new CanvasToolSelections(canvas);
   connect(threshold, SIGNAL(thresholdChanged(double)),
           selections, SLOT(thresholdChanged(double)));
   addTool(toolbar, canvas, selections);
@@ -152,28 +150,33 @@ MainWindow::MainWindow()
   
   configs->addLayout(btns);
 
+  configs->addWidget(new QLabel("Presets:"));
+  presets = new QComboBox();
+  connect(presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPreset(int)));
+  configs->addWidget(presets);
+
   configs->addWidget(new QLabel("Attack length:"));
-  QSlider *slider = new QSlider(Qt::Horizontal);
-  slider->setRange(10, 1000);
-  connect(slider, SIGNAL(sliderMoved(int)), sorter, SLOT(setAttackLength(int)));
-  slider->setValue(666);
-  configs->addWidget(slider); 
+  slider_attacklength = new QSlider(Qt::Horizontal);
+  slider_attacklength->setRange(10, 1000);
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)), sorter, SLOT(setAttackLength(int)));
+  slider_attacklength->setValue(666);
+  configs->addWidget(slider_attacklength);
 
   configs->addWidget(new QLabel("Falloff:"));
-  QSlider *slider2 = new QSlider(Qt::Horizontal);
-  slider2->setRange(1, 10000);
-  connect(slider2, SIGNAL(sliderMoved(int)),
+  slider_falloff = new QSlider(Qt::Horizontal);
+  slider_falloff->setRange(1, 10000);
+  connect(slider_falloff, SIGNAL(sliderMoved(int)),
           selections, SLOT(noiseFloorChanged(int)));
-  slider2->setValue(666);
-  configs->addWidget(slider2); 
+  slider_falloff->setValue(666);
+  configs->addWidget(slider_falloff); 
 
   configs->addWidget(new QLabel("Fadelength:"));
-  QSlider *slider3 = new QSlider(Qt::Horizontal);
-  slider3->setRange(1, 2000);
-  connect(slider3, SIGNAL(sliderMoved(int)),
+  slider_fadelength = new QSlider(Qt::Horizontal);
+  slider_fadelength->setRange(1, 2000);
+  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
           selections, SLOT(fadeoutChanged(int)));
-  slider3->setValue(666);
-  configs->addWidget(slider3); 
+  slider_fadelength->setValue(666);
+  configs->addWidget(slider_fadelength); 
 
   configs->addWidget(new QLabel("Player volume:"));
   QSlider *slider4 = new QSlider(Qt::Horizontal);
@@ -224,8 +227,24 @@ MainWindow::MainWindow()
   yoffset->setValue(MAXVAL/2);
   xscale->setValue(0);
   xoffset->setValue(0);
-
+  
   loadSettings();
+
+  QSettings settings("presets.ini", QSettings::IniFormat);
+  QStringList list = settings.childGroups();
+  for(int i = 0; i != list.size(); i++) {
+    QString presetname = list.at(i);
+    Preset p;
+    settings.beginGroup(presetname);
+    p.attacklength = settings.value("attacklength", 0).toInt();
+    p.falloff = settings.value("falloff", 0).toInt();
+    p.fadelength = settings.value("fadelength", 0).toInt();
+    settings.endGroup();
+    QVariant v;
+    v.setValue(p);
+    presets->addItem(presetname, v); 
+  }
+
   statusBar()->showMessage("Ready");
 }
 
@@ -301,4 +320,16 @@ void MainWindow::loadFile(QString filename)
   sorter->setWavData(canvas->data, canvas->size);
   statusBar()->showMessage("Ready");
   setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::setPreset(int index) 
+{
+  QVariant v = presets->itemData(index);
+  Preset p = v.value<Preset>();
+  slider_attacklength->setValue(p.attacklength);
+  slider_falloff->setValue(p.falloff);
+  slider_fadelength->setValue(p.fadelength);
+//  sorter->setAttackLength(p.attacklength);  
+//  selections->noiseFloorChanged(p.falloff);
+//  selections->fadeoutChanged(p.fadeout);
 }
