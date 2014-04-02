@@ -47,6 +47,7 @@ public slots:
   void setYOffset(int);
   void doExport();
   void loadFile(QString filename);
+  void playSamples();
 
 protected:
   void closeEvent(QCloseEvent*);
@@ -63,6 +64,7 @@ private:
   QScrollBar *yscale;
   QScrollBar *xscale;
   QScrollBar *xoffset;
+  QScrollBar *sb_playsamples;
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

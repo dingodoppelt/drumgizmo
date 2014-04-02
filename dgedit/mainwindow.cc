@@ -60,6 +60,7 @@ static void addTool(QToolBar *toolbar, Canvas *canvas, CanvasTool *tool)
   canvas->tools.push_back(tool);
 }
 
+static CanvasToolListen *g_listen;
 MainWindow::MainWindow()
 {
   QWidget *central = new QWidget();
@@ -72,7 +73,8 @@ MainWindow::MainWindow()
   canvas = new Canvas(this);
 
   QToolBar *toolbar = addToolBar("Tools");
-  CanvasTool *listen = new CanvasToolListen(canvas);
+  g_listen = new CanvasToolListen(canvas);
+  CanvasTool *listen = g_listen;
   addTool(toolbar, canvas, listen);
   CanvasTool *threshold = new CanvasToolThreshold(canvas);
   addTool(toolbar, canvas, threshold);
@@ -120,6 +122,13 @@ MainWindow::MainWindow()
   connect(sorter, SIGNAL(activeSelectionChanged(Selection)),
           selections, SLOT(setActiveSelection(Selection)));
 
+  QPushButton *btn_playsamples = new QPushButton("Play samples");
+  connect(btn_playsamples, SIGNAL(clicked()), this, SLOT(playSamples()));
+  
+  sb_playsamples = new QScrollBar(Qt::Horizontal);
+  sb_playsamples->setRange(100, 4000); // ms
+  
+
   lh->addWidget(canvas);
   lh->addWidget(yscale);
   lh->addWidget(yoffset);
@@ -127,7 +136,8 @@ MainWindow::MainWindow()
   lv->addWidget(xscale, 100);
   lv->addWidget(xoffset, 100);
   lv->addWidget(sorter, 15);
-
+  lv->addWidget(btn_playsamples);
+  lv->addWidget(sb_playsamples);
 
   QHBoxLayout *btns = new QHBoxLayout();
 
@@ -227,6 +237,28 @@ MainWindow::MainWindow()
 
   loadSettings();
   statusBar()->showMessage("Ready");
+}
+
+void MainWindow::playSamples()
+{
+  //  unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
+
+  Selections sels = sorter->selections();
+  Selections::iterator i = sels.begin();
+  while(i != sels.end()) {
+    unsigned int length = sb_playsamples->value() * 44100 / 1000;
+
+    unsigned int sample_length = i->to - i->from;
+
+    unsigned int to = i->to;
+    unsigned int sleep = 0;
+
+    if(sample_length > length) to = i->from + length;
+    else sleep = length - sample_length;
+    g_listen->playRange(i->from, to);
+    usleep(1000000 * sleep / 44100);
+    i++;
+  }
 }
 
 void MainWindow::closeEvent(QCloseEvent *)

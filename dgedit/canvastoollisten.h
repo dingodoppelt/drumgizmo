@@ -64,6 +64,8 @@ public:
   bool mouseReleaseEvent(QMouseEvent *event);
   void paintEvent(QPaintEvent *event, QPainter &painter);
 
+  void playRange(unsigned int from, unsigned int to);
+  
 public slots:
   void update();
   void setVolume(int v);
