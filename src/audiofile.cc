@@ -33,8 +33,9 @@
 #include <unistd.h>
 
 #include <sndfile.h>
+#ifdef WITH_RESAMPLE
 #include <samplerate.h>
-
+#endif/*WITH_RESAMPLE*/
 #include <hugin.hpp>
 
 #include "configuration.h"
