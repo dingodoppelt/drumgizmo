@@ -296,9 +296,10 @@ void MainWindow::closeEvent(QCloseEvent *)
 
 void MainWindow::loadSettings()
 {
-  QSettings settings("Aasimon.org", "DGEdit");
+  QSettings settings("config.ini", QSettings::IniFormat);
 
   settings.beginGroup("MainWindow");
+  exportp->setText(settings.value("exportp", "").toString());
   resize(settings.value("size", QSize(700, 800)).toSize());
   move(settings.value("pos", QPoint(0, 0)).toPoint());
   settings.endGroup();
@@ -306,11 +307,13 @@ void MainWindow::loadSettings()
 
 void MainWindow::saveSettings()
 {
-  QSettings settings("Aasimon.org", "DGEdit");
+  QSettings settings("config.ini", QSettings::IniFormat);
 
   settings.beginGroup("MainWindow");
+  settings.setValue("exportp", exportp->text());
   settings.setValue("size", size());
   settings.setValue("pos", pos());
+  settings.setValue("exportp", exportp->text());
   settings.endGroup();
 }
 

@@ -32,6 +32,7 @@
 #include <QComboBox>
 #include <QSlider>
 #include <QLineEdit>
+#include <QCloseEvent>
 
 #include "canvas.h"
 #include "audioextractor.h"
