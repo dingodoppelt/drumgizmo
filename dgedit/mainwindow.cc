@@ -40,6 +40,8 @@
 #include <QMenuBar>
 #include <QFileDialog>
 
+#include <unistd.h>
+
 #include "canvastool.h"
 #include "canvastoolthreshold.h"
 #include "canvastoollisten.h"
