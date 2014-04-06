@@ -83,11 +83,22 @@ private:
   QScrollBar *xoffset;
   QScrollBar *sb_playsamples;
   QComboBox *presets;
+  QLineEdit *lineed_attacklength;
   QSlider *slider_attacklength;
+  QLineEdit *lineed_falloff;
   QSlider *slider_falloff;
+  QLineEdit *lineed_fadelength;
   QSlider *slider_fadelength;
+  QLineEdit *lineed_slider4;
   QLineEdit *prefix;
-  QLineEdit *exportp;
+  QLineEdit *lineed_exportp;
+
+private slots:
+  void setAttackLengthLineEd(int);
+  void setFalloffLineEd(int);
+  void setFadeLengthLineEd(int);
+  void setVolumeLineEd(int);
+
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

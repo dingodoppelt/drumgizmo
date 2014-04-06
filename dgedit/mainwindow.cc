@@ -39,6 +39,7 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QFileDialog>
+#include <QIntValidator>
 
 #include <unistd.h>
 
@@ -167,61 +168,89 @@ MainWindow::MainWindow()
   connect(presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPreset(int)));
   configs->addWidget(presets);
 
-  configs->addWidget(new QLabel("Attack length:"));
+  QGridLayout *attribs_layout = new QGridLayout();
+
+  attribs_layout->addWidget(new QLabel("Attack length:"), 1, 1, 1, 2);
+  lineed_attacklength = new QLineEdit();
+  lineed_attacklength->setReadOnly(true);
+  lineed_attacklength->setValidator(new QIntValidator(0, 1000));
+  attribs_layout->addWidget(lineed_attacklength, 2, 1);
   slider_attacklength = new QSlider(Qt::Horizontal);
   slider_attacklength->setRange(10, 1000);
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)), sorter, SLOT(setAttackLength(int)));
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+          this, SLOT(setAttackLengthLineEd(int)));
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+          sorter, SLOT(setAttackLength(int)));
   slider_attacklength->setValue(666);
-  configs->addWidget(slider_attacklength);
+  attribs_layout->addWidget(slider_attacklength, 2, 2);
 
-  configs->addWidget(new QLabel("Falloff:"));
+  attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
+  lineed_falloff = new QLineEdit();
+  lineed_falloff->setReadOnly(true);
+  lineed_falloff->setValidator(new QIntValidator(0, 10000));
+  attribs_layout->addWidget(lineed_falloff, 4, 1);
   slider_falloff = new QSlider(Qt::Horizontal);
   slider_falloff->setRange(1, 10000);
   connect(slider_falloff, SIGNAL(sliderMoved(int)),
+          this, SLOT(setFalloffLineEd(int)));
+  connect(slider_falloff, SIGNAL(sliderMoved(int)),
           selections, SLOT(noiseFloorChanged(int)));
   slider_falloff->setValue(666);
-  configs->addWidget(slider_falloff); 
+  attribs_layout->addWidget(slider_falloff, 4, 2);
 
-  configs->addWidget(new QLabel("Fadelength:"));
+  attribs_layout->addWidget(new QLabel("Fadelength:"), 5, 1, 1, 2);
+  lineed_fadelength = new QLineEdit();
+  lineed_fadelength->setReadOnly(true);
+  lineed_fadelength->setValidator(new QIntValidator(0, 2000));
+  attribs_layout->addWidget(lineed_fadelength, 6, 1);
   slider_fadelength = new QSlider(Qt::Horizontal);
   slider_fadelength->setRange(1, 2000);
   connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+          this, SLOT(setFadeLengthLineEd(int)));
+  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
           selections, SLOT(fadeoutChanged(int)));
   slider_fadelength->setValue(666);
-  configs->addWidget(slider_fadelength); 
+  attribs_layout->addWidget(slider_fadelength, 6, 2);
 
-  configs->addWidget(new QLabel("Player volume:"));
+  attribs_layout->addWidget(new QLabel("Player volume:"), 7, 1, 1, 2);
+  lineed_slider4 = new QLineEdit();
+  lineed_slider4->setReadOnly(true);
+  lineed_slider4->setValidator(new QIntValidator(0, 1000000));
+  attribs_layout->addWidget(lineed_slider4, 8, 1);
   QSlider *slider4 = new QSlider(Qt::Horizontal);
   slider4->setRange(0, 1000000);
   connect(slider4, SIGNAL(sliderMoved(int)),
+          this, SLOT(setVolumeLineEd(int)));
+  connect(slider4, SIGNAL(sliderMoved(int)),
           listen, SLOT(setVolume(int)));
   slider4->setValue(100000);
-  configs->addWidget(slider4); 
+  attribs_layout->addWidget(slider4, 8, 2); 
+
+  configs->addLayout(attribs_layout);
 
   configs->addWidget(new QLabel("Prefix:"));
   prefix = new QLineEdit();
   connect(prefix, SIGNAL(textChanged(const QString &)),
           extractor, SLOT(setOutputPrefix(const QString &)));
-  prefix->setText("kick-r");
   configs->addWidget(prefix);
 
   configs->addWidget(new QLabel("Export path:"));
   QHBoxLayout *lo_exportp = new QHBoxLayout();
-  exportp = new QLineEdit();
-  connect(exportp, SIGNAL(textChanged(const QString &)),
+  lineed_exportp = new QLineEdit();
+  connect(lineed_exportp, SIGNAL(textChanged(const QString &)),
           extractor, SLOT(setExportPath(const QString &)));
-  exportp->setText("/home/deva/tmp/drumgizmoexport");
-  lo_exportp->addWidget(exportp);
+  lo_exportp->addWidget(lineed_exportp);
   QPushButton *btn_browse = new QPushButton("...");
   connect(btn_browse, SIGNAL(clicked()), this, SLOT(browse()));
   lo_exportp->addWidget(btn_browse);
+
   configs->addLayout(lo_exportp);
 
+  configs->addWidget(new QLabel("Files: (double-click to set as master)"));
   QPushButton *loadbtn = new QPushButton();
   loadbtn->setText("Add files...");
   configs->addWidget(loadbtn);
 
-  configs->addWidget(new QLabel("Files: (double-click to set as master)"));
   filelist = new FileList();
   connect(filelist, SIGNAL(masterFileChanged(QString)),
           this, SLOT(loadFile(QString)));
@@ -266,6 +295,27 @@ MainWindow::MainWindow()
   statusBar()->showMessage("Ready");
 }
 
+void MainWindow::setAttackLengthLineEd(int value)
+{
+  lineed_attacklength->setText(QString::number(value));
+}
+
+void MainWindow::setFalloffLineEd(int value)
+{
+  lineed_falloff->setText(QString::number(value));
+}
+
+void MainWindow::setFadeLengthLineEd(int value)
+{
+  lineed_fadelength->setText(QString::number(value));
+}
+
+void MainWindow::setVolumeLineEd(int value)
+{
+  lineed_slider4->setText(QString::number(value));
+}
+
+
 void MainWindow::playSamples()
 {
   //  unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
@@ -299,7 +349,7 @@ void MainWindow::loadSettings()
   QSettings settings("config.ini", QSettings::IniFormat);
 
   settings.beginGroup("MainWindow");
-  exportp->setText(settings.value("exportp", "").toString());
+  lineed_exportp->setText(settings.value("exportpath", "").toString());
   resize(settings.value("size", QSize(700, 800)).toSize());
   move(settings.value("pos", QPoint(0, 0)).toPoint());
   settings.endGroup();
@@ -310,10 +360,9 @@ void MainWindow::saveSettings()
   QSettings settings("config.ini", QSettings::IniFormat);
 
   settings.beginGroup("MainWindow");
-  settings.setValue("exportp", exportp->text());
+  settings.setValue("exportpath", lineed_exportp->text());
   settings.setValue("size", size());
   settings.setValue("pos", pos());
-  settings.setValue("exportp", exportp->text());
   settings.endGroup();
 }
 
@@ -376,6 +425,6 @@ void MainWindow::setPreset(int index)
 }
 
 void MainWindow::browse() {
-  QString path = QFileDialog::getExistingDirectory(this, "Select export path", exportp->text());
-  exportp->setText(path);
+  QString path = QFileDialog::getExistingDirectory(this, "Select export path", lineed_exportp->text());
+  lineed_exportp->setText(path);
 }
