@@ -224,6 +224,7 @@ MainWindow::MainWindow()
   connect(slider4, SIGNAL(sliderMoved(int)),
           listen, SLOT(setVolume(int)));
   slider4->setValue(100000);
+  lineed_slider4->setText("100000");
   attribs_layout->addWidget(slider4, 8, 2); 
 
   configs->addLayout(attribs_layout);
@@ -419,8 +420,11 @@ void MainWindow::setPreset(int index)
   QVariant v = presets->itemData(index);
   Preset p = v.value<Preset>();
   slider_attacklength->setValue(p.attacklength);
+  lineed_attacklength->setText(QString::number(p.attacklength));
   slider_falloff->setValue(p.falloff);
+  lineed_falloff->setText(QString::number(p.falloff));
   slider_fadelength->setValue(p.fadelength);
+  lineed_fadelength->setText(QString::number(p.fadelength));
   prefix->setText(p.prefix);
 }
 
