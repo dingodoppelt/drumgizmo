@@ -124,7 +124,7 @@ void JackAudio::run(int channel, sample_t* data, size_t size)
 
 void JackAudio::post(size_t size)
 {
-  //sem.wait();
+  sem.wait();
 }
 
 void JackAudio::jack_process(jack_nframes_t nframes)
@@ -138,7 +138,7 @@ void JackAudio::jack_process(jack_nframes_t nframes)
       out[i] = channels[c][i];
     }
   }
-  //  sem.post();
+  sem.post();
 }
 
 size_t JackAudio::bufsize()
