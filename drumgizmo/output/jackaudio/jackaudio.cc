@@ -53,6 +53,8 @@ public:
 
   void jack_process(jack_nframes_t nframes);
 
+  size_t bufsize();
+
 private:
   JackClient *jackclient;
   jack_port_t *output_port[64];
@@ -61,7 +63,7 @@ private:
   Semaphore sem;
 };
 
-JackAudio::JackAudio()
+JackAudio::JackAudio() : sem("jackaudio")
 {
 }
 
@@ -85,7 +87,7 @@ bool JackAudio::init(int nchannels, char *cnames[])
                                         name.c_str(),
                                         JACK_DEFAULT_AUDIO_TYPE,
                                         JackPortIsOutput, 0);
-    channels[i] = (sample_t*)malloc(16 * sizeof(sample_t));
+    channels[i] = (sample_t*)malloc(bufsize() * sizeof(sample_t));
   }
   return true;
 }
@@ -113,7 +115,7 @@ void JackAudio::pre(size_t size)
 }
 
 void JackAudio::run(int channel, sample_t* data, size_t size)
-{ 
+{
   // Copy engine data to ringbuffer.
   for(size_t i = 0; i < size; i++) {
     channels[channel][i] = data[i];
@@ -122,18 +124,12 @@ void JackAudio::run(int channel, sample_t* data, size_t size)
 
 void JackAudio::post(size_t size)
 {
-  sem.wait();
+  //sem.wait();
 }
 
 void JackAudio::jack_process(jack_nframes_t nframes)
 {
-  if(nframes != 128) {
-    fprintf(stderr, "jackaudio output module currently only works with a"
-            " buffersize of 64 samples!\n");
-    exit(1);
-  }
-
-  printf("o"); fflush(stdout);
+  //printf("o"); fflush(stdout);
   for(size_t c = 0; c < nchannels; c++) {
     jack_default_audio_sample_t *out =
       (jack_default_audio_sample_t *) jack_port_get_buffer(output_port[c],
@@ -142,7 +138,12 @@ void JackAudio::jack_process(jack_nframes_t nframes)
       out[i] = channels[c][i];
     }
   }
-  sem.post();
+  //  sem.post();
+}
+
+size_t JackAudio::bufsize()
+{
+  return jack_get_buffer_size(jackclient->jack_client);
 }
 
 extern "C" {
@@ -197,6 +198,12 @@ extern "C" {
   {
     JackAudio *jack = (JackAudio*)h;
     jack->post(s);
+  }
+
+  size_t bufsize(void *h)
+  {
+    JackAudio *jack = (JackAudio*)h;
+    return jack->bufsize();
   }
 }
 

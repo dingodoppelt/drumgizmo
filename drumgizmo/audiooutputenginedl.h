@@ -45,6 +45,7 @@ typedef void (*output_setparm_func_t)(void*,const char*,const char*);
 typedef void (*output_pre_func_t)(void*, size_t);
 typedef void (*output_run_func_t)(void*,int,sample_t*,size_t);
 typedef void (*output_post_func_t)(void*, size_t);
+typedef size_t (*output_bufsize_func_t)(void*);
 
 class AudioOutputEngineDL : public AudioOutputEngine {
 public:
@@ -62,6 +63,8 @@ public:
   void run(int ch, sample_t *samples, size_t nsamples);
   void post(size_t nsamples);
 
+  size_t getBufferSize();
+
 private:
   void *ptr;
   output_create_func_t o_create;
@@ -73,6 +76,7 @@ private:
   output_pre_func_t o_pre;
   output_run_func_t o_run;
   output_post_func_t o_post;
+  output_bufsize_func_t o_bufsize;
 
   bool is_jack_plugin;
   JackClient *jackclient;

@@ -137,7 +137,7 @@ event_t *JackMidi::run(size_t pos, size_t len, size_t *nevents)
 
 void JackMidi::jack_process(jack_nframes_t nframes)
 {
-  printf("i"); fflush(stdout);
+  // printf("i"); fflush(stdout);
 
   void *midibuffer = jack_port_get_buffer(midi_port, nframes);
 

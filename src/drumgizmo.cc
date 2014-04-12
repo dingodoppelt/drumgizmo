@@ -284,12 +284,12 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 void DrumGizmo::run(int endpos)
 {
+  size_t pos = 0;
+  size_t nsamples = oe->getBufferSize();
+  sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
   ie->start();
   oe->start();
-
-  size_t pos = 0;
-  size_t nsamples = 128;//1024;
-  sample_t samples[nsamples];
 
   while(run(pos, samples, nsamples) == true) {
     pos += nsamples;
@@ -298,6 +298,8 @@ void DrumGizmo::run(int endpos)
 
   ie->stop();
   oe->stop();
+
+  free(samples);
 }
 
 #ifdef SSE
