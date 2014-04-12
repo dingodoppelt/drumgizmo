@@ -28,10 +28,11 @@
  */
 #include "audiofile.h"
 
+#include <config.h>
+
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <sndfile.h>
 #ifdef WITH_RESAMPLE
 #include <samplerate.h>
@@ -39,8 +40,6 @@
 #include <hugin.hpp>
 
 #include "configuration.h"
-
-#include <config.h>
 
 AudioFile::AudioFile(std::string filename, int filechannel)
 {
