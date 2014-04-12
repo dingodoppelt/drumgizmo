@@ -173,7 +173,8 @@ MainWindow::MainWindow()
   attribs_layout->addWidget(new QLabel("Attack length:"), 1, 1, 1, 2);
   lineed_attacklength = new QLineEdit();
   lineed_attacklength->setReadOnly(true);
-  lineed_attacklength->setValidator(new QIntValidator(0, 1000));
+  lineed_attacklength->setValidator(new QIntValidator(0, 1000,
+                                                      lineed_attacklength));
   attribs_layout->addWidget(lineed_attacklength, 2, 1);
   slider_attacklength = new QSlider(Qt::Horizontal);
   slider_attacklength->setRange(10, 1000);
@@ -187,7 +188,7 @@ MainWindow::MainWindow()
   attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
   lineed_falloff = new QLineEdit();
   lineed_falloff->setReadOnly(true);
-  lineed_falloff->setValidator(new QIntValidator(0, 10000));
+  lineed_falloff->setValidator(new QIntValidator(0, 10000, lineed_falloff));
   attribs_layout->addWidget(lineed_falloff, 4, 1);
   slider_falloff = new QSlider(Qt::Horizontal);
   slider_falloff->setRange(1, 10000);
@@ -201,7 +202,8 @@ MainWindow::MainWindow()
   attribs_layout->addWidget(new QLabel("Fadelength:"), 5, 1, 1, 2);
   lineed_fadelength = new QLineEdit();
   lineed_fadelength->setReadOnly(true);
-  lineed_fadelength->setValidator(new QIntValidator(0, 2000));
+  lineed_fadelength->setValidator(new QIntValidator(0, 2000,
+                                                    lineed_fadelength));
   attribs_layout->addWidget(lineed_fadelength, 6, 1);
   slider_fadelength = new QSlider(Qt::Horizontal);
   slider_fadelength->setRange(1, 2000);
@@ -215,7 +217,7 @@ MainWindow::MainWindow()
   attribs_layout->addWidget(new QLabel("Player volume:"), 7, 1, 1, 2);
   lineed_slider4 = new QLineEdit();
   lineed_slider4->setReadOnly(true);
-  lineed_slider4->setValidator(new QIntValidator(0, 1000000));
+  lineed_slider4->setValidator(new QIntValidator(0, 1000000, lineed_slider4));
   attribs_layout->addWidget(lineed_slider4, 8, 1);
   QSlider *slider4 = new QSlider(Qt::Horizontal);
   slider4->setRange(0, 1000000);
