@@ -40,16 +40,6 @@ Player::Player()
   pcm_data = NULL;
   pcm_size = 0;
 
-  ao_initialize();
-
-  ao_sample_format sf;
-  sf.bits = 16;
-  sf.rate = 44100;
-  sf.channels = 1;
-  sf.byte_format = AO_FMT_NATIVE;
-
-  dev = ao_open_live(ao_default_driver_id(), &sf, 0);
-
   connect(&report_timer, SIGNAL(timeout()), this, SLOT(reportTimeout()));
   report_timer.start(50); // Update 25 times per second
 }
@@ -62,6 +52,16 @@ Player::~Player()
 
 void Player::run()
 {
+  ao_initialize();
+
+  ao_sample_format sf;
+  sf.bits = 16;
+  sf.rate = 44100;
+  sf.channels = 1;
+  sf.byte_format = AO_FMT_NATIVE;
+
+  dev = ao_open_live(ao_default_driver_id(), &sf, 0);
+
   short s[BUFSZ];
   while(true) {
     if(playing) {
