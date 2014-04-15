@@ -37,13 +37,12 @@ typedef struct {
   float *data;
 } audiodata_t;
 
-AudioExtractor::AudioExtractor(QObject *parent)
-  : QObject(parent)
+AudioExtractor::AudioExtractor(Selections &s, QObject *parent)
+  : QObject(parent), selections(s)
 {
 }
 
-void AudioExtractor::exportSelections(Selections selections,
-                                      Levels levels)
+void AudioExtractor::exportSelections()
 {
   // Open all input audio files:
   audiodata_t audiodata[audiofiles.size()];
@@ -67,9 +66,10 @@ void AudioExtractor::exportSelections(Selections selections,
   }
   
   idx = 0;
-  QMap<int, Selection>::iterator si = selections.begin();
-  while(si != selections.end()) {
-    Selection &sel = *si;
+  QVector<sel_id_t> sels = selections.ids();
+  QVector<sel_id_t>::iterator si = sels.begin();
+  while(si != sels.end()) {
+    Selection sel = selections.get(*si);
     size_t offset = sel.from;
     size_t size = sel.to - sel.from;
     size_t fadein = sel.fadein;
@@ -161,18 +161,22 @@ void AudioExtractor::exportSelections(Selections selections,
   QDomElement samples = doc.createElement("samples");
   instrument.appendChild(samples);
 
+  {
   // Do the adding to the xml file one sample at the time.
   int index = 0;
-  QMap<int, Selection>::iterator i = selections.begin();
-  while(i != selections.end()) {
+  QVector<sel_id_t>::iterator si = sels.begin();
+  while(si != sels.end()) {
     index++;
 
-    i->name = prefix + "-" + QString::number(index);
+    Selection i = selections.get(*si);
+    i.name = prefix + "-" + QString::number(index);
 
     QDomElement sample = doc.createElement("sample");
-    sample.setAttribute("name", i->name);
-    sample.setAttribute("power", QString::number(i->energy));
+    sample.setAttribute("name", i.name);
+    sample.setAttribute("power", QString::number(i.energy));
     samples.appendChild(sample);
+
+    selections.update(*si, i);
 
     int channelnum = 1; // Filechannel numbers are 1-based.
     AudioFileList::iterator j = audiofiles.begin();
@@ -191,47 +195,10 @@ void AudioExtractor::exportSelections(Selections selections,
       j++;
     }
 
-    i++;
+    si++;
   }
-
-  QDomElement velocities = doc.createElement("velocities");
-  instrument.appendChild(velocities);
-
-  Levels::iterator k = levels.begin();
-  while(k != levels.end()) {
-
-    Levels::iterator nxt = k;
-    nxt++;
-    float next;
-    if(nxt == levels.end()) next = 1.0;
-    else next = nxt->velocity;
-    
-
-    QDomElement velocity = doc.createElement("velocity");
-    velocity.setAttribute("lower", k->velocity);
-    velocity.setAttribute("upper", next);
-    velocities.appendChild(velocity);
-
-    QMap<float, Selection>::iterator i = k->selections.begin();
-    while(i != k->selections.end()) {
-
-      QMap<int, Selection>::iterator j = selections.begin();
-      while(j != selections.end()) {
-        if(i->from == j->from && i->to == j->to) {
-          QDomElement sampleref = doc.createElement("sampleref");
-          sampleref.setAttribute("name", j->name);
-          sampleref.setAttribute("probability",
-                                 1.0 / (double)k->selections.size());
-          velocity.appendChild(sampleref);
-        }
-        j++;
-      }
-      i++;
-    }
-
-    k++;
   }
-
+  
   QFile xmlfile(exportpath + "/" + prefix + "/" + prefix + ".xml");
   xmlfile.open(QIODevice::WriteOnly);
   xmlfile.write(doc.toByteArray());

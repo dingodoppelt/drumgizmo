@@ -39,6 +39,7 @@
 #include "samplesorter.h"
 #include "filelist.h"
 #include "canvastoolselections.h"
+#include "selection.h"
 
 class Preset {
 public:  
@@ -93,12 +94,14 @@ private:
   QLineEdit *prefix;
   QLineEdit *lineed_exportp;
 
+  // Session state information:
+  Selections session;
+
 private slots:
   void setAttackLengthLineEd(int);
   void setFalloffLineEd(int);
   void setFadeLengthLineEd(int);
   void setVolumeLineEd(int);
-
 };
 
 #endif/*__DRUMGIZMO_MAINWINDOW_H__*/

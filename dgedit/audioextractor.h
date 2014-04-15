@@ -41,17 +41,19 @@ typedef QLinkedList< QPair<QString, QString> > AudioFileList;
 class AudioExtractor : public QObject {
 Q_OBJECT
 public:
-  AudioExtractor(QObject *parent);
+  AudioExtractor(Selections &selections, QObject *parent);
 
 public slots:
   void addFile(QString file, QString name);
   void changeName(QString file, QString name);
   void removeFile(QString file, QString name);
-  void exportSelections(Selections selections, Levels levels);
+
+  void exportSelections();
   void setExportPath(const QString &path);
   void setOutputPrefix(const QString &prefix);
 
 private:
+  Selections &selections;
   AudioFileList audiofiles;
   QString exportpath;
   QString prefix;

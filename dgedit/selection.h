@@ -27,7 +27,10 @@
 #ifndef __DRUMGIZMO_SELECTION_H__
 #define __DRUMGIZMO_SELECTION_H__
 
+#include <QObject>
+
 #include <QMap>
+#include <QVector>
 
 class Selection {
 public:
@@ -47,6 +50,86 @@ public:
   QString name;
 };
 
-typedef QMap<int, Selection> Selections;
+typedef int sel_id_t;
+#define SEL_NONE -1
+
+class Selections : public QObject {
+Q_OBJECT
+public:
+  Selections();
+
+  /**
+   * Add a new selection object. The new id is returned.
+   * Adding a new selections will emit an added signal with the new id.
+   */
+  sel_id_t add(Selection selection);
+
+  /**
+   * Get a stack copy of a specific selection object, by id.
+   * NOTE: If id does not exist an empty selection (from = to = 0) is
+   * returned.
+   */
+  Selection get(sel_id_t id);
+
+  /**
+   * Return vector (unsorted) of all ids in the object.
+   */
+  QVector<sel_id_t> ids();
+
+  /**
+   * Set active selection (to be rendered yellow)
+   */
+  void setActive(sel_id_t id);
+
+  /**
+   * Get active selection id.
+   */
+  sel_id_t active();
+
+public slots:
+  /**
+   * Update a selection by id.
+   * Updating a selection will emit a updated signal.
+   */
+  void update(sel_id_t id, Selection selection);
+
+  /**
+   * Delete a selection by id.
+   * Deleting a selection will emit a deleted signal.
+   */
+  void remove(sel_id_t id);
+
+  /**
+   * Delete all selections
+   */
+  void clear();
+
+signals:
+  /**
+   * This signal is emitted when a new selection has been added.
+   */
+  void added(sel_id_t id);
+
+  /**
+   * This signal is emitted when an existing selection has been updated.
+   */
+  void updated(sel_id_t id);
+
+  /**
+   * This signal is emitted when a selection has been removed.
+   */
+  void removed(sel_id_t id);
+
+  /**
+   * The active selection changed.
+   */
+  void activeChanged(sel_id_t id);
+
+private:
+  QMap<sel_id_t, Selection> sels;
+  sel_id_t nextid;
+  sel_id_t act;
+};
+
 
 #endif/*__DRUMGIZMO_SELECTION_H__*/

@@ -31,29 +31,18 @@
 #include <QVector>
 #include "selection.h"
 
-class Level {
-public:
-  float velocity;
-  QMap<float, Selection> selections;
-};
-
-typedef QVector<Level> Levels;
-
 class SampleSorter : public QWidget {
 Q_OBJECT
 public:
-  SampleSorter();
-
-  Selections selections();
-  Levels levels();
+  SampleSorter(Selections &selections);
 
 public slots:
-  void setSelections(Selections selections);
   void setWavData(const float *data, size_t size);
-  void resort();
   void setAttackLength(int len);
   int attackLength();
-  void setActiveSelection(Selection s);
+
+  void addSelection(sel_id_t id);
+  void relayout();
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -61,14 +50,11 @@ protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
-signals:
-  void activeSelectionChanged(Selection selection);
-
 private:
-  Selection *getSelectionByCoordinate(int x, int y);
+  sel_id_t getSelectionByCoordinate(int x, int y);
 
-  Selections _selections;
-  QMap<float, Selection> sorted;
+  Selections &selections;
+
   float min;
   float max;
   int attlen;
@@ -79,13 +65,7 @@ private:
 
   Selection sel;
 
-  QVector<double> threshold;
-  bool threshold_is_moving;
-  bool selection_is_moving_left;
-  bool selection_is_moving_right;
-  int cur_thr;
-
-  Selection *sel_moving;
+  sel_id_t sel_moving;
 };
 
 #endif/*__DRUMGIZMO_SAMPLESORTER_H__*/

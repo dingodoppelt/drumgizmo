@@ -23,7 +23,8 @@ dgedit_SOURCES = \
 	itemeditor.cc \
 	mainwindow.cc \
 	mipmap.cc \
-	samplesorter.cc
+	samplesorter.cc \
+	selection.cc
 
 EXTRA_DIST = \
 	audioextractor.h \

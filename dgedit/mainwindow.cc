@@ -70,7 +70,7 @@ MainWindow::MainWindow()
   central->setLayout(lv);
   setCentralWidget(central);
 
-  extractor = new AudioExtractor(this);
+  extractor = new AudioExtractor(session, this);
   canvas = new Canvas(this);
 
   QToolBar *toolbar = addToolBar("Tools");
@@ -79,9 +79,11 @@ MainWindow::MainWindow()
   addTool(toolbar, canvas, listen);
   CanvasTool *threshold = new CanvasToolThreshold(canvas);
   addTool(toolbar, canvas, threshold);
-  selections = new CanvasToolSelections(canvas);
+  selections = new CanvasToolSelections(canvas, session);
   connect(threshold, SIGNAL(thresholdChanged(double)),
           selections, SLOT(thresholdChanged(double)));
+  connect(&session, SIGNAL(activeChanged(sel_id_t)),
+          canvas, SLOT(update()));
   addTool(toolbar, canvas, selections);
 
   QMenu *fileMenu = menuBar()->addMenu("&File");
@@ -114,14 +116,12 @@ MainWindow::MainWindow()
   xoffset->setSingleStep(SINGLESTEP);
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
-  sorter = new SampleSorter();
-  connect(selections, SIGNAL(selectionsChanged(Selections)),
-          sorter, SLOT(setSelections(Selections)));
-  connect(selections, SIGNAL(activeSelectionChanged(Selection)),
-          sorter, SLOT(setActiveSelection(Selection)));
-
-  connect(sorter, SIGNAL(activeSelectionChanged(Selection)),
-          selections, SLOT(setActiveSelection(Selection)));
+  sorter = new SampleSorter(session);
+  connect(&session, SIGNAL(added(sel_id_t)),
+          sorter, SLOT(addSelection(sel_id_t)));
+  connect(&session, SIGNAL(updated(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&session, SIGNAL(removed(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&session, SIGNAL(activeChanged(sel_id_t)), sorter, SLOT(relayout()));
 
   QPushButton *btn_playsamples = new QPushButton("Play samples");
   connect(btn_playsamples, SIGNAL(clicked()), this, SLOT(playSamples()));
@@ -321,21 +321,40 @@ void MainWindow::setVolumeLineEd(int value)
 
 void MainWindow::playSamples()
 {
-  //  unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
+  //unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
 
-  Selections sels = sorter->selections();
-  Selections::iterator i = sels.begin();
-  while(i != sels.end()) {
+  QVector<sel_id_t> ids = session.ids();
+  for(int v1 = 0; v1 < ids.size(); v1++) {
+    for(int v2 = 0; v2 < ids.size(); v2++) {
+
+      Selection sel1 = session.get(ids[v1]);
+      Selection sel2 = session.get(ids[v2]);
+
+      if(sel1.energy < sel2.energy) {
+        sel_id_t vtmp = ids[v1];
+        ids[v1] = ids[v2];
+        ids[v2] = vtmp;
+      }
+    }
+  }
+
+  QVector<sel_id_t>::iterator i = ids.begin();
+  while(i != ids.end()) {
+    Selection sel = session.get(*i);
+
     unsigned int length = sb_playsamples->value() * 44100 / 1000;
 
-    unsigned int sample_length = i->to - i->from;
+    unsigned int sample_length = sel.to - sel.from;
 
-    unsigned int to = i->to;
+    unsigned int to = sel.to;
     unsigned int sleep = 0;
 
-    if(sample_length > length) to = i->from + length;
+    if(sample_length > length) to = sel.from + length;
     else sleep = length - sample_length;
-    g_listen->playRange(i->from, to);
+
+    session.setActive(*i);
+    
+    g_listen->playRange(sel.from, to);
     usleep(1000000 * sleep / 44100);
     i++;
   }
@@ -402,7 +421,7 @@ void MainWindow::setYOffset(int of)
 
 void MainWindow::doExport()
 {
-  extractor->exportSelections(sorter->selections(), sorter->levels());
+  extractor->exportSelections();
 }
 
 void MainWindow::loadFile(QString filename)
