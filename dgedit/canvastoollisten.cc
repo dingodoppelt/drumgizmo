@@ -150,11 +150,9 @@ void CanvasToolListen::playRange(unsigned int from, unsigned int to)
   player.playing = true;
   canvas->update();
   timer.start(50);
-  printf("start\n");
   while(player.pos < to) {
     qApp->processEvents();
     usleep(10000);
   }
   player.playing = false;
-  printf("stop\n");
 }
