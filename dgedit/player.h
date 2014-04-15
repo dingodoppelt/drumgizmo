@@ -63,7 +63,19 @@ public slots:
   void setGainDB(double gain_db);
 
 signals:
+  /**
+   * The absolute maximum of samples seen since last update.
+   */
   void peakUpdate(double peak);
+
+  /**
+   * The absolute maximum of samples seen since last update in dB.
+   */
+  void peakUpdateDB(double peak_db);
+
+  /**
+   * The sample position of the player.
+   */
   void positionUpdate(size_t position);
 
 private slots:

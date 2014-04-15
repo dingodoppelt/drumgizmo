@@ -88,17 +88,18 @@ void Player::run()
 
 void Player::setGainScalar(double g)
 {
-  gain_scalar = g / 10000.0;
+  gain_scalar = g;
 }
 
 void Player::setGainDB(double gain_db)
 {
-  setGainScalar(20*log10(gain_db));
+  setGainScalar(pow(10, gain_db/ 20.0));
 }
 
 void Player::reportTimeout()
 {
   emit peakUpdate(peak);
+  emit peakUpdateDB(20 * log10(peak));
   peak = 0.0;
 
   emit positionUpdate(pos);
