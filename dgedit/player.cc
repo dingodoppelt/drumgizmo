@@ -42,6 +42,8 @@ Player::Player()
 
   connect(&report_timer, SIGNAL(timeout()), this, SLOT(reportTimeout()));
   report_timer.start(50); // Update 25 times per second
+
+  start();
 }
 
 Player::~Player()
@@ -55,6 +57,7 @@ void Player::run()
   ao_initialize();
 
   ao_sample_format sf;
+  memset(&sf, 0, sizeof(sf));
   sf.bits = 16;
   sf.rate = 44100;
   sf.channels = 1;
