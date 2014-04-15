@@ -101,6 +101,8 @@ private:
 
   double gain_scalar;
   double peak;
+
+  bool running;
 };
 
 #endif/*__DRUMGIZMO_PLAYER_H__*/
