@@ -98,7 +98,7 @@ private:
 
   // Session state information:
   Selections session;
-  Player *player;
+  Player player;
 
 private slots:
   void setAttackLengthLineEd(int);

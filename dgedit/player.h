@@ -37,7 +37,7 @@
 class Player : public QThread {
 Q_OBJECT
 public:
-  Player(Canvas *canvas); // TODO: Don't use canvas pointer here. Instead introduce setData slot or similar.
+  Player();
   ~Player();
 
   void run();
@@ -50,6 +50,11 @@ public:
 
 public slots:
   /**
+   * Assign PCM data to the player.
+   */
+  void setPcmData(float *data, size_t num_samples);
+
+  /**
    * Set gain scalar.
    * This value is multiplied with each sample before it is played.
    */
@@ -61,6 +66,11 @@ public slots:
    * to a scalar and sets the gain scalar accordingly.
    */
   void setGainDB(double gain_db);
+
+  /**
+   * Set player position as sample offset.
+   */
+  void setPosition(size_t position);
 
 signals:
   /**
@@ -83,7 +93,9 @@ private slots:
 
 private:
   ao_device *dev;  
-  Canvas *canvas;
+
+  float *pcm_data;
+  size_t pcm_size;
 
   QTimer report_timer;
 

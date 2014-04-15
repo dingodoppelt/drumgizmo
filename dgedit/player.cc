@@ -30,11 +30,15 @@
 
 #define BUFSZ 1024 * 2
 
-Player::Player(Canvas *c)
+Player::Player()
 {
-  canvas = c;
   playing = false;
+
+  peak = 0;
   pos = 0;
+  gain_scalar = 1.0;
+  pcm_data = NULL;
+  pcm_size = 0;
 
   ao_initialize();
 
@@ -45,10 +49,6 @@ Player::Player(Canvas *c)
   sf.byte_format = AO_FMT_NATIVE;
 
   dev = ao_open_live(ao_default_driver_id(), &sf, 0);
-
-  gain_scalar = 1000;
-
-  peak = 0;
 
   connect(&report_timer, SIGNAL(timeout()), this, SLOT(reportTimeout()));
   report_timer.start(50); // Update 25 times per second
@@ -67,8 +67,8 @@ void Player::run()
     if(playing) {
       for(size_t i = 0; i < BUFSZ; i++) {
         double sample = 0.0;
-        if(i + pos < canvas->size) {
-          sample = canvas->data[pos + i] * gain_scalar;
+        if(i + pos < pcm_size) {
+          sample = pcm_data[pos + i] * gain_scalar;
         } else {
           playing = false;
         }
@@ -105,3 +105,14 @@ void Player::reportTimeout()
   emit positionUpdate(pos);
   peak = 0.0;
 }
+
+void Player::setPcmData(float *data, size_t size)
+{
+  pcm_data = data;
+  pcm_size = size;
+}
+
+ void Player::setPosition(size_t position)
+ {
+   pos = position;
+ }

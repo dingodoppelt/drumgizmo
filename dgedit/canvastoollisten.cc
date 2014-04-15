@@ -38,6 +38,7 @@ CanvasToolListen::CanvasToolListen(Canvas *c, Player &p)
 bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 {
   if(!isActive()) return false;
+  player.setPosition(canvas->unmapX(event->x()));
   player.playing = true;
   canvas->update();
   connect(&player, SIGNAL(positionUpdate(size_t)), this, SLOT(update(size_t)));

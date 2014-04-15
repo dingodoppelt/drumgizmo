@@ -73,11 +73,10 @@ MainWindow::MainWindow()
   extractor = new AudioExtractor(session, this);
   canvas = new Canvas(this);
 
-  player = new Player(canvas);
-  player->start();
+  player.start();
 
   QToolBar *toolbar = addToolBar("Tools");
-  g_listen = new CanvasToolListen(canvas, *player);
+  g_listen = new CanvasToolListen(canvas, player);
   CanvasTool *listen = g_listen;
   addTool(toolbar, canvas, listen);
   CanvasTool *threshold = new CanvasToolThreshold(canvas);
@@ -303,7 +302,6 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-  delete player;
 }
 
 void MainWindow::setAttackLengthLineEd(int value)
@@ -437,9 +435,15 @@ void MainWindow::loadFile(QString filename)
   setCursor(Qt::WaitCursor);
   statusBar()->showMessage("Loading...");
   qApp->processEvents();
+
   sorter->setWavData(NULL, 0);
+  player.setPcmData(NULL, 0);
+
   canvas->load(filename);
+
   sorter->setWavData(canvas->data, canvas->size);
+  player.setPcmData(canvas->data, canvas->size);
+
   statusBar()->showMessage("Ready");
   setCursor(Qt::ArrowCursor);
 }
@@ -458,6 +462,7 @@ void MainWindow::setPreset(int index)
 }
 
 void MainWindow::browse() {
-  QString path = QFileDialog::getExistingDirectory(this, "Select export path", lineed_exportp->text());
+  QString path = QFileDialog::getExistingDirectory(this, "Select export path",
+                                                   lineed_exportp->text());
   lineed_exportp->setText(path);
 }
