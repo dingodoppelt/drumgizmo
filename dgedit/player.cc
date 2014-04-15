@@ -46,8 +46,8 @@ Player::Player()
 
 Player::~Player()
 {
-  ao_close(dev);
-  ao_shutdown();
+  running = false; // Signal player thread to stop
+  wait(); // Wait for player thread to stop.
 }
 
 void Player::run()
@@ -62,8 +62,10 @@ void Player::run()
 
   dev = ao_open_live(ao_default_driver_id(), &sf, 0);
 
+  running = true;
+
   short s[BUFSZ];
-  while(true) {
+  while(running) {
     if(playing) {
       for(size_t i = 0; i < BUFSZ; i++) {
         double sample = 0.0;
@@ -84,6 +86,9 @@ void Player::run()
       msleep(22);
     }
   }
+
+  ao_close(dev);
+  ao_shutdown();
 }
 
 void Player::setGainScalar(double g)
