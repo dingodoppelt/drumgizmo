@@ -25,7 +25,8 @@ dgedit_SOURCES = \
 	mipmap.cc \
 	player.cc \
 	samplesorter.cc \
-	selection.cc
+	selection.cc \
+	volumefader.cc
 
 EXTRA_DIST = \
 	audioextractor.h \
@@ -41,6 +42,7 @@ EXTRA_DIST = \
 	player.h \
 	samplesorter.h \
 	selection.h \
+	volumefader.h \
 	dgedit.qrc
 
 dgedit_MOC = $(shell ../tools/MocList cc )
