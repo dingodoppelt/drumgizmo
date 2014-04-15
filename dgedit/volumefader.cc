@@ -26,9 +26,14 @@
  */
 #include "volumefader.h"
 
+#include <QSlider>
+#include <QVBoxLayout>
+
 VolumeFader::VolumeFader() 
 {
-
+  QVBoxLayout* lo = new QVBoxLayout();
+  lo->addWidget(new QSlider());
+  setLayout(lo);
 }
 
 VolumeFader::~VolumeFader()
