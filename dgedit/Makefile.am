@@ -23,6 +23,7 @@ dgedit_SOURCES = \
 	itemeditor.cc \
 	mainwindow.cc \
 	mipmap.cc \
+	player.cc \
 	samplesorter.cc \
 	selection.cc
 
@@ -37,6 +38,7 @@ EXTRA_DIST = \
 	itemeditor.h \
 	mainwindow.h \
 	mipmap.h \
+	player.h \
 	samplesorter.h \
 	selection.h \
 	dgedit.qrc
