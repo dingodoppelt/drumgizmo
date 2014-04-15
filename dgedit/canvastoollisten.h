@@ -29,35 +29,15 @@
 
 #include "canvastool.h"
 
-#include <QThread>
-#include <QTimer>
-
-#include <ao/ao.h>
+//#include <QTimer>
 
 #include "canvas.h"
-
-class Player : public QThread {
-public:
-  Player(Canvas *canvas);
-  ~Player();
-
-  void run();
-
-  volatile bool playing;
-  volatile size_t pos;
-
-  void setVolume(double v);
-
-private:
-  ao_device *dev;  
-  Canvas *canvas;
-  double volume;
-};
+#include "player.h"
 
 class CanvasToolListen : public CanvasTool {
 Q_OBJECT
 public:
-  CanvasToolListen(Canvas *canvas);
+  CanvasToolListen(Canvas *canvas, Player &player);
 
   QString name() { return "Listen"; }
   bool mousePressEvent(QMouseEvent *event);
@@ -67,15 +47,16 @@ public:
   void playRange(unsigned int from, unsigned int to);
   
 public slots:
-  void update();
+  void update(size_t position);
   void setVolume(int v);
 
 private:
   Canvas *canvas;
 
-  Player player;
-  QTimer timer;
+  Player &player;
+
   size_t lastpos;
+  size_t pos;
 };
 
 #endif/*__DRUMGIZMO_CANVASTOOLLISTEN_H__*/

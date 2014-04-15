@@ -28,78 +28,19 @@
 
 #include <QApplication>
 
-#define BUFSZ 1024 * 2
-
-Player::Player(Canvas *c)
+CanvasToolListen::CanvasToolListen(Canvas *c, Player &p)
+  : player(p)
 {
-  canvas = c;
-  playing = false;
-  pos = 0;
-
-  ao_initialize();
-
-  ao_sample_format sf;
-  sf.bits = 16;
-  sf.rate = 44100;
-  sf.channels = 1;
-  sf.byte_format = AO_FMT_NATIVE;
-
-  dev = ao_open_live(ao_default_driver_id(), &sf, 0);
-
-  volume = 1000;
-}
-
-Player::~Player()
-{
-  ao_close(dev);
-  ao_shutdown();
-}
-
-void Player::run()
-{
-  while(true) {
-    if(playing) {
-      short s[BUFSZ];
-      for(size_t i = 0; i < BUFSZ; i++) {
-        if(i + pos < canvas->size) s[i] = canvas->data[pos + i] * volume;
-        else {
-          s[i] = 0;
-          playing = false;
-        }
-      }
-
-      ao_play(dev, (char*)s, BUFSZ * sizeof(short));
-      //      canvas->update();
-
-      pos += BUFSZ;
-
-    } else {
-      msleep(22);
-    }
-  }
-}
-
-void Player::setVolume(double v)
-{
-  volume = v;
-}
-
-CanvasToolListen::CanvasToolListen(Canvas *c)
-  : player(c)
-{
-  lastpos = 0;
+  lastpos = pos = 0;
   canvas = c ;
-  player.start();
-  QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
 bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 {
   if(!isActive()) return false;
-  player.pos = canvas->unmapX(event->x());
   player.playing = true;
   canvas->update();
-  timer.start(50);
+  connect(&player, SIGNAL(positionUpdate(size_t)), this, SLOT(update(size_t)));
   return true;
 }
 
@@ -107,7 +48,8 @@ bool CanvasToolListen::mouseReleaseEvent(QMouseEvent *event)
 {
   if(!isActive()) return false;
   player.playing = false;
-  timer.stop();
+  disconnect(&player, SIGNAL(positionUpdate(size_t)),
+             this, SLOT(update(size_t)));
   lastpos = 0;
   canvas->update();
   return true;
@@ -119,16 +61,16 @@ void CanvasToolListen::paintEvent(QPaintEvent *event, QPainter &painter)
 
   if(player.playing) {
     painter.setPen(QColor(0, 127, 127));
-    painter.drawLine(canvas->mapX(player.pos),
+    painter.drawLine(canvas->mapX(pos),
                      event->rect().y(),
-                     canvas->mapX(player.pos),
+                     canvas->mapX(pos),
                      event->rect().y() + event->rect().height());
    }
 }
 
-void CanvasToolListen::update()
+void CanvasToolListen::update(size_t pos)
 {
-  size_t pos = player.pos;
+  this->pos = pos;
   size_t last = canvas->mapX(lastpos);
   size_t x = canvas->mapX(player.pos);
   QRect r(last, 0,
@@ -140,19 +82,24 @@ void CanvasToolListen::update()
 
 void CanvasToolListen::setVolume(int v)
 {
-  player.setVolume(v);
+  player.setGainScalar(v);
 }
 
+/*
+ * UGLY HACK: This method is in dire need of a rewrite!
+ */
 #include <unistd.h>
 void CanvasToolListen::playRange(unsigned int from, unsigned int to)
 {
   player.pos = from;
   player.playing = true;
   canvas->update();
-  timer.start(50);
+  connect(&player, SIGNAL(positionUpdate(size_t)), this, SLOT(update(size_t)));
   while(player.pos < to) {
     qApp->processEvents();
     usleep(10000);
   }
+  disconnect(&player, SIGNAL(positionUpdate(size_t)),
+             this, SLOT(update(size_t)));
   player.playing = false;
 }

@@ -40,6 +40,7 @@
 #include "filelist.h"
 #include "canvastoolselections.h"
 #include "selection.h"
+#include "player.h"
 
 class Preset {
 public:  
@@ -54,6 +55,7 @@ class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
   MainWindow();
+  ~MainWindow();
 
 public slots:
   void setXScale(int);
@@ -96,6 +98,7 @@ private:
 
   // Session state information:
   Selections session;
+  Player *player;
 
 private slots:
   void setAttackLengthLineEd(int);

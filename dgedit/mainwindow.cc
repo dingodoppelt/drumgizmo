@@ -73,8 +73,11 @@ MainWindow::MainWindow()
   extractor = new AudioExtractor(session, this);
   canvas = new Canvas(this);
 
+  player = new Player(canvas);
+  player->start();
+
   QToolBar *toolbar = addToolBar("Tools");
-  g_listen = new CanvasToolListen(canvas);
+  g_listen = new CanvasToolListen(canvas, *player);
   CanvasTool *listen = g_listen;
   addTool(toolbar, canvas, listen);
   CanvasTool *threshold = new CanvasToolThreshold(canvas);
@@ -296,6 +299,11 @@ MainWindow::MainWindow()
   }
 
   statusBar()->showMessage("Ready");
+}
+
+MainWindow::~MainWindow()
+{
+  delete player;
 }
 
 void MainWindow::setAttackLengthLineEd(int value)
