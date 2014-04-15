@@ -65,21 +65,6 @@ void SampleSorter::setAttackLength(int len)
   attlen = len;
   relayout();
 }
-/* // TODO
-Selections SampleSorter::selections()
-{
-  Selections s;
-  int j = 0;
-
-  QMap<float, Selection>::iterator i = sorted.begin();
-  while(i != sorted.end()) {
-    s[j++] = i.value();
-    i++;
-  }
-
-  return s;
-}
-*/
 
 void SampleSorter::addSelection(sel_id_t id)
 {
