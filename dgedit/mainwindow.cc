@@ -125,11 +125,17 @@ MainWindow::MainWindow()
   xoffset->setSingleStep(SINGLESTEP);
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
-  sorter = new SampleSorter(selections);
+  sorter = new SampleSorter(selections, selections_preview);
   connect(&selections, SIGNAL(added(sel_id_t)),
           sorter, SLOT(addSelection(sel_id_t)));
+  connect(&selections_preview, SIGNAL(added(sel_id_t)),
+          sorter, SLOT(addSelectionPreview(sel_id_t)));
   connect(&selections, SIGNAL(updated(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&selections_preview, SIGNAL(updated(sel_id_t)),
+          sorter, SLOT(relayout()));
   connect(&selections, SIGNAL(removed(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&selections_preview, SIGNAL(removed(sel_id_t)),
+          sorter, SLOT(relayout()));
   connect(&selections, SIGNAL(activeChanged(sel_id_t)),
           sorter, SLOT(relayout()));
 
@@ -163,6 +169,7 @@ MainWindow::MainWindow()
   tabs->addTab(createEditTab(), "Edit");
   tabs->addTab(createExportTab(), "Export");
   connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+  tabChanged(tabs->currentIndex());
 
   dockWidget->widget()->layout()->addWidget(tabs);
 
@@ -208,6 +215,8 @@ MainWindow::~MainWindow()
 void MainWindow::tabChanged(int tabid)
 {
   tool_selections->setShowPreview(tabid == generateTabId);
+  sorter->setShowPreview(tabid == generateTabId);
+  tool_selections->autoCreateSelectionsPreview();
 }
 
 QWidget *MainWindow::createFilesTab()
@@ -298,10 +307,10 @@ QWidget *MainWindow::createGenerateTab()
   attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
   lineed_falloff = new QLineEdit();
   lineed_falloff->setReadOnly(true);
-  lineed_falloff->setValidator(new QIntValidator(0, 10000, lineed_falloff));
+  lineed_falloff->setValidator(new QIntValidator(0, 1000, lineed_falloff));
   attribs_layout->addWidget(lineed_falloff, 4, 1);
   slider_falloff = new QSlider(Qt::Horizontal);
-  slider_falloff->setRange(1, 10000);
+  slider_falloff->setRange(1, 1000);
   connect(slider_falloff, SIGNAL(sliderMoved(int)),
           this, SLOT(setFalloffLineEd(int)));
   connect(slider_falloff, SIGNAL(sliderMoved(int)),

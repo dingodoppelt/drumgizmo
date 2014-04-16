@@ -34,7 +34,7 @@
 class SampleSorter : public QWidget {
 Q_OBJECT
 public:
-  SampleSorter(Selections &selections);
+  SampleSorter(Selections &selections, Selections &selections_preview);
 
 public slots:
   void setWavData(const float *data, size_t size);
@@ -42,7 +42,11 @@ public slots:
   int attackLength();
 
   void addSelection(sel_id_t id);
+  void addSelectionPreview(sel_id_t id);
+
   void relayout();
+
+  void setShowPreview(bool show_preview);
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -54,6 +58,9 @@ private:
   sel_id_t getSelectionByCoordinate(int x, int y);
 
   Selections &selections;
+  Selections &selections_preview;
+
+  bool show_preview;
 
   float min;
   float max;

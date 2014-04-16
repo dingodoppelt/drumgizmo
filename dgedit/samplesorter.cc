@@ -36,8 +36,8 @@
 #define MAXFLOAT (3.40282347e+38F)
 #endif
 
-SampleSorter::SampleSorter(Selections &s)
-  : selections(s)
+SampleSorter::SampleSorter(Selections &s, Selections &p)
+  : selections(s), selections_preview(p)
 {
   setMouseTracking(true);
 
@@ -46,6 +46,12 @@ SampleSorter::SampleSorter(Selections &s)
   attlen = 666; // Magical constants needs biblical proportions...
 
   sel_moving = SEL_NONE;
+}
+
+void SampleSorter::setShowPreview(bool s)
+{
+  show_preview = s;
+  update();
 }
 
 void SampleSorter::setWavData(const float *data, size_t size)
@@ -84,20 +90,53 @@ void SampleSorter::addSelection(sel_id_t id)
   relayout();
 }
 
+void SampleSorter::addSelectionPreview(sel_id_t id)
+{
+  Selection s = selections_preview.get(id);
+
+  double energy = 0.0;
+  for(size_t idx = s.from;
+      (idx < (size_t)s.from + (size_t)attackLength()) &&
+        (idx < (size_t)s.to) && (idx < size);
+      idx++) {
+    energy += data[idx] * data[idx];
+  }
+    
+  s.energy = energy;
+  selections_preview.update(id, s);
+
+  relayout();
+}
+
 void SampleSorter::relayout()
 {
   min = MAXFLOAT;
   max = 0.0;
 
-  QVector<sel_id_t> ids = selections.ids();
-  QVector<sel_id_t>::iterator i = ids.begin();
-  while(i != ids.end()) {
-    Selection sel = selections.get(*i);
+  {
+    QVector<sel_id_t> ids = selections.ids();
+    QVector<sel_id_t>::iterator i = ids.begin();
+    while(i != ids.end()) {
+      Selection sel = selections.get(*i);
+      
+      if(sel.energy < min) min = sel.energy;
+      if(sel.energy > max) max = sel.energy;
+      
+      i++;
+    }
+  }
 
-    if(sel.energy < min) min = sel.energy;
-    if(sel.energy > max) max = sel.energy;
-
-    i++;
+  if(show_preview) {
+    QVector<sel_id_t> ids = selections_preview.ids();
+    QVector<sel_id_t>::iterator i = ids.begin();
+    while(i != ids.end()) {
+      Selection sel = selections_preview.get(*i);
+      
+      if(sel.energy < min) min = sel.energy;
+      if(sel.energy > max) max = sel.energy;
+      
+      i++;
+    }
   }
 
   update();
@@ -123,6 +162,7 @@ void SampleSorter::paintEvent(QPaintEvent *event)
   QColor colBg = QColor(180, 200, 180);
   QColor colFg = QColor(160, 180, 160);
   QColor colPt = QColor(255, 100, 100);
+  QColor colPtPreview = QColor(0, 0, 255);
   QColor colPtSel = QColor(255, 255, 100);
 
   painter.setPen(colBg);
@@ -131,19 +171,37 @@ void SampleSorter::paintEvent(QPaintEvent *event)
 
   painter.setPen(colFg);
   painter.drawLine(0,height(),width(),0);
-
-  QVector<sel_id_t> ids = selections.ids();
-  QVector<sel_id_t>::iterator i = ids.begin();
-  while(i != ids.end()) {
-    Selection sel = selections.get(*i);
-    if(*i == selections.active()) painter.setPen(colPtSel);
-    else painter.setPen(colPt);
-    float x = sel.energy / max;
-    x = sqrt(x);
-    x *= (float)width();
-    drawCircle(painter, x, MAP(x));
-    i++;
+  
+  {
+    QVector<sel_id_t> ids = selections.ids();
+    QVector<sel_id_t>::iterator i = ids.begin();
+    while(i != ids.end()) {
+      Selection sel = selections.get(*i);
+      if(*i == selections.active()) painter.setPen(colPtSel);
+      else painter.setPen(colPt);
+      float x = sel.energy / max;
+      x = sqrt(x);
+      x *= (float)width();
+      drawCircle(painter, x, MAP(x));
+      i++;
+    }
   }
+
+  if(show_preview) {
+    QVector<sel_id_t> ids = selections_preview.ids();
+    QVector<sel_id_t>::iterator i = ids.begin();
+    while(i != ids.end()) {
+      Selection sel = selections_preview.get(*i);
+      painter.setPen(colPtPreview);
+      float x = sel.energy / max;
+      x = sqrt(x);
+      x *= (float)width();
+      drawCircle(painter, x, MAP(x));
+      i++;
+    }
+  }
+
+
 }
 
 sel_id_t SampleSorter::getSelectionByCoordinate(int px, int py)
