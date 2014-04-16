@@ -39,6 +39,7 @@
 #include "samplesorter.h"
 #include "filelist.h"
 #include "canvastoolselections.h"
+#include "canvastoolthreshold.h"
 #include "selection.h"
 #include "player.h"
 
@@ -67,6 +68,7 @@ public slots:
   void playSamples();
   void setPreset(int);
   void browse();
+  void tabChanged(int tabid);
 
 protected:
   void closeEvent(QCloseEvent*);
@@ -75,9 +77,17 @@ private:
   void loadSettings();
   void saveSettings();
 
+  QWidget *createFilesTab();
+  QWidget *createEditTab();
+  QWidget *createGenerateTab();
+  QWidget *createExportTab();
+
+  int generateTabId;
+
   SampleSorter *sorter;
   Canvas *canvas;
-  CanvasToolSelections *selections;
+  CanvasToolSelections *tool_selections;
+  CanvasToolThreshold *threshold;
   AudioExtractor *extractor;
   FileList *filelist;
   QScrollBar *yoffset;
@@ -97,7 +107,8 @@ private:
   QLineEdit *lineed_exportp;
 
   // Session state information:
-  Selections session;
+  Selections selections;
+  Selections selections_preview;
   Player player;
 
 private slots:

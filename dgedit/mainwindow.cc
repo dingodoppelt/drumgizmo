@@ -40,6 +40,7 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QIntValidator>
+#include <QTabWidget>
 
 #include <unistd.h>
 
@@ -64,36 +65,41 @@ static void addTool(QToolBar *toolbar, Canvas *canvas, CanvasTool *tool)
 static CanvasToolListen *g_listen;
 MainWindow::MainWindow()
 {
+  {
+    int start = 44100 * 60;
+    Selection p(start, start + 44100 * 60, 0, 0); // one minute selection
+    selections_preview.add(p);
+  }
+
   QWidget *central = new QWidget();
   QHBoxLayout *lh = new QHBoxLayout();
   QVBoxLayout *lv = new QVBoxLayout();
   central->setLayout(lv);
   setCentralWidget(central);
 
-  extractor = new AudioExtractor(session, this);
+  extractor = new AudioExtractor(selections, this);
   canvas = new Canvas(this);
-
-  player.start();
 
   QToolBar *toolbar = addToolBar("Tools");
   g_listen = new CanvasToolListen(canvas, player);
   CanvasTool *listen = g_listen;
   addTool(toolbar, canvas, listen);
-  CanvasTool *threshold = new CanvasToolThreshold(canvas);
+  threshold = new CanvasToolThreshold(canvas);
   addTool(toolbar, canvas, threshold);
-  selections = new CanvasToolSelections(canvas, session);
+  tool_selections = new CanvasToolSelections(canvas, selections,
+                                             selections_preview);
   connect(threshold, SIGNAL(thresholdChanged(double)),
-          selections, SLOT(thresholdChanged(double)));
-  connect(&session, SIGNAL(activeChanged(sel_id_t)),
+          tool_selections, SLOT(thresholdChanged(double)));
+  connect(&selections, SIGNAL(activeChanged(sel_id_t)),
           canvas, SLOT(update()));
-  addTool(toolbar, canvas, selections);
+  addTool(toolbar, canvas, tool_selections);
 
   QMenu *fileMenu = menuBar()->addMenu("&File");
   QAction *act_quit = new QAction("&Quit", this);
   fileMenu->addAction(act_quit);
   connect(act_quit, SIGNAL(triggered()), this, SLOT(close()));
 
-  QWidget *dock = new QWidget();
+  //  QWidget *dock = new QWidget();
   yoffset = new QScrollBar(Qt::Vertical);
   yoffset->setRange(0, MAXVAL);
   yoffset->setPageStep(PAGESTEP);
@@ -118,12 +124,13 @@ MainWindow::MainWindow()
   xoffset->setSingleStep(SINGLESTEP);
   connect(xoffset, SIGNAL(valueChanged(int)), this, SLOT(setXOffset(int)));
 
-  sorter = new SampleSorter(session);
-  connect(&session, SIGNAL(added(sel_id_t)),
+  sorter = new SampleSorter(selections);
+  connect(&selections, SIGNAL(added(sel_id_t)),
           sorter, SLOT(addSelection(sel_id_t)));
-  connect(&session, SIGNAL(updated(sel_id_t)), sorter, SLOT(relayout()));
-  connect(&session, SIGNAL(removed(sel_id_t)), sorter, SLOT(relayout()));
-  connect(&session, SIGNAL(activeChanged(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&selections, SIGNAL(updated(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&selections, SIGNAL(removed(sel_id_t)), sorter, SLOT(relayout()));
+  connect(&selections, SIGNAL(activeChanged(sel_id_t)),
+          sorter, SLOT(relayout()));
 
   QPushButton *btn_playsamples = new QPushButton("Play samples");
   connect(btn_playsamples, SIGNAL(clicked()), this, SLOT(playSamples()));
@@ -142,80 +149,12 @@ MainWindow::MainWindow()
   lv->addWidget(btn_playsamples);
   lv->addWidget(sb_playsamples);
 
-  QHBoxLayout *btns = new QHBoxLayout();
 
-  QPushButton *autosel = new QPushButton();
-  autosel->setText("Auto");
-  connect(autosel, SIGNAL(clicked()), selections, SLOT(clearSelections()));
-  connect(autosel, SIGNAL(clicked()), selections, SLOT(autoCreateSelections()));
 
-  QPushButton *clearsel = new QPushButton();
-  clearsel->setText("Clear");
-  connect(clearsel, SIGNAL(clicked()), selections, SLOT(clearSelections()));
 
-  QPushButton *exportsel = new QPushButton();
-  exportsel->setText("Export");
-  connect(exportsel, SIGNAL(clicked()), this, SLOT(doExport()));
+  // under tab widget
 
-  btns->addWidget(autosel);
-  btns->addWidget(clearsel);
-  btns->addWidget(exportsel);
-
-  QVBoxLayout *configs = new QVBoxLayout();
-  
-  configs->addLayout(btns);
-
-  configs->addWidget(new QLabel("Presets:"));
-  presets = new QComboBox();
-  connect(presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPreset(int)));
-  configs->addWidget(presets);
-
-  QGridLayout *attribs_layout = new QGridLayout();
-
-  attribs_layout->addWidget(new QLabel("Attack length:"), 1, 1, 1, 2);
-  lineed_attacklength = new QLineEdit();
-  lineed_attacklength->setReadOnly(true);
-  lineed_attacklength->setValidator(new QIntValidator(0, 1000,
-                                                      lineed_attacklength));
-  attribs_layout->addWidget(lineed_attacklength, 2, 1);
-  slider_attacklength = new QSlider(Qt::Horizontal);
-  slider_attacklength->setRange(10, 1000);
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
-          this, SLOT(setAttackLengthLineEd(int)));
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
-          sorter, SLOT(setAttackLength(int)));
-  slider_attacklength->setValue(666);
-  attribs_layout->addWidget(slider_attacklength, 2, 2);
-
-  attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
-  lineed_falloff = new QLineEdit();
-  lineed_falloff->setReadOnly(true);
-  lineed_falloff->setValidator(new QIntValidator(0, 10000, lineed_falloff));
-  attribs_layout->addWidget(lineed_falloff, 4, 1);
-  slider_falloff = new QSlider(Qt::Horizontal);
-  slider_falloff->setRange(1, 10000);
-  connect(slider_falloff, SIGNAL(sliderMoved(int)),
-          this, SLOT(setFalloffLineEd(int)));
-  connect(slider_falloff, SIGNAL(sliderMoved(int)),
-          selections, SLOT(noiseFloorChanged(int)));
-  slider_falloff->setValue(666);
-  attribs_layout->addWidget(slider_falloff, 4, 2);
-
-  attribs_layout->addWidget(new QLabel("Fadelength:"), 5, 1, 1, 2);
-  lineed_fadelength = new QLineEdit();
-  lineed_fadelength->setReadOnly(true);
-  lineed_fadelength->setValidator(new QIntValidator(0, 2000,
-                                                    lineed_fadelength));
-  attribs_layout->addWidget(lineed_fadelength, 6, 1);
-  slider_fadelength = new QSlider(Qt::Horizontal);
-  slider_fadelength->setRange(1, 2000);
-  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
-          this, SLOT(setFadeLengthLineEd(int)));
-  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
-          selections, SLOT(fadeoutChanged(int)));
-  slider_fadelength->setValue(666);
-  attribs_layout->addWidget(slider_fadelength, 6, 2);
-
+  /*
   attribs_layout->addWidget(new QLabel("Player volume:"), 7, 1, 1, 2);
   lineed_slider4 = new QLineEdit();
   lineed_slider4->setReadOnly(true);
@@ -232,47 +171,23 @@ MainWindow::MainWindow()
   attribs_layout->addWidget(slider4, 8, 2); 
 
   configs->addLayout(attribs_layout);
+  */
 
-  configs->addWidget(new QLabel("Prefix:"));
-  prefix = new QLineEdit();
-  connect(prefix, SIGNAL(textChanged(const QString &)),
-          extractor, SLOT(setOutputPrefix(const QString &)));
-  configs->addWidget(prefix);
 
-  configs->addWidget(new QLabel("Export path:"));
-  QHBoxLayout *lo_exportp = new QHBoxLayout();
-  lineed_exportp = new QLineEdit();
-  connect(lineed_exportp, SIGNAL(textChanged(const QString &)),
-          extractor, SLOT(setExportPath(const QString &)));
-  lo_exportp->addWidget(lineed_exportp);
-  QPushButton *btn_browse = new QPushButton("...");
-  connect(btn_browse, SIGNAL(clicked()), this, SLOT(browse()));
-  lo_exportp->addWidget(btn_browse);
-
-  configs->addLayout(lo_exportp);
-
-  configs->addWidget(new QLabel("Files: (double-click to set as master)"));
-  QPushButton *loadbtn = new QPushButton();
-  loadbtn->setText("Add files...");
-  configs->addWidget(loadbtn);
-
-  filelist = new FileList();
-  connect(filelist, SIGNAL(masterFileChanged(QString)),
-          this, SLOT(loadFile(QString)));
-  connect(loadbtn, SIGNAL(clicked()), filelist, SLOT(addFiles()));
-  connect(filelist, SIGNAL(fileAdded(QString, QString)),
-          extractor, SLOT(addFile(QString, QString)));
-  connect(filelist, SIGNAL(fileRemoved(QString, QString)),
-          extractor, SLOT(removeFile(QString, QString)));
-  connect(filelist, SIGNAL(nameChanged(QString, QString)),
-          extractor, SLOT(changeName(QString, QString)));
-  configs->addWidget(filelist);
 
   QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);
   dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  dockWidget->setWidget(dock);
+
+  QTabWidget *tabs = new QTabWidget(this);
+  tabs->addTab(createFilesTab(), "Files");
+  generateTabId = tabs->addTab(createGenerateTab(), "Generate");
+  tabs->addTab(createEditTab(), "Edit");
+  tabs->addTab(createExportTab(), "Export");
+  connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+  dockWidget->setWidget(tabs);
   addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-  dock->setLayout(configs);
+  //  dock->setLayout(configs);
 
   yscale->setValue(MAXVAL);
   yoffset->setValue(MAXVAL/2);
@@ -304,6 +219,172 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::tabChanged(int tabid)
+{
+  tool_selections->setShowPreview(tabid == generateTabId);
+}
+
+QWidget *MainWindow::createFilesTab()
+{
+  QWidget *w = new QWidget();
+  QVBoxLayout *l = new QVBoxLayout();
+  w->setLayout(l);
+
+  l->addWidget(new QLabel("Files: (double-click to set as master)"));
+  QPushButton *loadbtn = new QPushButton();
+  loadbtn->setText("Add files...");
+  l->addWidget(loadbtn);
+
+  filelist = new FileList();
+  connect(filelist, SIGNAL(masterFileChanged(QString)),
+          this, SLOT(loadFile(QString)));
+  connect(loadbtn, SIGNAL(clicked()), filelist, SLOT(addFiles()));
+  connect(filelist, SIGNAL(fileAdded(QString, QString)),
+          extractor, SLOT(addFile(QString, QString)));
+  connect(filelist, SIGNAL(fileRemoved(QString, QString)),
+          extractor, SLOT(removeFile(QString, QString)));
+  connect(filelist, SIGNAL(nameChanged(QString, QString)),
+          extractor, SLOT(changeName(QString, QString)));
+  l->addWidget(filelist);
+
+  return w;
+}
+
+QWidget *MainWindow::createEditTab()
+{
+  return new QWidget();
+}
+
+QWidget *MainWindow::createGenerateTab()
+{
+  QWidget *w = new QWidget();
+  QVBoxLayout *l = new QVBoxLayout();
+  w->setLayout(l);
+
+  QHBoxLayout *btns = new QHBoxLayout();
+
+  QPushButton *autosel = new QPushButton();
+  autosel->setText("Generate");
+  connect(autosel, SIGNAL(clicked()),
+          tool_selections, SLOT(clearSelections()));
+  connect(autosel, SIGNAL(clicked()),
+          tool_selections, SLOT(autoCreateSelections()));
+
+  connect(threshold, SIGNAL(thresholdChanged(double)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+
+  QPushButton *clearsel = new QPushButton();
+  clearsel->setText("Clear");
+  connect(clearsel, SIGNAL(clicked()),
+          tool_selections, SLOT(clearSelections()));
+
+  btns->addWidget(autosel);
+  btns->addWidget(clearsel);
+  
+  l->addLayout(btns);
+
+  l->addWidget(new QLabel("Presets:"));
+  presets = new QComboBox();
+  connect(presets, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(setPreset(int)));
+  l->addWidget(presets);
+
+  QGridLayout *attribs_layout = new QGridLayout();
+
+  attribs_layout->addWidget(new QLabel("Attack length:"), 1, 1, 1, 2);
+  lineed_attacklength = new QLineEdit();
+  lineed_attacklength->setReadOnly(true);
+  lineed_attacklength->setValidator(new QIntValidator(0, 1000,
+                                                      lineed_attacklength));
+  attribs_layout->addWidget(lineed_attacklength, 2, 1);
+  slider_attacklength = new QSlider(Qt::Horizontal);
+  slider_attacklength->setRange(10, 1000);
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+          this, SLOT(setAttackLengthLineEd(int)));
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+          sorter, SLOT(setAttackLength(int)));
+  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+
+  slider_attacklength->setValue(666);
+  attribs_layout->addWidget(slider_attacklength, 2, 2);
+
+  attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
+  lineed_falloff = new QLineEdit();
+  lineed_falloff->setReadOnly(true);
+  lineed_falloff->setValidator(new QIntValidator(0, 10000, lineed_falloff));
+  attribs_layout->addWidget(lineed_falloff, 4, 1);
+  slider_falloff = new QSlider(Qt::Horizontal);
+  slider_falloff->setRange(1, 10000);
+  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+          this, SLOT(setFalloffLineEd(int)));
+  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+          tool_selections, SLOT(noiseFloorChanged(int)));
+  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+
+  slider_falloff->setValue(666);
+  attribs_layout->addWidget(slider_falloff, 4, 2);
+
+  attribs_layout->addWidget(new QLabel("Fadelength:"), 5, 1, 1, 2);
+  lineed_fadelength = new QLineEdit();
+  lineed_fadelength->setReadOnly(true);
+  lineed_fadelength->setValidator(new QIntValidator(0, 2000,
+                                                    lineed_fadelength));
+  attribs_layout->addWidget(lineed_fadelength, 6, 1);
+  slider_fadelength = new QSlider(Qt::Horizontal);
+  slider_fadelength->setRange(1, 2000);
+  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+          this, SLOT(setFadeLengthLineEd(int)));
+  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+          tool_selections, SLOT(fadeoutChanged(int)));
+  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+
+  slider_fadelength->setValue(666);
+  attribs_layout->addWidget(slider_fadelength, 6, 2);
+
+  l->addLayout(attribs_layout);
+
+  l->addStretch();
+
+  return w;
+}
+
+QWidget *MainWindow::createExportTab()
+{
+  QWidget *w = new QWidget();
+  QVBoxLayout *l = new QVBoxLayout();
+  w->setLayout(l);
+
+  l->addWidget(new QLabel("Prefix:"));
+  prefix = new QLineEdit();
+  connect(prefix, SIGNAL(textChanged(const QString &)),
+          extractor, SLOT(setOutputPrefix(const QString &)));
+  l->addWidget(prefix);
+
+  l->addWidget(new QLabel("Export path:"));
+  QHBoxLayout *lo_exportp = new QHBoxLayout();
+  lineed_exportp = new QLineEdit();
+  connect(lineed_exportp, SIGNAL(textChanged(const QString &)),
+          extractor, SLOT(setExportPath(const QString &)));
+  lo_exportp->addWidget(lineed_exportp);
+  QPushButton *btn_browse = new QPushButton("...");
+  connect(btn_browse, SIGNAL(clicked()), this, SLOT(browse()));
+  lo_exportp->addWidget(btn_browse);
+
+  l->addLayout(lo_exportp);
+
+  QPushButton *exportsel = new QPushButton();
+  exportsel->setText("Export");
+  connect(exportsel, SIGNAL(clicked()), this, SLOT(doExport()));
+  l->addWidget(exportsel);
+
+  l->addStretch();
+
+  return w;
+}
+
 void MainWindow::setAttackLengthLineEd(int value)
 {
   lineed_attacklength->setText(QString::number(value));
@@ -329,12 +410,12 @@ void MainWindow::playSamples()
 {
   //unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
 
-  QVector<sel_id_t> ids = session.ids();
+  QVector<sel_id_t> ids = selections.ids();
   for(int v1 = 0; v1 < ids.size(); v1++) {
     for(int v2 = 0; v2 < ids.size(); v2++) {
 
-      Selection sel1 = session.get(ids[v1]);
-      Selection sel2 = session.get(ids[v2]);
+      Selection sel1 = selections.get(ids[v1]);
+      Selection sel2 = selections.get(ids[v2]);
 
       if(sel1.energy < sel2.energy) {
         sel_id_t vtmp = ids[v1];
@@ -346,7 +427,7 @@ void MainWindow::playSamples()
 
   QVector<sel_id_t>::iterator i = ids.begin();
   while(i != ids.end()) {
-    Selection sel = session.get(*i);
+    Selection sel = selections.get(*i);
 
     unsigned int length = sb_playsamples->value() * 44100 / 1000;
 
@@ -358,7 +439,7 @@ void MainWindow::playSamples()
     if(sample_length > length) to = sel.from + length;
     else sleep = length - sample_length;
 
-    session.setActive(*i);
+    selections.setActive(*i);
     
     g_listen->playRange(sel.from, to);
     usleep(1000000 * sleep / 44100);

@@ -38,7 +38,8 @@
 class CanvasToolSelections : public CanvasTool {
 Q_OBJECT
 public:
-  CanvasToolSelections(Canvas *canvas, Selections &selections);
+  CanvasToolSelections(Canvas *canvas, Selections &selections,
+                       Selections &selections_preview);
 
   QString name() { return "Selections"; }
   bool mouseMoveEvent(QMouseEvent *event);
@@ -55,12 +56,16 @@ signals:
 
 public slots:
   void autoCreateSelections();
+  void autoCreateSelectionsPreview();
   void clearSelections();
   void thresholdChanged(double threshold);
   void noiseFloorChanged(int t);
   void fadeoutChanged(int t);
+  void setShowPreview(bool show_preview);
 
 private:
+  void doAutoCreateSelections(bool preview);
+
   bool selection_is_moving_left;
   bool selection_is_moving_right;
 
@@ -74,8 +79,13 @@ private:
   QColor colSel;
   QColor colActiveSelBg;
   QColor colActiveSel;
+  QColor colPreviewSelBg;
+  QColor colPreviewSel;
 
   Selections &selections;
+  Selections &selections_preview;
+
+  bool show_preview;
 };
 
 #endif/*__DRUMGIZMO_CANVASTOOLSELECTIONS_H__*/
