@@ -47,6 +47,7 @@
 #include "canvastool.h"
 #include "canvastoolthreshold.h"
 #include "canvastoollisten.h"
+#include "volumefader.h"
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
@@ -137,7 +138,7 @@ MainWindow::MainWindow()
   
   sb_playsamples = new QScrollBar(Qt::Horizontal);
   sb_playsamples->setRange(100, 4000); // ms
-  
+
 
   lh->addWidget(canvas);
   lh->addWidget(yscale);
@@ -150,33 +151,11 @@ MainWindow::MainWindow()
   lv->addWidget(sb_playsamples);
 
 
-
-
-  // under tab widget
-
-  /*
-  attribs_layout->addWidget(new QLabel("Player volume:"), 7, 1, 1, 2);
-  lineed_slider4 = new QLineEdit();
-  lineed_slider4->setReadOnly(true);
-  lineed_slider4->setValidator(new QIntValidator(0, 1000000, lineed_slider4));
-  attribs_layout->addWidget(lineed_slider4, 8, 1);
-  QSlider *slider4 = new QSlider(Qt::Horizontal);
-  slider4->setRange(0, 1000000);
-  connect(slider4, SIGNAL(sliderMoved(int)),
-          this, SLOT(setVolumeLineEd(int)));
-  connect(slider4, SIGNAL(sliderMoved(int)),
-          listen, SLOT(setVolume(int)));
-  slider4->setValue(100000);
-  lineed_slider4->setText("100000");
-  attribs_layout->addWidget(slider4, 8, 2); 
-
-  configs->addLayout(attribs_layout);
-  */
-
-
-
   QDockWidget *dockWidget = new QDockWidget(tr("Dock Widget"), this);
   dockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+  dockWidget->setWidget(new QWidget());
+  dockWidget->widget()->setLayout(new QVBoxLayout());
 
   QTabWidget *tabs = new QTabWidget(this);
   tabs->addTab(createFilesTab(), "Files");
@@ -185,9 +164,16 @@ MainWindow::MainWindow()
   tabs->addTab(createExportTab(), "Export");
   connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
-  dockWidget->setWidget(tabs);
+  dockWidget->widget()->layout()->addWidget(tabs);
+
+  VolumeFader *vol = new VolumeFader();
+  connect(vol, SIGNAL(volumeChangedDb(double)),
+          &player, SLOT(setGainDB(double)));
+  connect(&player, SIGNAL(peakUpdate(double)),
+          vol, SLOT(updatePeakPower(double)));
+  dockWidget->widget()->layout()->addWidget(vol);
+
   addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-  //  dock->setLayout(configs);
 
   yscale->setValue(MAXVAL);
   yoffset->setValue(MAXVAL/2);
