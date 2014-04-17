@@ -46,6 +46,7 @@ public:
 
 signals:
   void thresholdChanged(double threshold);
+  void thresholdChanging(double threshold);
 
 private:
   float threshold;

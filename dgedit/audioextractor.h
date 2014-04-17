@@ -52,6 +52,10 @@ public slots:
   void setExportPath(const QString &path);
   void setOutputPrefix(const QString &prefix);
 
+signals:
+  void progressUpdate(int value);
+  void setMaximumProgress(int value);
+
 private:
   Selections &selections;
   AudioFileList audiofiles;

@@ -45,7 +45,9 @@ CanvasToolThreshold::CanvasToolThreshold(Canvas *c)
 
 bool CanvasToolThreshold::mouseMoveEvent(QMouseEvent *event)
 {
- if(event->button() != Qt::LeftButton) {
+  if(!isActive()) return false;
+
+  if(event->button() != Qt::LeftButton) {
     if(abs(event->y() - mapY(threshold)) < 2 ||
        abs(event->y() - mapY(-threshold)) < 2 ) {
       canvas->setCursor(Qt::SplitVCursor);
@@ -58,6 +60,9 @@ bool CanvasToolThreshold::mouseMoveEvent(QMouseEvent *event)
     if(fabs(val) > 1.0) val = 1.0;
     threshold = fabs(val);
     canvas->update();
+
+    emit thresholdChanging(threshold);
+
     return true;
   }
 
@@ -66,6 +71,8 @@ bool CanvasToolThreshold::mouseMoveEvent(QMouseEvent *event)
 
 bool CanvasToolThreshold::mousePressEvent(QMouseEvent *event)
 {
+  if(!isActive()) return false;
+
   if(event->button() == Qt::LeftButton) {
 
     // Check if threshold is being dragged.
@@ -82,6 +89,8 @@ bool CanvasToolThreshold::mousePressEvent(QMouseEvent *event)
 
 bool CanvasToolThreshold::mouseReleaseEvent(QMouseEvent *event)
 {
+  if(!isActive()) return false;
+
   if(event->button() == Qt::LeftButton) {
     if(threshold_is_moving) {
       threshold_is_moving = false;
@@ -99,6 +108,8 @@ bool CanvasToolThreshold::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasToolThreshold::paintEvent(QPaintEvent *event, QPainter &painter)
 {
+  if(!isActive()) return;
+
   if(threshold_is_moving) painter.setPen(colThresholdMoving);
   else painter.setPen(colThreshold);
   painter.drawLine(event->rect().x(), mapY(threshold),

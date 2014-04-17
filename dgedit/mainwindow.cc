@@ -41,6 +41,7 @@
 #include <QFileDialog>
 #include <QIntValidator>
 #include <QTabWidget>
+#include <QProgressBar>
 
 #include <unistd.h>
 
@@ -86,10 +87,12 @@ MainWindow::MainWindow()
   CanvasTool *listen = g_listen;
   addTool(toolbar, canvas, listen);
   threshold = new CanvasToolThreshold(canvas);
-  addTool(toolbar, canvas, threshold);
+  canvas->tools.push_back(threshold);//addTool(toolbar, canvas, threshold);
   tool_selections = new CanvasToolSelections(canvas, selections,
                                              selections_preview);
   connect(threshold, SIGNAL(thresholdChanged(double)),
+          tool_selections, SLOT(thresholdChanged(double)));
+  connect(threshold, SIGNAL(thresholdChanging(double)),
           tool_selections, SLOT(thresholdChanged(double)));
   connect(&selections, SIGNAL(activeChanged(sel_id_t)),
           canvas, SLOT(update()));
@@ -217,6 +220,7 @@ void MainWindow::tabChanged(int tabid)
   tool_selections->setShowPreview(tabid == generateTabId);
   sorter->setShowPreview(tabid == generateTabId);
   tool_selections->autoCreateSelectionsPreview();
+  threshold->setActive(tabid == generateTabId);
 }
 
 QWidget *MainWindow::createFilesTab()
@@ -266,6 +270,8 @@ QWidget *MainWindow::createGenerateTab()
           tool_selections, SLOT(autoCreateSelections()));
 
   connect(threshold, SIGNAL(thresholdChanged(double)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+  connect(threshold, SIGNAL(thresholdChanging(double)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
 
   QPushButton *clearsel = new QPushButton();
@@ -374,6 +380,12 @@ QWidget *MainWindow::createExportTab()
   exportsel->setText("Export");
   connect(exportsel, SIGNAL(clicked()), this, SLOT(doExport()));
   l->addWidget(exportsel);
+
+  QProgressBar *bar = new QProgressBar();
+  connect(extractor, SIGNAL(progressUpdate(int)), bar, SLOT(setValue(int)));
+  connect(extractor, SIGNAL(setMaximumProgress(int)),
+          bar, SLOT(setMaximum(int)));
+  l->addWidget(bar);
 
   l->addStretch();
 

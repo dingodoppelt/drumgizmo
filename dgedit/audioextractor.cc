@@ -29,6 +29,7 @@
 #include <QDomDocument>
 #include <QFile>
 #include <QDir>
+#include <QApplication>
 
 #include <sndfile.h>
 
@@ -44,6 +45,11 @@ AudioExtractor::AudioExtractor(Selections &s, QObject *parent)
 
 void AudioExtractor::exportSelections()
 {
+  emit setMaximumProgress(selections.ids().size());
+  int progress = 0;
+  emit progressUpdate(progress++);
+  qApp->processEvents();
+
   // Open all input audio files:
   audiodata_t audiodata[audiofiles.size()];
 
@@ -137,6 +143,9 @@ void AudioExtractor::exportSelections()
 
     idx++;
     si++;
+
+    emit progressUpdate(progress++);
+    qApp->processEvents();
   }
 
   // Close all input audio files:
