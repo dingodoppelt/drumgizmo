@@ -26,6 +26,7 @@ dgedit_SOURCES = \
 	player.cc \
 	samplesorter.cc \
 	selection.cc \
+	selectioneditor.cc \
 	volumefader.cc
 
 EXTRA_DIST = \
@@ -42,6 +43,7 @@ EXTRA_DIST = \
 	player.h \
 	samplesorter.h \
 	selection.h \
+	selectioneditor.h \
 	volumefader.h \
 	dgedit.qrc
 

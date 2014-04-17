@@ -49,6 +49,7 @@
 #include "canvastoolthreshold.h"
 #include "canvastoollisten.h"
 #include "volumefader.h"
+#include "selectioneditor.h"
 
 #define MAXVAL 10000000L
 #define SINGLESTEP MAXVAL/100000
@@ -95,6 +96,8 @@ MainWindow::MainWindow()
   connect(threshold, SIGNAL(thresholdChanging(double)),
           tool_selections, SLOT(thresholdChanged(double)));
   connect(&selections, SIGNAL(activeChanged(sel_id_t)),
+          canvas, SLOT(update()));
+  connect(&selections, SIGNAL(updated(sel_id_t)),
           canvas, SLOT(update()));
   addTool(toolbar, canvas, tool_selections);
 
@@ -251,7 +254,15 @@ QWidget *MainWindow::createFilesTab()
 
 QWidget *MainWindow::createEditTab()
 {
-  return new QWidget();
+  SelectionEditor *se = new SelectionEditor(selections);
+
+  connect(&selections, SIGNAL(added(sel_id_t)), se, SLOT(added(sel_id_t)));
+  connect(&selections, SIGNAL(updated(sel_id_t)), se, SLOT(updated(sel_id_t)));
+  connect(&selections, SIGNAL(removed(sel_id_t)), se, SLOT(removed(sel_id_t)));
+  connect(&selections, SIGNAL(activeChanged(sel_id_t)),
+          se, SLOT(activeChanged(sel_id_t)));
+
+  return se;
 }
 
 QWidget *MainWindow::createGenerateTab()
