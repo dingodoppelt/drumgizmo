@@ -45,7 +45,7 @@ AudioExtractor::AudioExtractor(Selections &s, QObject *parent)
 
 void AudioExtractor::exportSelections()
 {
-  emit setMaximumProgress(selections.ids().size());
+  emit setMaximumProgress(selections.ids().size() + 1/* for xml writing*/);
   int progress = 0;
   emit progressUpdate(progress++);
   qApp->processEvents();
@@ -212,6 +212,9 @@ void AudioExtractor::exportSelections()
   xmlfile.open(QIODevice::WriteOnly);
   xmlfile.write(doc.toByteArray());
   xmlfile.close();
+
+  emit progressUpdate(progress++);
+  qApp->processEvents();
 }
 
 void AudioExtractor::addFile(QString file, QString name)
