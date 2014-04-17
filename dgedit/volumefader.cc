@@ -29,10 +29,20 @@
 #include <QSlider>
 #include <QVBoxLayout>
 
+#include <math.h>
+
+#define SCALAR 10
+
 VolumeFader::VolumeFader() 
 {
+  volslider = new QSlider();
+  volslider->setRange(-60 * SCALAR , 10 * SCALAR);
+  
+  connect(volslider, SIGNAL(valueChanged(int)), this, SLOT(handleValueChanged()));
+
   QVBoxLayout* lo = new QVBoxLayout();
-  lo->addWidget(new QSlider());
+  lo->addWidget(volslider);
+  
   setLayout(lo);
 }
 
@@ -58,4 +68,13 @@ void VolumeFader::setVolumeDb(double)
 void VolumeFader::setVolumePower(double vol)
 {
 
+}
+
+void VolumeFader::handleValueChanged() 
+{
+  double db = ((double)volslider->value())/((double)SCALAR);
+  double power = pow(10, db/10);
+//  printf("Volume %f db, %f power\n", vol, pow(10, vol/10));
+  emit volumeChangedDb(db);
+  emit volumeChangedPower(power);
 }

@@ -28,6 +28,9 @@
 #define __DRUMGIZMO_VOLUMEFADER_H__
 
 #include <QWidget>
+#include <QSlider>
+
+#include <stdio.h>
 
 class VolumeFader : public QWidget {
 Q_OBJECT
@@ -35,15 +38,24 @@ public:
   VolumeFader();
   ~VolumeFader();
 
+  void volumeDb();
+  void volumePower();
+
 public slots:
   void updatePeakDb(double vol);
   void updatePeakPower(double vol);
   void setVolumeDb(double vol);
   void setVolumePower(double vol);
 
+private slots:
+  void handleValueChanged();
+
 signals:
   void volumeChangedDb(double vol);
   void volumeChangedPower(double vol);
+
+private:
+  QSlider *volslider;
 };
 
 #endif/*__DRUMGIZMO_VOLUMEFADER_H__*/
