@@ -260,18 +260,17 @@ void CanvasToolSelections::doAutoCreateSelections(bool preview)
     if(fabs(data[i]) > fabs(threshold)) {
       int from = i;
 
+      // FIXME: This doesn't work if the recording has a DC offset.
       if(data[from] > 0.0) {
-        while(data[from] > data[from-1] // Falling
-              && data[from-1] > 0.0 // Not crossing zero
-              ) {
+        while(data[from] > 0.0) { // Not crossing zero
           from--;
         }
+        from++;
       } else if(data[from] < 0.0) {
-        while(data[from] < data[from-1] // Rising
-              && data[from-1] < 0.0 // Not crossing zero
-              ) {
+        while(data[from-1] < 0.0) { // Not crossing zero
           from--;
         }
+        from++;
       }
 
       int minsize = 100; // attack.
