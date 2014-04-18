@@ -273,11 +273,11 @@ void CanvasToolSelections::doAutoCreateSelections(bool preview)
         from++;
       }
 
-      int minsize = 100; // attack.
+      int hold = 1000; // hold in number of samples
       int to = i;
       float runavg = fabs(data[from]);
       while((runavg > noise_floor ||
-             to < from + minsize) &&
+             to < from + hold) &&
             to < (int)size) {
         double p = 0.9;
         runavg = runavg * p + fabs(data[to]) * (1 - p);
