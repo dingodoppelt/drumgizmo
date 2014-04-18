@@ -309,11 +309,11 @@ QWidget *MainWindow::createGenerateTab()
   attribs_layout->addWidget(lineed_attacklength, 2, 1);
   slider_attacklength = new QSlider(Qt::Horizontal);
   slider_attacklength->setRange(10, 1000);
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+  connect(slider_attacklength, SIGNAL(valueChanged(int)),
           this, SLOT(setAttackLengthLineEd(int)));
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+  connect(slider_attacklength, SIGNAL(valueChanged(int)),
           sorter, SLOT(setAttackLength(int)));
-  connect(slider_attacklength, SIGNAL(sliderMoved(int)),
+  connect(slider_attacklength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
 
   slider_attacklength->setValue(666);
@@ -326,11 +326,11 @@ QWidget *MainWindow::createGenerateTab()
   attribs_layout->addWidget(lineed_falloff, 4, 1);
   slider_falloff = new QSlider(Qt::Horizontal);
   slider_falloff->setRange(1, 1000);
-  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+  connect(slider_falloff, SIGNAL(valueChanged(int)),
           this, SLOT(setFalloffLineEd(int)));
-  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+  connect(slider_falloff, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(noiseFloorChanged(int)));
-  connect(slider_falloff, SIGNAL(sliderMoved(int)),
+  connect(slider_falloff, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
 
   slider_falloff->setValue(666);
@@ -344,11 +344,11 @@ QWidget *MainWindow::createGenerateTab()
   attribs_layout->addWidget(lineed_fadelength, 6, 1);
   slider_fadelength = new QSlider(Qt::Horizontal);
   slider_fadelength->setRange(1, 2000);
-  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+  connect(slider_fadelength, SIGNAL(valueChanged(int)),
           this, SLOT(setFadeLengthLineEd(int)));
-  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+  connect(slider_fadelength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(fadeoutChanged(int)));
-  connect(slider_fadelength, SIGNAL(sliderMoved(int)),
+  connect(slider_fadelength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
 
   slider_fadelength->setValue(666);
