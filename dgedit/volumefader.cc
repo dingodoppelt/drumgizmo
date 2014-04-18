@@ -44,6 +44,9 @@ VolumeFader::VolumeFader()
   lo->addWidget(volslider);
   
   setLayout(lo);
+
+  setVolumeDb(10);
+  setVolumePower(10);
 }
 
 VolumeFader::~VolumeFader()
@@ -60,21 +63,22 @@ void VolumeFader::updatePeakPower(double)
 
 }
 
-void VolumeFader::setVolumeDb(double)
+void VolumeFader::setVolumeDb(double db)
 {
-
+  volslider->setValue(db*SCALAR); 
 }
 
-void VolumeFader::setVolumePower(double vol)
+void VolumeFader::setVolumePower(double power)
 {
-
+  double db = 10 * log10(power);
+  setVolumeDb(db);
 }
 
 void VolumeFader::handleValueChanged() 
 {
   double db = ((double)volslider->value())/((double)SCALAR);
   double power = pow(10, db/10);
-//  printf("Volume %f db, %f power\n", vol, pow(10, vol/10));
+//  printf("Volume %f db, %f power\n", db, pow(10, db/10));
   emit volumeChangedDb(db);
   emit volumeChangedPower(power);
 }
