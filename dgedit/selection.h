@@ -40,10 +40,10 @@ public:
     this->fadein = fadein;
     this->fadeout = fadeout;
   }
-  int from;
-  int to;
-  int fadein;
-  int fadeout;
+  size_t from;
+  size_t to;
+  size_t fadein;
+  size_t fadeout;
 
   double energy;
 

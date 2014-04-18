@@ -42,12 +42,12 @@
 #include <QIntValidator>
 #include <QTabWidget>
 #include <QProgressBar>
+#include <QTime>
 
-#include <unistd.h>
+//#include <unistd.h>
 
 #include "canvastool.h"
 #include "canvastoolthreshold.h"
-#include "canvastoollisten.h"
 #include "volumefader.h"
 #include "selectioneditor.h"
 
@@ -65,7 +65,6 @@ static void addTool(QToolBar *toolbar, Canvas *canvas, CanvasTool *tool)
   canvas->tools.push_back(tool);
 }
 
-static CanvasToolListen *g_listen;
 MainWindow::MainWindow()
 {
   {
@@ -84,8 +83,7 @@ MainWindow::MainWindow()
   canvas = new Canvas(this);
 
   QToolBar *toolbar = addToolBar("Tools");
-  g_listen = new CanvasToolListen(canvas, player);
-  CanvasTool *listen = g_listen;
+  listen = new CanvasToolListen(canvas, player);
   addTool(toolbar, canvas, listen);
   threshold = new CanvasToolThreshold(canvas);
   canvas->tools.push_back(threshold);//addTool(toolbar, canvas, threshold);
@@ -426,8 +424,6 @@ void MainWindow::setVolumeLineEd(int value)
 
 void MainWindow::playSamples()
 {
-  //unsigned int length = 44100 / 4; // 0.25 seconds in 44k1Hz
-
   QVector<sel_id_t> ids = selections.ids();
   for(int v1 = 0; v1 < ids.size(); v1++) {
     for(int v2 = 0; v2 < ids.size(); v2++) {
@@ -452,15 +448,25 @@ void MainWindow::playSamples()
     unsigned int sample_length = sel.to - sel.from;
 
     unsigned int to = sel.to;
-    unsigned int sleep = 0;
 
     if(sample_length > length) to = sel.from + length;
-    else sleep = length - sample_length;
 
     selections.setActive(*i);
     
-    g_listen->playRange(sel.from, to);
-    usleep(1000000 * sleep / 44100);
+    connect(&player, SIGNAL(positionUpdate(size_t)),
+            listen, SLOT(update(size_t)));
+
+    player.playSelection(sel, to - sel.from);
+    QTime t;
+    t.start();
+    while(t.elapsed() < sb_playsamples->value()) {
+      qApp->processEvents();
+      usleep(25 * 1000);
+    }
+    player.stop();
+
+    disconnect(&player, SIGNAL(positionUpdate(size_t)),
+               listen, SLOT(update(size_t)));
     i++;
   }
 }

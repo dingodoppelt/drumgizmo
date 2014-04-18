@@ -28,17 +28,17 @@
 
 #include <math.h>
 
-#define BUFSZ 1024 * 2
+#define BUFSZ 512
 
 Player::Player()
 {
-  playing = false;
-
   peak = 0;
   pos = 0;
   gain_scalar = 1.0;
   pcm_data = NULL;
   pcm_size = 0;
+  end = 0;
+  new_selection = false;
 
   connect(&report_timer, SIGNAL(timeout()), this, SLOT(reportTimeout()));
   report_timer.start(50); // Update 25 times per second
@@ -52,8 +52,11 @@ Player::~Player()
   wait(); // Wait for player thread to stop.
 }
 
+#define _MIN(a, b) (a<b?a:b)
 void Player::run()
 {
+  Selection sel;
+
   ao_initialize();
 
   ao_sample_format sf;
@@ -69,29 +72,73 @@ void Player::run()
 
   short s[BUFSZ];
   while(running) {
-    if(playing) {
-      for(size_t i = 0; i < BUFSZ; i++) {
-        double sample = 0.0;
-        if(i + pos < pcm_size) {
-          sample = pcm_data[pos + i] * gain_scalar;
-        } else {
-          playing = false;
-        }
-        if(abs(sample) > peak) peak = abs(sample);
-        s[i] = sample * SHRT_MAX;
+
+    { // Check for new Selection.
+      QMutexLocker lock(&mutex);
+      if(new_selection) {
+        sel = selection;
+        pos = sel.from;
+        end = sel_end;
+        new_selection = false;
       }
-
-      ao_play(dev, (char*)s, BUFSZ * sizeof(short));
-
-      pos += BUFSZ;
-
-    } else {
-      msleep(22);
     }
+
+    for(size_t i = 0; i < BUFSZ; i++) {
+      double sample = 0.0;
+      size_t p = i + pos;
+      if(p < sel.to && p < end && p < pcm_size) {
+        double fade = 1;
+        if(p < (sel.from + sel.fadein)) {
+          // Apply linear fade-in
+          double fp = p - sel.from;
+          fade = fp / (double)sel.fadeout;
+        }
+
+        if(p > (sel.to - sel.fadeout)) {
+          // Apply linear fade-out
+          double fp = (double)(((int)sel.to - (int)sel.fadeout) - (int)p);
+          fade = 1 + (fp / (double)sel.fadeout);
+        }
+
+        sample = pcm_data[p] * fade * gain_scalar;
+      }
+      if(abs(sample) > peak) peak = abs(sample);
+      s[i] = _MIN(sample * SHRT_MAX, SHRT_MAX);
+    }
+    
+    ao_play(dev, (char*)s, BUFSZ * sizeof(short));
+
+    pos += BUFSZ;
   }
 
   ao_close(dev);
   ao_shutdown();
+}
+
+bool Player::playSelectionDone()
+{
+  return pos >= sel_end || pos >= selection.to;
+}
+
+void Player::playSelection(Selection s, int len)
+{
+  { // Enqueue new Selection for player consumation
+    QMutexLocker lock(&mutex);
+
+    selection = s;
+
+    if(len > 0) sel_end = len;
+    else sel_end = selection.to - selection.from;
+    
+    sel_end += selection.from;
+
+    new_selection = true;
+  }
+
+  // Wait until player actually consumed the new Selection.
+  while(new_selection) {
+    msleep(1);
+  }
 }
 
 void Player::setGainScalar(double g)
@@ -120,7 +167,22 @@ void Player::setPcmData(float *data, size_t size)
   pcm_size = size;
 }
 
- void Player::setPosition(size_t position)
- {
-   pos = position;
- }
+void Player::setPosition(size_t position)
+{
+  Selection s;
+  s.from = position;
+  s.to = pcm_size;
+  s.fadein = 0;
+  s.fadeout = 0;
+  playSelection(s);
+}
+
+void Player::stop()
+{
+  Selection s;
+  s.from = 0;
+  s.to = 0;
+  s.fadein = 0;
+  s.fadeout = 0;
+  playSelection(s, pos);
+}

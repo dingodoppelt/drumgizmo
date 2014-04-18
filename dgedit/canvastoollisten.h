@@ -48,7 +48,6 @@ public:
   
 public slots:
   void update(size_t position);
-  void setVolume(int v);
 
 private:
   Canvas *canvas;

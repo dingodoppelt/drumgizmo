@@ -29,10 +29,11 @@
 
 #include <QThread>
 #include <QTimer>
+#include <QMutex>
 
 #include <ao/ao.h>
 
-#include "canvas.h"
+#include "selection.h"
 
 class Player : public QThread {
 Q_OBJECT
@@ -45,8 +46,9 @@ public:
   // TODO: Make these private.
   // These two need to be public in order for the ugly hack in
   //  CanvasToolListen::playRange to work...
-  volatile bool playing;
+  //  volatile bool playing;
   volatile size_t pos;
+  volatile size_t end;
 
 public slots:
   /**
@@ -71,6 +73,22 @@ public slots:
    * Set player position as sample offset.
    */
   void setPosition(size_t position);
+
+  /**
+   * Play range based on selection including fade-in/out.
+   * @param length Stop playing after length samples. -1 means play all.
+   */
+  void playSelection(Selection selection, int length = -1);
+
+  /**
+   * Return true if last selection is done playing.
+   */
+  bool playSelectionDone();
+
+  /**
+   * Stop playing
+   */
+  void stop();
 
 signals:
   /**
@@ -103,6 +121,11 @@ private:
   double peak;
 
   bool running;
+
+  QMutex mutex;
+  volatile bool new_selection;
+  size_t sel_end;
+  Selection selection;
 };
 
 #endif/*__DRUMGIZMO_PLAYER_H__*/

@@ -39,7 +39,6 @@ bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 {
   if(!isActive()) return false;
   player.setPosition(canvas->unmapX(event->x()));
-  player.playing = true;
   canvas->update();
   connect(&player, SIGNAL(positionUpdate(size_t)), this, SLOT(update(size_t)));
   return true;
@@ -48,7 +47,7 @@ bool CanvasToolListen::mousePressEvent(QMouseEvent *event)
 bool CanvasToolListen::mouseReleaseEvent(QMouseEvent *event)
 {
   if(!isActive()) return false;
-  player.playing = false;
+  player.stop();
   disconnect(&player, SIGNAL(positionUpdate(size_t)),
              this, SLOT(update(size_t)));
   lastpos = 0;
@@ -60,7 +59,7 @@ void CanvasToolListen::paintEvent(QPaintEvent *event, QPainter &painter)
 {
   if(!isActive()) return;
 
-  if(player.playing) {
+  if(player.pos < player.end) {
     painter.setPen(QColor(0, 127, 127));
     painter.drawLine(canvas->mapX(pos),
                      event->rect().y(),
@@ -79,28 +78,4 @@ void CanvasToolListen::update(size_t pos)
   
   canvas->update(r);
   lastpos = pos;
-}
-
-void CanvasToolListen::setVolume(int v)
-{
-  player.setGainScalar(v);
-}
-
-/*
- * UGLY HACK: This method is in dire need of a rewrite!
- */
-#include <unistd.h>
-void CanvasToolListen::playRange(unsigned int from, unsigned int to)
-{
-  player.pos = from;
-  player.playing = true;
-  canvas->update();
-  connect(&player, SIGNAL(positionUpdate(size_t)), this, SLOT(update(size_t)));
-  while(player.pos < to) {
-    qApp->processEvents();
-    usleep(10000);
-  }
-  disconnect(&player, SIGNAL(positionUpdate(size_t)),
-             this, SLOT(update(size_t)));
-  player.playing = false;
 }

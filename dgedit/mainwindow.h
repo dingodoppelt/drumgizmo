@@ -40,6 +40,7 @@
 #include "filelist.h"
 #include "canvastoolselections.h"
 #include "canvastoolthreshold.h"
+#include "canvastoollisten.h"
 #include "selection.h"
 #include "player.h"
 
@@ -88,6 +89,7 @@ private:
   Canvas *canvas;
   CanvasToolSelections *tool_selections;
   CanvasToolThreshold *threshold;
+  CanvasToolListen *listen;
   AudioExtractor *extractor;
   FileList *filelist;
   QScrollBar *yoffset;
