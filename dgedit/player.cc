@@ -90,7 +90,7 @@ void Player::run()
         double fade = 1;
         if(p < (sel.from + sel.fadein)) {
           // Apply linear fade-in
-          double fp = p - sel.from;
+          double fp = (double)((int)p - (int)sel.from);
           fade = fp / (double)sel.fadeout;
         }
 
