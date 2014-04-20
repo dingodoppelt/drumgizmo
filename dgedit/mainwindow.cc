@@ -43,8 +43,9 @@
 #include <QTabWidget>
 #include <QProgressBar>
 #include <QTime>
+#include <QSpinBox>
 
-//#include <unistd.h>
+#include "sleep.h"
 
 #include "canvastool.h"
 #include "canvastoolthreshold.h"
@@ -167,6 +168,12 @@ MainWindow::MainWindow()
   dockWidget->setWidget(new QWidget());
   dockWidget->widget()->setLayout(new QVBoxLayout());
 
+  dockWidget->widget()->layout()->addWidget(new QLabel("Presets:"));
+  presets = new QComboBox();
+  connect(presets, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(setPreset(int)));
+  dockWidget->widget()->layout()->addWidget(presets);
+
   QTabWidget *tabs = new QTabWidget(this);
   tabs->addTab(createFilesTab(), "Files");
   generateTabId = tabs->addTab(createGenerateTab(), "Generate");
@@ -263,6 +270,33 @@ QWidget *MainWindow::createEditTab()
   return se;
 }
 
+QSlider *createAttribute(QWidget *parent, QString name,
+                         int range_from, int range_to)
+{
+  QSlider *slider;
+
+  QGridLayout *l = new QGridLayout();
+  
+  l->addWidget(new QLabel(name), 0, 0, 1, 2);
+
+  QSpinBox *spin = new QSpinBox();
+  spin->setRange(range_from, range_to);
+  l->addWidget(spin, 1, 0, 1, 1);
+
+  slider = new QSlider(Qt::Horizontal);
+  slider->setRange(range_from, range_to);
+  l->addWidget(slider, 1, 1, 1,1);
+
+  QObject::connect(spin, SIGNAL(valueChanged(int)),
+                   slider, SLOT(setValue(int)));
+  QObject::connect(slider, SIGNAL(valueChanged(int)),
+                   spin, SLOT(setValue(int)));
+
+  ((QBoxLayout *)parent->layout())->addLayout(l);
+
+  return slider;
+}
+
 QWidget *MainWindow::createGenerateTab()
 {
   QWidget *w = new QWidget();
@@ -293,68 +327,33 @@ QWidget *MainWindow::createGenerateTab()
   
   l->addLayout(btns);
 
-  l->addWidget(new QLabel("Presets:"));
-  presets = new QComboBox();
-  connect(presets, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(setPreset(int)));
-  l->addWidget(presets);
-
-  QGridLayout *attribs_layout = new QGridLayout();
-
-  attribs_layout->addWidget(new QLabel("Attack length:"), 1, 1, 1, 2);
-  lineed_attacklength = new QLineEdit();
-  lineed_attacklength->setReadOnly(true);
-  lineed_attacklength->setValidator(new QIntValidator(0, 1000,
-                                                      lineed_attacklength));
-  attribs_layout->addWidget(lineed_attacklength, 2, 1);
-  slider_attacklength = new QSlider(Qt::Horizontal);
-  slider_attacklength->setRange(10, 1000);
-  connect(slider_attacklength, SIGNAL(valueChanged(int)),
-          this, SLOT(setAttackLengthLineEd(int)));
+  slider_attacklength = createAttribute(w, "Attack length:", 10, 1000);
   connect(slider_attacklength, SIGNAL(valueChanged(int)),
           sorter, SLOT(setAttackLength(int)));
   connect(slider_attacklength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
-
   slider_attacklength->setValue(666);
-  attribs_layout->addWidget(slider_attacklength, 2, 2);
 
-  attribs_layout->addWidget(new QLabel("Falloff:"), 3, 1, 1, 2);
-  lineed_falloff = new QLineEdit();
-  lineed_falloff->setReadOnly(true);
-  lineed_falloff->setValidator(new QIntValidator(0, 1000, lineed_falloff));
-  attribs_layout->addWidget(lineed_falloff, 4, 1);
-  slider_falloff = new QSlider(Qt::Horizontal);
-  slider_falloff->setRange(1, 1000);
-  connect(slider_falloff, SIGNAL(valueChanged(int)),
-          this, SLOT(setFalloffLineEd(int)));
+  slider_hold = createAttribute(w, "Minimum size (samples):", 0, 200000);
+  connect(slider_hold, SIGNAL(valueChanged(int)),
+          tool_selections, SLOT(holdChanged(int)));
+  connect(slider_hold, SIGNAL(valueChanged(int)),
+          tool_selections, SLOT(autoCreateSelectionsPreview()));
+  slider_hold->setValue(100);
+
+  slider_falloff = createAttribute(w, "Falloff:", 10, 5000);
   connect(slider_falloff, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(noiseFloorChanged(int)));
   connect(slider_falloff, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
-
   slider_falloff->setValue(666);
-  attribs_layout->addWidget(slider_falloff, 4, 2);
 
-  attribs_layout->addWidget(new QLabel("Fadelength:"), 5, 1, 1, 2);
-  lineed_fadelength = new QLineEdit();
-  lineed_fadelength->setReadOnly(true);
-  lineed_fadelength->setValidator(new QIntValidator(0, 2000,
-                                                    lineed_fadelength));
-  attribs_layout->addWidget(lineed_fadelength, 6, 1);
-  slider_fadelength = new QSlider(Qt::Horizontal);
-  slider_fadelength->setRange(1, 2000);
-  connect(slider_fadelength, SIGNAL(valueChanged(int)),
-          this, SLOT(setFadeLengthLineEd(int)));
+  slider_fadelength = createAttribute(w, "Fadelength:", 0, 2000);
   connect(slider_fadelength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(fadeoutChanged(int)));
   connect(slider_fadelength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
-
   slider_fadelength->setValue(666);
-  attribs_layout->addWidget(slider_fadelength, 6, 2);
-
-  l->addLayout(attribs_layout);
 
   l->addStretch();
 
@@ -401,27 +400,6 @@ QWidget *MainWindow::createExportTab()
   return w;
 }
 
-void MainWindow::setAttackLengthLineEd(int value)
-{
-  lineed_attacklength->setText(QString::number(value));
-}
-
-void MainWindow::setFalloffLineEd(int value)
-{
-  lineed_falloff->setText(QString::number(value));
-}
-
-void MainWindow::setFadeLengthLineEd(int value)
-{
-  lineed_fadelength->setText(QString::number(value));
-}
-
-void MainWindow::setVolumeLineEd(int value)
-{
-  lineed_slider4->setText(QString::number(value));
-}
-
-
 void MainWindow::playSamples()
 {
   QVector<sel_id_t> ids = selections.ids();
@@ -461,7 +439,7 @@ void MainWindow::playSamples()
     t.start();
     while(t.elapsed() < sb_playsamples->value()) {
       qApp->processEvents();
-      usleep(25 * 1000);
+      q_usleep(25 * 1000);
     }
     player.stop();
 
@@ -558,11 +536,8 @@ void MainWindow::setPreset(int index)
   QVariant v = presets->itemData(index);
   Preset p = v.value<Preset>();
   slider_attacklength->setValue(p.attacklength);
-  lineed_attacklength->setText(QString::number(p.attacklength));
   slider_falloff->setValue(p.falloff);
-  lineed_falloff->setText(QString::number(p.falloff));
   slider_fadelength->setValue(p.fadelength);
-  lineed_fadelength->setText(QString::number(p.fadelength));
   prefix->setText(p.prefix);
 }
 

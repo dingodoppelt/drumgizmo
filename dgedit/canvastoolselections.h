@@ -60,7 +60,8 @@ public slots:
   void clearSelections();
   void thresholdChanged(double threshold);
   void noiseFloorChanged(int t);
-  void fadeoutChanged(int t);
+  void holdChanged(int h);
+  void fadeoutChanged(int f);
   void setShowPreview(bool show_preview);
 
 private:
@@ -73,8 +74,9 @@ private:
 
   double threshold;
   double noise_floor;
-  double fadeout;
-  
+  double fadeout;  
+  int hold;
+
   QColor colSelBg;
   QColor colSel;
   QColor colActiveSelBg;

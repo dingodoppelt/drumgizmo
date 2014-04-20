@@ -39,6 +39,7 @@ CanvasToolSelections::CanvasToolSelections(Canvas *c, Selections &s,
   : selections(s), selections_preview(p)
 {
   threshold = 0.5; // Default from CanvasToolThreshold
+  hold = 100;
 
   canvas = c;
 
@@ -228,6 +229,11 @@ void CanvasToolSelections::thresholdChanged(double t)
   threshold = t;
 }
 
+void CanvasToolSelections::holdChanged(int h)
+{
+  hold = h;
+}
+
 void CanvasToolSelections::noiseFloorChanged(int t)
 {
   double div = 666.0 / 0.00003;
@@ -260,20 +266,20 @@ void CanvasToolSelections::doAutoCreateSelections(bool preview)
     if(fabs(data[i]) > fabs(threshold)) {
       int from = i;
 
-      // FIXME: This doesn't work if the recording has a DC offset.
       if(data[from] > 0.0) {
-        while(data[from] > 0.0) { // Not crossing zero
+        while(data[from] > data[from-1] // Falling
+              && data[from-1] > 0.0 // Not crossing zero
+              ) {
           from--;
         }
-        from++;
       } else if(data[from] < 0.0) {
-        while(data[from-1] < 0.0) { // Not crossing zero
+        while(data[from] < data[from-1] // Rising
+              && data[from-1] < 0.0 // Not crossing zero
+              ) {
           from--;
         }
-        from++;
       }
 
-      int hold = 1000; // hold in number of samples
       int to = i;
       float runavg = fabs(data[from]);
       while((runavg > noise_floor ||

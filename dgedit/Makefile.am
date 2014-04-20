@@ -44,6 +44,7 @@ EXTRA_DIST = \
 	samplesorter.h \
 	selection.h \
 	selectioneditor.h \
+	sleep.h \
 	volumefader.h \
 	dgedit.qrc
 
