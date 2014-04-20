@@ -159,11 +159,11 @@ void SampleSorter::paintEvent(QPaintEvent *event)
 {
   QPainter painter(this);
 
-  QColor colBg = QColor(180, 200, 180);
-  QColor colFg = QColor(160, 180, 160);
-  QColor colPt = QColor(255, 100, 100);
-  QColor colPtPreview = QColor(0, 0, 255);
-  QColor colPtSel = QColor(255, 255, 100);
+  QColor colBg = QColor(180, 200, 180, 160);
+  QColor colFg = QColor(160, 180, 160, 160);
+  QColor colPt = QColor(255, 100, 100, 160);
+  QColor colPtPreview = QColor(0, 0, 255, 60);
+  QColor colPtSel = QColor(255, 255, 100, 160);
 
   painter.setPen(colBg);
   painter.setBrush(colBg);
