@@ -101,13 +101,13 @@ void AudioExtractor::exportSelections()
       // Apply linear fadein
       for(size_t fi = 0; fi < fadein; fi++) {
         float val = ((float)fi / (float)fadein);
-        data[fi] *= val;
+        if(fi < size) data[fi] *= val;
       }
 
       // Apply fadeout
       for(size_t fo = 0; fo < fadeout; fo++) {
         float val = ((float)fo / (float)fadeout);
-        data[size - fo] *= val;
+        if(size >= fo) data[size - fo] *= val;
       }
 
       audiodata[i].data = data;
