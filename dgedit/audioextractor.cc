@@ -71,7 +71,7 @@ void AudioExtractor::exportSelections()
     idx++;
   }
   
-  idx = 0;
+  idx = 1;
   QVector<sel_id_t> sels = selections.ids();
   QVector<sel_id_t>::iterator si = sels.begin();
   while(si != sels.end()) {
