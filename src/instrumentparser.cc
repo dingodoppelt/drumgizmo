@@ -161,7 +161,10 @@ void InstrumentParser::startTag(std::string name,
       return;
     }
 
+#ifndef EXPERIMENTAL
+    // TODO: Old algorithm needs this here.
     instrument.addSample(lower, upper, sample);
+#endif/*EXPERIMENTAL*/
   }
 }
 
@@ -174,7 +177,13 @@ void InstrumentParser::endTag(std::string name)
     }
 
     instrument.samplelist.push_back(s);
-    s = NULL;
+
+#ifdef EXPERIMENTAL
+    // TODO: New algorithm needs this here. Thresholds are ignored, hence '0'
+    instrument.addSample(0, 0, s);
+#endif/*EXPERIMENTAL*/
+
+   s = NULL;
   }
 
   if(name == "instrument") {
