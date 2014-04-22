@@ -33,6 +33,7 @@
 #include <QSlider>
 #include <QLineEdit>
 #include <QCloseEvent>
+#include <QTabWidget>
 
 #include "canvas.h"
 #include "audioextractor.h"
@@ -104,6 +105,8 @@ private:
   QSlider *slider_fadelength;
   QLineEdit *prefix;
   QLineEdit *lineed_exportp;
+
+  QTabWidget *tabs;
 
   // Session state information:
   Selections selections;

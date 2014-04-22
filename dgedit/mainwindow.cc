@@ -174,7 +174,7 @@ MainWindow::MainWindow()
           this, SLOT(setPreset(int)));
   dockWidget->widget()->layout()->addWidget(presets);
 
-  QTabWidget *tabs = new QTabWidget(this);
+  tabs = new QTabWidget(this);
   tabs->addTab(createFilesTab(), "Files");
   generateTabId = tabs->addTab(createGenerateTab(), "Generate");
   tabs->addTab(createEditTab(), "Edit");
@@ -402,12 +402,15 @@ QWidget *MainWindow::createExportTab()
 
 void MainWindow::playSamples()
 {
-  QVector<sel_id_t> ids = selections.ids();
+  Selections *sels = &selections;
+  if(tabs->currentIndex() == generateTabId) sels = &selections_preview;
+
+  QVector<sel_id_t> ids = sels->ids();
   for(int v1 = 0; v1 < ids.size(); v1++) {
     for(int v2 = 0; v2 < ids.size(); v2++) {
 
-      Selection sel1 = selections.get(ids[v1]);
-      Selection sel2 = selections.get(ids[v2]);
+      Selection sel1 = sels->get(ids[v1]);
+      Selection sel2 = sels->get(ids[v2]);
 
       if(sel1.energy < sel2.energy) {
         sel_id_t vtmp = ids[v1];
@@ -419,7 +422,7 @@ void MainWindow::playSamples()
 
   QVector<sel_id_t>::iterator i = ids.begin();
   while(i != ids.end()) {
-    Selection sel = selections.get(*i);
+    Selection sel = sels->get(*i);
 
     unsigned int length = sb_playsamples->value() * 44100 / 1000;
 
@@ -429,7 +432,7 @@ void MainWindow::playSamples()
 
     if(sample_length > length) to = sel.from + length;
 
-    selections.setActive(*i);
+    sels->setActive(*i);
     
     connect(&player, SIGNAL(positionUpdate(size_t)),
             listen, SLOT(update(size_t)));
