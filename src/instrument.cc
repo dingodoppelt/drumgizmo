@@ -109,14 +109,17 @@ Sample *Instrument::sample(level_t level, size_t pos)
 void Instrument::addSample(level_t a, level_t b, Sample *s)
 {
   samples.insert(a, b, s);
-#ifdef NEW_ALGORITHM
-  powerlist.add(s);
-#endif/*NEW_ALGORITHM*/
 }
 
 void Instrument::finalise()
 {
 #ifdef NEW_ALGORITHM
+  std::vector<Sample*>::iterator s = samplelist.begin();
+  while(s != samplelist.end()) {
+    powerlist.add(*s);
+    s++;
+  }
+
   powerlist.finalise();
 #endif/*NEW_ALGORITHM*/
 }

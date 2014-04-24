@@ -32,11 +32,14 @@
 
 #include <hugin.hpp>
 
+// Enable to calculate power on old samples without power attribute
+//#define AUTO_CALCULATE_POWER
+
 #define SIZE 500
 
 // Box–Muller transform.
 // See: http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
-float box_muller_transform(float mean, float stddev)
+static float box_muller_transform(float mean, float stddev)
 {
   float U1 = (float)rand() / (float)RAND_MAX;
   float U2 = (float)rand() / (float)RAND_MAX;
@@ -133,6 +136,7 @@ Channel *PowerList::getMasterChannel()
 
 void PowerList::finalise()
 {
+#ifdef AUTO_CALCULATE_POWER
   Channel *master_channel = getMasterChannel();
 
   if(master_channel == NULL) {
@@ -141,13 +145,15 @@ void PowerList::finalise()
   }
 
   DEBUG(rand, "Master channel: %s\n", master_channel->name.c_str());
+#endif/*AUTO_CALCULATE_POWER*/
 
   std::vector<PowerListItem>::iterator si = samples.begin();
   while(si != samples.end()) {
     PowerListItem &item = *si;
     Sample *sample = item.sample;
 
-    DEBUG(rand, "Sample: %s\n", sample->name.c_str());
+ #ifdef AUTO_CALCULATE_POWER
+   DEBUG(rand, "Sample: %s\n", sample->name.c_str());
 
     AudioFile *master = NULL;
 
@@ -166,10 +172,13 @@ void PowerList::finalise()
     }
 
     master->load();
+#endif/*AUTO_CALCULATE_POWER*/
 
-    float power = 0;
+#ifdef AUTO_CALCULATE_POWER
     if(sample->power == -1) { // Power not defined. Calculate it!
       DEBUG(powerlist, "Calculating power\n");
+
+      float power = 0;
       size_t s = 0;
       for(; s < SIZE && s < master->size; s++) {
         power += master->data[s] * master->data[s];
@@ -179,13 +188,13 @@ void PowerList::finalise()
 
       if(power > power_max) power_max = power;
 
-      item.power = power;
-    } else { // Power defined in xml
-      DEBUG(powerlist, "Using power from xml\n");
-      power = sample->power;
+      sample->power = power;
     }
+#endif/*AUTO_CALCULATE_POWER*/
 
-    DEBUG(rand, " - power: %f\n", power);
+    item.power = sample->power;
+
+    DEBUG(rand, " - power: %f\n", item.power);
     
     si++;
   }

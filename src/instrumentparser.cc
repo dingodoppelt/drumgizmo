@@ -178,12 +178,7 @@ void InstrumentParser::endTag(std::string name)
 
     instrument.samplelist.push_back(s);
 
-#ifdef EXPERIMENTAL
-    // TODO: New algorithm needs this here. Thresholds are ignored, hence '0'
-    instrument.addSample(0, 0, s);
-#endif/*EXPERIMENTAL*/
-
-   s = NULL;
+    s = NULL;
   }
 
   if(name == "instrument") {
