@@ -186,13 +186,13 @@ void PowerList::finalise()
     
       power = sqrt(power);
 
-      if(power > power_max) power_max = power;
-
       sample->power = power;
     }
 #endif/*AUTO_CALCULATE_POWER*/
 
     item.power = sample->power;
+
+    if(item.power > power_max) power_max = item.power;
 
     DEBUG(rand, " - power: %f\n", item.power);
     
@@ -202,6 +202,8 @@ void PowerList::finalise()
 
 Sample *PowerList::get(level_t level)
 {
+  
+
   Sample *sample = NULL;
   float power = 0;
 
@@ -210,8 +212,8 @@ Sample *PowerList::get(level_t level)
 
   float lvl = box_muller_transform(mean, stddev);
 
-  DEBUG(rand, "lvl: %f (mean: %.2f, stddev: %.2f)\n",
-        lvl, mean, stddev);
+  DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f)\n",
+        level, lvl, mean, stddev);
 
   std::vector<PowerListItem>::iterator i = samples.begin();
   while(i != samples.end()) {
