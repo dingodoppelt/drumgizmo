@@ -73,6 +73,23 @@ void AudioExtractor::exportSelections()
   
   idx = 1;
   QVector<sel_id_t> sels = selections.ids();
+
+  // Sort selections by velocity
+  for(int v1 = 0; v1 < sels.size(); v1++) {
+    for(int v2 = 0; v2 < sels.size(); v2++) {
+
+      Selection sel1 = selections.get(sels[v1]);
+      Selection sel2 = selections.get(sels[v2]);
+
+      if(sel1.energy < sel2.energy) {
+        sel_id_t vtmp = sels[v1];
+        sels[v1] = sels[v2];
+        sels[v2] = vtmp;
+      }
+    }
+  }
+
+  // Iterate and write audio files
   QVector<sel_id_t>::iterator si = sels.begin();
   while(si != sels.end()) {
     Selection sel = selections.get(*si);
