@@ -60,14 +60,14 @@ void InstrumentParser::startTag(std::string name,
 
     if(attr.find("version") != attr.end()) {
       try {
-        instrument._version = VersionStr(attr["version"]);
+        instrument.version = VersionStr(attr["version"]);
       } catch(const char *err) {
         ERR(instrparser, "Error parsing version number: %s, using 1.0\n", err);
-        instrument._version = VersionStr(1,0,0);
+        instrument.version = VersionStr(1,0,0);
       } 
     } else {
       WARN(instrparser, "Missing version number, assuming 1.0\n");
-      instrument._version = VersionStr(1,0,0);
+      instrument.version = VersionStr(1,0,0);
     }
   }
 
@@ -161,10 +161,10 @@ void InstrumentParser::startTag(std::string name,
       return;
     }
 
-#ifndef EXPERIMENTAL
-    // TODO: Old algorithm needs this here.
-    instrument.addSample(lower, upper, sample);
-#endif/*EXPERIMENTAL*/
+    if(instrument.version == VersionStr("1.0")) {
+      // Old "velocity group" algorithm needs this
+      instrument.addSample(lower, upper, sample);
+    }
   }
 }
 

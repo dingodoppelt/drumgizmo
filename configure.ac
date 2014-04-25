@@ -30,12 +30,6 @@ if test x$with_debug == xyes; then
 fi 
 CXXFLAGS="$CXXFLAGS $HUGIN_PARM"
 
-AC_ARG_WITH(experimental,  [  --with-experimental     Build with experimental features])
-if test x$with_experimental == xyes; then
-    AC_MSG_WARN([*** Building with experimental support!])
-    CXXFLAGS="$CXXFLAGS -DEXPERIMENTAL"
-fi 
-
 dnl ===========================
 dnl Check for GUI backend
 dnl ===========================

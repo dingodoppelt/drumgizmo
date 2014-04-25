@@ -34,10 +34,6 @@
 #include "sample.h"
 #include "configuration.h"
 
-#ifdef EXPERIMENTAL
-#define NEW_ALGORITHM
-#endif
-
 Instrument::Instrument()
 {
   DEBUG(instrument, "new %p\n", this);
@@ -88,15 +84,16 @@ Sample *Instrument::sample(level_t level, size_t pos)
     if(mod > 1.0) mod = 1.0;
   }
 
-#ifdef NEW_ALGORITHM
-  sample = powerlist.get(level * mod);
-#else
-  //  printf("Find level %f\n", level);
-  std::vector<Sample*> s = samples.get(level * mod);
-  if(s.size() == 0) return NULL;
-  size_t idx = rand()%(s.size());
-  sample = s[idx];
-#endif/*NEW_ALGORITHM*/
+  if(version >= VersionStr("2.0")) {
+    // Version 2.0
+    sample = powerlist.get(level * mod);
+  } else {
+    // Version 1.0
+    std::vector<Sample*> s = samples.get(level * mod);
+    if(s.size() == 0) return NULL;
+    size_t idx = rand()%(s.size());
+    sample = s[idx];
+  }
 
   if(Conf::enable_velocity_modifier) {
     lastpos = pos;
@@ -113,15 +110,15 @@ void Instrument::addSample(level_t a, level_t b, Sample *s)
 
 void Instrument::finalise()
 {
-#ifdef NEW_ALGORITHM
-  std::vector<Sample*>::iterator s = samplelist.begin();
-  while(s != samplelist.end()) {
-    powerlist.add(*s);
-    s++;
-  }
+  if(version >= VersionStr("2.0")) {
+    std::vector<Sample*>::iterator s = samplelist.begin();
+    while(s != samplelist.end()) {
+      powerlist.add(*s);
+      s++;
+    }
 
-  powerlist.finalise();
-#endif/*NEW_ALGORITHM*/
+    powerlist.finalise();
+  }
 }
 
 std::string Instrument::name()

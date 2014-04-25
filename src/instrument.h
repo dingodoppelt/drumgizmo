@@ -64,7 +64,7 @@ private:
   std::string _name;
   std::string _description;
 
-  VersionStr _version;
+  VersionStr version;
 
   RangeMap<level_t, Sample*> samples;
   PowerList powerlist;
