@@ -33,6 +33,8 @@
 
 #include <sndfile.h>
 
+#define INSTRUMENT_VERSION "2.0"
+
 typedef struct {
   SNDFILE *fh;
   float *data;
@@ -184,6 +186,7 @@ void AudioExtractor::exportSelections()
   doc.appendChild(header); 
 
   QDomElement instrument = doc.createElement("instrument");
+  instrument.setAttribute("version", INSTRUMENT_VERSION);
   instrument.setAttribute("name", prefix);
   doc.appendChild(instrument);
 
