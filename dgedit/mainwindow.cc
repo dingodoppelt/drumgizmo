@@ -168,11 +168,11 @@ MainWindow::MainWindow()
   dockWidget->setWidget(new QWidget());
   dockWidget->widget()->setLayout(new QVBoxLayout());
 
-  dockWidget->widget()->layout()->addWidget(new QLabel("Presets:"));
-  presets = new QComboBox();
-  connect(presets, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(setPreset(int)));
-  dockWidget->widget()->layout()->addWidget(presets);
+//  dockWidget->widget()->layout()->addWidget(new QLabel("Presets:"));
+//  presets = new QComboBox();
+//  connect(presets, SIGNAL(currentIndexChanged(int)),
+//          this, SLOT(setPreset(int)));
+//  dockWidget->widget()->layout()->addWidget(presets);
 
   tabs = new QTabWidget(this);
   tabs->addTab(createFilesTab(), "Files");
@@ -201,6 +201,7 @@ MainWindow::MainWindow()
   
   loadSettings();
 
+/*
   QSettings settings("presets.ini", QSettings::IniFormat);
   QStringList list = settings.childGroups();
   for(int i = 0; i != list.size(); i++) {
@@ -216,6 +217,7 @@ MainWindow::MainWindow()
     v.setValue(p);
     presets->addItem(presetname, v); 
   }
+*/
 
   statusBar()->showMessage("Ready");
 }
@@ -461,7 +463,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 
 void MainWindow::loadSettings()
 {
-  QSettings settings("config.ini", QSettings::IniFormat);
+  QSettings settings;
 
   settings.beginGroup("MainWindow");
   lineed_exportp->setText(settings.value("exportpath", "").toString());
@@ -472,7 +474,7 @@ void MainWindow::loadSettings()
 
 void MainWindow::saveSettings()
 {
-  QSettings settings("config.ini", QSettings::IniFormat);
+  QSettings settings;
 
   settings.beginGroup("MainWindow");
   settings.setValue("exportpath", lineed_exportp->text());
@@ -537,12 +539,14 @@ void MainWindow::loadFile(QString filename)
 
 void MainWindow::setPreset(int index) 
 {
+  /*
   QVariant v = presets->itemData(index);
   Preset p = v.value<Preset>();
   slider_attacklength->setValue(p.attacklength);
   slider_falloff->setValue(p.falloff);
   slider_fadelength->setValue(p.fadelength);
   prefix->setText(p.prefix);
+  */
 }
 
 void MainWindow::browse() {
