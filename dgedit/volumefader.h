@@ -29,6 +29,7 @@
 
 #include <QWidget>
 #include <QSlider>
+#include <QLabel>
 
 #include <stdio.h>
 
@@ -56,6 +57,9 @@ signals:
 
 private:
   QSlider *volslider;
+  QLabel *volumepeak;
+  QLabel *volume;
+  double peak;
 };
 
 #endif/*__DRUMGIZMO_VOLUMEFADER_H__*/

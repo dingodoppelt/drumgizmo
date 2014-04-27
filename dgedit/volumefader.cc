@@ -32,21 +32,28 @@
 #include <math.h>
 
 #define SCALAR 10
+#define P 0.5
 
 VolumeFader::VolumeFader() 
 {
+  peak = 0;
   volslider = new QSlider();
   volslider->setRange(-60 * SCALAR , 10 * SCALAR);
-  
+  volslider->setOrientation(Qt::Horizontal);
+
+  volumepeak = new QLabel();
+
+  volume = new QLabel();
+
   connect(volslider, SIGNAL(valueChanged(int)), this, SLOT(handleValueChanged()));
 
   QVBoxLayout* lo = new QVBoxLayout();
   lo->addWidget(volslider);
   
-  setLayout(lo);
+  lo->addWidget(volumepeak);
+  lo->addWidget(volume);
 
-  setVolumeDb(10);
-  setVolumePower(10);
+  setLayout(lo);
 }
 
 VolumeFader::~VolumeFader()
@@ -58,27 +65,32 @@ void VolumeFader::updatePeakDb(double)
 {
 }
 
-void VolumeFader::updatePeakPower(double)
+void VolumeFader::updatePeakPower(double newpeak)
 {
-
+  peak = (newpeak * (1-P) + peak * P);
+  volumepeak->setText("Peak " + QString::number(peak, 'f', 5));
+  handleValueChanged();
 }
 
 void VolumeFader::setVolumeDb(double db)
 {
   volslider->setValue(db*SCALAR); 
+  handleValueChanged();
 }
 
 void VolumeFader::setVolumePower(double power)
 {
-  double db = 10 * log10(power);
+  double db = 20 * log10(power);
   setVolumeDb(db);
+  handleValueChanged();
 }
 
 void VolumeFader::handleValueChanged() 
 {
   double db = ((double)volslider->value())/((double)SCALAR);
-  double power = pow(10, db/10);
-//  printf("Volume %f db, %f power\n", db, pow(10, db/10));
+  double power = pow(10, db/20);
   emit volumeChangedDb(db);
   emit volumeChangedPower(power);
+
+  volume->setText("Gain " + QString::number(volslider->value()/SCALAR) + " dB");
 }
