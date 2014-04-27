@@ -1,3 +1,23 @@
+Version 0.9.5
+=============
+Released April 27th 2014
+ - Editor changes:
+   - Add stroke power attribute to drumkit xml format. (suhr)
+   - Realtime update of waveform view when dragging fadeout slider. (deva)
+   - Export energy levels to .xml file. (deva)
+   - Clicking hit circles in velocity view selects corresponding in waveform view. (deva)
+   - After selecting a hit by clicking a circle, allow direct deletion using “delete” kbd key. (deva)
+   - Make hits in velocity view dragable. (deva)
+   - Marked selection (ie. its values) is shown as lineedits in “edit” tab, changable by-value. (deva)
+   - Enable multichannel export both for .wav and for .xml. (deva)
+   - Turn volume slider into actual mixer fader instead of sample multiplier. (suhr)
+   - Create filebrowser for selecting export path. (suhr)
+   - Create main config file for saving and loading current values. (suhr)
+   - Make player use fadein/out while playing (controllable through checkbox somewhere?) (deva)
+ - Make engine use version number in order to select velocity algorithms and remove –with-experimental configure parameter. (deva)
+ - Use Atom lv2 midi events. (suhr)
+ - Make jack backend work on all buffer sizes. (deva)
+
 Version 0.9.4
 ==============
 Released March 5th 2014
