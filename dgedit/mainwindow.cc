@@ -335,7 +335,7 @@ QWidget *MainWindow::createGenerateTab()
           sorter, SLOT(setAttackLength(int)));
   connect(slider_attacklength, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
-  slider_attacklength->setValue(666);
+  slider_attacklength->setValue(300);
 
   slider_hold = createAttribute(w, "Minimum size (samples):", 0, 200000);
   connect(slider_hold, SIGNAL(valueChanged(int)),
@@ -349,7 +349,7 @@ QWidget *MainWindow::createGenerateTab()
           tool_selections, SLOT(noiseFloorChanged(int)));
   connect(slider_falloff, SIGNAL(valueChanged(int)),
           tool_selections, SLOT(autoCreateSelectionsPreview()));
-  slider_falloff->setValue(666);
+  slider_falloff->setValue(300);
 
   slider_fadelength = createAttribute(w, "Fadelength:", 0, 2000);
   connect(slider_fadelength, SIGNAL(valueChanged(int)),
