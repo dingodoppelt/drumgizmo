@@ -52,6 +52,7 @@ static float box_muller_transform(float mean, float stddev)
 PowerList::PowerList()
 {
   power_max = 0;
+  lastsample = NULL;
 }
 
 #define THRES 1.0
@@ -202,7 +203,7 @@ void PowerList::finalise()
 
 Sample *PowerList::get(level_t level)
 {
-  
+  int retry = 3; // TODO: This must be user controllable via the UI.
 
   Sample *sample = NULL;
   float power = 0;
@@ -210,6 +211,7 @@ Sample *PowerList::get(level_t level)
   float mean = level * power_max;
   float stddev = power_max / samples.size() * 1.5;
 
+again:
   float lvl = box_muller_transform(mean, stddev);
 
   DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f)\n",
@@ -231,6 +233,10 @@ Sample *PowerList::get(level_t level)
   }
 
   DEBUG(rand, "Found power %f\n", power);
+
+  if(lastsample == sample && retry--) goto again;
+
+  lastsample = sample;
 
   return sample;
 }
