@@ -358,14 +358,9 @@ if test x$with_resample == xyes; then
 fi 
 
 #dnl ======================
-#dnl Check for libpng
-#dnl ======================
-PKG_CHECK_MODULES(PNG, libpng >= 1.2)
-
-#dnl ======================
 #dnl Check for zlib
 #dnl ======================
-#PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.7)
+PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.3)
 
 dnl ======================
 dnl Check for the pthread library

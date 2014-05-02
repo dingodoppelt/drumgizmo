@@ -66,7 +66,8 @@ GUI_SRC = \
 	$(top_srcdir)/plugingui/progressbar.cc \
 	$(top_srcdir)/plugingui/verticalline.cc \
 	$(top_srcdir)/plugingui/resource.cc \
-	$(top_srcdir)/plugingui/resource_data.cc
+	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/plugingui/lodepng/lodepng.cpp
 
 GUI_CFLAGS=-I../plugingui -DUSE_THREAD
 GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
@@ -93,9 +94,9 @@ SNDFILE_BASE=${MSYS}
 SNDFILE_CFLAGS=-I${SNDFILE_BASE}/include
 SNDFILE_LIBS=-L${SNDFILE_BASE}/lib -lsndfile
 
-PNG_BASE=${MSYS}
-PNG_CFLAGS=-I${PNG_BASE}/include
-PNG_LIBS=-L${PNG_BASE}/lib -lpng -lz
+ZLIB_BASE=${MSYS}
+ZLIB_CFLAGS=-I${ZLIB_BASE}/include
+ZLIB_LIBS=-L${ZLIB_BASE}/lib -lz
 
 SRC_BASE=${MSYS}
 SRC_CFLAGS=-I${SRC_BASE}/include
@@ -140,7 +141,7 @@ SRC = \
 all:
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) $(top_srcdir)/hugin/hugin_syslog.c -c
-	g++ -static -static-libgcc -O2 -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(PNG_CFLAGS) $(SRC_CFLAGS) $(EXPAT_LIBS) $(PNG_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ -static -static-libgcc -O2 -g -Wall -DWIN32 $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(ZLIB_CFLAGS) $(SRC_CFLAGS) $(EXPAT_LIBS) $(ZLIB_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
  
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a

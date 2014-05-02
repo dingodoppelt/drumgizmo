@@ -31,157 +31,66 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include <hugin.hpp>
 
 #include "resource.h"
 // http://blog.hammerian.net/2009/reading-png-images-from-memory/
 
-typedef struct {
-  size_t p;
-  size_t size;
-  const char *data;
-} data_io_t;
-
-static void dio_reader(png_structp png_ptr, png_bytep buf, png_size_t size)
-{
-  data_io_t *dio = (data_io_t *)png_get_io_ptr(png_ptr);
-
-  if(size > dio->size - dio->p) {
-    png_error(png_ptr, "Could not read bytes.");
-  }
-
-  memcpy(buf, (dio->data + dio->p), size);
-  dio->p += size;
-}
+#include "lodepng/lodepng.h"
 
 GUI::Image::Image(const char* data, size_t size)
 {
-  row_pointers = NULL;
   load(data, size);
 }
 
 GUI::Image::Image(std::string filename)
 {
-  row_pointers = NULL;
   GUI::Resource rc(filename);
   load(rc.data(), rc.size());
 }
 
 GUI::Image::~Image()
 {
-  if(!row_pointers) return;
-
-  for(unsigned int y = 0; y < h; y++) {
-    free(row_pointers[y]);
-  }
-  free(row_pointers);
+  free(image_data);
 }
 
 void GUI::Image::setError(int err)
 {
   GUI::Resource rc(":png_error");
 
-  const char *p = rc.data();
+  const unsigned char *p = (const unsigned char *)rc.data();
 
-  memcpy(&w, p, 4); p += 4;
-  memcpy(&h, p, 4); p += 4;
+  uint32_t iw, ih;
+
+  memcpy(&iw, p, sizeof(uint32_t)); p += sizeof(uint32_t);
+  memcpy(&ih, p, sizeof(uint32_t)); p += sizeof(uint32_t);
+
+  w = iw;
+  h = ih;
 
   DEBUG(image, "w:%d, h:%d\n", (int)w, (int)h);
 
-  row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
-  for(unsigned int y = 0; y < h; y++) {
-    size_t size = w * sizeof(unsigned int);
-    DEBUG(image, "rc.size:%d >= p:%d (rowsize: %d)\n",
-          (int)rc.size(), (int)(p - rc.data()), (int)size);
-    row_pointers[y] = (png_byte*)malloc(size);
-    memcpy(row_pointers[y], p, size);
-    p += size;
-  }
+  image_data = (unsigned char*)malloc(rc.size() - 8);
+  memcpy(image_data, p, rc.size() - 8);
 }
 
 void GUI::Image::load(const char* data, size_t size)
 {
-  // Don't ever read image twice.
-  if(row_pointers) return;
+  //unsigned lodepng_decode32(unsigned char** out, unsigned* w, unsigned* h,
+  //                          const unsigned char* in, size_t insize);
+  unsigned iw, ih;
+  unsigned res = lodepng_decode32((unsigned char**)&image_data, &iw, &ih,
+                                  (const unsigned char*)data, size);
+  w = iw;
+  h = ih;
 
-  png_structp png_ptr = NULL;
-  png_infop info_ptr = NULL;
-  //png_byte color_type;
-  //png_byte bit_depth;
-
-  if(!size) setError(0);
-
-  const char *header = data;
-
-  // test for it being a png:
-  if(png_sig_cmp((png_byte*)header, 0, 8)) {
-    ERR(image, "[read_png_file] File is not recognized as a PNG file");
-    setError(0);
-    return;
-  }
-  
-  // initialize stuff
-  png_ptr =
-    png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  
-  if(!png_ptr) {
-    ERR(image, "[read_png_file] png_create_read_struct failed");
-    setError(1);
-    return;
-  }
-  
-  info_ptr = png_create_info_struct(png_ptr);
-  if(!info_ptr) {
-    ERR(image, "[read_png_file] png_create_info_struct failed");
-    setError(2);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
-    return;
-  }
-  
-  if(setjmp(png_jmpbuf(png_ptr))) {
+  if(res != 0) {
     ERR(image, "[read_png_file] Error during init_io");
     setError(3);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     return;
   }
-  
-  //png_init_io(png_ptr, fp);
-  data_io_t dio;
-  dio.data = data;
-  dio.size = size;
-  dio.p = 8; // skip header
-  png_set_read_fn(png_ptr, &dio, dio_reader);
-
-  png_set_sig_bytes(png_ptr, 8);
-  
-  png_read_info(png_ptr, info_ptr);
-  
-  w = png_get_image_width(png_ptr, info_ptr);
-  h = png_get_image_height(png_ptr, info_ptr);
-  //color_type = png_get_color_type(png_ptr, info_ptr);
-  //bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-  
-  number_of_passes = png_set_interlace_handling(png_ptr);
-  png_read_update_info(png_ptr, info_ptr);
-  
-  // read file
-  if(setjmp(png_jmpbuf(png_ptr))) {
-    ERR(image, "[read_png_file] Error during read_image");
-    setError(4);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    return;
-  }
-  
-  row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * h);
-  for(size_t y = 0; y < h; y++) {
-    row_pointers[y] =
-      (png_byte*) malloc(png_get_rowbytes(png_ptr, info_ptr));
-  }
-  
-  png_read_image(png_ptr, row_pointers);
-
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 }
 
 size_t GUI::Image::width()
@@ -197,8 +106,7 @@ size_t GUI::Image::height()
 GUI::Colour GUI::Image::getPixel(size_t x, size_t y)
 {
   if(x > width() || y > height()) return GUI::Colour(0,0,0,0);
-  png_byte* row = row_pointers[y];
-  png_byte* ptr = &(row[x*4]);
+  unsigned char *ptr = &image_data[(x + y * width()) * 4];
   float r = ptr[0];
   float g = ptr[1];
   float b = ptr[2];
