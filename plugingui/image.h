@@ -27,7 +27,6 @@
 #ifndef __DRUMGIZMO_IMAGE_H__
 #define __DRUMGIZMO_IMAGE_H__
 
-#include <png.h>
 #include <string>
 
 #include "colour.h"
@@ -52,8 +51,7 @@ private:
   void load(const char* data, size_t size);
 
   size_t w, h;
-  int number_of_passes;
-  png_bytep *row_pointers;
+  unsigned char *image_data;
 };
 
 };
