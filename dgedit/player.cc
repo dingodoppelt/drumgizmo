@@ -102,7 +102,9 @@ void Player::run()
 
         sample = pcm_data[p] * fade * gain_scalar;
       }
-      if(abs(sample) > peak) peak = abs(sample);
+      if(fabs(sample) > peak) { 
+        peak = fabs(sample);
+      }
       s[i] = _MIN(sample * SHRT_MAX, SHRT_MAX);
     }
     
