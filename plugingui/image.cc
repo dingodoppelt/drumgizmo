@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include <hugin.hpp>
 
@@ -61,8 +62,13 @@ void GUI::Image::setError(int err)
 
   const unsigned char *p = (const unsigned char *)rc.data();
 
-  memcpy(&w, p, 4); p += 4;
-  memcpy(&h, p, 4); p += 4;
+  uint32_t iw, ih;
+
+  memcpy(&iw, p, sizeof(uint32_t)); p += sizeof(uint32_t);
+  memcpy(&ih, p, sizeof(uint32_t)); p += sizeof(uint32_t);
+
+  w = iw;
+  h = ih;
 
   DEBUG(image, "w:%d, h:%d\n", (int)w, (int)h);
 
@@ -74,8 +80,11 @@ void GUI::Image::load(const char* data, size_t size)
 {
   //unsigned lodepng_decode32(unsigned char** out, unsigned* w, unsigned* h,
   //                          const unsigned char* in, size_t insize);
+  unsigned iw, ih;
   unsigned res = lodepng_decode32((unsigned char**)&image_data, &w, &h,
-                                  (const unsigned char*)data, size);
+                                  (const unsigned char*)data, (size_t)size);
+  w = iw;
+  h = ih;
 
   if(res != 0) {
     ERR(image, "[read_png_file] Error during init_io");
