@@ -52,6 +52,7 @@ static float box_muller_transform(float mean, float stddev)
 PowerList::PowerList()
 {
   power_max = 0;
+  power_min = 10000000000;
   lastsample = NULL;
 }
 
@@ -194,6 +195,7 @@ void PowerList::finalise()
     item.power = sample->power;
 
     if(item.power > power_max) power_max = item.power;
+    if(item.power < power_min) power_min = item.power;
 
     DEBUG(rand, " - power: %f\n", item.power);
     
@@ -206,17 +208,31 @@ Sample *PowerList::get(level_t level)
   int retry = 3; // TODO: This must be user controllable via the UI.
 
   Sample *sample = NULL;
-  float power = 0;
 
-  float mean = level * power_max;
-  float stddev = power_max / samples.size() * 1.5;
+  if(!samples.size()) return NULL; // No samples to choose from.
+
+  float power_span = power_max - power_min;
+
+  // Spread out at most 1.5 samples away from center 
+  float stddev = power_span / samples.size() * 1.5;
+
+  // Cut off mean value with stddev/2 in both ends in order to make room for
+  //  downwards expansion on velocity 0 and upwards expansion on velocity 1.
+  float mean = level * (power_span - stddev) + (stddev / 2.0);
 
 again:
+  // Select normal distributed value between
+  //  (stddev/2) and (power_span-stddev/2)
   float lvl = box_muller_transform(mean, stddev);
+
+  // Adjust this value to be in range
+  //  (power_min+stddev/2) and (power_max-stddev/2)
+  lvl += power_min;
 
   DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f)\n",
         level, lvl, mean, stddev);
 
+  float power = 0;
   std::vector<PowerListItem>::iterator i = samples.begin();
   while(i != samples.end()) {
     if(sample == NULL) {
@@ -232,9 +248,12 @@ again:
     i++;
   }
 
-  DEBUG(rand, "Found power %f\n", power);
+  if(lastsample == sample && retry--) {
+    DEBUG(rand, "Retry [%d retries left]", retry);
+    goto again;
+  }
 
-  if(lastsample == sample && retry--) goto again;
+  DEBUG(rand, "Found sample with power %f\n", power);
 
   lastsample = sample;
 
