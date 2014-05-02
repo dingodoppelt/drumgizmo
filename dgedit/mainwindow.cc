@@ -189,6 +189,9 @@ MainWindow::MainWindow()
           &player, SLOT(setGainDB(double)));
   connect(&player, SIGNAL(peakUpdate(double)),
           vol, SLOT(updatePeakPower(double)));
+//  connect(&player, SIGNAL(peakUpdateDB(double)),
+//          vol, SLOT(updatePeakDb(double)));
+
   vol->setVolumeDb(0);
   dockWidget->widget()->layout()->addWidget(vol);
 

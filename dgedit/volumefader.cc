@@ -61,13 +61,14 @@ VolumeFader::~VolumeFader()
 
 }
 
-void VolumeFader::updatePeakDb(double) 
+void VolumeFader::updatePeakDb(double db) 
 {
+//  updatePeakPower(pow(10, db/20));
 }
 
 void VolumeFader::updatePeakPower(double newpeak)
 {
-  peak = (newpeak * (1-P) + peak * P);
+  peak = (newpeak * (1.0-P) + peak * P);
   volumepeak->setText("Peak " + QString::number(peak, 'f', 5));
   handleValueChanged();
 }
