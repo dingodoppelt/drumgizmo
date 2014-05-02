@@ -52,6 +52,7 @@ private:
   float power_min;
 
   Channel *getMasterChannel();
+  Sample *lastsample;
 };
 
 #endif/*__DRUMGIZMO_POWERLIST_H__*/
