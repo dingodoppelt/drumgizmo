@@ -99,9 +99,15 @@ void FileList::createMenus()
   removeAction = new QAction("Remove", this);
   connect(removeAction, SIGNAL(triggered()), this, SLOT(removeFile()));
 
+  removeAllAction = new QAction("Remove all", this);
+  connect(removeAllAction, SIGNAL(triggered()), this, SLOT(removeAllFiles()));
+
   menu->addAction(setMasterAction);
   menu->addAction(editAction);
   menu->addAction(removeAction);
+  menu->addSeparator();
+  menu->addAction(removeAllAction);
+
 }
 
 void FileList::popupMenu(const QPoint & pos)
@@ -127,6 +133,15 @@ void FileList::removeFile()
   setCurrentRow(-1);
 
   emit fileRemoved(file, name);
+}
+
+void FileList::removeAllFiles()
+{
+  activeItem = NULL;
+
+  clear();
+
+  emit allFilesRemoved();
 }
 
 void FileList::editName()

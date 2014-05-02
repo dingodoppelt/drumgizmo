@@ -42,6 +42,7 @@ signals:
   void masterFileChanged(QString filename);
   void fileAdded(QString file, QString name);
   void fileRemoved(QString file, QString name);
+  void allFilesRemoved();
   void nameChanged(QString file, QString name);
 
 public slots:
@@ -52,6 +53,7 @@ private slots:
   void selectionChanged(QListWidgetItem *item);
   void setMaster();
   void removeFile();
+  void removeAllFiles();
   void editName();
   void setItemName(QListWidgetItem *i, QString name);
 
@@ -68,6 +70,7 @@ private:
   QAction *setMasterAction;
   QAction *editAction;
   QAction *removeAction;
+  QAction *removeAllAction;
 
   QListWidgetItem *activeItem;
 };
