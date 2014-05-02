@@ -81,8 +81,8 @@ void GUI::Image::load(const char* data, size_t size)
   //unsigned lodepng_decode32(unsigned char** out, unsigned* w, unsigned* h,
   //                          const unsigned char* in, size_t insize);
   unsigned iw, ih;
-  unsigned res = lodepng_decode32((unsigned char**)&image_data, &w, &h,
-                                  (const unsigned char*)data, (size_t)size);
+  unsigned res = lodepng_decode32((unsigned char**)&image_data, &iw, &ih,
+                                  (const unsigned char*)data, size);
   w = iw;
   h = ih;
 
