@@ -52,7 +52,7 @@ static float box_muller_transform(float mean, float stddev)
 PowerList::PowerList()
 {
   power_max = 0;
-  power_min = 10000000000;
+  power_min = 100000000;
   lastsample = NULL;
 }
 
