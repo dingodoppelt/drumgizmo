@@ -360,7 +360,7 @@ fi
 #dnl ======================
 #dnl Check for zlib
 #dnl ======================
-PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.7)
+PKG_CHECK_MODULES(ZLIB, zlib >= 1.2.3)
 
 dnl ======================
 dnl Check for the pthread library
