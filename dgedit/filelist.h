@@ -37,6 +37,7 @@ Q_OBJECT
 public:
   FileList();
 
+  QString path;
 signals:
   void masterFileChanged(QString filename);
   void fileAdded(QString file, QString name);

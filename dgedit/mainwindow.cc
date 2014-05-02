@@ -470,6 +470,7 @@ void MainWindow::loadSettings()
 
   settings.beginGroup("MainWindow");
   lineed_exportp->setText(settings.value("exportpath", "").toString());
+  filelist->path = settings.value("loadpath", "").toString();
   resize(settings.value("size", QSize(700, 800)).toSize());
   move(settings.value("pos", QPoint(0, 0)).toPoint());
   settings.endGroup();
@@ -480,6 +481,7 @@ void MainWindow::saveSettings()
   QSettings settings;
 
   settings.beginGroup("MainWindow");
+  settings.setValue("loadpath", filelist->path); 
   settings.setValue("exportpath", lineed_exportp->text());
   settings.setValue("size", size());
   settings.setValue("pos", pos());

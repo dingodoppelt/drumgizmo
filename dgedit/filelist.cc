@@ -48,12 +48,13 @@ FileList::FileList()
 void FileList::addFiles()
 {
   QStringList files = QFileDialog::getOpenFileNames(this, tr("Open file"),
-                                                    "", tr("Audio Files (*.wav)"));
+                                                    path, tr("Audio Files (*.wav)"));
   QStringList::Iterator i = files.begin();
   while(i != files.end()) {
     QString file = *i;
     QFileInfo fi(file);
     QString name = fi.baseName();
+    path = fi.absolutePath();
 
     QListWidgetItem *item = new QListWidgetItem();
     setItemFile(item, file);
