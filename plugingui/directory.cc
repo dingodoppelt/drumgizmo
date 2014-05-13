@@ -77,7 +77,8 @@ size_t Directory::count()
 
 void Directory::refresh()
 {
-  _files = listFiles(_path);
+  _files = listFiles(_path, DIRECTORY_HIDDEN);
+//  _files = listFiles(_path);
 }
 
 bool Directory::cd(std::string dir)
@@ -128,7 +129,7 @@ std::string Directory::cleanPath(std::string path)
   return Directory::pathToStr(pathlst);  
 }
 
-Directory::EntryList Directory::listFiles(std::string path)
+Directory::EntryList Directory::listFiles(std::string path, unsigned char filter)
 {
   DEBUG(directory, "Listing files in '%s'\n", path.c_str());
 
@@ -149,12 +150,19 @@ Directory::EntryList Directory::listFiles(std::string path)
 
     if(Directory::isRoot(path) && name == "..") continue;
     
+    unsigned char entryinfo = 0;
+    if(isHidden(name)) {
+      entryinfo |= DIRECTORY_HIDDEN;
+    }
+
     std::string entrypath = path;
     entrypath += SEP;
     entrypath += entry->d_name;
     if(Directory::isDir(entrypath)) {
-      if(name == "..") directories.push_back(entry->d_name);
-      else directories.push_back(std::string(SEP) + entry->d_name);
+      if(!(entryinfo && filter)) {
+        if(name == "..") directories.push_back(entry->d_name);
+        else directories.push_back(std::string(SEP) + entry->d_name);
+      }
     }
     else {
       int drumkit_suffix_length = strlen(DRUMKIT_SUFFIX);
@@ -164,7 +172,10 @@ Directory::EntryList Directory::listFiles(std::string path)
         continue;
       }
 
-      files.push_back(entry->d_name);
+
+//      if(!(entryinfo && filter)) {
+        files.push_back(entry->d_name);
+//      }
     }
   }
 
@@ -276,6 +287,20 @@ bool Directory::isDir()
   return isDir(_path);
 }
 
+bool Directory::isDir(std::string path)
+{
+  DEBUG(directory, "Is '%s' dir?\n", path.c_str());
+  struct stat st;
+  if(stat(path.c_str(), &st) == 0) {
+    if((st.st_mode & S_IFDIR) != 0) {
+      DEBUG(directory, "Yes\n");
+      return true;
+    }
+  }
+  DEBUG(directory, "No\n");
+  return false;
+}
+
 bool Directory::fileExists(std::string filename)
 {
   return !isDir(_path + SEP + filename);
@@ -291,18 +316,24 @@ bool Directory::exists(std::string path)
   }
 }
 
-bool Directory::isDir(std::string path)
+bool Directory::isHidden(std::string path) 
 {
-  DEBUG(directory, "Is '%s' dir?\n", path.c_str());
-  struct stat st;
-  if(stat(path.c_str(), &st) == 0) {
-    if((st.st_mode & S_IFDIR) != 0) {
-      DEBUG(directory, "Yes\n");
-      return true;
-    }
+  // TODO: Handle hidden and system files in windows
+#ifdef WIN32
+  return false
+#else
+  unsigned pos = path.find_last_of("/\\");
+  std::string entry = path.substr(pos+1);
+
+  if(entry.size() > 1 &&
+     entry.at(0) == '.' &&
+     entry.at(1) != '.') {
+    return true;
   }
-  DEBUG(directory, "No\n");
-  return false;
+  else {
+    return false;
+  }
+#endif
 }
 
 Directory::Path Directory::parsePath(std::string path_str)

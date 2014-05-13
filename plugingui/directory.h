@@ -36,6 +36,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define DIRECTORY_HIDDEN 1
+
 class Directory {
 
   public:
@@ -70,10 +72,11 @@ class Directory {
     static std::string root();
     static std::string root(std::string path); 
     static std::string cleanPath(std::string path);
-    static Directory::EntryList listFiles(std::string path);
+    static Directory::EntryList listFiles(std::string path, unsigned char filter = 0);
     static bool isRoot(std::string path);
     static Directory::DriveList drives();
     static bool isDir(std::string path);
+    static bool isHidden(std::string entry);
     static bool exists(std::string path);
     static std::string pathDirectory(std::string filepath);
      
