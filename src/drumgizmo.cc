@@ -172,7 +172,7 @@ void DrumGizmo::handleMessage(Message *msg)
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
   double samplerate_scale = 1.0;
-#ifndef WITH_RESAMPLE
+#ifdef WITH_RESAMPLE
   if(oe->samplerate() != UNKNOWN_SAMPLERATE) {
     samplerate_scale = (double)kit.samplerate() / (double)oe->samplerate();
   }
@@ -300,8 +300,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       size_t nkitsamples = nsamples * samplerate_scale;
       sample_t kitsamples[nkitsamples];
 
-      memset(rs, 0, nkitsamples * sizeof(sample_t));
-      getSamples(c, pos * samplerate_scale, rs, nkitsamples);
+      memset(kitsamples, 0, nkitsamples * sizeof(sample_t));
+      getSamples(c, pos * samplerate_scale, kitsamples, nkitsamples);
 
 #ifdef ZITA
       Resampler resampler;
