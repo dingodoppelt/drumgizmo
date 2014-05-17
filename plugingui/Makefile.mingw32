@@ -3,7 +3,7 @@ include Makefile.am.plugingui
 
 CFLAGS=-DSTANDALONE -DWIN32 -DUSE_THREAD ${PLUGIN_GUI_CFLAGS} \
 										-I$(top_srcdir)/src -I/local/include 
-LDFLAGS=-mconsole -lgdi32 -lsetupapi -lws2_32 -L/local/lib -lpng -lz -pthread
+LDFLAGS=-mconsole -lgdi32 -lsetupapi -lws2_32 -L/local/lib -lz -pthread
 
 C_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
@@ -39,6 +39,7 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/progressbar.cc \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/plugingui/lodepng/lodepng.cpp \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/mutex.cc \
