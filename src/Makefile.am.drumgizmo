@@ -26,4 +26,4 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/velocity.cc \
 	$(top_srcdir)/src/versionstr.cc
 
-DRUMGIZMO_LIBS = $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS)
+DRUMGIZMO_LIBS = $(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS)

@@ -36,6 +36,19 @@
 
 #include <hugin.hpp>
 
+#include <config.h>
+
+//
+// Warning: Zita currently not working...
+//
+#ifdef WITH_RESAMPLE
+#ifdef ZITA
+#include <zita-resampler/resampler.h>
+#else
+#include <samplerate.h>
+#endif/*ZITA*/
+#endif/*WITH_RESAMPLE*/
+
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
 #include "configuration.h"
@@ -158,6 +171,13 @@ void DrumGizmo::handleMessage(Message *msg)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+  double samplerate_scale = 1.0;
+#ifndef WITH_RESAMPLE
+  if(oe->samplerate() != UNKNOWN_SAMPLERATE) {
+    samplerate_scale = (double)kit.samplerate() / (double)oe->samplerate();
+  }
+#endif/*WITH_RESAMPLE*/
+
   // Handle engine messages, at most one in each iteration:
   handleMessages(1);
 
@@ -240,7 +260,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         } else {
           //DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
-          evt->offset = evs[e].offset + pos;
+          evt->offset = (evs[e].offset + pos) * samplerate_scale;
           activeevents[ch.num].push_back(evt);
         }
         j++;
@@ -255,22 +275,60 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     
   free(evs);
   
-  
   //
   // Write audio
   //
   for(size_t c = 0; c < kit.channels.size(); c++) {
-    sample_t *buf = samples;
-    bool internal = false;
-    if(oe->getBuffer(c)) {
-      buf = oe->getBuffer(c);
-      internal = true;
-    }
-    if(buf) {
-      memset(buf, 0, nsamples * sizeof(sample_t));
+    if(samplerate_scale == 1.0) {
+      // No resampling needed
+      sample_t *buf = samples;
+      bool internal = false;
+      if(oe->getBuffer(c)) {
+        buf = oe->getBuffer(c);
+        internal = true;
+      }
+      if(buf) {
+        memset(buf, 0, nsamples * sizeof(sample_t));
       
-      getSamples(c, pos, buf, nsamples);
-      if(!internal) oe->run(c, samples, nsamples);
+        getSamples(c, pos, buf, nsamples);
+
+        if(!internal) oe->run(c, samples, nsamples);
+      }
+    } else {
+#ifdef WITH_RESAMPLE
+      // Resampling needed
+      size_t nkitsamples = nsamples * samplerate_scale;
+      sample_t kitsamples[nkitsamples];
+
+      memset(rs, 0, nkitsamples * sizeof(sample_t));
+      getSamples(c, pos * samplerate_scale, rs, nkitsamples);
+
+#ifdef ZITA
+      Resampler resampler;
+      resampler.setup(kit.samplerate(), oe->samplerate(), 1, 96);
+
+      resampler.inp_data = kitsamples;
+      resampler.inp_count = nkitsamples;
+
+      resampler.out_data = samples;
+      resampler.out_count = nsamples;
+
+      resampler.process();
+#else
+      SRC_DATA src;
+      src.data_in = kitsamples;
+      src.input_frames = nkitsamples;
+
+      src.data_out = samples;
+      src.output_frames = nsamples;
+
+      src.src_ratio = 1.0 / samplerate_scale;
+
+      src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
+#endif/*ZITA*/
+
+      oe->run(c, samples, nsamples);
+#endif/*WITH_RESAMPLE*/
     }
   }
   

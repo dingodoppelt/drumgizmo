@@ -53,6 +53,8 @@ public:
 
   bool isValid();
 
+  size_t samplerate();
+
 private:
   void *magic;
 
@@ -60,6 +62,7 @@ private:
 
   std::string _name;
   std::string _description;
+  size_t _samplerate;
 
   VersionStr _version;
 };

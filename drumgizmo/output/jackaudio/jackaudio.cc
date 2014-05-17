@@ -54,6 +54,7 @@ public:
   void jack_process(jack_nframes_t nframes);
 
   size_t bufsize();
+  size_t samplerate();
 
 private:
   JackClient *jackclient;
@@ -146,6 +147,11 @@ size_t JackAudio::bufsize()
   return jack_get_buffer_size(jackclient->jack_client);
 }
 
+size_t JackAudio::samplerate()
+{
+  return jack_get_sample_rate(jackclient->jack_client);
+}
+
 extern "C" {
   void *create()
   {
@@ -204,6 +210,12 @@ extern "C" {
   {
     JackAudio *jack = (JackAudio*)h;
     return jack->bufsize();
+  }
+
+  size_t samplerate(void *h)
+  {
+    JackAudio *jack = (JackAudio*)h;
+    return jack->samplerate();
   }
 }
 

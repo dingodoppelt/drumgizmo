@@ -50,6 +50,7 @@ void DrumKit::clear()
 
   _name = "";
   _description = "";
+  _samplerate = 44100;
 }
 
 bool DrumKit::isValid()
@@ -70,6 +71,11 @@ std::string DrumKit::name()
 std::string DrumKit::description()
 {
   return _description;
+}
+
+size_t DrumKit::samplerate()
+{
+  return _samplerate;
 }
 
 #ifdef TEST_DRUMKIT

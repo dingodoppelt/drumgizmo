@@ -111,6 +111,12 @@ AudioOutputEngineDL::AudioOutputEngineDL(std::string name)
     o_bufsize = NULL;
   }
 
+  o_samplerate = (output_samplerate_func_t) dlsym(lib, "samplerate");
+  dlsym_error = dlerror();
+  if(dlsym_error) {
+    o_samplerate = NULL;
+  }
+
   ptr = o_create();
 
   if(is_jack_plugin) {
@@ -179,6 +185,12 @@ size_t AudioOutputEngineDL::getBufferSize()
 {
   if(o_bufsize) return o_bufsize(ptr);
   return 1024;
+}
+
+size_t AudioOutputEngineDL::samplerate()
+{
+  if(o_samplerate) return o_samplerate(ptr);
+  return UNKNOWN_SAMPLERATE;
 }
 
 #ifdef TEST_AUDIOOUTPUTENGINEDL

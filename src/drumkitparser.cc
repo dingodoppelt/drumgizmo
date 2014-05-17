@@ -60,6 +60,14 @@ void DrumKitParser::startTag(std::string name,
     if(attr.find("name") != attr.end())
       kit._name = attr["name"];
 
+    if(attr.find("samplerate") != attr.end()) {
+      kit._samplerate = atoi(attr["samplerate"].c_str());
+    } else {
+      // If 'samplerate' attribute is missing, assume 44k1Hz
+      // TODO: Ask instrument what samplerate is in the audiofiles...
+      kit._samplerate = 44100;
+    }
+
     if(attr.find("description") != attr.end())
       kit._description = attr["description"];
 

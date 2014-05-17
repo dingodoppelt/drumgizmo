@@ -33,6 +33,8 @@
 
 #include "channel.h"
 
+#define UNKNOWN_SAMPLERATE 0
+
 class AudioOutputEngine {
 public:
   virtual ~AudioOutputEngine() {}
@@ -55,6 +57,11 @@ public:
    * Overload this method to force engine to use different buffer size.
    */
   virtual size_t getBufferSize() { return 1024; }
+
+  /**
+   * Overload this method to report output engine samplerate.
+   */
+  virtual size_t samplerate() { return UNKNOWN_SAMPLERATE; }
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/
