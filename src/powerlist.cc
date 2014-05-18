@@ -32,6 +32,14 @@
 
 #include <hugin.hpp>
 
+/**
+ * Minimum sample set size.
+ * Smaller means wider 'velocity groups'.
+ * Limited by sample set size, ie. only kicks in if sample set size is smaller
+ * than this number.
+ */
+#define MIN_SAMPLE_SET_SIZE 26
+
 // Enable to calculate power on old samples without power attribute
 //#define AUTO_CALCULATE_POWER
 
@@ -213,8 +221,13 @@ Sample *PowerList::get(level_t level)
 
   float power_span = power_max - power_min;
 
-  // Spread out at most 1.5 samples away from center 
-  float stddev = power_span / samples.size() * 1.5;
+  // Width is limited to at least 10. Fioxes problem with instrument with a
+  //  sample set smaller than MIN_SAMPLE_SET_SIZE.
+  float width = fmax(samples.size(), MIN_SAMPLE_SET_SIZE);
+
+  // Spread out at most ~2 samples away from center if all samples have a
+  // uniform distribution over the power spectrum (which they probably don't).
+  float stddev = power_span / width;
 
   // Cut off mean value with stddev/2 in both ends in order to make room for
   //  downwards expansion on velocity 0 and upwards expansion on velocity 1.
