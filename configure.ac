@@ -108,7 +108,7 @@ dnl ======================
 AC_ARG_ENABLE([lv2],
 [  --enable-lv2   Compile the LV2 plugin [default=yes]],,
         [enable_lv2="yes"])
-if test "x$enable_lv2" = "xyes"; then
+if test "x$enable_lv2" = "xno"; then
 	 enable_lv2=yes 
    dnl ======================
    dnl Check for lv2core
@@ -125,7 +125,7 @@ dnl Compile VST plugin
 dnl ======================
 AC_ARG_ENABLE([vst],
 [  --enable-vst   Compile the VST plugin [default=yes]],,
-        [enable_vst="yes"])
+        [enable_vst="no"])
 if test "x$enable_vst" = "xyes"; then
 	 enable_vst=yes 
 else
