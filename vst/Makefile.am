@@ -25,6 +25,7 @@ EXTRA_DIST = \
 	output_vst.cc \
 	output_vst.h
 
+plugindir = $(prefix)/vst
 plugin_LTLIBRARIES =
 
 if ENABLE_VST
