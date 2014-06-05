@@ -42,7 +42,7 @@
 #include <hugin.hpp>
 
 #ifdef __MINGW32__
-#include <direct.h>
+//#include <direct.h>
 #endif
 
 struct GUI::FileBrowser::private_data {
