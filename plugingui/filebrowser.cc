@@ -41,7 +41,7 @@
 
 #include <hugin.hpp>
 
-#ifdef WIN32
+#ifdef __MINGW32__
 #include <direct.h>
 #endif
 
