@@ -129,7 +129,7 @@ AC_ARG_ENABLE([vst],
         [enable_vst="no"])
 if test "x$enable_vst" = "xyes"; then
 	 enable_vst=yes
-	 VST_CPPFLAGS="-I$with_vst_sources"
+	 VST_CPPFLAGS="-I$with_vst_sources -D__int64='long long int'"
 	 VST_SOURCE_PATH="$with_vst_sources"
 	 AC_SUBST(VST_SOURCE_PATH)
 	 AC_SUBST(VST_CPPFLAGS)
