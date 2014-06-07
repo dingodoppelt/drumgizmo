@@ -39,6 +39,6 @@ drumgizmo_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-drumgizmo_la_LDFLAGS = -static -static-libgcc -mno-cygwin -module -avoid-version
+drumgizmo_la_LDFLAGS = -static -static-libgcc -mno-cygwin -module -avoid-version -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
 drumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
