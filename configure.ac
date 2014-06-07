@@ -123,16 +123,22 @@ AM_CONDITIONAL([ENABLE_LV2], [test "x$enable_lv2" = "xyes"])
 dnl ======================
 dnl Compile VST plugin
 dnl ======================
+AC_ARG_WITH(vst_sources,  [  --with-vst-sources         Point this to the vstsdk24 directory])
 AC_ARG_ENABLE([vst],
 [  --enable-vst   Compile the VST plugin [default=no]],,
         [enable_vst="no"])
 if test "x$enable_vst" = "xyes"; then
-	 enable_vst=yes 
+	 enable_vst=yes
+	 VST_CPPFLAGS="-I$with_vst_sources"
+	 VST_SOURCE_PATH="$with_vst_sources"
+	 AC_SUBST(VST_SOURCE_PATH)
+	 AC_SUBST(VST_CPPFLAGS)
 else
 	 AC_MSG_RESULT([*** VST plugin will not be compiled ***])
    enable_vst=no
 fi
 AM_CONDITIONAL([ENABLE_VST], [test "x$enable_vst" = "xyes"])
+
 
 dnl ======================
 dnl Compile AU plugin

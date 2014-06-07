@@ -1,13 +1,12 @@
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-VST_BASE = vstsdk2.4
+VST_BASE = ${VST_SOURCE_PATH}
 VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
 VST_SRC = \
 	${VST_SRC_BASE}/audioeffectx.cpp \
 	${VST_SRC_BASE}/audioeffect.cpp \
 	${VST_SRC_BASE}/vstplugmain.cpp
-VST_CPPFLAGS=-I$(VST_BASE)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
