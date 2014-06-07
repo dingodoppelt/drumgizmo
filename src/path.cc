@@ -27,7 +27,10 @@
 #include "path.h"
 
 #ifndef WIN32
+
 #include <libgen.h>
+
+#else/*WIN32*/
 
 #ifndef _MAX_DIR
 #define _MAX_DIR 256
