@@ -26,33 +26,9 @@
  */
 #include "path.h"
 
-#ifndef WIN32
-
+#ifndef __MINGW32__
 #include <libgen.h>
-
-#else/*WIN32*/
-
-#ifndef _MAX_DIR
-#define _MAX_DIR 256
-#endif
-
-#ifndef _MAX_DRIVE
-#define _MAX_DRIVE 3
-#endif
-
-#ifndef _MAX_EXT
-#define _MAX_EXT 256
-#endif
-
-#ifndef _MAX_FNAME
-#define _MAX_FNAME 256
-#endif
-
-#ifndef _MAX_PATH
-#define _MAX_PATH 260
-#endif
-
-#endif/*WIN32*/
+#endif/*__MINGW32__*/
 
 #include <string.h>
 #include <stdlib.h>
@@ -60,7 +36,7 @@
 std::string getPath(std::string file)
 {
   std::string p;
-#ifndef WIN32
+#ifndef __MINGW32__
   char *b = strdup(file.c_str());
   p = dirname(b);
   free(b);
@@ -73,25 +49,3 @@ std::string getPath(std::string file)
 
   return p;
 }
-
-#ifdef TEST_PATH
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-std::string a = "../dir/file";
-TEST_EQUAL_STR(getPath(a), "../dir", "relative path");
-
-std::string b = "/abs/path/file";
-TEST_EQUAL_STR(getPath(b), "/abs/path", "absolute path");
-
-
-TEST_END;
-
-#endif/*TEST_PATH*/
