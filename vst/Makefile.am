@@ -39,6 +39,6 @@ libdrumgizmo_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-libdrumgizmo_la_LDFLAGS = -shared
+libdrumgizmo_la_LDFLAGS = -shared -no-undefined
 libdrumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
