@@ -48,6 +48,6 @@ libdrumgizmo_vst_la_SOURCES = \
 
 libdrumgizmo_vst_la_LDFLAGS = -static-libgcc -no-undefined -shared
 libdrumgizmo_vst_la_LIBADD =
-libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) .libs/libdg.a \
+libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) libdg.la \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui
 
