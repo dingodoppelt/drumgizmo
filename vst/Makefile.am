@@ -3,7 +3,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 VST_BASE = ${VST_SOURCE_PATH}
 VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
-VST_SRC = \
+VST_SOURCES = \
 	${VST_SRC_BASE}/audioeffectx.cpp \
 	${VST_SRC_BASE}/audioeffect.cpp \
 	${VST_SRC_BASE}/vstplugmain.cpp
