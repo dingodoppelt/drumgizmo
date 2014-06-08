@@ -31,7 +31,7 @@ endif
 libdgvst_a_SOURCES = \
   $(VST_SOURCES)
 
-libdgvst_a_CXXFLAGS = $(VST_CPPFLAGS) -Wno-error=write-strings -Wno-error=narrowing
+libdgvst_a_CXXFLAGS = $(VST_CPPFLAGS) -w
 
 
 
