@@ -25,23 +25,29 @@ plugin_LTLIBRARIES =
 
 if ENABLE_VST
 plugin_LTLIBRARIES += libdrumgizmo_vst.la
+noinst_LTLIBRARIES = libdg.la
 endif
 
-libdrumgizmo_vst_la_SOURCES = \
-  $(VST_SOURCES) \
+libdg_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
-	$(PLUGIN_GUI_SOURCES) \
-	drumgizmo_vst.cc \
-	input_vst.cc \
-	output_vst.cc
+	$(PLUGIN_GUI_SOURCES)
 
-libdrumgizmo_vst_la_LDFLAGS = -static -static-libgcc -no-undefined \
-	-shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
-libdrumgizmo_vst_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
-libdrumgizmo_vst_la_CXXFLAGS = -w -I$(top_srcdir)/src \
-	-I$(top_srcdir)/plugingui \
+libdg_la_LDFLAGS = -static
+libdg_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
+libdg_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(VST_CPPFLAGS) \
 	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS)\
 	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
+
+libdrumgizmo_vst_la_SOURCES = \
+  $(VST_SOURCES) \
+	drumgizmo_vst.cc \
+	input_vst.cc \
+	output_vst.cc
+
+libdrumgizmo_vst_la_LDFLAGS = -static-libgcc -no-undefined -shared
+libdrumgizmo_vst_la_LIBADD =
+libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) .libs/libdg.a \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui
 
