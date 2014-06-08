@@ -24,16 +24,14 @@ plugindir = $(prefix)/vst
 plugin_LTLIBRARIES =
 
 if ENABLE_VST
-noinst_LIBRARIES = libdgvst.a
+noinst_LTLIBRARIES = libdgvst.la
 plugin_LTLIBRARIES += libdrumgizmo.la
 endif
 
-libdgvst_a_SOURCES = \
+libdgvst_la_SOURCES = \
   $(VST_SOURCES)
 
-libdgvst_a_CXXFLAGS = $(VST_CPPFLAGS) -w
-
-
+libdgvst_la_CXXFLAGS = $(VST_CPPFLAGS) -w
 
 libdrumgizmo_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
@@ -42,8 +40,8 @@ libdrumgizmo_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-libdrumgizmo_la_LDFLAGS = -shared -no-undefined
-libdrumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS) libdgvst.a
+libdrumgizmo_la_LDFLAGS = -dynamic -no-undefined
+libdrumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS) -ldgvst
 libdrumgizmo_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(VST_CPPFLAGS) \
