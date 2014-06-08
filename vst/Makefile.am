@@ -28,10 +28,10 @@ plugindir = $(prefix)/vst
 plugin_LTLIBRARIES =
 
 if ENABLE_VST
-plugin_LTLIBRARIES += drumgizmo.la
+plugin_LTLIBRARIES += libdrumgizmo.la
 endif
 
-drumgizmo_la_SOURCES = \
+libdrumgizmo_la_SOURCES = \
   $(VST_SOURCES) \
 	$(DRUMGIZMO_SOURCES) \
 	$(PLUGIN_GUI_SOURCES) \
@@ -39,6 +39,6 @@ drumgizmo_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-drumgizmo_la_LDFLAGS = -shared
-drumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
+libdrumgizmo_la_LDFLAGS = -shared
+libdrumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
