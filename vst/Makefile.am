@@ -35,7 +35,7 @@ libdrumgizmo_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-libdrumgizmo_la_LDFLAGS = -dynamic -no-undefined
+libdrumgizmo_la_LDFLAGS = -dynamic -no-undefined -mno-cygwin
 libdrumgizmo_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 libdrumgizmo_la_CXXFLAGS = -w -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
