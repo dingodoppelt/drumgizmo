@@ -32,7 +32,7 @@ libdg_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
 	$(PLUGIN_GUI_SOURCES)
 
-libdg_la_LDFLAGS = -static -static-libgcc
+libdg_la_LDFLAGS = -all-static -static -static-libgcc
 libdg_la_LIBADD = $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 libdg_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
@@ -46,8 +46,8 @@ libdrumgizmo_vst_la_SOURCES = \
 	input_vst.cc \
 	output_vst.cc
 
-libdrumgizmo_vst_la_LDFLAGS = -static-libgcc -no-undefined -shared
-libdrumgizmo_vst_la_LIBADD =
-libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) libdg.la \
+libdrumgizmo_vst_la_LDFLAGS = -all-static -static-libgcc -no-undefined -shared
+libdrumgizmo_vst_la_LIBADD = libdg.la
+libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui
 
