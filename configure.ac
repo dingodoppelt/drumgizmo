@@ -399,8 +399,8 @@ tmp_LDFLAGS="$LDFLAGS"
 tmp_LIBS="$LIBS"
 CXXFLAGS=""
 CPPFLAGS=""
-CFLAGS="EXPAT_CFLAGS"
-LDFLAGS="EXPAT_LIBS"
+CFLAGS="$EXPAT_CFLAGS"
+LDFLAGS="$EXPAT_LDFLAGS"
 LIBS=""
 AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
 AC_CHECK_LIB(expat, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!]))
