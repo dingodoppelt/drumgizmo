@@ -133,6 +133,7 @@ if test "x$enable_vst" = "xyes"; then
 	 VST_SOURCE_PATH="$with_vst_sources"
 	 AC_SUBST(VST_SOURCE_PATH)
 	 AC_SUBST(VST_CPPFLAGS)
+   AC_CONFIG_FILES(vst/Makefile.mingw32)
 else
 	 AC_MSG_RESULT([*** VST plugin will not be compiled ***])
    enable_vst=no
