@@ -33,7 +33,7 @@
 LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
   GUI::NativeWindowWin32 *native =
-    (GUI::NativeWindowWin32 *)GetWindowLong(hwnd, GWL_USERDATA);
+    (GUI::NativeWindowWin32 *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
   // NOTE: 'native' is NULL intil the WM_CREATE message has been handled. 
   if(!native) return DefWindowProc(hwnd, msg, wp, lp);
@@ -311,7 +311,7 @@ GUI::NativeWindowWin32::NativeWindowWin32(GUI::Window *window)
                           wndId, NULL,
                           GetModuleHandle(NULL), NULL);
 
-	SetWindowLongPtr(m_hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 }
 
 GUI::NativeWindowWin32::~NativeWindowWin32()
