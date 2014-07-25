@@ -53,7 +53,6 @@ DrumGizmo::~DrumGizmo()
 
 bool DrumGizmo::loadkit(std::string file)
 {
-  if(file == kit.file()) return 1;
   if(file == "") return 1;
 
   DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
