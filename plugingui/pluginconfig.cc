@@ -71,6 +71,7 @@ FILE* openFilePtr(std::string mode) {
                                0,
                                szPath))); {
   DEBUG(config, "WINDOWS APP DATA PATH:%s\n", szPath);
+  std::string configpath = ".";
 //    PathAppend(szPath, TEXT(
 //    PathAppend(szPath, TEXT(CONFIGFILENAME));
 //    HANDLE hFile = CreateFile(szPath, GENERIC_READ | GENERIC_WRITE, 0, NULL);
