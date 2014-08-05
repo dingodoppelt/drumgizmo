@@ -37,6 +37,7 @@
 #include <direct.h>
 #include <windows.h>
 #include <Shlobj.h>
+#include <Shlwapi.h>
 #else
 #endif
 
