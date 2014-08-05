@@ -40,6 +40,7 @@ CXX_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/plugingui/lodepng/lodepng.cpp \
+	$(top_srcdir)/plugingui/pluginconfig.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/mutex.cc \
