@@ -72,9 +72,11 @@ FILE* openFilePtr(std::string mode) {
                                NULL,
                                0,
                                szPath))); {
-  DEBUG(config, "WINDOWS APP DATA PATH:%s\n", szPath);
-  PathAppend(szPath, TEXT(CONFIGDIRNAME));
-  HANDLE hFile = CreateFile(szPath, GENERIC_READ | GENERIC_WRITE, 0, NULL);
+    DEBUG(config, "WINDOWS APP DATA PATH:%s\n", szPath);
+    PathAppend(szPath, TEXT(CONFIGDIRNAME));
+    if(!Directory::exists(configpath)) {
+      CreateDirectory(szPath, NULL); 
+    }
   }
 #else
   std::string configpath = strdup(getenv("HOME"));
