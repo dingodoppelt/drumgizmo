@@ -36,6 +36,7 @@
 #ifdef WIN32
 #include <direct.h>
 #include <windows.h>
+#include <Shlobj.h>
 #else
 #endif
 
