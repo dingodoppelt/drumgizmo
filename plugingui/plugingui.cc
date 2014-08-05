@@ -33,7 +33,7 @@
 #include "verticalline.h"
 #include "../version.h"
 
-#include "config.h"
+#include "pluginconfig.h"
 #include "messagehandler.h"
 
 static void checkClick(void *ptr)
