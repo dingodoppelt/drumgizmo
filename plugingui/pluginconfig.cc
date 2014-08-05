@@ -64,6 +64,7 @@ Config::~Config()
 
 FILE* openFilePtr(std::string mode) {
 #ifdef WIN32
+  std::string configpath = ".";
   TCHAR szPath[256];
   if(SUCCEEDED(SHGetFolderPath(NULL,
                                CSIDL_APPDATA | CSIDL_FLAG_CREATE,
@@ -71,10 +72,8 @@ FILE* openFilePtr(std::string mode) {
                                0,
                                szPath))); {
   DEBUG(config, "WINDOWS APP DATA PATH:%s\n", szPath);
-  std::string configpath = ".";
-//    PathAppend(szPath, TEXT(
-//    PathAppend(szPath, TEXT(CONFIGFILENAME));
-//    HANDLE hFile = CreateFile(szPath, GENERIC_READ | GENERIC_WRITE, 0, NULL);
+  PathAppend(szPath, TEXT(CONFIGDIRNAME));
+  HANDLE hFile = CreateFile(szPath, GENERIC_READ | GENERIC_WRITE, 0, NULL);
   }
 #else
   std::string configpath = strdup(getenv("HOME"));
