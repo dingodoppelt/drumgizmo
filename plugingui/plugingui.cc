@@ -33,6 +33,7 @@
 #include "verticalline.h"
 #include "../version.h"
 
+#include "config.h"
 #include "messagehandler.h"
 
 static void checkClick(void *ptr)
@@ -81,6 +82,12 @@ static void knobChange2(void *ptr)
 #endif
 }
 
+static void quit(void *ptr) {
+  PluginGUI *gui = (PluginGUI*)ptr;
+
+  gui->stopThread();
+}
+
 GUI::FileBrowser *fb;
 static void selectKitFile(void *ptr, std::string filename)
 {
@@ -90,6 +97,8 @@ static void selectKitFile(void *ptr, std::string filename)
   fb->hide();
 
   std::string drumkit = gui->lineedit->text();
+
+  gui->config->lastkit = drumkit;
 
   gui->progress->setProgress(0);
   gui->progress->setState(GUI::ProgressBar::blue);
@@ -105,6 +114,7 @@ static void kitBrowseClick(void *ptr)
   PluginGUI *gui = (PluginGUI*)ptr;
 
   std::string path = gui->lineedit->text();
+  if(path == "") path = gui->config->lastkit;
   if(path == "") path = gui->lineedit2->text();
 
   fb->setPath(path);
@@ -120,6 +130,8 @@ static void selectMapFile(void *ptr, std::string filename)
   fb->hide();
 
   std::string midimap = gui->lineedit2->text();
+
+  gui->config->lastmidimap = midimap;
 
   LoadMidimapMessage *msg = new LoadMidimapMessage();
   msg->midimapfile = midimap;
@@ -137,6 +149,7 @@ static void midimapBrowseClick(void *ptr)
   PluginGUI *gui = (PluginGUI*)ptr;
 
   std::string path = gui->lineedit2->text();
+  if(path == "") path = gui->config->lastmidimap;
   if(path == "") path = gui->lineedit->text();
 
   fb->setPath(path);
@@ -269,6 +282,10 @@ void PluginGUI::thread_main()
 void PluginGUI::deinit()
 {
   if(window) delete window;
+  if(config) {
+    config->save();
+    delete config;
+  }
 }
 
 void closeEventHandler(void *ptr)
@@ -280,6 +297,10 @@ void closeEventHandler(void *ptr)
 void PluginGUI::init()
 {
   DEBUG(gui, "init");
+
+  config = new Config();
+  config->load();
+
   window = new GUI::Window();
   window->eventHandler()->registerCloseHandler(closeEventHandler,
                                                (void*)&closing);
@@ -427,6 +448,13 @@ void PluginGUI::init()
   filebrowser->resize(window->width() - 1, window->height() - 1);
   filebrowser->hide();
   fb = filebrowser;
+
+  // Enable quit button
+  GUI::Button *btn_quit = new GUI::Button(window);
+  btn_quit->setText("Quit");
+  btn_quit->move(50,280);
+  btn_quit->resize(80,80);
+  btn_quit->registerClickHandler(quit, this);
 
   window->show();
 
