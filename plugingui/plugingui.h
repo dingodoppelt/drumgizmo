@@ -36,7 +36,7 @@
 #include "button.h"
 #include "knob.h"
 #include "progressbar.h"
-#include "config.h"
+#include "pluginconfig.h"
 
 #include "filebrowser.h"
 

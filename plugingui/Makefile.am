@@ -26,7 +26,7 @@ EXTRA_DIST = \
 	button.h \
 	checkbox.h \
 	colour.h \
-	config.h \
+	pluginconfig.h \
 	combobox.h \
 	directory.h \
 	eventhandler.h \
