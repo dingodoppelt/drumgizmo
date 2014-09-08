@@ -312,38 +312,6 @@ AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_JACKAUDIO], [test "x$have_output_jackaudio" = "xyes"])
 
 
-AC_ARG_ENABLE([editor],
-[  --disable-editor       Disable Qt editor [default=enabled]],,
-        [enable_editor="yes"])
-if test "x$enable_editor" = "xyes"; then
-	 have_editor=yes 
-   dnl ======================
-   dnl Check for Qt
-   dnl ======================
-   PKG_CHECK_MODULES(QT, QtCore QtGui QtXml >= 4.5)
-   AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
-   AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
-   AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
-   if (test "$QT_MOC" = ""); then
-     AC_MSG_ERROR([QT4 moc is required.])
-   fi
-   if (test "$QT_RCC" = ""); then
-     AC_MSG_ERROR([QT4 rcc is required.])
-   fi
-   if (test "$QT_UIC" = ""); then
-     AC_MSG_ERROR([QT4 uic is required.])
-   fi
-
-   dnl ======================
-   dnl Check for libao
-   dnl ======================
-   PKG_CHECK_MODULES(AO, ao >= 0.8.8)
-else
-	 AC_MSG_RESULT([*** Qt Drumkit Editor disabled per user request ***])
-   have_editor=no
-fi
-AM_CONDITIONAL([HAVE_EDITOR], [test "x$have_editor" = "xyes"])
-
 dnl ======================
 dnl Check for sndfile
 dnl ======================
@@ -502,6 +470,4 @@ AC_OUTPUT(
 	drumgizmo/output/dummy/Makefile
 	drumgizmo/output/alsa/Makefile
 	drumgizmo/output/jackaudio/Makefile
-	drumgizmo/output/wavfile/Makefile
-  dgedit/Makefile
-  dgedit/icons/Makefile)
+	drumgizmo/output/wavfile/Makefile)
