@@ -1,3 +1,14 @@
+Version 0.9.6
+=============
+Released September 9th 2014
+ - Editor split out into own project. (deva,suhr)
+ - Integrate VST build into autotools. (deva)
+ - Make 64bit VST binary. (deva)
+ - Accept loading the same kit twice. (deva)
+ - Reduce probability of playing the same sample twice in a row. (deva)
+ - Normalise velocity range (was 0 to hardest sample, now is weakest sample to hardest sample). (deva)
+ - Make sure loading a new kit after another works properly. (muldjord)
+
 Version 0.9.5
 =============
 Released April 27th 2014
