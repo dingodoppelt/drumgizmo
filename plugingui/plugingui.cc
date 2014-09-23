@@ -281,11 +281,11 @@ void PluginGUI::thread_main()
 
 void PluginGUI::deinit()
 {
-  if(window) delete window;
   if(config) {
     config->save();
     delete config;
   }
+  if(window) delete window;
 }
 
 void closeEventHandler(void *ptr)
