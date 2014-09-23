@@ -63,7 +63,7 @@ Config::~Config()
 
 }
 
-FILE* openFilePtr(std::string mode) {
+static FILE* openFilePtr(std::string mode) {
 #ifdef WIN32
   std::string configpath = ".";
   TCHAR szPath[256];
@@ -135,6 +135,8 @@ void Config::load()
 
 void Config::save()
 {
+  DEBUG(pluginconfig, "Saving configuration...\n");
+
   FILE *fp = openFilePtr("w");
   if(!fp) return;
 
