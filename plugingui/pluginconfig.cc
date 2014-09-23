@@ -82,7 +82,11 @@ FILE* openFilePtr(std::string mode) {
   configpath += CONFIGDIRNAME;
   if(!Directory::exists(configpath)) {
     DEBUG(pluginconfig, "No configuration exists, creating directory '%s'\n", configpath.c_str());
+#ifdef WIN32
+    if( (mkdir(configpath.c_str())) < 0) { 
+#else
     if( (mkdir(configpath.c_str(), 0755)) < 0) { 
+#endif
       DEBUG(pluginconfig, "Could not create config directory\n");
     }
     return NULL;
