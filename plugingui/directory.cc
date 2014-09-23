@@ -320,11 +320,14 @@ bool Directory::isHidden(std::string path)
 {
   // TODO: Handle hidden and system files in windows
 #ifdef WIN32
-  return false;
+  DWORD fattribs = GetFileAttributes(path.c_str());
+  if(fattribs & FILE_ATTRIBUTE_HIDDEN) {
+    return false;
+  }
+  return true;
 #else
   unsigned pos = path.find_last_of("/\\");
   std::string entry = path.substr(pos+1);
-
   if(entry.size() > 1 &&
      entry.at(0) == '.' &&
      entry.at(1) != '.') {
