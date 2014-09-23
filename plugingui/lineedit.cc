@@ -175,6 +175,8 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
     p.drawLine(px + BORDER - 1 - 4 + 3, 6,
                px + BORDER - 1 - 4 + 3, height() - 7);
   }
+
+  DEBUG(lineedit, "Weeeh!\n");
 }
 
 #ifdef TEST_LINEEDIT
