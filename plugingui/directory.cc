@@ -181,8 +181,8 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 
 
 #ifdef WIN32
-	DEBUG(directory, "root is %s\n", Directory::root(path).c_str()); 
-	DEBUG(directory, "current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
+	DEBUG(directory, "Root is %s\n", Directory::root(path).c_str()); 
+	DEBUG(directory, "Current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
 if(Directory::isRoot(path)) entries.push_back(".."); 
 #endif
 
@@ -289,7 +289,7 @@ bool Directory::isDir()
 
 bool Directory::isDir(std::string path)
 {
-  DEBUG(directory, "Is '%s' dir?\n", path.c_str());
+  DEBUG(directory, "Is '%s' a directory?\n", path.c_str());
   struct stat st;
   if(stat(path.c_str(), &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
