@@ -151,7 +151,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
     if(Directory::isRoot(path) && name == "..") continue;
     
     unsigned char entryinfo = 0;
-    if(isHidden(name)) {
+    if(isHidden(path + SEP + name)) {
       entryinfo |= DIRECTORY_HIDDEN;
     }
 
@@ -293,11 +293,11 @@ bool Directory::isDir(std::string path)
   struct stat st;
   if(stat(path.c_str(), &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
-      DEBUG(directory, "Yes\n");
+      DEBUG(directory, "\t...yes!\n");
       return true;
     }
   }
-  DEBUG(directory, "No\n");
+  DEBUG(directory, "\t...no!\n");
   return false;
 }
 
