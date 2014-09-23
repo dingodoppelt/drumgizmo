@@ -47,7 +47,7 @@
 
 #ifdef WIN32
   #define SEP "\\"
-  #define CONFIGDIRNAME "drumgizmo"
+  #define CONFIGDIRNAME ".drumgizmo"
 #else
   #define SEP "/"
   #define CONFIGDIRNAME ".drumgizmo"
@@ -83,7 +83,11 @@ FILE* openFilePtr(std::string mode) {
   configpath += SEP;
   configpath += CONFIGDIRNAME;
   if(!Directory::exists(configpath)) {
-    if( (mkdir(configpath.c_str(), 0755)) < 0) return NULL;
+    DEBUG(pluginconfig, "No configuration exists, creating directory '%s'\n", configpath.c_str());
+    if( (mkdir(configpath.c_str(), 0755)) < 0) { 
+      DEBUG(pluginconfig, "Could not create config directory\n");
+    }
+    return NULL;
   }
 #endif
 
@@ -91,6 +95,8 @@ FILE* openFilePtr(std::string mode) {
   std::string configfile = configpath;
   configfile += SEP;
   configfile += CONFIGFILENAME;
+
+  DEBUG(pluginconfig, "Reading config file '%s'\n", configfile.c_str());
   if(! (fp = fopen(configfile.c_str(), mode.c_str())) ) {
     return NULL;
   }
@@ -100,6 +106,7 @@ FILE* openFilePtr(std::string mode) {
 
 void Config::load()
 {
+  DEBUG(pluginconfig, "Loading config file...\n");
   FILE *fp = openFilePtr("r");
   if(!fp) return;
 
@@ -109,12 +116,18 @@ void Config::load()
   char buf[4096];
   while( fgets(buf, 4096, fp) ) {
     if(!strncmp(buf, "lastkit:", 8)) {
+      DEBUG(pluginconfig, "Loading last kit path\n");
       // Dont copy newline
-      if(strlen(buf) > 8 + 1) lastkit.append(buf+8, strlen(buf+8) - 1);
+      if(strlen(buf) > 8 + 1) { 
+        lastkit.append(buf+8, strlen(buf+8) - 1);
+        DEBUG(pluginconfig, "\t path is %s\n", lastkit.c_str());
+      }
     }
     if(!strncmp(buf, "lastmidimap:", 12)) {
+      DEBUG(pluginconfig, "Loading lastmidimap path\n");
       // Dont copy newline
       if(strlen(buf) > 12+1) lastmidimap.append(buf+12, strlen(buf+12) - 1);
+      DEBUG(pluginconfig, "\t path is %s\n", lastmidimap.c_str());
     }
   }
 }
