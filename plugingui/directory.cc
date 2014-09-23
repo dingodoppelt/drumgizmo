@@ -319,8 +319,14 @@ bool Directory::exists(std::string path)
 bool Directory::isHidden(std::string path) 
 {
   DEBUG(directory, "Is '%s' hidden?\n", path.c_str());
-  // TODO: Handle hidden and system files in windows
 #ifdef WIN32
+  // We dont want to filter out '..' pointing to root of a partition
+  unsigned pos = path.find_last_of("/\\");
+  std::string entry = path.substr(pos+1);
+  if(entry == "..") {
+    return false;
+  }
+
   DWORD fattribs = GetFileAttributes(path.c_str());
   if(fattribs & FILE_ATTRIBUTE_HIDDEN) {
     DEBUG(directory, "\t...yes!\n");
