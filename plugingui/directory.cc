@@ -318,22 +318,29 @@ bool Directory::exists(std::string path)
 
 bool Directory::isHidden(std::string path) 
 {
+  DEBUG(directory, "Is '%s' hidden?\n", path.c_str());
   // TODO: Handle hidden and system files in windows
 #ifdef WIN32
   DWORD fattribs = GetFileAttributes(path.c_str());
   if(fattribs & FILE_ATTRIBUTE_HIDDEN) {
+    DEBUG(directory, "\t...yes!\n");
     return true;
   }
-  return false;
+  else {
+    DEBUG(directory, "\t...no!\n");
+    return false;
+  }
 #else
   unsigned pos = path.find_last_of("/\\");
   std::string entry = path.substr(pos+1);
   if(entry.size() > 1 &&
      entry.at(0) == '.' &&
      entry.at(1) != '.') {
+    DEBUG(directory, "\t...yes!\n");
     return true;
   }
   else {
+    DEBUG(directory, "\t...no!\n");
     return false;
   }
 #endif
