@@ -74,13 +74,10 @@ FILE* openFilePtr(std::string mode) {
                                szPath))); {
     configpath = szPath;
     DEBUG(config, "WINDOWS APP DATA PATH:%s\n", configpath.c_str());
-//    PathAppend(szPath, "drumgizmo");
-//    if(!Directory::exists(configpath)) {
-//      CreateDirectory(szPath, NULL); 
-//    }
   }
 #else
   std::string configpath = strdup(getenv("HOME"));
+#endif
   configpath += SEP;
   configpath += CONFIGDIRNAME;
   if(!Directory::exists(configpath)) {
@@ -90,7 +87,6 @@ FILE* openFilePtr(std::string mode) {
     }
     return NULL;
   }
-#endif
 
   FILE *fp;
   std::string configfile = configpath;
