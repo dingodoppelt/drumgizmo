@@ -332,6 +332,10 @@ bool Directory::isHidden(std::string path)
     DEBUG(directory, "\t...yes!\n");
     return true;
   }
+  else if(fattribs & FILE_ATTRIBUTE_SYSTEM) {
+    DEBUG(directory, "\t...yes!\n");
+    return true;
+  }
   else {
     DEBUG(directory, "\t...no!\n");
     return false;
