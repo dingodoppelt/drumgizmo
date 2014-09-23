@@ -82,11 +82,11 @@ static void knobChange2(void *ptr)
 #endif
 }
 
-static void quit(void *ptr) {
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  gui->stopThread();
-}
+//static void quit(void *ptr) {
+//  PluginGUI *gui = (PluginGUI*)ptr;
+//
+//  gui->stopThread();
+//}
 
 GUI::FileBrowser *fb;
 static void selectKitFile(void *ptr, std::string filename)
@@ -450,11 +450,11 @@ void PluginGUI::init()
   fb = filebrowser;
 
   // Enable quit button
-  GUI::Button *btn_quit = new GUI::Button(window);
-  btn_quit->setText("Quit");
-  btn_quit->move(50,280);
-  btn_quit->resize(80,80);
-  btn_quit->registerClickHandler(quit, this);
+//  GUI::Button *btn_quit = new GUI::Button(window);
+//  btn_quit->setText("Quit");
+//  btn_quit->move(50,280);
+//  btn_quit->resize(80,80);
+//  btn_quit->registerClickHandler(quit, this);
 
   window->show();
 
