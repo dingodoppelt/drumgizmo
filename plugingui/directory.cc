@@ -322,9 +322,9 @@ bool Directory::isHidden(std::string path)
 #ifdef WIN32
   DWORD fattribs = GetFileAttributes(path.c_str());
   if(fattribs & FILE_ATTRIBUTE_HIDDEN) {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 #else
   unsigned pos = path.find_last_of("/\\");
   std::string entry = path.substr(pos+1);
