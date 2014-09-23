@@ -63,9 +63,9 @@ Config::~Config()
 
 }
 
-static FILE* openFilePtr(std::string mode) {
-#ifdef WIN32
-  std::string configpath = ".";
+static std::string configPath() {
+ #ifdef WIN32
+  std::string configpath;
   TCHAR szPath[256];
   if(SUCCEEDED(SHGetFolderPath(NULL,
                                CSIDL_APPDATA | CSIDL_FLAG_CREATE,
@@ -73,13 +73,19 @@ static FILE* openFilePtr(std::string mode) {
                                0,
                                szPath))); {
     configpath = szPath;
-    DEBUG(config, "WINDOWS APP DATA PATH:%s\n", configpath.c_str());
   }
 #else
   std::string configpath = strdup(getenv("HOME"));
 #endif
   configpath += SEP;
   configpath += CONFIGDIRNAME;
+
+  return configpath;
+}
+
+static bool createConfigPath() {
+  std::string configpath = configPath();
+
   if(!Directory::exists(configpath)) {
     DEBUG(pluginconfig, "No configuration exists, creating directory '%s'\n", configpath.c_str());
 #ifdef WIN32
@@ -89,8 +95,15 @@ static FILE* openFilePtr(std::string mode) {
 #endif
       DEBUG(pluginconfig, "Could not create config directory\n");
     }
-    return NULL;
+    return false;
   }
+
+  return true;
+}
+
+static FILE* openConfigFile(std::string mode) {
+
+  std::string configpath = configPath();
 
   FILE *fp;
   std::string configfile = configpath;
@@ -108,7 +121,7 @@ static FILE* openFilePtr(std::string mode) {
 void Config::load()
 {
   DEBUG(pluginconfig, "Loading config file...\n");
-  FILE *fp = openFilePtr("r");
+  FILE *fp = openConfigFile("r");
   if(!fp) return;
 
   lastkit.clear();
@@ -137,7 +150,9 @@ void Config::save()
 {
   DEBUG(pluginconfig, "Saving configuration...\n");
 
-  FILE *fp = openFilePtr("w");
+  createConfigPath();
+
+  FILE *fp = openConfigFile("w");
   if(!fp) return;
 
   std::string buf;
