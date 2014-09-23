@@ -300,6 +300,7 @@ void PluginGUI::init()
 
   config = new Config();
   config->load();
+    config->save();
 
   window = new GUI::Window();
   window->eventHandler()->registerCloseHandler(closeEventHandler,
