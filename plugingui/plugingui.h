@@ -36,6 +36,7 @@
 #include "button.h"
 #include "knob.h"
 #include "progressbar.h"
+#include "pluginconfig.h"
 
 #include "filebrowser.h"
 
@@ -79,6 +80,8 @@ public:
   GUI::Label *lbl2;
   GUI::LineEdit *lineedit2;
   GUI::ProgressBar *progress2;
+
+  Config *config;
 
   void (*windowClosedHandler)(void *);
   void *windowClosedPtr;

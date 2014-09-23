@@ -34,9 +34,7 @@
 #include <string.h>
 
 #ifdef WIN32
-#ifdef __MINGW32__
 #include <direct.h>
-#endif
 #include <windows.h>
 #endif
 
@@ -153,7 +151,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
     if(Directory::isRoot(path) && name == "..") continue;
     
     unsigned char entryinfo = 0;
-    if(isHidden(name)) {
+    if(isHidden(path + SEP + name)) {
       entryinfo |= DIRECTORY_HIDDEN;
     }
 
@@ -183,8 +181,8 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 
 
 #ifdef WIN32
-	DEBUG(directory, "root is %s\n", Directory::root(path).c_str()); 
-	DEBUG(directory, "current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
+	DEBUG(directory, "Root is %s\n", Directory::root(path).c_str()); 
+	DEBUG(directory, "Current path %s is root? %d", path.c_str(), Directory::isRoot(path)); 
 if(Directory::isRoot(path)) entries.push_back(".."); 
 #endif
 
@@ -291,15 +289,15 @@ bool Directory::isDir()
 
 bool Directory::isDir(std::string path)
 {
-  DEBUG(directory, "Is '%s' dir?\n", path.c_str());
+  DEBUG(directory, "Is '%s' a directory?\n", path.c_str());
   struct stat st;
   if(stat(path.c_str(), &st) == 0) {
     if((st.st_mode & S_IFDIR) != 0) {
-      DEBUG(directory, "Yes\n");
+      DEBUG(directory, "\t...yes!\n");
       return true;
     }
   }
-  DEBUG(directory, "No\n");
+  DEBUG(directory, "\t...no!\n");
   return false;
 }
 
@@ -320,19 +318,39 @@ bool Directory::exists(std::string path)
 
 bool Directory::isHidden(std::string path) 
 {
-  // TODO: Handle hidden and system files in windows
+  DEBUG(directory, "Is '%s' hidden?\n", path.c_str());
 #ifdef WIN32
-  return false;
-#else
+  // We dont want to filter out '..' pointing to root of a partition
   unsigned pos = path.find_last_of("/\\");
   std::string entry = path.substr(pos+1);
+  if(entry == "..") {
+    return false;
+  }
 
-  if(entry.size() > 1 &&
-     entry.at(0) == '.' &&
-     entry.at(1) != '.') {
+  DWORD fattribs = GetFileAttributes(path.c_str());
+  if(fattribs & FILE_ATTRIBUTE_HIDDEN) {
+    DEBUG(directory, "\t...yes!\n");
+    return true;
+  }
+  else if(fattribs & FILE_ATTRIBUTE_SYSTEM) {
+    DEBUG(directory, "\t...yes!\n");
     return true;
   }
   else {
+    DEBUG(directory, "\t...no!\n");
+    return false;
+  }
+#else
+  unsigned pos = path.find_last_of("/\\");
+  std::string entry = path.substr(pos+1);
+  if(entry.size() > 1 &&
+     entry.at(0) == '.' &&
+     entry.at(1) != '.') {
+    DEBUG(directory, "\t...yes!\n");
+    return true;
+  }
+  else {
+    DEBUG(directory, "\t...no!\n");
     return false;
   }
 #endif
