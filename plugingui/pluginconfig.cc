@@ -110,7 +110,7 @@ static FILE* openConfigFile(std::string mode) {
   configfile += SEP;
   configfile += CONFIGFILENAME;
 
-  DEBUG(pluginconfig, "Reading config file '%s'\n", configfile.c_str());
+  DEBUG(pluginconfig, "Opening config file '%s'\n", configfile.c_str());
   if(! (fp = fopen(configfile.c_str(), mode.c_str())) ) {
     return NULL;
   }
