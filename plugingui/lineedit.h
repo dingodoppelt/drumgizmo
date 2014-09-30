@@ -65,6 +65,15 @@ private:
 
   std::string _text;
   size_t pos;
+  std::string _visibletext;
+  size_t offsetpos;
+
+  enum state_t {
+    NOOP = 0,
+    WALK_LEFT =  1, 
+    WALK_RIGHT = 2
+  };
+  state_t walkstate;
 
   bool readonly;
 
