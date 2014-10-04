@@ -333,6 +333,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
         size_t end = sz;
         if(evt->t + end - n > af->size) end = af->size - evt->t + n;
+        if(end > sz) end = sz;
 
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
