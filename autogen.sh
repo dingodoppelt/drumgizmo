@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 # Check if hugin has been obtained:
-if [ ! -d hugin ]
+if [ ! -f hugin/hugin.c ]
 then
 		echo "You are missing the hugin submodule."
 		echo "Run"
