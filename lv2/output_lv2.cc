@@ -28,8 +28,9 @@
 
 #include <string.h>
 
-OutputLV2::OutputLV2()
+OutputLV2::OutputLV2(double sample_rate)
 {
+  this->sample_rate = sample_rate;
   for(size_t i = 0; i < NUM_OUTPUTS; i++) {
     outputPorts[i].size = 0;
     outputPorts[i].samples = NULL;
@@ -83,19 +84,8 @@ sample_t *OutputLV2::getBuffer(int ch)
   return NULL;
 }
 
-#ifdef TEST_OUTPUT_LV2
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+size_t OutputLV2::samplerate()
+{
+  return sample_rate;
+}
 
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_OUTPUT_LV2*/

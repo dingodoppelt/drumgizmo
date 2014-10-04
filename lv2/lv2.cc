@@ -248,7 +248,7 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
   dg_descriptor.get_pci = dg_get_pci;
 
   dglv2->in = new InputLV2();
-  dglv2->out = new OutputLV2();
+  dglv2->out = new OutputLV2(sample_rate);
 
   dglv2->buffer = NULL;
   dglv2->buffer_size = 0;

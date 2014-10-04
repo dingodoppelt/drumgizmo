@@ -39,7 +39,7 @@ public:
 
 class OutputLV2 : public AudioOutputEngine {
 public:
-  OutputLV2();
+  OutputLV2(double sample_rate);
   ~OutputLV2();
 
   bool init(Channels channels);
@@ -54,9 +54,13 @@ public:
   void post(size_t nsamples);
 
   sample_t *getBuffer(int c);
+  
+  size_t samplerate();
 
   //  sample_t *outputPort[NUM_OUTPUTS];
   OutputPort outputPorts[NUM_OUTPUTS];
+
+  double sample_rate;
 };
 
 #endif/*__DRUMGIZMO_OUTPUT_LV2_H__*/
