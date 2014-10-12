@@ -106,8 +106,8 @@ dnl ======================
 dnl Compile LV2 plugin
 dnl ======================
 AC_ARG_ENABLE([lv2],
-[  --enable-lv2   Compile the LV2 plugin [default=yes]],,
-        [enable_lv2="yes"])
+[  --enable-lv2   Compile the LV2 plugin [default=no]],,
+        [enable_lv2="no"])
 if test "x$enable_lv2" = "xyes"; then
 	 enable_lv2=yes 
    dnl ======================
@@ -120,23 +120,26 @@ else
 fi
 AM_CONDITIONAL([ENABLE_LV2], [test "x$enable_lv2" = "xyes"])
 
-#dnl ======================
-#dnl Compile VST plugin
-#dnl ======================
-#AC_ARG_ENABLE([vst],
-#[  --enable-vst   Compile the VST plugin [default=yes]],,
-#        [enable_vst="yes"])
-#if test "x$enable_vst" = "xyes"; then
-#	 enable_vst=yes 
-#   dnl ======================
-#   dnl Check for vstcore
-#   dnl ======================
-#   PKG_CHECK_MODULES(VST, vstcore >= 4.1)
-#else
-#	 AC_MSG_RESULT([*** VST plugin will not be compiled ***])
-#   enable_vst=no
-#fi
-#AM_CONDITIONAL([ENABLE_VST], [test "x$enable_vst" = "xyes"])
+dnl ======================
+dnl Compile VST plugin
+dnl ======================
+AC_ARG_WITH(vst_sources,  [  --with-vst-sources         Point this to the vstsdk24 directory])
+AC_ARG_ENABLE([vst],
+[  --enable-vst   Compile the VST plugin [default=no]],,
+        [enable_vst="no"])
+if test "x$enable_vst" = "xyes"; then
+	 enable_vst=yes
+	 VST_CPPFLAGS="-I$with_vst_sources -D__int64='long long int'"
+	 VST_SOURCE_PATH="$with_vst_sources"
+	 AC_SUBST(VST_SOURCE_PATH)
+	 AC_SUBST(VST_CPPFLAGS)
+   AC_CONFIG_FILES(vst/Makefile.mingw32)
+else
+	 AC_MSG_RESULT([*** VST plugin will not be compiled ***])
+   enable_vst=no
+fi
+AM_CONDITIONAL([ENABLE_VST], [test "x$enable_vst" = "xyes"])
+
 
 dnl ======================
 dnl Compile AU plugin
@@ -309,38 +312,6 @@ AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_JACKAUDIO], [test "x$have_output_jackaudio" = "xyes"])
 
 
-AC_ARG_ENABLE([editor],
-[  --disable-editor       Disable Qt editor [default=enabled]],,
-        [enable_editor="yes"])
-if test "x$enable_editor" = "xyes"; then
-	 have_editor=yes 
-   dnl ======================
-   dnl Check for Qt
-   dnl ======================
-   PKG_CHECK_MODULES(QT, QtCore QtGui QtXml >= 4.5)
-   AC_CHECK_PROGS(QT_MOC, [moc4 moc-qt4 moc], [])
-   AC_CHECK_PROGS(QT_RCC, [rcc4 rcc-qt4 rcc], [])
-   AC_CHECK_PROGS(QT_UIC, [uic4 uic-qt4 uic], [])
-   if (test "$QT_MOC" = ""); then
-     AC_MSG_ERROR([QT4 moc is required.])
-   fi
-   if (test "$QT_RCC" = ""); then
-     AC_MSG_ERROR([QT4 rcc is required.])
-   fi
-   if (test "$QT_UIC" = ""); then
-     AC_MSG_ERROR([QT4 uic is required.])
-   fi
-
-   dnl ======================
-   dnl Check for libao
-   dnl ======================
-   PKG_CHECK_MODULES(AO, ao >= 0.8.8)
-else
-	 AC_MSG_RESULT([*** Qt Drumkit Editor disabled per user request ***])
-   have_editor=no
-fi
-AM_CONDITIONAL([HAVE_EDITOR], [test "x$have_editor" = "xyes"])
-
 dnl ======================
 dnl Check for sndfile
 dnl ======================
@@ -464,8 +435,8 @@ tmp_LDFLAGS="$LDFLAGS"
 tmp_LIBS="$LIBS"
 CXXFLAGS=""
 CPPFLAGS=""
-CFLAGS=""
-LDFLAGS=""
+CFLAGS="$EXPAT_CFLAGS"
+LDFLAGS="$EXPAT_LDFLAGS"
 LIBS=""
 AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
 AC_CHECK_LIB(expat, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!]))
@@ -566,6 +537,4 @@ AC_OUTPUT(
 	drumgizmo/output/dummy/Makefile
 	drumgizmo/output/alsa/Makefile
 	drumgizmo/output/jackaudio/Makefile
-	drumgizmo/output/wavfile/Makefile
-  dgedit/Makefile
-  dgedit/icons/Makefile)
+	drumgizmo/output/wavfile/Makefile)

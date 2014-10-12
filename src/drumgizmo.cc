@@ -55,8 +55,6 @@ DrumGizmo::~DrumGizmo()
 
 bool DrumGizmo::loadkit(std::string file)
 {
-  printf("loadkit(%s)\n", file.c_str());
-  if(file == kit.file()) return 1;
   if(file == "") return 1;
 
   printf("loadkit() go\n");
