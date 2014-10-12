@@ -45,7 +45,9 @@
 
 #include "messagereceiver.h"
 
-#define MAX_NUM_CHANNELS 512
+#include "chresampler.h"
+
+#define MAX_NUM_CHANNELS 64
 
 class DrumGizmo : public MessageReceiver {
 public:
@@ -86,6 +88,10 @@ private:
   AudioInputEngine *ie;
 
   std::list< Event* > activeevents[MAX_NUM_CHANNELS];
+
+  CHResampler resampler[MAX_NUM_CHANNELS];
+  sample_t resampler_output_buffer[MAX_NUM_CHANNELS][4096];
+  sample_t resampler_input_buffer[MAX_NUM_CHANNELS][64];
 
   std::map<std::string, AudioFile *> audiofiles;
 

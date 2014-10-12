@@ -38,17 +38,6 @@
 
 #include <config.h>
 
-//
-// Warning: Zita currently not working...
-//
-#ifdef WITH_RESAMPLE
-#ifdef ZITA
-#include <zita-resampler/resampler.h>
-#else
-#include <samplerate.h>
-#endif/*ZITA*/
-#endif/*WITH_RESAMPLE*/
-
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
 #include "configuration.h"
@@ -66,8 +55,11 @@ DrumGizmo::~DrumGizmo()
 
 bool DrumGizmo::loadkit(std::string file)
 {
+  printf("loadkit(%s)\n", file.c_str());
   if(file == kit.file()) return 1;
   if(file == "") return 1;
+
+  printf("loadkit() go\n");
 
   DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
 
@@ -80,12 +72,23 @@ bool DrumGizmo::loadkit(std::string file)
   DrumKitParser parser(file, kit);
   if(parser.parse()) {
     ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
-    return false;
+   printf("loadkit() parser failed\n");
+   return false;
   }
 
   loader.loadKit(&kit);
 
+#ifdef WITH_RESAMPLER
+  unsigned int output_fs = kit.samplerate();
+  if(oe->samplerate() != UNKNOWN_SAMPLERATE) output_fs = oe->samplerate();
+  for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
+    resampler[i].setup(kit.samplerate(), output_fs);
+  }
+#endif/*WITH_RESAMPLER*/
+
+
   DEBUG(loadkit, "loadkit: Success\n");
+  printf("loadkit() done\n");
 
   return true;
 }
@@ -171,13 +174,7 @@ void DrumGizmo::handleMessage(Message *msg)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
-  double samplerate_scale = 1.0;
-#ifdef WITH_RESAMPLE
-  if(oe->samplerate() != UNKNOWN_SAMPLERATE) {
-    samplerate_scale = (double)kit.samplerate() / (double)oe->samplerate();
-  }
-#endif/*WITH_RESAMPLE*/
-
+  // printf("."); fflush(stdout);
   // Handle engine messages, at most one in each iteration:
   handleMessages(1);
 
@@ -260,7 +257,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         } else {
           //DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
-          evt->offset = (evs[e].offset + pos) * samplerate_scale;
+          evt->offset = (evs[e].offset + pos) * resampler[0].ratio();
           activeevents[ch.num].push_back(evt);
         }
         j++;
@@ -278,59 +275,62 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   //
   // Write audio
   //
+#ifndef WITH_RESAMPLER
+  // No resampling needed
   for(size_t c = 0; c < kit.channels.size(); c++) {
-    if(samplerate_scale == 1.0) {
-      // No resampling needed
-      sample_t *buf = samples;
-      bool internal = false;
-      if(oe->getBuffer(c)) {
-        buf = oe->getBuffer(c);
-        internal = true;
-      }
-      if(buf) {
-        memset(buf, 0, nsamples * sizeof(sample_t));
+    sample_t *buf = samples;
+    bool internal = false;
+    if(oe->getBuffer(c)) {
+      buf = oe->getBuffer(c);
+      internal = true;
+    }
+    if(buf) {
+      memset(buf, 0, nsamples * sizeof(sample_t));
       
-        getSamples(c, pos, buf, nsamples);
-
-        if(!internal) oe->run(c, samples, nsamples);
-      }
-    } else {
-#ifdef WITH_RESAMPLE
-      // Resampling needed
-      size_t nkitsamples = nsamples * samplerate_scale;
-      sample_t kitsamples[nkitsamples];
-
-      memset(kitsamples, 0, nkitsamples * sizeof(sample_t));
-      getSamples(c, pos * samplerate_scale, kitsamples, nkitsamples);
-
-#ifdef ZITA
-      Resampler resampler;
-      resampler.setup(kit.samplerate(), oe->samplerate(), 1, 96);
-
-      resampler.inp_data = kitsamples;
-      resampler.inp_count = nkitsamples;
-
-      resampler.out_data = samples;
-      resampler.out_count = nsamples;
-
-      resampler.process();
-#else
-      SRC_DATA src;
-      src.data_in = kitsamples;
-      src.input_frames = nkitsamples;
-
-      src.data_out = samples;
-      src.output_frames = nsamples;
-
-      src.src_ratio = 1.0 / samplerate_scale;
-
-      src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
-#endif/*ZITA*/
-
-      oe->run(c, samples, nsamples);
-#endif/*WITH_RESAMPLE*/
+      getSamples(c, pos, buf, nsamples);
+      
+      if(!internal) oe->run(c, samples, nsamples);
     }
   }
+#else/*WITH_RESAMPLER*/
+  // Resampling needed
+
+  //
+  // NOTE: Channels must be processed one buffer at a time on all channels in
+  // parallel - NOT all buffers on one channel and then all buffer on the next
+  // one since this would mess up the event queue (it would jump back and forth
+  // in time)
+  //
+
+  // Prepare output buffer
+  for(size_t c = 0; c < kit.channels.size(); c++) {
+    resampler[c].setOutputSamples(resampler_output_buffer[c], nsamples);
+  }
+    
+  // Process channel data
+  size_t kitpos = pos * resampler[0].ratio();
+  //printf("ratio: %f\n", resampler[c].ratio());
+  while(resampler[0].getOutputSampleCount() > 0) {
+    for(size_t c = 0; c < kit.channels.size(); c++) {
+      if(resampler[c].getInputSampleCount() == 0) {
+        sample_t *sin = resampler_input_buffer[c];
+        size_t insize = sizeof(resampler_input_buffer[c]) / sizeof(sample_t);
+        memset(resampler_input_buffer[c], 0,
+               sizeof(resampler_input_buffer[c]));
+        getSamples(c, kitpos, sin, insize);
+        kitpos += insize;
+        
+        resampler[c].setInputSamples(sin, insize);
+      }
+      resampler[c].process();
+    }
+  }
+
+  // Write output data to output engine.
+  for(size_t c = 0; c < kit.channels.size(); c++) {
+    oe->run(c, resampler_output_buffer[c], nsamples);
+  }
+#endif/*WITH_RESAMPLER*/
   
   ie->post();
   oe->post(nsamples);
@@ -359,6 +359,7 @@ void DrumGizmo::run(int endpos)
 
   free(samples);
 }
+#undef SSE
 
 #ifdef SSE
 #define N 8
@@ -391,7 +392,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         size_t n = 0;
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
         size_t end = sz;
-        if(evt->t + end - n > af->size) end = af->size - evt->t + n;
+        if((evt->t + end - n) > af->size) end = af->size - evt->t + n;
+        if(end > sz) end = sz;
 
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
