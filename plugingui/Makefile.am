@@ -26,7 +26,6 @@ EXTRA_DIST = \
 	button.h \
 	checkbox.h \
 	colour.h \
-	pluginconfig.h \
 	combobox.h \
 	directory.h \
 	eventhandler.h \
@@ -47,6 +46,7 @@ EXTRA_DIST = \
 	nativewindow_x11.h \
 	painter.h \
 	pixelbuffer.h \
+	pluginconfig.h \
 	plugingui.h \
 	progressbar.h \
 	resource.h \

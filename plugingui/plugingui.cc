@@ -94,11 +94,13 @@ static void selectKitFile(void *ptr, std::string filename)
   PluginGUI *gui = (PluginGUI*)ptr;
 
   gui->lineedit->setText(filename);
+
   fb->hide();
 
   std::string drumkit = gui->lineedit->text();
 
   gui->config->lastkit = drumkit;
+  gui->config->save();
 
   gui->progress->setProgress(0);
   gui->progress->setState(GUI::ProgressBar::blue);
@@ -132,6 +134,7 @@ static void selectMapFile(void *ptr, std::string filename)
   std::string midimap = gui->lineedit2->text();
 
   gui->config->lastmidimap = midimap;
+  gui->config->save();
 
   LoadMidimapMessage *msg = new LoadMidimapMessage();
   msg->midimapfile = midimap;
@@ -334,7 +337,8 @@ void PluginGUI::init()
     lineedit = new GUI::LineEdit(window);
     lineedit->move(XOFFSET, y);
     lineedit->resize(243, 29);
-    
+    lineedit->setReadOnly(true);
+
     GUI::Button *btn_brw = new GUI::Button(window);
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);
@@ -364,7 +368,8 @@ void PluginGUI::init()
     lineedit2 = new GUI::LineEdit(window);
     lineedit2->move(XOFFSET, y);
     lineedit2->resize(243, 29);
-    
+    lineedit2->setReadOnly(true);
+
     GUI::Button *btn_brw = new GUI::Button(window);
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);

@@ -1,4 +1,6 @@
 
+puglsources =
+
 PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_syslog.c \
@@ -26,11 +28,11 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/knob.cc \
 	$(top_srcdir)/plugingui/filebrowser.cc \
 	$(top_srcdir)/plugingui/directory.cc \
+	$(top_srcdir)/plugingui/pluginconfig.cc \
 	$(top_srcdir)/plugingui/image.cc \
 	$(top_srcdir)/plugingui/combobox.cc \
 	$(top_srcdir)/plugingui/progressbar.cc \
 	$(top_srcdir)/plugingui/verticalline.cc \
-	$(top_srcdir)/plugingui/pluginconfig.cc \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/plugingui/lodepng/lodepng.cpp
