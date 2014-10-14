@@ -57,8 +57,6 @@ bool DrumGizmo::loadkit(std::string file)
 {
   if(file == "") return 1;
 
-  printf("loadkit() go\n");
-
   DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
 
   // Remove all queue AudioFiles from loader before we actually delete them.
@@ -70,8 +68,7 @@ bool DrumGizmo::loadkit(std::string file)
   DrumKitParser parser(file, kit);
   if(parser.parse()) {
     ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
-   printf("loadkit() parser failed\n");
-   return false;
+    return false;
   }
 
   loader.loadKit(&kit);
@@ -86,7 +83,6 @@ bool DrumGizmo::loadkit(std::string file)
 
 
   DEBUG(loadkit, "loadkit: Success\n");
-  printf("loadkit() done\n");
 
   return true;
 }
@@ -172,7 +168,6 @@ void DrumGizmo::handleMessage(Message *msg)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
-  // printf("."); fflush(stdout);
   // Handle engine messages, at most one in each iteration:
   handleMessages(1);
 
@@ -269,7 +264,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   }
     
   free(evs);
-  
+
   //
   // Write audio
   //
@@ -357,7 +352,6 @@ void DrumGizmo::run(int endpos)
 
   free(samples);
 }
-#undef SSE
 
 #ifdef SSE
 #define N 8
