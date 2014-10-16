@@ -92,7 +92,7 @@ public:
 private:
   volatile bool running;
   volatile bool closing;
-
+  volatile bool initialised;
   Semaphore sem;
 };
 

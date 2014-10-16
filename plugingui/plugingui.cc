@@ -171,6 +171,9 @@ void closeClick(void *ptr)
 PluginGUI::PluginGUI()
   : MessageReceiver(MSGRCV_UI), sem("plugingui")
 {
+  initialised = false;
+  //printf("PluginGUI::PluginGUI() begin\n"); fflush(stdout);
+
   windowClosedHandler = NULL;
   changeMidimapHandler = NULL;
 
@@ -186,6 +189,8 @@ PluginGUI::PluginGUI()
 #endif/*USE_THREAD*/
 
   sem.wait();
+
+  //printf("PluginGUI::PluginGUI() done\n"); fflush(stdout);
 }
 
 PluginGUI::~PluginGUI()
@@ -300,6 +305,8 @@ void closeEventHandler(void *ptr)
 void PluginGUI::init()
 {
   DEBUG(gui, "init");
+
+  //printf("init begin\n"); fflush(stdout);
 
   config = new Config();
   config->load();
@@ -464,10 +471,17 @@ void PluginGUI::init()
   window->show();
 
   sem.post();
+
+  //printf("init end\n"); fflush(stdout);
+  initialised = true;
 }
 
 void PluginGUI::show()
 {
+  while(!initialised) {
+    //printf("Waiting for init to finish\n"); fflush(stdout);
+    sleep(1);
+  }
   if(!window) init();
 
   window->show();
@@ -475,11 +489,19 @@ void PluginGUI::show()
 
 void PluginGUI::hide()
 {
+  while(!initialised) {
+    //printf("Waiting for init to finish\n"); fflush(stdout);
+    sleep(1);
+  }
   if(window) window->hide();
 }
 
 void PluginGUI::processEvents()
 {
+  if(!initialised) {
+    //printf("Not yet initialised\n"); fflush(stdout);
+    return;
+  }
   if(closing) {
     if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
     closing = false;
