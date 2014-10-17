@@ -120,31 +120,24 @@ struct DG_GUI {
 
 static void ui_run(struct lv2_external_ui * _this_)
 {
-  //printf("ui_run begin\n"); fflush(stdout);
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   dggui->gui->processEvents();
-  //printf("ui_run end\n"); fflush(stdout);
 }
 
 static void ui_show(struct lv2_external_ui * _this_)
 {
-  //printf("ui_show begin\n"); fflush(stdout);
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   dggui->gui->show();
-  //printf("ui_show end\n"); fflush(stdout);
 }
 
 static void ui_hide(struct lv2_external_ui * _this_)
 {
-  //printf("ui_hide begin\n"); fflush(stdout);
   struct DG_GUI *dggui = (struct DG_GUI *)_this_;
   if(dggui->gui) dggui->gui->hide();
-  //printf("ui_hide end\n"); fflush(stdout);
 }
 
 static void closeHandler(void *ptr)
 {
-  //printf("closeHandler begin\n"); fflush(stdout);
   struct DG_GUI *gui = (struct DG_GUI *)ptr;
 
   if(gui->ui_host_ptr && gui->ui_host_ptr->ui_closed) {
@@ -153,7 +146,6 @@ static void closeHandler(void *ptr)
 
   delete gui->gui;
   gui->gui = NULL;
-  //printf("closeHandler end\n"); fflush(stdout);
 }
 
 static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
@@ -164,7 +156,7 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
                                    LV2UI_Widget * widget,
                                    const LV2_Feature * const * features)
 {
-  //printf("ui_instantiate begin\n"); fflush(stdout);
+  printf("ui_instantiate\n");
 
   struct DG_GUI* pt = new struct DG_GUI;
 
@@ -175,7 +167,7 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
     std::string uri = (*features)->URI;
     void *data = (*features)->data;
 
-    //printf("DGUI: feature: %s\n", uri.c_str());
+    printf("DGUI: feature: %s\n", uri.c_str());
 
     if(uri == LV2_INSTANCE_ACCESS_URI) {
       pt->instance_handle = data;
@@ -202,8 +194,6 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
   pt->gui->setWindowClosedCallback(closeHandler, pt);
 
   *widget = (LV2UI_Widget)pt;
-
-  //printf("ui_instantiate end\n"); fflush(stdout);
 
   return pt;
 }
