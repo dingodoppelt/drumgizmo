@@ -171,6 +171,8 @@ void closeClick(void *ptr)
 PluginGUI::PluginGUI()
   : MessageReceiver(MSGRCV_UI), sem("plugingui")
 {
+  initialised = false;
+
   windowClosedHandler = NULL;
   changeMidimapHandler = NULL;
 
@@ -464,10 +466,14 @@ void PluginGUI::init()
   window->show();
 
   sem.post();
+
+  initialised = true;
 }
 
 void PluginGUI::show()
 {
+  while(!initialised) usleep(10000);
+
   if(!window) init();
 
   window->show();
@@ -475,11 +481,15 @@ void PluginGUI::show()
 
 void PluginGUI::hide()
 {
+  while(!initialised) usleep(10000);
+
   if(window) window->hide();
 }
 
 void PluginGUI::processEvents()
 {
+  if(!initialised) return;
+
   if(closing) {
     if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
     closing = false;
