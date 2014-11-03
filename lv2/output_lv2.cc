@@ -28,9 +28,8 @@
 
 #include <string.h>
 
-OutputLV2::OutputLV2(double sample_rate)
+OutputLV2::OutputLV2()
 {
-  this->sample_rate = sample_rate;
   for(size_t i = 0; i < NUM_OUTPUTS; i++) {
     outputPorts[i].size = 0;
     outputPorts[i].samples = NULL;
@@ -83,9 +82,3 @@ sample_t *OutputLV2::getBuffer(int ch)
   if(ch < NUM_OUTPUTS) return outputPorts[ch].samples;
   return NULL;
 }
-
-size_t OutputLV2::samplerate()
-{
-  return sample_rate;
-}
-

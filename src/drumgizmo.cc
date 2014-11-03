@@ -74,13 +74,10 @@ bool DrumGizmo::loadkit(std::string file)
   loader.loadKit(&kit);
 
 #ifdef WITH_RESAMPLER
-  unsigned int output_fs = kit.samplerate();
-  if(oe->samplerate() != UNKNOWN_SAMPLERATE) output_fs = oe->samplerate();
   for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
-    resampler[i].setup(kit.samplerate(), output_fs);
+    resampler[i].setup(kit.samplerate(), Conf::samplerate);
   }
 #endif/*WITH_RESAMPLER*/
-
 
   DEBUG(loadkit, "loadkit: Success\n");
 
@@ -443,6 +440,12 @@ int DrumGizmo::samplerate()
 void DrumGizmo::setSamplerate(int samplerate)
 {
   Conf::samplerate = samplerate;
+#ifdef WITH_RESAMPLER
+  for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
+    resampler[i].setup(kit.samplerate(), Conf::samplerate);
+  }
+#endif/*WITH_RESAMPLER*/
+
 }
 
 std::string float2str(float a)

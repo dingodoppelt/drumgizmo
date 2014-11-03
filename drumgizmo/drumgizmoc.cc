@@ -248,6 +248,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  gizmo.setSamplerate(oe->samplerate());
+
   if(!gizmo.init(preload)) {
     printf("Failed init engine.\n");
     return 1;
