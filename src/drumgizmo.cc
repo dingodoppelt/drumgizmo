@@ -309,7 +309,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
                sizeof(resampler_input_buffer[c]));
         getSamples(c, kitpos, sin, insize);
         kitpos += insize;
-        
+
         resampler[c].setInputSamples(sin, insize);
       }
       resampler[c].process();
