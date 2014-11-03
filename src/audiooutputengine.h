@@ -33,8 +33,6 @@
 
 #include "channel.h"
 
-#define UNKNOWN_SAMPLERATE 0
-
 class AudioOutputEngine {
 public:
   virtual ~AudioOutputEngine() {}

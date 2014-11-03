@@ -54,8 +54,6 @@ public:
   void post(size_t nsamples);
 
   sample_t *getBuffer(int c);
-  
-  size_t samplerate();
 
   //  sample_t *outputPort[NUM_OUTPUTS];
   OutputPort outputPorts[NUM_OUTPUTS];

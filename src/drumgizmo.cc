@@ -278,7 +278,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       memset(buf, 0, nsamples * sizeof(sample_t));
       
       getSamples(c, pos, buf, nsamples);
-      
+
       if(!internal) oe->run(c, samples, nsamples);
     }
   }
@@ -296,7 +296,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   for(size_t c = 0; c < kit.channels.size(); c++) {
     resampler[c].setOutputSamples(resampler_output_buffer[c], nsamples);
   }
-    
+
   // Process channel data
   size_t kitpos = pos * resampler[0].ratio();
   //printf("ratio: %f\n", resampler[c].ratio());
