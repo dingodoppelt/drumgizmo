@@ -28,3 +28,7 @@ Makefile.am.test
 plugingui/plugingui
 plugingui/rcgen
 *.lo
+test/result_*.xml
+test/resampler
+test/engine
+test/gui

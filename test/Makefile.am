@@ -23,7 +23,8 @@ gui_SOURCES = \
 	gui.cc
 
 resampler_CXXFLAGS = -DOUTPUT=\"resampler\" $(CPPUNIT_CFLAGS) \
-	$(ZITA_CXXFLAGS) $(SAMPLERATE_CFLAGS)
+	$(ZITA_CXXFLAGS) $(SAMPLERATE_CFLAGS) \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
 resampler_LDFLAGS = $(ZITA_LIBS) $(SAMPLERATE_LIBS) $(CPPUNIT_LIBS)
 resampler_SOURCES = \
 	$(top_srcdir)/src/chresampler.cc \
