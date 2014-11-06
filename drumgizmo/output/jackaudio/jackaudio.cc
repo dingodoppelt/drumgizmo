@@ -218,20 +218,3 @@ extern "C" {
     return jack->samplerate();
   }
 }
-
-#ifdef TEST_AUDIOINPUTENGINEJACKAUDIO
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOINPUTENGINEJACKAUDIO*/

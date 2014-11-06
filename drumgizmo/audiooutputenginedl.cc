@@ -114,7 +114,8 @@ AudioOutputEngineDL::AudioOutputEngineDL(std::string name)
   o_samplerate = (output_samplerate_func_t) dlsym(lib, "samplerate");
   dlsym_error = dlerror();
   if(dlsym_error) {
-    o_samplerate = NULL;
+    printf("Cannot load symbol samplerate: %s\n", dlsym_error);
+    return;
   }
 
   ptr = o_create();
@@ -190,22 +191,5 @@ size_t AudioOutputEngineDL::getBufferSize()
 size_t AudioOutputEngineDL::samplerate()
 {
   if(o_samplerate) return o_samplerate(ptr);
-  return UNKNOWN_SAMPLERATE;
+  return 44100;
 }
-
-#ifdef TEST_AUDIOOUTPUTENGINEDL
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOOUTPUTENGINEDL*/

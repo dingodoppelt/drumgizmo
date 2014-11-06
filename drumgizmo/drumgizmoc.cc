@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  AudioOutputEngine *oe = new AudioOutputEngineDL(outputengine);
+  AudioOutputEngineDL *oe = new AudioOutputEngineDL(outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());

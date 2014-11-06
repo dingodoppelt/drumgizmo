@@ -43,6 +43,8 @@ public:
   void pre(size_t size);
   void run(int channel, sample_t* data, size_t size);
   void post(size_t size);
+
+  size_t samplerate();
 };
 
 Dummy::Dummy()
@@ -81,6 +83,11 @@ void Dummy::run(int channel, sample_t* data, size_t size)
 
 void Dummy::post(size_t size)
 {
+}
+
+size_t Dummy::samplerate()
+{
+  return 44100;
 }
 
 extern "C" {
@@ -136,21 +143,10 @@ extern "C" {
     Dummy *dummy = (Dummy*)h;
     dummy->post(size);
   }
+
+  size_t samplerate(void *h)
+  {
+    Dummy *dummy = (Dummy*)h;
+    return dummy->samplerate();
+  }
 }
-
-#ifdef TEST_AUDIOOUTPUTENGINEDUMMY
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOOUTPUTENGINEDUMMY*/
