@@ -351,8 +351,8 @@ if test x$enable_resampler != xno; then
     CXXFLAGS=""
     CPPFLAGS="$ZITA_CPPFLAGS"
     CFLAGS=""
-    LDFLAGS="$ZITA_LDFLAGS -lzita-resampler -lpthread"
-    LIBS=""
+    LDFLAGS="$ZITA_LDFLAGS"
+    LIBS="-lzita-resampler -lpthread"
     AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([#include <zita-resampler/resampler.h>],
         [Resampler r] ) ], has_zita=yes, has_zita=no)
