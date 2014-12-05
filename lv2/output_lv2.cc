@@ -82,20 +82,3 @@ sample_t *OutputLV2::getBuffer(int ch)
   if(ch < NUM_OUTPUTS) return outputPorts[ch].samples;
   return NULL;
 }
-
-#ifdef TEST_OUTPUT_LV2
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_OUTPUT_LV2*/

@@ -36,6 +36,8 @@
 
 #include <hugin.hpp>
 
+#include <config.h>
+
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
 #include "configuration.h"
@@ -70,6 +72,12 @@ bool DrumGizmo::loadkit(std::string file)
   }
 
   loader.loadKit(&kit);
+
+#ifdef WITH_RESAMPLER
+  for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
+    resampler[i].setup(kit.samplerate(), Conf::samplerate);
+  }
+#endif/*WITH_RESAMPLER*/
 
   DEBUG(loadkit, "loadkit: Success\n");
 
@@ -239,7 +247,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
         } else {
           //DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
           Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
-          evt->offset = evs[e].offset + pos;
+          evt->offset = (evs[e].offset + pos) * resampler[0].ratio();
           activeevents[ch.num].push_back(evt);
         }
         j++;
@@ -253,11 +261,12 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   }
     
   free(evs);
-  
-  
+
   //
   // Write audio
   //
+#ifndef WITH_RESAMPLER
+  // No resampling needed
   for(size_t c = 0; c < kit.channels.size(); c++) {
     sample_t *buf = samples;
     bool internal = false;
@@ -269,9 +278,49 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
       memset(buf, 0, nsamples * sizeof(sample_t));
       
       getSamples(c, pos, buf, nsamples);
+
       if(!internal) oe->run(c, samples, nsamples);
     }
   }
+#else/*WITH_RESAMPLER*/
+  // Resampling needed
+
+  //
+  // NOTE: Channels must be processed one buffer at a time on all channels in
+  // parallel - NOT all buffers on one channel and then all buffer on the next
+  // one since this would mess up the event queue (it would jump back and forth
+  // in time)
+  //
+
+  // Prepare output buffer
+  for(size_t c = 0; c < kit.channels.size(); c++) {
+    resampler[c].setOutputSamples(resampler_output_buffer[c], nsamples);
+  }
+
+  // Process channel data
+  size_t kitpos = pos * resampler[0].ratio();
+  //printf("ratio: %f\n", resampler[c].ratio());
+  while(resampler[0].getOutputSampleCount() > 0) {
+    for(size_t c = 0; c < kit.channels.size(); c++) {
+      if(resampler[c].getInputSampleCount() == 0) {
+        sample_t *sin = resampler_input_buffer[c];
+        size_t insize = sizeof(resampler_input_buffer[c]) / sizeof(sample_t);
+        memset(resampler_input_buffer[c], 0,
+               sizeof(resampler_input_buffer[c]));
+        getSamples(c, kitpos, sin, insize);
+        kitpos += insize;
+
+        resampler[c].setInputSamples(sin, insize);
+      }
+      resampler[c].process();
+    }
+  }
+
+  // Write output data to output engine.
+  for(size_t c = 0; c < kit.channels.size(); c++) {
+    oe->run(c, resampler_output_buffer[c], nsamples);
+  }
+#endif/*WITH_RESAMPLER*/
   
   ie->post();
   oe->post(nsamples);
@@ -332,7 +381,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         size_t n = 0;
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
         size_t end = sz;
-        if(evt->t + end - n > af->size) end = af->size - evt->t + n;
+        if((evt->t + end - n) > af->size) end = af->size - evt->t + n;
         if(end > sz) end = sz;
 
         if(evt->rampdown == NO_RAMPDOWN) {
@@ -391,6 +440,12 @@ int DrumGizmo::samplerate()
 void DrumGizmo::setSamplerate(int samplerate)
 {
   Conf::samplerate = samplerate;
+#ifdef WITH_RESAMPLER
+  for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
+    resampler[i].setup(kit.samplerate(), Conf::samplerate);
+  }
+#endif/*WITH_RESAMPLER*/
+
 }
 
 std::string float2str(float a)

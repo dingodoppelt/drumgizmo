@@ -49,6 +49,7 @@ public:
   void pre(size_t size);
   void run(int channel, sample_t* data, size_t size);
   void post(size_t size);
+  size_t samplerate();
 
 private:
   snd_pcm_t *handle;
@@ -157,6 +158,11 @@ void Alsa::post(size_t size)
   snd_pcm_writei(handle, data, size);
 }
 
+size_t Alsa::samplerate()
+{
+  return srate;
+}
+
 extern "C" {
   void *create()
   {
@@ -210,21 +216,10 @@ extern "C" {
     Alsa *alsa = (Alsa*)h;
     alsa->post(s);
   }
+
+  size_t samplerate(void *h)
+  {
+    Alsa *alsa = (Alsa*)h;
+    return alsa->samplerate();
+  }
 }
-
-#ifdef TEST_AUDIOOUTPUTENGINEALSA
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOOUTPUTENGINEALSA*/

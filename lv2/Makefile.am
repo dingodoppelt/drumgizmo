@@ -3,12 +3,6 @@ if ENABLE_LV2
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
-	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
-	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS) \
-	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS)\
-	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
-
 plugindir = $(prefix)/lib/lv2/drumgizmo.lv2
 plugin_LTLIBRARIES = drumgizmo.la
 plugin_DATA = manifest.ttl drumgizmo.ttl
@@ -20,6 +14,12 @@ EXTRA_DIST = \
 	lv2_event.h \
 	lv2_gui.h \
 	lv2_instance.h
+
+drumgizmo_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/include $(SNDFILE_CXXFLAGS) \
+	$(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) $(LV2_CFLAGS) \
+	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS) $(ZITA_CPPFLAGS) \
+	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
 
 drumgizmo_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \

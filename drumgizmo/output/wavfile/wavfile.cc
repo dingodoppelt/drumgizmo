@@ -44,6 +44,7 @@ public:
   void pre(size_t size);
   void run(int channel, sample_t* data, size_t size);
   void post(size_t size);
+  size_t samplerate();
 
 private:
   SF_INFO sf_info;
@@ -58,6 +59,10 @@ WavFile::WavFile()
 {
   fh = NULL;
   filename = "output";
+
+  sf_info.channels = 1;//channels;
+  sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
+  sf_info.samplerate = 44100;
 }
 
 WavFile::~WavFile()
@@ -74,10 +79,6 @@ WavFile::~WavFile()
 bool WavFile::init(int channels, char *cnames[])
 {
   this->channels = channels;
-  
-  sf_info.channels = 1;//channels;
-  sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-  sf_info.samplerate = 44100;
 
   fh = (SNDFILE **)malloc(sizeof(SNDFILE *)*channels);
 
@@ -102,6 +103,7 @@ bool WavFile::init(int channels, char *cnames[])
 void WavFile::setParm(std::string parm, std::string value)
 {
   if(parm == "file") filename = value;
+  if(parm == "srate") sf_info.samplerate = atoi(value.c_str());
 }
 
 bool WavFile::start()
@@ -124,6 +126,11 @@ void WavFile::run(int channel, sample_t* cdata, size_t csize)
 
 void WavFile::post(size_t size)
 {
+}
+
+size_t WavFile::samplerate()
+{
+  return sf_info.samplerate;
 }
 
 extern "C" {
@@ -179,21 +186,10 @@ extern "C" {
     WavFile *sndfile = (WavFile*)h;
     sndfile->post(s);
   }
+
+  size_t samplerate(void *h)
+  {
+    WavFile *wavfile = (WavFile*)h;
+    return wavfile->samplerate();
+  }
 }
-
-#ifdef TEST_AUDIOOUTPUTENGINESNDFILE
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOOUTPUTENGINESNDFILE*/

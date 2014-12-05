@@ -317,16 +317,83 @@ dnl Check for sndfile
 dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
-AC_ARG_WITH(resample,  [  --with-resample             Build with resample support])
-if test x$with_resample == xyes; then
-   AC_MSG_WARN([*** Building resample support!])
-   AC_DEFINE(WITH_RESAMPLE, [], [Use resample])
 
-   dnl ======================
-   dnl Check for libsamplerate
-   dnl ======================
-   PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7)
-fi 
+AC_ARG_ENABLE([resampler],
+[  --enable-resampler[=lib]   Enable resampler using either 'zita' or 'src' (libsamplerate). Use 'auto' for autodetect [default=auto]],,
+        [enable_resampler="auto"])
+if test "x$enable_resampler" = "xyes"; then
+  enable_resampler="auto"
+fi
+
+has_src=no
+has_zita=no
+if test x$enable_resampler != xno; then
+   AC_MSG_WARN([*** Building resample support!])
+   AC_DEFINE(WITH_RESAMPLER, [], [Use resample])
+
+  if test x$enable_resampler == xauto || test x$enable_resampler == xsrc; then
+    dnl ======================
+    dnl Check for libsamplerate
+    dnl ======================
+    PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7, has_src=yes, has_src=no)
+  fi
+
+  if test x$enable_resampler == xauto || test x$enable_resampler == xzita; then
+    dnl ======================
+    dnl Check for the zitaresampler library
+    dnl ======================
+    AC_LANG_PUSH([C++])
+    tmp_CXXFLAGS="$CXXFLAGS"
+    tmp_CPPFLAGS="$CPPFLAGS"
+    tmp_CFLAGS="$CFLAGS"
+    tmp_LDFLAGS="$LDFLAGS"
+    tmp_LIBS="$LIBS"
+    CXXFLAGS=""
+    CPPFLAGS="$ZITA_CPPFLAGS"
+    CFLAGS=""
+    LDFLAGS="$ZITA_LDFLAGS -lzita-resampler -lpthread"
+    LIBS=""
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([#include <zita-resampler/resampler.h>],
+        [Resampler r] ) ], has_zita=yes, has_zita=no)
+    ZITA_CPPFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
+    ZITA_LIBS="$LDFLAGS $LIBS"
+    CXXFLAGS="$tmp_CXXFLAGS"
+    CPPFLAGS="$tmp_CPPFLAGS"
+    CFLAGS="$tmp_CFLAGS"
+    LDFLAGS="$tmp_LDFLAGS"
+    LIBS="$tmp_LIBS"
+    AC_SUBST(ZITA_CPPFLAGS)
+    AC_SUBST(ZITA_LIBS)
+    AC_LANG_POP([C++])
+  fi
+fi
+
+if test x$enable_resampler == xauto; then
+   if test x$has_zita == xyes; then
+	   enable_resampler=zita
+   elif test x$has_src == xyes; then
+	   enable_resampler=src
+   else
+	   AC_MSG_ERROR([*** No resampler library present. Either libsamplerate or zita-resampler must be installed.])
+   fi
+fi
+
+if test x$enable_resampler == xzita; then
+	 if test x$has_zita == xyes; then
+	   AC_DEFINE(USE_ZITA, [], [zita-resampler is present])
+   else
+     AC_MSG_ERROR([*** zita-resampler library or headers not found. Set ZITA_LDFLAGS or ZITA_CPPFLAGS to add searchpath.])
+   fi
+fi
+
+if test x$enable_resampler == xsrc; then
+   if test x$has_src == xyes; then
+	   AC_DEFINE(USE_SRC, [], [libsamplerate is present])
+   else
+	   AC_MSG_ERROR([*** Missing libsamplerate.])
+   fi
+fi
 
 #dnl ======================
 #dnl Check for zlib

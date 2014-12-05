@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  AudioOutputEngine *oe = new AudioOutputEngineDL(outputengine);
+  AudioOutputEngineDL *oe = new AudioOutputEngineDL(outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());
@@ -247,6 +247,8 @@ int main(int argc, char *argv[])
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
   }
+
+  gizmo.setSamplerate(oe->samplerate());
 
   if(!gizmo.init(preload)) {
     printf("Failed init engine.\n");

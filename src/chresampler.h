@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            drumkit.h
+ *            chresampler.h
  *
- *  Wed Mar  9 15:27:26 CET 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Tue Sep 23 20:42:14 CEST 2014
+ *  Copyright 2014 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,47 +24,42 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKIT_H__
-#define __DRUMGIZMO_DRUMKIT_H__
+#ifndef __DRUMGIZMO_CHRESAMPLER_H__
+#define __DRUMGIZMO_CHRESAMPLER_H__
 
-#include <map>
-#include <string>
+#include <stdlib.h>
 
-#include "channel.h"
-#include "instrument.h"
-#include "versionstr.h"
-
-class DrumKitParser;
-class DrumKit {
-  friend class DrumKitParser;
+/**
+ * Channel resampler class using either zita-resampler or secret rabbit code
+ * (really!!) depending on the value of the WITH_RESAMPLER macro.
+ * If WITH_RESAMPLER is unset the resampler is disabled entirely.
+ * If WITH_RESAMPLER=="zita" zita-resampler will be used.
+ * If WITH_RESAMPLER=="src" Secret Rabbit Code will be used.
+ */
+class CHResampler {
 public:
-  DrumKit();
-  ~DrumKit();
+  CHResampler();
+  ~CHResampler();
 
-  std::string file();
+  void setup(double input_fs, double output_fs);
 
-  std::string name();
-  std::string description();
-  
-  Instruments instruments;
-  Channels channels;
- 
-  void clear();
+  void setInputSamples(float *samples, size_t count);
+  void setOutputSamples(float *samples, size_t count);
 
-  bool isValid();
+  void process();
 
-  size_t samplerate();
+  size_t getInputSampleCount();
+  size_t getOutputSampleCount();
+
+  double ratio();
 
 private:
-  void *magic;
+  class Prv;
+  Prv *prv;
 
-  std::string _file;
-
-  std::string _name;
-  std::string _description;
-  size_t _samplerate;
-
-  VersionStr _version;
+  double input_fs;
+  double output_fs;
 };
 
-#endif/*__DRUMGIZMO_DRUMKIT_H__*/
+
+#endif/*__DRUMGIZMO_CHRESAMPLER_H__*/

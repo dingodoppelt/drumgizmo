@@ -34,9 +34,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sndfile.h>
-#ifdef WITH_RESAMPLE
-#include <samplerate.h>
-#endif/*WITH_RESAMPLE*/
 #include <hugin.hpp>
 
 #include "configuration.h"
@@ -153,39 +150,6 @@ void AudioFile::load(int num_samples)
   DEBUG(audiofile,"Loaded %d samples %p\n", (int)size, this);
   
   sf_close(fh);
-
-#ifdef WITH_RESAMPLE
-
-  // Check environment to see if resample should be disabled.
-  // Defaults to "1" which is 'enable'. All other values are 'disabled'.
-  const char *env_res = getenv("DRUMGIZMO_RESAMPLE");
-  if(env_res == NULL) env_res = "1";
-
-  if( (strcmp(env_res, "1") == 0) &&
-      Conf::samplerate != sf_info.samplerate) {
-    // Resample data...
-    size_t osize = size * ratio;
-    sample_t *odata = new sample_t[osize];
-
-    SRC_DATA src;
-    src.data_in = data;
-    src.input_frames = size;
-
-    src.data_out = odata;
-    src.output_frames = osize;
-
-    src.src_ratio = ratio;
-
-    // Do the conversion
-    src_simple(&src, SRC_SINC_BEST_QUALITY, 1);
-
-    delete[] data;
-    data = odata;
-    size = src.output_frames;
-
-    DEBUG(audiofile,"Converted into %d samples %p\n", (int)size, this);
-  }
-#endif/*WITH_RESAMPLE*/
 
   this->data = data;
   is_loaded = true;

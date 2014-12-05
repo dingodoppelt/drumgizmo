@@ -54,6 +54,7 @@ public:
   void jack_process(jack_nframes_t nframes);
 
   size_t bufsize();
+  size_t samplerate();
 
 private:
   JackClient *jackclient;
@@ -146,6 +147,11 @@ size_t JackAudio::bufsize()
   return jack_get_buffer_size(jackclient->jack_client);
 }
 
+size_t JackAudio::samplerate()
+{
+  return jack_get_sample_rate(jackclient->jack_client);
+}
+
 extern "C" {
   void *create()
   {
@@ -205,21 +211,10 @@ extern "C" {
     JackAudio *jack = (JackAudio*)h;
     return jack->bufsize();
   }
+
+  size_t samplerate(void *h)
+  {
+    JackAudio *jack = (JackAudio*)h;
+    return jack->samplerate();
+  }
 }
-
-#ifdef TEST_AUDIOINPUTENGINEJACKAUDIO
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOINPUTENGINEJACKAUDIO*/
