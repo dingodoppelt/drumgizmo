@@ -76,7 +76,6 @@ void GUI::LineEdit::setText(std::string text)
 {
   _text = text;
   pos = text.size();
-//  if(_text.size() < pos) pos = text.size();
   
   repaintEvent(NULL);
   textChanged();
@@ -99,7 +98,6 @@ void GUI::LineEdit::buttonEvent(ButtonEvent *e)
         break;
       }
     }
-//    if(e->x >= (int)(font.textWidth(_visibletext) + BORDER)) pos = _visibletext.length();
     repaintEvent(NULL);
   }
 }
@@ -108,8 +106,6 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 {
   if(readOnly()) return;
 
-  DEBUG(lineedit, "Handling keyevent with text '%s'\n", _text.c_str());
-
   bool change = false;
   
   if(e->direction == -1) {
@@ -117,7 +113,6 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
     if(e->keycode == GUI::KeyEvent::KEY_LEFT) {
       if(pos) pos--;
       if(offsetpos >= pos) walkstate = WALK_LEFT;
-//      else walkstate = NOOP;
     
     } else if(e->keycode == GUI::KeyEvent::KEY_HOME) {
       pos = 0;
@@ -129,7 +124,6 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
       if(pos < _text.length()) pos++;
       if(offsetpos + _visibletext.length() <= pos &&
          pos < _text.length()) walkstate = WALK_RIGHT;
-//      else walkstate = NOOP;
     
     } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
       if(pos < _text.length()) {
@@ -210,9 +204,6 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
       }
     }
     else {
-      DEBUG(lienedit, "Full text:              '%s'\n", _text.c_str());
-      DEBUG(lineedit, "Drawing text in lineedit '%s'\n", _visibletext.c_str());
-      DEBUG(lineedit, "Offset, pos: %d, %d\n", offsetpos, pos);
       break;
     }
   }
@@ -224,9 +215,7 @@ void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
   if(readOnly()) return;
 
   if(hasKeyboardFocus()) {
-//    size_t px = font.textWidth(_text.substr(0, pos - offsetpos));
     size_t px = font.textWidth(_visibletext.substr(0, pos - offsetpos));
-    //p.setColour(Colour(0.8));
     p.drawLine(px + BORDER - 1 - 4 + 3, 6,
                px + BORDER - 1 - 4 + 3, height() - 7);
   }
