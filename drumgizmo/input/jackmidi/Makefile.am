@@ -8,7 +8,7 @@ jackmidisources = \
 
 if HAVE_INPUT_JACKMIDI
 
-jackmidiltlibs = libjackmidi.la
+jackmidiltlibs = jackmidi.la
 jackmidibuildsources = $(jackmidisources)
 
 else
@@ -25,6 +25,9 @@ lib_LTLIBRARIES = $(jackmidiltlibs)
 libdir = $(INPUT_PLUGIN_DIR)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/hugin
-libjackmidi_la_LDFLAGS =
-libjackmidi_la_LIBADD =
-libjackmidi_la_SOURCES = $(jackmidibuildsources)
+jackmidi_la_LDFLAGS = -module -avoid-version -shared
+jackmidi_la_LIBADD =
+jackmidi_la_SOURCES = $(jackmidibuildsources)
+
+install-exec-hook:
+	rm -f $(DESTDIR)$(libdir)/jackmidi.la

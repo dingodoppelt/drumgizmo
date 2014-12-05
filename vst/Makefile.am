@@ -11,7 +11,7 @@ VST_SOURCES = \
 AM_CPPFLAGS = -I$(top_srcdir)/hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
 
 EXTRA_DIST = \
-	Makefile.mingw32 \
+	Makefile.mingw32.in \
 	constants.h \
 	drumgizmo_vst.cc \
 	drumgizmo_vst.h \
@@ -20,10 +20,9 @@ EXTRA_DIST = \
 	output_vst.cc \
 	output_vst.h
 
-plugindir = $(prefix)/vst
-plugin_LTLIBRARIES =
-
 if ENABLE_VST
+plugin_LTLIBRARIES =
+plugindir = $(prefix)/lib/vst
 plugin_LTLIBRARIES += libdrumgizmo_vst.la
 noinst_LTLIBRARIES = libdg.la
 endif
@@ -40,8 +39,10 @@ libdg_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS)\
 	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
 
+nodist_libdrumgizmo_vst_la_SOURCES = \
+  $(VST_SOURCES)
+
 libdrumgizmo_vst_la_SOURCES = \
-  $(VST_SOURCES) \
 	drumgizmo_vst.cc \
 	input_vst.cc \
 	output_vst.cc

@@ -6,7 +6,7 @@ jackaudiosources = \
 
 if HAVE_OUTPUT_JACKAUDIO
 
-jackaudioltlibs = libjackaudio.la
+jackaudioltlibs = jackaudio.la
 jackaudiobuildsources = $(jackaudiosources)
 
 else
@@ -23,6 +23,9 @@ lib_LTLIBRARIES = $(jackaudioltlibs)
 libdir = $(OUTPUT_PLUGIN_DIR)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(JACK_CFLAGS) -I$(top_srcdir)/hugin -I$(top_srcdir)/src
-libjackaudio_la_LDFLAGS = $(JACK_LIBS)
-libjackaudio_la_LIBADD =
-libjackaudio_la_SOURCES = $(jackaudiobuildsources)
+jackaudio_la_LDFLAGS = $(JACK_LIBS) -module -avoid-version -shared
+jackaudio_la_LIBADD =
+jackaudio_la_SOURCES = $(jackaudiobuildsources)
+
+install-exec-hook:
+	rm -f $(DESTDIR)$(libdir)/jackaudio.la

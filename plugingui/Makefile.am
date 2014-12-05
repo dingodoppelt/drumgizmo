@@ -1,4 +1,4 @@
-bin_PROGRAMS = plugingui rcgen
+noinst_PROGRAMS = plugingui rcgen
 
 include Makefile.am.plugingui
 #include $(top_srcdir)/src/Makefile.am.drumgizmo
@@ -55,4 +55,6 @@ EXTRA_DIST = \
 	slider.h \
 	verticalline.h \
 	widget.h \
-	window.h
+	window.h \
+	lodepng/lodepng.h
+

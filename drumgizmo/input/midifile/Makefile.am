@@ -9,7 +9,7 @@ midifilesources = \
 
 if HAVE_INPUT_MIDIFILE
 
-midifileltlibs = libmidifile.la
+midifileltlibs = midifile.la
 midifilebuildsources = $(midifilesources)
 
 else
@@ -27,6 +27,9 @@ libdir = $(INPUT_PLUGIN_DIR)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SMF_CFLAGS) \
 	$(EXPAT_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_MUTEX
-libmidifile_la_LDFLAGS = $(SMF_LIBS) $(EXPAT_LIBS)
-libmidifile_la_LIBADD =
-libmidifile_la_SOURCES = $(midifilebuildsources)
+midifile_la_LDFLAGS = $(SMF_LIBS) $(EXPAT_LIBS) -module -avoid-version -shared
+midifile_la_LIBADD =
+midifile_la_SOURCES = $(midifilebuildsources)
+
+install-exec-hook:
+	rm -f $(DESTDIR)$(libdir)/midifile.la

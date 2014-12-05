@@ -1,10 +1,12 @@
-if ENABLE_LV2
-
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 plugindir = $(prefix)/lib/lv2/drumgizmo.lv2
+
+if ENABLE_LV2
 plugin_LTLIBRARIES = drumgizmo.la
+endif
+
 plugin_DATA = manifest.ttl drumgizmo.ttl
 
 EXTRA_DIST = \
@@ -32,4 +34,3 @@ drumgizmo_la_SOURCES = \
 drumgizmo_la_LDFLAGS = -module -avoid-version
 drumgizmo_la_LIBADD = $(LV2_LIBS) $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
-endif
