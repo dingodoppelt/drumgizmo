@@ -95,7 +95,6 @@ void GUI::LineEdit::buttonEvent(ButtonEvent *e)
   if(e->direction == 1) {
     for(int i = 0; i < (int)_visibletext.length(); i++) {
       if(e->x < (int)(font.textWidth(_visibletext.substr(0, i)) + BORDER)) {
-        printf("i, Offset: %d, %d\n", i, offsetpos);
         pos = i + offsetpos;
         break;
       }
@@ -128,7 +127,8 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 
     } else if(e->keycode == GUI::KeyEvent::KEY_RIGHT) {
       if(pos < _text.length()) pos++;
-      if(offsetpos + _visibletext.length() <= pos) walkstate = WALK_RIGHT;
+      if(offsetpos + _visibletext.length() <= pos &&
+         pos < _text.length()) walkstate = WALK_RIGHT;
 //      else walkstate = NOOP;
     
     } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
