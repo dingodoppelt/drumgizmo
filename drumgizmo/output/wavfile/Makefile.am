@@ -4,7 +4,7 @@ wavfilesources = \
 
 if HAVE_OUTPUT_WAVFILE
 
-wavfileltlibs = libwavfile.la
+wavfileltlibs = wavfile.la
 wavfilebuildsources = $(wavfilesources)
 
 else
@@ -21,6 +21,9 @@ lib_LTLIBRARIES = $(wavfileltlibs)
 libdir = $(OUTPUT_PLUGIN_DIR)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SNDFILE_CFLAGS)
-libwavfile_la_LDFLAGS = $(SNDFILE_LIBS)
-libwavfile_la_LIBADD =
-libwavfile_la_SOURCES = $(wavfilebuildsources)
+wavfile_la_LDFLAGS = $(SNDFILE_LIBS) -module -avoid-version -shared
+wavfile_la_LIBADD =
+wavfile_la_SOURCES = $(wavfilebuildsources)
+
+install-exec-hook:
+	rm -f $(DESTDIR)$(libdir)/alsa.la

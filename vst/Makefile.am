@@ -20,10 +20,9 @@ EXTRA_DIST = \
 	output_vst.cc \
 	output_vst.h
 
-plugindir = $(prefix)/vst
-plugin_LTLIBRARIES =
-
 if ENABLE_VST
+plugin_LTLIBRARIES =
+plugindir = $(prefix)/lib/vst
 plugin_LTLIBRARIES += libdrumgizmo_vst.la
 noinst_LTLIBRARIES = libdg.la
 endif

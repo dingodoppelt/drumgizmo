@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = vst lv2 drumgizmo
+SUBDIRS = plugingui tools include src vst lv2 drumgizmo
 DISTDIRS = plugingui tools include src vst lv2 drumgizmo
 
 EXTRA_DIST = \

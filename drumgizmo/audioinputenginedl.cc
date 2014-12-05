@@ -40,7 +40,7 @@ AudioInputEngineDL::AudioInputEngineDL(std::string name)
 {
   is_jack_plugin = strstr(name.c_str(), "jack");
 
-  std::string plugin = INPUT_PLUGIN_DIR"/lib" + name + ".so";
+  std::string plugin = INPUT_PLUGIN_DIR"/" + name + ".so";
   void *lib = dlopen(plugin.c_str(), RTLD_LAZY);
   if(!lib) {
     printf("Cannot load device: %s\n", dlerror());

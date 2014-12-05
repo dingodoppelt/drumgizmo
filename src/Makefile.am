@@ -7,6 +7,7 @@ EXTRA_DIST = \
 	beatmapper.h \
 	channel.h \
 	channelmixer.h \
+	chresampler.h \
 	configuration.h \
 	configparser.h \
 	drumgizmo.h \
@@ -39,6 +40,7 @@ EXTRA_DIST = \
 	beatmapper.cc \
 	channel.cc \
 	channelmixer.cc \
+	chresampler.cc \
 	configuration.cc \
 	configparser.cc \
 	drumgizmo.cc \
