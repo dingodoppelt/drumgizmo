@@ -6,14 +6,11 @@ AC_CONFIG_SRCDIR([src/drumgizmo.cc])
 AM_INIT_AUTOMAKE
 
 AC_PROG_CXX
-#AM_PROG_CC_C_O
-
-AC_PROG_LIBTOOL
-AM_PROG_LIBTOOL
-
 AM_PROG_CC_C_O
 
-AM_CONFIG_HEADER(config.h)
+LT_INIT
+
+AC_CONFIG_HEADERS(config.h)
 
 need_jack=no
 
@@ -100,7 +97,7 @@ AC_ARG_WITH(test,  [  --with-test             Build unit tests])
 if test x$with_test == xyes; then
     AC_MSG_WARN([*** Building unittests!])
 		AM_PATH_CPPUNIT(1.9.6)
-		AC_OUTPUT(test/Makefile)
+		AC_CONFIG_FILES(test/Makefile)
 fi 
 
 dnl ======================
@@ -168,7 +165,7 @@ if test "x$enable_cli" = "xyes"; then
    dnl ======================
    dnl Check for getopt
    dnl ======================
-   AC_HAVE_HEADERS(getopt.h)
+   AC_CHECK_HEADERS(getopt.h)
    
    dnl ***
    dnl *** Input plugins
@@ -520,7 +517,7 @@ AC_SUBST(LDFLAGS)
 
 #	au/Makefile
 
-AC_OUTPUT(
+AC_CONFIG_FILES(
 	Makefile
 	tools/Makefile
 	src/Makefile
@@ -539,3 +536,5 @@ AC_OUTPUT(
 	drumgizmo/output/alsa/Makefile
 	drumgizmo/output/jackaudio/Makefile
 	drumgizmo/output/wavfile/Makefile)
+
+AC_OUTPUT()
