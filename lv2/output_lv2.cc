@@ -62,11 +62,9 @@ void OutputLV2::pre(size_t nsamples)
 {
 }
 
-#include <stdio.h>
 void OutputLV2::run(int ch, sample_t *samples, size_t nsamples)
 {
   if(ch < NUM_OUTPUTS) {
-    //    if(outputPorts[ch].size != nsamples) printf("port.%d nsamples.%d\n", outputPorts[ch].size, nsamples);
     if(outputPorts[ch].samples) {
       memcpy(outputPorts[ch].samples, samples, nsamples * sizeof(sample_t));
     }

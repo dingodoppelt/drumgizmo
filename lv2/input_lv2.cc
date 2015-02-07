@@ -99,11 +99,6 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
         list[listsize].offset = ev->time.frames;
         listsize++;
       }
-      /*
-				start_frame = ev->frames;
-				plugin->frame = 0;
-				plugin->play  = true;
-      */
     }
     ev = lv2_atom_sequence_next(ev);
   }
@@ -115,20 +110,3 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 void InputLV2::post()
 {
 }
-
-#ifdef TEST_INPUT_LV2
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_INPUT_LV2*/

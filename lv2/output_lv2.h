@@ -55,7 +55,6 @@ public:
 
   sample_t *getBuffer(int c);
 
-  //  sample_t *outputPort[NUM_OUTPUTS];
   OutputPort outputPorts[NUM_OUTPUTS];
 };
 
