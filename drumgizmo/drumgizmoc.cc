@@ -30,8 +30,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "drumgizmo.h"
+#include "drumgizmoc.h"
 
 #include "audiooutputenginedl.h"
 #include "audioinputenginedl.h"
@@ -64,7 +66,29 @@ static const char usage_str[] =
 "  -h, --help             Print this message and exit.\n"
 ;
 
-int main(int argc, char *argv[])
+CliMain::CliMain() : MessageReceiver(MSGRCV_UI), loading(false)
+{}
+
+CliMain::~CliMain()
+{}
+
+void CliMain::handleMessage(Message *msg)
+{
+  switch(msg->type()) {
+  case Message::LoadStatus:
+    {
+      LoadStatusMessage *ls = (LoadStatusMessage*)msg;
+      if(ls->numer_of_files_loaded == ls->number_of_files) {
+        loading = false;
+      }
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+int CliMain::run(int argc, char *argv[])
 {
   int c;
 
@@ -243,10 +267,26 @@ int main(int argc, char *argv[])
   printf("Using kitfile: %s\n", kitfile.c_str());
 
   DrumGizmo gizmo(oe, ie);
+
   if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
   }
+
+  printf("Loading drumkit, this may take a while...");
+  fflush(stdout);
+  loading = true;
+  while (loading) {
+#ifdef WIN32
+    SleepEx(500, FALSE);
+#else
+    usleep(500000);
+#endif/*WIN32*/
+    handleMessages();
+    printf(".");
+    fflush(stdout);
+  }
+  printf("done.\n");
 
   gizmo.setSamplerate(oe->samplerate());
 
@@ -263,4 +303,20 @@ int main(int argc, char *argv[])
   delete ie;
 
   return 0;
+}
+
+int main(int argc, char *argv[])
+{
+
+  CliMain* cli = new CliMain();
+  if (cli == NULL) {
+    printf("Could not initialize command line client\n");
+    return 1;
+  }
+
+  cli->run(argc, argv);
+  delete cli;
+
+  return 0;
+
 }
