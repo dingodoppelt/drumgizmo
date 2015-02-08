@@ -47,6 +47,7 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : MessageReceiver(MSGRCV_ENGINE),
     loader(), oe(o), ie(i)
 {
+  is_stopping = false;
 }
 
 DrumGizmo::~DrumGizmo()
@@ -255,7 +256,23 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     }
     
     if(evs[e].type == TYPE_STOP) {
-      return false;
+      is_stopping = true;
+    }
+
+    if(is_stopping) {
+      // Count the number of active events.
+      int num_active_events = 0;
+      Channels::iterator j = kit.channels.begin();
+      while(j != kit.channels.end()) {
+        Channel &ch = *j;
+        num_active_events += activeevents[ch.num].size();
+        j++;
+      }
+
+      if(num_active_events == 0) {
+        // No more active events - now we can stop the engine.
+        return false;
+      }
     }
     
   }
