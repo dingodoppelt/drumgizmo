@@ -1,0 +1,47 @@
+.TH "DRUMGIZMO" "1" "4 February 2015" "drumgizmo 0.9.7" ""
+
+.SH NAME
+drumgizmo \- drum application
+
+.SH SYNOPSIS
+\fBdrumgizmo\fR [OPTIONS] \fIdrumkitfile
+
+.SH "DESCRIPTION"
+.PP
+\fBDrumGizmo\fR is an open source cross-platform drum plugin and stand-alone application. It is comparable to several commercial drum plugin products.
+.PP
+DrumGizmo uses an open drumkit file format, allowing the community to create their own drumkits. It has multichannel output, making it possible to mix it just the way you would a real drumkit. The optional built-in humanizer analyzes the midi notes, adjusting velocities on-the-fly. This client can be a stand-alone midi renderer, generating .wav files, 1 for each channel. Or use DrumGizmo as a software sampler for an electronic drumkit. There are also plugin versions available.
+
+.SH "OPTIONS"
+.TP
+\fB-p, --preload
+Load entire kit audio files into memory (uses ALOT of memory).
+.TP
+\fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
+Use said event input engine.
+.TP
+\fB-I, --inputparms parmlist
+Set input engine parameters.
+.TP
+\fB-o, --outputengine \fR{dummy|alsa|jack|sndfile}
+Use said audio output engine.
+.TP
+\fB-O, --outputparms parmlist
+Set output engine parameters.
+.TP
+\fB-e, --endpos
+Number of samples to process, -1: infinite.
+.TP
+\fB-v, --version
+Print drumgizmo version and exit.
+.TP
+\fB-h, --help
+Print command line help and exit.
+.TP
+\fB\fIdrumkitfile
+Load the drumkitfile.
+.SH "BUGS"
+Report bugs to http://www.drumgizmo.org/wiki/doku.php?id=bugs.
+
+.SH "ADDITIONAL INFORMATION"
+For further information, visit the website http://www.drumgizmo.org/.
