@@ -1,7 +1,7 @@
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-plugindir = $(prefix)/lib/lv2/drumgizmo.lv2
+plugindir = $(libdir)/lv2/drumgizmo.lv2
 
 if ENABLE_LV2
 plugin_LTLIBRARIES = drumgizmo.la
