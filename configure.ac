@@ -300,16 +300,10 @@ AS_IF(
   dnl
   dgplugindir=${libdir}/drumgizmo
   AC_SUBST([dgplugindir])
-
   INPUT_PLUGIN_DIR=${dgplugindir}/input
   OUTPUT_PLUGIN_DIR=${dgplugindir}/output
   AC_SUBST([INPUT_PLUGIN_DIR])
-  AC_SUBST([OUTPUT_PLUGIN_DIR])
-
-  AC_DEFINE_UNQUOTED(INPUT_PLUGIN_DIR, "${libdir}/drumgizmo/input",
-    [Input plugin dir])
-  AC_DEFINE_UNQUOTED(OUTPUT_PLUGIN_DIR, "${libdir}/drumgizmo/output",
-    [Output plugin dir])],
+  AC_SUBST([OUTPUT_PLUGIN_DIR])],
 
   [AC_MSG_RESULT([*** Command line interface disabled per user request ***])
    enable_cli=no]
