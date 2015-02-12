@@ -87,7 +87,7 @@ AC_ARG_WITH([test],
 
 AS_IF([test x$with_test == xyes],
       [AC_MSG_WARN([*** Building unittests!])
-       AM_PATH_CPPUNIT(1.9.6)
+       AM_PATH_CPPUNIT(1.9.6)]
 )
 
 dnl ======================
