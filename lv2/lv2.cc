@@ -63,10 +63,14 @@ dg_save(LV2_Handle                 instance,
 
   std::string config = dglv2->dg->configString();
 
+  // Backwards compatible fix for errornously stored '\0' byte in < v0.9.8.
+  // Remove when we reach v1.0
+  config += "\n";
+
   store(handle,
         dglv2->map->map(dglv2->map->handle, NS_DG "config"),
-        config.c_str(),
-        config.length() + 1, // Careful!  Need space for terminator
+        config.data(),
+        config.length(),
         dglv2->map->map(dglv2->map->handle, LV2_ATOM__Chunk),
         LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE);
 
@@ -99,7 +103,12 @@ dg_restore(LV2_Handle                  instance,
 
   if(data && size) {
     std::string config;
-    config.append(data, size - 1);
+
+    // Fix for errornously stored '\0' byte in < v0.9.8.
+    // Remove when we reach v1.0
+    if(data[size - 1] == '\0') size--;
+
+    config.append(data, size);
     dglv2->dg->setConfigString(config);
   }
 
