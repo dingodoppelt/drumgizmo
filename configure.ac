@@ -88,7 +88,6 @@ AC_ARG_WITH([test],
 AS_IF([test x$with_test == xyes],
       [AC_MSG_WARN([*** Building unittests!])
        AM_PATH_CPPUNIT(1.9.6)
-       AC_CONFIG_FILES(test/Makefile)]
 )
 
 dnl ======================
@@ -542,6 +541,7 @@ AC_CONFIG_FILES(
 	plugingui/Makefile
 	include/Makefile
 	man/Makefile
+  test/Makefile
 	drumgizmo/Makefile
 	drumgizmo/input/Makefile
 	drumgizmo/input/dummy/Makefile
