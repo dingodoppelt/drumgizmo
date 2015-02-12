@@ -15,7 +15,7 @@ DrumGizmo uses an open drumkit file format, allowing the community to create the
 .SH "OPTIONS"
 .TP
 \fB-p, --preload
-Load entire kit audio files into memory (uses ALOT of memory).
+Load entire kit audio files into memory (uses A LOT of memory).
 .TP
 \fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
 Use said event input engine.
@@ -23,11 +23,54 @@ Use said event input engine.
 \fB-I, --inputparms parmlist
 Set input engine parameters.
 .TP
-\fB-o, --outputengine \fR{dummy|alsa|jack|sndfile}
+.SS
+\fBjackmidi:
+midimap=<midimapfile>
+.TP
+.SS
+\fBmidifile:
+file=<midifile>, speed=<tempo> (default 1.0)
+.br
+track=<miditrack> (default -1, all tracks)
+.br
+midimap=<midimapfile>, loop=<true|false>
+.TP
+.SS
+\fBtest:
+p=<hit_propability> (default 0.1)
+.br
+instr=<instrument> (default -1, random instrument)
+.br
+len=<seconds> (default -1, forever)
+.TP
+.SS
+\fBdummy:
+.TP
+\fB-o, --outputengine \fR{dummy|alsa|jackaudio|wavfile}
 Use said audio output engine.
 .TP
 \fB-O, --outputparms parmlist
 Set output engine parameters.
+.TP
+.SS
+\fBalsa:
+dev=<device> (default 'default')
+.br
+frames=<frames> (default 32)
+.br
+srate=<samplerate> (default 441000)
+.TP
+.SS
+\fBwavfile:
+file=<filename> (default 'output')
+.br
+srate=<samplerate> (default 44100)
+.TP
+.SS
+\fBjackaudio:
+.TP
+.SS
+\fBdummy:
 .TP
 \fB-e, --endpos
 Number of samples to process, -1: infinite.
@@ -40,6 +83,14 @@ Print command line help and exit.
 .TP
 \fB\fIdrumkitfile
 Load the drumkitfile.
+.El
+.Sh "EXAMPLES"
+Render midifile to wav files:
+.Bb -literal -offset indent -compact
+drumgizmo -p -i midifile -I file=file.mid,midimap=midimap.xml -o wavfile -O file=file.wav drumkit.xml
+.Ed
+Recieve midi from Jack and send audio output to speakers:
+drumgizmo -p -i jackmidi -I midimap=midimap.xml -o jackaudio drumkit.xml
 .SH "BUGS"
 Report bugs to http://www.drumgizmo.org/wiki/doku.php?id=bugs.
 
