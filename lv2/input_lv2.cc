@@ -66,6 +66,11 @@ void InputLV2::pre()
 
 event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 {
+  if(eventPort == NULL) {
+    *nevents = 0;
+    return NULL;
+  }
+
   event_t *list;
   size_t listsize;
 
