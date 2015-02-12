@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<instrument name="snare">
+<instrument name="instr1">
  <samples>
   <sample name="stroke1">
    <audiofile channel="ch1" file="1111.wav"/>
