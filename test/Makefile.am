@@ -1,7 +1,7 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = engine gui resampler
+TESTS = engine gui resampler lv2
 
 check_PROGRAMS = $(TESTS)
 
@@ -30,3 +30,11 @@ resampler_SOURCES = \
 	$(top_srcdir)/src/chresampler.cc \
 	test.cc \
 	resampler.cc
+
+lv2_CXXFLAGS = -DOUTPUT=\"lv2\" $(CPPUNIT_CFLAGS) \
+	 -I/usr/include/lilv-0 -I/usr/include/serd-0
+lv2_LDFLAGS = $(CPPUNIT_LIBS) -llilv-0 -lserd-0 -lcrypto
+lv2_SOURCES = \
+	test.cc \
+	lv2_test_host.cc \
+	lv2.cc
