@@ -371,6 +371,8 @@ AS_IF([test x$enable_resampler != xno],
               CFLAGS="$tmp_CFLAGS"
               LDFLAGS="$tmp_LDFLAGS"
               LIBS="$tmp_LIBS"
+              AC_SUBST(ZITA_CPPFLAGS)
+              AC_SUBST(ZITA_LIBS)
               AC_LANG_POP([C++])]
        )]
 )
@@ -389,8 +391,8 @@ AS_IF([test x$enable_resampler == xauto],
 AS_IF([test x$enable_resampler == xzita],
       [AS_IF([test x$has_zita == xyes],
              [AC_DEFINE(USE_ZITA, [], [zita-resampler is present])
-              AC_SUBST(ZITA_CPPFLAGS)
-              AC_SUBST(ZITA_LIBS)
+                SAMPLERATE_CFLAGS=""
+                SAMPLERATE_LIBS=""
              ],
              [AC_MSG_ERROR([*** zita-resampler library or headers not found. Set ZITA_LDFLAGS or ZITA_CPPFLAGS to add searchpath.])]
        )]
@@ -398,8 +400,10 @@ AS_IF([test x$enable_resampler == xzita],
 
 AS_IF([test x$enable_resampler == xsrc],
       [AS_IF([test x$has_src == xyes],
-             [AC_DEFINE(USE_SRC, [], [libsamplerate is present])],
-
+             [AC_DEFINE(USE_SRC, [], [libsamplerate is present])
+                ZITA_CPPFLAGS=""
+                ZITA_LIBS=""
+             ],
              [AC_MSG_ERROR([*** Missing libsamplerate.])]
        )]
 )
