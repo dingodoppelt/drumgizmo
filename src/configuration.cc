@@ -35,19 +35,4 @@ float Conf::velocity_randomiser_weight = 0.1;
 
 int Conf::samplerate = 44100;
 
-#ifdef TEST_CONFIGURATION
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_CONFIGURATION*/
+bool Conf::enable_resampling = true;

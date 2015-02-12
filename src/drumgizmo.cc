@@ -265,24 +265,26 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   //
   // Write audio
   //
-#ifndef WITH_RESAMPLER
-  // No resampling needed
-  for(size_t c = 0; c < kit.channels.size(); c++) {
-    sample_t *buf = samples;
-    bool internal = false;
-    if(oe->getBuffer(c)) {
-      buf = oe->getBuffer(c);
-      internal = true;
-    }
-    if(buf) {
-      memset(buf, 0, nsamples * sizeof(sample_t));
-      
-      getSamples(c, pos, buf, nsamples);
+#ifdef WITH_RESAMPLER
+  if(Conf::enable_resampling == false) { // No resampling needed
+#endif
+    for(size_t c = 0; c < kit.channels.size(); c++) {
+      sample_t *buf = samples;
+      bool internal = false;
+      if(oe->getBuffer(c)) {
+        buf = oe->getBuffer(c);
+        internal = true;
+      }
+      if(buf) {
+        memset(buf, 0, nsamples * sizeof(sample_t));
 
-      if(!internal) oe->run(c, samples, nsamples);
+        getSamples(c, pos, buf, nsamples);
+
+        if(!internal) oe->run(c, samples, nsamples);
+      }
     }
-  }
-#else/*WITH_RESAMPLER*/
+#ifdef WITH_RESAMPLER
+  } else {
   // Resampling needed
 
   //
@@ -319,6 +321,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   // Write output data to output engine.
   for(size_t c = 0; c < kit.channels.size(); c++) {
     oe->run(c, resampler_output_buffer[c], nsamples);
+  }
+
   }
 #endif/*WITH_RESAMPLER*/
   
@@ -526,6 +530,11 @@ bool DrumGizmo::setConfigString(std::string cfg)
   if(p.value("velocity_randomiser_weight") != "") {
     Conf::velocity_randomiser_weight =
       str2float(p.value("velocity_randomiser_weight"));
+  }
+
+  if(p.value("enable_resampling") != "") {
+    Conf::enable_resampling =
+      p.value("enable_resampling") == "true";
   }
 
   std::string newkit = p.value("drumkitfile");
