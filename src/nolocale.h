@@ -30,6 +30,10 @@
 #include <locale.h>
 #include <stdarg.h>
 
+#ifdef WIN32
+typedef _locale_t locale_t;
+#endif
+
 static inline double atof_nol(const char *nptr)
 {
 	double res;
