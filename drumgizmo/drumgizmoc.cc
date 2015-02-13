@@ -57,7 +57,7 @@ static const char usage_str[] =
 "  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
 "  -i, --inputengine dummy|test|jackmidi|midifile  Use said event input engine.\n"
 "  -I, --inputparms parmlist  Set input engine parameters.\n"
-"  -o, --outputengine dummy|alsa|jack|sndfile  Use said audio output engine.\n"
+"  -o, --outputengine dummy|alsa|jackaudio|wavfile  Use said audio output engine.\n"
 "  -O, --outputparms parmlist  Set output engine parameters.\n"
 "  -e, --endpos Number of samples to process, -1: infinite.\n"
 "  -v, --version          Print version information and exit.\n"
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     case 'o':
       outputengine = optarg;
       if(outputengine == "help") {
-        printf("Available output engines: alsa, jack, sndfile.\n");
+        printf("Available output engines: alsa, jackaudio, wavfile.\n");
         return 0;
       }
       break;
