@@ -36,7 +36,7 @@ static inline double atof_nol(const char *nptr)
 
 #ifdef WIN32
 
-  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+  _locale_t l = _create_locale(LC_NUMERIC, "C");
 
   res = _atof_l(nptr, l);
 
@@ -65,7 +65,7 @@ static inline int sprintf_nol(char *str, const char *format, ...)
 
 #ifdef WIN32
 
-  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+  _locale_t l = _create_locale(LC_NUMERIC, "C");
 
   va_list vl;
   va_start(vl, format);
@@ -100,7 +100,7 @@ static inline int snprintf_nol(char *str, size_t size, const char *format, ...)
 
 #ifdef WIN32
 
-  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+  _locale_t l = _create_locale(LC_NUMERIC, "C");
 
   va_list vl;
   va_start(vl, format);
