@@ -30,13 +30,20 @@
 #include <locale.h>
 #include <stdarg.h>
 
-#ifdef WIN32
-typedef _locale_t locale_t;
-#endif
-
 static inline double atof_nol(const char *nptr)
 {
 	double res;
+
+#ifdef WIN32
+
+  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+
+  res = _atof_l(nptr, l);
+
+  _free_locale(l);
+
+#else/*WIN32*/
+
 	locale_t new_locale, prev_locale;
 
 	new_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
@@ -47,11 +54,28 @@ static inline double atof_nol(const char *nptr)
 	uselocale(prev_locale);
 	freelocale(new_locale);
 
+#endif/*WIN32*/
+
 	return res;
 }
 
 static inline int sprintf_nol(char *str, const char *format, ...)
 {
+  int ret;
+
+#ifdef WIN32
+
+  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+
+  va_list vl;
+  va_start(vl, format);
+  ret = _vsprintf_l(str, format, vl, l);
+  va_end(vl);
+
+  _free_locale(l);
+
+#else/*WIN32*/
+
 	locale_t new_locale, prev_locale;
 
 	new_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
@@ -59,17 +83,34 @@ static inline int sprintf_nol(char *str, const char *format, ...)
 
   va_list vl;
   va_start(vl, format);
-  int ret = vsprintf(str, format, vl);
+  ret = vsprintf(str, format, vl);
   va_end(vl);
 
 	uselocale(prev_locale);
 	freelocale(new_locale);
+
+#endif/*WIN32*/
 
   return ret;
 }
 
 static inline int snprintf_nol(char *str, size_t size, const char *format, ...)
 {
+  int ret;
+
+#ifdef WIN32
+
+  _locale_t l = _create_locale(LC_NUMERIC_MASK, "C");
+
+  va_list vl;
+  va_start(vl, format);
+  ret = vsnprintf(str, size, format, vl, l);
+  va_end(vl);
+
+  _free_locale(l);
+
+#else/*WIN32*/
+
 	locale_t new_locale, prev_locale;
 
 	new_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
@@ -77,11 +118,13 @@ static inline int snprintf_nol(char *str, size_t size, const char *format, ...)
 
   va_list vl;
   va_start(vl, format);
-  int ret = vsnprintf(str, size, format, vl);
+  ret = vsnprintf(str, size, format, vl);
   va_end(vl);
 
 	uselocale(prev_locale);
 	freelocale(new_locale);
+
+#endif/*WIN32*/
 
   return ret;
 }
