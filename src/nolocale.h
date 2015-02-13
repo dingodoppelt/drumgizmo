@@ -69,7 +69,7 @@ static inline int sprintf_nol(char *str, const char *format, ...)
 
   va_list vl;
   va_start(vl, format);
-  ret = _vsprintf_l(str, format, vl, l);
+  ret = _vsprintf_l(str, format, l, vl);
   va_end(vl);
 
   _free_locale(l);
@@ -104,7 +104,7 @@ static inline int snprintf_nol(char *str, size_t size, const char *format, ...)
 
   va_list vl;
   va_start(vl, format);
-  ret = _vsnprintf_l(str, size, format, vl, l);
+  ret = _vsnprintf_l(str, size, format, l, vl);
   va_end(vl);
 
   _free_locale(l);
