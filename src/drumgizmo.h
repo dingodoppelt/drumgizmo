@@ -56,7 +56,7 @@ public:
 
   bool loadkit(std::string kitfile);
 
-  bool init(bool preload = true);
+  bool init();
 
   /**
    * @param endpos number of samples to process, -1 := never stop.

@@ -56,10 +56,10 @@ static const char copyright_str[] =
 static const char usage_str[] =
 "Usage: %s [options] drumkitfile\n"
 "Options:\n"
-"  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
+"  -a, --async-load       Load drumkit in the background and start the engine immediately.\n"
 "  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event input engine.\n"
 "  -I, --inputparms       parmlist  Set input engine parameters.\n"
-"  -o, --outputengine     dummy|alsa|jack|sndfile  Use said audio output engine.\n"
+"  -o, --outputengine     dummy|alsa|jackaudio|sndfile  Use said audio output engine.\n"
 "  -O, --outputparms      parmlist  Set output engine parameters.\n"
 "  -e, --endpos           Number of samples to process, -1: infinite.\n"
 "  -v, --version          Print version information and exit.\n"
@@ -84,11 +84,14 @@ static const char usage_str[] =
 "\n"
 ;
 
-CliMain::CliMain() : MessageReceiver(MSGRCV_UI), loading(false)
-{}
+CliMain::CliMain() : MessageReceiver(MSGRCV_UI)
+{
+  loading = true; // Block by default
+}
 
 CliMain::~CliMain()
-{}
+{
+}
 
 void CliMain::handleMessage(Message *msg)
 {
@@ -114,13 +117,13 @@ int CliMain::run(int argc, char *argv[])
   std::string inputengine;
   std::string iparms;
   std::string oparms;
-  bool preload = false;
+  bool async = false;
   int endpos = -1;
 
   int option_index = 0;
   while(1) {
     static struct option long_options[] = {
-      {"preload", no_argument, 0, 'p'},
+      {"async-load", no_argument, 0, 'a'},
       {"inputengine", required_argument, 0, 'i'},
       {"inputparms", required_argument, 0, 'I'},
       {"outputengine", required_argument, 0, 'o'},
@@ -152,7 +155,7 @@ int CliMain::run(int argc, char *argv[])
     case 'o':
       outputengine = optarg;
       if(outputengine == "help") {
-        printf("Available output engines: alsa, jack, sndfile.\n");
+        printf("Available output engines: alsa, jackaudio, wavfile.\n");
         return 0;
       }
       break;
@@ -161,8 +164,8 @@ int CliMain::run(int argc, char *argv[])
       oparms = optarg;
       break;
 
-    case 'p':
-      preload = true;
+    case 'a':
+      async = true;
       break;
  
     case 'e':
@@ -294,7 +297,7 @@ int CliMain::run(int argc, char *argv[])
   printf("Loading drumkit, this may take a while...");
   fflush(stdout);
   loading = true;
-  while (loading) {
+  while(async == false && loading) {
 #ifdef WIN32
     SleepEx(500, FALSE);
 #else
@@ -308,7 +311,7 @@ int CliMain::run(int argc, char *argv[])
 
   gizmo.setSamplerate(oe->samplerate());
 
-  if(!gizmo.init(preload)) {
+  if(!gizmo.init()) {
     printf("Failed init engine.\n");
     return 1;
   }
@@ -325,15 +328,9 @@ int CliMain::run(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+  CliMain cli;
 
-  CliMain* cli = new CliMain();
-  if (cli == NULL) {
-    printf("Could not initialize command line client\n");
-    return 1;
-  }
-
-  cli->run(argc, argv);
-  delete cli;
+  cli.run(argc, argv);
 
   return 0;
 

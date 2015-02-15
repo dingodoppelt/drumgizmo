@@ -33,6 +33,8 @@
 
 #include "path.h"
 
+#include "nolocale.h"
+
 InstrumentParser::InstrumentParser(const std::string &file, Instrument &i)
   : instrument(i)
 {
@@ -84,7 +86,7 @@ void InstrumentParser::startTag(std::string name,
     if(attr.find("power") == attr.end()) {
       power = -1; 
     } else {
-      power = atof(attr["power"].c_str());  
+      power = atof_nol(attr["power"].c_str());
       DEBUG(instrparser, "Instrument power set to %f\n", power);
     }
     
@@ -136,8 +138,8 @@ void InstrumentParser::startTag(std::string name,
       return;
     }
 
-    lower = atof(attr["lower"].c_str());
-    upper = atof(attr["upper"].c_str());
+    lower = atof_nol(attr["lower"].c_str());
+    upper = atof_nol(attr["upper"].c_str());
   }
 
   if(name == "sampleref") {
