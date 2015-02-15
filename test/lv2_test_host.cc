@@ -151,9 +151,16 @@ LV2TestHost::Sequence::Sequence(void *buffer, size_t buffer_size)
 	seq->body.pad = 0;
 }
 
+// Keep this to support atom extension from lv2 < 1.10
+static inline void
+_lv2_atom_sequence_clear(LV2_Atom_Sequence* seq)
+{
+  seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
+}
+
 void LV2TestHost::Sequence::clear()
 {
-  lv2_atom_sequence_clear(seq);
+  _lv2_atom_sequence_clear(seq);
 }
 
 // Keep this to support atom extension from lv2 < 1.10
