@@ -65,13 +65,13 @@ public:
     LV2TestHost h(LV2_PATH);
 
     res = h.open(DG_URI);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.verify();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.close();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
   }
 
   void run_no_ports_connected()
@@ -81,13 +81,13 @@ public:
     LV2TestHost h("/home/deva/docs/c/drumgizmo/install/lib/lv2");
 
     res = h.open(DG_URI);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.verify();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.createInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     const char config_fmt[] = 
       "<config>\n"
@@ -123,21 +123,21 @@ public:
             );
 
     res = h.loadConfig(config, strlen(config));
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     // run for 1 samples to trigger kit loading
     res = h.run(1);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
     sleep(1); // wait for kit to get loaded (async),
 
     res = h.run(100);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.destroyInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.close();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
   }
 
   void run_no_output_ports_connected()
@@ -147,13 +147,13 @@ public:
     LV2TestHost h("/home/deva/docs/c/drumgizmo/install/lib/lv2");
 
     res = h.open(DG_URI);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.verify();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.createInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     const char config_fmt[] = 
       "<config>\n"
@@ -189,29 +189,29 @@ public:
             );
 
     res = h.loadConfig(config, strlen(config));
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     // Port buffers:
     char sequence_buffer[4096];
 
     LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
     res = h.connectPort(0, seq.data());
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     // run for 1 samples to trigger kit loading
     res = h.run(1);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
     sleep(1); // wait for kit to get loaded (async),
 
     seq.addMidiNote(5, 1, 127);
     res = h.run(100);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.destroyInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.close();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
   }
 
   void test1()
@@ -221,13 +221,13 @@ public:
     LV2TestHost h("/home/deva/docs/c/drumgizmo/install/lib/lv2");
 
     res = h.open(DG_URI);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.verify();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.createInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     const char config_fmt[] = 
       "<config>\n"
@@ -263,7 +263,7 @@ public:
             );
 
     res = h.loadConfig(config, strlen(config));
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     // Port buffers:
     char sequence_buffer[4096];
@@ -271,24 +271,24 @@ public:
 
     LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
     res = h.connectPort(0, seq.data());
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     for(int i = 1; i <= 16; i++) {
       memset(pcm_buffer, 1, sizeof(pcm_buffer));
       res += h.connectPort(i, pcm_buffer[i-1]);
     }
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     // run for 1 samples to trigger kit loading
     res = h.run(1);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
     sleep(1); // wait for kit to get loaded (async),
 
     /*
     seq.addMidiNote(5, 1, 127);
     for(int i = 0; i < 10; i++) {
       res = h.run(10);
-      CPPUNIT_ASSERT(res == 0);
+      CPPUNIT_ASSERT_EQUAL(res, 0);
 
       printf("Iteration:\n");
       for(int k = 0; k < 4; k++) {
@@ -304,7 +304,7 @@ public:
 
     seq.addMidiNote(5, 1, 127);
     res = h.run(10);
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     union {
       float f;
@@ -321,10 +321,10 @@ public:
     seq.clear();
 
     res = h.destroyInstance();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
 
     res = h.close();
-    CPPUNIT_ASSERT(res == 0);
+    CPPUNIT_ASSERT_EQUAL(res, 0);
   }
 };
 
