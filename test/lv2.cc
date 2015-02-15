@@ -62,7 +62,7 @@ public:
   {
     int res;
 
-    LV2TestHost h("/home/deva/docs/c/drumgizmo/install/lib/lv2");
+    LV2TestHost h(LV2_PATH);
 
     res = h.open(DG_URI);
     CPPUNIT_ASSERT(res == 0);

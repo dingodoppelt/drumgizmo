@@ -32,8 +32,10 @@ resampler_SOURCES = \
 	resampler.cc
 
 lv2_CXXFLAGS = -DOUTPUT=\"lv2\" $(CPPUNIT_CFLAGS) \
-	 -I/usr/include/lilv-0 -I/usr/include/serd-0
-lv2_LDFLAGS = $(CPPUNIT_LIBS) -llilv-0 -lserd-0 -lcrypto
+	 `pkg-config --cflags serd-0` `pkg-config --cflags lilv-0` \
+	-DLV2_PATH=\"$(libdir)/lv2\"
+lv2_LDFLAGS = $(CPPUNIT_LIBS) `pkg-config --libs serd-0` \
+	`pkg-config --libs lilv-0` -lcrypto
 lv2_SOURCES = \
 	test.cc \
 	lv2_test_host.cc \

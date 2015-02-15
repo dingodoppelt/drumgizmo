@@ -156,6 +156,25 @@ void LV2TestHost::Sequence::clear()
   lv2_atom_sequence_clear(seq);
 }
 
+// Keep this to support atom extension from lv2 < 1.10
+static inline LV2_Atom_Event*
+_lv2_atom_sequence_append_event(LV2_Atom_Sequence*    seq,
+                               uint32_t              capacity,
+                               const LV2_Atom_Event* event)
+{
+  const uint32_t total_size = (uint32_t)sizeof(*event) + event->body.size;
+  if (capacity - seq->atom.size < total_size) {
+    return NULL;
+  }
+
+  LV2_Atom_Event* e = lv2_atom_sequence_end(&seq->body, seq->atom.size);
+  memcpy(e, event, total_size);
+  
+  seq->atom.size += lv2_atom_pad_size(total_size);
+  
+  return e;
+}
+
 void LV2TestHost::Sequence::addMidiNote(uint64_t pos,
                                         uint8_t key, int8_t velocity)
 {
@@ -176,7 +195,7 @@ void LV2TestHost::Sequence::addMidiNote(uint64_t pos,
 	ev.msg[2] = velocity;
 
 	LV2_Atom_Event *e =
-		lv2_atom_sequence_append_event(seq, this->buffer_size, &ev.event);
+		_lv2_atom_sequence_append_event(seq, this->buffer_size, &ev.event);
   (void)e;
 }
 
