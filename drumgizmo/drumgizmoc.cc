@@ -59,7 +59,7 @@ static const char usage_str[] =
 "  -a, --async-load       Load drumkit in the background and start the engine immediately.\n"
 "  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event input engine.\n"
 "  -I, --inputparms       parmlist  Set input engine parameters.\n"
-"  -o, --outputengine     dummy|alsa|jackaudio|sndfile  Use said audio output engine.\n"
+"  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio output engine.\n"
 "  -O, --outputparms      parmlist  Set output engine parameters.\n"
 "  -e, --endpos           Number of samples to process, -1: infinite.\n"
 "  -v, --version          Print version information and exit.\n"
