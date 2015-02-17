@@ -422,12 +422,13 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             evt->rampdown--;
           }
           
+          if(evt->rampdown == 0) {
+            removeevent = true; // Down ramp done. Remove event.
+          }
         }
 
         if(evt->t >= af->size) { 
           removeevent = true;
-//        LAZYLOAD:
-//          loader.reset(af);
         }
 
         }
