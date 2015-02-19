@@ -30,8 +30,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "drumgizmo.h"
+#include "drumgizmoc.h"
 
 #include "audiooutputenginedl.h"
 #include "audioinputenginedl.h"
@@ -54,17 +56,60 @@ static const char copyright_str[] =
 static const char usage_str[] =
 "Usage: %s [options] drumkitfile\n"
 "Options:\n"
-"  -p, --preload          Load entire kit audio files into memory (uses ALOT of memory).\n"
-"  -i, --inputengine dummy|test|jackmidi|midifile  Use said event input engine.\n"
-"  -I, --inputparms parmlist  Set input engine parameters.\n"
-"  -o, --outputengine dummy|alsa|jack|sndfile  Use said audio output engine.\n"
-"  -O, --outputparms parmlist  Set output engine parameters.\n"
-"  -e, --endpos Number of samples to process, -1: infinite.\n"
+"  -a, --async-load       Load drumkit in the background and start the engine immediately.\n"
+"  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event input engine.\n"
+"  -I, --inputparms       parmlist  Set input engine parameters.\n"
+"  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio output engine.\n"
+"  -O, --outputparms      parmlist  Set output engine parameters.\n"
+"  -e, --endpos           Number of samples to process, -1: infinite.\n"
 "  -v, --version          Print version information and exit.\n"
 "  -h, --help             Print this message and exit.\n"
+"\n"
+"Input engine parameters:\n"
+"  jackmidi:  midimap=<midimapfile>\n"
+"  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n"
+"             track=<miditrack> (default -1, all tracks)\n"
+"             midimap=<midimapfile>, loop=<true|false>\n"
+"  test:      p=<hit_propability> (default 0.1)\n"
+"             instr=<instrument> (default -1, random instrument)\n"
+"             len=<seconds> (default -1, forever)\n"
+"  dummy:\n"
+"\n"
+"Output engine parameters:\n"
+"  alsa:      dev=<device> (default 'default'), frames=<frames> (default 32)\n"
+"             srate=<samplerate> (default 441000)\n"
+"  wavfile:   file=<filename> (default 'output'), srate=<samplerate> (default 44100)\n"
+"  jackaudio:\n"
+"  dummy:\n"
+"\n"
 ;
 
-int main(int argc, char *argv[])
+CliMain::CliMain() : MessageReceiver(MSGRCV_UI)
+{
+  loading = true; // Block by default
+}
+
+CliMain::~CliMain()
+{
+}
+
+void CliMain::handleMessage(Message *msg)
+{
+  switch(msg->type()) {
+  case Message::LoadStatus:
+    {
+      LoadStatusMessage *ls = (LoadStatusMessage*)msg;
+      if(ls->numer_of_files_loaded == ls->number_of_files) {
+        loading = false;
+      }
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+int CliMain::run(int argc, char *argv[])
 {
   int c;
 
@@ -72,13 +117,13 @@ int main(int argc, char *argv[])
   std::string inputengine;
   std::string iparms;
   std::string oparms;
-  bool preload = false;
+  bool async = false;
   int endpos = -1;
 
   int option_index = 0;
   while(1) {
     static struct option long_options[] = {
-      {"preload", no_argument, 0, 'p'},
+      {"async-load", no_argument, 0, 'a'},
       {"inputengine", required_argument, 0, 'i'},
       {"inputparms", required_argument, 0, 'I'},
       {"outputengine", required_argument, 0, 'o'},
@@ -110,7 +155,7 @@ int main(int argc, char *argv[])
     case 'o':
       outputengine = optarg;
       if(outputengine == "help") {
-        printf("Available output engines: alsa, jack, sndfile.\n");
+        printf("Available output engines: alsa, jackaudio, wavfile.\n");
         return 0;
       }
       break;
@@ -119,8 +164,8 @@ int main(int argc, char *argv[])
       oparms = optarg;
       break;
 
-    case 'p':
-      preload = true;
+    case 'a':
+      async = true;
       break;
  
     case 'e':
@@ -243,14 +288,30 @@ int main(int argc, char *argv[])
   printf("Using kitfile: %s\n", kitfile.c_str());
 
   DrumGizmo gizmo(oe, ie);
+
   if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
   }
 
+  printf("Loading drumkit, this may take a while...");
+  fflush(stdout);
+  loading = true;
+  while(async == false && loading) {
+#ifdef WIN32
+    SleepEx(500, FALSE);
+#else
+    usleep(500000);
+#endif/*WIN32*/
+    handleMessages();
+    printf(".");
+    fflush(stdout);
+  }
+  printf("done.\n");
+
   gizmo.setSamplerate(oe->samplerate());
 
-  if(!gizmo.init(preload)) {
+  if(!gizmo.init()) {
     printf("Failed init engine.\n");
     return 1;
   }
@@ -263,4 +324,14 @@ int main(int argc, char *argv[])
   delete ie;
 
   return 0;
+}
+
+int main(int argc, char *argv[])
+{
+  CliMain cli;
+
+  cli.run(argc, argv);
+
+  return 0;
+
 }

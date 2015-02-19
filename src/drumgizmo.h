@@ -51,14 +51,13 @@
 
 class DrumGizmo : public MessageReceiver {
 public:
-  DrumGizmo(AudioOutputEngine *outputengine,
-            AudioInputEngine *inputengine);
+  DrumGizmo(AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
   virtual ~DrumGizmo();
 
   bool loadkit(std::string kitfile);
 
-  bool init(bool preload = true);
-  
+  bool init();
+
   /**
    * @param endpos number of samples to process, -1 := never stop.
    */
@@ -68,8 +67,6 @@ public:
 
   void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
-  bool isRunning() { return is_running; }
-
   std::string configString();
   bool setConfigString(std::string cfg);
 
@@ -77,12 +74,12 @@ public:
 
   int samplerate();
   void setSamplerate(int samplerate);
-  
+
 private:
   DrumKitLoader loader;
 
   Mutex mutex;
-  bool is_running;
+  bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
 
   AudioOutputEngine *oe;
   AudioInputEngine *ie;

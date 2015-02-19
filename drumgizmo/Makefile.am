@@ -27,6 +27,7 @@ drumgizmo_SOURCES = \
 EXTRA_DIST = \
 	audioinputenginedl.h \
 	audiooutputenginedl.h \
+	drumgizmoc.h \
 	jackclient.h
 
 endif

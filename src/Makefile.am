@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	midimapparser.h \
 	midimapper.h \
 	mutex.h \
+	nolocale.h \
 	path.h \
 	powerlist.h \
 	rangemap.h \

@@ -26,4 +26,4 @@ wavfile_la_LIBADD =
 wavfile_la_SOURCES = $(wavfilebuildsources)
 
 install-exec-hook:
-	rm -f $(DESTDIR)$(libdir)/alsa.la
+	rm -f $(DESTDIR)$(libdir)/wavfile.la

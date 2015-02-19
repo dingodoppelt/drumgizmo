@@ -43,10 +43,13 @@
 #include "configuration.h"
 #include "configparser.h"
 
+#include "nolocale.h"
+
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : MessageReceiver(MSGRCV_ENGINE),
     loader(), oe(o), ie(i)
 {
+  is_stopping = false;
 }
 
 DrumGizmo::~DrumGizmo()
@@ -84,10 +87,8 @@ bool DrumGizmo::loadkit(std::string file)
   return true;
 }
 
-bool DrumGizmo::init(bool preload)
+bool DrumGizmo::init()
 {
-  (void)preload;
-
   if(!ie->init(kit.instruments)) return false;
   if(!oe->init(kit.channels)) return false;
 
@@ -255,7 +256,23 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
     }
     
     if(evs[e].type == TYPE_STOP) {
-      return false;
+      is_stopping = true;
+    }
+
+    if(is_stopping) {
+      // Count the number of active events.
+      int num_active_events = 0;
+      Channels::iterator j = kit.channels.begin();
+      while(j != kit.channels.end()) {
+        Channel &ch = *j;
+        num_active_events += activeevents[ch.num].size();
+        j++;
+      }
+
+      if(num_active_events == 0) {
+        // No more active events - now we can stop the engine.
+        return false;
+      }
     }
     
   }
@@ -409,12 +426,13 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             evt->rampdown--;
           }
           
+          if(evt->rampdown == 0) {
+            removeevent = true; // Down ramp done. Remove event.
+          }
         }
 
         if(evt->t >= af->size) { 
           removeevent = true;
-//        LAZYLOAD:
-//          loader.reset(af);
         }
 
         }
@@ -455,7 +473,7 @@ void DrumGizmo::setSamplerate(int samplerate)
 std::string float2str(float a)
 {
   char buf[256];
-  sprintf(buf, "%f", a);
+  snprintf_nol(buf, sizeof(buf) - 1, "%f", a);
   return buf;
 }
 
@@ -467,7 +485,7 @@ std::string bool2str(bool a)
 float str2float(std::string a)
 {
   if(a == "") return 0.0;
-  return atof(a.c_str());
+  return atof_nol(a.c_str());
 }
 
 std::string DrumGizmo::configString()
