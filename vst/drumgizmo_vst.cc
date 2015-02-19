@@ -438,7 +438,7 @@ void DrumGizmoVst::setBlockSize(VstInt32 blockSize)
 void DrumGizmoVst::initProcess()
 {
   //  drumgizmo->loadkit(getenv("DRUMGIZMO_DRUMKIT"));
-  drumgizmo->init(true);
+  drumgizmo->init();
 }
 
 void DrumGizmoVst::processReplacing(float** inputs, float** outputs,
