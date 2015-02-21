@@ -326,10 +326,10 @@ PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
 
 AC_ARG_ENABLE([resampler],
-	AS_HELP_STRING([--enable-resampler[=lib]], [Enable resampler using either 'zita' or 'src' (libsamplerate). Use 'auto' for autodetect [default=auto]]),,
-        [enable_resampler="auto"])
+	AS_HELP_STRING([--enable-resampler[=lib]], [Enable resampler using either 'zita' or 'src' (libsamplerate). [default=no]]),,
+        [enable_resampler="no"])
 
-AS_IF([test "x$enable_resampler" = "xyes"], [enable_resampler="auto"])
+AS_IF([test "x$enable_resampler" = "xyes"], [enable_resampler="zita"])
 
 has_src=no
 has_zita=no
@@ -373,17 +373,6 @@ AS_IF([test x$enable_resampler != xno],
               AC_SUBST(ZITA_CPPFLAGS)
               AC_SUBST(ZITA_LIBS)
               AC_LANG_POP([C++])]
-       )]
-)
-
-AS_IF([test x$enable_resampler == xauto],
-      [AS_IF([test x$has_zita == xyes],
-             [enable_resampler=zita],
-
-             [test x$has_src == xyes],
-             [enable_resampler=src],
-
-             [AC_MSG_ERROR([*** No resampler library present. Either libsamplerate or zita-resampler must be installed.])]
        )]
 )
 
