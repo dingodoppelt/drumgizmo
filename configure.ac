@@ -326,7 +326,8 @@ PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
 
 AC_ARG_ENABLE([resampler],
-	AS_HELP_STRING([--enable-resampler[=lib]], [Enable resampler using either 'zita' or 'src' (libsamplerate). [default=no]]),,
+	AS_HELP_STRING([--enable-resampler[=lib]], 
+        [Enable resampling using libzita-resampler, set to 'src' to force use of libsamplerate (slow). [default=no]]),,
         [enable_resampler="no"])
 
 AS_IF([test "x$enable_resampler" = "xyes"], [enable_resampler="zita"])
@@ -338,14 +339,13 @@ AS_IF([test x$enable_resampler != xno],
       [AC_MSG_WARN([*** Building resample support!])
        AC_DEFINE(WITH_RESAMPLER, [], [Use resample])
 
-       AS_IF([test x$enable_resampler == xauto || test x$enable_resampler == xsrc],
+       AS_CASE([$enable_resampler],
+        [src],
              [dnl ======================
               dnl Check for libsamplerate
               dnl ======================
-              PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7, has_src=yes, has_src=no)]
-       )
-
-       AS_IF([test x$enable_resampler == xauto || test x$enable_resampler == xzita],
+              PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.7, has_src=yes, has_src=no)],
+        [zita],
              [dnl ======================
               dnl Check for the zitaresampler library
               dnl ======================
@@ -372,8 +372,10 @@ AS_IF([test x$enable_resampler != xno],
               LIBS="$tmp_LIBS"
               AC_SUBST(ZITA_CPPFLAGS)
               AC_SUBST(ZITA_LIBS)
-              AC_LANG_POP([C++])]
-       )]
+              AC_LANG_POP([C++])],
+            [AC_MSG_ERROR([*** Bad argument '$enable_resampler'.])]
+       )
+       ]
 )
 
 AS_IF([test x$enable_resampler == xzita],
