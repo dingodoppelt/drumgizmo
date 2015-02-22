@@ -327,8 +327,8 @@ PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
 AC_ARG_ENABLE([resampler],
 	AS_HELP_STRING([--enable-resampler[=lib]], 
-        [Enable resampling using libzita-resampler, set to 'src' to force use of libsamplerate (slow). [default=no]]),,
-        [enable_resampler="no"])
+        [Enable resampling using libzita-resampler, set to 'src' to force use of libsamplerate (slow). [default=yes]]),,
+        [enable_resampler="yes"])
 
 AS_IF([test "x$enable_resampler" = "xyes"], [enable_resampler="zita"])
 
