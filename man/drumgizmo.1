@@ -67,7 +67,7 @@ dev=<device> (default 'default')
 .P
 frames=<frames> (default 32)
 .P
-srate=<samplerate> (default 441000)
+srate=<samplerate> (default 44100)
 
 \fBwavfile:\fR
 .P
@@ -82,7 +82,7 @@ srate=<samplerate> (default 44100)
 .RE
 \fB-e, --endpos\fR
 .RS 7
-Number of samples to process, -1: infinite.
+Number of samples to process, (default -1: infinite)
 
 .RE
 \fB-v, --version\fR
@@ -103,7 +103,7 @@ Load the drumkitfile.
 .SH "EXAMPLES"
 \fBRender midifile to wav files:\fR
 .RS 7
-drumgizmo -i midifile -I file=file.mid,midimap=midimap.xml -o wavfile -O file=file.wav drumkit.xml
+drumgizmo -i midifile -I file=file.mid,midimap=midimap.xml -o wavfile -O file=prefix drumkit.xml
 .RE
 \fBRecieve midi from Jack and send audio output to speakers:\fR
 .RS 7
