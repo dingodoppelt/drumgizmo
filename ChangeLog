@@ -1,3 +1,38 @@
+Version 0.9.8
+=============
+Released February 22nd 2015
+ - Fix deprecated autoconf/automake macros. (Nils Tonnätt)
+ - Update LV2 plugin to use new URID extension (http://lv2plug.in/ns/ext/urid/). (deva)
+ - Fix state store so it does not store terminating zero in config xml. (deva)
+ - "No sound" bug in resampler code. See: http://drumgizmo.org/irc-logs/drumgizmo.log.11Jan2015
+ - Make cli wait for drumkit to finish loading before starting the engine. (Jin^eLD)
+ - Make cli TYPE_STOP event wait until active events is empty. (deva)
+ - Add basic man page. (Nils Tonnätt)
+ - Reflect input/output parms in cli help text. (suhr)
+ - Reflect input/output parms in cli man page. (muldjord)
+ - Make resampler depend directly on zita-resampler and make libsamplerate an active opt-in. (suhr)
+ - Include test directory in dist. (suhr)
+ - Don't AC_SUBST zita libs and cflags if not used/detected by configure. (suhr)
+ - Make all use of atof and sprintf("%f") locale independent. (deva)
+ - Fix crash after rendering midi file to wav files via DG cli. (deva)
+ - Remove wavfile.la in output dir. (deva)
+ - Replace obsolete cli -p argument (preload) with -a (async-load) argument. (deva)
+
+Version 0.9.7
+=============
+Released December 7th 2014
+ - Resampling on channel output to match system. (in 'resample' branch) (deva)
+   - Zita on windows, configure lib detection
+   - Add missing resampler unit test files.
+   - Make resample work on VST.
+ - Fix LV2 UI crash on open. (deva)
+ - Global config file. (suhr)
+ - Remember last browse path. (suhr)
+ - Don't show hidden folder in file browser. (suhr)
+ - Lineedit follow marker. (suhr)
+   - LineEdit, scroll when in end on line and arrow right typed.
+   - Remove printf and uncommented code
+
 Version 0.9.6
 =============
 Released September 9th 2014
