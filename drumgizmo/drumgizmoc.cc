@@ -134,7 +134,7 @@ int CliMain::run(int argc, char *argv[])
       {0, 0, 0, 0}
     };
     
-    c = getopt_long (argc, argv, "hvpo:O:i:I:e:", long_options, &option_index);
+    c = getopt_long (argc, argv, "hvpo:O:i:I:e:a", long_options, &option_index);
     
     if (c == -1)
       break;
