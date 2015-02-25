@@ -32,6 +32,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <hugin.hpp>
+
 #include "drumgizmo.h"
 #include "drumgizmoc.h"
 
@@ -62,6 +64,9 @@ static const char usage_str[] =
 "  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio output engine.\n"
 "  -O, --outputparms      parmlist  Set output engine parameters.\n"
 "  -e, --endpos           Number of samples to process, -1: infinite.\n"
+#ifndef DISABLE_HUGIN
+"  -D, --debug ddd        Enable debug messages on 'ddd'; see hugin documentation for details\n"
+#endif/*DISABLE_HUGIN*/
 "  -v, --version          Print version information and exit.\n"
 "  -h, --help             Print this message and exit.\n"
 "\n"
@@ -113,6 +118,9 @@ int CliMain::run(int argc, char *argv[])
 {
   int c;
 
+  const char *hugin_filter = "+all";
+  unsigned int hugin_flags = HUG_FLAG_OUTPUT_TO_STDOUT;
+
   std::string outputengine;
   std::string inputengine;
   std::string iparms;
@@ -129,12 +137,19 @@ int CliMain::run(int argc, char *argv[])
       {"outputengine", required_argument, 0, 'o'},
       {"outputparms", required_argument, 0, 'O'},
       {"endpos", required_argument, 0, 'e'},
+#ifndef DISABLE_HUGIN
+      {"debug", required_argument, 0, 'D'},
+#endif/*DISABLE_HUGIN*/
       {"version", no_argument, 0, 'v'},
       {"help", no_argument, 0, 'h'},
       {0, 0, 0, 0}
     };
     
-    c = getopt_long (argc, argv, "hvpo:O:i:I:e:a", long_options, &option_index);
+    c = getopt_long(argc, argv, "hvpo:O:i:I:e:a"
+#ifndef DISABLE_HUGIN
+                    "D:"
+#endif/*DISABLE_HUGIN*/
+                    , long_options, &option_index);
     
     if (c == -1)
       break;
@@ -147,6 +162,13 @@ int CliMain::run(int argc, char *argv[])
         return 0;
       }
       break;
+
+#ifndef DISABLE_HUGIN
+    case 'D':
+      hugin_flags |= HUG_FLAG_USE_FILTER;
+      hugin_filter = optarg;
+      break;
+#endif/*DISABLE_HUGIN*/
 
     case 'I':
       iparms = optarg;
@@ -186,6 +208,14 @@ int CliMain::run(int argc, char *argv[])
     default:
       break;
     }
+  }
+
+  hug_status_t status = hug_init(hugin_flags,
+                                 HUG_OPTION_FILTER, hugin_filter,
+                                 HUG_OPTION_END);
+  if(status != HUG_STATUS_OK) {
+    printf("Error: %d\n", status);
+    return 1;
   }
 
   if(inputengine == "") {
@@ -269,10 +299,9 @@ int CliMain::run(int argc, char *argv[])
   std::string kitfile;
 
   if(option_index < argc) {
-    printf("non-option ARGV-elements: ");
     while (optind < argc) {
       if(kitfile != "") {
-        fprintf(stderr, "Can only handle a single kitfile.\n");
+        printf("Can only handle a single kitfile.\n");
         printf(usage_str, argv[0]);
         return 1;
       }
@@ -280,7 +309,7 @@ int CliMain::run(int argc, char *argv[])
     }
     printf("\n");
   } else {
-    fprintf(stderr, "Missing kitfile.\n");
+    printf("Missing kitfile.\n");
     printf(usage_str, argv[0]);
     return 1;
   }
@@ -322,6 +351,8 @@ int CliMain::run(int argc, char *argv[])
 
   delete oe;
   delete ie;
+
+  hug_close();
 
   return 0;
 }
