@@ -283,7 +283,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   // Write audio
   //
 #ifdef WITH_RESAMPLER
-  if(Conf::enable_resampling == false) { // No resampling needed
+  if(Conf::enable_resampling == false ||
+     resampler[0].ratio() == 1.0) { // No resampling needed
 #endif
     for(size_t c = 0; c < kit.channels.size(); c++) {
       sample_t *buf = samples;
@@ -318,21 +319,22 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
   // Process channel data
   size_t kitpos = pos * resampler[0].ratio();
+  size_t insize = sizeof(resampler_input_buffer[0]) / sizeof(sample_t);
+
   //printf("ratio: %f\n", resampler[c].ratio());
   while(resampler[0].getOutputSampleCount() > 0) {
     for(size_t c = 0; c < kit.channels.size(); c++) {
       if(resampler[c].getInputSampleCount() == 0) {
         sample_t *sin = resampler_input_buffer[c];
-        size_t insize = sizeof(resampler_input_buffer[c]) / sizeof(sample_t);
         memset(resampler_input_buffer[c], 0,
                sizeof(resampler_input_buffer[c]));
         getSamples(c, kitpos, sin, insize);
-        kitpos += insize;
 
         resampler[c].setInputSamples(sin, insize);
       }
       resampler[c].process();
     }
+    kitpos += insize;
   }
 
   // Write output data to output engine.
