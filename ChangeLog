@@ -1,3 +1,8 @@
+Version 0.9.8.1-hotfix
+======================
+Released March 16th 2015
+ - Fixed bug where resampling resulted in sample skewing over the output channels
+
 Version 0.9.8
 =============
 Released February 22nd 2015
