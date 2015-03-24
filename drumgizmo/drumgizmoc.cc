@@ -34,6 +34,10 @@
 
 #include <hugin.hpp>
 
+#ifndef HUG_FLAG_OUTPUT_TO_STDOUT
+#define HUG_FLAG_OUTPUT_TO_STDOUT 0
+#endif
+
 #include "drumgizmo.h"
 #include "drumgizmoc.h"
 
