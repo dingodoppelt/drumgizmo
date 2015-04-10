@@ -66,86 +66,106 @@ sample_t *CacheManager::open(AudioFile *file, int initial_samples_needed, int ch
   availableids.pop_front();
   m_ids.unlock();
 
-  cache_t c;
-  c.file = file;
-  c.channel = channel;
-  c.pos = initial_samples_needed;
-  // Allocate buffers
-  // Increase audio ref count
+  if(initial_samples_needed < file->size) {
+    cache_t c;
+    c.file = file;
+    c.channel = channel;
+    c.pos = initial_samples_needed;
+  
+    // Allocate buffers
+    // Increase audio ref count
 
-  id2cache[id] = c;
+    id2cache[id] = c;
  
-  event_t e;
-  e.id = id;
-  pushEvent(e);
+    event_t e = createEvent(id, LOADNEXT);
+    pushEvent(e);
+  }
 
   return file->data;
 }
 
 void CacheManager::close(cacheid_t id)
 {
-  m_ids.lock();
-  availableids.push_back(id);
-  m_ids.unlock();
-
+  {
+    event_t e = createEvent(id, CLEAN);
+    MutexAutolock l(m_events); 
+    eventqueue.push_front(e);
+  }
+  
+  {
+    MutexAutolock l(m_ids);
+    availableids.push_back(id);
+  }
   // Clean cache_t mapped to event
-  // Clean event list for other events mapped to this id?
-  //    Maybe we need an event for this, that we can push in front of eventqueue (con: we dont read from disk when doing this stuff).
   // Decrement audiofile ref count
 }
 
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
-  cache_t *c;
-  {
-    MutexAutolock l(m_caches);
-    c = &id2cache[id];
-  }
   size = CHUNKSIZE;
-  sample_t *s = c->file->data + c->pos;
-  c->pos += size;
+  m_caches.lock();
+  cache_t c = id2cache[id];
+  c.pos += size;
+  id2cache[id] = c;
+  m_caches.unlock(); 
+  
+  // If more is left of file 
+  if(c.pos < c.file->size) {
+    event_t e = createEvent(id, LOADNEXT); 
+    pushEvent(e);
+  }  
+
+  sample_t *s = c.file->data + c.pos;
   return s;
 }
 
 void CacheManager::loadNext(cacheid_t id) 
 {
-  m_caches.lock(); 
+  MutexAutolock l(m_caches);
   cache_t c = id2cache[id];
   c.pos += CHUNKSIZE;
   id2cache[id] = c;
-  m_caches.unlock();
-
-  // If more is left of file 
-  if(c.pos < c.file->size) {
-    event_t e; 
-    e.id = id;
-    pushEvent(e);
-  }
 }
 
 void CacheManager::thread_main()
 {
   while(running) {
     sem.wait();
-    
+
     m_events.lock();
     if(eventqueue.empty()) {
       event_t e = eventqueue.front();
       eventqueue.pop_front();
       m_events.unlock();
-    
-      loadNext(e.id);      
+ 
+      if(!e.active) continue;
+
+      switch(e.cmd) {  
+        case LOADNEXT:
+          loadNext(e.id);
+          break;
+        case CLEAN:
+          break;
+      }      
     }
     else {
       m_events.unlock();
-    } 
+    }
   }
 }
 
 void CacheManager::pushEvent(event_t e)
 {
   // Check that if event should be merged (Maybe by event queue (ie. push in front).
-  m_events.lock();
+  MutexAutolock l(m_events);
   eventqueue.push_back(e);
-  m_events.unlock();
+}
+
+CacheManager::event_t CacheManager::createEvent(cacheid_t id, cmd_t cmd)
+{
+  event_t e;
+  e.active = true;
+  e.id = id;
+  e.cmd = cmd;
+  return e; 
 }
