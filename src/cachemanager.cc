@@ -177,8 +177,11 @@ void CacheManager::thread_main()
 void CacheManager::pushEvent(event_t e)
 {
   // Check that if event should be merged (Maybe by event queue (ie. push in front).
+  {
   MutexAutolock l(m_events);
   eventqueue.push_back(e);
+  }
+  sem.post();
 }
 
 CacheManager::event_t CacheManager::createEvent(cacheid_t id, cmd_t cmd)
