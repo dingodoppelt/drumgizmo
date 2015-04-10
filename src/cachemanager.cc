@@ -28,6 +28,8 @@
 
 #include <stdio.h>
 
+#define CHUNKSIZE 256
+
 CacheManager::CacheManager()
 {
 }
@@ -99,7 +101,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
     MutexAutolock l(m_caches);
     c = &id2cache[id];
   }
-  size = 256;
+  size = CHUNKSIZE;
   sample_t *s = c->file->data + c->pos;
   c->pos += size;
   return s;
@@ -107,16 +109,18 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
 void CacheManager::loadNext(cacheid_t id) 
 {
-/*
-  printf("Loading next...\n");
+  m_caches.lock(); 
+  cache_t c = id2cache[id];
+  c.pos += CHUNKSIZE;
+  id2cache[id] = c;
+  m_caches.unlock();
 
   // If more is left of file 
-  if(false) {
+  if(c.pos < c.file->size) {
     event_t e; 
     e.id = id;
     pushEvent(e);
   }
-*/
 }
 
 void CacheManager::thread_main()
