@@ -99,7 +99,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
 
 void CacheManager::close(cacheid_t id)
 {
-  if(CACHE_DUMMYID) return;
+  if(id == CACHE_DUMMYID) return;
 
   {
     event_t e = createEvent(id, CLEAN);
