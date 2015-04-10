@@ -100,6 +100,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
 void CacheManager::loadNext(cacheid_t id) 
 {
+/*
   printf("Loading next...\n");
 
   // If more is left of file 
@@ -108,6 +109,7 @@ void CacheManager::loadNext(cacheid_t id)
     e.id = id;
     pushEvent(e);
   }
+*/
 }
 
 void CacheManager::thread_main()
