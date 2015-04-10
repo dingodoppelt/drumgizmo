@@ -91,14 +91,20 @@ private:
     void *b;
   } cache_t;
 
+  enum cmd_t {
+    LOADNEXT = 0,
+    CLEAN = 1
+  };
+
   typedef struct {
+    bool active;
     cacheid_t id;
+    cmd_t cmd;
   } event_t;
 
+  CacheManager::event_t createEvent(cacheid_t id, cmd_t type);
   void loadNext(cacheid_t id);
   void pushEvent(event_t e);
-  cacheid_t leaseId();
-  cacheid_t releaseId();
 
   // Protected by mutex
   std::list<event_t> eventqueue;
