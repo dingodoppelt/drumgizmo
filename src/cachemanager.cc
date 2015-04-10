@@ -58,7 +58,7 @@ void CacheManager::deinit()
 }
 
 // Invariant: initial_samples_needed < preloaded audio data 
-sample_t *CacheManager::open(AudioFile *file, int initial_samples_needed, int channel, cacheid_t &id) 
+sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &id) 
 {
   // What if no free ids is available?
   m_ids.lock();

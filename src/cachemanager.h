@@ -58,7 +58,7 @@ public:
   // returns the first buffer and its size in &size.
   // get id from "free stack" and store pointers to buffers in id vector.
   // event: open sndfile handle (if not already open) and increase refcount
-  sample_t *open(AudioFile *file, int initial_samples_needed, int channel, cacheid_t &new_id);
+  sample_t *open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &new_id);
 
   // Return which ever buffer is the front, swap them and add event to load the
   // next chunk.
