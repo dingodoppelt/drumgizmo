@@ -30,8 +30,13 @@
 
 #define CHUNKSIZE 256
 
+sample_t nodata[CHUNKSIZE];
+
 CacheManager::CacheManager()
 {
+  for(int i = 0; i < CHUNKSIZE; i++) {
+    nodata[i] = 0;
+  }
 }
 
 CacheManager::~CacheManager()
@@ -62,11 +67,17 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
 {
   // What if no free ids is available?
   m_ids.lock();
-  id = availableids.front();
-  availableids.pop_front();
+  if(availableids.empty()) {
+    id = CACHEMANAGER_NOID;
+  }
+  else {
+    id = availableids.front();
+    availableids.pop_front();
+  }
   m_ids.unlock();
 
-  if(initial_samples_needed < file->size) {
+  if(id != CACHEMANAGER_NOID && 
+     initial_samples_needed < file->size) {
     cache_t c;
     c.file = file;
     c.channel = channel;
@@ -81,11 +92,17 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     pushEvent(e);
   }
 
+  if(id == CACHEMANAGER_NOID) {
+    return nodata;
+  }
+  
   return file->data;
 }
 
 void CacheManager::close(cacheid_t id)
 {
+  if(CACHEMANAGER_NOID) return;
+
   {
     event_t e = createEvent(id, CLEAN);
     MutexAutolock l(m_events); 
@@ -103,6 +120,11 @@ void CacheManager::close(cacheid_t id)
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
   size = CHUNKSIZE;
+
+  if(id == CACHEMANAGER_NOID) {
+    return nodata;
+  }
+
   m_caches.lock();
   cache_t c = id2cache[id];
   c.pos += size;
