@@ -52,7 +52,7 @@ void CacheManager::init(int poolsize)
 sample_t *CacheManager::open(AudioFile *file, int initial_samples_needed, int channel, cacheid_t &id) 
 {
   // What if no free ids is available?
-  m_ids.lock(); 
+  m_ids.lock();
   id = availableids.front();
   availableids.pop_front();
   m_ids.unlock();
@@ -87,8 +87,15 @@ void CacheManager::close(cacheid_t id)
 
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
-  sample_t *s = NULL;
-  return s;   
+  cache_t *c;
+  {
+    MutexAutolock l(m_caches);
+    c = &id2cache[id];
+  }
+  size = 256;
+  sample_t *s = c->file->data + c->pos;
+  c->pos += size;
+  return s;
 }
 
 void CacheManager::loadNext(cacheid_t id) 
