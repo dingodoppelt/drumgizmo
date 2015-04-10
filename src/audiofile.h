@@ -80,7 +80,7 @@ public:
   bool isLoaded();
 
   volatile size_t size;
-  volatile sample_t *data;
+  sample_t *data;
 
   std::string filename;
 

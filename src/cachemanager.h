@@ -3,8 +3,8 @@
  *            cachemanager.h
  *
  *  Fri Apr 10 10:39:24 CEST 2015
- *  Copyright 2015 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Copyright 2015 Jonas Suhr Christensen
+ *  jsc@umbraculum.org
  ****************************************************************************/
 
 /*
@@ -29,18 +29,28 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
+#include "thread.h"
+#include "semaphore.h"
+#include "mutex.h"
+
+#include "audiotypes.h"
+#include "audiofile.h"
+
+#define CACHEMANAGER_NOID -1;
 class AudioFile;
+typedef int cacheid_t;
 
-class CacheManager {
+class CacheManager : public Thread {
 public:
+  CacheManager();
+  ~CacheManager();
 
-  class Request {
-  public:
-    std::string filename;
-    std::map<unsigned int, void*> targets;
-    size_t pos;
-  };
+  void init(int poolsize);
+  void deinit();
+
+  void thread_main();
 
   // Pre: preloaded contains 2 x framesize. chunk size is framesize.
   // allocate 2 chunks and copy initial_samples_needed to first buffer from
@@ -48,17 +58,17 @@ public:
   // returns the first buffer and its size in &size.
   // get id from "free stack" and store pointers to buffers in id vector.
   // event: open sndfile handle (if not already open) and increase refcount
-  sample_t *hello(AudioFile *file, int initial_samples_needed, int channel, id_t &new_id);
+  sample_t *open(AudioFile *file, int initial_samples_needed, int channel, cacheid_t &new_id);
 
   // Return which ever buffer is the front, swap them and add event to load the
   // next chunk.
-  sample_t *getNextBuffer(id_t id, size_t &size);
+  sample_t *next(cacheid_t id, size_t &size);
 
   // decrement file handle refcounter and close file if it is 0.
   // free the 2 buffers
   // (do not erase from the id vector), push index to
   // "free stack" for reuse.
-  void goodbye(id_t id);
+  void close(cacheid_t id);
 
   // id vector:
   // {
@@ -70,15 +80,38 @@ public:
   // }
 
 private:
-  class File {
-  public:
-    sndfile_t *handle;
-    int refcounter;
-  };
 
-  std::list<Request> requests;
-  std::map<AudioFile *, File>
+  void pushEvent();
 
+  typedef struct {
+    AudioFile *file;
+    int channel;
+    size_t pos;
+    void *a;
+    void *b;
+  } cache_t;
+
+  typedef struct {
+    cacheid_t id;
+  } event_t;
+
+  void loadNext(cacheid_t id);
+  void pushEvent(event_t e);
+  cacheid_t leaseId();
+  cacheid_t releaseId();
+
+  // Protected by mutex
+  std::list<event_t> eventqueue;
+  std::list<cacheid_t> availableids; 
+  std::vector<cache_t> id2cache; 
+  
+  Mutex m_events;
+  Mutex m_ids;
+  Mutex m_caches;
+
+  Semaphore sem;
+
+  int running;
 };
 
 #endif/*__DRUMGIZMO_CACHEMANAGER_H__*/

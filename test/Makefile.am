@@ -1,7 +1,7 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = resource engine gui resampler lv2 configfile
+TESTS = resource engine cache gui resampler lv2 configfile
 
 check_PROGRAMS = $(TESTS)
 
@@ -25,6 +25,17 @@ engine_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	engine.cc
+
+cache_CXXFLAGS = -DOUTPUT=\"cache\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+cache_CFLAGS = -DDISABLE_HUGIN
+cache_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
+cache_SOURCES = \
+	$(DRUMGIZMO_SOURCES) \
+	$(top_srcdir)/hugin/hugin.c \
+	test.cc \
+	cache.cc
 
 gui_CXXFLAGS = -DOUTPUT=\"gui\" $(CPPUNIT_CFLAGS)
 gui_LDFLAGS = $(CPPUNIT_LIBS)
