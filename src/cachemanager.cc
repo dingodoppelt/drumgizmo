@@ -65,10 +65,9 @@ void CacheManager::deinit()
 // Invariant: initial_samples_needed < preloaded audio data 
 sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &id) 
 {
-  // What if no free ids is available?
   m_ids.lock();
   if(availableids.empty()) {
-    id = CACHEMANAGER_NOID;
+    id = CACHE_DUMMYID;
   }
   else {
     id = availableids.front();
@@ -76,8 +75,11 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   }
   m_ids.unlock();
 
-  if(id != CACHEMANAGER_NOID && 
-     initial_samples_needed < file->size) {
+  if(id == CACHE_DUMMYID) {
+    return nodata;
+  }
+
+  if(initial_samples_needed < file->size) {
     cache_t c;
     c.file = file;
     c.channel = channel;
@@ -92,16 +94,12 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     pushEvent(e);
   }
 
-  if(id == CACHEMANAGER_NOID) {
-    return nodata;
-  }
-  
   return file->data;
 }
 
 void CacheManager::close(cacheid_t id)
 {
-  if(CACHEMANAGER_NOID) return;
+  if(CACHE_DUMMYID) return;
 
   {
     event_t e = createEvent(id, CLEAN);
@@ -121,7 +119,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 {
   size = CHUNKSIZE;
 
-  if(id == CACHEMANAGER_NOID) {
+  if(id == CACHE_DUMMYID) {
     return nodata;
   }
 

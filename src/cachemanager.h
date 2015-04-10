@@ -38,7 +38,9 @@
 #include "audiotypes.h"
 #include "audiofile.h"
 
-#define CACHEMANAGER_NOID -1
+#define CACHE_DUMMYID -2
+#define CACHE_NOID -1
+
 class AudioFile;
 typedef int cacheid_t;
 
