@@ -34,7 +34,7 @@ CacheManager::CacheManager()
 
 CacheManager::~CacheManager()
 {
-  wait_stop();
+  deinit();
 }
 
 void CacheManager::init(int poolsize)
@@ -46,6 +46,13 @@ void CacheManager::init(int poolsize)
 
   running = true;
   run();
+}
+
+void CacheManager::deinit()
+{
+  if(!running) return;
+  running = false;
+  wait_stop();
 }
 
 // Invariant: initial_samples_needed < preloaded audio data 
