@@ -49,7 +49,7 @@ public:
   CacheManager();
   ~CacheManager();
 
-  void init(int poolsize);
+  void init(size_t poolsize);
   void deinit();
 
   void thread_main();
@@ -89,8 +89,8 @@ private:
     AudioFile *file;
     int channel;
     size_t pos;
-    void *a;
-    void *b;
+    sample_t *front;
+    sample_t *back;
   } cache_t;
 
   enum cmd_t {

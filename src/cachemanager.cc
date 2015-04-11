@@ -28,15 +28,17 @@
 
 #include <stdio.h>
 
-#define CHUNKSIZE 256
+#define FRAMESIZE 256
+#define CHUNKSIZE FRAMESIZE*8
 
-sample_t nodata[CHUNKSIZE];
+sample_t nodata[FRAMESIZE];
+
+static std::vector<size_t> localcachepos;
+static std::vector<sample_t*> localcache;
 
 CacheManager::CacheManager()
 {
-  for(int i = 0; i < CHUNKSIZE; i++) {
-    nodata[i] = 0;
-  }
+
 }
 
 CacheManager::~CacheManager()
@@ -44,15 +46,26 @@ CacheManager::~CacheManager()
   deinit();
 }
 
-void CacheManager::init(int poolsize)
+void CacheManager::init(size_t poolsize)
 {
+  for(size_t i = 0; i < FRAMESIZE; i++) {
+    nodata[i] = 0;
+  }
+
   id2cache.resize(poolsize);
-  for(int i = 0; i < poolsize; i++) {
+  for(size_t i = 0; i < poolsize; i++) {
     availableids.push_back(i);
   }
 
+  localcachepos.resize(poolsize);
+  for(size_t i = 0; i < poolsize; i++) {
+    localcachepos[i] = 0;
+  }
+  
   running = true;
   run();
+
+  // TODO: Add semaphore
 }
 
 void CacheManager::deinit()
@@ -65,39 +78,41 @@ void CacheManager::deinit()
 // Invariant: initial_samples_needed < preloaded audio data 
 sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &id) 
 {
-  m_ids.lock();
-  if(availableids.empty()) {
-    id = CACHE_DUMMYID;
+  {
+    MutexAutolock l(m_ids);
+    if(availableids.empty()) {
+      id = CACHE_DUMMYID;
+    } else {
+      id = availableids.front();
+      availableids.pop_front();
+    }
   }
-  else {
-    id = availableids.front();
-    availableids.pop_front();
-  }
-  m_ids.unlock();
 
   if(id == CACHE_DUMMYID) {
     return nodata;
   }
 
-  if(initial_samples_needed < file->size) {
-    cache_t c;
-    c.file = file;
-    c.channel = channel;
-    c.pos = initial_samples_needed;
-  
-    // Allocate buffers
-    // Increase audio ref count
 
-    {
+  cache_t c;
+  c.file = file;
+  c.channel = channel;
+  c.pos = initial_samples_needed;
+  c.front = file->data;
+  c.back = nodata;
+  // Allocate buffers
+  // Increase audio ref count
+
+  {
     MutexAutolock l(m_ids);
     id2cache[id] = c;
-    }
- 
+  }
+
+  if(initial_samples_needed < file->size) {
     event_t e = createLoadNextEvent(id, c.pos, LOADNEXT);
     pushEvent(e);
   }
 
-  return file->data;
+  return c.front;
 }
 
 void CacheManager::close(cacheid_t id)
@@ -128,29 +143,47 @@ const CacheManager::cache_t CacheManager::getNextCache(cacheid_t id)
 
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
-  size = CHUNKSIZE;
+  size = FRAMESIZE;
 
   if(id == CACHE_DUMMYID) {
     return nodata;
   }
 
-  const cache_t c = getNextCache(id);
+  size_t localpos = localcachepos[id];
+  sample_t* localbuf = localcache[id];
+  if(localpos < CHUNKSIZE) {
+    localcachepos[id] += FRAMESIZE;
+    return localbuf + FRAMESIZE;
+  }
 
-  // If more is left of file 
+  localcachepos[id] = 0;
+
+  const cache_t c = getNextCache(id);
+  
+  localcache[id] = c.front;
+
   if(c.pos < c.file->size) {
     event_t e = createLoadNextEvent(id, c.pos + CHUNKSIZE, LOADNEXT); 
     pushEvent(e);
   } 
 
-  sample_t *s = c.file->data + (c.pos - size);
-  return s;
+//  sample_t *s = c.file->data + (c.pos - size);
+  return c.front;
+//  return s;
 }
 
 void CacheManager::loadNext(cacheid_t id) 
 {
-  MutexAutolock l(m_caches);
+  m_caches.lock();
   cache_t c = id2cache[id];
+  sample_t *tmp;
+  c.front = c.back;
+  c.back = tmp;
   id2cache[id] = c;
+  m_caches.unlock();
+
+  // do work
+  tmp = tmp + CHUNKSIZE;
 }
 
 void CacheManager::thread_main()
@@ -165,14 +198,14 @@ void CacheManager::thread_main()
       m_events.unlock();
 
       // TODO: Skip event if e.pos < cache.pos 
-      if(!e.active) continue;
+//      if(!e.active) continue;
 
       switch(e.cmd) {  
         case LOADNEXT:
           loadNext(e.id);
           break;
-        case CLEAN:
-          break;
+//        case CLEAN:
+//          break;
       }      
     }
     else {
