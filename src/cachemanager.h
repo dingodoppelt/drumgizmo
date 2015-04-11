@@ -138,8 +138,8 @@ private:
     AudioFile *file;
     int channel;
     size_t pos;
-    void *a;
-    void *b;
+    sample_t *front;
+    sample_t *back;
   } cache_t;
 
   enum cmd_t {
