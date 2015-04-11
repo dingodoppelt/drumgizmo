@@ -38,6 +38,7 @@
 #include "drumkit.h"
 
 #include "drumkitloader.h"
+#include "cachemanager.h"
 
 #include "mutex.h"
 
@@ -94,6 +95,8 @@ private:
   sample_t resampler_input_buffer[MAX_NUM_CHANNELS][64];
 
   std::map<std::string, AudioFile *> audiofiles;
+
+  CacheManager cacheManager;
 
   DrumKit kit;
 };
