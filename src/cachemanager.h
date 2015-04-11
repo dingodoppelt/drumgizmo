@@ -44,42 +44,91 @@
 class AudioFile;
 typedef int cacheid_t;
 
+
+//TODO:
+// 1: Move nodata initialisation to init method.
+// 2: Make semaphore in thread to block init call until thread has been started.
+
+//// next
+// Pre: preloaded contains 2 x framesize. chunk size is framesize.
+// allocate 2 chunks and copy initial_samples_needed to first buffer from
+// preloaded data and enough to fill up the second buffer from preloaded
+// returns the first buffer and its size in &size.
+// get id from "free stack" and store pointers to buffers in id vector.
+// event: open sndfile handle (if not already open) and increase refcount
+
+//// next
+// Return which ever buffer is the front, swap them and add event to load the
+// next chunk.
+
+//// close
+// decrement file handle refcounter and close file if it is 0.
+// free the 2 buffers
+// (do not erase from the id vector), push index to
+// "free stack" for reuse.
+
 class CacheManager : public Thread {
 public:
+  /**
+   * Empty constructor...
+   */
   CacheManager();
+
+  /**
+   * Destroy object and stop thread if needed.
+   */
   ~CacheManager();
 
-  void init(int poolsize);
+  /**
+   * Initialise cache manager and allocate needed resources
+   * This method starts the cache manager thread.
+   * This method blocks until the thread has been started.
+   * @param poolsize The maximum number of parellel events supported. 
+   */
+  void init(size_t poolsize);
+
+  /**
+   * Stop thread and clean up resources.
+   * This method blocks until the thread has stopped.
+   */
   void deinit();
 
-  void thread_main();
+  /**
+   * Register new cache entry.
+   * Prepares an entry in the cache manager for future disk streaming.
+   * @param file A pointer to the file which is to be streamed from.
+   * @param initial_samples_needed The number of samples needed in the first
+   *  read that is not nessecarily of framesize. This is the number of samples
+   *  from the input event offset to the end of the frame in which it resides.
+   *  initial_samples_needed <= framesize.
+   * @param channel The channel to which the cache id will be bound.
+   * @param [out] new_id The newly created cache id.
+   * @return A pointer to the first buffer containing the
+   *  'initial_samples_needed' number of samples.
+   */
+  sample_t *open(AudioFile *file, size_t initial_samples_needed, int channel,
+                 cacheid_t &new_id);
 
-  // Pre: preloaded contains 2 x framesize. chunk size is framesize.
-  // allocate 2 chunks and copy initial_samples_needed to first buffer from
-  // preloaded data and enough to fill up the second buffer from preloaded
-  // returns the first buffer and its size in &size.
-  // get id from "free stack" and store pointers to buffers in id vector.
-  // event: open sndfile handle (if not already open) and increase refcount
-  sample_t *open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &new_id);
-
-  // Return which ever buffer is the front, swap them and add event to load the
-  // next chunk.
+  /**
+   * Get next buffer.
+   * Returns the next buffer for reading based on cache id.
+   * This function will (if needed) schedule a new disk read to make sure that
+   * data is available in the next call to this method.
+   * @param id The cache id to read from.
+   * @param [out] size The size of the returned buffer.
+   * @return A pointer to the buffer.
+   */
   sample_t *next(cacheid_t id, size_t &size);
 
-  // decrement file handle refcounter and close file if it is 0.
-  // free the 2 buffers
-  // (do not erase from the id vector), push index to
-  // "free stack" for reuse.
+  /**
+   * Unregister cache entry.
+   * Close associated file handles and free associated buffers.
+   * @param id The cache id to close.
+   */
   void close(cacheid_t id);
 
-  // id vector:
-  // {
-  //   AudioFile*
-  //   channel
-  //   buffer1, buffer2
-  //   position
-  //   (ready?)
-  // }
+  ///! Internal thread main method - needs to be public.
+  void thread_main();
 
 private:
 
