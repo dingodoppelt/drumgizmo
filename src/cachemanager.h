@@ -152,12 +152,13 @@ private:
     cacheid_t id;
     size_t pos;
     cmd_t cmd;
+    sample_t **fillbuffer;
   } event_t;
 
-  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, cmd_t type);
-  void loadNext(cacheid_t id);
+  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, sample_t** fillbuffer);
+  void loadNext(event_t &e);
   void pushEvent(event_t e);
-  const cache_t getNextCache(cacheid_t id);
+  cache_t getNextCache(cacheid_t id);
 
   // Protected by mutex
   std::list<event_t> eventqueue;
