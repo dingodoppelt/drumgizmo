@@ -35,6 +35,7 @@
 #include "audiofile.h"
 #include "audio.h"
 #include "mutex.h"
+#include "cachemanager.h"
 
 typedef unsigned int timepos_t;
 
@@ -58,6 +59,7 @@ public:
   EventSample(channel_t c, float g, AudioFile *af, std::string grp,
               void *instr)
   {
+    cache_id = CACHE_NOID;
     channel = c;
     gain = g;
     t = 0;
@@ -69,6 +71,10 @@ public:
   }
 
   Event::type_t type() { return Event::sample; }
+
+  cacheid_t cache_id;
+  sample_t *buffer;
+  size_t buffer_size;
 
   float gain;
   unsigned int t;

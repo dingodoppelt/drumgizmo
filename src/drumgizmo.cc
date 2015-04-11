@@ -50,10 +50,12 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
     loader(), oe(o), ie(i)
 {
   is_stopping = false;
+  cacheManager.init(1000); // start thread
 }
 
 DrumGizmo::~DrumGizmo()
 {
+  cacheManager.deinit(); // stop thread
 }
 
 bool DrumGizmo::loadkit(std::string file)
@@ -398,6 +400,18 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           break;
         }
 
+        // Don't handle event now is is scheduled for a future iteration?
+        if(evt->offset > (pos + sz)) {
+          continue;
+        }
+
+        if(evt->cache_id == CACHE_NOID) {
+          size_t initial_chunksize = (pos + sz) - evt->offset;
+          evt->buffer =
+            cacheManager.open(af, initial_chunksize, ch, evt->cache_id);
+          evt->buffer_size = initial_chunksize;
+        }
+
         {
         MutexAutolock l(af->mutex);
 
@@ -409,32 +423,37 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
-//          DEBUG(drumgizmo,"%d\n", evt->t); fflush(stdout);
-         size_t optend = ((end - n) / N) * N + n;
-         for(; n < optend; n += N) {
-            *(vNsf*)&(s[n]) += *(vNsf*)&(af->data[evt->t]);
+          size_t optend = ((end - n) / N) * N + n;
+          size_t t;
+          for(; n < optend; n += N) {
+            t = evt->t % evt->buffer_size;
+            *(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
             evt->t += N;
-          }
+         }
 #endif
           for(; n < end; n++) {
-            s[n] += af->data[evt->t];
+            s[n] += evt->buffer[evt->t % evt->buffer_size];
             evt->t++;
           }
         } else { // Ramp down in progress.
           for(; n < end && evt->rampdown; n++) {
             float scale = (float)evt->rampdown/(float)evt->ramp_start;
-            s[n] += af->data[evt->t] * scale;
+            s[n] += evt->buffer[evt->t % evt->buffer_size] * scale;
             evt->t++;
             evt->rampdown--;
           }
           
           if(evt->rampdown == 0) {
             removeevent = true; // Down ramp done. Remove event.
+            cacheManager.close(evt->cache_id);
           }
         }
 
         if(evt->t >= af->size) { 
           removeevent = true;
+          cacheManager.close(evt->cache_id);
+        } else {
+          evt->buffer = cacheManager.next(evt->cache_id, evt->buffer_size);
         }
 
         }
