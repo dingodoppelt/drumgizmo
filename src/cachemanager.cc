@@ -61,7 +61,10 @@ void CacheManager::init(size_t poolsize)
   for(size_t i = 0; i < poolsize; i++) {
     localcachepos[i] = 0;
   }
-  
+
+  for(size_t i = 0; i < poolsize; i++) {
+    localcache[i] = NULL;
+  } 
   localcache.resize(poolsize);
   
   running = true;
@@ -108,6 +111,9 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     MutexAutolock l(m_ids);
     id2cache[id] = c;
   }
+
+  localcachepos[id] = 0;
+  localcache[id] = c.front;
 
   if(initial_samples_needed < file->size) {
     event_t e = createLoadNextEvent(id, c.pos, LOADNEXT);
@@ -159,6 +165,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   }
 
   localcachepos[id] = 0;
+  localcache[id] = NULL;
 
   const cache_t c = getNextCache(id);
   
