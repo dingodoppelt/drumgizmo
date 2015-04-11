@@ -375,7 +375,6 @@ void DrumGizmo::run(int endpos)
   free(samples);
 }
 
-#undef SSE
 #ifdef SSE
 #define N 8
 typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
