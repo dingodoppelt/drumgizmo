@@ -144,7 +144,7 @@ private:
 
   enum cmd_t {
     LOADNEXT = 0,
-    CLEAN = 1
+//    CLEAN = 1
   };
 
   typedef struct {

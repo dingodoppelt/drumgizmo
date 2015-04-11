@@ -176,7 +176,7 @@ void CacheManager::loadNext(cacheid_t id)
 {
   m_caches.lock();
   cache_t c = id2cache[id];
-  sample_t *tmp;
+  sample_t *tmp = c.front;
   c.front = c.back;
   c.back = tmp;
   id2cache[id] = c;
