@@ -88,9 +88,12 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     // Allocate buffers
     // Increase audio ref count
 
+    {
+    MutexAutolock l(m_ids);
     id2cache[id] = c;
+    }
  
-    event_t e = createEvent(id, LOADNEXT);
+    event_t e = createLoadNextEvent(id, c.pos, LOADNEXT);
     pushEvent(e);
   }
 
@@ -102,9 +105,9 @@ void CacheManager::close(cacheid_t id)
   if(id == CACHE_DUMMYID) return;
 
   {
-    event_t e = createEvent(id, CLEAN);
-    MutexAutolock l(m_events); 
-    eventqueue.push_front(e);
+//    event_t e = createEvent(id, CLEAN);
+//    MutexAutolock l(m_events); 
+//    eventqueue.push_front(e);
   }
   
   {
@@ -115,6 +118,14 @@ void CacheManager::close(cacheid_t id)
   // Decrement audiofile ref count
 }
 
+const CacheManager::cache_t CacheManager::getNextCache(cacheid_t id)
+{
+  MutexAutolock l(m_caches);
+  cache_t c = id2cache[id];
+  id2cache[id].pos += CHUNKSIZE;
+  return c;
+}
+
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
   size = CHUNKSIZE;
@@ -123,19 +134,15 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
     return nodata;
   }
 
-  m_caches.lock();
-  cache_t c = id2cache[id];
-  c.pos += size;
-  id2cache[id] = c;
-  m_caches.unlock(); 
-  
+  const cache_t c = getNextCache(id);
+
   // If more is left of file 
   if(c.pos < c.file->size) {
-    event_t e = createEvent(id, LOADNEXT); 
+    event_t e = createLoadNextEvent(id, c.pos + CHUNKSIZE, LOADNEXT); 
     pushEvent(e);
-  }  
+  } 
 
-  sample_t *s = c.file->data + c.pos;
+  sample_t *s = c.file->data + (c.pos - size);
   return s;
 }
 
@@ -143,7 +150,6 @@ void CacheManager::loadNext(cacheid_t id)
 {
   MutexAutolock l(m_caches);
   cache_t c = id2cache[id];
-  c.pos += CHUNKSIZE;
   id2cache[id] = c;
 }
 
@@ -153,11 +159,12 @@ void CacheManager::thread_main()
     sem.wait();
 
     m_events.lock();
-    if(eventqueue.empty()) {
+    if(!eventqueue.empty()) {
       event_t e = eventqueue.front();
       eventqueue.pop_front();
       m_events.unlock();
- 
+
+      // TODO: Skip event if e.pos < cache.pos 
       if(!e.active) continue;
 
       switch(e.cmd) {  
@@ -184,11 +191,12 @@ void CacheManager::pushEvent(event_t e)
   sem.post();
 }
 
-CacheManager::event_t CacheManager::createEvent(cacheid_t id, cmd_t cmd)
+CacheManager::event_t CacheManager::createLoadNextEvent(cacheid_t id, size_t pos, cmd_t cmd)
 {
   event_t e;
   e.active = true;
   e.id = id;
   e.cmd = cmd;
+  e.pos = pos;
   return e; 
 }

@@ -101,12 +101,14 @@ private:
   typedef struct {
     bool active;
     cacheid_t id;
+    size_t pos;
     cmd_t cmd;
   } event_t;
 
-  CacheManager::event_t createEvent(cacheid_t id, cmd_t type);
+  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, cmd_t type);
   void loadNext(cacheid_t id);
   void pushEvent(event_t e);
+  const cache_t getNextCache(cacheid_t id);
 
   // Protected by mutex
   std::list<event_t> eventqueue;
