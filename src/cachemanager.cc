@@ -62,6 +62,8 @@ void CacheManager::init(size_t poolsize)
     localcachepos[i] = 0;
   }
   
+  localcache.resize(poolsize);
+  
   running = true;
   run();
 
