@@ -139,10 +139,10 @@ void AudioFile::load(int num_samples)
     int read;
     do {
       read = sf_readf_float(fh, buffer, readsize);
-      for (int i = 0; i < read; i++) {
+      for (int i = 0; i < read && totalread < num_samples; i++) {
         data[totalread++] = buffer[i * sf_info.channels + filechannel];
       }
-    } while(read > 0 && totalread < (int)size);
+    } while(read > 0 && totalread < (int)size && totalread < num_samples);
     // set data size to total bytes read
     size = totalread;
   }
