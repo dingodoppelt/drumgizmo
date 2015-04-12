@@ -101,7 +101,8 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   }
 
   if(initial_samples_needed < file->size) {
-    cevent_t e = createLoadNextEvent(c.file, c.pos + CHUNKSIZE, c.back);
+    cevent_t e =
+      createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
     pushEvent(e);
   }
 
@@ -111,6 +112,9 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
 void CacheManager::close(cacheid_t id)
 {
   if(id == CACHE_DUMMYID) return;
+
+  cevent_t e = createCloseEvent(id);
+  pushEvent(e);
 
   {
 //    event_t e = createEvent(id, CLEAN);
@@ -150,16 +154,24 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   c.pos += CHUNKSIZE;
   
   if(c.pos < c.file->size) {
-    cevent_t e = createLoadNextEvent(c.file, c.pos, c.back);
+    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos, c.back);
     pushEvent(e);
   } 
 
   return c.front;
 }
 
-void CacheManager::loadNext(cevent_t &e) 
+void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
   memcpy(e.buffer, e.file->data + e.pos, CHUNKSIZE * sizeof(sample_t));
+}
+
+void CacheManager::handleCloseEvent(cevent_t &e) 
+{
+  cache_t& c = id2cache[e.id];
+  delete[] c.front;
+  delete[] c.back;
+  // TODO: Count down ref coutner on c.file and close it if 0.
 }
 
 void CacheManager::thread_main()
@@ -178,13 +190,13 @@ void CacheManager::thread_main()
 
       switch(e.cmd) {  
         case LOADNEXT:
-          loadNext(e);
+          handleLoadNextEvent(e);
           break;
-//        case CLEAN:
-//          break;
+        case CLOSE:
+          handleCloseEvent(e);
+          break;
       }      
-    }
-    else {
+    } else {
       m_events.unlock();
     }
   }
@@ -200,14 +212,24 @@ void CacheManager::pushEvent(cevent_t e)
   sem.post();
 }
 
-CacheManager::cevent_t CacheManager::createLoadNextEvent(AudioFile *file,
-                                                         size_t pos,
-                                                         sample_t* buffer)
+CacheManager::cevent_t
+CacheManager::createLoadNextEvent(AudioFile *file, size_t channel, size_t pos,
+                                  sample_t* buffer)
 {
   cevent_t e;
   e.cmd = LOADNEXT;
   e.pos = pos;
   e.buffer = buffer;
   e.file = file;
+  e.channel = channel;
+  return e; 
+}
+
+CacheManager::cevent_t
+CacheManager::createCloseEvent(cacheid_t id)
+{
+  cevent_t e;
+  e.cmd = CLOSE;
+  e.id = id;
   return e; 
 }
