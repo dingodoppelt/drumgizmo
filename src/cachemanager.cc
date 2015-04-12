@@ -33,13 +33,12 @@
 
 #include <hugin.hpp>
 
-#define FRAMESIZE 256
-#define CHUNKSIZE FRAMESIZE*100
-
 static sample_t nodata[FRAMESIZE];
 
-#define BUFFER_SIZE FRAMESIZE
-static size_t readChunk(std::string filename, int filechannel, size_t from, size_t num_samples, sample_t* buf)
+#define	BUFFER_SIZE	4092
+
+static size_t readChunk(std::string filename, int filechannel, size_t pos,
+                        size_t num_samples, sample_t* buf)
 {
   SF_INFO sf_info;
   SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
@@ -49,14 +48,17 @@ static size_t readChunk(std::string filename, int filechannel, size_t from, size
     return 0;
   }
 
-  sf_seek(fh, from, SEEK_SET);
+  if(pos > sf_info.frames) return 0;
 
-  size_t size = num_samples;
-  sample_t* data = buf; 
+  sf_seek(fh, pos, SEEK_SET);
+
+  size_t size = sf_info.frames - pos;
+  if(size > num_samples) size = num_samples;
+
+  sample_t* data = buf;
   if(sf_info.channels == 1) {
     size = sf_read_float(fh, data, size);
-  }
-  else {
+  } else {
     // check filechannel exists
     if(filechannel >= sf_info.channels) {
         filechannel = sf_info.channels - 1;
@@ -67,10 +69,10 @@ static size_t readChunk(std::string filename, int filechannel, size_t from, size
     int read;
     do {
       read = sf_readf_float(fh, buffer, readsize);
-      for (int i = 0; i < read; i++) {
+      for (int i = 0; i < read && totalread < (int)size; i++) {
         data[totalread++] = buffer[i * sf_info.channels + filechannel];
       }
-    } while(read > 0 && totalread < (int)size);
+    } while(read > 0 && totalread < (int)size && totalread < sf_info.frames);
     // set data size to total bytes read
     size = totalread;
   }

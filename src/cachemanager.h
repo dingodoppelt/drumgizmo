@@ -41,6 +41,9 @@
 #define CACHE_DUMMYID -2
 #define CACHE_NOID -1
 
+#define FRAMESIZE 256
+#define CHUNKSIZE FRAMESIZE*100
+
 class AudioFile;
 typedef int cacheid_t;
 
