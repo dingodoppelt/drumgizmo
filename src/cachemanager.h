@@ -149,20 +149,18 @@ private:
   };
 
   typedef struct {
-    bool active;
-    cacheid_t id;
-    size_t pos;
     cmd_t cmd;
-    sample_t *fillbuffer;
-  } event_t;
+    size_t pos;
+    sample_t *buffer;
+    AudioFile *file;
+  } cevent_t;
 
-  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, sample_t* fillbuffer);
-  void loadNext(event_t &e);
-  void pushEvent(event_t e);
-  cache_t getNextCache(cacheid_t id);
+  cevent_t createLoadNextEvent(AudioFile *file, size_t pos, sample_t* buffer);
+  void loadNext(cevent_t &e);
+  void pushEvent(cevent_t e);
 
   // Protected by mutex
-  std::list<event_t> eventqueue;
+  std::list<cevent_t> eventqueue;
   std::list<cacheid_t> availableids; 
   std::vector<cache_t> id2cache; 
   
