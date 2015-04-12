@@ -29,10 +29,56 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <sndfile.h>
+
+#include <hugin.hpp>
+
 #define FRAMESIZE 256
 #define CHUNKSIZE FRAMESIZE*100
 
 static sample_t nodata[FRAMESIZE];
+
+#define BUFFER_SIZE FRAMESIZE
+static size_t readChunk(std::string filename, int filechannel, size_t from, size_t num_samples, sample_t* buf)
+{
+  SF_INFO sf_info;
+  SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
+  if(!fh) {
+    ERR(audiofile,"SNDFILE Error (%s): %s\n",
+        filename.c_str(), sf_strerror(fh));
+    return 0;
+  }
+
+  sf_seek(fh, from, SEEK_SET);
+
+  size_t size = num_samples;
+  sample_t* data = buf; 
+  if(sf_info.channels == 1) {
+    size = sf_read_float(fh, data, size);
+  }
+  else {
+    // check filechannel exists
+    if(filechannel >= sf_info.channels) {
+        filechannel = sf_info.channels - 1;
+    }
+    sample_t buffer[BUFFER_SIZE];
+    int readsize = BUFFER_SIZE / sf_info.channels;
+    int totalread = 0;
+    int read;
+    do {
+      read = sf_readf_float(fh, buffer, readsize);
+      for (int i = 0; i < read; i++) {
+        data[totalread++] = buffer[i * sf_info.channels + filechannel];
+      }
+    } while(read > 0 && totalread < (int)size);
+    // set data size to total bytes read
+    size = totalread;
+  }
+
+  sf_close(fh);
+
+  return size;
+}
 
 CacheManager::CacheManager() {}
 
@@ -163,7 +209,8 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
-  memcpy(e.buffer, e.file->data + e.pos, CHUNKSIZE * sizeof(sample_t));
+//  memcpy(e.buffer, e.file->data + e.pos, CHUNKSIZE * sizeof(sample_t));
+  readChunk(e.file->filename, e.channel, e.pos, CHUNKSIZE, e.buffer);
 }
 
 void CacheManager::handleCloseEvent(cevent_t &e) 
