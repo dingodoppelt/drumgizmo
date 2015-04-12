@@ -30,17 +30,11 @@
 #include <stdio.h>
 
 #define FRAMESIZE 256
-#define CHUNKSIZE FRAMESIZE*8
+#define CHUNKSIZE FRAMESIZE*100
 
-sample_t nodata[FRAMESIZE];
+static sample_t nodata[FRAMESIZE];
 
-//static std::vector<size_t> localcachepos;
-//static std::vector<sample_t*> localcache;
-
-CacheManager::CacheManager()
-{
-
-}
+CacheManager::CacheManager() {}
 
 CacheManager::~CacheManager()
 {
@@ -97,7 +91,8 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   c.front = new sample_t[CHUNKSIZE];
   c.back = new sample_t[CHUNKSIZE];
 
-  memcpy(c.front, c.file->data + c.pos, CHUNKSIZE);
+  memcpy(c.front, c.file->data + c.pos, CHUNKSIZE * sizeof(sample_t));
+
   // Increase audio ref count
 
   {
@@ -106,7 +101,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   }
 
   if(initial_samples_needed < file->size) {
-    event_t e = createLoadNextEvent(id, c.pos, c.front);
+    cevent_t e = createLoadNextEvent(c.file, c.pos + CHUNKSIZE, c.back);
     pushEvent(e);
   }
 
@@ -131,21 +126,6 @@ void CacheManager::close(cacheid_t id)
   // Decrement audiofile ref count
 }
 
-CacheManager::cache_t CacheManager::getNextCache(cacheid_t id)
-{
-  MutexAutolock l(m_caches);
-  cache_t &c = id2cache[id];
-
-  sample_t *tmp = c.front;
-  c.front = c.back;
-  c.back = tmp;
-  c.localpos = 0;
-
-  c.pos += CHUNKSIZE;
-  
-  return c;
-}
-
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
   size = FRAMESIZE;
@@ -155,26 +135,31 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   }
 
   cache_t& c = id2cache[id];
-
   if(c.localpos < CHUNKSIZE) {
     c.localpos += size;
     return c.front + c.localpos;
   }
 
-  cache_t next = getNextCache(id);
+  // Swap buffers
+  sample_t *tmp = c.front;
+  c.front = c.back;
+  c.back = tmp;
+
+  c.localpos = 0;
+
+  c.pos += CHUNKSIZE;
   
-  if(next.pos < c.file->size) {
-    event_t e = createLoadNextEvent(id, next.pos + CHUNKSIZE, c.back); 
+  if(c.pos < c.file->size) {
+    cevent_t e = createLoadNextEvent(c.file, c.pos, c.back);
     pushEvent(e);
   } 
 
   return c.front;
 }
 
-void CacheManager::loadNext(event_t &e) 
+void CacheManager::loadNext(cevent_t &e) 
 {
-  cache_t c = id2cache[e.id];
-  memcpy(e.fillbuffer, c.file->data + e.pos, CHUNKSIZE);
+  memcpy(e.buffer, e.file->data + e.pos, CHUNKSIZE * sizeof(sample_t));
 }
 
 void CacheManager::thread_main()
@@ -184,7 +169,7 @@ void CacheManager::thread_main()
 
     m_events.lock();
     if(!eventqueue.empty()) {
-      event_t e = eventqueue.front();
+      cevent_t e = eventqueue.front();
       eventqueue.pop_front();
       m_events.unlock();
 
@@ -205,23 +190,24 @@ void CacheManager::thread_main()
   }
 }
 
-void CacheManager::pushEvent(event_t e)
+void CacheManager::pushEvent(cevent_t e)
 {
   // Check that if event should be merged (Maybe by event queue (ie. push in front).
   {
-  MutexAutolock l(m_events);
-  eventqueue.push_back(e);
+    MutexAutolock l(m_events);
+    eventqueue.push_back(e);
   }
   sem.post();
 }
 
-CacheManager::event_t CacheManager::createLoadNextEvent(cacheid_t id, size_t pos, sample_t* fillbuffer)
+CacheManager::cevent_t CacheManager::createLoadNextEvent(AudioFile *file,
+                                                         size_t pos,
+                                                         sample_t* buffer)
 {
-  event_t e;
-  e.active = true;
-  e.id = id;
+  cevent_t e;
   e.cmd = LOADNEXT;
   e.pos = pos;
-  e.fillbuffer = fillbuffer;
+  e.buffer = buffer;
+  e.file = file;
   return e; 
 }
