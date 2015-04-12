@@ -116,7 +116,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   localcache[id] = c.front;
 
   if(initial_samples_needed < file->size) {
-    event_t e = createLoadNextEvent(id, c.pos, &c.back);
+    event_t e = createLoadNextEvent(id, c.pos, &id2cache[id].back);
     pushEvent(e);
   }
 
@@ -144,12 +144,13 @@ void CacheManager::close(cacheid_t id)
 CacheManager::cache_t CacheManager::getNextCache(cacheid_t id)
 {
   MutexAutolock l(m_caches);
-  cache_t c = id2cache[id];
+  cache_t &c = id2cache[id];
 
-  sample_t *tmp = id2cache[id].front;
-  id2cache[id].front = c.back;
-  id2cache[id].back = tmp;
-  id2cache[id].pos += CHUNKSIZE;
+  sample_t *tmp = c.front;
+  c.front = c.back;
+  c.back = tmp;
+
+  c.pos += CHUNKSIZE;
   
   return c;
 }
@@ -173,7 +174,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   localcache[id] = c.front;
 
   if(c.pos < c.file->size) {
-    event_t e = createLoadNextEvent(id, c.pos + CHUNKSIZE, &c.back); 
+    event_t e = createLoadNextEvent(id, c.pos + CHUNKSIZE, &id2cache[id].back); 
     pushEvent(e);
   } 
 
