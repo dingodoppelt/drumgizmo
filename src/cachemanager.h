@@ -140,6 +140,7 @@ private:
     size_t pos;
     sample_t *front;
     sample_t *back;
+    size_t localpos;
   } cache_t;
 
   enum cmd_t {
@@ -152,10 +153,10 @@ private:
     cacheid_t id;
     size_t pos;
     cmd_t cmd;
-    sample_t **fillbuffer;
+    sample_t *fillbuffer;
   } event_t;
 
-  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, sample_t** fillbuffer);
+  CacheManager::event_t createLoadNextEvent(cacheid_t id, size_t pos, sample_t* fillbuffer);
   void loadNext(event_t &e);
   void pushEvent(event_t e);
   cache_t getNextCache(cacheid_t id);

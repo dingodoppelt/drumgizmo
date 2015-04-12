@@ -26,6 +26,7 @@
  */
 #include "cachemanager.h"
 
+#include <string.h>
 #include <stdio.h>
 
 #define FRAMESIZE 256
@@ -33,8 +34,8 @@
 
 sample_t nodata[FRAMESIZE];
 
-static std::vector<size_t> localcachepos;
-static std::vector<sample_t*> localcache;
+//static std::vector<size_t> localcachepos;
+//static std::vector<sample_t*> localcache;
 
 CacheManager::CacheManager()
 {
@@ -57,16 +58,6 @@ void CacheManager::init(size_t poolsize)
     availableids.push_back(i);
   }
 
-  localcachepos.resize(poolsize);
-  for(size_t i = 0; i < poolsize; i++) {
-    localcachepos[i] = 0;
-  }
-
-  localcache.resize(poolsize);
-  for(size_t i = 0; i < poolsize; i++) {
-    localcache[i] = NULL;
-  } 
-  
   running = true;
   run();
 
@@ -102,9 +93,11 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   c.file = file;
   c.channel = channel;
   c.pos = initial_samples_needed;
-  c.front = file->data + initial_samples_needed;
-  c.back = file->data;
-  // Allocate buffers
+  c.localpos = 0;
+  c.front = new sample_t[CHUNKSIZE];
+  c.back = new sample_t[CHUNKSIZE];
+
+  memcpy(c.front, c.file->data + c.pos, CHUNKSIZE);
   // Increase audio ref count
 
   {
@@ -112,11 +105,8 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     id2cache[id] = c;
   }
 
-  localcachepos[id] = 0;
-  localcache[id] = c.front;
-
   if(initial_samples_needed < file->size) {
-    event_t e = createLoadNextEvent(id, c.pos, &id2cache[id].back);
+    event_t e = createLoadNextEvent(id, c.pos, c.front);
     pushEvent(e);
   }
 
@@ -149,6 +139,7 @@ CacheManager::cache_t CacheManager::getNextCache(cacheid_t id)
   sample_t *tmp = c.front;
   c.front = c.back;
   c.back = tmp;
+  c.localpos = 0;
 
   c.pos += CHUNKSIZE;
   
@@ -163,30 +154,27 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
     return nodata;
   }
 
-  if(localcachepos[id] < CHUNKSIZE) {
-    localcachepos[id] += size;
-    return localcache[id] + localcachepos[id];
+  cache_t& c = id2cache[id];
+
+  if(c.localpos < CHUNKSIZE) {
+    c.localpos += size;
+    return c.front + c.localpos;
   }
 
-  cache_t c = getNextCache(id);
+  cache_t next = getNextCache(id);
   
-  localcachepos[id] = 0;
-  localcache[id] = c.front;
-
-  if(c.pos < c.file->size) {
-    event_t e = createLoadNextEvent(id, c.pos + CHUNKSIZE, &id2cache[id].back); 
+  if(next.pos < c.file->size) {
+    event_t e = createLoadNextEvent(id, next.pos + CHUNKSIZE, c.back); 
     pushEvent(e);
   } 
 
-//  sample_t *s = c.file->data + (c.pos - size);
   return c.front;
-//  return s;
 }
 
 void CacheManager::loadNext(event_t &e) 
 {
   cache_t c = id2cache[e.id];
-  *e.fillbuffer = c.file->data + e.pos;
+  memcpy(e.fillbuffer, c.file->data + e.pos, CHUNKSIZE);
 }
 
 void CacheManager::thread_main()
@@ -227,7 +215,7 @@ void CacheManager::pushEvent(event_t e)
   sem.post();
 }
 
-CacheManager::event_t CacheManager::createLoadNextEvent(cacheid_t id, size_t pos, sample_t** fillbuffer)
+CacheManager::event_t CacheManager::createLoadNextEvent(cacheid_t id, size_t pos, sample_t* fillbuffer)
 {
   event_t e;
   e.active = true;
