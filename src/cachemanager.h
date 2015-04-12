@@ -131,46 +131,54 @@ public:
   void thread_main();
 
 private:
-
-  void pushEvent();
-
   typedef struct {
     AudioFile *file;
-    int channel;
-    size_t pos;
+    size_t channel;
+    size_t pos; //< File possition
     sample_t *front;
     sample_t *back;
-    size_t localpos;
+    size_t localpos; //< Intra buffer (front) position.
   } cache_t;
 
-  enum cmd_t {
+  typedef enum {
     LOADNEXT = 0,
-//    CLEAN = 1
-  };
+    CLOSE = 1
+  } cmd_t;
 
   typedef struct {
     cmd_t cmd;
+
+    // For close event:
+    cacheid_t id;
+
+    // For load next event:
     size_t pos;
     sample_t *buffer;
     AudioFile *file;
+    size_t channel;
   } cevent_t;
 
-  cevent_t createLoadNextEvent(AudioFile *file, size_t pos, sample_t* buffer);
-  void loadNext(cevent_t &e);
+  cevent_t createLoadNextEvent(AudioFile *file, size_t channel, size_t pos,
+                               sample_t* buffer);
+  cevent_t createCloseEvent(cacheid_t id);
+
+  void handleLoadNextEvent(cevent_t &e);
+  void handleCloseEvent(cevent_t &e);
+
   void pushEvent(cevent_t e);
 
-  // Protected by mutex
+  std::vector<cache_t> id2cache; 
+
+  // Protected by mutex:
   std::list<cevent_t> eventqueue;
   std::list<cacheid_t> availableids; 
-  std::vector<cache_t> id2cache; 
   
   Mutex m_events;
   Mutex m_ids;
-  Mutex m_caches;
 
   Semaphore sem;
 
-  int running;
+  bool running;
 };
 
 #endif/*__DRUMGIZMO_CACHEMANAGER_H__*/
