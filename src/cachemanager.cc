@@ -149,7 +149,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   c.back = new sample_t[CHUNKSIZE];
 
   size_t size = CHUNKSIZE;
-  if(size > file->size) size = file->size;
+  if(size > (file->preloadedsize - c.pos)) size = (file->preloadedsize - c.pos);
   memcpy(c.front, c.file->data + c.pos, size * sizeof(sample_t));
   c.ready = false;
   //c.pos += size;
@@ -162,7 +162,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   }
 
   // Only load next buffer if there are more data in the file to be loaded...
-  if(initial_samples_needed < file->size) {
+  if(c.pos + CHUNKSIZE < file->size) {
     cevent_t e =
       createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
     e.ready = &id2cache[id].ready;
@@ -212,8 +212,6 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
 void CacheManager::close(cacheid_t id)
 {
-return;
-
   if(id == CACHE_DUMMYID) return;
 
   cevent_t e = createCloseEvent(id);
