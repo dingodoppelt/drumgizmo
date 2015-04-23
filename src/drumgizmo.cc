@@ -50,7 +50,7 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
     loader(), oe(o), ie(i)
 {
   is_stopping = false;
-  cacheManager.init(1000); // start thread
+  cacheManager.init(1000, true); // start thread
 }
 
 DrumGizmo::~DrumGizmo()
@@ -415,10 +415,18 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         {
         MutexAutolock l(af->mutex);
 
-        size_t n = 0;
+        size_t n = 0; // default start point is 0.
+
+        // If we are not at offset 0 in current buffer:
         if(evt->offset > (size_t)pos) n = evt->offset - pos;
-        size_t end = sz;
+
+        size_t end = sz; // default end point is the end of the buffer.
+
+        // Find the end point intra-buffer
         if((evt->t + end - n) > af->size) end = af->size - evt->t + n;
+
+        // This should not be necessary but make absolutely shure that we do
+        // not write over the end of the buffer.
         if(end > sz) end = sz;
 
         if(evt->rampdown == NO_RAMPDOWN) {

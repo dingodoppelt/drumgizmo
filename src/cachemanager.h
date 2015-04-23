@@ -41,8 +41,9 @@
 #define CACHE_DUMMYID -2
 #define CACHE_NOID -1
 
-#define FRAMESIZE 256
-#define CHUNKSIZE FRAMESIZE*100
+#define FRAMESIZE 2048
+#define CHUNKSIZE (FRAMESIZE * 16)
+#define PRELOADSIZE (FRAMESIZE + CHUNKSIZE)
 
 class AudioFile;
 typedef int cacheid_t;
@@ -88,7 +89,7 @@ public:
    * This method blocks until the thread has been started.
    * @param poolsize The maximum number of parellel events supported. 
    */
-  void init(size_t poolsize);
+  void init(size_t poolsize, bool threaded);
 
   /**
    * Stop thread and clean up resources.
@@ -138,6 +139,7 @@ private:
     AudioFile *file;
     size_t channel;
     size_t pos; //< File possition
+    volatile bool ready;
     sample_t *front;
     sample_t *back;
     size_t localpos; //< Intra buffer (front) position.
@@ -157,6 +159,7 @@ private:
     // For load next event:
     size_t pos;
     sample_t *buffer;
+    volatile bool *ready;
     AudioFile *file;
     size_t channel;
   } cevent_t;
@@ -168,6 +171,7 @@ private:
   void handleLoadNextEvent(cevent_t &e);
   void handleCloseEvent(cevent_t &e);
 
+  void handleEvent(cevent_t &e);
   void pushEvent(cevent_t e);
 
   std::vector<cache_t> id2cache; 
@@ -179,8 +183,9 @@ private:
   Mutex m_events;
   Mutex m_ids;
 
+  bool threaded; // Indicates if we are running in thread mode or offline mode.
   Semaphore sem;
-
+  Semaphore sem_run;
   bool running;
 };
 

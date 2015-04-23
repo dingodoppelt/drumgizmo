@@ -30,6 +30,7 @@
 
 #include "drumkitparser.h"
 #include "drumgizmo.h"
+#include "cachemanager.h"
 
 DrumKitLoader::DrumKitLoader()
   : semaphore("drumkitloader")
@@ -136,7 +137,7 @@ void DrumKitLoader::thread_main()
       AudioFile *audiofile = load_queue.front();
       load_queue.pop_front();
       filename = audiofile->filename;
-      audiofile->load();
+      audiofile->load(PRELOADSIZE);
     }
 
     loaded++;
