@@ -48,7 +48,9 @@ static size_t readChunk(std::string filename, int filechannel, size_t pos,
     return 0;
   }
 
-  if(pos > sf_info.frames) return 0;
+  if(pos > sf_info.frames) {
+    return 0;
+  }
 
   sf_seek(fh, pos, SEEK_SET);
 
@@ -57,11 +59,11 @@ static size_t readChunk(std::string filename, int filechannel, size_t pos,
 
   sample_t* data = buf;
   if(sf_info.channels == 1) {
-    size = sf_read_float(fh, data, size);
+    size = sf_readf_float(fh, data, size);
   } else {
     // check filechannel exists
     if(filechannel >= sf_info.channels) {
-        filechannel = sf_info.channels - 1;
+      filechannel = sf_info.channels - 1;
     }
     sample_t buffer[BUFFER_SIZE];
     int readsize = BUFFER_SIZE / sf_info.channels;
@@ -89,8 +91,10 @@ CacheManager::~CacheManager()
   deinit();
 }
 
-void CacheManager::init(size_t poolsize)
+void CacheManager::init(size_t poolsize, bool threaded)
 {
+  this->threaded = threaded;
+
   for(size_t i = 0; i < FRAMESIZE; i++) {
     nodata[i] = 0;
   }
@@ -101,21 +105,26 @@ void CacheManager::init(size_t poolsize)
   }
 
   running = true;
-  run();
-
-  // TODO: Add semaphore
+  if(threaded) {
+    run();
+    sem_run.wait();
+  }
 }
 
 void CacheManager::deinit()
 {
   if(!running) return;
   running = false;
-  wait_stop();
+  if(threaded) {
+    sem.post();
+    wait_stop();
+  }
 }
 
 // Invariant: initial_samples_needed < preloaded audio data 
 // Proposal: preloaded > 2 x CHUNKSIZE? So that we can fill c.front immediatly on open
-sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int channel, cacheid_t &id) 
+sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
+                             int channel, cacheid_t &id)
 {
   {
     MutexAutolock l(m_ids);
@@ -139,7 +148,11 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
   c.front = new sample_t[CHUNKSIZE];
   c.back = new sample_t[CHUNKSIZE];
 
-  memcpy(c.front, c.file->data + c.pos, CHUNKSIZE * sizeof(sample_t));
+  size_t size = CHUNKSIZE;
+  if(size > file->size) size = file->size;
+  memcpy(c.front, c.file->data + c.pos, size * sizeof(sample_t));
+  c.ready = false;
+  //c.pos += size;
 
   // Increase audio ref count
 
@@ -148,34 +161,15 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed, int
     id2cache[id] = c;
   }
 
+  // Only load next buffer if there are more data in the file to be loaded...
   if(initial_samples_needed < file->size) {
     cevent_t e =
       createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
+    e.ready = &id2cache[id].ready;
     pushEvent(e);
   }
 
   return file->data; // preloaded data
-}
-
-void CacheManager::close(cacheid_t id)
-{
-  if(id == CACHE_DUMMYID) return;
-
-  cevent_t e = createCloseEvent(id);
-  pushEvent(e);
-
-  {
-//    event_t e = createEvent(id, CLEAN);
-//    MutexAutolock l(m_events); 
-//    eventqueue.push_front(e);
-  }
-  
-  {
-    MutexAutolock l(m_ids);
-    availableids.push_back(id);
-  }
-  // Clean cache_t mapped to event
-  // Decrement audiofile ref count
 }
 
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
@@ -188,8 +182,13 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
   cache_t& c = id2cache[id];
   if(c.localpos < CHUNKSIZE) {
+    sample_t *s = c.front + c.localpos;
     c.localpos += size;
-    return c.front + c.localpos;
+    return s;
+  }
+
+  if(!c.ready) {
+    printf("\nNOT READY!\n");
   }
 
   // Swap buffers
@@ -197,22 +196,46 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   c.front = c.back;
   c.back = tmp;
 
-  c.localpos = 0;
+  c.localpos = size; // Next time we go here we have already read the first frame.
 
   c.pos += CHUNKSIZE;
   
   if(c.pos < c.file->size) {
-    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos, c.back);
+    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
+    c.ready = false;
+    e.ready = &c.ready;
     pushEvent(e);
   } 
 
   return c.front;
 }
 
+void CacheManager::close(cacheid_t id)
+{
+return;
+
+  if(id == CACHE_DUMMYID) return;
+
+  cevent_t e = createCloseEvent(id);
+  pushEvent(e);
+
+  // Clean cache_t mapped to event
+  // Decrement audiofile ref count
+}
+
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
-//  memcpy(e.buffer, e.file->data + e.pos, CHUNKSIZE * sizeof(sample_t));
+#if 0 // memcpy
+  size_t size = CHUNKSIZE;
+  if(size > (e.file->size - e.pos)) {
+    size = (e.file->size - e.pos);
+  }
+  memcpy(e.buffer, e.file->data + e.pos, size * sizeof(sample_t));
+#elif 1 // diskread
+  //memset(e.buffer, 0, CHUNKSIZE * sizeof(sample_t));
   readChunk(e.file->filename, e.channel, e.pos, CHUNKSIZE, e.buffer);
+#endif
+  *e.ready = true;
 }
 
 void CacheManager::handleCloseEvent(cevent_t &e) 
@@ -220,44 +243,66 @@ void CacheManager::handleCloseEvent(cevent_t &e)
   cache_t& c = id2cache[e.id];
   delete[] c.front;
   delete[] c.back;
+
+  {
+    MutexAutolock l(m_ids);
+    availableids.push_back(e.id);
+  }
+
   // TODO: Count down ref coutner on c.file and close it if 0.
+}
+
+
+void CacheManager::handleEvent(cevent_t &e)
+{
+  switch(e.cmd) {
+  case LOADNEXT:
+    handleLoadNextEvent(e);
+    break;
+  case CLOSE:
+    handleCloseEvent(e);
+    break;
+  }
 }
 
 void CacheManager::thread_main()
 {
+  sem_run.post(); // Signal that the thread has been started
+
   while(running) {
     sem.wait();
 
     m_events.lock();
-    if(!eventqueue.empty()) {
-      cevent_t e = eventqueue.front();
-      eventqueue.pop_front();
+    if(eventqueue.empty()) {
       m_events.unlock();
-
-      // TODO: Skip event if e.pos < cache.pos 
-//      if(!e.active) continue;
-
-      switch(e.cmd) {  
-        case LOADNEXT:
-          handleLoadNextEvent(e);
-          break;
-        case CLOSE:
-          handleCloseEvent(e);
-          break;
-      }      
-    } else {
-      m_events.unlock();
+      continue;
     }
+
+    cevent_t e = eventqueue.front();
+    eventqueue.pop_front();
+    m_events.unlock();
+
+    // TODO: Skip event if e.pos < cache.pos
+    // if(!e.active) continue;
+
+    handleEvent(e);
   }
 }
 
 void CacheManager::pushEvent(cevent_t e)
 {
-  // Check that if event should be merged (Maybe by event queue (ie. push in front).
+  if(!threaded) {
+    handleEvent(e);
+    return;
+  }
+
+  // Check that if event should be merged (Maybe by event queue (ie. push
+  // in front).
   {
     MutexAutolock l(m_events);
     eventqueue.push_back(e);
   }
+
   sem.post();
 }
 

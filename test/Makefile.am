@@ -1,13 +1,27 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = engine cache gui resampler lv2
+TESTS = engine gui resampler lv2 cachemanager
 
 check_PROGRAMS = $(TESTS)
 
+cachemanager_CXXFLAGS = -DOUTPUT=\"cachemanager\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
+cachemanager_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+cachemanager_SOURCES = \
+	$(top_srcdir)/src/cachemanager.cc \
+	$(top_srcdir)/src/thread.cc \
+	$(top_srcdir)/src/mutex.cc \
+	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/configuration.cc \
+	$(top_srcdir)/src/audiofile.cc \
+	test.cc \
+	cachemanagertest.cc
+
 engine_CXXFLAGS = -DOUTPUT=\"engine\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
 engine_CFLAGS = -DDISABLE_HUGIN
 engine_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
 engine_SOURCES = \
@@ -15,17 +29,6 @@ engine_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	engine.cc
-
-cache_CXXFLAGS = -DOUTPUT=\"cache\" $(CPPUNIT_CFLAGS) \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
-cache_CFLAGS = -DDISABLE_HUGIN
-cache_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
-cache_SOURCES = \
-	$(DRUMGIZMO_SOURCES) \
-	$(top_srcdir)/hugin/hugin.c \
-	test.cc \
-	cache.cc
 
 gui_CXXFLAGS = -DOUTPUT=\"gui\" $(CPPUNIT_CFLAGS)
 gui_LDFLAGS = $(CPPUNIT_LIBS)
