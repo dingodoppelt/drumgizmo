@@ -79,7 +79,8 @@ public:
 
   bool isLoaded();
 
-  volatile size_t size;
+  volatile size_t size; // Full size of the file
+  volatile size_t preloadedsize; // Number of samples preloaded (in data)
   sample_t *data;
 
   std::string filename;
