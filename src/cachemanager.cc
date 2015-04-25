@@ -152,7 +152,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   if(size > (file->preloadedsize - c.pos)) size = (file->preloadedsize - c.pos);
   memcpy(c.front, c.file->data + c.pos, size * sizeof(sample_t));
   c.ready = false;
-  //c.pos += size;
+  c.pos += size;
 
   // Increase audio ref count
 
@@ -162,9 +162,9 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   }
 
   // Only load next buffer if there are more data in the file to be loaded...
-  if(c.pos + CHUNKSIZE < file->size) {
+  if(c.pos < file->size) {
     cevent_t e =
-      createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
+      createLoadNextEvent(c.file, c.channel, c.pos, c.back);
     e.ready = &id2cache[id].ready;
     pushEvent(e);
   }
@@ -188,7 +188,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   }
 
   if(!c.ready) {
-    printf("\nNOT READY!\n");
+    printf("#%d: NOT READY!\n", id); // TODO: Count and show in UI?
   }
 
   // Swap buffers
@@ -201,7 +201,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
   c.pos += CHUNKSIZE;
   
   if(c.pos < c.file->size) {
-    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos + CHUNKSIZE, c.back);
+    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos, c.back);
     c.ready = false;
     e.ready = &c.ready;
     pushEvent(e);
@@ -212,13 +212,12 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
 void CacheManager::close(cacheid_t id)
 {
-  if(id == CACHE_DUMMYID) return;
+  if(id == CACHE_DUMMYID) {
+    return;
+  }
 
   cevent_t e = createCloseEvent(id);
   pushEvent(e);
-
-  // Clean cache_t mapped to event
-  // Decrement audiofile ref count
 }
 
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
