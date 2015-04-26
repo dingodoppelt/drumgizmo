@@ -434,25 +434,24 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         // not write over the end of the buffer.
         if(end > sz) end = sz;
 
+        size_t t = 0; // Internal buffer counter
         if(evt->rampdown == NO_RAMPDOWN) {
 #ifdef SSE
           size_t optend = ((end - n) / N) * N + n;
-          size_t t;
           for(; n < optend; n += N) {
-            t = (evt->t + buffer_offset) % evt->buffer_size;
             *(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
-            evt->t += N;
+            t += N;
          }
 #endif
           for(; n < end; n++) {
-            s[n] += evt->buffer[ (evt->t + buffer_offset)  % evt->buffer_size];
-            evt->t++;
+            s[n] += evt->buffer[t];
+            t++;
           }
         } else { // Ramp down in progress.
           for(; n < end && evt->rampdown; n++) {
             float scale = (float)evt->rampdown/(float)evt->ramp_start;
-            s[n] += evt->buffer[ (evt->t + buffer_offset) % evt->buffer_size] * scale;
-            evt->t++;
+            s[n] += evt->buffer[t] * scale;
+            t++;
             evt->rampdown--;
           }
           
@@ -461,6 +460,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             cacheManager.close(evt->cache_id);
           }
         }
+        evt->t += t; // Add internal buffer counter to "global" event counter.
 
         if(evt->t >= af->size) { 
           removeevent = true;
