@@ -405,7 +405,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           continue;
         }
 
-        bool initial = evt->cache_id == CACHE_NOID? 1 : 0;
+        size_t buffer_offset = 0;
 
         if(evt->cache_id == CACHE_NOID) {
           size_t initial_chunksize = (pos + sz) - evt->offset;
@@ -413,16 +413,17 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             cacheManager.open(af, initial_chunksize, ch, evt->cache_id);
           evt->buffer_size = initial_chunksize;
         }
+        else {
+          buffer_offset = evt->offset;
+        }
 
         {
         MutexAutolock l(af->mutex);
 
         size_t n = 0; // default start point is 0.
 
-        if(initial) {
-          // If we are not at offset 0 in current buffer:
-          if(evt->offset > (size_t)pos) n = evt->offset - pos;
-        }
+        // If we are not at offset 0 in current buffer:
+        if(evt->offset > (size_t)pos) n = evt->offset - pos;
 
         size_t end = sz; // default end point is the end of the buffer.
 
@@ -434,27 +435,23 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         if(end > sz) end = sz;
 
         if(evt->rampdown == NO_RAMPDOWN) {
-
 #ifdef SSE
           size_t optend = ((end - n) / N) * N + n;
           size_t t;
           for(; n < optend; n += N) {
-            t = evt->t % evt->buffer_size;
+            t = (evt->t + buffer_offset) % evt->buffer_size;
             *(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
             evt->t += N;
          }
 #endif
           for(; n < end; n++) {
-            if(initial)
-              s[n] += evt->buffer[evt->t % evt->buffer_size];
-            else
-              s[n] += evt->buffer[(evt->t + evt->offset) % evt->buffer_size];
+            s[n] += evt->buffer[ (evt->t + buffer_offset)  % evt->buffer_size];
             evt->t++;
           }
         } else { // Ramp down in progress.
           for(; n < end && evt->rampdown; n++) {
             float scale = (float)evt->rampdown/(float)evt->ramp_start;
-            s[n] += evt->buffer[evt->t % evt->buffer_size] * scale;
+            s[n] += evt->buffer[ (evt->t + buffer_offset) % evt->buffer_size] * scale;
             evt->t++;
             evt->rampdown--;
           }
