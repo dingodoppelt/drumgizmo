@@ -137,7 +137,7 @@ SRC = \
 all:
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
-	g++ -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(ZLIB_CFLAGS) $(SRC_CFLAGS) $(ZITA_CXXFLAGS) $(EXPAT_LIBS) $(ZLIB_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) $(ZITA_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(ZLIB_CFLAGS) $(SRC_CFLAGS) $(ZITA_CXXFLAGS) $(EXPAT_LIBS) $(ZLIB_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) $(ZITA_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
  
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a

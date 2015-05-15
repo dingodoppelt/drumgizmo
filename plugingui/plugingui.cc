@@ -311,7 +311,7 @@ void PluginGUI::init()
                                                (void*)&closing);
 
   window->setFixedSize(370, 330);
-  window->setCaption("DrumGizmo v"VERSION);
+  window->setCaption("DrumGizmo v" VERSION);
 
   GUI::Label *lbl_title = new GUI::Label(window);
   lbl_title->setText("DrumGizmo");
@@ -437,7 +437,7 @@ void PluginGUI::init()
   l2->resize(window->width() - 40, 2);
 
   GUI::Label *lbl_version = new GUI::Label(window);
-  lbl_version->setText(".::. v"VERSION"  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
+  lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
   lbl_version->move(16, 300);
   lbl_version->resize(window->width(), 20);
   /*
