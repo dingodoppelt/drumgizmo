@@ -8,7 +8,7 @@ AM_PROG_CC_C_O
 
 dnl Compile with C++11 support.
 #AX_CXX_COMPILE_STDCXX_11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++0x"
 
 LT_INIT
 
