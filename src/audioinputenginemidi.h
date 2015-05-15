@@ -34,6 +34,8 @@
 #include "midimapper.h"
 #include "instrument.h"
 
+#include "configfile.h"
+
 class AudioInputEngineMidi : public AudioInputEngine {
 public:
   AudioInputEngineMidi();
@@ -62,6 +64,8 @@ protected:
   MidiMapper mmap;
   std::string file;
   bool is_valid;
+
+  ConfigFile refs;
 };
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__*/

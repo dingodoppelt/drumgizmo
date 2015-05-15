@@ -50,20 +50,3 @@ int MidiMapParser::readData(char *data, size_t size)
   if(!fd) return -1;
   return fread(data, 1, size, fd);
 }
-
-#ifdef TEST_MIDIMAPPARSER
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_MIDIMAPPARSER*/

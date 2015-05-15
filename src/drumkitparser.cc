@@ -32,10 +32,20 @@
 
 #include "instrumentparser.h"
 #include "path.h"
+#include "drumgizmo.h"
 
-DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
+DrumKitParser::DrumKitParser(const std::string &file, DrumKit &k)
   : kit(k)
+  , refs(REFSFILE)
 {
+  refs.load();
+
+  std::string kitfile = file;
+
+  if(file.size() > 1 && file[0] == '@') {
+    kitfile = refs.getValue(file.substr(1));
+  }
+
   //  instr = NULL;
   path = getPath(kitfile);
 
@@ -45,7 +55,7 @@ DrumKitParser::DrumKitParser(const std::string &kitfile, DrumKit &k)
 
   if(!fd) return;
 
-  kit._file = kitfile;
+  kit._file = file;
 }
 
 DrumKitParser::~DrumKitParser()

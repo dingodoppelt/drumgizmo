@@ -29,6 +29,7 @@
 
 #include "saxparser.h"
 #include "drumkit.h"
+#include "configfile.h"
 
 class DrumKitParser : public SAXParser {
 public:
@@ -52,6 +53,8 @@ private:
   std::string instr_file;
   std::string instr_name;
   std::string instr_group;
+
+  ConfigFile refs;
 };
 
 #endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/
