@@ -27,7 +27,11 @@
 #include "powerlist.h"
 
 #include <stdlib.h>
+
+// Otherwise M_PI is not defined in math.h on some older platforms...
+#define _USE_MATH_DEFINES
 #include <math.h>
+
 #include <string.h>
 
 #include <hugin.hpp>
