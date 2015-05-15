@@ -27,22 +27,18 @@
 #ifndef __DRUMGIZMO_CONFIG_H__
 #define __DRUMGIZMO_CONFIG_H__
 
-#include <string>
-#include <list>
+#include <configfile.h>
 
-#define DIRECTORY_HIDDEN 1
+class Config : public ConfigFile {
+public:
+  Config();
+  ~Config();
 
-class Config {
+  void load();
+  void save();
 
-  public:
-    Config();
-    ~Config();
-
-    void load();
-    void save();
-
-    std::string lastkit;
-    std::string lastmidimap;
+  std::string lastkit;
+  std::string lastmidimap;
 };
 
 #endif/*__DRUMGIZMO_CONFIG_H__*/

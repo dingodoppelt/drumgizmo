@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            config.cc
+ *            configfile.h
  *
- *  Tue Jun  3 13:54:05 CEST 2014
- *  Copyright 2014 Jonas Suhr Christensen
- *  jsc@umbraculum.org
+ *  Thu May 14 14:51:38 CEST 2015
+ *  Copyright 2015 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -24,36 +24,33 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "pluginconfig.h"
+#ifndef __DRUMGIZMO_CONFIGFILE_H__
+#define __DRUMGIZMO_CONFIGFILE_H__
 
-#include <hugin.hpp>
-  
-#define CONFIGFILENAME "plugingui.conf"
+#include <string>
+#include <map>
+#include <stdio.h>
 
-Config::Config()
-  : ConfigFile(CONFIGFILENAME)
-{
-}
+class ConfigFile {
+public:
+  ConfigFile(std::string filename);
+  virtual ~ConfigFile();
 
-Config::~Config()
-{
-}
+  virtual void load();
+  virtual void save();
 
-void Config::load()
-{
-  lastkit.clear();
-  lastmidimap.clear();
+  virtual std::string getValue(const std::string& key);
+  virtual void setValue(const std::string& key, const std::string& value);
 
-  ConfigFile::load();
+protected:
+  std::map<std::string, std::string> values;
+  std::string filename;
 
-  lastkit = getValue("lastkit");
-  lastmidimap = getValue("lastmidimap");
-}
+  bool open(std::string mode);
+  void close();
+  std::string readLine();
 
-void Config::save()
-{
-  setValue("lastkit", lastkit);
-  setValue("lastmidimap", lastmidimap);
+  FILE* fp;
+};
 
-  ConfigFile::save();
-}
+#endif/*__DRUMGIZMO_CONFIGFILE_H__*/
