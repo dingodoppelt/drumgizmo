@@ -2,9 +2,10 @@ Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache/
+compile
 config.guess
 config.h
-config.h.in
+config.h.in*
 config.log
 config.status
 config.sub
@@ -16,6 +17,7 @@ libtool
 ltmain.sh
 missing
 stamp-h1
+test-driver
 *.o
 *.a
 *.la
@@ -34,3 +36,5 @@ test/engine
 test/gui
 test/lv2
 test/resource
+drumgizmo-*.tar.gz
+tst
