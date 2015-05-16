@@ -160,6 +160,15 @@ static void handleKeyEvent(void *ptr) {
   lb->clearSelectedValue();  
   GUI::LineEdit *le = prv->lineedit;
 
+  std::string value = le->text();
+  if(value.size() > 1 && value[0] == '@') {
+    DEBUG(filebrowser, "Selecting ref-file '%s'\n", value.c_str());
+    if(prv->filesel_handler) {
+      prv->filesel_handler(prv->ptr, value);
+    }
+    return;
+  }
+
   prv->dir->setPath(le->text());
   changeDir(ptr);
 }

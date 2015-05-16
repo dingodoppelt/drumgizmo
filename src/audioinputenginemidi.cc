@@ -28,15 +28,24 @@
 
 #include "midimapparser.h"
 
+#include "drumgizmo.h"
+
 #include <hugin.hpp>
 
 AudioInputEngineMidi::AudioInputEngineMidi()
+  : refs(REFSFILE)
 {
+  refs.load();
   is_valid = false;
 }
 
-bool AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
+bool AudioInputEngineMidi::loadMidiMap(std::string _f, Instruments &instruments)
 {
+  std::string f = _f;
+  if(_f.size() > 1 && _f[0] == '@') {
+    f = refs.getValue(_f.substr(1));
+  }
+
   file = "";
   is_valid = false;
 
@@ -57,7 +66,7 @@ bool AudioInputEngineMidi::loadMidiMap(std::string f, Instruments &instruments)
     mmap.instrmap[instruments[i]->name()] = i;
   }
 
-  file = f;
+  file = _f;
   is_valid = true;
 
   return true;
@@ -72,20 +81,3 @@ bool AudioInputEngineMidi::isValid()
 {
   return is_valid;
 }
-
-#ifdef TEST_AUDIOINPUTENGINEMIDI
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOINPUTENGINEMIDI*/

@@ -27,10 +27,16 @@
 #include "powerlist.h"
 
 #include <stdlib.h>
-#include <math.h>
+
 #include <string.h>
 
 #include <hugin.hpp>
+
+// M_PI is not defined in math.h if __STRICT_ANSI__ is defined.
+#ifdef __STRICT_ANSI__
+#undef __STRICT_ANSI__
+#endif
+#include <math.h>
 
 /**
  * Minimum sample set size.

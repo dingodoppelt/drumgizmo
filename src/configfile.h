@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audioinputenginemidi.h
+ *            configfile.h
  *
- *  Mon Apr  1 20:13:24 CEST 2013
- *  Copyright 2013 Bent Bisballe Nyeng
+ *  Thu May 14 14:51:38 CEST 2015
+ *  Copyright 2015 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,48 +24,33 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__
-#define __DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__
-
-#include "audioinputengine.h"
+#ifndef __DRUMGIZMO_CONFIGFILE_H__
+#define __DRUMGIZMO_CONFIGFILE_H__
 
 #include <string>
+#include <map>
+#include <stdio.h>
 
-#include "midimapper.h"
-#include "instrument.h"
-
-#include "configfile.h"
-
-class AudioInputEngineMidi : public AudioInputEngine {
+class ConfigFile {
 public:
-  AudioInputEngineMidi();
-  virtual ~AudioInputEngineMidi() {}
+  ConfigFile(std::string filename);
+  virtual ~ConfigFile();
 
-  bool isMidiEngine() { return true; } 
+  virtual void load();
+  virtual void save();
 
-  virtual bool init(Instruments &instruments) = 0;
-
-  virtual void setParm(std::string parm, std::string value) = 0;
-
-  virtual bool start() = 0;
-  virtual void stop() = 0;
-
-  virtual void pre() = 0;
-  virtual event_t *run(size_t pos, size_t len, size_t *nevents) = 0;
-  virtual void post() = 0;
-
-  bool loadMidiMap(std::string file, Instruments &i);
-
-  std::string midimapFile();
-
-  bool isValid();
+  virtual std::string getValue(const std::string& key);
+  virtual void setValue(const std::string& key, const std::string& value);
 
 protected:
-  MidiMapper mmap;
-  std::string file;
-  bool is_valid;
+  std::map<std::string, std::string> values;
+  std::string filename;
 
-  ConfigFile refs;
+  bool open(std::string mode);
+  void close();
+  std::string readLine();
+
+  FILE* fp;
 };
 
-#endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__*/
+#endif/*__DRUMGIZMO_CONFIGFILE_H__*/

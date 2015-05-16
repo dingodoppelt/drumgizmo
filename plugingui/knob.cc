@@ -30,6 +30,11 @@
 
 #include <hugin.hpp>
 #include <stdio.h>
+
+// M_PI is not defined in math.h if __STRICT_ANSI__ is defined.
+#ifdef __STRICT_ANSI__
+#undef __STRICT_ANSI__
+#endif
 #include <math.h>
 
 GUI::Knob::Knob(Widget *parent)

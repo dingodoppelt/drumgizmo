@@ -48,7 +48,10 @@
 
 #include "chresampler.h"
 
+#include "configfile.h"
+
 #define MAX_NUM_CHANNELS 64
+#define REFSFILE "refs.conf"
 
 class DrumGizmo : public MessageReceiver {
 public:
