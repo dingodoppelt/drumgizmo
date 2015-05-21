@@ -46,7 +46,7 @@ protected:
   std::map<std::string, std::string> values;
   std::string filename;
 
-  bool open(std::string mode);
+  virtual bool open(std::string mode);
   void close();
   std::string readLine();
 
