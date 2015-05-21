@@ -40,7 +40,7 @@ protected:
   virtual bool open(std::string mode)
   {
     fp = fopen("test.conf", mode.c_str());
-    return fp != nullptr;
+    return fp != NULL;
   }
 };
 
