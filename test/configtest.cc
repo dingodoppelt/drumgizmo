@@ -37,7 +37,7 @@ public:
 
 protected:
   // Overload the built-in open method to use local file instead of homedir.
-  virtual bool open(std::string mode) override
+  virtual bool open(std::string mode)
   {
     fp = fopen("test.conf", mode.c_str());
     return fp != nullptr;
