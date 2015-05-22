@@ -38,12 +38,14 @@ DrumKitParser::DrumKitParser(const std::string &file, DrumKit &k)
   : kit(k)
   , refs(REFSFILE)
 {
-  refs.load();
-
   std::string kitfile = file;
 
-  if(file.size() > 1 && file[0] == '@') {
-    kitfile = refs.getValue(file.substr(1));
+  if(refs.load()) {
+    if(file.size() > 1 && file[0] == '@') {
+      kitfile = refs.getValue(file.substr(1));
+    }
+  } else {
+    ERR(drumkitparser, "Error reading refs.conf");
   }
 
   //  instr = NULL;

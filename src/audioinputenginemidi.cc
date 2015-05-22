@@ -35,15 +35,19 @@
 AudioInputEngineMidi::AudioInputEngineMidi()
   : refs(REFSFILE)
 {
-  refs.load();
   is_valid = false;
 }
 
 bool AudioInputEngineMidi::loadMidiMap(std::string _f, Instruments &instruments)
 {
   std::string f = _f;
-  if(_f.size() > 1 && _f[0] == '@') {
-    f = refs.getValue(_f.substr(1));
+
+  if(refs.load()) {
+    if(_f.size() > 1 && _f[0] == '@') {
+      f = refs.getValue(_f.substr(1));
+    }
+  } else {
+    ERR(drumkitparser, "Error reading refs.conf");
   }
 
   file = "";
