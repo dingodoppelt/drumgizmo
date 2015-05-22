@@ -48,7 +48,7 @@ struct semaphore_private_t {
 Semaphore::Semaphore(const char *name)
 {
   this->name = name;
-  DEBUG(semaphore, "Create [%s]\n", name);
+  //  DEBUG(semaphore, "Create [%s]\n", name);
 
   prv = new struct semaphore_private_t();
 
@@ -64,7 +64,7 @@ Semaphore::Semaphore(const char *name)
 
 Semaphore::~Semaphore()
 {
-  DEBUG(semaphore, "Delete [%s]\n", name);
+  //  DEBUG(semaphore, "Delete [%s]\n", name);
 
 #ifdef WIN32
   CloseHandle(prv->semaphore);
@@ -77,7 +77,7 @@ Semaphore::~Semaphore()
 
 void Semaphore::post()
 {
-  DEBUG(semaphore, "Post [%s]\n", name);
+  //  DEBUG(semaphore, "Post [%s]\n", name);
 
 #ifdef WIN32
   ReleaseSemaphore(prv->semaphore, 1, NULL);
@@ -88,7 +88,7 @@ void Semaphore::post()
 
 void Semaphore::wait()
 {
-  DEBUG(semaphore, "Wait [%s]\n", name);
+  //  DEBUG(semaphore, "Wait [%s]\n", name);
 
 #ifdef WIN32
   WaitForSingleObject(prv->semaphore, INFINITE);
