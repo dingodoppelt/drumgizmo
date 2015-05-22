@@ -34,6 +34,7 @@
 
 DrumKitLoader::DrumKitLoader()
   : semaphore("drumkitloader")
+  , framesize(0)
 {
   run();
   run_semaphore.wait(); // Wait for the thread to actually start.
@@ -62,6 +63,13 @@ void DrumKitLoader::skip()
 {
   MutexAutolock l(mutex);  
   load_queue.clear();
+}
+
+void DrumKitLoader::setFrameSize(size_t framesize)
+{
+  MutexAutolock l(mutex);
+  this->framesize = framesize;
+  framesize_semaphore.post(); // Signal that the framesize has been set.
 }
 
 bool DrumKitLoader::isDone()
@@ -120,6 +128,8 @@ void DrumKitLoader::thread_main()
 
   run_semaphore.post(); // Signal that the thread has been started.
 
+  framesize_semaphore.wait(); // Wait until the framesize has been set.
+
   while(running) {
     size_t size;
     {
@@ -137,7 +147,7 @@ void DrumKitLoader::thread_main()
       AudioFile *audiofile = load_queue.front();
       load_queue.pop_front();
       filename = audiofile->filename;
-      audiofile->load(PRELOADSIZE);
+      audiofile->load(framesize * CHUNK_MULTIPLIER + framesize);
     }
 
     loaded++;

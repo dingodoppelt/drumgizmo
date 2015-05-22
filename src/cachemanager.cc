@@ -28,14 +28,15 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include <sndfile.h>
 
 #include <hugin.hpp>
 
-static sample_t nodata[FRAMESIZE];
-
 #define	BUFFER_SIZE	4092
+
+#define CHUNKSIZE(x) (x * CHUNK_MULTIPLIER)
 
 static size_t readChunk(std::string filename, int filechannel, size_t pos,
                         size_t num_samples, sample_t* buf)
@@ -84,20 +85,21 @@ static size_t readChunk(std::string filename, int filechannel, size_t pos,
   return size;
 }
 
-CacheManager::CacheManager() {}
+CacheManager::CacheManager()
+  : framesize(0)
+  , nodata(NULL)
+{
+}
 
 CacheManager::~CacheManager()
 {
   deinit();
+  delete[] nodata;
 }
 
 void CacheManager::init(size_t poolsize, bool threaded)
 {
   this->threaded = threaded;
-
-  for(size_t i = 0; i < FRAMESIZE; i++) {
-    nodata[i] = 0;
-  }
 
   id2cache.resize(poolsize);
   for(size_t i = 0; i < poolsize; i++) {
@@ -137,6 +139,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   }
 
   if(id == CACHE_DUMMYID) {
+    assert(nodata);
     return nodata;
   }
 
@@ -145,10 +148,10 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   c.channel = channel;
   c.pos = initial_samples_needed;
   c.localpos = 0;
-  c.front = new sample_t[CHUNKSIZE];
-  c.back = new sample_t[CHUNKSIZE];
+  c.front = new sample_t[CHUNKSIZE(framesize)];
+  c.back = new sample_t[CHUNKSIZE(framesize)];
 
-  size_t size = CHUNKSIZE;
+  size_t size = CHUNKSIZE(framesize);
   if(size > (file->preloadedsize - c.pos)) size = (file->preloadedsize - c.pos);
   memcpy(c.front, c.file->data + c.pos, size * sizeof(sample_t));
   c.ready = false;
@@ -174,21 +177,22 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
 
 sample_t *CacheManager::next(cacheid_t id, size_t &size) 
 {
-  size = FRAMESIZE;
+  size = framesize;
 
   if(id == CACHE_DUMMYID) {
+    assert(nodata);
     return nodata;
   }
 
   cache_t& c = id2cache[id];
-  if(c.localpos < CHUNKSIZE) {
+  if(c.localpos < CHUNKSIZE(framesize)) {
     sample_t *s = c.front + c.localpos;
     c.localpos += size;
     return s;
   }
 
   if(!c.ready) {
-    printf("#%d: NOT READY!\n", id); // TODO: Count and show in UI?
+    //printf("#%d: NOT READY!\n", id); // TODO: Count and show in UI?
   }
 
   // Swap buffers
@@ -198,7 +202,7 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
   c.localpos = size; // Next time we go here we have already read the first frame.
 
-  c.pos += CHUNKSIZE;
+  c.pos += CHUNKSIZE(framesize);
   
   if(c.pos < c.file->size) {
     cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos, c.back);
@@ -220,17 +224,28 @@ void CacheManager::close(cacheid_t id)
   pushEvent(e);
 }
 
+void CacheManager::setFrameSize(size_t framesize)
+{
+  this->framesize = framesize;
+  delete[] nodata;
+  nodata = new sample_t[framesize];
+
+  for(size_t i = 0; i < framesize; i++) {
+    nodata[i] = 0;
+  }
+}
+
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
 #if 0 // memcpy
-  size_t size = CHUNKSIZE;
+  size_t size = CHUNKSIZE(framesize);
   if(size > (e.file->size - e.pos)) {
     size = (e.file->size - e.pos);
   }
   memcpy(e.buffer, e.file->data + e.pos, size * sizeof(sample_t));
 #elif 1 // diskread
-  //memset(e.buffer, 0, CHUNKSIZE * sizeof(sample_t));
-  readChunk(e.file->filename, e.channel, e.pos, CHUNKSIZE, e.buffer);
+  //memset(e.buffer, 0, CHUNKSIZE(framesize) * sizeof(sample_t));
+  readChunk(e.file->filename, e.channel, e.pos, CHUNKSIZE(framesize), e.buffer);
 #endif
   *e.ready = true;
 }
@@ -246,7 +261,7 @@ void CacheManager::handleCloseEvent(cevent_t &e)
     availableids.push_back(e.id);
   }
 
-  // TODO: Count down ref coutner on c.file and close it if 0.
+  // TODO: Count down ref counter on c.file and close it if 0.
 }
 
 

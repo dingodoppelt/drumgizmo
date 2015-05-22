@@ -47,12 +47,11 @@ static DrumGizmo *dg_get_pci(LV2_Handle instance)
   return dglv2->dg;
 }
 
-LV2_State_Status
-dg_save(LV2_Handle                 instance,
-        LV2_State_Store_Function   store,
-        LV2_State_Handle           handle,
-        uint32_t                   flags,
-        const LV2_Feature *const * features)
+LV2_State_Status dg_save(LV2_Handle instance,
+                         LV2_State_Store_Function store,
+                         LV2_State_Handle handle,
+                         uint32_t flags,
+                         const LV2_Feature *const * features)
 {
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
@@ -77,12 +76,11 @@ dg_save(LV2_Handle                 instance,
   return LV2_STATE_SUCCESS;
 }
 
-LV2_State_Status
-dg_restore(LV2_Handle                  instance,
-           LV2_State_Retrieve_Function retrieve,
-           LV2_State_Handle            handle,
-           uint32_t                    flags,
-           const LV2_Feature *const *  features)
+LV2_State_Status dg_restore(LV2_Handle instance,
+                            LV2_State_Retrieve_Function retrieve,
+                            LV2_State_Handle handle,
+                            uint32_t flags,
+                            const LV2_Feature *const * features)
 {
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
@@ -148,9 +146,7 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
   return (LV2_Handle)dglv2;
 }
 
-void connect_port(LV2_Handle instance,
-                  uint32_t port,
-                  void *data_location)
+void connect_port(LV2_Handle instance, uint32_t port, void *data_location)
 {
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
@@ -171,12 +167,15 @@ void activate(LV2_Handle instance)
   (void)dglv2;
 }
 
-void run(LV2_Handle instance,
-         uint32_t sample_count)
+void run(LV2_Handle instance, uint32_t sample_count)
 {
   static size_t pos = 0;
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
+  if(dglv2->buffer_size != sample_count) {
+    dglv2->buffer_size = sample_count;
+    dglv2->dg->setFrameSize(sample_count);
+  }
   dglv2->dg->run(pos, dglv2->buffer, sample_count);
 
   pos += sample_count;
@@ -184,7 +183,6 @@ void run(LV2_Handle instance,
 
 void deactivate(LV2_Handle instance)
 {
-  // We don't really need to do anything here.
   DGLV2 *dglv2 = (DGLV2 *)instance;
   dglv2->dg->stop();
 }

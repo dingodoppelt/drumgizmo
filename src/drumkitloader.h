@@ -85,15 +85,20 @@ public:
    */
   void skip();
 
+  void setFrameSize(size_t framesize);
+
 private:
   Semaphore run_semaphore;
   Semaphore semaphore;
+  Semaphore framesize_semaphore;
   Mutex mutex;
 	volatile bool running{false};
   std::list<AudioFile*> load_queue;
 	size_t total_num_audiofiles{0};
 	size_t fraction{1};
 	size_t loaded{0};
+
+	size_t framesize{0};
 };
 
 #endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/

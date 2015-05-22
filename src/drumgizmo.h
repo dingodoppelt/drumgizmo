@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMGIZMO_H__
-#define __DRUMGIZMO_DRUMGIZMO_H__
+#pragma once
 
 #include <string>
 #include <list>
@@ -52,6 +51,7 @@
 
 #define MAX_NUM_CHANNELS 64
 #define REFSFILE "refs.conf"
+#define RESAMPLER_INPUT_BUFFER 64
 
 class DrumGizmo : public MessageReceiver {
 public:
@@ -62,10 +62,6 @@ public:
 
   bool init();
 
-  /**
-   * @param endpos number of samples to process, -1 := never stop.
-   */
-  void run(int endpos);
   bool run(size_t pos, sample_t *samples, size_t nsamples);
   void stop();
 
@@ -78,6 +74,8 @@ public:
 
   int samplerate();
   void setSamplerate(int samplerate);
+
+  void setFrameSize(size_t framesize);
 
 private:
   DrumKitLoader loader;
@@ -92,14 +90,13 @@ private:
 
   CHResampler resampler[MAX_NUM_CHANNELS];
   sample_t resampler_output_buffer[MAX_NUM_CHANNELS][4096];
-  sample_t resampler_input_buffer[MAX_NUM_CHANNELS][64];
+  sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 
   std::map<std::string, AudioFile *> audiofiles;
 
   CacheManager cacheManager;
 
   DrumKit kit;
+
+  size_t framesize;
 };
-
-
-#endif/*__DRUMGIZMO_DRUMGIZMO_H__*/

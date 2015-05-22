@@ -328,6 +328,8 @@ int CliMain::run(int argc, char *argv[])
 
   DrumGizmo gizmo(oe, ie);
 
+  gizmo.setFrameSize(oe->getBufferSize());
+
   if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
@@ -357,7 +359,22 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  gizmo.run(endpos);
+  size_t pos = 0;
+  size_t nsamples = oe->getBufferSize();
+  sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
+  ie->start();
+  oe->start();
+
+  while(gizmo.run(pos, samples, nsamples) == true) {
+    pos += nsamples;
+    if(endpos != -1 && pos >= (size_t)endpos) break;
+  }
+
+  ie->stop();
+  oe->stop();
+
+  free(samples);
 
   printf("Quit.\n"); fflush(stdout);
 

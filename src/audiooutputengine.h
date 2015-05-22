@@ -50,11 +50,6 @@ public:
 
   // Reimplement this if you wish to use internal buffer directly.
   virtual sample_t *getBuffer(int ch) { return NULL; }
-
-  /*
-   * Overload this method to force engine to use different buffer size.
-   */
-  virtual size_t getBufferSize() { return 1024; }
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/
