@@ -36,3 +36,4 @@ test/engine
 test/gui
 drumgizmo-*.tar.gz
 tst
+vst/Makefile.mingw32
