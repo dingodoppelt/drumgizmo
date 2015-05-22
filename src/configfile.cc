@@ -46,11 +46,11 @@
   
 #ifdef WIN32
   #define SEP "\\"
-  #define CONFIGDIRNAME ".drumgizmo"
 #else
   #define SEP "/"
-  #define CONFIGDIRNAME ".drumgizmo"
 #endif
+
+#define CONFIGDIRNAME ".drumgizmo"
 
 /**
  * Return the path containing the config files.
@@ -89,7 +89,7 @@ static bool createConfigPath()
 #else
     if(mkdir(configpath.c_str(), 0755) < 0) { 
 #endif
-      DEBUG(pluginconfig, "Could not create config directory\n");
+      DEBUG(configfile, "Could not create config directory\n");
     }
 
     return false;
@@ -108,10 +108,12 @@ ConfigFile::~ConfigFile()
 {
 }
 
-void ConfigFile::load()
+bool ConfigFile::load()
 {
-  DEBUG(pluginconfig, "Loading config file...\n");
-  if(!open("r")) return;
+  DEBUG(configfile, "Loading config file...\n");
+  if(!open("r")) {
+    return false;
+  }
 
   values.clear();
 
@@ -120,35 +122,26 @@ void ConfigFile::load()
     line = readLine();
 
     if(line == "") break;
-
-    if(line[line.size() - 1] == '\n') {
-      line = line.substr(0, line.size() - 1); // strip ending newline.
-    }
-
-    std::size_t colon = line.find(':');
-
-    if(colon == std::string::npos) break; // malformed line
-
-    std::string key = line.substr(0, colon);
-    std::string value = line.substr(colon + 1);
-
-    printf("key['%s'] value['%s']\n", key.c_str(), value.c_str());
-
-    if(key != "") {
-      values[key] = value;
+    
+    if(!parseLine(line)) {
+      return false;
     }
   }
 
   close();
+
+  return true;
 }
 
-void ConfigFile::save()
+bool ConfigFile::save()
 {
-  DEBUG(pluginconfig, "Saving configuration...\n");
+  DEBUG(configfile, "Saving configuration...\n");
 
   createConfigPath();
 
-  if(!open("w")) return;
+  if(!open("w")) {
+    return false;
+  }
 
   std::map<std::string, std::string>::iterator v = values.begin();
   for(; v != values.end(); ++v) {
@@ -156,6 +149,8 @@ void ConfigFile::save()
   }
 
   close();
+
+  return true;
 }
 
 std::string ConfigFile::getValue(const std::string& key)
@@ -182,7 +177,7 @@ bool ConfigFile::open(std::string mode)
   configfile += SEP;
   configfile += filename;
 
-  DEBUG(pluginconfig, "Opening config file '%s'\n", configfile.c_str());
+  DEBUG(configfile, "Opening config file '%s'\n", configfile.c_str());
   fp = fopen(configfile.c_str(), mode.c_str());
 
   if(!fp) return false;
@@ -212,4 +207,141 @@ std::string ConfigFile::readLine()
   }
 
   return line;
+}
+
+bool ConfigFile::parseLine(const std::string& line)
+{
+  std::string key;
+  std::string value;
+  enum {
+    before_key,
+    in_key,
+    after_key,
+    before_value,
+    in_value,
+    in_value_single_quoted,
+    in_value_double_quoted,
+    after_value,
+  } state = before_key;
+
+  for(std::size_t p = 0; p < line.size(); ++p) {
+    switch(state) {
+    case before_key:
+      if(line[p] == '#') {
+        // Comment: Ignore line.
+        p = line.size();
+        continue;
+      }
+      if(std::isspace(line[p])) {
+        continue;
+      }
+      key += line[p];
+      state = in_key;
+      break;
+
+    case in_key:
+      if(std::isspace(line[p])) {
+        state = after_key;
+        continue;
+      }
+      if(line[p] == ':' || line[p] == '=') {
+        state = before_value;
+        continue;
+      }
+      key += line[p];
+      break;
+
+    case after_key:
+      if(std::isspace(line[p])) {
+        continue;
+      }
+      if(line[p] == ':' || line[p] == '=') {
+        state = before_value;
+        continue;
+      }
+      ERR(configfile, "Bad symbol."
+            " Expecting only whitespace or key/value seperator: '%s'",
+            line.c_str());
+      return false;
+
+    case before_value:
+      if(std::isspace(line[p])) {
+        continue;
+      }
+      if(line[p] == '\'') {
+        state = in_value_single_quoted;
+        continue;
+      }
+      if(line[p] == '"') {
+        state = in_value_double_quoted;
+        continue;
+      }
+      value += line[p];
+      state = in_value;
+      break;
+
+    case in_value:
+      if(std::isspace(line[p])) {
+        state = after_value;
+        continue;
+      }
+      if(line[p] == '#') {
+        // Comment: Ignore the rest of the line.
+        p = line.size();
+        state = after_value;
+        continue;
+      }
+      value += line[p];
+      break;
+
+    case in_value_single_quoted:
+      if(line[p] == '\'') {
+        state = after_value;
+        continue;
+      }
+      value += line[p];
+      break;
+
+    case in_value_double_quoted:
+      if(line[p] == '"') {
+        state = after_value;
+        continue;
+      }
+      value += line[p];
+      break;
+
+    case after_value:
+      if(std::isspace(line[p])) {
+        continue;
+      }
+      if(line[p] == '#') {
+        // Comment: Ignore the rest of the line.
+        p = line.size();
+        continue;
+      }
+      ERR(configfile, "Bad symbol."
+            " Expecting only whitespace or key/value seperator: '%s'",
+            line.c_str());
+      return false;
+    }
+  }
+
+  if(state == before_key) {
+    // Line did not contain any data (empty or comment)
+    return true;
+  }
+
+  // If state == in_value_XXX_quoted here, the string was not terminated.
+  if(state != after_value && state != in_value) {
+    ERR(configfile,"Malformed line: '%s'", line.c_str());
+    return false;
+  }
+
+  DEBUG(configfile, "key['%s'] value['%s']\n", key.c_str(), value.c_str());
+
+  if(key != "") {
+    values[key] = value;
+  }
+
+  return true;
 }

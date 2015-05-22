@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   runner.addTest( suite );
 
   std::ofstream myfile;
-  myfile.open("result_"OUTPUT".xml");
+  myfile.open("result_" OUTPUT ".xml");
   runner.setOutputter(new CppUnit::XmlOutputter(&runner.result(), myfile));
 
   // Run the tests.

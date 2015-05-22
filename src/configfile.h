@@ -36,8 +36,8 @@ public:
   ConfigFile(std::string filename);
   virtual ~ConfigFile();
 
-  virtual void load();
-  virtual void save();
+  virtual bool load();
+  virtual bool save();
 
   virtual std::string getValue(const std::string& key);
   virtual void setValue(const std::string& key, const std::string& value);
@@ -46,9 +46,10 @@ protected:
   std::map<std::string, std::string> values;
   std::string filename;
 
-  bool open(std::string mode);
+  virtual bool open(std::string mode);
   void close();
   std::string readLine();
+  bool parseLine(const std::string& line);
 
   FILE* fp;
 };

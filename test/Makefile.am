@@ -1,7 +1,7 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = engine gui resampler lv2 cachemanager
+TESTS = engine gui resampler lv2 configfile cachemanager
 
 check_PROGRAMS = $(TESTS)
 
@@ -54,3 +54,12 @@ lv2_SOURCES = \
 	test.cc \
 	lv2_test_host.cc \
 	lv2.cc
+
+configfile_CXXFLAGS = -DOUTPUT=\"configfile\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/hugin
+configfile_LDFLAGS = $(CPPUNIT_LIBS)
+configfile_SOURCES = \
+	$(top_srcdir)/src/configfile.cc \
+	$(top_srcdir)/hugin/hugin.c \
+	test.cc \
+	configtest.cc

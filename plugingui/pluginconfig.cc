@@ -39,21 +39,25 @@ Config::~Config()
 {
 }
 
-void Config::load()
+bool Config::load()
 {
   lastkit.clear();
   lastmidimap.clear();
 
-  ConfigFile::load();
+  if(!ConfigFile::load()) {
+    return false;
+  }
 
   lastkit = getValue("lastkit");
   lastmidimap = getValue("lastmidimap");
+
+  return true;
 }
 
-void Config::save()
+bool Config::save()
 {
   setValue("lastkit", lastkit);
   setValue("lastmidimap", lastmidimap);
 
-  ConfigFile::save();
+  return ConfigFile::save();
 }

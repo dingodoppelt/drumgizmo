@@ -34,8 +34,8 @@ public:
   Config();
   ~Config();
 
-  void load();
-  void save();
+  bool load();
+  bool save();
 
   std::string lastkit;
   std::string lastmidimap;
