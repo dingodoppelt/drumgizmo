@@ -58,6 +58,10 @@ class test_configtest : public CppUnit::TestFixture
 	CPPUNIT_TEST(loading_inline_comment);
 	CPPUNIT_TEST(loading_single_quoted_string);
 	CPPUNIT_TEST(loading_double_quoted_string);
+	CPPUNIT_TEST(loading_error_no_key);
+	CPPUNIT_TEST(loading_error_no_value);
+	CPPUNIT_TEST(loading_error_string_not_terminated_single);
+	CPPUNIT_TEST(loading_error_string_not_terminated_double);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -82,7 +86,7 @@ public:
     writeFile("a:b");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -91,7 +95,7 @@ public:
     writeFile(" a =\tb\t\n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -100,7 +104,7 @@ public:
     writeFile("a:b\n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -109,7 +113,7 @@ public:
     writeFile(" a : b ");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -118,7 +122,7 @@ public:
     writeFile("\ta\t:\tb\t");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -127,7 +131,7 @@ public:
     writeFile(" a : b \n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -136,7 +140,7 @@ public:
     writeFile("\ta\t:\tb\t\n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -145,7 +149,7 @@ public:
     writeFile("# comment\na:b\n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -154,7 +158,7 @@ public:
     writeFile("a:b #comment\n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
@@ -163,7 +167,7 @@ public:
     writeFile("a: '#\"b\" ' \n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("#\"b\" "), cf.getValue("a"));
 	}
 
@@ -172,8 +176,40 @@ public:
     writeFile("a: \"#'b' \" \n");
 
     TestConfigFile cf;
-    cf.load();
+    CPPUNIT_ASSERT_EQUAL(true, cf.load());
     CPPUNIT_ASSERT_EQUAL(std::string("#'b' "), cf.getValue("a"));
+	}
+
+  void loading_error_no_key()
+  {
+    writeFile(":foo");
+
+    TestConfigFile cf;
+    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+  void loading_error_no_value()
+  {
+    writeFile("key");
+
+    TestConfigFile cf;
+    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+  void loading_error_string_not_terminated_single()
+  {
+    writeFile("a:'b\n");
+
+    TestConfigFile cf;
+    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+  void loading_error_string_not_terminated_double()
+  {
+    writeFile("a:\"b\n");
+
+    TestConfigFile cf;
+    CPPUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 };
 
