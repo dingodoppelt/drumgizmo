@@ -41,9 +41,7 @@
 #define CACHE_DUMMYID -2
 #define CACHE_NOID -1
 
-#define FRAMESIZE 2048
-#define CHUNKSIZE (FRAMESIZE * 16)
-#define PRELOADSIZE (FRAMESIZE + CHUNKSIZE)
+#define CHUNK_MULTIPLIER 16
 
 class AudioFile;
 typedef int cacheid_t;
@@ -131,10 +129,15 @@ public:
    */
   void close(cacheid_t id);
 
+  void setFrameSize(size_t framesize);
+
   ///! Internal thread main method - needs to be public.
   void thread_main();
 
 private:
+  size_t framesize;
+  sample_t *nodata;
+
   typedef struct {
     AudioFile *file;
     size_t channel;

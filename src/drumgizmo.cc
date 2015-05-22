@@ -46,8 +46,11 @@
 #include "nolocale.h"
 
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
-  : MessageReceiver(MSGRCV_ENGINE),
-    loader(), oe(o), ie(i)
+  : MessageReceiver(MSGRCV_ENGINE)
+  , loader()
+  , oe(o)
+  , ie(i)
+  , framesize(0)
 {
   is_stopping = false;
   cacheManager.init(1000, true); // start thread
@@ -166,8 +169,30 @@ void DrumGizmo::handleMessage(Message *msg)
   }
 }
 
+void DrumGizmo::setFrameSize(size_t framesize)
+{
+  // If we are resampling override the frame size.
+  if(resampler[0].ratio() != 1) {
+    framesize = RESAMPLER_INPUT_BUFFER;
+  }
+
+  if(this->framesize != framesize) {
+    printf("New framesize: %d\n", framesize);
+
+    this->framesize = framesize;
+
+    // Update framesize in drumkitloader and cachemanager:
+    loader.setFrameSize(framesize);
+    printf("loader.setFrameSize\n"); fflush(stdout);
+    cacheManager.setFrameSize(framesize);
+    printf("cacheManager.setFrameSize\n"); fflush(stdout);
+  }
+}
+
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+  setFrameSize(nsamples);
+
   // Handle engine messages, at most one in each iteration:
   handleMessages(1);
 
@@ -355,26 +380,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   return true;
 }
 
-void DrumGizmo::run(int endpos)
-{
-  size_t pos = 0;
-  size_t nsamples = oe->getBufferSize();
-  sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
-
-  ie->start();
-  oe->start();
-
-  while(run(pos, samples, nsamples) == true) {
-    pos += nsamples;
-    if(endpos != -1 && pos >= (size_t)endpos) break;
-  }
-
-  ie->stop();
-  oe->stop();
-
-  free(samples);
-}
-
 #ifdef SSE
 #define N 8
 typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
@@ -383,7 +388,7 @@ typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
 void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 {
   std::list< Event* >::iterator i = activeevents[ch].begin();
-  while(i != activeevents[ch].end()) {
+  for(; i != activeevents[ch].end(); ++i) {
     bool removeevent = false;
 
     Event *event = *i;
@@ -405,16 +410,11 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           continue;
         }
 
-        size_t buffer_offset = 0;
-
         if(evt->cache_id == CACHE_NOID) {
           size_t initial_chunksize = (pos + sz) - evt->offset;
           evt->buffer =
             cacheManager.open(af, initial_chunksize, ch, evt->cache_id);
           evt->buffer_size = initial_chunksize;
-        }
-        else {
-          buffer_offset = evt->offset;
         }
 
         {
@@ -479,7 +479,6 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
       i = activeevents[ch].erase(i);
       continue;
     }
-    i++;
   }
 }
 
@@ -499,6 +498,9 @@ void DrumGizmo::setSamplerate(int samplerate)
 #ifdef WITH_RESAMPLER
   for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
     resampler[i].setup(kit.samplerate(), Conf::samplerate);
+  }
+  if(resampler[0].ratio() != 1) {
+    setFrameSize(RESAMPLER_INPUT_BUFFER);
   }
 #endif/*WITH_RESAMPLER*/
 

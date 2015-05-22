@@ -450,6 +450,7 @@ void DrumGizmoVst::processReplacing(float** inputs, float** outputs,
     if(buffer) free(buffer);
     buffer_size = sampleFrames;
     buffer = (sample_t*)malloc(sizeof(sample_t) * buffer_size);
+    drumgizmo->setFrameSize(buffer_size);
   }
 
   drumgizmo->run(pos, buffer, buffer_size);

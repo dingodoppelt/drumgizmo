@@ -49,6 +49,7 @@ public:
   void pre(size_t size);
   void run(int channel, sample_t* data, size_t size);
   void post(size_t size);
+  size_t bufsize();
   size_t samplerate();
 
 private:
@@ -158,6 +159,11 @@ void Alsa::post(size_t size)
   snd_pcm_writei(handle, data, size);
 }
 
+size_t Alsa::bufsize()
+{
+  return frames;
+}
+
 size_t Alsa::samplerate()
 {
   return srate;
@@ -215,6 +221,12 @@ extern "C" {
   {
     Alsa *alsa = (Alsa*)h;
     alsa->post(s);
+  }
+
+  size_t bufsize(void *h)
+  {
+    Alsa *alsa = (Alsa*)h;
+    return alsa->bufsize();
   }
 
   size_t samplerate(void *h)
