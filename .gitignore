@@ -38,3 +38,4 @@ test/lv2
 test/resource
 drumgizmo-*.tar.gz
 tst
+vst/Makefile.mingw32
