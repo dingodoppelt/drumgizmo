@@ -40,7 +40,17 @@
 //
 #include <openssl/bio.h>
 #include <openssl/err.h>
-#include <openssl/evp.h>
+
+#ifdef final
+// final is used as variable name in evp.h so we need to undef it before we
+// include it.
+  #undef final
+  #include <openssl/evp.h>
+  #define final
+#else
+  #include <openssl/evp.h>
+#endif
+
 #include <string>
 class Base64 {
 public:
