@@ -6,15 +6,57 @@ AM_INIT_AUTOMAKE
 AC_PROG_CXX
 AM_PROG_CC_C_O
 
-dnl Compile with C++11 support.
-#AX_CXX_COMPILE_STDCXX_11
-CXXFLAGS="$CXXFLAGS -std=c++0x"
-
 LT_INIT
 
 AC_CONFIG_HEADERS(config.h)
 
 need_jack=no
+
+dnl ===========================
+dnl Compile with C++11 support.
+dnl ===========================
+AC_LANG_PUSH([C++])
+TMP_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS=-std=c++11
+AC_MSG_CHECKING([whether CXX supports -std=c++11])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	[AC_MSG_RESULT([yes])],
+	[
+	 AC_MSG_RESULT([no])
+	 CXXFLAGS=-std=c++0x
+	 AC_MSG_CHECKING([whether CXX supports -std=c++0x])
+	 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 	[AC_MSG_RESULT([yes])],
+	 	[
+	 	 AC_MSG_RESULT([no])
+	 	 AC_MSG_ERROR([Compiler does not support c++11])
+	 	]
+	 )
+]
+)
+CXXFLAGS="$TMP_CXXFLAGS $CXXFLAGS"
+AC_LANG_POP([C++])
+
+dnl ===========================
+dnl Check for override /final keywords support
+dnl ===========================
+AC_LANG_PUSH([C++])
+AC_MSG_CHECKING([whether 'override' and 'final' keywords are supported])
+AC_COMPILE_IFELSE(
+	[AC_LANG_SOURCE(
+		[
+			class A { virtual void foo() {} };
+			class B : public A { virtual void foo() override {} };
+			class C : public B { virtual void foo() final {} };
+		]
+	 )
+	],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no (deploying fix)])
+	 CXXFLAGS="$CXXFLAGS -Doverride=\"\" -Dfinal=\"\""
+	]
+)
+AC_LANG_POP([C++])
 
 dnl ======================
 dnl Init pkg-config
