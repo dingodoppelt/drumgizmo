@@ -430,15 +430,22 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         // Find the end point intra-buffer
         if((evt->t + end - n) > af->size) end = af->size - evt->t + n;
 
-        // This should not be necessary but make absolutely shure that we do
+        // This should not be necessary but make absolutely sure that we do
         // not write over the end of the buffer.
         if(end > sz) end = sz;
 
         size_t t = 0; // Internal buffer counter
         if(evt->rampdown == NO_RAMPDOWN) {
+          if(n > 0) {
+            // We cannot use SIMD on this buffer.
+            for(; n < end; n++) {
+              s[n] += evt->buffer[t];
+              t++;
+            }
+          }
 #ifdef SSE
           size_t optend = ((end - n) / N) * N + n;
-          for(; n < optend; n += N) {
+          for(; (n < optend) && (t < evt->buffer_size); n += N) {
             *(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
             t += N;
          }
@@ -454,21 +461,19 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
             t++;
             evt->rampdown--;
           }
-          
-          if(evt->rampdown == 0) {
-            removeevent = true; // Down ramp done. Remove event.
-            cacheManager.close(evt->cache_id);
-          }
         }
+
         evt->t += t; // Add internal buffer counter to "global" event counter.
 
-        if(evt->t >= af->size) { 
-          removeevent = true;
-          cacheManager.close(evt->cache_id);
-        } else {
+        if((evt->t < af->size) && (evt->rampdown != 0)) {
           evt->buffer = cacheManager.next(evt->cache_id, evt->buffer_size);
+        } else {
+          removeevent = true;
         }
 
+        if(removeevent) {
+          cacheManager.close(evt->cache_id);
+        }
         }
       }
       break;
