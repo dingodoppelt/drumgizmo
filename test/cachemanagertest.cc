@@ -29,6 +29,8 @@
 #include <cachemanager.h>
 #include <unistd.h>
 
+#define FRAMESIZE 1024
+
 class test_cachemanager : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(test_cachemanager);
@@ -59,6 +61,8 @@ public:
     CacheManager cm;
     printf("cm.init\n");
     cm.init(100, threaded);
+
+    cm.setFrameSize(FRAMESIZE);
 
     cacheid_t id;
     // TODO: test 0 ... FRAMESIZE - 1

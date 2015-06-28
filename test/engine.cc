@@ -43,6 +43,7 @@ public:
     AudioOutputEngine *oe = NULL;
     AudioInputEngine *ie = NULL;
     DrumGizmo dg(oe, ie);
+    dg.setFrameSize(100);
 
     // Switch kits emmidiately with giving the loader time to work:
     for(int i = 0; i < 100; i++) {
