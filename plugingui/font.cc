@@ -88,9 +88,9 @@ size_t Font::textHeight(const std::string& text) const
 	return img_font.height();
 }
 
-void Font::setLetterSpacing(int letterSpacing)
+void Font::setLetterSpacing(int letter_spacing)
 {
-	spacing = letterSpacing;
+	spacing = letter_spacing;
 }
 
 int Font::letterSpacing() const
