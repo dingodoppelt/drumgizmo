@@ -68,7 +68,7 @@ std::string GUI::Font::face()
 
 void GUI::Font::setSize(size_t points)
 {
-  points = points;
+  (void)points;
 }
 
 size_t GUI::Font::size()
