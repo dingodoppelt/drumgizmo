@@ -136,6 +136,7 @@ size_t Widget::height()
 size_t Widget::windowX()
 {
 	size_t window_x = x();
+
 	if(parent)
 	{
 		window_x += parent->windowX();
