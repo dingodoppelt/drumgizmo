@@ -134,7 +134,7 @@ GUI::Widget *GUI::Widget::find(size_t x, size_t y)
     i++;
   }
 
-  if(x > width() || x < 0 || y > height() || y < 0) return NULL;
+  if(x > width() /*|| x < 0*/ || y > height() /*|| y < 0*/) return NULL;
   return this;
 }
 
