@@ -99,10 +99,11 @@ public:
 
   Mutex mutex;
 
+  int filechannel;
+
 private:
   void *magic;
   volatile bool is_loaded;
-  int filechannel;
 };
 
 #endif/*__DRUMGIZMO_AUDIOFILE_H__*/

@@ -412,8 +412,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->cache_id == CACHE_NOID) {
           size_t initial_chunksize = (pos + sz) - evt->offset;
-          evt->buffer =
-            cacheManager.open(af, initial_chunksize, ch, evt->cache_id);
+          evt->buffer = cacheManager.open(af, initial_chunksize,
+                                          af->filechannel, evt->cache_id);
           evt->buffer_size = initial_chunksize;
         }
 
