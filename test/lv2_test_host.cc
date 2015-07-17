@@ -166,10 +166,11 @@ void LV2TestHost::Sequence::clear()
 // Keep this to support atom extension from lv2 < 1.10
 static inline LV2_Atom_Event*
 _lv2_atom_sequence_append_event(LV2_Atom_Sequence*    seq,
-                               uint32_t              capacity,
-                               const LV2_Atom_Event* event)
+                                uint32_t              capacity,
+                                const LV2_Atom_Event* event)
 {
   const uint32_t total_size = (uint32_t)sizeof(*event) + event->body.size;
+
   if (capacity - seq->atom.size < total_size) {
     return NULL;
   }
@@ -195,7 +196,7 @@ void LV2TestHost::Sequence::addMidiNote(uint64_t pos,
 	MIDINoteEvent ev;
 	ev.event.time.frames = pos;// sample position
 	ev.event.body.type = map.map(map.handle, LV2_MIDI__MidiEvent);
-	ev.event.body.size = sizeof(MIDINoteEvent);
+	ev.event.body.size = sizeof(ev.msg);
  
 	ev.msg[0] = note_on;
 	ev.msg[1] = key;
