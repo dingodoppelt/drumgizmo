@@ -135,12 +135,20 @@ public:
   ///! Internal thread main method - needs to be public.
   void thread_main();
 
+  class Channel {
+  public:
+    size_t channel;
+    sample_t* samples;
+    size_t num_samples;
+    volatile bool* ready;
+  };
+
 private:
   size_t framesize;
   sample_t *nodata;
 
   typedef struct {
-    AFile *file;
+    AFile *afile;
     size_t channel;
     size_t pos; //< File possition
     volatile bool ready;
@@ -166,21 +174,19 @@ private:
 
     // For load next event:
     size_t pos;
-    sample_t *buffer;
-    volatile bool *ready;
-    size_t channel;
-    AFile *file;
+    AFile *afile;
+    std::list<CacheManager::Channel> channels;
   } cevent_t;
 
-  cevent_t createLoadNextEvent(AFile *file, size_t channel, size_t pos,
-                               sample_t* buffer);
+  cevent_t createLoadNextEvent(AFile *afile, size_t channel, size_t pos,
+                               sample_t* buffer, volatile bool* ready);
   cevent_t createCloseEvent(cacheid_t id);
 
-  void handleLoadNextEvent(cevent_t &e);
-  void handleCloseEvent(cevent_t &e);
+  void handleLoadNextEvent(cevent_t& e);
+  void handleCloseEvent(cevent_t& e);
 
-  void handleEvent(cevent_t &e);
-  void pushEvent(cevent_t e);
+  void handleEvent(cevent_t& e);
+  void pushEvent(cevent_t& e);
 
   std::vector<cache_t> id2cache; 
 

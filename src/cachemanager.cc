@@ -62,8 +62,9 @@ public:
   std::string filename;
 };
 
-static void readChunk(AFile* file, int filechannel, size_t pos,
-                      size_t num_samples, sample_t* buf)
+static void readChunk(AFile* file,
+                      std::list<CacheManager::Channel>& channels,
+                      size_t pos, size_t num_samples)
 {
   SNDFILE* fh = file->fh;
   SF_INFO& sf_info = file->sf_info;
@@ -96,10 +97,16 @@ static void readChunk(AFile* file, int filechannel, size_t pos,
   size_t read_size = sf_readf_float(fh, read_buffer, size);
   (void)read_size;
 
-  size_t channel = filechannel;
-  sample_t *data = buf;
-  for (size_t i = 0; i < size; i++) {
-    data[i] = read_buffer[(i * sf_info.channels) + channel];
+  for(auto it = channels.begin(); it != channels.end(); ++it) {
+    size_t channel = it->channel;
+    sample_t *data = it->samples;
+    for (size_t i = 0; i < size; i++) {
+      data[i] = read_buffer[(i * sf_info.channels) + channel];
+    }
+  }
+
+  for(auto it = channels.begin(); it != channels.end(); ++it) {
+    *(it->ready) = true;
   }
 }
 
@@ -179,7 +186,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   afile->ref++;
 
   cache_t c;
-  c.file = afile;
+  c.afile = afile;
   c.channel = channel;
 
   // next call to 'next' will read from this point.
@@ -202,8 +209,6 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
   c.preloaded_samples = file->data;
   c.preloaded_samples_size = cropped_size;
 
-  c.ready = false;
-
   // next read from disk will read from this point.
   c.pos = cropped_size;//c.preloaded_samples_size;
 
@@ -222,8 +227,7 @@ sample_t *CacheManager::open(AudioFile *file, size_t initial_samples_needed,
     }
 
     cevent_t e =
-      createLoadNextEvent(c.file, c.channel, c.pos, c.back);
-    e.ready = &id2cache[id].ready;
+      createLoadNextEvent(c.afile, c.channel, c.pos, c.back, &c.ready);
     pushEvent(e);
   }
 
@@ -275,14 +279,12 @@ sample_t *CacheManager::next(cacheid_t id, size_t &size)
 
   c.pos += CHUNKSIZE(framesize);
   
-  if(c.pos < c.file->sf_info.frames) {
+  if(c.pos < c.afile->sf_info.frames) {
     if(c.back == NULL) {
       c.back = new sample_t[CHUNKSIZE(framesize)];
     }
 
-    cevent_t e = createLoadNextEvent(c.file, c.channel, c.pos, c.back);
-    c.ready = false;
-    e.ready = &c.ready;
+    cevent_t e = createLoadNextEvent(c.afile, c.channel, c.pos, c.back, &c.ready);
     pushEvent(e);
   } 
 
@@ -321,23 +323,26 @@ void CacheManager::setFrameSize(size_t framesize)
 
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
-  assert(files.find(e.file->filename) != files.end());
-  readChunk(files[e.file->filename], e.channel, e.pos, CHUNKSIZE(framesize), e.buffer);
-  *e.ready = true;
+  assert(files.find(e.afile->filename) != files.end());
+  readChunk(files[e.afile->filename], e.channels, e.pos, CHUNKSIZE(framesize));
 }
 
 void CacheManager::handleCloseEvent(cevent_t &e) 
 {
   cache_t& c = id2cache[e.id];
 
-  auto f = files.find(c.file->filename);
+  {
+    MutexAutolock l(m_events);
 
-  if(f != files.end()) {
-    // Decrease ref count and close file if needed (in AFile destructor).
-    files[c.file->filename]->ref--;
-    if(files[c.file->filename]->ref == 0) {
-      delete f->second;
-      files.erase(f);
+    auto f = files.find(c.afile->filename);
+
+    if(f != files.end()) {
+      // Decrease ref count and close file if needed (in AFile destructor).
+      files[c.afile->filename]->ref--;
+      if(files[c.afile->filename]->ref == 0) {
+        delete f->second;
+        files.erase(f);
+      }
     }
   }
 
@@ -387,32 +392,59 @@ void CacheManager::thread_main()
   }
 }
 
-void CacheManager::pushEvent(cevent_t e)
+void CacheManager::pushEvent(cevent_t& e)
 {
   if(!threaded) {
     handleEvent(e);
     return;
   }
 
-  // TODO: Check if event should be merged.
   {
     MutexAutolock l(m_events);
-    eventqueue.push_back(e);
+
+    bool found = false;
+
+    if(e.cmd == LOADNEXT) {
+      for(auto it = eventqueue.begin(); it != eventqueue.end(); ++it) {
+        auto& event = *it;
+        if((event.cmd == LOADNEXT) &&
+           (e.afile->filename == event.afile->filename) &&
+           (e.pos == event.pos)) {
+          // Append channel and buffer to the existing event.
+          event.channels.insert(event.channels.end(), e.channels.begin(), e.channels.end());
+          found = true;
+          break;
+        }
+      }
+    }
+
+    if(!found) {
+      // The event was not already on the list, create a new one.
+      eventqueue.push_back(e);
+    }
   }
 
   sem.post();
 }
 
 CacheManager::cevent_t
-CacheManager::createLoadNextEvent(AFile *file, size_t channel, size_t pos,
-                                  sample_t* buffer)
+CacheManager::createLoadNextEvent(AFile *afile, size_t channel, size_t pos,
+                                  sample_t* buffer, volatile bool* ready)
 {
   cevent_t e;
   e.cmd = LOADNEXT;
   e.pos = pos;
-  e.buffer = buffer;
-  e.file = file;
-  e.channel = channel;
+  e.afile = afile;
+
+  CacheManager::Channel c;
+  c.channel = channel;
+  c.samples = buffer;
+
+  *ready = false;
+  c.ready = ready;
+
+  e.channels.insert(e.channels.end(), c);
+
   return e; 
 }
 
