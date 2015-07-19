@@ -147,7 +147,7 @@ int CliMain::run(int argc, char *argv[])
       {"help", no_argument, 0, 'h'},
       {0, 0, 0, 0}
     };
-    
+
     c = getopt_long(argc, argv, "hvpo:O:i:I:e:a"
 #ifndef DISABLE_HUGIN
                     "D:"
