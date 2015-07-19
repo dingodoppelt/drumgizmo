@@ -380,9 +380,10 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   return true;
 }
 
+#undef SSE // SSE broken for now ... so disable it.
 #ifdef SSE
 #define N 8
-typedef float vNsf __attribute__ ((vector_size(sizeof(float)*N)));
+typedef float vNsf __attribute__ ((vector_size(sizeof(sample_t)*N)));
 #endif/*SSE*/
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
@@ -423,39 +424,45 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         size_t n = 0; // default start point is 0.
 
         // If we are not at offset 0 in current buffer:
-        if(evt->offset > (size_t)pos) n = evt->offset - pos;
+        if(evt->offset > (size_t)pos) {
+          n = evt->offset - pos;
+        }
 
         size_t end = sz; // default end point is the end of the buffer.
 
         // Find the end point intra-buffer
-        if((evt->t + end - n) > af->size) end = af->size - evt->t + n;
+        if((evt->t + end - n) > af->size) {
+          end = af->size - evt->t + n;
+        }
 
         // This should not be necessary but make absolutely sure that we do
         // not write over the end of the buffer.
-        if(end > sz) end = sz;
+        if(end > sz) {
+          end = sz;
+        }
 
         size_t t = 0; // Internal buffer counter
         if(evt->rampdown == NO_RAMPDOWN) {
-          if(n > 0) {
-            // We cannot use SIMD on this buffer.
-            for(; n < end; n++) {
-              s[n] += evt->buffer[t];
-              t++;
-            }
-          }
+
 #ifdef SSE
           size_t optend = ((end - n) / N) * N + n;
+
+          // Force source addr to be 16 byte aligned... (might skip 1 or 2 samples)
+          while((size_t)&evt->buffer[t] % 16) {
+            ++t;
+          }
+
           for(; (n < optend) && (t < evt->buffer_size); n += N) {
             *(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
             t += N;
-         }
+          }
 #endif
-          for(; n < end; n++) {
+          for(; (n < end) && (t < evt->buffer_size); n++) {
             s[n] += evt->buffer[t];
             t++;
           }
         } else { // Ramp down in progress.
-          for(; n < end && evt->rampdown; n++) {
+          for(; (n < end) && (t < evt->buffer_size) && evt->rampdown; n++) {
             float scale = (float)evt->rampdown/(float)evt->ramp_start;
             s[n] += evt->buffer[t] * scale;
             t++;
@@ -463,7 +470,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
           }
         }
 
-        evt->t += t; // Add internal buffer counter to "global" event counter.
+        evt->t += evt->buffer_size; // Add internal buffer counter to "global" event counter.
 
         if((evt->t < af->size) && (evt->rampdown != 0)) {
           evt->buffer = cacheManager.next(evt->cache_id, evt->buffer_size);
