@@ -34,6 +34,8 @@ public:
   Test()
     : p(0.1)
     , instr(-1)
+    , nth(-1)
+    , nth_counter(0)
   {}
 
   ~Test() {}
@@ -52,6 +54,8 @@ public:
 private:
   float p;
   int instr;
+  int nth;
+  int nth_counter;
   int num_instruments;
 };
 
@@ -65,6 +69,7 @@ void Test::setParm(std::string parm, std::string value)
 {
   if(parm == "p") p = atof(value.c_str());
   if(parm == "instr") instr = atoi(value.c_str());
+  if(parm == "nth") nth = atoi(value.c_str());
 }
 
 bool Test::start()
@@ -87,8 +92,17 @@ event_t *Test::run(size_t pos, size_t nsamples, size_t *nevents)
   event_t *evs = (event_t *)malloc(sizeof(event_t) * BUFFER_MAX);
 
   for(size_t i = 0; i < nsamples; ++i) {
-    if((float)rand() / (float)RAND_MAX > p) {
-      continue;
+
+    if(nth != -1) {
+      if(nth_counter < nth) {
+        ++nth_counter;
+        continue;
+      }
+      nth_counter = 0;
+    } else {
+      if((float)rand() / (float)RAND_MAX > p) {
+        continue;
+      }
     }
 
     evs[*nevents].type = TYPE_ONSET;
