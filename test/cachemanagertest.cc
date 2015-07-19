@@ -35,7 +35,7 @@ class test_cachemanager : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(test_cachemanager);
   CPPUNIT_TEST(singlechannel_nonthreaded);
-	CPPUNIT_TEST(singlechannel_threaded);
+  CPPUNIT_TEST(singlechannel_threaded);
   CPPUNIT_TEST(multichannel_nonthreaded);
   CPPUNIT_TEST(multichannel_threaded);
 	CPPUNIT_TEST_SUITE_END();
@@ -55,8 +55,8 @@ public:
     // Input file:
     AudioFile af(filename, channel);
     printf("af.load\n");
-    af.load(ALL_SAMPLES);
-    //af.load(PRELOADSIZE);
+    //af.load(ALL_SAMPLES);
+    af.load(4096);
 
     CacheManager cm;
     printf("cm.init\n");
@@ -68,7 +68,7 @@ public:
     // TODO: test 0 ... FRAMESIZE - 1
     size_t initial_samples_needed = (FRAMESIZE - 1) / 2;
 
-    printf("open\n");
+    printf("open: initial_samples_needed: %d\n", initial_samples_needed);
     sample_t *s = cm.open(&af, initial_samples_needed, channel, id);
     size_t size = initial_samples_needed;
     size_t offset = 0;
@@ -90,7 +90,12 @@ public:
       //printf("offset: %d\t", offset);
       s = cm.next(id, size);
       //printf("next -> size: %d\n", size);
-      for(size_t i = 0; i < size && (offset < afref.size); i++) {
+      for(size_t i = 0; (i < size) && (offset < afref.size); i++) {
+        /*
+        if(afref.data[offset] != s[i]) {
+          printf("offset: %d, size: %d, diff: %d\n", offset, afref.size, afref.size - offset);
+        }
+        */
         CPPUNIT_ASSERT_EQUAL(afref.data[offset], s[i]);
         offset++;
       }
@@ -101,6 +106,7 @@ public:
 
   void singlechannel_nonthreaded()
   {
+    printf("\nsinglechannel_nonthreaded()\n");
     const char filename[] = "kit/ride-single-channel.wav";
     int channel = 0;
     bool threaded = false;
@@ -109,6 +115,7 @@ public:
 
   void singlechannel_threaded()
   {
+    printf("\nsinglechannel_threaded()\n");
     const char filename[] = "kit/ride-single-channel.wav";
     int channel = 0;
     bool threaded = true;
@@ -117,6 +124,7 @@ public:
 
   void multichannel_nonthreaded()
   {
+    printf("\nmultichannel_nonthreaded()\n");
     const char filename[] = "kit/ride-multi-channel.wav";
     int channel = 0;
     bool threaded = false;
@@ -125,6 +133,7 @@ public:
 
   void multichannel_threaded()
   {
+    printf("\nmultichannel_threaded()\n");
     const char filename[] = "kit/ride-multi-channel.wav";
     int channel = 0;
     bool threaded = true;
