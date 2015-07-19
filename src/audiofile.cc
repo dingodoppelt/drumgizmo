@@ -114,15 +114,15 @@ void AudioFile::load(int num_samples)
     return;
   }
  
+  if(num_samples == ALL_SAMPLES) {
+    num_samples = sf_info.frames;
+  }
+
   size = sf_info.frames;
   preloadedsize = sf_info.frames;
 
-  double ratio = (double)Conf::samplerate / (double)sf_info.samplerate;
-
-  if(num_samples != ALL_SAMPLES) {
-    // Make sure we read enough samples, even after conversion.
-    num_samples /= ratio;
-    if((int)preloadedsize > num_samples) preloadedsize = num_samples;
+  if(preloadedsize > (size_t)num_samples) {
+    preloadedsize = num_samples;
   }
 
   sample_t* data = new sample_t[preloadedsize];
@@ -139,7 +139,7 @@ void AudioFile::load(int num_samples)
     int read;
     do {
       read = sf_readf_float(fh, buffer, readsize);
-      for (int i = 0; i < read && totalread < num_samples; i++) {
+      for (int i = 0; (i < read) && (totalread < num_samples); i++) {
         data[totalread++] = buffer[i * sf_info.channels + filechannel];
       }
     } while( (read > 0) &&
@@ -148,7 +148,7 @@ void AudioFile::load(int num_samples)
     // set data size to total bytes read
     preloadedsize = totalread;
   }
-  
+
   DEBUG(audiofile,"Loaded %d samples %p\n", (int)preloadedsize, this);
   
   sf_close(fh);
