@@ -122,8 +122,10 @@ int CliMain::run(int argc, char *argv[])
 {
   int c;
 
+#ifndef DISABLE_HUGIN
   const char *hugin_filter = "+all";
   unsigned int hugin_flags = HUG_FLAG_OUTPUT_TO_STDOUT;
+#endif/*DISABLE_HUGIN*/
 
   std::string outputengine;
   std::string inputengine;
