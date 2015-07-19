@@ -86,7 +86,7 @@ event_t *InputLV2::run(size_t pos, size_t len, size_t *nevents)
 
     if ((data[0] & 0xF0) == 0x80) { // note off
       int key = data[1];
-    
+      (void)key;
       DEBUG(lv2input, "Event (off) key:%d\n", key);
     }
 
