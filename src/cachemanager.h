@@ -45,6 +45,7 @@
 
 class AudioFile;
 typedef int cacheid_t;
+class AFile;
 
 
 //TODO:
@@ -139,13 +140,17 @@ private:
   sample_t *nodata;
 
   typedef struct {
-    AudioFile *file;
+    AFile *file;
     size_t channel;
     size_t pos; //< File possition
     volatile bool ready;
     sample_t *front;
     sample_t *back;
     size_t localpos; //< Intra buffer (front) position.
+
+    sample_t* preloaded_samples; // NULL means not active.
+    size_t preloaded_samples_size;
+
   } cache_t;
 
   typedef enum {
@@ -163,11 +168,11 @@ private:
     size_t pos;
     sample_t *buffer;
     volatile bool *ready;
-    AudioFile *file;
     size_t channel;
+    AFile *file;
   } cevent_t;
 
-  cevent_t createLoadNextEvent(AudioFile *file, size_t channel, size_t pos,
+  cevent_t createLoadNextEvent(AFile *file, size_t channel, size_t pos,
                                sample_t* buffer);
   cevent_t createCloseEvent(cacheid_t id);
 
@@ -190,6 +195,8 @@ private:
   Semaphore sem;
   Semaphore sem_run;
   bool running;
+
+  std::map<std::string, AFile*> files;
 };
 
 #endif/*__DRUMGIZMO_CACHEMANAGER_H__*/
