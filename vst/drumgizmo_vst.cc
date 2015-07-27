@@ -444,6 +444,12 @@ void DrumGizmoVst::initProcess()
 void DrumGizmoVst::processReplacing(float** inputs, float** outputs,
                                     VstInt32 sampleFrames)
 {
+  long lvl = getCurrentProcessLevel();
+  // 0 = realtime/normal
+  // 1 = non-realtime/rendering
+  // 2 = offline processing
+  drumgizmo->setFreeWheel(lvl != 0);
+
   output->setOutputs(outputs);
 
   if(buffer_size != (size_t)sampleFrames) {
