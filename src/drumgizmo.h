@@ -77,6 +77,8 @@ public:
 
   void setFrameSize(size_t framesize);
 
+  void setFreeWheel(bool freewheel);
+
 private:
   DrumKitLoader loader;
 
@@ -98,4 +100,5 @@ private:
   DrumKit kit;
 
   size_t framesize;
+  bool freewheel;
 };

@@ -51,6 +51,7 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   , oe(o)
   , ie(i)
   , framesize(0)
+  , freewheel(false)
 {
   is_stopping = false;
   cacheManager.init(1000, true); // start thread
@@ -186,6 +187,16 @@ void DrumGizmo::setFrameSize(size_t framesize)
     printf("loader.setFrameSize\n"); fflush(stdout);
     cacheManager.setFrameSize(framesize);
     printf("cacheManager.setFrameSize\n"); fflush(stdout);
+  }
+}
+
+void DrumGizmo::setFreeWheel(bool freewheel)
+{
+  // Freewheel = true means that we are bouncing and therefore running faster
+  // than realtime.
+  if(freewheel != this->freewheel) {
+    this->freewheel = freewheel;
+    cacheManager.setAsyncMode(!freewheel);
   }
 }
 
