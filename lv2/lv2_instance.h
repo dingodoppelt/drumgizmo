@@ -43,6 +43,8 @@ typedef struct {
   sample_t *buffer;
   size_t buffer_size;
   LV2_URID_Map* map;
+  float* free_wheel_port;
+  size_t pos;
 } DGLV2;
 
 #endif/*__DRUMGIZMO_LV2_INSTANCE_H__*/

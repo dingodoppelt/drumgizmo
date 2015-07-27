@@ -321,6 +321,14 @@ void CacheManager::setFrameSize(size_t framesize)
   this->framesize = framesize;
 }
 
+void CacheManager::setAsyncMode(bool async)
+{
+  // TODO: Clean out read queue.
+  // TODO: Block until reader thread is idle, otherwise we might screw up the
+  // buffers...?
+  threaded = async;
+}
+
 void CacheManager::handleLoadNextEvent(cevent_t &e) 
 {
   assert(files.find(e.afile->filename) != files.end());
@@ -354,7 +362,6 @@ void CacheManager::handleCloseEvent(cevent_t &e)
     availableids.push_back(e.id);
   }
 }
-
 
 void CacheManager::handleEvent(cevent_t &e)
 {

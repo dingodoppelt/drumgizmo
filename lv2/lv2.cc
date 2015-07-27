@@ -35,6 +35,12 @@
 
 #include <hugin.hpp>
 
+enum {
+  FREE_WHEEL_PORT = 0,
+  MIDI_PORT,
+  AUDIO_PORT_BASE
+};
+
 #define DRUMGIZMO_URI "http://drumgizmo.org/lv2"
 #define NS_DG DRUMGIZMO_URI "/atom#"
 
@@ -125,6 +131,9 @@ LV2_Handle instantiate(const struct _LV2_Descriptor *descriptor,
 {
   DGLV2 *dglv2 = new DGLV2;
 
+  dglv2->free_wheel_port = NULL; // Not assigned
+  dglv2->pos = 0; // Start from the beginning
+
   dglv2->map = NULL;
   for (int i = 0 ; features[i] ; i++) {
     if (!strcmp(features[i]->URI,  LV2_URID_URI "#map")) {
@@ -150,13 +159,18 @@ void connect_port(LV2_Handle instance, uint32_t port, void *data_location)
 {
   DGLV2 *dglv2 = (DGLV2 *)instance;
 
-  if(port == 0) {// MIDI in
+  if(port == FREE_WHEEL_PORT) {
+    dglv2->free_wheel_port = (float*)data_location;
+  }
+
+  if(port == MIDI_PORT) { // MIDI in
     dglv2->in->eventPort = (LV2_Atom_Sequence*)data_location;
-  } else {// Audio Port
-    if(port - 1 < NUM_OUTPUTS) {
-      dglv2->out->outputPorts[port - 1].samples = (sample_t*)data_location;
-      dglv2->out->outputPorts[port - 1].size = 0;
-    }
+  }
+
+  if(port >= AUDIO_PORT_BASE) { // Audio Port
+    uint32_t audio_port = port - AUDIO_PORT_BASE;
+    dglv2->out->outputPorts[audio_port].samples = (sample_t*)data_location;
+    dglv2->out->outputPorts[audio_port].size = 0;
   }
 }
 
@@ -169,16 +183,19 @@ void activate(LV2_Handle instance)
 
 void run(LV2_Handle instance, uint32_t sample_count)
 {
-  static size_t pos = 0;
   DGLV2 *dglv2 = (DGLV2 *)instance;
+
+  if(dglv2->free_wheel_port) {
+    dglv2->dg->setFreeWheel(*dglv2->free_wheel_port);
+  }
 
   if(dglv2->buffer_size != sample_count) {
     dglv2->buffer_size = sample_count;
     dglv2->dg->setFrameSize(sample_count);
   }
-  dglv2->dg->run(pos, dglv2->buffer, sample_count);
+  dglv2->dg->run(dglv2->pos, dglv2->buffer, sample_count);
 
-  pos += sample_count;
+  dglv2->pos += sample_count;
 }
 
 void deactivate(LV2_Handle instance)

@@ -130,7 +130,16 @@ public:
    */
   void close(cacheid_t id);
 
+  /**
+   * Set internal framesize used when iterating through cache buffers.
+   */
   void setFrameSize(size_t framesize);
+
+  /**
+   * Control reader thread.
+   * Set to true to make reading happen threaded, false to do all reading sync.
+   */
+  void setAsyncMode(bool async);
 
   ///! Internal thread main method - needs to be public.
   void thread_main();
