@@ -40,6 +40,8 @@ typedef void (*input_pre_func_t)(void*);
 typedef event_t* (*input_run_func_t)(void*,size_t,size_t,size_t*);
 typedef void (*input_post_func_t)(void*);
   
+class DrumGizmo;
+
 class AudioInputEngineDL : public AudioInputEngine {
 public:
   AudioInputEngineDL(std::string name);
@@ -55,6 +57,8 @@ public:
   void pre();
   event_t *run(size_t pos, size_t len, size_t *nevents);
   void post();
+
+  void setEngine(DrumGizmo* drumgizmo);
 
 private:
   void *ptr;

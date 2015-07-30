@@ -36,6 +36,8 @@ public:
   virtual void jack_process(jack_nframes_t nframes) = 0;
 };
 
+class DrumGizmo;
+
 class JackClient {
 public:
   JackClient();
@@ -51,12 +53,17 @@ public:
   void activate();
   int process(jack_nframes_t nframes);
 
+  void setFreeWheel(bool freewheel);
+
 	jack_client_t *jack_client;
+
+  void setEngine(DrumGizmo* drumgizmo);
 
   // Sort of private...
   int refcnt;
 
 private:
+  DrumGizmo* drumgizmo;
   std::set<JackProcess *> jack_processes;
   bool active;
 };
