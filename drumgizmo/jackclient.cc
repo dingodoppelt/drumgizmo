@@ -26,20 +26,33 @@
  */
 #include "jackclient.h"
 
+#include <drumgizmo.h>
+
 extern "C"
 {
-  int _wrap_jack_process(jack_nframes_t nframes, void *arg){
-    return ((JackClient*)arg)->process(nframes);}
+
+static int jack_process_callback(jack_nframes_t nframes, void *arg)
+{
+  return ((JackClient*)arg)->process(nframes);
+}
+
+static void jack_free_wheel_callback(int starting, void *arg)
+{
+  ((JackClient*)arg)->setFreeWheel(starting);
+}
+
 }  // extern "C"
 
 JackClient::JackClient()
   : refcnt(0)
+  , drumgizmo(NULL)
 {
 	jack_status_t status;
 
 	jack_client = jack_client_open("DrumGizmo", JackNullOption, &status);
 
-  jack_set_process_callback(jack_client, _wrap_jack_process, this);
+  jack_set_process_callback(jack_client, jack_process_callback, this);
+  jack_set_freewheel_callback(jack_client, jack_free_wheel_callback, this);
 
   active = false;
 }
@@ -77,6 +90,18 @@ int JackClient::process(jack_nframes_t nframes)
   }
 
 	return 0;
+}
+
+void JackClient::setFreeWheel(bool freewheel)
+{
+  if(drumgizmo) {
+    drumgizmo->setFreeWheel(freewheel);
+  }
+}
+
+void JackClient::setEngine(DrumGizmo* drumgizmo)
+{
+  this->drumgizmo = drumgizmo;
 }
 
 JackClient *jackclient = NULL;

@@ -130,7 +130,6 @@ void JackAudio::post(size_t size)
 
 void JackAudio::jack_process(jack_nframes_t nframes)
 {
-  //printf("o"); fflush(stdout);
   for(size_t c = 0; c < nchannels; c++) {
     jack_default_audio_sample_t *out =
       (jack_default_audio_sample_t *) jack_port_get_buffer(output_port[c],

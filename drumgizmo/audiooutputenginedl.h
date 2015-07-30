@@ -48,6 +48,8 @@ typedef void (*output_post_func_t)(void*, size_t);
 typedef size_t (*output_bufsize_func_t)(void*);
 typedef size_t (*output_samplerate_func_t)(void*);
 
+class DrumGizmo;
+
 class AudioOutputEngineDL : public AudioOutputEngine {
 public:
   AudioOutputEngineDL(std::string name);
@@ -66,6 +68,8 @@ public:
 
   size_t getBufferSize();
   size_t samplerate();
+
+  void setEngine(DrumGizmo* drumgizmo);
 
 private:
   void *ptr{nullptr};

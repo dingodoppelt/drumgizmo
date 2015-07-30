@@ -176,76 +176,7 @@ void AudioInputEngineDL::post()
   return i_post(ptr);
 }
 
-//#include "audioinputenginedummy.h"
-//#include "audioinputenginejackmidi.h"
-//#include "audioinputenginemidifile.h"
-
-/*
-
-typedef Device* (*create_func_t)(void);
-typedef void (*destroy_func_t)(Device*);
-
-struct device_t {
-  Device* dev;
-  destroy_func_t destroyer;
-  void* lib;
-};
-
-int load_shared_device(device_t &dev, std::string devlib,
-                             std::string devfile, ConfMap devconfmap) {
-  // load library
-  dev.lib = dlopen(devlib.c_str(), RTLD_LAZY);
-  if(!dev.lib ) {
-    printf("Cannot load device: %s\n", dlerror());
-    return -1;
-  }
-
-  create_func_t create_device = (create_func_t) dlsym(dev.lib, "create");
-  const char* dlsym_error = dlerror();
-  if(dlsym_error) {
-    printf("Cannot load symbol create: %s\n", dlsym_error);
-    return -1;
-  }
-
-  dev.destroyer = (destroy_func_t) dlsym(dev.lib, "destroy");
-  dlsym_error = dlerror();
-  if(dlsym_error) {
-    printf("Cannot load symbol destroy: %s\n", dlsym_error);
-    return -1;
-  }
-
-  dev.dev = create_device();
-
-  // initialize device 
-  DevData devdata = dev.dev->init(devfile, devconfmap);
-  if(devdata.retval != DevData::VALUE_SUCCESS) {
-    printf("Error while initializing device: %s\n",  devdata.msg.c_str());
-    return -1;
-  }
-
-  return 0;
+void AudioInputEngineDL::setEngine(DrumGizmo* drumgizmo)
+{
+  jackclient->setEngine(drumgizmo);
 }
-
-void unload_shared_device(device_t &dev) {
-  
-  dev.destroyer(dev.dev);
-  dlclose(dev.lib);
-}
-*/
-
-#ifdef TEST_AUDIOINPUTENGINEDL
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_AUDIOINPUTENGINEDL*/

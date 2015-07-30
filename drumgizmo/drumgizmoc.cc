@@ -228,7 +228,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  AudioInputEngine *ie = new AudioInputEngineDL(inputengine);
+  AudioInputEngineDL *ie = new AudioInputEngineDL(inputengine);
 
   if(ie == NULL) {
     printf("Invalid input engine: %s\n", inputengine.c_str());
@@ -327,6 +327,8 @@ int CliMain::run(int argc, char *argv[])
   printf("Using kitfile: %s\n", kitfile.c_str());
 
   DrumGizmo gizmo(oe, ie);
+  oe->setEngine(&gizmo);
+  ie->setEngine(&gizmo);
 
   gizmo.setFrameSize(oe->getBufferSize());
 
