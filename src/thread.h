@@ -24,10 +24,10 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_THREAD_H__
-#define __DRUMGIZMO_THREAD_H__
+#pragma once
 
 #ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
 #include <pthread.h>
@@ -41,14 +41,16 @@ public:
   void run();
   void wait_stop();
 
+protected:
   virtual void thread_main() = 0;
   
 private:
 #ifdef WIN32
   HANDLE tid;
+  static DWORD WINAPI
 #else
   pthread_t tid;
+  static void*
 #endif/*WIN32*/
+    thread_run(void *data);
 };
-
-#endif/*__DRUMGIZMO_THREAD_H__*/

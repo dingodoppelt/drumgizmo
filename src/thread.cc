@@ -29,18 +29,6 @@
 #include <stdio.h>
 #include <hugin.hpp>
 
-#ifdef WIN32
-static DWORD WINAPI thread_run(void *data)
-#else
-static void* thread_run(void *data)
-#endif/*WIN32*/
-{
-  DEBUG(thread, "Thread run\n");
-  Thread *t = (Thread*)data;
-  t->thread_main();
-  return 0;
-}
-
 Thread::Thread()
 {}
 
@@ -66,19 +54,15 @@ void Thread::wait_stop()
 #endif/*WIN32*/
 }
 
-#ifdef TEST_THREAD
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_THREAD*/
+#ifdef WIN32
+DWORD WINAPI
+#else
+void*
+#endif/*WIN32*/
+Thread::thread_run(void *data)
+{
+  DEBUG(thread, "Thread run\n");
+  Thread *t = (Thread*)data;
+  t->thread_main();
+  return 0;
+}
