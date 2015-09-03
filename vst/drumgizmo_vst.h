@@ -112,7 +112,7 @@ public:
 
 private:
   DrumGizmoVst* dgeff;
-  PluginGUI *plugingui;
+  GUI::PluginGUI *plugingui;
   DrumGizmo *drumgizmo;
 };
 

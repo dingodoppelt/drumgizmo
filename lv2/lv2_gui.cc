@@ -114,7 +114,7 @@ struct DG_GUI {
   DrumGizmo *instance;
   LV2UI_Controller controller;
 
-  PluginGUI *gui;
+  GUI::PluginGUI *gui;
   struct lv2_external_ui_host *ui_host_ptr;
 };
 
@@ -190,7 +190,7 @@ static LV2UI_Handle ui_instantiate(const struct _LV2UI_Descriptor * descriptor,
   pt->virt.run = ui_run;
   pt->virt.show = ui_show;
   pt->virt.hide = ui_hide;
-  pt->gui = new PluginGUI();
+  pt->gui = new GUI::PluginGUI();
   pt->gui->setWindowClosedCallback(closeHandler, pt);
 
   *widget = (LV2UI_Widget)pt;
