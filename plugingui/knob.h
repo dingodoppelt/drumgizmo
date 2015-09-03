@@ -38,8 +38,8 @@ class Knob : public Widget {
 public:
   Knob(Widget *parent);
 
-  bool catchMouse() { return true; }
-  bool isFocusable() { return true; }
+  bool catchMouse() override { return true; }
+  bool isFocusable() override { return true; }
 
   void setValue(float value);
   float value();
