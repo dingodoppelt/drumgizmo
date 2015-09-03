@@ -29,6 +29,7 @@ lv2 >= 1.0
 Xlib >= 1.0
 sndfile >= 1.0.21
 libpng >= 1.2
+libsmf
 pthread (no minimal version specified)
 expat (no minimal version specified)
 
