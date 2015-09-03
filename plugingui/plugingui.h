@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_PLUGINGUI_H__
-#define __DRUMGIZMO_PLUGINGUI_H__
+#pragma once
 
 #include "window.h"
 #include "eventhandler.h"
@@ -44,8 +43,11 @@
 #include "semaphore.h"
 
 #include "messagereceiver.h"
+#include "notifier.h"
 
-class PluginGUI : public Thread, public MessageReceiver {
+namespace GUI {
+
+class PluginGUI : public Thread, public MessageReceiver, public Listener {
 public:
   PluginGUI();
   virtual ~PluginGUI();
@@ -64,22 +66,22 @@ public:
   void handleMessage(Message *msg);
 
   //private:
-  GUI::Window *window;
-  GUI::EventHandler *eventhandler;
+  Window *window;
+  EventHandler *eventhandler;
 
-  GUI::FileBrowser *filebrowser;
+  FileBrowser *filebrowser;
 
-  GUI::CheckBox *check;
-  GUI::Knob *knob;
-  GUI::Knob *knob2;
+  CheckBox *check;
+  Knob *attackKnob;
+  Knob *falloffKnob;
 
-  GUI::Label *lbl;
-  GUI::LineEdit *lineedit;
-  GUI::ProgressBar *progress;
+  Label *lbl;
+  LineEdit *lineedit;
+  ProgressBar *progress;
 
-  GUI::Label *lbl2;
-  GUI::LineEdit *lineedit2;
-  GUI::ProgressBar *progress2;
+  Label *lbl2;
+  LineEdit *lineedit2;
+  ProgressBar *progress2;
 
   Config *config;
 
@@ -90,6 +92,9 @@ public:
   void *changeMidimapPtr;
 
 private:
+  void attackValueChanged(float value);
+  void falloffValueChanged(float value);
+
   volatile bool running;
   volatile bool closing;
   volatile bool initialised;
@@ -97,4 +102,5 @@ private:
   Semaphore sem;
 };
 
-#endif/*__DRUMGIZMO_PLUGINGUI_H__*/
+} // GUI::
+

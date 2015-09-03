@@ -24,11 +24,11 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_WIDGET_H__
-#define __DRUMGIZMO_WIDGET_H__
+#pragma once
 
 #include "guievent.h"
 #include "pixelbuffer.h"
+#include "notifier.h"
 
 #include <vector>
 
@@ -36,7 +36,7 @@ namespace GUI {
 
 class Window;
 
-class Widget {
+class Widget : public Listener {
 public:
   Widget(Widget *parent);
   virtual ~Widget();
@@ -94,6 +94,4 @@ private:
   bool _visible;
 };
 
-};
-
-#endif/*__DRUMGIZMO_WIDGET_H__*/
+} // GUI::

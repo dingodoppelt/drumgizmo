@@ -24,12 +24,13 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_KNOB_H__
-#define __DRUMGIZMO_KNOB_H__
+#pragma once
 
 #include "widget.h"
 
 #include "image.h"
+
+#include "notifier.h"
 
 namespace GUI {
 
@@ -43,38 +44,37 @@ public:
   void setValue(float value);
   float value();
 
-  void registerClickHandler(void (*handler)(void *), void *ptr);
+  Notifier<float> valueChangedNotifier; // (float newValue)
 
-  //protected:
+protected:
   virtual void clicked() {}
 
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
-  virtual void mouseMoveEvent(MouseMoveEvent *e);
-  virtual void scrollEvent(ScrollEvent *e);
-  virtual void keyEvent(KeyEvent *e);
+  // From Widget:
+  virtual void repaintEvent(RepaintEvent *e) override;
+  virtual void buttonEvent(ButtonEvent *e) override;
+  virtual void mouseMoveEvent(MouseMoveEvent *e) override;
+  virtual void scrollEvent(ScrollEvent *e) override;
+  virtual void keyEvent(KeyEvent *e) override;
 
 private:
+  //! Sets the internal value and sends out the changed notification.
+  void internalSetValue(float value);
+
   typedef enum {
     up,
     down
   } state_t;
 
-  float val;
+  state_t state;
+
+  float currentValue;
   float maximum;
   float minimum;
 
-  state_t state;
-
-  GUI::Image img_knob;
-
-  void (*handler)(void *);
-  void *ptr;
+  Image img_knob;
 
   int mouse_offset_x;
-
 };
 
-};
+} // GUI::
 
-#endif/*__DRUMGIZMO_KNOB_H__*/

@@ -36,6 +36,8 @@
 #include "pluginconfig.h"
 #include "messagehandler.h"
 
+namespace GUI {
+
 static void checkClick(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
@@ -45,7 +47,7 @@ static void checkClick(void *ptr)
                              gui->check->checked());
   msghandler.sendMessage(MSGRCV_ENGINE, msg);
 }
-
+/*
 static void knobChange(void *ptr)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
@@ -59,10 +61,10 @@ static void knobChange(void *ptr)
 #ifdef STANDALONE
   int i = gui->knob->value() * 4;
   switch(i) {
-  case 0: gui->progress->setState(GUI::ProgressBar::off); break;
-  case 1: gui->progress->setState(GUI::ProgressBar::blue); break;
-  case 2: gui->progress->setState(GUI::ProgressBar::green); break;
-  case 3: gui->progress->setState(GUI::ProgressBar::red); break;
+  case 0: gui->progress->setState(ProgressBar::off); break;
+  case 1: gui->progress->setState(ProgressBar::blue); break;
+  case 2: gui->progress->setState(ProgressBar::green); break;
+  case 3: gui->progress->setState(ProgressBar::red); break;
   default: break;
   }
 #endif
@@ -81,6 +83,7 @@ static void knobChange2(void *ptr)
   gui->progress->setProgress(gui->knob2->value());
 #endif
 }
+*/
 
 //static void quit(void *ptr) {
 //  PluginGUI *gui = (PluginGUI*)ptr;
@@ -88,7 +91,7 @@ static void knobChange2(void *ptr)
 //  gui->stopThread();
 //}
 
-GUI::FileBrowser *fb;
+FileBrowser *fb;
 static void selectKitFile(void *ptr, std::string filename)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
@@ -103,7 +106,7 @@ static void selectKitFile(void *ptr, std::string filename)
   gui->config->save();
 
   gui->progress->setProgress(0);
-  gui->progress->setState(GUI::ProgressBar::blue);
+  gui->progress->setState(ProgressBar::blue);
 
   LoadDrumKitMessage *msg = new LoadDrumKitMessage();
   msg->drumkitfile = drumkit;
@@ -143,7 +146,7 @@ static void selectMapFile(void *ptr, std::string filename)
   /*
   if(gui->changeMidimapHandler)
     gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
-  gui->progress2->setState(GUI::ProgressBar::green);
+  gui->progress2->setState(ProgressBar::green);
   */
 }
 
@@ -206,7 +209,7 @@ void PluginGUI::stopThread()
 
 void PluginGUI::handleMessage(Message *msg)
 {
-  GUI::Painter p(window);// Make sure we only redraw buffer one time.
+  Painter p(window);// Make sure we only redraw buffer one time.
 
   switch(msg->type()) {
   case Message::LoadStatus:
@@ -215,7 +218,7 @@ void PluginGUI::handleMessage(Message *msg)
       progress->setProgress((float)ls->numer_of_files_loaded /
                             (float)ls->number_of_files);
       if(ls->numer_of_files_loaded == ls->number_of_files) {
-        progress->setState(GUI::ProgressBar::green);
+        progress->setState(ProgressBar::green);
       }
     }
     break;
@@ -224,9 +227,9 @@ void PluginGUI::handleMessage(Message *msg)
       LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
       progress2->setProgress(1);
       if(ls->success) {
-        progress2->setState(GUI::ProgressBar::green);
+        progress2->setState(ProgressBar::green);
       } else {
-        progress2->setState(GUI::ProgressBar::red);
+        progress2->setState(ProgressBar::red);
       }
     }
     break;
@@ -236,22 +239,22 @@ void PluginGUI::handleMessage(Message *msg)
       lineedit->setText(settings->drumkitfile);
       if(settings->drumkit_loaded) {
         progress->setProgress(1);
-        progress->setState(GUI::ProgressBar::green);
+        progress->setState(ProgressBar::green);
       } else {
         progress->setProgress(0);
-        progress->setState(GUI::ProgressBar::blue);
+        progress->setState(ProgressBar::blue);
       }
       lineedit2->setText(settings->midimapfile);
       if(settings->midimap_loaded) {
         progress2->setProgress(1);
-        progress2->setState(GUI::ProgressBar::green);
+        progress2->setState(ProgressBar::green);
       } else {
         progress2->setProgress(0);
-        progress2->setState(GUI::ProgressBar::blue);
+        progress2->setState(ProgressBar::blue);
       }
       check->setChecked(settings->enable_velocity_modifier);
-      knob->setValue(settings->velocity_modifier_weight);
-      knob2->setValue(settings->velocity_modifier_falloff);
+      attackKnob->setValue(settings->velocity_modifier_weight);
+      falloffKnob->setValue(settings->velocity_modifier_falloff);
       
     }
   default:
@@ -306,19 +309,19 @@ void PluginGUI::init()
   config = new Config();
   config->load();
 
-  window = new GUI::Window();
+  window = new Window();
   window->eventHandler()->registerCloseHandler(closeEventHandler,
                                                (void*)&closing);
 
   window->setFixedSize(370, 330);
   window->setCaption("DrumGizmo v" VERSION);
 
-  GUI::Label *lbl_title = new GUI::Label(window);
+  Label *lbl_title = new Label(window);
   lbl_title->setText("DrumGizmo");
   lbl_title->move(127, 7);
   lbl_title->resize(200, 20);
   
-  GUI::VerticalLine *l1 = new GUI::VerticalLine(window);
+  VerticalLine *l1 = new VerticalLine(window);
   l1->move(20, 30);
   l1->resize(window->width() - 40, 2);
 
@@ -330,30 +333,30 @@ void PluginGUI::init()
   // Drumkit file
   {
     int y = 37;
-    GUI::Label *lbl = new GUI::Label(window);
+    Label *lbl = new Label(window);
     lbl->setText("Drumkit file:");
     lbl->move(XOFFSET - 4, y);
     lbl->resize(100, 20);
 
     y += OFFSET1;
-    lineedit = new GUI::LineEdit(window);
+    lineedit = new LineEdit(window);
     lineedit->move(XOFFSET, y);
     lineedit->resize(243, 29);
     lineedit->setReadOnly(true);
 
-    GUI::Button *btn_brw = new GUI::Button(window);
+    Button *btn_brw = new Button(window);
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);
     btn_brw->resize(85, 35 + 6 - 4);
     btn_brw->registerClickHandler(kitBrowseClick, this);
 
     y += OFFSET2;
-    progress = new GUI::ProgressBar(window);
+    progress = new ProgressBar(window);
     progress->move(XOFFSET, y);
     progress->resize(window->width() - 2*XOFFSET, 11);
 
     y += OFFSET3;
-    GUI::VerticalLine *l = new GUI::VerticalLine(window);
+    VerticalLine *l = new VerticalLine(window);
     l->move(XOFFSET, y);
     l->resize(window->width() - 2*XOFFSET, 2);
   }
@@ -361,30 +364,30 @@ void PluginGUI::init()
   // Midimap file
   {
     int y = 120;
-    lbl2 = new GUI::Label(window);
+    lbl2 = new Label(window);
     lbl2->setText("Midimap file:");
     lbl2->move(XOFFSET - 4, y);
     lbl2->resize(100, 20);
     
     y += OFFSET1;
-    lineedit2 = new GUI::LineEdit(window);
+    lineedit2 = new LineEdit(window);
     lineedit2->move(XOFFSET, y);
     lineedit2->resize(243, 29);
     lineedit2->setReadOnly(true);
 
-    GUI::Button *btn_brw = new GUI::Button(window);
+    Button *btn_brw = new Button(window);
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);
     btn_brw->resize(85, 35 + 6 - 4);
     btn_brw->registerClickHandler(midimapBrowseClick, this);
 
     y += OFFSET2;
-    progress2 = new GUI::ProgressBar(window);
+    progress2 = new ProgressBar(window);
     progress2->move(XOFFSET, y);
     progress2->resize(window->width() - 2*XOFFSET, 11);
 
     y += OFFSET3;
-    GUI::VerticalLine *l = new GUI::VerticalLine(window);
+    VerticalLine *l = new VerticalLine(window);
     l->move(XOFFSET, y);
     l->resize(window->width() - 2*XOFFSET, 2);
   }
@@ -394,12 +397,12 @@ void PluginGUI::init()
 #define OFFSET4 21
 
     // Enable Velocity
-    GUI::Label *lbl_velocity = new GUI::Label(window);
+    Label *lbl_velocity = new Label(window);
     lbl_velocity->resize(78 ,20);
     lbl_velocity->move(16, y);
     lbl_velocity->setText("Humanizer");
 
-    check = new GUI::CheckBox(window);
+    check = new CheckBox(window);
     //check->setText("Enable Velocity Modifier");
     check->move(26, y + OFFSET4);
     check->resize(59,38);
@@ -407,42 +410,43 @@ void PluginGUI::init()
 
     // Velocity Weight Modifier:
     {
-      GUI::Label *lbl_weight = new GUI::Label(window);
+      Label *lbl_weight = new Label(window);
       lbl_weight->setText("Attack");
       lbl_weight->move(107, y);
       lbl_weight->resize(100, 20);
       
-      knob = new GUI::Knob(window);
-      knob->move(109, y + OFFSET4 - 4);
-      knob->resize(57, 57);
-      knob->registerClickHandler(knobChange, this);
+      attackKnob = new Knob(window);
+      attackKnob->move(109, y + OFFSET4 - 4);
+      attackKnob->resize(57, 57);
+      obj_connect(attackKnob, valueChangedNotifier,
+                  this, PluginGUI::attackValueChanged);
     }
     
     // Velocity Falloff Modifier:
     {
-      GUI::Label *lbl_falloff = new GUI::Label(window);
+      Label *lbl_falloff = new Label(window);
       lbl_falloff->setText("Release");
       lbl_falloff->move(202 - 17 - 7, y);
       lbl_falloff->resize(100, 20);
       
-      knob2 = new GUI::Knob(window);
-      knob2->move(202 - 13 - 5,  y + OFFSET4 - 4);
-      knob2->resize(57, 57);
-      knob2->registerClickHandler(knobChange2, this);
-    }
+      falloffKnob = new Knob(window);
+      falloffKnob->move(202 - 13 - 5,  y + OFFSET4 - 4);
+      falloffKnob->resize(57, 57);
+      obj_connect(falloffKnob, valueChangedNotifier,
+                  this, PluginGUI::falloffValueChanged);    }
   }
 
-  GUI::VerticalLine *l2 = new GUI::VerticalLine(window);
+  VerticalLine *l2 = new VerticalLine(window);
   l2->move(20, 310 - 15 - 9);
   l2->resize(window->width() - 40, 2);
 
-  GUI::Label *lbl_version = new GUI::Label(window);
+  Label *lbl_version = new Label(window);
   lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
   lbl_version->move(16, 300);
   lbl_version->resize(window->width(), 20);
   /*
   {
-    GUI::ComboBox *cmb = new GUI::ComboBox(window);
+    ComboBox *cmb = new ComboBox(window);
     cmb->addItem("Foo", "Bar");
     cmb->addItem("Hello", "World");
     cmb->move(10,10);
@@ -450,14 +454,14 @@ void PluginGUI::init()
   }
   */
   // Create filebrowser
-  filebrowser = new GUI::FileBrowser(window);
+  filebrowser = new FileBrowser(window);
   filebrowser->move(0, 0);
   filebrowser->resize(window->width() - 1, window->height() - 1);
   filebrowser->hide();
   fb = filebrowser;
 
   // Enable quit button
-//  GUI::Button *btn_quit = new GUI::Button(window);
+//  Button *btn_quit = new Button(window);
 //  btn_quit->setText("Quit");
 //  btn_quit->move(50,280);
 //  btn_quit->resize(80,80);
@@ -506,13 +510,46 @@ void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void *ptr)
   windowClosedPtr = ptr;
 }
 
+void PluginGUI::attackValueChanged(float value)
+{
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
+                             value);
+
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
+
+#ifdef STANDALONE
+  int i = value * 4;
+  switch(i) {
+  case 0: progress->setState(ProgressBar::off); break;
+  case 1: progress->setState(ProgressBar::blue); break;
+  case 2: progress->setState(ProgressBar::green); break;
+  case 3: progress->setState(ProgressBar::red); break;
+  default: break;
+  }
+#endif
+}
+
+void PluginGUI::falloffValueChanged(float value)
+{
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
+                             value);
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
+
+#ifdef STANDALONE
+  progress->setProgress(value);
+#endif
+}
+
+} // GUI::
+
 #ifdef STANDALONE
 
 class Engine : public MessageHandler {
 public:
   void handleMessage(Message *msg) {}
 };
-
 
 void stop(void *ptr)
 {
@@ -523,32 +560,19 @@ void stop(void *ptr)
 
 int main()
 {
-/*
-  hug_status_t status = hug_init(HUG_FLAG_OUTPUT_TO_SYSLOG,
-                                 HUG_OPTION_SYSLOG_HOST, "192.168.0.10",
-                                 HUG_OPTION_SYSLOG_PORT, 514,
-                                 HUG_OPTION_END);
-
-  if(status != HUG_STATUS_OK) {
-    printf("Error: %d\n", status);
-    return 1;
-  }
-*/
   INFO(example, "We are up and running");
 
   bool running = true;
 
-  PluginGUI gui;
+  GUI::PluginGUI gui;
   gui.setWindowClosedCallback(stop, &running);
 
   // gui.show();
 
   while(running) {
-    //    gui.processEvents();
 #ifdef WIN32
     SleepEx(1000, FALSE);
 #else
-    //    usleep(10000);
     sleep(1);
 #endif
   }

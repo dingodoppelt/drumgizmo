@@ -37,118 +37,101 @@
 #endif
 #include <math.h>
 
-GUI::Knob::Knob(Widget *parent)
-  : GUI::Widget(parent), img_knob(":knob.png")
+namespace GUI {
+
+Knob::Knob(Widget *parent)
+  : Widget(parent)
+  , img_knob(":knob.png")
 {
   state = up;
 
-  val = 0.0;
   maximum = 1.0;
   minimum = 0.0;
+
+  currentValue = minimum;
+
   mouse_offset_x = 0;
-
-  handler = NULL;
-  ptr = NULL;
 }
 
-void GUI::Knob::setValue(float v)
+void Knob::setValue(float value)
 {
-  val = v;
-  if(handler) handler(ptr);
-  repaintEvent(NULL);
+  internalSetValue(value);
 }
 
-float GUI::Knob::value()
+float Knob::value()
 {
-  return val;
+  return currentValue;
 }
 
-void GUI::Knob::registerClickHandler(void (*handler)(void *), void *ptr)
+void Knob::scrollEvent(ScrollEvent *e)
 {
-  this->handler = handler;
-  this->ptr = ptr;
+  float value = currentValue - (e->delta / 200.0);
+  internalSetValue(value);
 }
 
-void GUI::Knob::scrollEvent(ScrollEvent *e)
-{
-  val -= e->delta / 200.0;
-  if(val < 0) val = 0;
-  if(val > 1) val = 1;
-
-  if(handler) handler(ptr);
-
-  repaintEvent(NULL);
-}
-
-void GUI::Knob::mouseMoveEvent(MouseMoveEvent *e)
+void Knob::mouseMoveEvent(MouseMoveEvent *e)
 {
   if(state == down) {
-    if(mouse_offset_x == (e->x + -1*e->y)) return;
+    if(mouse_offset_x == (e->x + -1 * e->y)) {
+      return;
+    }
 
-    float dval = mouse_offset_x - (e->x + -1*e->y);
-    val -= dval / 300.0;
+    float dval = mouse_offset_x - (e->x + -1 * e->y);
+    float value = currentValue - (dval / 300.0);
 
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
+    internalSetValue(value);
 
-    if(handler) handler(ptr);
-    repaintEvent(NULL);
-
-    mouse_offset_x = e->x + -1*e->y;
+    mouse_offset_x = e->x + -1 * e->y;
   }
 }
 
-void GUI::Knob::keyEvent(KeyEvent *e)
+void Knob::keyEvent(KeyEvent *e)
 {
-  if(e->direction != -1) return;
+  if(e->direction != -1) {
+    return;
+  }
 
+  float value = currentValue;
   switch(e->keycode) {
-  case GUI::KeyEvent::KEY_UP:
-    val += 0.01;
+  case KeyEvent::KEY_UP:
+    value += 0.01;
     break;
-  case GUI::KeyEvent::KEY_DOWN:
-    val -= 0.01;
+  case KeyEvent::KEY_DOWN:
+    value -= 0.01;
     break;
-  case GUI::KeyEvent::KEY_RIGHT:
-    val += 0.01;
+  case KeyEvent::KEY_RIGHT:
+    value += 0.01;
     break;
-  case GUI::KeyEvent::KEY_LEFT:
-    val -= 0.01;
+  case KeyEvent::KEY_LEFT:
+    value -= 0.01;
     break;
-  case GUI::KeyEvent::KEY_HOME:
-    val = 0;
+  case KeyEvent::KEY_HOME:
+    value = 0;
     break;
-  case GUI::KeyEvent::KEY_END:
-    val = 1;
+  case KeyEvent::KEY_END:
+    value = 1;
     break;
   default:
     break;
   }
 
-  if(val < 0) val = 0;
-  if(val > 1) val = 1;
- 
-  repaintEvent(NULL);
+  internalSetValue(value);
 }
 
-void GUI::Knob::buttonEvent(ButtonEvent *e)
+void Knob::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == 1) {
     state = down;
     mouse_offset_x = e->x + -1*e->y;
-    if(handler) handler(ptr);
-    repaintEvent(NULL);
   }
   if(e->direction == -1) {
     state = up;
     mouse_offset_x = e->x + -1*e->y;
-    repaintEvent(NULL);
     clicked();
-    if(handler) handler(ptr);
   }
 }
 
-void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
+void Knob::repaintEvent(RepaintEvent *e)
 {
   int diameter = (width()>height()?height():width());
   int radius = diameter / 2;
@@ -161,12 +144,13 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   p.drawImageStretched(0, 0, &img_knob, diameter, diameter);
 
   char buf[64];
-  sprintf(buf, "%.2f", val * maximum);
+  sprintf(buf, "%.2f", currentValue * maximum);
   Font font;
   p.drawText(center_x - font.textWidth(buf) / 2 + 1,
              center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
-  double padval = val * 0.8 + 0.1; // Make it start from 20% and stop at 80%
+  // Make it start from 20% and stop at 80%
+  double padval = currentValue * 0.8 + 0.1;
 
   double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
   double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
@@ -187,19 +171,18 @@ void GUI::Knob::repaintEvent(GUI::RepaintEvent *e)
   }
 }
 
-#ifdef TEST_KNOB
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
+void Knob::internalSetValue(float value)
+{
+  if(value < minimum) value = minimum;
+  if(value > maximum) value = maximum;
 
-TEST_BEGIN;
+  if(value == currentValue) {
+    return;
+  }
 
-// TODO: Put some testcode here (see test.h for usable macros).
+  currentValue = value;
+  valueChangedNotifier.notify(currentValue);
+  repaintEvent(NULL);
+}
 
-TEST_END;
-
-#endif/*TEST_KNOB*/
+} // GUI::
