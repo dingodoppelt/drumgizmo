@@ -30,22 +30,23 @@
 
 #include <stdio.h>
 
-GUI::CheckBox::CheckBox(Widget *parent)
-  : GUI::Widget(parent),
-    bg_on(":switch_back_on.png"), bg_off(":switch_back_off.png"),
-    knob(":switch_front.png")
+namespace GUI {
+
+CheckBox::CheckBox(Widget *parent)
+  : Widget(parent)
+  , bg_on(":switch_back_on.png")
+  , bg_off(":switch_back_off.png")
+  , knob(":switch_front.png")
+  , state(false)
+  , middle(false)
 {
-  middle = false;
-  state = false;
-  handler = NULL;
 }
 
-void GUI::CheckBox::buttonEvent(ButtonEvent *e)
+void CheckBox::buttonEvent(ButtonEvent *e)
 {
   if(e->direction == -1 || e->doubleclick) {
-    state = !state;
     middle = false;
-    if(handler) handler(ptr);
+    internalSetChecked(!state);
   } else {
     middle = true;
   }
@@ -53,24 +54,18 @@ void GUI::CheckBox::buttonEvent(ButtonEvent *e)
   repaintEvent(NULL);
 }
 
-void GUI::CheckBox::setText(std::string text)
+void CheckBox::setText(std::string text)
 {
   _text = text;
   repaintEvent(NULL);
 }
 
-void GUI::CheckBox::registerClickHandler(void (*handler)(void *), void *ptr)
+void CheckBox::keyEvent(KeyEvent *e)
 {
-  this->handler = handler;
-  this->ptr = ptr;
-}
-
-void GUI::CheckBox::keyEvent(KeyEvent *e)
-{
-  if(e->keycode == GUI::KeyEvent::KEY_CHARACTER && e->text == " ") {
+  if(e->keycode == KeyEvent::KEY_CHARACTER && e->text == " ") {
     if(e->direction == -1) {
-      state = !state;
       middle = false;
+      internalSetChecked(!state);
     } else {
       middle = true;
     }
@@ -79,7 +74,7 @@ void GUI::CheckBox::keyEvent(KeyEvent *e)
   }
 }
 
-void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
+void CheckBox::repaintEvent(RepaintEvent *e)
 {
   Painter p(this);
 
@@ -94,37 +89,27 @@ void GUI::CheckBox::repaintEvent(GUI::RepaintEvent *e)
     if(middle) p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
     else p.drawImage(0, 0, &knob);
   }
-  /*
-  p.setColour(Colour(1));
-  Font font;
-  p.drawText(box + 8, height() / 2 + 5, font, _text);
-  */
 }
 
-bool GUI::CheckBox::checked()
+bool CheckBox::checked()
 {
   return state;
 }
 
-void GUI::CheckBox::setChecked(bool c)
+void CheckBox::setChecked(bool c)
 {
-  state = c;
+  internalSetChecked(c);
+}
+
+void CheckBox::internalSetChecked(bool checked)
+{
+  if(checked == state) {
+    return;
+  }
+
+  state = checked;
+  stateChangedNotifier.notify(state);
   repaintEvent(NULL);
 }
 
-#ifdef TEST_CHECKBOX
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_CHECKBOX*/
+} // GUI::

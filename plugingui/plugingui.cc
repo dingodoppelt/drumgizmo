@@ -38,59 +38,6 @@
 
 namespace GUI {
 
-static void checkClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
-                             gui->check->checked());
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-}
-/*
-static void knobChange(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
-                             gui->knob->value());
-
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-#ifdef STANDALONE
-  int i = gui->knob->value() * 4;
-  switch(i) {
-  case 0: gui->progress->setState(ProgressBar::off); break;
-  case 1: gui->progress->setState(ProgressBar::blue); break;
-  case 2: gui->progress->setState(ProgressBar::green); break;
-  case 3: gui->progress->setState(ProgressBar::red); break;
-  default: break;
-  }
-#endif
-}
-
-static void knobChange2(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
-                             gui->knob2->value());
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-#ifdef STANDALONE
-  gui->progress->setProgress(gui->knob2->value());
-#endif
-}
-*/
-
-//static void quit(void *ptr) {
-//  PluginGUI *gui = (PluginGUI*)ptr;
-//
-//  gui->stopThread();
-//}
-
 FileBrowser *fb;
 static void selectKitFile(void *ptr, std::string filename)
 {
@@ -252,7 +199,7 @@ void PluginGUI::handleMessage(Message *msg)
         progress2->setProgress(0);
         progress2->setState(ProgressBar::blue);
       }
-      check->setChecked(settings->enable_velocity_modifier);
+      velocityCheck->setChecked(settings->enable_velocity_modifier);
       attackKnob->setValue(settings->velocity_modifier_weight);
       falloffKnob->setValue(settings->velocity_modifier_falloff);
       
@@ -402,11 +349,12 @@ void PluginGUI::init()
     lbl_velocity->move(16, y);
     lbl_velocity->setText("Humanizer");
 
-    check = new CheckBox(window);
-    //check->setText("Enable Velocity Modifier");
-    check->move(26, y + OFFSET4);
-    check->resize(59,38);
-    check->registerClickHandler(checkClick, this);
+    velocityCheck = new CheckBox(window);
+    //velocityCheck->setText("Enable Velocity Modifier");
+    velocityCheck->move(26, y + OFFSET4);
+    velocityCheck->resize(59,38);
+    obj_connect(velocityCheck, stateChangedNotifier,
+                this, PluginGUI::velocityCheckClick);
 
     // Velocity Weight Modifier:
     {
@@ -540,6 +488,14 @@ void PluginGUI::falloffValueChanged(float value)
 #ifdef STANDALONE
   progress->setProgress(value);
 #endif
+}
+
+void PluginGUI::velocityCheckClick(bool checked)
+{
+  ChangeSettingMessage *msg =
+    new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
+                             checked);
+  msghandler.sendMessage(MSGRCV_ENGINE, msg);
 }
 
 } // GUI::

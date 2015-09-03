@@ -65,15 +65,10 @@ public:
 
   void handleMessage(Message *msg);
 
-  //private:
   Window *window;
   EventHandler *eventhandler;
 
   FileBrowser *filebrowser;
-
-  CheckBox *check;
-  Knob *attackKnob;
-  Knob *falloffKnob;
 
   Label *lbl;
   LineEdit *lineedit;
@@ -94,6 +89,12 @@ public:
 private:
   void attackValueChanged(float value);
   void falloffValueChanged(float value);
+  void velocityCheckClick(bool checked);
+
+  // Humanized velocity controls:
+  CheckBox *velocityCheck;
+  Knob *attackKnob;
+  Knob *falloffKnob;
 
   volatile bool running;
   volatile bool closing;

@@ -24,11 +24,11 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CHECKBOX_H__
-#define __DRUMGIZMO_CHECKBOX_H__
+#pragma once
 
 #include "widget.h"
 #include "image.h"
+#include "notifier.h"
 
 namespace GUI {
 
@@ -38,21 +38,24 @@ public:
 
   void setText(std::string text);
 
-  bool isFocusable() { return true; }
+  bool isFocusable() override { return true; }
 
   bool checked();
   void setChecked(bool checked);
 
-  void registerClickHandler(void (*handler)(void *), void *ptr);
+  Notifier<bool> stateChangedNotifier;
 
-  //protected:
+protected:
   virtual void clicked() {}
 
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
-  virtual void keyEvent(KeyEvent *e);
+  // From Widget:
+  virtual void repaintEvent(RepaintEvent *e) override;
+  virtual void buttonEvent(ButtonEvent *e) override;
+  virtual void keyEvent(KeyEvent *e) override;
 
 private:
+  void internalSetChecked(bool checked);
+
   Image bg_on;
   Image bg_off;
   Image knob;
@@ -60,12 +63,7 @@ private:
   bool state;
   bool middle;
 
-  void (*handler)(void *);
-  void *ptr;
-
   std::string _text;
 };
 
-};
-
-#endif/*__DRUMGIZMO_CHECKBOX_H__*/
+} // GUI::
