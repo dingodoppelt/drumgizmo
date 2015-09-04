@@ -27,18 +27,22 @@
 #include "label.h"
 
 #include "painter.h"
+#include "guievent.h"
 
-GUI::Label::Label(GUI::Widget *parent) : GUI::Widget(parent)
+namespace GUI {
+
+Label::Label(GUI::Widget *parent)
+  : Widget(parent)
 {
 }
 
-void GUI::Label::setText(std::string text)
+void Label::setText(std::string text)
 {
   _text = text;
   repaintEvent(NULL);
 }
 
-void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
+void Label::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
 
@@ -50,20 +54,4 @@ void GUI::Label::repaintEvent(GUI::RepaintEvent *e)
   p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
 }
 
-
-#ifdef TEST_LABEL
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_LABEL*/
+} // GUI::

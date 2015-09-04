@@ -24,16 +24,15 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LABEL_H__
-#define __DRUMGIZMO_LABEL_H__
+#pragma once
 
 #include "widget.h"
 
 #include <string>
 
-#include "guievent.h"
-
 namespace GUI {
+
+class RepaintEvent;
 
 class Label : public Widget {
 public:
@@ -41,13 +40,12 @@ public:
 
   void setText(std::string text);
 
-  //protected:
-  virtual void repaintEvent(RepaintEvent *e);
+protected:
+  // From Widget:
+  virtual void repaintEvent(RepaintEvent *e) override;
 
 private:
   std::string _text;
 };
 
-};
-
-#endif/*__DRUMGIZMO_LABEL_H__*/
+} // GUI::
