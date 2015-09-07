@@ -1,42 +1,71 @@
 Installation Instructions
 *************************
+NOTE1: Certain audio-centric Linux distros such as KxStudio has DrumGizmo
+included in the repository. To install it on such systems, use the distros
+package manager, search for it and install it. Please refer to each distro's
+documentation for detailed instructions on how to do this.
 
-Compiling and installing the LV2 plugin
-=======================================
-If you extracted the code from a tar-ball skip to the "Configuring" section.
-
-Preparing code from git
------------------------
-If you cloned the repository from git, make sure to run the following commands
-in order to obtain the hugin debug code:
- git submodule init
- git submodule update
-
-After that you need to run ./autogen.sh
-
-Configuring
------------
-Run ./configure --enable-lv2 --prefix=/usr
-Then run 'make && make install' and the plugin should be installed in
-/usr/lib/lv2/drumgizmo.lv2
-If you want to compile only the LV2 parts of the plugin use
-'--disable-editor --disable-cli' as additional parameters to the configure
-script.
-
-The LV2 plugin requires the following dependencies:
-pkg-config >= 0.23
-lv2 >= 1.0
-Xlib >= 1.0
-sndfile >= 1.0.21
-libpng >= 1.2
-libsmf
-pthread (no minimal version specified)
-expat (no minimal version specified)
-
-Be aware that if you are planning on running the LV2 plugin from within one
-of the binary releases of Ardour, you must make sure that drumgizmo is using
+NOTE2: Be aware that if you are planning on running the LV2 plugin from within
+one of the binary releases of Ardour, you must make sure that drumgizmo is using
 the same version of libpng, pthread and expat as Ardour was compiled with (or
 at least versions matching the ABI), otherwise the plugin will show strange
 behaviour or even crash upon load.
 
+Compiling and Installing on linux (LV2)
+=======================================
+This guide will show you how to unpack, compile and install the lv2 version
+of the drumgizmo plugin. It will also show how to make it usable for the LV2
+host Ardour3.
 
+Prerequisites
+-------------
+* lv2-devel package >= 1.0
+* libsndfile-devel >= 1.0.21
+* zita-resampler-devel (no minimal version specified)
+* libexpat-devel (no minimal version specified)
+* pkg-config >= 0.23
+* Xlib >= 1.0
+* libpng >= 1.2
+* libsmf (no minimal version specified)
+* pthread (no minimal version specified)
+* libcppunit-dev (only necessary when compiling from git sources)
+
+Compiling source tarball
+------------------------
+$ tar xvzf drumgizmo-[version].tar.gz (you probably already did this)
+$ cd drumgizmo-[version]
+$ ./configure --prefix=$PWD/install --enable-lv2
+$ make
+$ make install
+
+Compiling from git sources
+--------------------------
+$ git clone http://git.drumgizmo.org/drumgizmo.git
+$ git submodule init
+$ git submodule update
+$ ./autogen.sh
+$ ./configure --prefix=$PWD/install --enable-lv2
+
+If you want to compile only the LV2 parts of the plugin use
+'--disable-editor --disable-cli' as additional parameters to the configure
+script.
+
+Now compile and install
+$ make
+$ make install
+
+Installing for use with Ardour3
+-------------------------------
+When the make install step has been successfully performed the source directory
+will contain a folder named install. In this folder the:
+
+  install/lib/lv2/drumgizmo.lv2
+
+... is located. This folder contain all the files needed for the plugin to run.
+In order to make it work with Ardour3, either copy this directory to the lv2
+plugin dir (usually /usr/lib/lv2) or create a symbolic link to the directory
+
+$ ln -s [dg path]/install/lib/lv2/drumgizmo.lv2 /usr/lib/lv2/drumgizmo.lv2
+
+You need to be root to do this. Keep in mind that the lv2 directory differs from
+distro to distro, so do a search for it in order to verify the correct location.
