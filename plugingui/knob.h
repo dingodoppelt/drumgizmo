@@ -36,45 +36,44 @@ namespace GUI {
 
 class Knob : public Widget {
 public:
-  Knob(Widget *parent);
+	Knob(Widget *parent);
 
-  bool catchMouse() override { return true; }
-  bool isFocusable() override { return true; }
+	bool catchMouse() override { return true; }
+	bool isFocusable() override { return true; }
 
-  void setValue(float value);
-  float value();
+	void setValue(float value);
+	float value();
 
-  Notifier<float> valueChangedNotifier; // (float newValue)
+	Notifier<float> valueChangedNotifier; // (float newValue)
 
 protected:
-  virtual void clicked() {}
+	virtual void clicked() {}
 
-  // From Widget:
-  virtual void repaintEvent(RepaintEvent *e) override;
-  virtual void buttonEvent(ButtonEvent *e) override;
-  virtual void mouseMoveEvent(MouseMoveEvent *e) override;
-  virtual void scrollEvent(ScrollEvent *e) override;
-  virtual void keyEvent(KeyEvent *e) override;
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void mouseMoveEvent(MouseMoveEvent *e) override;
+	virtual void scrollEvent(ScrollEvent *e) override;
+	virtual void keyEvent(KeyEvent *e) override;
 
 private:
-  //! Sets the internal value and sends out the changed notification.
-  void internalSetValue(float value);
+	//! Sets the internal value and sends out the changed notification.
+	void internalSetValue(float value);
 
-  typedef enum {
-    up,
-    down
-  } state_t;
+	typedef enum {
+		up,
+		down
+	} state_t;
 
-  state_t state;
+	state_t state;
 
-  float currentValue;
-  float maximum;
-  float minimum;
+	float currentValue;
+	float maximum;
+	float minimum;
 
-  Image img_knob;
+	Image img_knob;
 
-  int mouse_offset_x;
+	int mouse_offset_x;
 };
 
 } // GUI::
-

@@ -36,16 +36,16 @@ class RepaintEvent;
 
 class Label : public Widget {
 public:
-  Label(Widget *parent);
+	Label(Widget *parent);
 
-  void setText(std::string text);
+	void setText(std::string text);
 
 protected:
-  // From Widget:
-  virtual void repaintEvent(RepaintEvent *e) override;
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent *e) override;
 
 private:
-  std::string _text;
+	std::string _text;
 };
 
 } // GUI::

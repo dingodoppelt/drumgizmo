@@ -32,26 +32,26 @@
 namespace GUI {
 
 Label::Label(GUI::Widget *parent)
-  : Widget(parent)
+	: Widget(parent)
 {
 }
 
 void Label::setText(std::string text)
 {
-  _text = text;
-  repaintEvent(NULL);
+	_text = text;
+	repaintEvent(nullptr);
 }
 
 void Label::repaintEvent(GUI::RepaintEvent *e)
 {
-  Painter p(this);
+	Painter p(this);
 
-  p.clear();
+	p.clear();
 
-  p.setColour(Colour(1));
+	p.setColour(Colour(1));
 
-  Font font(":fontemboss.png");
-  p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
+	Font font(":fontemboss.png");
+	p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
 }
 
 } // GUI::

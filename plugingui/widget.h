@@ -38,60 +38,60 @@ class Window;
 
 class Widget : public Listener {
 public:
-  Widget(Widget *parent);
-  virtual ~Widget();
+	Widget(Widget *parent);
+	virtual ~Widget();
 
-  virtual void show();
-  virtual void hide();
+	virtual void show();
+	virtual void hide();
 
-  virtual void resize(int width, int height);
-  virtual void move(size_t x, size_t y);
+	virtual void resize(int width, int height);
+	virtual void move(size_t x, size_t y);
 
-  virtual size_t x();
-  virtual size_t y();
-  virtual size_t windowX();
-  virtual size_t windowY();
-  virtual size_t width();
-  virtual size_t height();
+	virtual size_t x();
+	virtual size_t y();
+	virtual size_t windowX();
+	virtual size_t windowY();
+	virtual size_t width();
+	virtual size_t height();
 
-  virtual bool isFocusable() { return false; }
-  virtual bool catchMouse() { return false; }
+	virtual bool isFocusable() { return false; }
+	virtual bool catchMouse() { return false; }
 
-  void addChild(Widget *widget);
-  void removeChild(Widget *widget);
+	void addChild(Widget *widget);
+	void removeChild(Widget *widget);
 
-  virtual void repaintEvent(RepaintEvent *e) {}
-  virtual void mouseMoveEvent(MouseMoveEvent *e) {}
-  virtual void buttonEvent(ButtonEvent *e) {}
-  virtual void scrollEvent(ScrollEvent *e) {}
-  virtual void keyEvent(KeyEvent *e) {}
+	virtual void repaintEvent(RepaintEvent *e) {}
+	virtual void mouseMoveEvent(MouseMoveEvent *e) {}
+	virtual void buttonEvent(ButtonEvent *e) {}
+	virtual void scrollEvent(ScrollEvent *e) {}
+	virtual void keyEvent(KeyEvent *e) {}
 
-  virtual void mouseLeaveEvent() {}
-  virtual void mouseEnterEvent() {}
+	virtual void mouseLeaveEvent() {}
+	virtual void mouseEnterEvent() {}
 
-  Widget *find(size_t x, size_t y);
+	Widget *find(size_t x, size_t y);
 
-  virtual Window *window();
+	virtual Window *window();
 
-  void repaint_r(RepaintEvent *e);
+	void repaint_r(RepaintEvent *e);
 
-  PixelBufferAlpha pixbuf;
-  std::vector<PixelBufferAlpha *> getPixelBuffers();
+	PixelBufferAlpha pixbuf;
+	std::vector<PixelBufferAlpha *> getPixelBuffers();
 
-  bool hasKeyboardFocus();
+	bool hasKeyboardFocus();
 
-  Widget *parent;
+	Widget *parent;
 
-  bool visible();
-  void setVisible(bool visible);
+	bool visible();
+	void setVisible(bool visible);
 
 protected:
-  std::vector<Widget*> children;
-  Window *_window;
-  size_t _x, _y, _width, _height;
+	std::vector<Widget*> children;
+	Window *_window;
+	size_t _x, _y, _width, _height;
 
 private:
-  bool _visible;
+	bool _visible;
 };
 
 } // GUI::

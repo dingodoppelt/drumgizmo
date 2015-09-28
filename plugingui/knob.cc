@@ -40,149 +40,164 @@
 namespace GUI {
 
 Knob::Knob(Widget *parent)
-  : Widget(parent)
-  , img_knob(":knob.png")
+	: Widget(parent)
+	, img_knob(":knob.png")
 {
-  state = up;
+	state = up;
 
-  maximum = 1.0;
-  minimum = 0.0;
+	maximum = 1.0;
+	minimum = 0.0;
 
-  currentValue = minimum;
+	currentValue = minimum;
 
-  mouse_offset_x = 0;
+	mouse_offset_x = 0;
 }
 
 void Knob::setValue(float value)
 {
-  internalSetValue(value);
+	internalSetValue(value);
 }
 
 float Knob::value()
 {
-  return currentValue;
+	return currentValue;
 }
 
 void Knob::scrollEvent(ScrollEvent *e)
 {
-  float value = currentValue - (e->delta / 200.0);
-  internalSetValue(value);
+	float value = currentValue - (e->delta / 200.0);
+	internalSetValue(value);
 }
 
 void Knob::mouseMoveEvent(MouseMoveEvent *e)
 {
-  if(state == down) {
-    if(mouse_offset_x == (e->x + -1 * e->y)) {
-      return;
-    }
+	if(state == down)
+	{
+		if(mouse_offset_x == (e->x + -1 * e->y))
+		{
+			return;
+		}
 
-    float dval = mouse_offset_x - (e->x + -1 * e->y);
-    float value = currentValue - (dval / 300.0);
+		float dval = mouse_offset_x - (e->x + -1 * e->y);
+		float value = currentValue - (dval / 300.0);
 
-    internalSetValue(value);
+		internalSetValue(value);
 
-    mouse_offset_x = e->x + -1 * e->y;
-  }
+		mouse_offset_x = e->x + -1 * e->y;
+	}
 }
 
 void Knob::keyEvent(KeyEvent *e)
 {
-  if(e->direction != -1) {
-    return;
-  }
+	if(e->direction != -1)
+	{
+		return;
+	}
 
-  float value = currentValue;
-  switch(e->keycode) {
-  case KeyEvent::KEY_UP:
-    value += 0.01;
-    break;
-  case KeyEvent::KEY_DOWN:
-    value -= 0.01;
-    break;
-  case KeyEvent::KEY_RIGHT:
-    value += 0.01;
-    break;
-  case KeyEvent::KEY_LEFT:
-    value -= 0.01;
-    break;
-  case KeyEvent::KEY_HOME:
-    value = 0;
-    break;
-  case KeyEvent::KEY_END:
-    value = 1;
-    break;
-  default:
-    break;
-  }
+	float value = currentValue;
+	switch(e->keycode) {
+	case KeyEvent::KEY_UP:
+		value += 0.01;
+		break;
+	case KeyEvent::KEY_DOWN:
+		value -= 0.01;
+		break;
+	case KeyEvent::KEY_RIGHT:
+		value += 0.01;
+		break;
+	case KeyEvent::KEY_LEFT:
+		value -= 0.01;
+		break;
+	case KeyEvent::KEY_HOME:
+		value = 0;
+		break;
+	case KeyEvent::KEY_END:
+		value = 1;
+		break;
+	default:
+		break;
+	}
 
-  internalSetValue(value);
+	internalSetValue(value);
 }
 
 void Knob::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == 1) {
-    state = down;
-    mouse_offset_x = e->x + -1*e->y;
-  }
-  if(e->direction == -1) {
-    state = up;
-    mouse_offset_x = e->x + -1*e->y;
-    clicked();
-  }
+	if(e->direction == 1)
+	{
+		state = down;
+		mouse_offset_x = e->x + -1*e->y;
+	}
+
+	if(e->direction == -1)
+	{
+		state = up;
+		mouse_offset_x = e->x + -1*e->y;
+		clicked();
+	}
 }
 
 void Knob::repaintEvent(RepaintEvent *e)
 {
-  int diameter = (width()>height()?height():width());
-  int radius = diameter / 2;
-  int center_x = width() / 2;
-  int center_y = height() / 2;
+	int diameter = (width()>height()?height():width());
+	int radius = diameter / 2;
+	int center_x = width() / 2;
+	int center_y = height() / 2;
 
-  Painter p(this);
+	Painter p(this);
 
-  p.clear();
-  p.drawImageStretched(0, 0, &img_knob, diameter, diameter);
+	p.clear();
+	p.drawImageStretched(0, 0, &img_knob, diameter, diameter);
 
-  char buf[64];
-  sprintf(buf, "%.2f", currentValue * maximum);
-  Font font;
-  p.drawText(center_x - font.textWidth(buf) / 2 + 1,
-             center_y + font.textHeight(buf) / 2 + 1, font, buf);
+	char buf[64];
+	sprintf(buf, "%.2f", currentValue * maximum);
+	Font font;
+	p.drawText(center_x - font.textWidth(buf) / 2 + 1,
+	           center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
-  // Make it start from 20% and stop at 80%
-  double padval = currentValue * 0.8 + 0.1;
+	// Make it start from 20% and stop at 80%
+	double padval = currentValue * 0.8 + 0.1;
 
-  double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
-  double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
+	double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
+	double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
 
-  double to_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
-  double to_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
+	double to_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
+	double to_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
 
-  // Draw "fat" line by drawing 9 lines with moved start/ending points.
-  p.setColour(Colour(1, 0, 0, 1));
-  for(int _x = -1; _x < 2; _x++) {
-    for(int _y = -1; _y < 2; _y++) {
-      p.drawLine(from_x + center_x + _x,
-                 from_y + center_y + _y,
-                 to_x + center_x + _x,
-                 to_y + center_y + _y);
-
-    }
-  }
+	// Draw "fat" line by drawing 9 lines with moved start/ending points.
+	p.setColour(Colour(1, 0, 0, 1));
+	for(int _x = -1; _x < 2; _x++)
+	{
+		for(int _y = -1; _y < 2; _y++)
+		{
+			p.drawLine(from_x + center_x + _x,
+			           from_y + center_y + _y,
+			           to_x + center_x + _x,
+			           to_y + center_y + _y);
+		}
+	}
 }
 
 void Knob::internalSetValue(float value)
 {
-  if(value < minimum) value = minimum;
-  if(value > maximum) value = maximum;
+	if(value < minimum)
+	{
+	  value = minimum;
+	}
 
-  if(value == currentValue) {
-    return;
-  }
+	if(value > maximum)
+	{
+		value = maximum;
+	}
 
-  currentValue = value;
-  valueChangedNotifier(currentValue);
-  repaintEvent(NULL);
+	if(value == currentValue)
+	{
+		return;
+	}
+
+	currentValue = value;
+	valueChangedNotifier(currentValue);
+	repaintEvent(nullptr);
 }
 
 } // GUI::

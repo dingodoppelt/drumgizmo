@@ -33,83 +33,106 @@
 namespace GUI {
 
 CheckBox::CheckBox(Widget *parent)
-  : Widget(parent)
-  , bg_on(":switch_back_on.png")
-  , bg_off(":switch_back_off.png")
-  , knob(":switch_front.png")
-  , state(false)
-  , middle(false)
+	: Widget(parent)
+	, bg_on(":switch_back_on.png")
+	, bg_off(":switch_back_off.png")
+	, knob(":switch_front.png")
+	, state(false)
+	, middle(false)
 {
 }
 
 void CheckBox::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == -1 || e->doubleclick) {
-    middle = false;
-    internalSetChecked(!state);
-  } else {
-    middle = true;
-  }
+	if(e->direction == -1 || e->doubleclick)
+	{
+		middle = false;
+		internalSetChecked(!state);
+	}
+	else
+	{
+		middle = true;
+	}
 
-  repaintEvent(NULL);
+	repaintEvent(nullptr);
 }
 
 void CheckBox::setText(std::string text)
 {
-  _text = text;
-  repaintEvent(NULL);
+	_text = text;
+	repaintEvent(nullptr);
 }
 
 void CheckBox::keyEvent(KeyEvent *e)
 {
-  if(e->keycode == KeyEvent::KEY_CHARACTER && e->text == " ") {
-    if(e->direction == -1) {
-      middle = false;
-      internalSetChecked(!state);
-    } else {
-      middle = true;
-    }
+	if(e->keycode == KeyEvent::KEY_CHARACTER && e->text == " ")
+	{
+		if(e->direction == -1)
+		{
+			middle = false;
+			internalSetChecked(!state);
+		}
+		else
+		{
+			middle = true;
+		}
 
-    repaintEvent(NULL);
-  }
+		repaintEvent(nullptr);
+	}
 }
 
 void CheckBox::repaintEvent(RepaintEvent *e)
 {
-  Painter p(this);
+	Painter p(this);
 
-  p.clear();
+	p.clear();
 
-  if(state) {
-    p.drawImage(0, (knob.height() - bg_on.height()) / 2, &bg_on);
-    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
-    else p.drawImage(bg_on.width() - 40 + 2, 0, &knob);
-  } else {
-    p.drawImage(0, (knob.height() - bg_off.height()) / 2, &bg_off);
-    if(middle) p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
-    else p.drawImage(0, 0, &knob);
-  }
+	if(state)
+	{
+		p.drawImage(0, (knob.height() - bg_on.height()) / 2, &bg_on);
+		if(middle)
+		{
+			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
+		}
+		else
+		{
+			p.drawImage(bg_on.width() - 40 + 2, 0, &knob);
+		}
+	}
+	else
+	{
+		p.drawImage(0, (knob.height() - bg_off.height()) / 2, &bg_off);
+		if(middle)
+		{
+			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
+		}
+		else
+		{
+			p.drawImage(0, 0, &knob);
+		}
+	}
 }
 
 bool CheckBox::checked()
 {
-  return state;
+	return state;
 }
 
 void CheckBox::setChecked(bool c)
 {
-  internalSetChecked(c);
+	internalSetChecked(c);
 }
 
 void CheckBox::internalSetChecked(bool checked)
 {
-  if(checked == state) {
-    return;
-  }
+	if(checked == state)
+	{
+		return;
+	}
 
-  state = checked;
-  stateChangedNotifier(state);
-  repaintEvent(NULL);
+	state = checked;
+	stateChangedNotifier(state);
+	repaintEvent(nullptr);
 }
 
 } // GUI::

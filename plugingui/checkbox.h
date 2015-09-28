@@ -34,36 +34,36 @@ namespace GUI {
 
 class CheckBox : public Widget {
 public:
-  CheckBox(Widget *parent);
+	CheckBox(Widget *parent);
 
-  void setText(std::string text);
+	void setText(std::string text);
 
-  bool isFocusable() override { return true; }
+	bool isFocusable() override { return true; }
 
-  bool checked();
-  void setChecked(bool checked);
+	bool checked();
+	void setChecked(bool checked);
 
-  Notifier<bool> stateChangedNotifier;
+	Notifier<bool> stateChangedNotifier;
 
 protected:
-  virtual void clicked() {}
+	virtual void clicked() {}
 
-  // From Widget:
-  virtual void repaintEvent(RepaintEvent *e) override;
-  virtual void buttonEvent(ButtonEvent *e) override;
-  virtual void keyEvent(KeyEvent *e) override;
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void keyEvent(KeyEvent *e) override;
 
 private:
-  void internalSetChecked(bool checked);
+	void internalSetChecked(bool checked);
 
-  Image bg_on;
-  Image bg_off;
-  Image knob;
+	Image bg_on;
+	Image bg_off;
+	Image knob;
 
-  bool state;
-  bool middle;
+	bool state;
+	bool middle;
 
-  std::string _text;
+	std::string _text;
 };
 
 } // GUI::

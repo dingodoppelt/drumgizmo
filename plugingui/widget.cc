@@ -34,74 +34,84 @@
 namespace GUI {
 
 Widget::Widget(Widget *parent)
-  : pixbuf(1, 1)
+	: pixbuf(1, 1)
 {
-  _width = _height = 10;
+	_width = _height = 10;
 
-  this->parent = parent;
-  if(parent) {
-    parent->addChild(this);
-    _window = parent->window();
-  }
-  _width = _height = 0;
-  _visible = true;
+	this->parent = parent;
+	if(parent)
+	{
+		parent->addChild(this);
+		_window = parent->window();
+	}
+	_width = _height = 0;
+	_visible = true;
 }
 
 Widget::~Widget()
 {
-  if(parent) parent->removeChild(this);
+	if(parent)
+	{
+		parent->removeChild(this);
+	}
 }
 
 void Widget::show()
 {
-  setVisible(true);
+	setVisible(true);
 }
 
 void Widget::hide()
 {
-  setVisible(false);
+	setVisible(false);
 }
 
 void Widget::setVisible(bool v)
 {
-  _visible = v;
-  repaintEvent(NULL);
+	_visible = v;
+	repaintEvent(nullptr);
 }
 
 bool Widget::visible()
 {
-  return _visible;
+	return _visible;
 }
 
 void Widget::addChild(Widget *widget)
 {
-  children.push_back(widget);
+	children.push_back(widget);
 }
 
 void Widget::removeChild(Widget *widget)
 {
-  std::vector<Widget *>::iterator i = children.begin();
-  while(i != children.end()) {
-    if(*i == widget) {
-      children.erase(i);
-      return;
-    }
-    i++;
-  }
+	std::vector<Widget *>::iterator i = children.begin();
+	while(i != children.end())
+	{
+		if(*i == widget)
+		{
+			children.erase(i);
+			return;
+		}
+		i++;
+	}
 }
 
 void Widget::resize(int width, int height)
 {
-  if(width < 1 || height < 1) return;
-  _width = width;
-  _height = height;
-  pixbuf.realloc(width, height);
+	if(width < 1 || height < 1)
+	{
+		return;
+	}
+
+	_width = width;
+	_height = height;
+	pixbuf.realloc(width, height);
 }
 
 void Widget::move(size_t x, size_t y)
 {
-  _x = x;
-  _y = y;
+	_x = x;
+	_y = y;
 }
 
 size_t Widget::x() { return _x; }
@@ -111,79 +121,98 @@ size_t Widget::height() { return _height; }
 
 size_t Widget::windowX()
 {
-  size_t window_x = x();
-  if(parent) window_x += parent->windowX();
-  return window_x;
+	size_t window_x = x();
+	if(parent)
+	{
+		window_x += parent->windowX();
+	}
+
+	return window_x;
 }
 
 size_t Widget::windowY()
 {
-  size_t window_y = y();
-  if(parent) window_y += parent->windowY();
-  return window_y;
+	size_t window_y = y();
+	if(parent)
+	{
+		window_y += parent->windowY();
+	}
+
+	return window_y;
 }
 
 Widget *Widget::find(size_t x, size_t y)
 {
-  std::vector<Widget*>::reverse_iterator i = children.rbegin();
-  while(i != children.rend()) {
-    Widget *w = *i;
-    if(w->visible()) {
-      if(w->x() <= x && (w->x() + w->width()) >= x &&
-         w->y() <= y && w->y() + w->height() >= y)
-        return w->find(x - w->x(), y - w->y());
-    }
-    i++;
-  }
+	std::vector<Widget*>::reverse_iterator i = children.rbegin();
+	while(i != children.rend())
+	{
+		Widget *w = *i;
+		if(w->visible())
+		{
+			if(w->x() <= x && (w->x() + w->width()) >= x &&
+			   w->y() <= y && w->y() + w->height() >= y)
+			{
+				return w->find(x - w->x(), y - w->y());
+			}
+		}
+		i++;
+	}
 
-  if(x > width() || x < 0 || y > height() || y < 0) return NULL;
-  return this;
+	if(x > width() || x < 0 || y > height() || y < 0)
+	{
+		return nullptr;
+	}
+
+	return this;
 }
 
 Window *Widget::window()
 {
-  return _window;
+	return _window;
 }
 
 void Widget::repaint_r(RepaintEvent *e)
 {
-  Painter p(this); // make sure pixbuf refcount is incremented.
+	Painter p(this); // make sure pixbuf refcount is incremented.
 
-  repaintEvent(e);
+	repaintEvent(e);
 
-  std::vector<Widget*>::iterator i = children.begin();
-  while(i != children.end()) {
-    Widget *w = *i;
-    w->repaint_r(e);
-    i++;
-  }
+	std::vector<Widget*>::iterator i = children.begin();
+	while(i != children.end())
+	{
+		Widget *w = *i;
+		w->repaint_r(e);
+		i++;
+	}
 }
 
 std::vector<PixelBufferAlpha *> Widget::getPixelBuffers()
 {
-  std::vector<PixelBufferAlpha *> pbs;
+	std::vector<PixelBufferAlpha *> pbs;
 
-  pixbuf.x = windowX();
-  pixbuf.y = windowY();
+	pixbuf.x = windowX();
+	pixbuf.y = windowY();
 
-  pbs.push_back(&pixbuf);
+	pbs.push_back(&pixbuf);
 
-  std::vector<Widget*>::iterator i = children.begin();
-  while(i != children.end()) {
-    Widget *w = *i;
-    if(w->visible()) {
-      std::vector<PixelBufferAlpha *> pbs0 = w->getPixelBuffers();
-      pbs.insert(pbs.end(), pbs0.begin(), pbs0.end());
-    }
-    i++;
-  }
+	std::vector<Widget*>::iterator i = children.begin();
+	while(i != children.end())
+	{
+		Widget *w = *i;
+		if(w->visible())
+		{
+			std::vector<PixelBufferAlpha *> pbs0 = w->getPixelBuffers();
+			pbs.insert(pbs.end(), pbs0.begin(), pbs0.end());
+		}
+		i++;
+	}
 
-  return pbs;
+	return pbs;
 }
 
 bool Widget::hasKeyboardFocus()
 {
-  return window()->keyboardFocus() == this;
+	return window()->keyboardFocus() == this;
 }
 
 } // GUI::
