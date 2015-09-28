@@ -203,6 +203,13 @@ void PluginGUI::thread_main()
 
     window->eventHandler()->processEvents();
     handleMessages();
+
+#ifdef STANDALONE
+    if(closing) {
+	    if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
+	    break;
+    }
+#endif
   }
 
   deinit();
