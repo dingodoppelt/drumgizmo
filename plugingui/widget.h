@@ -29,6 +29,7 @@
 #include "guievent.h"
 #include "pixelbuffer.h"
 #include "notifier.h"
+#include "layout.h"
 
 #include <vector>
 
@@ -36,7 +37,7 @@ namespace GUI {
 
 class Window;
 
-class Widget : public Listener {
+class Widget : public Listener, LayoutItem {
 public:
 	Widget(Widget *parent);
 	virtual ~Widget();
