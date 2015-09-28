@@ -31,127 +31,131 @@
 #include <stdio.h>
 #include <hugin.hpp>
 
-GUI::Button::Button(Widget *parent)
-  : GUI::Widget(parent)
+namespace GUI {
+
+Button::Button(Widget *parent)
+	: Widget(parent)
+	, draw_state(up)
+	, button_state(up)
 {
-  box_up.topLeft     = new Image(":pushbutton_tl.png");
-  box_up.top         = new Image(":pushbutton_t.png");
-  box_up.topRight    = new Image(":pushbutton_tr.png");
-  box_up.left        = new Image(":pushbutton_l.png");
-  box_up.right       = new Image(":pushbutton_r.png");
-  box_up.bottomLeft  = new Image(":pushbutton_bl.png");
-  box_up.bottom      = new Image(":pushbutton_b.png");
-  box_up.bottomRight = new Image(":pushbutton_br.png");
-  box_up.center      = new Image(":pushbutton_c.png");
+	box_up.topLeft     = new Image(":pushbutton_tl.png");
+	box_up.top         = new Image(":pushbutton_t.png");
+	box_up.topRight    = new Image(":pushbutton_tr.png");
+	box_up.left        = new Image(":pushbutton_l.png");
+	box_up.right       = new Image(":pushbutton_r.png");
+	box_up.bottomLeft  = new Image(":pushbutton_bl.png");
+	box_up.bottom      = new Image(":pushbutton_b.png");
+	box_up.bottomRight = new Image(":pushbutton_br.png");
+	box_up.center      = new Image(":pushbutton_c.png");
 
-  box_down.topLeft     = new Image(":pushbuttondown_tl.png");
-  box_down.top         = new Image(":pushbuttondown_t.png");
-  box_down.topRight    = new Image(":pushbuttondown_tr.png");
-  box_down.left        = new Image(":pushbuttondown_l.png");
-  box_down.right       = new Image(":pushbuttondown_r.png");
-  box_down.bottomLeft  = new Image(":pushbuttondown_bl.png");
-  box_down.bottom      = new Image(":pushbuttondown_b.png");
-  box_down.bottomRight = new Image(":pushbuttondown_br.png");
-  box_down.center      = new Image(":pushbuttondown_c.png");
-
-  draw_state = up;
-  button_state = up;
-
-  handler = NULL;
-  ptr = NULL;
+	box_down.topLeft     = new Image(":pushbuttondown_tl.png");
+	box_down.top         = new Image(":pushbuttondown_t.png");
+	box_down.topRight    = new Image(":pushbuttondown_tr.png");
+	box_down.left        = new Image(":pushbuttondown_l.png");
+	box_down.right       = new Image(":pushbuttondown_r.png");
+	box_down.bottomLeft  = new Image(":pushbuttondown_bl.png");
+	box_down.bottom      = new Image(":pushbuttondown_b.png");
+	box_down.bottomRight = new Image(":pushbuttondown_br.png");
+	box_down.center      = new Image(":pushbuttondown_c.png");
 }
 
-void GUI::Button::registerClickHandler(void (*handler)(void *), void *ptr)
+Button::~Button()
 {
-  this->handler = handler;
-  this->ptr = ptr;
+	delete(box_up.topLeft);
+	delete(box_up.top);
+	delete(box_up.topRight);
+	delete(box_up.left);
+	delete(box_up.right);
+	delete(box_up.bottomLeft);
+	delete(box_up.bottom);
+	delete(box_up.bottomRight);
+	delete(box_up.center);
+	delete(box_down.topLeft);
+	delete(box_down.top);
+	delete(box_down.topRight);
+	delete(box_down.left);
+	delete(box_down.right);
+	delete(box_down.bottomLeft);
+	delete(box_down.bottom);
+	delete(box_down.bottomRight);
+	delete(box_down.center);
 }
 
-void GUI::Button::buttonEvent(ButtonEvent *e)
+void Button::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == 1) {
-    draw_state = down;
-    button_state = down;
-    in_button = true;
-    repaintEvent(NULL);
-  }
-  if(e->direction == -1) {
-    draw_state = up;
-    button_state = up;
-    repaintEvent(NULL);
-    if(in_button) {
-      clicked();
-      if(handler) handler(ptr);
-    }
-  }
+	if(e->direction == 1)
+	{
+		draw_state = down;
+		button_state = down;
+		in_button = true;
+		repaintEvent(nullptr);
+	}
+
+	if(e->direction == -1)
+	{
+		draw_state = up;
+		button_state = up;
+		repaintEvent(nullptr);
+		if(in_button)
+		{
+			clicked();
+			clickNotifier();
+		}
+	}
 }
 
-void GUI::Button::repaintEvent(GUI::RepaintEvent *e)
+void Button::repaintEvent(RepaintEvent *e)
 {
-  Painter p(this);
+	Painter p(this);
 
-  p.clear();
+	p.clear();
 
-  int w = width();
-  int h = height();
-  if(w == 0 || h == 0) return;
+	int w = width();
+	int h = height();
+	if(w == 0 || h == 0)
+	{
+		return;
+	}
 
-  switch(draw_state) {
-  case up:
-    p.drawBox(0, 0, &box_up, w, h);
-    break;
-  case down:
-    p.drawBox(0, 0, &box_down, w, h);
-    break;
-  }    
+	switch(draw_state) {
+	case up:
+		p.drawBox(0, 0, &box_up, w, h);
+		break;
+	case down:
+		p.drawBox(0, 0, &box_down, w, h);
+		break;
+	}
 
-  Font font(":fontemboss.png");
-  p.setColour(Colour(0.1));
-  p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1),
-             height()/2+5+1+(draw_state==up?0:1), font, text, true);
+	Font font(":fontemboss.png");
+	p.setColour(Colour(0.1));
+	p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1),
+	           height()/2+5+1+(draw_state==up?0:1), font, text, true);
 }
 
-void GUI::Button::setText(std::string text)
+void Button::setText(std::string text)
 {
-  this->text = text;
-  repaintEvent(NULL);
+	this->text = text;
+	repaintEvent(nullptr);
 }
 
-void GUI::Button::mouseLeaveEvent()
+void Button::mouseLeaveEvent()
 {
-  in_button = false;
-  if(button_state == down) {
-    draw_state = up;
-    repaintEvent(NULL);
-  }
+	in_button = false;
+	if(button_state == down)
+	{
+		draw_state = up;
+		repaintEvent(nullptr);
+	}
 }
 
-void GUI::Button::mouseEnterEvent()
+void Button::mouseEnterEvent()
 {
-  in_button = true;
-  if(button_state == down) {
-    draw_state = down;
-    repaintEvent(NULL);
-  }
+	in_button = true;
+	if(button_state == down)
+	{
+		draw_state = down;
+		repaintEvent(nullptr);
+	}
 }
 
-void GUI::Button::mouseMoveEvent(MouseMoveEvent *e)
-{
-}
-
-#ifdef TEST_BUTTON
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_BUTTON*/
+} //GUI::

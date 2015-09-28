@@ -57,6 +57,9 @@ public:
   virtual void resize(int w, int h);
 
 private:
+	void selectButtonClicked();
+	void cancelButtonClicked();
+
   struct private_data *prv;
 
   GUI::Label lbl_path;

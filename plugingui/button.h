@@ -24,57 +24,52 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_BUTTON_H__
-#define __DRUMGIZMO_BUTTON_H__
+#pragma once
 
 #include <string>
 
 #include "widget.h"
 #include "painter.h"
+#include "notifier.h"
 
 namespace GUI {
 
 class Button : public Widget {
 public:
-  Button(Widget *parent);
+	Button(Widget *parent);
+	~Button();
 
-  bool isFocusable() { return true; }
-  bool catchMouse() { return true; }
+	bool isFocusable() { return true; }
+	bool catchMouse() { return true; }
 
-  void setText(std::string text);
+	void setText(std::string text);
 
-  void registerClickHandler(void (*handler)(void *), void *ptr);
+	Notifier<> clickNotifier;
 
-  //protected:
-  virtual void clicked() {}
+protected:
+	virtual void clicked() {}
 
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
+	virtual void repaintEvent(RepaintEvent *e);
+	virtual void buttonEvent(ButtonEvent *e);
 
-  virtual void mouseLeaveEvent();
-  virtual void mouseEnterEvent();
-  virtual void mouseMoveEvent(MouseMoveEvent *e);
+	virtual void mouseLeaveEvent();
+	virtual void mouseEnterEvent();
 
 private:
-  bool in_button;
+	bool in_button;
 
-  Painter::Box box_up;
-  Painter::Box box_down;
+	Painter::Box box_up;
+	Painter::Box box_down;
 
-  typedef enum {
-    up,
-    down
-  } state_t;
+	typedef enum {
+		up,
+		down
+	} state_t;
 
-  std::string text;
+	std::string text;
 
-  state_t draw_state;
-  state_t button_state;
-
-  void (*handler)(void *);
-  void *ptr;
+	state_t draw_state;
+	state_t button_state;
 };
 
-};
-
-#endif/*__DRUMGIZMO_BUTTON_H__*/
+} // GUI::

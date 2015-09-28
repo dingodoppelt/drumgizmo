@@ -196,10 +196,10 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   listbox.registerSelectHandler(changeDir, prv);
 
   btn_sel.setText("Select");
-  btn_sel.registerClickHandler(changeDir, prv);
+  CONNECT((&btn_sel), clickNotifier, this, &FileBrowser::selectButtonClicked);
 
   btn_esc.setText("Cancel");
-  btn_esc.registerClickHandler(cancel, this);
+  CONNECT((&btn_esc), clickNotifier, this, &FileBrowser::cancelButtonClicked);
 
   changeDir(prv);
 
@@ -265,4 +265,14 @@ void GUI::FileBrowser::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
   p.drawImageStretched(0,0, &back, width(), height());
+}
+
+void GUI::FileBrowser::selectButtonClicked()
+{
+	changeDir(prv);
+}
+
+void GUI::FileBrowser::cancelButtonClicked()
+{
+	cancel(this);
 }

@@ -61,19 +61,6 @@ static void selectKitFile(void *ptr, std::string filename)
   msghandler.sendMessage(MSGRCV_ENGINE, msg);
 }
 
-static void kitBrowseClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  std::string path = gui->lineedit->text();
-  if(path == "") path = gui->config->lastkit;
-  if(path == "") path = gui->lineedit2->text();
-
-  fb->setPath(path);
-  fb->registerFileSelectHandler(selectKitFile, gui);
-  fb->show();
-}
-
 static void selectMapFile(void *ptr, std::string filename)
 {
   PluginGUI *gui = (PluginGUI*)ptr;
@@ -95,19 +82,6 @@ static void selectMapFile(void *ptr, std::string filename)
     gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
   gui->progress2->setState(ProgressBar::green);
   */
-}
-
-static void midimapBrowseClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  std::string path = gui->lineedit2->text();
-  if(path == "") path = gui->config->lastmidimap;
-  if(path == "") path = gui->lineedit->text();
-
-  fb->setPath(path);
-  fb->registerFileSelectHandler(selectMapFile, gui);
-  fb->show();
 }
 
 /*
@@ -295,7 +269,8 @@ void PluginGUI::init()
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);
     btn_brw->resize(85, 35 + 6 - 4);
-    btn_brw->registerClickHandler(kitBrowseClick, this);
+//    btn_brw->registerClickHandler(kitBrowseClick, this);
+    CONNECT(btn_brw, clickNotifier, this, &PluginGUI::kitBrowseClick);
 
     y += OFFSET2;
     progress = new ProgressBar(window);
@@ -326,7 +301,7 @@ void PluginGUI::init()
     btn_brw->setText("Browse...");
     btn_brw->move(266, y - 6 + 4);
     btn_brw->resize(85, 35 + 6 - 4);
-    btn_brw->registerClickHandler(midimapBrowseClick, this);
+    CONNECT(btn_brw, clickNotifier, this, &PluginGUI::midimapBrowseClick);
 
     y += OFFSET2;
     progress2 = new ProgressBar(window);
@@ -490,10 +465,46 @@ void PluginGUI::falloffValueChanged(float value)
 
 void PluginGUI::velocityCheckClick(bool checked)
 {
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
-                             checked);
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
+	ChangeSettingMessage *msg =
+		new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
+		                         checked);
+	msghandler.sendMessage(MSGRCV_ENGINE, msg);
+}
+
+void PluginGUI::kitBrowseClick()
+{
+	std::string path = lineedit->text();
+	if(path == "")
+	{
+		path = config->lastkit;
+	}
+
+	if(path == "")
+	{
+		path = lineedit2->text();
+	}
+
+	fb->setPath(path);
+	fb->registerFileSelectHandler(selectKitFile, this);
+	fb->show();
+}
+
+void PluginGUI::midimapBrowseClick()
+{
+	std::string path = lineedit2->text();
+	if(path == "")
+	{
+		path = config->lastmidimap;
+	}
+
+	if(path == "")
+	{
+		path = lineedit->text();
+	}
+
+	fb->setPath(path);
+	fb->registerFileSelectHandler(selectMapFile, this);
+	fb->show();
 }
 
 } // GUI::
