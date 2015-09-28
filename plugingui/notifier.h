@@ -64,7 +64,7 @@ public:
 	std::set<NotifierBase*> signals;
 };
 
-template<typename T, typename... Args>
+template<typename... Args>
 class Notifier : public NotifierBase {
 public:
 	Notifier() {}
@@ -75,7 +75,7 @@ public:
 		}
 	}
 
-	void connect(Listener* object, std::function<void(T, Args...)> slot)
+	void connect(Listener* object, std::function<void(Args...)> slot)
 	{
 		slots[object] = slot;
 		if(object) {
@@ -88,14 +88,14 @@ public:
 		slots.erase(object);
 	}
 
-	void notify(T t, Args...args)
+	void notify(Args...args)
 	{
 		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
-			(*slot).second(t, args...);
+			(*slot).second(args...);
 		}
 	}
 
-	std::map<Listener*, std::function<void(T, Args...)>> slots;
+	std::map<Listener*, std::function<void(Args...)>> slots;
 };
 
 } // GUI::
@@ -118,7 +118,7 @@ template<unsigned... Is, class F, class... Ts>
 auto easy_bind(seq<Is...>, F&& f, Ts&&... vs)
 	-> decltype(std::bind(std::forward<F>(f), std::forward<Ts>(vs)..., ::placeholder<1 + Is>()...))
 {
-    return std::bind(std::forward<F>(f), std::forward<Ts>(vs)..., ::placeholder<1 + Is>()...);
+	return std::bind(std::forward<F>(f), std::forward<Ts>(vs)..., ::placeholder<1 + Is>()...);
 }
 } // aux::
 
@@ -126,18 +126,18 @@ template<class R, class C, class... FArgs, class... Args>
 auto mem_bind(R (C::*ptmf)(FArgs...), Args&&... vs)
 	-> decltype(aux::easy_bind(gen_seq<(sizeof...(FArgs) + 1) - sizeof...(Args)>(), ptmf, std::forward<Args>(vs)...))
 {
-    // the +1s for 'this' argument
-    static_assert(sizeof...(Args) <= sizeof...(FArgs) + 1, "too many arguments to mem_bind");
-    return aux::easy_bind(gen_seq<(sizeof...(FArgs) + 1) - sizeof...(Args)>(), ptmf, std::forward<Args>(vs)...);
+	// the +1s for 'this' argument
+	static_assert(sizeof...(Args) <= sizeof...(FArgs) + 1, "too many arguments to mem_bind");
+	return aux::easy_bind(gen_seq<(sizeof...(FArgs) + 1) - sizeof...(Args)>(), ptmf, std::forward<Args>(vs)...);
 }
 
 template<class T, class C, class... Args>
 auto mem_bind(T C::*ptmd, Args&&... vs)
 	-> decltype(aux::easy_bind(gen_seq<1 - sizeof...(Args)>(), ptmd, std::forward<Args>(vs)...))
 {
-    // just 'this' argument
-    static_assert(sizeof...(Args) <= 1, "too many arguments to mem_bind");
-    return aux::easy_bind(gen_seq<1 - sizeof...(Args)>(), ptmd, std::forward<Args>(vs)...);
+	// just 'this' argument
+	static_assert(sizeof...(Args) <= 1, "too many arguments to mem_bind");
+	return aux::easy_bind(gen_seq<1 - sizeof...(Args)>(), ptmd, std::forward<Args>(vs)...);
 }
 
 //#define obj_connect_old(SRC, SIG, TAR, SLO) (SRC).SIG.connect(&(TAR), mem_bind(&decltype(TAR)::SLO, TAR))
@@ -146,4 +146,4 @@ auto mem_bind(T C::*ptmd, Args&&... vs)
 	(SRC).SIG.connect(nullptr, SLO)
 
 #define obj_connect(SRC, SIG, TAR, SLO) \
-  (SRC)->SIG.connect(TAR, mem_bind(&SLO, std::ref(*TAR)))
+	(SRC)->SIG.connect(TAR, mem_bind(&SLO, std::ref(*TAR)))
