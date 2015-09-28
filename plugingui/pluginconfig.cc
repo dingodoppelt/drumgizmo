@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            config.cc
+ *            pluginconfig.cc
  *
  *  Tue Jun  3 13:54:05 CEST 2014
  *  Copyright 2014 Jonas Suhr Christensen
@@ -27,11 +27,13 @@
 #include "pluginconfig.h"
 
 #include <hugin.hpp>
-  
+
 #define CONFIGFILENAME "plugingui.conf"
 
+namespace GUI {
+
 Config::Config()
-  : ConfigFile(CONFIGFILENAME)
+	: ConfigFile(CONFIGFILENAME)
 {
 }
 
@@ -41,23 +43,26 @@ Config::~Config()
 
 bool Config::load()
 {
-  lastkit.clear();
-  lastmidimap.clear();
+	lastkit.clear();
+	lastmidimap.clear();
 
-  if(!ConfigFile::load()) {
-    return false;
-  }
+	if(!ConfigFile::load())
+	{
+		return false;
+	}
 
-  lastkit = getValue("lastkit");
-  lastmidimap = getValue("lastmidimap");
+	lastkit = getValue("lastkit");
+	lastmidimap = getValue("lastmidimap");
 
-  return true;
+	return true;
 }
 
 bool Config::save()
 {
-  setValue("lastkit", lastkit);
-  setValue("lastmidimap", lastmidimap);
+	setValue("lastkit", lastkit);
+	setValue("lastmidimap", lastmidimap);
 
-  return ConfigFile::save();
+	return ConfigFile::save();
 }
+
+} // GUI::

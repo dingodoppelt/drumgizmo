@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            config.h
+ *            pluginconfig.h
  *
  *  Tue Jun  3 13:51:29 CEST 2014
  *  Copyright 2014 Jonas Suhr Christensen
@@ -24,21 +24,22 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CONFIG_H__
-#define __DRUMGIZMO_CONFIG_H__
+#pragma once
 
 #include <configfile.h>
 
+namespace GUI {
+
 class Config : public ConfigFile {
 public:
-  Config();
-  ~Config();
+	Config();
+	~Config();
 
-  bool load();
-  bool save();
+	bool load();
+	bool save();
 
-  std::string lastkit;
-  std::string lastmidimap;
+	std::string lastkit;
+	std::string lastmidimap;
 };
 
-#endif/*__DRUMGIZMO_CONFIG_H__*/
+} // GUI::
