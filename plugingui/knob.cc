@@ -181,7 +181,7 @@ void Knob::internalSetValue(float value)
   }
 
   currentValue = value;
-  valueChangedNotifier.notify(currentValue);
+  valueChangedNotifier(currentValue);
   repaintEvent(NULL);
 }
 

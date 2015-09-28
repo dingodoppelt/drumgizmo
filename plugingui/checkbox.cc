@@ -108,7 +108,7 @@ void CheckBox::internalSetChecked(bool checked)
   }
 
   state = checked;
-  stateChangedNotifier.notify(state);
+  stateChangedNotifier(state);
   repaintEvent(NULL);
 }
 

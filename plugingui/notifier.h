@@ -88,7 +88,7 @@ public:
 		slots.erase(object);
 	}
 
-	void notify(Args...args)
+	void operator()(Args... args)
 	{
 		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
 			(*slot).second(args...);
