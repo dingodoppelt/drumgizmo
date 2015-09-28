@@ -353,8 +353,7 @@ void PluginGUI::init()
     //velocityCheck->setText("Enable Velocity Modifier");
     velocityCheck->move(26, y + OFFSET4);
     velocityCheck->resize(59,38);
-    obj_connect(velocityCheck, stateChangedNotifier,
-                this, PluginGUI::velocityCheckClick);
+    CONNECT(velocityCheck, stateChangedNotifier, this, &PluginGUI::velocityCheckClick);
 
     // Velocity Weight Modifier:
     {
@@ -366,8 +365,7 @@ void PluginGUI::init()
       attackKnob = new Knob(window);
       attackKnob->move(109, y + OFFSET4 - 4);
       attackKnob->resize(57, 57);
-      obj_connect(attackKnob, valueChangedNotifier,
-                  this, PluginGUI::attackValueChanged);
+      CONNECT(attackKnob, valueChangedNotifier, this, &PluginGUI::attackValueChanged);
     }
     
     // Velocity Falloff Modifier:
@@ -380,8 +378,8 @@ void PluginGUI::init()
       falloffKnob = new Knob(window);
       falloffKnob->move(202 - 13 - 5,  y + OFFSET4 - 4);
       falloffKnob->resize(57, 57);
-      obj_connect(falloffKnob, valueChangedNotifier,
-                  this, PluginGUI::falloffValueChanged);    }
+      CONNECT(falloffKnob, valueChangedNotifier, this, &PluginGUI::falloffValueChanged);
+    }
   }
 
   VerticalLine *l2 = new VerticalLine(window);

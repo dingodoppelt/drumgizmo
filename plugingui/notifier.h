@@ -26,13 +26,51 @@
  */
 #pragma once
 
-#include <iostream>
 #include <functional>
 #include <vector>
 #include <map>
 #include <set>
-#include <type_traits>
-#include <utility>
+#include <memory>
+
+namespace aux
+{
+	template<int>
+	struct placeholder
+	{
+	};
+}
+
+namespace std
+{
+	template<int N>
+	struct is_placeholder<aux::placeholder<N>>
+		: integral_constant<int, N+1>
+	{
+	};
+}
+
+namespace aux
+{
+	// std::integer_sequence introduced in C++14 so remove this once we start requiring that.
+
+	template<int... Ns>
+	struct int_sequence
+	{
+	};
+
+	template<int N, int... Ns>
+	struct gen_int_sequence
+		: gen_int_sequence<N-1, N-1, Ns...>
+	{
+	};
+
+	template<int... Ns>
+	struct gen_int_sequence<0, Ns...>
+		: int_sequence<Ns...>
+	{
+	};
+};
+
 
 namespace GUI {
 
@@ -61,6 +99,7 @@ public:
 		signals.erase(signal);
 	}
 
+private:
 	std::set<NotifierBase*> signals;
 };
 
@@ -68,6 +107,8 @@ template<typename... Args>
 class Notifier : public NotifierBase {
 public:
 	Notifier() {}
+
+	//! \brief When dtor is called it will automatically disconnect all its listeners.
 	~Notifier()
 	{
 		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
@@ -75,19 +116,26 @@ public:
 		}
 	}
 
-	void connect(Listener* object, std::function<void(Args...)> slot)
+	using callback_type = std::function<void(Args...)>;
+
+	//! \brief Connect object to this Notifier.
+	template<typename O, typename F>
+	void connect(O* p, const F& fn)
 	{
-		slots[object] = slot;
-		if(object) {
-			object->registerNotifier(this);
+		slots[p] = std::move(construct_mem_fn(fn, p, aux::gen_int_sequence<sizeof...(Args)>{}));
+		if(p && dynamic_cast<Listener*>(p)) {
+			dynamic_cast<Listener*>(p)->registerNotifier(this);
 		}
 	}
 
+	//! \brief Disconnect object from this Notifier.
 	void disconnect(Listener* object)
 	{
 		slots.erase(object);
 	}
 
+	//! \brief Activate this notifier by pretending it is a function.
+	//! Example: Notifier<int> foo; foo(42);
 	void operator()(Args... args)
 	{
 		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
@@ -95,55 +143,17 @@ public:
 		}
 	}
 
-	std::map<Listener*, std::function<void(Args...)>> slots;
+private:
+	std::map<Listener*, callback_type> slots;
+
+	template<typename F, typename O, int... Ns>
+	callback_type construct_mem_fn(const F& fn, O* p, aux::int_sequence<Ns...>) const
+	{
+		return std::bind(fn, p, aux::placeholder<Ns>{}...);
+	}
+
 };
 
 } // GUI::
 
-template<unsigned... Is> struct seq{};
-template<unsigned I, unsigned... Is>
-struct gen_seq : gen_seq<I-1, I-1, Is...>{};
-template<unsigned... Is>
-struct gen_seq<0, Is...> : seq<Is...>{};
-
-template<unsigned I> struct placeholder{};
-
-namespace std{
-template<unsigned I>
-struct is_placeholder< ::placeholder<I> > : integral_constant<int, I>{};
-} // std::
-
-namespace aux{
-template<unsigned... Is, class F, class... Ts>
-auto easy_bind(seq<Is...>, F&& f, Ts&&... vs)
-	-> decltype(std::bind(std::forward<F>(f), std::forward<Ts>(vs)..., ::placeholder<1 + Is>()...))
-{
-	return std::bind(std::forward<F>(f), std::forward<Ts>(vs)..., ::placeholder<1 + Is>()...);
-}
-} // aux::
-
-template<class R, class C, class... FArgs, class... Args>
-auto mem_bind(R (C::*ptmf)(FArgs...), Args&&... vs)
-	-> decltype(aux::easy_bind(gen_seq<(sizeof...(FArgs) + 1) - sizeof...(Args)>(), ptmf, std::forward<Args>(vs)...))
-{
-	// the +1s for 'this' argument
-	static_assert(sizeof...(Args) <= sizeof...(FArgs) + 1, "too many arguments to mem_bind");
-	return aux::easy_bind(gen_seq<(sizeof...(FArgs) + 1) - sizeof...(Args)>(), ptmf, std::forward<Args>(vs)...);
-}
-
-template<class T, class C, class... Args>
-auto mem_bind(T C::*ptmd, Args&&... vs)
-	-> decltype(aux::easy_bind(gen_seq<1 - sizeof...(Args)>(), ptmd, std::forward<Args>(vs)...))
-{
-	// just 'this' argument
-	static_assert(sizeof...(Args) <= 1, "too many arguments to mem_bind");
-	return aux::easy_bind(gen_seq<1 - sizeof...(Args)>(), ptmd, std::forward<Args>(vs)...);
-}
-
-//#define obj_connect_old(SRC, SIG, TAR, SLO) (SRC).SIG.connect(&(TAR), mem_bind(&decltype(TAR)::SLO, TAR))
-
-#define fun_connect(SRC, SIG, SLO) \
-	(SRC).SIG.connect(nullptr, SLO)
-
-#define obj_connect(SRC, SIG, TAR, SLO) \
-	(SRC)->SIG.connect(TAR, mem_bind(&SLO, std::ref(*TAR)))
+#define CONNECT(SRC, SIG, TAR, SLO) SRC->SIG.connect(TAR, SLO)
