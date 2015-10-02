@@ -26,38 +26,25 @@
  */
 #include "colour.h"
 
-GUI::Colour::Colour()
+namespace GUI {
+
+Colour::Colour()
 {
-  red = blue = green = alpha = 1.0;
+	red = blue = green = alpha = 1.0;
 }
 
-GUI::Colour::Colour(float grey, float a)
+Colour::Colour(float grey, float a)
 {
-  red = green = blue = grey;
-  alpha = a;
+	red = green = blue = grey;
+	alpha = a;
 }
 
-GUI::Colour::Colour(float r, float g, float b, float a)
+Colour::Colour(float r, float g, float b, float a)
 {
-  red = r;
-  green = g;
-  blue = b;
-  alpha = a;
+	red = r;
+	green = g;
+	blue = b;
+	alpha = a;
 }
 
-#ifdef TEST_COLOUR
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_COLOUR*/
+} // GUI::

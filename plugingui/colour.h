@@ -24,28 +24,25 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_COLOUR_H__
-#define __DRUMGIZMO_COLOUR_H__
+#pragma once
 
 namespace GUI {
 
 class Colour {
 public:
-  Colour();
+	Colour();
 
-  Colour(float grey, float alpha = 1.0);
+	Colour(float grey, float alpha = 1.0);
 
-  Colour(float red,
-         float green,
-         float blue,
-         float alpha = 1.0);
+	Colour(float red,
+	       float green,
+	       float blue,
+	       float alpha = 1.0);
 
-  float red;
-  float green;
-  float blue;
-  float alpha;
+	float red;
+	float green;
+	float blue;
+	float alpha;
 };
 
-};
-
-#endif/*__DRUMGIZMO_COLOUR_H__*/
+} // GUI::
