@@ -90,6 +90,8 @@ private:
   void attackValueChanged(float value);
   void falloffValueChanged(float value);
   void velocityCheckClick(bool checked);
+	void kitBrowseClick();
+	void midimapBrowseClick();
 
   // Humanized velocity controls:
   CheckBox *velocityCheck;
