@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LISTBOXBASIC_H__
-#define __DRUMGIZMO_LISTBOXBASIC_H__
+#pragma once
 
 #include <string.h>
 #include <vector>
@@ -33,69 +32,58 @@
 #include "widget.h"
 #include "font.h"
 #include "painter.h"
-
 #include "scrollbar.h"
+#include "notifier.h"
 
 namespace GUI {
 
 class ListBoxBasic : public Widget {
 public:
-  class Item {
-  public:
-    std::string name;
-    std::string value;
-  };
+	class Item {
+	public:
+		std::string name;
+		std::string value;
+	};
 
-  ListBoxBasic(Widget *parent);
-  ~ListBoxBasic();
+	ListBoxBasic(Widget *parent);
+	~ListBoxBasic();
 
-  bool isFocusable() { return true; }
+	void addItem(std::string name, std::string value);
+	void addItems(std::vector<Item> &items);
 
-  void addItem(std::string name, std::string value);
-  void addItems(std::vector<Item> &items);
+	void clear();
+	bool selectItem(int index);
+	std::string selectedName();
+	std::string selectedValue();
 
-  void clear();
-  bool selectItem(int index);
-  std::string selectedName();
-  std::string selectedValue();
+	void clearSelectedValue();
 
-  void clearSelectedValue();
+	// From Widget:
+	bool isFocusable() override { return true; }
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void scrollEvent(ScrollEvent *e) override;
+	virtual void keyEvent(KeyEvent *e) override;
+	virtual void resize(int w, int h) override;
 
-  void registerSelectHandler(void (*handler)(void *), void *ptr);
-  void registerClickHandler(void (*handler)(void *), void *ptr);
-  void registerValueChangeHandler(void (*handler)(void *), void *ptr);
-
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
-  virtual void scrollEvent(ScrollEvent *e);
-  virtual void keyEvent(KeyEvent *e);
-  virtual void resize(int w, int h);
+	Notifier<> selectionNotifier;
+	Notifier<> clickNotifier;
+	Notifier<> valueChangedNotifier;
 
 private:
-  ScrollBar scroll;
+	ScrollBar scroll;
 
-  Image bg_img;
+	Image bg_img;
 
-  void setSelection(int index);
+	void setSelection(int index);
 
-  std::vector<Item> items;
+	std::vector<Item> items;
 
-  int selected;
-  int marked;
-  GUI::Font font;
-  int padding;
-  int btn_size;
-
-  void (*sel_handler)(void *);
-  void *sel_ptr;
-
-  void (*clk_handler)(void *);
-  void *clk_ptr;
-
-  void (*valch_handler)(void *);
-  void *valch_ptr;
+	int selected;
+	int marked;
+	Font font;
+	int padding;
+	int btn_size;
 };
 
-};
-
-#endif/*__DRUMGIZMO_LISTBOXBASIC_H__*/
+} // GUI::

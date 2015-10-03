@@ -29,90 +29,92 @@
 #include "painter.h"
 #include "font.h"
 
-#include <stdio.h>
+namespace GUI {
 
-GUI::ListBoxThin::ListBoxThin(GUI::Widget *parent)
-  : GUI::Widget(parent)
+ListBoxThin::ListBoxThin(Widget *parent)
+	: Widget(parent)
+	, selectionNotifier(basic.selectionNotifier)
+	, clickNotifier(basic.clickNotifier)
+	, valueChangedNotifier(basic.valueChangedNotifier)
+	, basic(this)
 {
-  box.topLeft     = new Image(":thinlistbox_tl.png");
-  box.top         = new Image(":thinlistbox_t.png");
-  box.topRight    = new Image(":thinlistbox_tr.png");
-  box.left        = new Image(":thinlistbox_l.png");
-  box.right       = new Image(":thinlistbox_r.png");
-  box.bottomLeft  = new Image(":thinlistbox_bl.png");
-  box.bottom      = new Image(":thinlistbox_b.png");
-  box.bottomRight = new Image(":thinlistbox_br.png");
-  box.center      = new Image(":thinlistbox_c.png");
+	box.topLeft     = new Image(":thinlistbox_tl.png");
+	box.top         = new Image(":thinlistbox_t.png");
+	box.topRight    = new Image(":thinlistbox_tr.png");
+	box.left        = new Image(":thinlistbox_l.png");
+	box.right       = new Image(":thinlistbox_r.png");
+	box.bottomLeft  = new Image(":thinlistbox_bl.png");
+	box.bottom      = new Image(":thinlistbox_b.png");
+	box.bottomRight = new Image(":thinlistbox_br.png");
+	box.center      = new Image(":thinlistbox_c.png");
 
-  basic = new GUI::ListBoxBasic(this);
-  basic->move(box.left->width(), box.top->height());
+	basic.move(box.left->width(), box.top->height());
 }
 
-GUI::ListBoxThin::~ListBoxThin()
+ListBoxThin::~ListBoxThin()
 {
+	delete box.topLeft;
+	delete box.top;
+	delete box.topRight;
+	delete box.left;
+	delete box.right;
+	delete box.bottomLeft;
+	delete box.bottom;
+	delete box.bottomRight;
+	delete box.center;
 }
 
-void GUI::ListBoxThin::addItem(std::string name, std::string value)
+void ListBoxThin::addItem(std::string name, std::string value)
 {
-  basic->addItem(name, value);
+	basic.addItem(name, value);
 }
 
-void GUI::ListBoxThin::addItems(std::vector<ListBoxBasic::Item> &items)
+void ListBoxThin::addItems(std::vector<ListBoxBasic::Item> &items)
 {
-  basic->addItems(items);
+	basic.addItems(items);
 }
 
-void GUI::ListBoxThin::clear()
+void ListBoxThin::clear()
 {
-  basic->clear();
+	basic.clear();
 }
 
-bool GUI::ListBoxThin::selectItem(int index)
+bool ListBoxThin::selectItem(int index)
 {
-  return basic->selectItem(index);
+	return basic.selectItem(index);
 }
 
-std::string GUI::ListBoxThin::selectedName()
+std::string ListBoxThin::selectedName()
 {
-  return basic->selectedName();
+	return basic.selectedName();
 }
 
-std::string GUI::ListBoxThin::selectedValue()
+std::string ListBoxThin::selectedValue()
 {
-  return basic->selectedValue();
+	return basic.selectedValue();
 }
 
-void GUI::ListBoxThin::registerClickHandler(void (*handler)(void *), void *ptr)
+void ListBoxThin::repaintEvent(RepaintEvent *e)
 {
-  basic->registerClickHandler(handler, ptr);
+	Painter p(this);
+
+	p.clear();
+
+	int w = width();
+	int h = height();
+	if(w == 0 || h == 0)
+	{
+		return;
+	}
+
+	p.drawBox(0, 0, &box, w, h);
 }
 
-void GUI::ListBoxThin::registerSelectHandler(void (*handler)(void *), void *ptr)
-{ 
-  basic->registerSelectHandler(handler, ptr);
-}
-
-void GUI::ListBoxThin::registerValueChangeHandler(void (*handler)(void *),
-                                              void *ptr)
+void ListBoxThin::resize(int width, int height)
 {
-  basic->registerValueChangeHandler(handler, ptr);
+	Widget::resize(width, height);
+	basic.resize(width - (box.left->width() + box.right->width()),
+	             height - (box.top->height() + box.bottom->height()));
 }
 
-void GUI::ListBoxThin::repaintEvent(GUI::RepaintEvent *e)
-{
-  GUI::Painter p(this);
-
-  p.clear();
-
-  int w = width();
-  int h = height();
-  if(w == 0 || h == 0) return;
-  p.drawBox(0, 0, &box, w, h);
-}
-
-void GUI::ListBoxThin::resize(int width, int height)
-{
-  GUI::Widget::resize(width, height);
-  basic->resize(width - (box.left->width() + box.right->width()),
-                height - (box.top->height() + box.bottom->height()));
-}
+} // GUI::

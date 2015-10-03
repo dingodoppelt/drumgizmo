@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_COMBOBOX_H__
-#define __DRUMGIZMO_COMBOBOX_H__
+#pragma once
 
 #include <string.h>
 #include <vector>
@@ -39,35 +38,32 @@ namespace GUI {
 
 class ComboBox : public Widget {
 public:
-  ComboBox(Widget *parent);
-  ~ComboBox();
+	ComboBox(Widget *parent);
+	~ComboBox();
 
-  bool isFocusable() { return true; }
+	void addItem(std::string name, std::string value);
 
-  void addItem(std::string name, std::string value);
+	void clear();
+	bool selectItem(int index);
+	std::string selectedName();
+	std::string selectedValue();
 
-  void clear();
-  bool selectItem(int index);
-  std::string selectedName();
-  std::string selectedValue();
+	// From Widget:
+	bool isFocusable() override { return true; }
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void scrollEvent(ScrollEvent *e) override;
+	virtual void keyEvent(KeyEvent *e) override;
 
-  void registerValueChangedHandler(void (*handler)(void *), void *ptr);
-
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
-  virtual void scrollEvent(ScrollEvent *e);
-  virtual void keyEvent(KeyEvent *e);
+	Notifier<std::string, std::string> valueChangedNotifier;
 
 private:
-  Painter::Box box;
+	Painter::Box box;
 
-  GUI::Font font;
-  GUI::ListBoxThin *listbox;
+	void listboxSelectHandler();
 
-  void (*handler)(void *);
-  void *ptr;
+	Font font;
+	ListBoxThin listbox;
 };
 
-};
-
-#endif/*__DRUMGIZMO_COMBOBOX_H__*/
+} // GUI::

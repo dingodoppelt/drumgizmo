@@ -193,13 +193,13 @@ GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
   prv->lineedit->registerEnterPressedHandler(handleKeyEvent, prv);
 
   prv->listbox = &listbox;
-  listbox.registerSelectHandler(changeDir, prv);
+  CONNECT(&listbox, selectionNotifier, this, &FileBrowser::listSelectionChanged);
 
   btn_sel.setText("Select");
-  CONNECT((&btn_sel), clickNotifier, this, &FileBrowser::selectButtonClicked);
+  CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
 
   btn_esc.setText("Cancel");
-  CONNECT((&btn_esc), clickNotifier, this, &FileBrowser::cancelButtonClicked);
+  CONNECT(&btn_esc, clickNotifier, this, &FileBrowser::cancelButtonClicked);
 
   changeDir(prv);
 
@@ -265,6 +265,11 @@ void GUI::FileBrowser::repaintEvent(GUI::RepaintEvent *e)
 {
   Painter p(this);
   p.drawImageStretched(0,0, &back, width(), height());
+}
+
+void GUI::FileBrowser::listSelectionChanged()
+{
+	changeDir(prv);
 }
 
 void GUI::FileBrowser::selectButtonClicked()

@@ -57,6 +57,7 @@ public:
   virtual void resize(int w, int h);
 
 private:
+	void listSelectionChanged();
 	void selectButtonClicked();
 	void cancelButtonClicked();
 

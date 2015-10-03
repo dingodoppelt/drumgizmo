@@ -156,4 +156,4 @@ private:
 
 } // GUI::
 
-#define CONNECT(SRC, SIG, TAR, SLO) SRC->SIG.connect(TAR, SLO)
+#define CONNECT(SRC, SIG, TAR, SLO) (SRC)->SIG.connect(TAR, SLO)

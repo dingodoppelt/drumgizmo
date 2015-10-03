@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LISTBOXTHIN_H__
-#define __DRUMGIZMO_LISTBOXTHIN_H__
+#pragma once
 
 #include <string.h>
 #include <vector>
@@ -33,35 +32,36 @@
 #include "widget.h"
 #include "painter.h"
 #include "listboxbasic.h"
+#include "notifier.h"
 
 namespace GUI {
 
 class ListBoxThin : public Widget {
 public:
-  ListBoxThin(Widget *parent);
-  ~ListBoxThin();
+	ListBoxThin(Widget *parent);
+	~ListBoxThin();
 
-  void addItem(std::string name, std::string value);
-  void addItems(std::vector<ListBoxBasic::Item> &items);
+	void addItem(std::string name, std::string value);
+	void addItems(std::vector<ListBoxBasic::Item> &items);
 
-  void clear();
-  bool selectItem(int index);
-  std::string selectedName();
-  std::string selectedValue();
+	void clear();
+	bool selectItem(int index);
+	std::string selectedName();
+	std::string selectedValue();
 
-  void registerSelectHandler(void (*handler)(void *), void *ptr);
-  void registerClickHandler(void (*handler)(void *), void *ptr);
-  void registerValueChangeHandler(void (*handler)(void *), void *ptr);
+	// From Widget:
+	virtual void repaintEvent(GUI::RepaintEvent *e) override;
+	virtual void resize(int w, int h) override;
 
-  virtual void repaintEvent(GUI::RepaintEvent *e);
-  virtual void resize(int w, int h);
+	// Forwarded notifier from ListBoxBasic::basic
+	Notifier<>& selectionNotifier;
+	Notifier<>& clickNotifier;
+	Notifier<>& valueChangedNotifier;
 
 private:
-  ListBoxBasic *basic;
+	ListBoxBasic basic;
 
-  Painter::Box box;
+	Painter::Box box;
 };
 
-};
-
-#endif/*__DRUMGIZMO_LISTBOXTHIN_H__*/
+} // GUI::

@@ -29,95 +29,97 @@
 #include "painter.h"
 #include "font.h"
 
-#include <stdio.h>
+namespace GUI {
 
-GUI::ListBox::ListBox(GUI::Widget *parent)
-  : GUI::Widget(parent)
+ListBox::ListBox(Widget *parent)
+	: Widget(parent)
+	, selectionNotifier(basic.selectionNotifier)
+	, clickNotifier(basic.clickNotifier)
+	, valueChangedNotifier(basic.valueChangedNotifier)
+	, basic(this)
 {
-  box.topLeft     = new Image(":widget_tl.png");
-  box.top         = new Image(":widget_t.png");
-  box.topRight    = new Image(":widget_tr.png");
-  box.left        = new Image(":widget_l.png");
-  box.right       = new Image(":widget_r.png");
-  box.bottomLeft  = new Image(":widget_bl.png");
-  box.bottom      = new Image(":widget_b.png");
-  box.bottomRight = new Image(":widget_br.png");
-  box.center      = new Image(":widget_c.png");
+	box.topLeft     = new Image(":widget_tl.png");
+	box.top         = new Image(":widget_t.png");
+	box.topRight    = new Image(":widget_tr.png");
+	box.left        = new Image(":widget_l.png");
+	box.right       = new Image(":widget_r.png");
+	box.bottomLeft  = new Image(":widget_bl.png");
+	box.bottom      = new Image(":widget_b.png");
+	box.bottomRight = new Image(":widget_br.png");
+	box.center      = new Image(":widget_c.png");
 
-  basic = new GUI::ListBoxBasic(this);
-  basic->move(box.left->width(), box.top->height());
+	basic.move(box.left->width(), box.top->height());
 }
 
-GUI::ListBox::~ListBox()
+ListBox::~ListBox()
 {
+	delete box.topLeft;
+	delete box.top;
+	delete box.topRight;
+	delete box.left;
+	delete box.right;
+	delete box.bottomLeft;
+	delete box.bottom;
+	delete box.bottomRight;
+	delete box.center;
 }
 
-void GUI::ListBox::addItem(std::string name, std::string value)
+void ListBox::addItem(std::string name, std::string value)
 {
-  basic->addItem(name, value);
+	basic.addItem(name, value);
 }
 
-void GUI::ListBox::addItems(std::vector<ListBoxBasic::Item> &items)
+void ListBox::addItems(std::vector<ListBoxBasic::Item> &items)
 {
-  basic->addItems(items);
+	basic.addItems(items);
 }
 
-void GUI::ListBox::clear()
+void ListBox::clear()
 {
-  basic->clear();
+	basic.clear();
 }
 
-bool GUI::ListBox::selectItem(int index)
+bool ListBox::selectItem(int index)
 {
-  return basic->selectItem(index);
+	return basic.selectItem(index);
 }
 
-std::string GUI::ListBox::selectedName()
+std::string ListBox::selectedName()
 {
-  return basic->selectedName();
+	return basic.selectedName();
 }
 
-std::string GUI::ListBox::selectedValue()
+std::string ListBox::selectedValue()
 {
-  return basic->selectedValue();
+	return basic.selectedValue();
 }
 
-void GUI::ListBox::clearSelectedValue() 
+void ListBox::clearSelectedValue()
 {
-  basic->clearSelectedValue();
+	basic.clearSelectedValue();
 }
 
-void GUI::ListBox::registerClickHandler(void (*handler)(void *), void *ptr)
+void ListBox::repaintEvent(RepaintEvent *e)
 {
-  basic->registerClickHandler(handler, ptr);
+	Painter p(this);
+
+	p.clear();
+
+	int w = width();
+	int h = height();
+	if(w == 0 || h == 0)
+	{
+		return;
+	}
+
+	p.drawBox(0, 0, &box, w, h);
 }
 
-void GUI::ListBox::registerSelectHandler(void (*handler)(void *), void *ptr)
-{ 
-  basic->registerSelectHandler(handler, ptr);
-}
-
-void GUI::ListBox::registerValueChangeHandler(void (*handler)(void *),
-                                              void *ptr)
+void ListBox::resize(int width, int height)
 {
-  basic->registerValueChangeHandler(handler, ptr);
+	Widget::resize(width, height);
+	basic.resize(width - (box.left->width() + box.right->width()),
+	             height - (box.top->height() + box.bottom->height()));
 }
 
-void GUI::ListBox::repaintEvent(GUI::RepaintEvent *e)
-{
-  GUI::Painter p(this);
-
-  p.clear();
-
-  int w = width();
-  int h = height();
-  if(w == 0 || h == 0) return;
-  p.drawBox(0, 0, &box, w, h);
-}
-
-void GUI::ListBox::resize(int width, int height)
-{
-  GUI::Widget::resize(width, height);
-  basic->resize(width - (box.left->width() + box.right->width()),
-                height - (box.top->height() + box.bottom->height()));
-}
+} // GUI::
