@@ -71,7 +71,7 @@ static void changeDir(void *ptr)
   GUI::ListBox *lb = prv->listbox;
   GUI::LineEdit *le = prv->lineedit;
   std::string value = lb->selectedValue(); 
-  Directory* dir = prv->dir;
+  GUI::Directory* dir = prv->dir;
 
 //  if(!Directory::isDir(dir->path() + dir->seperator())) {
 //    return;
@@ -90,7 +90,7 @@ static void changeDir(void *ptr)
   }
 #endif
 
-  if(value.empty() && !dir->isDir() && Directory::exists(dir->path())) {
+  if(value.empty() && !dir->isDir() && GUI::Directory::exists(dir->path())) {
     DEBUG(filebrowser, "Selecting file '%s'\n", dir->path().c_str());
     if(prv->filesel_handler) prv->filesel_handler(prv->ptr, dir->path().c_str());
     return;
@@ -127,7 +127,7 @@ static void changeDir(void *ptr)
       return;
     }
     
-    Directory::EntryList entries = dir->entryList();
+    GUI::Directory::EntryList entries = dir->entryList();
 
     if(entries.empty()) {
       dir->cdUp();
@@ -138,7 +138,7 @@ static void changeDir(void *ptr)
           dir->path().c_str()); 
     le->setText(dir->path());
 
-    for(Directory::EntryList::iterator it = entries.begin();
+    for(GUI::Directory::EntryList::iterator it = entries.begin();
         it != entries.end(); it++) { 
       GUI::ListBoxBasic::Item item;
       std::string name = *it;
