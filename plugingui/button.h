@@ -39,8 +39,9 @@ public:
 	Button(Widget *parent);
 	~Button();
 
-	bool isFocusable() { return true; }
-	bool catchMouse() { return true; }
+	// From Widget:
+	bool isFocusable() override { return true; }
+	bool catchMouse() override { return true; }
 
 	void setText(std::string text);
 
@@ -49,11 +50,11 @@ public:
 protected:
 	virtual void clicked() {}
 
-	virtual void repaintEvent(RepaintEvent *e);
-	virtual void buttonEvent(ButtonEvent *e);
-
-	virtual void mouseLeaveEvent();
-	virtual void mouseEnterEvent();
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void mouseLeaveEvent() override;
+	virtual void mouseEnterEvent() override;
 
 private:
 	bool in_button;

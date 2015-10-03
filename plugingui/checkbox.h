@@ -38,6 +38,7 @@ public:
 
 	void setText(std::string text);
 
+	// From Widget:
 	bool isFocusable() override { return true; }
 
 	bool checked();

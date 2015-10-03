@@ -38,6 +38,7 @@ class Knob : public Widget {
 public:
 	Knob(Widget *parent);
 
+	// From Widget:
 	bool catchMouse() override { return true; }
 	bool isFocusable() override { return true; }
 

@@ -78,7 +78,8 @@ public:
 	//! \brief Set to false to only move the items, not scale them.
 	void setResizeChildren(bool resize_children);
 
-	virtual void layout() = 0;
+	// From Layout:
+	virtual void layout() override  = 0;
 
 protected:
 	bool resize_children;
@@ -97,7 +98,8 @@ public:
 
 	void setHAlignment(alignment_t alignment);
 
-	virtual void layout();
+	// From BoxLayout:
+	virtual void layout() override;
 
 protected:
 	alignment_t align;
@@ -116,7 +118,8 @@ public:
 
 	void setVAlignment(alignment_t alignment);
 
-	virtual void layout();
+	// From BoxLayout:
+	virtual void layout() override;
 
 protected:
 	alignment_t align;
