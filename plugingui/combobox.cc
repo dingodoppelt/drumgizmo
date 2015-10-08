@@ -38,7 +38,7 @@ namespace GUI {
 void ComboBox::listboxSelectHandler()
 {
 	ButtonEvent e;
-	e.direction = 1;
+	e.direction = ButtonEvent::Down;
 	buttonEvent(&e);
 }
 

@@ -224,10 +224,9 @@ void PluginGUI::deinit()
   if(window) delete window;
 }
 
-void closeEventHandler(void *ptr)
+void PluginGUI::closeEventHandler()
 {
-  volatile bool *closing = (volatile bool*)ptr;
-  *closing = true;
+	closing = true;
 }
 
 void PluginGUI::init()
@@ -238,8 +237,8 @@ void PluginGUI::init()
   config->load();
 
   window = new Window();
-  window->eventHandler()->registerCloseHandler(closeEventHandler,
-                                               (void*)&closing);
+  auto eventHandler = window->eventHandler();
+  CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
 
   window->setFixedSize(370, 330);
   window->setCaption("DrumGizmo v" VERSION);

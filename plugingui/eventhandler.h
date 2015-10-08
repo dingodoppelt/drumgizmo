@@ -24,39 +24,38 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_EVENTHANDLER_H__
-#define __DRUMGIZMO_EVENTHANDLER_H__
+#pragma once
 
 #include "guievent.h"
 #include "nativewindow.h"
-//#include "window.h"
+#include "notifier.h"
 
 namespace GUI {
+
 class Window;
 
 class EventHandler {
 public:
-  EventHandler(NativeWindow *native, Window *window);
+	EventHandler(NativeWindow *nativeWindow, Window *window);
 
-  void processEvents();
+	//! \brief Process all evebts currently in the event queue.
+	void processEvents();
 
-  bool hasEvent();
-  Event *getNextEvent();
+	//! \brief Query if any events are currently in the event queue.
+	bool hasEvent();
 
-  void registerCloseHandler(void (*handler)(void *), void *ptr);
+	//! \brief Get a single event from the event queue.
+	//! \return A pointer to the event or nullptr if there are none.
+	Event *getNextEvent();
+
+	Notifier<> closeNotifier;
 
 private:
-  Window *window;
-  int last_click;
-  void (*closeHandler)(void *);
-  void *closeHandlerPtr;
+	Window *window;
+	NativeWindow *nativeWindow;
 
-  // Used to ignore mouse button release after a double click.
-  bool last_was_dbl_click;
-
-  NativeWindow *native;
+	// Used to ignore mouse button release after a double click.
+	bool lastWasDoubleClick;
 };
 
-};
-
-#endif/*__DRUMGIZMO_EVENTHANDLER_H__*/
+} // GUI::

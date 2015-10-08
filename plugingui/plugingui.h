@@ -92,6 +92,7 @@ private:
   void velocityCheckClick(bool checked);
 	void kitBrowseClick();
 	void midimapBrowseClick();
+	void closeEventHandler();
 
   // Humanized velocity controls:
   CheckBox *velocityCheck;

@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_GUI_EVENT_H__
-#define __DRUMGIZMO_GUI_EVENT_H__
+#pragma once
 
 #include <unistd.h>
 
@@ -40,102 +39,113 @@ namespace GUI {
 
 class Event {
 public:
-  typedef enum {
-    MouseMove,
-    Repaint,
-    Button,
-    Scroll,
-    Key,
-    Close,
-    Resize
-  } Type;
-  virtual ~Event() {}
+	typedef enum {
+		MouseMove,
+		Repaint,
+		Button,
+		Scroll,
+		Key,
+		Close,
+		Resize
+	} Type;
+	virtual ~Event() {}
 
-  virtual Type type() = 0;
+	virtual Type type() = 0;
 
 #ifdef X11
-  ::Window window_id;
+	::Window window_id;
 #endif/*X11*/
 };
 
 class MouseMoveEvent : public Event {
 public:
-  Type type() { return MouseMove; }
+	Type type() { return MouseMove; }
 
-  int x;
-  int y;
+	int x;
+	int y;
 };
 
 class ButtonEvent : public Event {
 public:
-  Type type() { return Button; }
+	Type type() { return Button; }
 
-  int x;
-  int y;
+	int x;
+	int y;
 
-  int direction;
-  int button;
-  int doubleclick;
+	enum {
+		Up,
+		Down,
+	} direction;
+
+	enum {
+		Right,
+		Middle,
+		Left,
+	} button;
+
+	bool doubleclick;
 };
 
 class ScrollEvent : public Event {
 public:
-  Type type() { return Scroll; }
+	Type type() { return Scroll; }
 
-  int x;
-  int y;
+	int x;
+	int y;
 
-  int delta;
+	int delta;
 };
 
 class RepaintEvent : public Event {
 public:
-  Type type() { return Repaint; }
+	Type type() { return Repaint; }
 
-  int x;
-  int y;
-  size_t width;
-  size_t height;
+	int x;
+	int y;
+	size_t width;
+	size_t height;
 };
 
 class KeyEvent : public Event {
 public:
-  Type type() { return Key; }
+	Type type() { return Key; }
 
-  int direction;
-  int keycode;
-  std::string text;
+	enum {
+		Up,
+		Down,
+	} direction;
 
-  enum {
-    KEY_UNKNOWN   =-1,
-    KEY_LEFT      = 1,
-    KEY_RIGHT     = 2,
-    KEY_UP        = 3,
-    KEY_DOWN      = 4,
-    KEY_DELETE    = 5,
-    KEY_BACKSPACE = 6,
-    KEY_HOME      = 7,
-    KEY_END       = 8,
-    KEY_PGDOWN    = 9,
-    KEY_PGUP      = 10,
-    KEY_ENTER     = 11,
-    KEY_CHARACTER = 0xffff // character data is stored in 'text'
-  };
+	int keycode;
+	std::string text;
+
+	enum {
+		KEY_UNKNOWN   =-1,
+		KEY_LEFT      = 1,
+		KEY_RIGHT     = 2,
+		KEY_UP        = 3,
+		KEY_DOWN      = 4,
+		KEY_DELETE    = 5,
+		KEY_BACKSPACE = 6,
+		KEY_HOME      = 7,
+		KEY_END       = 8,
+		KEY_PGDOWN    = 9,
+		KEY_PGUP      = 10,
+		KEY_ENTER     = 11,
+		KEY_CHARACTER = 0xffff // character data is stored in 'text'
+	};
 };
 
 class CloseEvent : public Event {
 public:
-  Type type() { return Close; }
+	Type type() { return Close; }
 };
 
 class ResizeEvent : public Event {
 public:
-  Type type() { return Resize; }
+	Type type() { return Resize; }
 
-  size_t width;
-  size_t height;
+	size_t width;
+	size_t height;
 };
 
-};
-
-#endif/*__DRUMGIZMO_GUI_EVENT_H__*/
+} // GUI::

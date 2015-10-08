@@ -334,8 +334,8 @@ GUI::Event *GUI::NativeWindowX11::getNextEvent()
       e->window_id = xe.xbutton.window;
       e->x = xe.xbutton.x;
       e->y = xe.xbutton.y;
-      e->button = 0;
-      e->direction = xe.type == ButtonPress?1:-1;
+      e->button = ButtonEvent::Left;
+      e->direction = (xe.type == ButtonPress) ? ButtonEvent::Down : ButtonEvent::Up;
       e->doubleclick =
         xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
       
@@ -371,7 +371,7 @@ GUI::Event *GUI::NativeWindowX11::getNextEvent()
     }
     e->text.append(buf, sz);
 
-    e->direction = xe.type == KeyPress?1:-1;
+    e->direction = (xe.type == KeyPress) ? KeyEvent::Down : KeyEvent::Up;
     event = e;
   }
 

@@ -29,166 +29,180 @@
 #include "window.h"
 #include "painter.h"
 
-GUI::EventHandler::EventHandler(GUI::NativeWindow *n, GUI::Window *w)
-{
-  native = n;
-  window = w;
+namespace GUI {
 
-  last_click = 0;
-  last_was_dbl_click = false;
+EventHandler::EventHandler(NativeWindow *nativeWindow, Window *window)
+	: window(window)
+	, nativeWindow(nativeWindow)
+//	, last_click(0)
+	, lastWasDoubleClick(false)
+{}
+
+bool EventHandler::hasEvent()
+{
+	return nativeWindow->hasEvent();
 }
 
-bool GUI::EventHandler::hasEvent()
+Event *EventHandler::getNextEvent()
 {
-  return native->hasEvent();
+	return nativeWindow->getNextEvent();
 }
 
-GUI::Event *GUI::EventHandler::getNextEvent()
+void EventHandler::processEvents()
 {
-  return native->getNextEvent();
+	while(hasEvent())
+	{
+		Painter p(window); // Make sure we only redraw buffer one time.
+
+		auto event = getNextEvent();
+
+		if(event == nullptr)
+		{
+			continue;
+		}
+
+		switch(event->type()) {
+		case Event::Repaint:
+			window->redraw();
+			break;
+
+		case Event::Resize:
+			{
+				auto resizeEvent = static_cast<ResizeEvent*>(event);
+				if((resizeEvent->width != window->width()) ||
+				   (resizeEvent->height != window->height()))
+				{
+					window->resized(resizeEvent->width, resizeEvent->height);
+				}
+			}
+			break;
+
+		case Event::MouseMove:
+			{
+				auto moveEvent = static_cast<MouseMoveEvent*>(event);
+
+				auto widget = window->find(moveEvent->x, moveEvent->y);
+				auto oldwidget = window->mouseFocus();
+				if(widget != oldwidget)
+				{
+					// Send focus leave to oldwidget
+					if(oldwidget)
+					{
+						oldwidget->mouseLeaveEvent();
+					}
+
+					// Send focus enter to widget
+					if(widget)
+					{
+						widget->mouseEnterEvent();
+					}
+
+					window->setMouseFocus(widget);
+				}
+
+				if(window->buttonDownFocus())
+				{
+					auto widget = window->buttonDownFocus();
+					moveEvent->x -= widget->windowX();
+					moveEvent->y -= widget->windowY();
+
+					window->buttonDownFocus()->mouseMoveEvent(moveEvent);
+					break;
+				}
+
+				if(widget)
+				{
+					moveEvent->x -= widget->windowX();
+					moveEvent->y -= widget->windowY();
+					widget->mouseMoveEvent(moveEvent);
+				}
+			}
+			break;
+
+		case Event::Button:
+			{
+				if(lastWasDoubleClick)
+				{
+					lastWasDoubleClick = false;
+					continue;
+				}
+
+				auto buttonEvent = static_cast<ButtonEvent*>(event);
+
+				lastWasDoubleClick = buttonEvent->doubleclick;
+
+				auto widget = window->find(buttonEvent->x, buttonEvent->y);
+
+				if(window->buttonDownFocus())
+				{
+					if(buttonEvent->direction == ButtonEvent::Up)
+					{
+						auto widget = window->buttonDownFocus();
+						buttonEvent->x -= widget->windowX();
+						buttonEvent->y -= widget->windowY();
+
+						widget->buttonEvent(buttonEvent);
+						break;
+					}
+					else // Event::Button::Down
+					{
+						window->setButtonDownFocus(nullptr);
+					}
+				}
+
+				if(widget)
+				{
+					buttonEvent->x -= widget->windowX();
+					buttonEvent->y -= widget->windowY();
+
+					widget->buttonEvent(buttonEvent);
+
+					if((buttonEvent->direction == ButtonEvent::Down) &&
+					   widget->catchMouse())
+					{
+						window->setButtonDownFocus(widget);
+					}
+
+					if(widget->isFocusable())
+					{
+						window->setKeyboardFocus(widget);
+					}
+				}
+			}
+			break;
+
+		case Event::Scroll:
+			{
+				auto scrollEvent = static_cast<ScrollEvent*>(event);
+
+				auto widget = window->find(scrollEvent->x, scrollEvent->y);
+				if(widget)
+				{
+					scrollEvent->x -= widget->windowX();
+					scrollEvent->y -= widget->windowY();
+
+					widget->scrollEvent(scrollEvent);
+				}
+			}
+			break;
+
+		case Event::Key:
+			{
+				auto keyEvent = static_cast<KeyEvent*>(event);
+				if(window->keyboardFocus())
+				{
+					window->keyboardFocus()->keyEvent(keyEvent);
+				}
+			}
+			break;
+
+		case Event::Close:
+			closeNotifier();
+			break;
+		}
+
+		delete event;
+	}
 }
 
-void GUI::EventHandler::registerCloseHandler(void (*handler)(void *), void *ptr)
-{
-  this->closeHandler = handler;
-  this->closeHandlerPtr = ptr;
-}
-
-void GUI::EventHandler::processEvents()
-{
-  while(hasEvent()) {
-    Painter p(window); // Make sure we only redraw buffer one time.
-
-    Event *event = getNextEvent();
-
-    if(event == NULL) continue;
-
-    //    Widget *widget = gctx->widgets[event->window_id];
-    switch(event->type()) {
-    case Event::Repaint:
-      //      window->repaint((RepaintEvent*)event);
-      window->redraw();
-      break;
-    case Event::Resize:
-      {
-        //      window->repaint((RepaintEvent*)event)
-        ResizeEvent *re = (ResizeEvent*)event;
-        if(re->width != window->width() || re->height != window->height()) {
-          window->resized(re->width, re->height);
-          //window->repaint_r(NULL);
-        }
-      }
-      break;
-    case Event::MouseMove:
-      {
-        MouseMoveEvent *me = (MouseMoveEvent*)event;
-
-        Widget *w = window->find(me->x, me->y);
-        Widget *oldw = window->mouseFocus();
-        if(w != oldw) {
-          // Send focus leave to oldw
-          if(oldw) oldw->mouseLeaveEvent();
-          // Send focus enter to w
-          if(w) w->mouseEnterEvent();
-
-          window->setMouseFocus(w);
-        }
-
-        if(window->buttonDownFocus()) {
-          Widget *w = window->buttonDownFocus();
-          /*
-          if(me->x < w->x()) me->x = w->x();
-          if(me->x > w->x() + w->width()) me->x = w->x() + w->width();
-          if(me->y < w->y()) me->y = w->y();
-          if(me->y > w->y() + w->height()) me->y = w->y() + w->height();
-          */
-          me->x -= w->windowX();
-          me->y -= w->windowY();
-
-          window->buttonDownFocus()->mouseMoveEvent(me);
-          break;
-        }
-
-        if(w) {
-          me->x -= w->windowX();
-          me->y -= w->windowY();
-          w->mouseMoveEvent(me);
-        }
-      }
-      break;
-    case Event::Button:
-      {
-        if(last_was_dbl_click) {
-          last_was_dbl_click = false;
-          continue;
-        }
-        ButtonEvent *be = (ButtonEvent *)event;
-
-        last_was_dbl_click = be->doubleclick;
-
-        Widget *w = window->find(be->x, be->y);
-
-        if(window->buttonDownFocus()) {
-          if(be->direction == -1) {
-            Widget *w = window->buttonDownFocus();
-            /*
-            if(be->x < w->x()) be->x = w->x();
-            if(be->x > w->x() + w->width()) be->x = w->x() + w->width();
-            if(be->y < w->y()) be->y = w->y();
-            if(be->y > w->y() + w->height()) be->y = w->y() + w->height();
-            */
-            be->x -= w->windowX();
-            be->y -= w->windowY();
-
-            w->buttonEvent(be);
-            break;
-          } else {
-            window->setButtonDownFocus(NULL);
-          }
-        }
-
-        if(w) {
-          be->x -= w->windowX();
-          be->y -= w->windowY();
-
-          w->buttonEvent(be);
-
-          if(be->direction == 1) {
-            if(w->catchMouse()) window->setButtonDownFocus(w);
-          }
-
-          if(w->isFocusable()) window->setKeyboardFocus(w);
-        }
-      }
-      break;
-    case Event::Scroll:
-      {
-        ScrollEvent *se = (ScrollEvent *)event;
-
-        Widget *w = window->find(se->x, se->y);
-
-        //printf("scroller (%d,%d) %p\n", se->x, se->y, w);
-
-        if(w) {
-          se->x -= w->windowX();
-          se->y -= w->windowY();
-
-          w->scrollEvent(se);
-        }
-      }
-      break;
-    case Event::Key:
-      //      window->key((KeyEvent*)event);
-      //      lineedit->keyEvent((KeyEvent*)event);
-      if(window->keyboardFocus())
-        window->keyboardFocus()->keyEvent((KeyEvent*)event);
-      break;
-    case Event::Close:
-      if(closeHandler) closeHandler(closeHandlerPtr);
-      //delete window;
-      //window = NULL;
-      break;
-    }
-    delete event;
-  }
-}
+} // GUI::
