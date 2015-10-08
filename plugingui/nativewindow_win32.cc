@@ -187,7 +187,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         GUI::KeyEvent *e = new GUI::KeyEvent();
         e->keycode = GUI::KeyEvent::KEY_CHARACTER;
         e->text += (char)wp;
-        e->direction = KeyEvent::Up;
+        e->direction = GUI::KeyEvent::Up;
         native->event = e;
       }
     }
