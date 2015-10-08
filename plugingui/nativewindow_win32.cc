@@ -125,13 +125,13 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       if(msg == WM_LBUTTONUP ||
          msg == WM_LBUTTONDBLCLK ||
-         msg == WM_LBUTTONDOWN) e->button = ButtonEvent::Left;
+         msg == WM_LBUTTONDOWN) e->button = GUI::ButtonEvent::Left;
       else if(msg == WM_RBUTTONUP ||
          msg == WM_RBUTTONDBLCLK ||
-         msg == WM_RBUTTONDOWN) e->button = ButtonEvent::Middle;
+         msg == WM_RBUTTONDOWN) e->button = GUI::ButtonEvent::Middle;
       else if(msg == WM_MBUTTONUP ||
          msg == WM_MBUTTONDBLCLK ||
-         msg == WM_MBUTTONDOWN) e->button = ButtonEvent::Right;
+         msg == WM_MBUTTONDOWN) e->button = GUI::ButtonEvent::Right;
       else {
 	      delete e;
 	      break; // unknown button
@@ -139,10 +139,10 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
       if(msg == WM_LBUTTONUP ||
          msg == WM_RBUTTONUP ||
-         msg == WM_MBUTTONUP) e->direction = ButtonEvent::Up;
+         msg == WM_MBUTTONUP) e->direction = GUI::ButtonEvent::Up;
       else if(msg == WM_LBUTTONDOWN ||
          msg == WM_RBUTTONDOWN ||
-         msg == WM_MBUTTONDOWN) e->direction = ButtonEvent::Down;
+         msg == WM_MBUTTONDOWN) e->direction = GUI::ButtonEvent::Down;
       else {
 	      delete e;
 	      break; // unknown direction
@@ -175,7 +175,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       default: e->keycode = GUI::KeyEvent::KEY_UNKNOWN; break;
       }
       e->text = "";
-      e->direction = KeyEvent::Up;
+      e->direction = GUI::KeyEvent::Up;
       native->event = e;
     }
 		break;
