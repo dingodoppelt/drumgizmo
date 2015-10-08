@@ -106,10 +106,10 @@ static void changeDir(void *ptr)
   std::vector<GUI::ListBoxBasic::Item> items;
 
 #ifdef WIN32
-  if(Directory::isRoot(dir->path()) && value == "..") {
+  if(GUI::Directory::isRoot(dir->path()) && value == "..") {
    DEBUG(filebrowser, "Showing partitions...\n");
-   Directory::DriveList entries = dir->drives();
-   for(Directory::DriveList::iterator it = entries.begin();
+   GUI::Directory::DriveList entries = dir->drives();
+   for(GUI::Directory::DriveList::iterator it = entries.begin();
        it != entries.end(); it++) {  
       GUI::ListBoxBasic::Item item;
       std::string name = (*it).name;
