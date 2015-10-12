@@ -195,7 +195,7 @@ void ListBoxBasic::scrollEvent(ScrollEvent *e)
 
 void ListBoxBasic::keyEvent(KeyEvent *e)
 {
-	if(e->direction != -1)
+	if(e->direction != KeyEvent::Up)
 	{
 		return;
 	}
@@ -279,7 +279,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 	{
 		if(e->y > 0 && e->y < btn_size)
 		{
-			if(e->direction == -1)
+			if(e->direction == ButtonEvent::Up)
 			{
 				return;
 			}
@@ -289,7 +289,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 
 		if(e->y > ((int)height() - btn_size) && e->y < ((int)height() - 1))
 		{
-			if(e->direction == -1)
+			if(e->direction == ButtonEvent::Up)
 			{
 				return;
 			}
@@ -298,7 +298,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 		}
 	}
 
-	if(e->direction == -1)
+	if(e->direction == ButtonEvent::Up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;
@@ -317,7 +317,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 		repaintEvent(nullptr);
 	}
 
-	if(e->direction != -1)
+	if(e->direction != ButtonEvent::Up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;

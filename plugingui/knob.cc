@@ -89,7 +89,7 @@ void Knob::mouseMoveEvent(MouseMoveEvent *e)
 
 void Knob::keyEvent(KeyEvent *e)
 {
-	if(e->direction != -1)
+	if(e->direction != KeyEvent::Up)
 	{
 		return;
 	}
@@ -123,13 +123,13 @@ void Knob::keyEvent(KeyEvent *e)
 
 void Knob::buttonEvent(ButtonEvent *e)
 {
-	if(e->direction == 1)
+	if(e->direction == ButtonEvent::Down)
 	{
 		state = down;
 		mouse_offset_x = e->x + -1*e->y;
 	}
 
-	if(e->direction == -1)
+	if(e->direction == ButtonEvent::Up)
 	{
 		state = up;
 		mouse_offset_x = e->x + -1*e->y;

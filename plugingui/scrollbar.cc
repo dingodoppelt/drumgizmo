@@ -150,21 +150,21 @@ void GUI::ScrollBar::mouseMoveEvent(MouseMoveEvent *e)
 void GUI::ScrollBar::buttonEvent(ButtonEvent *e)
 {
   if(e->y < (int)width() && e->y > 0) {
-    if(e->direction == -1) setValue(value() - 1);
+    if(e->direction == ButtonEvent::Up) setValue(value() - 1);
     return;
   }
 
   if(e->y > (int)height() - (int)width() && e->y < (int)height()) {
-    if(e->direction == -1) setValue(value() + 1);
+    if(e->direction == ButtonEvent::Up) setValue(value() + 1);
     return;
   }
 
-  if(e->direction == 1) {
+  if(e->direction == ButtonEvent::Down) {
     yoffset = e->y;
     value_offset = value();
   }
 
-  dragging = (e->direction == 1);
+  dragging = (e->direction == ButtonEvent::Down);
 }
 
 #ifdef TEST_SCROLLBAR

@@ -83,7 +83,7 @@ Button::~Button()
 
 void Button::buttonEvent(ButtonEvent *e)
 {
-	if(e->direction == 1)
+	if(e->direction == ButtonEvent::Down)
 	{
 		draw_state = down;
 		button_state = down;
@@ -91,7 +91,7 @@ void Button::buttonEvent(ButtonEvent *e)
 		repaintEvent(nullptr);
 	}
 
-	if(e->direction == -1)
+	if(e->direction == ButtonEvent::Up)
 	{
 		draw_state = up;
 		button_state = up;

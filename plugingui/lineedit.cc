@@ -91,7 +91,7 @@ void GUI::LineEdit::buttonEvent(ButtonEvent *e)
   if(readOnly()) return;
 
 
-  if(e->direction == 1) {
+  if(e->direction == ButtonEvent::Down) {
     for(int i = 0; i < (int)_visibletext.length(); i++) {
       if(e->x < (int)(font.textWidth(_visibletext.substr(0, i)) + BORDER)) {
         pos = i + offsetpos;
@@ -108,7 +108,7 @@ void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
 
   bool change = false;
   
-  if(e->direction == -1) {
+  if(e->direction == KeyEvent::Up) {
 
     if(e->keycode == GUI::KeyEvent::KEY_LEFT) {
       if(pos) pos--;

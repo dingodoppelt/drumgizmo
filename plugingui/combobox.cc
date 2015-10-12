@@ -166,7 +166,7 @@ void ComboBox::scrollEvent(ScrollEvent *e)
 
 void ComboBox::keyEvent(KeyEvent *e)
 {
-	if(e->direction != -1)
+	if(e->direction != KeyEvent::Up)
 	{
 		return;
 	}
@@ -226,7 +226,7 @@ void ComboBox::keyEvent(KeyEvent *e)
 
 void ComboBox::buttonEvent(ButtonEvent *e)
 {
-	if(e->direction != 1)
+	if(e->direction != ButtonEvent::Down)
 	{
 		return;
 	}

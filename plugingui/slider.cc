@@ -77,7 +77,7 @@ void GUI::Slider::mouseMoveEvent(MouseMoveEvent *e)
 
 void GUI::Slider::buttonEvent(ButtonEvent *e)
 {
-  if(e->direction == 1) {
+  if(e->direction == ButtonEvent::Down) {
     state = down;
     val = maximum / (float)width() * (float)e->x;
 
@@ -87,7 +87,7 @@ void GUI::Slider::buttonEvent(ButtonEvent *e)
     if(handler) handler(ptr);
     repaintEvent(NULL);
   }
-  if(e->direction == -1) {
+  if(e->direction == ButtonEvent::Up) {
     state = up;
     val = maximum / (float)width() * (float)e->x;
     

@@ -44,7 +44,7 @@ CheckBox::CheckBox(Widget *parent)
 
 void CheckBox::buttonEvent(ButtonEvent *e)
 {
-	if(e->direction == -1 || e->doubleclick)
+	if(e->direction == ButtonEvent::Up || e->doubleclick)
 	{
 		middle = false;
 		internalSetChecked(!state);
@@ -67,7 +67,7 @@ void CheckBox::keyEvent(KeyEvent *e)
 {
 	if(e->keycode == KeyEvent::KEY_CHARACTER && e->text == " ")
 	{
-		if(e->direction == -1)
+		if(e->direction == KeyEvent::Up)
 		{
 			middle = false;
 			internalSetChecked(!state);
