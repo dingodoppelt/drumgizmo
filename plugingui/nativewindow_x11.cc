@@ -26,105 +26,147 @@
  */
 #include "nativewindow_x11.h"
 
-#ifdef X11
 #include <X11/Xutil.h>
 #include <stdlib.h>
 
+#include <hugin.hpp>
+
 #include "window.h"
 
-GUI::NativeWindowX11::NativeWindowX11(GUI::Window *window)
-  : GUI::NativeWindow()
+namespace GUI {
+
+NativeWindowX11::NativeWindowX11(Window* window)
+	: NativeWindow()
+	, buffer(nullptr)
+	, window(window)
 {
-  display = XOpenDisplay(NULL);
+	display = XOpenDisplay(nullptr);
+	if(display  == nullptr)
+	{
+		ERR(X11, "XOpenDisplay failed");
+		return;
+	}
 
-  this->window = window;
-  buffer = NULL;
+	screen = DefaultScreen(display);
 
-  // Get some colors
-  int blackColor = BlackPixel(display, DefaultScreen(display));
-  
-  ::Window w = DefaultRootWindow(display);
+	// Get some colors
+	int blackColor = BlackPixel(display, screen);
 
-  // Create the window
-  xwindow = XCreateSimpleWindow(display,
-                                w,
-                                window->x(), window->y(),
-                                window->width(), window->height(),
-                                0,
-                                blackColor, blackColor);
+	::Window rootWindow = DefaultRootWindow(display);
 
-  XSelectInput(display, xwindow,
-               StructureNotifyMask |
-               PointerMotionMask |
-               ButtonPressMask |
-               ButtonReleaseMask |
-               KeyPressMask |
-               KeyReleaseMask|
-               ExposureMask |
-               StructureNotifyMask |
-               SubstructureNotifyMask);
+	// Create the window
+	unsigned long border = 0;
+	xwindow = XCreateSimpleWindow(display,
+	                              rootWindow,
+	                              window->x(), window->y(),
+	                              window->width(), window->height(),
+	                              border,
+	                              blackColor, blackColor);
 
-  // register interest in the delete window message
-  wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
-  XSetWMProtocols(display, xwindow, &wmDeleteMessage, 1);
+	long mask = (StructureNotifyMask |
+	             PointerMotionMask |
+	             ButtonPressMask |
+	             ButtonReleaseMask |
+	             KeyPressMask |
+	             KeyReleaseMask|
+	             ExposureMask |
+	             StructureNotifyMask |
+	             SubstructureNotifyMask);
+	XSelectInput(display, xwindow, mask);
 
-  // "Map" the window (that is, make it appear on the screen)
-  XMapWindow(display, xwindow);
+	// Register the delete window message:
+	wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
 
-  // Create a "Graphics Context"
-  gc = XCreateGC(display, xwindow, 0, NULL);
+	Atom protocols[] = { wmDeleteMessage };
+	int count = sizeof(protocols)/sizeof(Atom);
+	XSetWMProtocols(display, xwindow, protocols, count);
+
+	// "Map" the window (that is, make it appear on the screen)
+	XMapWindow(display, xwindow);
+
+	// Create a "Graphics Context"
+	gc = XCreateGC(display, xwindow, 0, nullptr);
 }
 
-GUI::NativeWindowX11::~NativeWindowX11()
+NativeWindowX11::~NativeWindowX11()
 {
-  XDestroyWindow(display, xwindow);
-  //widgets.erase(window);
-  XCloseDisplay(display);
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XDestroyWindow(display, xwindow);
+	XCloseDisplay(display);
 }
 
-void GUI::NativeWindowX11::setFixedSize(int width, int height)
+void NativeWindowX11::setFixedSize(int width, int height)
 {
-  resize(width, height);
+	if(display == nullptr)
+	{
+		return;
+	}
 
-  XSizeHints *size_hints;
-  size_hints = XAllocSizeHints();
+	resize(width, height);
 
-  if(size_hints == NULL) {
-    //fprintf(stderr,"XMallocSizeHints() failed\n");
-    //exit(1);
-    return;
-  }
+	XSizeHints* size_hints;
+	size_hints = XAllocSizeHints();
 
-  size_hints->flags = USPosition | PMinSize | PMaxSize;
-  size_hints->min_width = size_hints->max_width = width;
-  size_hints->min_height = size_hints->max_height = height;
-  /*
-    size_hints->min_aspect.x = window->width()/window->height();
-    size_hints->max_aspect.x = window->width()/window->height();
-    size_hints->min_aspect.y = window->width()/window->height();
-    size_hints->max_aspect.y = size_hints->min_aspect.y;
-  */
-  XSetWMNormalHints(display, xwindow, size_hints);
+	if(size_hints == nullptr)
+	{
+		ERR(X11,"XMallocSizeHints() failed");
+		return;
+	}
+
+	size_hints->flags = USPosition | PMinSize | PMaxSize;
+	size_hints->min_width = size_hints->max_width = width;
+	size_hints->min_height = size_hints->max_height = height;
+
+	//size_hints->min_aspect.x = (float)window->width()/(float)window->height();
+	//size_hints->max_aspect.x = (float)window->width()/(float)window->height();
+	//size_hints->min_aspect.y = (float)window->width()/(float)window->height();
+	//size_hints->max_aspect.y = size_hints->min_aspect.y;
+
+	XSetWMNormalHints(display, xwindow, size_hints);
 }
 
-void GUI::NativeWindowX11::resize(int width, int height)
+void NativeWindowX11::resize(int width, int height)
 {
-  XResizeWindow(display, xwindow, width, height);
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XResizeWindow(display, xwindow, width, height);
 }
 
-void GUI::NativeWindowX11::move(int x, int y)
+void NativeWindowX11::move(int x, int y)
 {
-  XMoveWindow(display, xwindow, x, y);
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XMoveWindow(display, xwindow, x, y);
 }
 
-void GUI::NativeWindowX11::show()
+void NativeWindowX11::show()
 {
-  XMapWindow(display, xwindow);
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XMapWindow(display, xwindow);
 }
 
-void GUI::NativeWindowX11::hide()
+void NativeWindowX11::hide()
 {
-  XUnmapWindow(display, xwindow);
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XUnmapWindow(display, xwindow);
 }
 
 static int get_byte_order (void)
@@ -135,254 +177,351 @@ static int get_byte_order (void)
 	} order;
 
 	order.s = 1;
-	if ((1 == order.c[0])) {
+	if((1 == order.c[0]))
+	{
 		return LSBFirst;
-	} else {
+	}
+	else
+	{
 		return MSBFirst;
 	}
 }
 
-static XImage *create_image_from_buffer(Display *dis, int screen,
-                                        unsigned char *buf,
-                                        int width, int height)
+XImage* NativeWindowX11::createImageFromBuffer(unsigned char* buf,
+                                               int width, int height)
 {
 	int depth;
-	XImage *img = NULL;
-	Visual *vis;
+	XImage* img = nullptr;
+	Visual* vis;
 	double rRatio;
 	double gRatio;
 	double bRatio;
-	int outIndex = 0;	
+	int outIndex = 0;
 	int i;
 	int numBufBytes = (3 * (width * height));
-		
-	depth = DefaultDepth(dis, screen);
-	vis = DefaultVisual(dis, screen);
+
+	depth = DefaultDepth(display, screen);
+	vis = DefaultVisual(display, screen);
 
 	rRatio = vis->red_mask / 255.0;
 	gRatio = vis->green_mask / 255.0;
 	bRatio = vis->blue_mask / 255.0;
-		
-	if (depth >= 24) {
+
+	if(depth >= 24)
+	{
 		size_t numNewBufBytes = (4 * (width * height));
 		u_int32_t *newBuf = (u_int32_t *)malloc (numNewBufBytes);
-	
-		for (i = 0; i < numBufBytes; ++i) {
-			unsigned int r, g, b;
-			r = (buf[i] * rRatio);
-			++i;
-			g = (buf[i] * gRatio);
-			++i;
-			b = (buf[i] * bRatio);
-					
-			r &= vis->red_mask;
-			g &= vis->green_mask;
-			b &= vis->blue_mask;
-			
-			newBuf[outIndex] = r | g | b;
-			++outIndex;
-		}		
-		
-		img = XCreateImage (dis, 
-			CopyFromParent, depth, 
-			ZPixmap, 0, 
-			(char *) newBuf,
-			width, height,
-			32, 0
-		);
-		
-	} else if (depth >= 15) {
-		size_t numNewBufBytes = (2 * (width * height));
-		u_int16_t *newBuf = (u_int16_t *)malloc (numNewBufBytes);
-		
-		for (i = 0; i < numBufBytes; ++i) {
-			unsigned int r, g, b;
 
+		for(i = 0; i < numBufBytes; ++i)
+		{
+			unsigned int r, g, b;
 			r = (buf[i] * rRatio);
 			++i;
 			g = (buf[i] * gRatio);
 			++i;
 			b = (buf[i] * bRatio);
-					
+
 			r &= vis->red_mask;
 			g &= vis->green_mask;
 			b &= vis->blue_mask;
-			
+
 			newBuf[outIndex] = r | g | b;
 			++outIndex;
-		}		
-		
-		img = XCreateImage(dis, CopyFromParent, depth, ZPixmap, 0, (char *) newBuf,
-                        width, height, 16, 0);
-	} else {
-		//fprintf (stderr, "This program does not support displays with a depth less than 15.");
-		return NULL;				
+		}
+
+		img = XCreateImage (display,
+		                    CopyFromParent, depth,
+		                    ZPixmap, 0,
+		                    (char*) newBuf,
+		                    width, height,
+		                    32, 0);
+	}
+	else
+	{
+		if(depth >= 15)
+		{
+			size_t numNewBufBytes = (2 * (width * height));
+			u_int16_t* newBuf = (u_int16_t*)malloc (numNewBufBytes);
+
+			for(i = 0; i < numBufBytes; ++i)
+			{
+				unsigned int r, g, b;
+
+				r = (buf[i] * rRatio);
+				++i;
+				g = (buf[i] * gRatio);
+				++i;
+				b = (buf[i] * bRatio);
+
+				r &= vis->red_mask;
+				g &= vis->green_mask;
+				b &= vis->blue_mask;
+
+				newBuf[outIndex] = r | g | b;
+				++outIndex;
+			}
+
+			img = XCreateImage(display, CopyFromParent, depth, ZPixmap, 0,
+			                   (char*)newBuf, width, height, 16, 0);
+		}
+		else
+		{
+			//fprintf (stderr, "This program does not support displays with a depth less than 15.");
+			return nullptr;
+		}
 	}
 
 	XInitImage (img);
-	/*Set the client's byte order, so that XPutImage knows what to do with the data.*/
-	/*The default in a new X image is the server's format, which may not be what we want.*/
-	if ((LSBFirst == get_byte_order ())) {
+
+	// Set the client's byte order, so that XPutImage knows what
+	// to do with the data.
+	// The default in a new X image is the server's format, which
+	// may not be what we want.
+	if((LSBFirst == get_byte_order ()))
+	{
 		img->byte_order = LSBFirst;
-	} else {
+	}
+	else
+	{
 		img->byte_order = MSBFirst;
 	}
-	
-	/*The bitmap_bit_order doesn't matter with ZPixmap images.*/
+
+	// The bitmap_bit_order doesn't matter with ZPixmap images.
 	img->bitmap_bit_order = MSBFirst;
 
 	return img;
-}		
-
-void GUI::NativeWindowX11::handleBuffer()
-{
-  if(buffer) XDestroyImage(buffer);
-  buffer =
-    create_image_from_buffer(display, DefaultScreen(display),
-                             window->wpixbuf.buf,
-                             window->wpixbuf.width,
-                             window->wpixbuf.height);
 }
 
-void GUI::NativeWindowX11::redraw()
+void NativeWindowX11::handleBuffer()
 {
-  // http://stackoverflow.com/questions/6384987/load-image-onto-a-window-using-xlib
-  if(buffer == NULL) window->updateBuffer();
-  XPutImage(display, xwindow, gc, buffer, 0, 0, 0, 0,
-            window->width(), window->height());
-  XFlush(display);
+	if(buffer)
+	{
+		XDestroyImage(buffer);
+	}
+
+	buffer = createImageFromBuffer(window->wpixbuf.buf,
+	                               window->wpixbuf.width,
+	                               window->wpixbuf.height);
 }
 
-void GUI::NativeWindowX11::setCaption(const std::string &caption)
+void NativeWindowX11::redraw()
 {
-  XStoreName(display, xwindow, caption.c_str());
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	if(buffer == nullptr)
+	{
+		window->updateBuffer();
+	}
+
+	XPutImage(display, xwindow, gc, buffer, 0, 0, 0, 0,
+	          window->width(), window->height());
+	XFlush(display);
 }
 
-void GUI::NativeWindowX11::grabMouse(bool grab)
+void NativeWindowX11::setCaption(const std::string &caption)
 {
-  (void)grab;
-  // Don't need to do anything on this platoform...
+	if(display == nullptr)
+	{
+		return;
+	}
+
+	XStoreName(display, xwindow, caption.c_str());
 }
 
-bool GUI::NativeWindowX11::hasEvent()
+void NativeWindowX11::grabMouse(bool grab)
 {
-  return XPending(display);
+	(void)grab;
+	// Don't need to do anything on this platform...
 }
 
-GUI::Event *GUI::NativeWindowX11::getNextEvent()
+bool NativeWindowX11::hasEvent()
 {
-  Event *event = NULL;
+	if(display == nullptr)
+	{
+		return false;
+	}
 
-  XEvent xe;
-  XNextEvent(display, &xe);
-
-  if(xe.type == MotionNotify) {
-    while(true) { // Hack to make sure only the last event is played.
-      if(!hasEvent()) break;
-      XEvent nxe;
-      XPeekEvent(display, &nxe);
-      if(nxe.type != MotionNotify) break;
-      XNextEvent(display, &xe);
-    }
-
-    MouseMoveEvent *e = new MouseMoveEvent();
-    e->window_id = xe.xmotion.window;
-    e->x = xe.xmotion.x;
-    e->y = xe.xmotion.y;
-    event = e;
-  }
-
-  if(xe.type == Expose && xe.xexpose.count == 0) {
-    RepaintEvent *e = new RepaintEvent();
-    e->window_id = xe.xexpose.window;
-    e->x = xe.xexpose.x;
-    e->y = xe.xexpose.y;
-    e->width = xe.xexpose.width;
-    e->height = xe.xexpose.height;
-    event = e;
-  }
-
-  if(xe.type == ConfigureNotify) {
-    ResizeEvent *e = new ResizeEvent();
-    e->window_id = xe.xconfigure.window;
-    //    e->x = xe.xconfigure.x;
-    //    e->y = xe.xconfigure.y;
-    e->width = xe.xconfigure.width;
-    e->height = xe.xconfigure.height;
-    event = e;
-  }
-
-  if(xe.type == ButtonPress || xe.type == ButtonRelease) {
-    if(xe.xbutton.button == 4 || xe.xbutton.button == 5) {
-      int scroll = 1;
-      while(true) { // Hack to make sure only the last event is played.
-        if(!hasEvent()) break;
-        XEvent nxe;
-        XPeekEvent(display, &nxe);
-        if(nxe.type != ButtonPress && nxe.type != ButtonRelease) break;
-        scroll += 1;
-        XNextEvent(display, &xe);
-      }
-      ScrollEvent *e = new ScrollEvent();
-      e->window_id = xe.xbutton.window;
-      e->x = xe.xbutton.x;
-      e->y = xe.xbutton.y;
-      e->delta = scroll * (xe.xbutton.button==4?-1:1);
-      event = e;
-    } else {
-      ButtonEvent *e = new ButtonEvent();
-      e->window_id = xe.xbutton.window;
-      e->x = xe.xbutton.x;
-      e->y = xe.xbutton.y;
-      e->button = ButtonEvent::Left;
-      e->direction = (xe.type == ButtonPress) ? ButtonEvent::Down : ButtonEvent::Up;
-      e->doubleclick =
-        xe.type == ButtonPress && (xe.xbutton.time - last_click) < 200;
-      
-      if(xe.type == ButtonPress) last_click = xe.xbutton.time;
-      event = e;
-    }
-  }
-
-  if(xe.type == KeyPress || xe.type == KeyRelease) {
-    //printf("key: %d\n", xe.xkey.keycode);
-    KeyEvent *e = new KeyEvent();
-    e->window_id = xe.xkey.window;
-
-    switch(xe.xkey.keycode) {
-    case 113: e->keycode = KeyEvent::KEY_LEFT; break;
-    case 114: e->keycode = KeyEvent::KEY_RIGHT; break;
-    case 111: e->keycode = KeyEvent::KEY_UP; break;
-    case 116: e->keycode = KeyEvent::KEY_DOWN; break;
-    case 119: e->keycode = KeyEvent::KEY_DELETE; break;
-    case 22: e->keycode = KeyEvent::KEY_BACKSPACE; break;
-    case 110: e->keycode = KeyEvent::KEY_HOME; break;
-    case 115: e->keycode = KeyEvent::KEY_END; break;
-    case 117: e->keycode = KeyEvent::KEY_PGDOWN; break;
-    case 112: e->keycode = KeyEvent::KEY_PGUP; break;
-    case 36: e->keycode = KeyEvent::KEY_ENTER; break;
-    default: e->keycode = KeyEvent::KEY_UNKNOWN; break;
-    }
-
-    char buf[1024];
-    int sz = XLookupString(&xe.xkey, buf, sizeof(buf),  NULL, NULL);
-    if(sz && e->keycode == KeyEvent::KEY_UNKNOWN) {
-      e->keycode = KeyEvent::KEY_CHARACTER;
-    }
-    e->text.append(buf, sz);
-
-    e->direction = (xe.type == KeyPress) ? KeyEvent::Down : KeyEvent::Up;
-    event = e;
-  }
-
-  if(xe.type == ClientMessage &&
-     (unsigned int)xe.xclient.data.l[0] == wmDeleteMessage) {
-    CloseEvent *e = new CloseEvent();
-    event = e;
-  }
-
-  return event;
+	return XPending(display);
 }
 
-#endif/*X11*/
+Event* NativeWindowX11::getNextEvent()
+{
+	if(display == nullptr)
+	{
+		return nullptr;
+	}
 
+	Event* event = nullptr;
+
+	XEvent xevent;
+	XNextEvent(display, &xevent);
+
+	if(xevent.type == MotionNotify)
+	{
+		while(true) // Hack to make sure only the last event is played.
+		{
+			if(!hasEvent())
+			{
+				break;
+			}
+
+			XEvent peekXEvent;
+			XPeekEvent(display, &peekXEvent);
+			if(peekXEvent.type != MotionNotify)
+			{
+				break;
+			}
+
+			XNextEvent(display, &xevent);
+		}
+
+		auto mouseMoveEvent = new MouseMoveEvent();
+		mouseMoveEvent->window_id = xevent.xmotion.window;
+		mouseMoveEvent->x = xevent.xmotion.x;
+		mouseMoveEvent->y = xevent.xmotion.y;
+		event = mouseMoveEvent;
+	}
+
+	if(xevent.type == Expose && xevent.xexpose.count == 0)
+	{
+		auto repaintEvent = new RepaintEvent();
+		repaintEvent->window_id = xevent.xexpose.window;
+		repaintEvent->x = xevent.xexpose.x;
+		repaintEvent->y = xevent.xexpose.y;
+		repaintEvent->width = xevent.xexpose.width;
+		repaintEvent->height = xevent.xexpose.height;
+		event = repaintEvent;
+	}
+
+	if(xevent.type == ConfigureNotify)
+	{
+		auto resizeEvent = new ResizeEvent();
+		resizeEvent->window_id = xevent.xconfigure.window;
+		//resizeEvent->x = xevent.xconfigure.x;
+		//resizeEvent->y = xevent.xconfigure.y;
+		resizeEvent->width = xevent.xconfigure.width;
+		resizeEvent->height = xevent.xconfigure.height;
+		event = resizeEvent;
+	}
+
+	if(xevent.type == ButtonPress || xevent.type == ButtonRelease)
+	{
+		if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
+		{
+			int scroll = 1;
+			while(true) // Hack to make sure only the last event is played.
+			{
+				if(!hasEvent())
+				{
+					break;
+				}
+
+				XEvent peekXEvent;
+				XPeekEvent(display, &peekXEvent);
+
+				if((peekXEvent.type != ButtonPress) &&
+				   (peekXEvent.type != ButtonRelease))
+				{
+					break;
+				}
+
+				scroll += 1;
+				XNextEvent(display, &xevent);
+			}
+
+			auto scrollEvent = new ScrollEvent();
+			scrollEvent->window_id = xevent.xbutton.window;
+			scrollEvent->x = xevent.xbutton.x;
+			scrollEvent->y = xevent.xbutton.y;
+			scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
+			event = scrollEvent;
+		}
+		else
+		{
+			auto buttonEvent = new ButtonEvent();
+			buttonEvent->window_id = xevent.xbutton.window;
+			buttonEvent->x = xevent.xbutton.x;
+			buttonEvent->y = xevent.xbutton.y;
+			switch(xevent.xbutton.button) {
+			case 1:
+				buttonEvent->button = ButtonEvent::Left;
+				break;
+			case 2:
+				buttonEvent->button = ButtonEvent::Middle;
+				break;
+			case 3:
+				buttonEvent->button = ButtonEvent::Right;
+				break;
+			default:
+				WARN(X11, "Unknown button %d, setting to Left\n",
+				     xevent.xbutton.button);
+				buttonEvent->button = ButtonEvent::Left;
+				break;
+			}
+
+			buttonEvent->direction =
+				(xevent.type == ButtonPress) ? ButtonEvent::Down : ButtonEvent::Up;
+
+			buttonEvent->doubleclick =
+				(xevent.type == ButtonPress) &&
+				((xevent.xbutton.time - last_click) < 200);
+
+			if(xevent.type == ButtonPress)
+			{
+				last_click = xevent.xbutton.time;
+			}
+			event = buttonEvent;
+		}
+	}
+
+	if(xevent.type == KeyPress || xevent.type == KeyRelease)
+	{
+		//printf("key: %d\n", xevent.xkey.keycode);
+		auto keyEvent = new KeyEvent();
+		keyEvent->window_id = xevent.xkey.window;
+
+		switch(xevent.xkey.keycode) {
+		case 113: keyEvent->keycode = KeyEvent::KEY_LEFT; break;
+		case 114: keyEvent->keycode = KeyEvent::KEY_RIGHT; break;
+		case 111: keyEvent->keycode = KeyEvent::KEY_UP; break;
+		case 116: keyEvent->keycode = KeyEvent::KEY_DOWN; break;
+		case 119: keyEvent->keycode = KeyEvent::KEY_DELETE; break;
+		case 22:  keyEvent->keycode = KeyEvent::KEY_BACKSPACE; break;
+		case 110: keyEvent->keycode = KeyEvent::KEY_HOME; break;
+		case 115: keyEvent->keycode = KeyEvent::KEY_END; break;
+		case 117: keyEvent->keycode = KeyEvent::KEY_PGDOWN; break;
+		case 112: keyEvent->keycode = KeyEvent::KEY_PGUP; break;
+		case 36:  keyEvent->keycode = KeyEvent::KEY_ENTER; break;
+		default:  keyEvent->keycode = KeyEvent::KEY_UNKNOWN; break;
+		}
+
+		char stringBuffer[1024];
+		int size = XLookupString(&xevent.xkey, stringBuffer,
+		                         sizeof(stringBuffer), nullptr, nullptr);
+		if(size && keyEvent->keycode == KeyEvent::KEY_UNKNOWN)
+		{
+			keyEvent->keycode = KeyEvent::KEY_CHARACTER;
+		}
+
+		keyEvent->text.append(stringBuffer, size);
+
+		keyEvent->direction =
+			(xevent.type == KeyPress) ? KeyEvent::Down : KeyEvent::Up;
+
+		event = keyEvent;
+	}
+
+	if((xevent.type == ClientMessage) &&
+	   ((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
+	{
+		auto closeEvent = new CloseEvent();
+		event = closeEvent;
+	}
+
+	return event;
+}
+
+} // GUI::

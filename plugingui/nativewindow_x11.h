@@ -24,11 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#define __DRUMGIZMO_NATIVEWINDOW_X11_H__
-#endif/*__DRUMGIZMO_NATIVEWINDOW_X11_H__*/
+#pragma once
 
-#ifdef X11
 #include <X11/Xlib.h>
 
 #include "nativewindow.h"
@@ -38,35 +35,36 @@ namespace GUI {
 class Window;
 class NativeWindowX11 : public NativeWindow {
 public:
-  NativeWindowX11(GUI::Window *window);
-  ~NativeWindowX11();
+	NativeWindowX11(Window* window);
+	~NativeWindowX11();
 
-  void setFixedSize(int width, int height);
-  void resize(int width, int height);
-  void move(int x, int y);
-  void show();
-  void setCaption(const std::string &caption);
-  void hide();
-  void handleBuffer();
-  void redraw();
-  void grabMouse(bool grab);
-
-  bool hasEvent();
-  Event *getNextEvent();
+	// From NativeWindow:
+	void setFixedSize(int width, int height) override;
+	void resize(int width, int height) override;
+	void move(int x, int y) override;
+	void show() override;
+	void hide() override;
+	void setCaption(const std::string &caption) override;
+	void handleBuffer() override;
+	void redraw() override;
+	void grabMouse(bool grab) override;
+	bool hasEvent() override;
+	Event* getNextEvent() override;
 
 private:
-  ::Window xwindow;
-  GC gc;
-  XImage *buffer;
+	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
 
-  GUI::Window *window;
+	::Window xwindow;
+	GC gc;
+	XImage* buffer;
 
-  int last_click;
+	Window* window;
 
-  Display *display;
-  Atom wmDeleteMessage;
+	int last_click;
+
+	Display* display;
+	int screen;
+	Atom wmDeleteMessage;
 };
 
-};
-
-#endif/*X11*/
+} // GUI::
