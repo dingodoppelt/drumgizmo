@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LED_H__
-#define __DRUMGIZMO_LED_H__
+#pragma once
 
 #include "widget.h"
 
@@ -33,24 +32,23 @@ namespace GUI {
 
 class LED : public Widget {
 public:
-  typedef enum {
-    red,
-    green,
-    blue,
-    off
-  } state_t;
+	typedef enum {
+		Red,
+		Green,
+		Blue,
+		Off
+	} state_t;
 
-  LED(Widget *parent);
+	LED(Widget *parent);
 
-  void setState(state_t state);
+	void setState(state_t state);
 
-  //protected:
-  void repaintEvent(RepaintEvent *e);
+protected:
+	// From Widget:
+	void repaintEvent(RepaintEvent *e) override;
 
 private:
-  state_t state;
+	state_t state;
 };
 
-};
-
-#endif/*__DRUMGIZMO_LED_H__*/
+} // GUI::

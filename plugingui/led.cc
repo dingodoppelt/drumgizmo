@@ -28,79 +28,70 @@
 
 #include "painter.h"
 
-GUI::LED::LED(Widget *parent)
-  : GUI::Widget(parent)
+namespace GUI {
+
+LED::LED(Widget *parent)
+	: Widget(parent)
+	, state(Off)
 {
-  state = off;
 }
 
-void GUI::LED::setState(GUI::LED::state_t state)
+void LED::setState(state_t state)
 {
-  if(this->state != state) {
-    this->state = state;
-    repaintEvent(NULL);
-  }
+	if(this->state != state)
+	{
+		this->state = state;
+		repaintEvent(nullptr);
+	}
 }
 
-void GUI::LED::repaintEvent(GUI::RepaintEvent *e)
+void LED::repaintEvent(RepaintEvent *e)
 {
-  size_t h = height() - 1;
-  size_t w = width() - 1;
+	size_t h = height() - 1;
+	size_t w = width() - 1;
 
-  Painter p(this);
-  float alpha = 0.9;
-  switch(state) {
-  case red:
-    p.setColour(Colour(1, 0, 0,alpha));
-    break;
-  case green:
-    p.setColour(Colour(0, 1, 0, alpha));
-    break;
-  case blue:
-    p.setColour(Colour(0, 0, 1, alpha));
-    break;
-  case off:
-    p.setColour(Colour(0.2, 0.2, 0.2, alpha));
-    break;
-  }
+	Painter p(this);
+	float alpha = 0.9;
+	switch(state) {
+	case Red:
+		p.setColour(Colour(1, 0, 0,alpha));
+		break;
+	case Green:
+		p.setColour(Colour(0, 1, 0, alpha));
+		break;
+	case Blue:
+		p.setColour(Colour(0, 0, 1, alpha));
+		break;
+	case Off:
+		p.setColour(Colour(0.2, 0.2, 0.2, alpha));
+		break;
+	}
 
-  size_t size = w / 2;
-  if(h / 2 < size) size = h / 2;
-  p.drawFilledCircle(w/2, h/2, size);
+	size_t size = w / 2;
+	if((h / 2) < size)
+	{
+		size = h / 2;
+	}
+	p.drawFilledCircle(w / 2, h / 2, size);
 
-  switch(state) {
-  case red:
-    p.setColour(Colour(0.4, 0, 0,alpha));
-    break;
-  case green:
-    p.setColour(Colour(0, 0.4, 0, alpha));
-    break;
-  case blue:
-    p.setColour(Colour(0, 0, 0.4, alpha));
-    break;
-  case off:
-    p.setColour(Colour(0.1, 0.1, 0.1, alpha));
-    break;
-  }
-  p.drawCircle(w/2, h/2, size);
+	switch(state) {
+	case Red:
+		p.setColour(Colour(0.4, 0, 0, alpha));
+		break;
+	case Green:
+		p.setColour(Colour(0, 0.4, 0, alpha));
+		break;
+	case Blue:
+		p.setColour(Colour(0, 0, 0.4, alpha));
+		break;
+	case Off:
+		p.setColour(Colour(0.1, 0.1, 0.1, alpha));
+		break;
+	}
+	p.drawCircle(w / 2, h / 2, size);
 
-  p.setColour(Colour(1,alpha));
-  p.drawFilledCircle(w/3, h/3, size / 6);
+	p.setColour(Colour(1, alpha));
+	p.drawFilledCircle(w / 3, h / 3, size / 6);
 }
 
-#ifdef TEST_LED
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_LED*/
+} // GUI::
