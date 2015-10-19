@@ -49,3 +49,6 @@ configfile_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	configtest.cc
+
+EXTRA_DIST = \
+	lv2_test_host.h
