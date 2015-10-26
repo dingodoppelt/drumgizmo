@@ -65,7 +65,7 @@ void CheckBox::setText(std::string text)
 
 void CheckBox::keyEvent(KeyEvent *e)
 {
-	if(e->keycode == KeyEvent::KEY_CHARACTER && e->text == " ")
+	if(e->keycode == KeyEvent::KeyCharacter && e->text == " ")
 	{
 		if(e->direction == KeyEvent::Up)
 		{

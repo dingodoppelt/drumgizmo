@@ -38,52 +38,6 @@
 
 namespace GUI {
 
-FileBrowser *fb;
-static void selectKitFile(void *ptr, std::string filename)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  gui->lineedit->setText(filename);
-
-  fb->hide();
-
-  std::string drumkit = gui->lineedit->text();
-
-  gui->config->lastkit = drumkit;
-  gui->config->save();
-
-  gui->progress->setProgress(0);
-  gui->progress->setState(ProgressBar::blue);
-
-  LoadDrumKitMessage *msg = new LoadDrumKitMessage();
-  msg->drumkitfile = drumkit;
-
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-}
-
-static void selectMapFile(void *ptr, std::string filename)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-
-  gui->lineedit2->setText(filename);
-  fb->hide();
-
-  std::string midimap = gui->lineedit2->text();
-
-  gui->config->lastmidimap = midimap;
-  gui->config->save();
-
-  LoadMidimapMessage *msg = new LoadMidimapMessage();
-  msg->midimapfile = midimap;
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-  /*
-  if(gui->changeMidimapHandler)
-    gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
-  gui->progress2->setState(ProgressBar::green);
-  */
-}
-
 /*
 void closeClick(void *ptr)
 {
@@ -227,6 +181,47 @@ void PluginGUI::deinit()
 void PluginGUI::closeEventHandler()
 {
 	closing = true;
+}
+
+void PluginGUI::selectKitFile(const std::string& filename)
+{
+	lineedit->setText(filename);
+
+	fileBrowser->hide();
+
+	std::string drumkit = lineedit->text();
+
+	config->lastkit = drumkit;
+	config->save();
+
+	progress->setProgress(0);
+	progress->setState(ProgressBar::blue);
+
+	LoadDrumKitMessage *msg = new LoadDrumKitMessage();
+	msg->drumkitfile = drumkit;
+
+	msghandler.sendMessage(MSGRCV_ENGINE, msg);
+}
+
+void PluginGUI::selectMapFile(const std::string& filename)
+{
+	lineedit2->setText(filename);
+	fileBrowser->hide();
+
+	std::string midimap = lineedit2->text();
+
+	config->lastmidimap = midimap;
+	config->save();
+
+	LoadMidimapMessage *msg = new LoadMidimapMessage();
+	msg->midimapfile = midimap;
+	msghandler.sendMessage(MSGRCV_ENGINE, msg);
+
+	/*
+	  if(gui->changeMidimapHandler)
+	  gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
+	  gui->progress2->setState(ProgressBar::green);
+	*/
 }
 
 void PluginGUI::init()
@@ -380,12 +375,11 @@ void PluginGUI::init()
     cmb->resize(70, 30);
   }
   */
-  // Create filebrowser
-  filebrowser = new FileBrowser(window);
-  filebrowser->move(0, 0);
-  filebrowser->resize(window->width() - 1, window->height() - 1);
-  filebrowser->hide();
-  fb = filebrowser;
+  // Create file browser
+  fileBrowser = new FileBrowser(window);
+  fileBrowser->move(0, 0);
+  fileBrowser->resize(window->width() - 1, window->height() - 1);
+  fileBrowser->hide();
 
   // Enable quit button
 //  Button *btn_quit = new Button(window);
@@ -490,9 +484,9 @@ void PluginGUI::kitBrowseClick()
 		path = lineedit2->text();
 	}
 
-	fb->setPath(path);
-	fb->registerFileSelectHandler(selectKitFile, this);
-	fb->show();
+	fileBrowser->setPath(path);
+	CONNECT(fileBrowser, fileSelectNotifier, this, &PluginGUI::selectKitFile);
+	fileBrowser->show();
 }
 
 void PluginGUI::midimapBrowseClick()
@@ -508,9 +502,9 @@ void PluginGUI::midimapBrowseClick()
 		path = lineedit->text();
 	}
 
-	fb->setPath(path);
-	fb->registerFileSelectHandler(selectMapFile, this);
-	fb->show();
+	fileBrowser->setPath(path);
+	CONNECT(fileBrowser, fileSelectNotifier, this, &PluginGUI::selectMapFile);
+	fileBrowser->show();
 }
 
 } // GUI::

@@ -161,18 +161,18 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       GUI::KeyEvent *e = new GUI::KeyEvent();
       //printf("wp: %d\n", wp);
       switch(wp) {
-      case 37: e->keycode = GUI::KeyEvent::KEY_LEFT; break;
-      case 39: e->keycode = GUI::KeyEvent::KEY_RIGHT; break;
-      case 38: e->keycode = GUI::KeyEvent::KEY_UP; break;
-      case 40: e->keycode = GUI::KeyEvent::KEY_DOWN; break;
-      case 8: e->keycode = GUI::KeyEvent::KEY_BACKSPACE; break;
-      case 46: e->keycode = GUI::KeyEvent::KEY_DELETE; break;
-      case 36: e->keycode = GUI::KeyEvent::KEY_HOME; break;
-      case 35: e->keycode = GUI::KeyEvent::KEY_END; break;
-      case 33: e->keycode = GUI::KeyEvent::KEY_PGUP; break;
-      case 34: e->keycode = GUI::KeyEvent::KEY_PGDOWN; break;
-      case 13: e->keycode = GUI::KeyEvent::KEY_ENTER; break;
-      default: e->keycode = GUI::KeyEvent::KEY_UNKNOWN; break;
+      case 37: e->keycode = GUI::KeyEvent::KeyLeft; break;
+      case 39: e->keycode = GUI::KeyEvent::KeyRight; break;
+      case 38: e->keycode = GUI::KeyEvent::KeyUp; break;
+      case 40: e->keycode = GUI::KeyEvent::KeyDown; break;
+      case 8:  e->keycode = GUI::KeyEvent::KeyBackspace; break;
+      case 46: e->keycode = GUI::KeyEvent::KeyDelete; break;
+      case 36: e->keycode = GUI::KeyEvent::KeyHome; break;
+      case 35: e->keycode = GUI::KeyEvent::KeyEnd; break;
+      case 33: e->keycode = GUI::KeyEvent::KeyPageUp; break;
+      case 34: e->keycode = GUI::KeyEvent::KeyPageDown; break;
+      case 13: e->keycode = GUI::KeyEvent::KeyEnter; break;
+      default: e->keycode = GUI::KeyEvent::KeyUnknown; break;
       }
       e->text = "";
       e->direction = GUI::KeyEvent::Up;
@@ -185,7 +185,7 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
       //printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
       if(wp >= ' ') { // Filter control chars.
         GUI::KeyEvent *e = new GUI::KeyEvent();
-        e->keycode = GUI::KeyEvent::KEY_CHARACTER;
+        e->keycode = GUI::KeyEvent::KeyCharacter;
         e->text += (char)wp;
         e->direction = GUI::KeyEvent::Up;
         native->event = e;

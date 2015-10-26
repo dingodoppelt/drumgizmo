@@ -173,7 +173,7 @@ void ComboBox::keyEvent(KeyEvent *e)
 
 	/*
 	switch(e->keycode) {
-	case KeyEvent::KEY_UP:
+	case KeyEvent::KeyUp:
 		{
 			selected--;
 			if(selected < 0)
@@ -190,7 +190,7 @@ void ComboBox::keyEvent(KeyEvent *e)
 			}
 		}
 		break;
-	case KeyEvent::KEY_DOWN:
+	case KeyEvent::KeyDown:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -210,10 +210,10 @@ void ComboBox::keyEvent(KeyEvent *e)
 			}
 		}
 		break;
-	case KeyEvent::KEY_HOME:
+	case KeyEvent::KeyHome:
 		selected = 0;
 		break;
-	case KeyEvent::KEY_END:
+	case KeyEvent::KeyEnd:
 		selected = items.size() - 1;
 		break;
 	default:

@@ -24,9 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LINEEDIT_H__
-#define __DRUMGIZMO_LINEEDIT_H__
-
+#pragma once
 
 #include <string>
 
@@ -38,49 +36,45 @@ namespace GUI {
 
 class LineEdit : public Widget {
 public:
-  LineEdit(Widget *parent);
+	LineEdit(Widget *parent);
+	~LineEdit();
 
-  bool isFocusable() { return true; }
+	bool isFocusable() override { return true; }
 
-  std::string text();
-  void setText(std::string text);
+	std::string text();
+	void setText(const std::string& text);
 
-  void setReadOnly(bool readonly);
-  bool readOnly();
+	void setReadOnly(bool readonly);
+	bool readOnly();
 
-  void registerEnterPressedHandler(void (*handler)(void *), void *ptr);
+	Notifier<> enterPressedNotifier;
 
-  //protected:
-  virtual void keyEvent(KeyEvent *e);
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
+	//protected:
+	virtual void keyEvent(KeyEvent *keyEvent);
+	virtual void repaintEvent(RepaintEvent *repaintEvent);
+	virtual void buttonEvent(ButtonEvent *buttonEvent);
 
 protected:
-  virtual void textChanged() {}
+	virtual void textChanged() {}
 
 private:
-  Painter::Box box;
+	Painter::Box box;
 
-  Font font;
+	Font font;
 
-  std::string _text;
-  size_t pos;
-  std::string _visibletext;
-  size_t offsetpos;
+	std::string _text;
+	size_t pos = 0;
+	std::string visibleText;
+	size_t offsetPos = 0;
 
-  enum state_t {
-    NOOP = 0,
-    WALK_LEFT =  1, 
-    WALK_RIGHT = 2
-  };
-  state_t walkstate;
+	enum state_t {
+		Noop,
+		WalkLeft,
+		WalkRight,
+	};
+	state_t walkstate;
 
-  bool readonly;
-
-  void (*handler)(void *);
-  void *ptr;
+	bool readonly;
 };
 
-};
-
-#endif/*__DRUMGIZMO_LINEEDIT_H__*/
+} // GUI::

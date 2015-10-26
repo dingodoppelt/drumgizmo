@@ -27,213 +27,265 @@
 #include "lineedit.h"
 
 #include <stdio.h>
-
-#include "window.h"
-
-#include <assert.h>
-
 #include <hugin.hpp>
 
 #define BORDER 10
 
-GUI::LineEdit::LineEdit(Widget *parent)
-  : GUI::Widget(parent)
+namespace GUI {
+
+LineEdit::LineEdit(Widget *parent)
+	: Widget(parent)
 {
-  pos = 0;
-  offsetpos = 0;
-  setReadOnly(false);
+	setReadOnly(false);
 
-  box.topLeft     = new Image(":widget_tl.png");
-  box.top         = new Image(":widget_t.png");
-  box.topRight    = new Image(":widget_tr.png");
-  box.left        = new Image(":widget_l.png");
-  box.right       = new Image(":widget_r.png");
-  box.bottomLeft  = new Image(":widget_bl.png");
-  box.bottom      = new Image(":widget_b.png");
-  box.bottomRight = new Image(":widget_br.png");
-  box.center      = new Image(":widget_c.png");
-
-  handler = NULL;
+	box.topLeft     = new Image(":widget_tl.png");
+	box.top         = new Image(":widget_t.png");
+	box.topRight    = new Image(":widget_tr.png");
+	box.left        = new Image(":widget_l.png");
+	box.right       = new Image(":widget_r.png");
+	box.bottomLeft  = new Image(":widget_bl.png");
+	box.bottom      = new Image(":widget_b.png");
+	box.bottomRight = new Image(":widget_br.png");
+	box.center      = new Image(":widget_c.png");
 }
 
-void GUI::LineEdit::registerEnterPressedHandler(void (*handler)(void *), void *ptr)
+LineEdit::~LineEdit()
 {
-  this->handler = handler;
-  this->ptr = ptr;
+	delete box.topLeft;
+	delete box.top;
+	delete box.topRight;
+	delete box.left;
+	delete box.right;
+	delete box.bottomLeft;
+	delete box.bottom;
+	delete box.bottomRight;
+	delete box.center;
 }
 
-void GUI::LineEdit::setReadOnly(bool ro)
+void LineEdit::setReadOnly(bool ro)
 {
-  readonly = ro;
+	readonly = ro;
 }
 
-bool GUI::LineEdit::readOnly()
+bool LineEdit::readOnly()
 {
-  return readonly;
+	return readonly;
 }
 
-void GUI::LineEdit::setText(std::string text)
+void LineEdit::setText(const std::string& text)
 {
-  _text = text;
-  pos = text.size();
-  
-  repaintEvent(NULL);
-  textChanged();
+	_text = text;
+	pos = text.size();
+
+	visibleText = _text;
+	offsetPos = 0;
+
+	repaintEvent(nullptr);
+	textChanged();
 }
 
-std::string GUI::LineEdit::text()
+std::string LineEdit::text()
 {
-  return _text;
+	return _text;
 }
 
-void GUI::LineEdit::buttonEvent(ButtonEvent *e)
+void LineEdit::buttonEvent(ButtonEvent *buttonEvent)
 {
-  if(readOnly()) return;
+	if(readOnly())
+	{
+		return;
+	}
 
-
-  if(e->direction == ButtonEvent::Down) {
-    for(int i = 0; i < (int)_visibletext.length(); i++) {
-      if(e->x < (int)(font.textWidth(_visibletext.substr(0, i)) + BORDER)) {
-        pos = i + offsetpos;
-        break;
-      }
-    }
-    repaintEvent(NULL);
-  }
+	if(buttonEvent->direction == ButtonEvent::Down)
+	{
+		for(int i = 0; i < (int)visibleText.length(); ++i)
+		{
+			int textWidth = font.textWidth(visibleText.substr(0, i));
+			if(buttonEvent->x < (textWidth + BORDER))
+			{
+				pos = i + offsetPos;
+				break;
+			}
+		}
+		repaintEvent(nullptr);
+	}
 }
 
-void GUI::LineEdit::keyEvent(GUI::KeyEvent *e)
+void LineEdit::keyEvent(KeyEvent *keyEvent)
 {
-  if(readOnly()) return;
+	if(readOnly())
+	{
+		return;
+	}
 
-  bool change = false;
-  
-  if(e->direction == KeyEvent::Up) {
+	bool change = false;
 
-    if(e->keycode == GUI::KeyEvent::KEY_LEFT) {
-      if(pos) pos--;
-      if(offsetpos >= pos) walkstate = WALK_LEFT;
-    
-    } else if(e->keycode == GUI::KeyEvent::KEY_HOME) {
-      pos = 0;
+	if(keyEvent->direction == KeyEvent::Up)
+	{
+		switch(keyEvent->keycode) {
+		case KeyEvent::KeyLeft:
+			if(pos)
+			{
+				pos--;
+			}
+			if(offsetPos >= pos)
+			{
+				walkstate = WalkLeft;
+			}
+			break;
 
-    } else if(e->keycode == GUI::KeyEvent::KEY_END) {
-      pos = _text.length();
+		case KeyEvent::KeyHome:
+			pos = 0;
+			visibleText = _text;
+			offsetPos = 0;
+			break;
 
-    } else if(e->keycode == GUI::KeyEvent::KEY_RIGHT) {
-      if(pos < _text.length()) pos++;
-      if(offsetpos + _visibletext.length() <= pos &&
-         pos < _text.length()) walkstate = WALK_RIGHT;
-    
-    } else if(e->keycode == GUI::KeyEvent::KEY_DELETE) {
-      if(pos < _text.length()) {
-        std::string t = _text.substr(0, pos);
-        t += _text.substr(pos + 1, std::string::npos);
-        _text = t;
-        change = true;
-      }
+		case KeyEvent::KeyEnd:
+			pos = _text.length();
+			visibleText = _text;
+			offsetPos = 0;
+			break;
 
-    } else if(e->keycode == GUI::KeyEvent::KEY_BACKSPACE) {
-      if(pos > 0) {
-        std::string t = _text.substr(0, pos - 1);
-        t += _text.substr(pos, std::string::npos);
-        _text = t;
-        pos--;
-        change = true;
-      }
+		case KeyEvent::KeyRight:
+			if(pos < _text.length())
+			{
+				pos++;
+			}
+			if((pos < _text.length()) && ((offsetPos + visibleText.length()) <= pos))
+			{
+				walkstate = WalkRight;
+			}
+			break;
 
-    } else if(e->keycode == GUI::KeyEvent::KEY_CHARACTER) {
-      std::string pre = _text.substr(0, pos);
-      std::string post = _text.substr(pos, std::string::npos);
-      _text = pre + e->text + post;
-      change = true;
-      pos++;
+		case KeyEvent::KeyDelete:
+			if(pos < _text.length())
+			{
+				std::string t = _text.substr(0, pos);
+				t += _text.substr(pos + 1, std::string::npos);
+				_text = t;
+				change = true;
+			}
+			break;
 
-    } else if(e->keycode == GUI::KeyEvent::KEY_ENTER) {
-      if(handler) handler(ptr);
-    }
-    repaintEvent(NULL);
-  }
+		case KeyEvent::KeyBackspace:
+			if(pos > 0)
+			{
+				std::string t = _text.substr(0, pos - 1);
+				t += _text.substr(pos, std::string::npos);
+				_text = t;
+				pos--;
+				change = true;
+			}
+			break;
 
-  if(change) textChanged();
+		case KeyEvent::KeyCharacter:
+			{
+				std::string pre = _text.substr(0, pos);
+				std::string post = _text.substr(pos, std::string::npos);
+				_text = pre + keyEvent->text + post;
+				change = true;
+				pos++;
+			}
+			break;
+
+		case KeyEvent::KeyEnter:
+			enterPressedNotifier();
+	    break;
+
+		default:
+			break;
+		}
+
+		repaintEvent(nullptr);
+	}
+
+	if(change)
+	{
+		textChanged();
+	}
 }
 
-void GUI::LineEdit::repaintEvent(GUI::RepaintEvent *e)
+void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 {
-  Painter p(this);
+	Painter p(this);
 
-  p.clear();
+	p.clear();
 
-  int w = width();
-  int h = height();
-  if(w == 0 || h == 0) return;
-  p.drawBox(0, 0, &box, w, h);
+	int w = width();
+	int h = height();
+	if((w == 0) || (h == 0))
+	{
+		return;
+	}
 
-  p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+	p.drawBox(0, 0, &box, w, h);
 
-  if(walkstate == WALK_LEFT) {
-    _visibletext = _text.substr(pos, std::string::npos);
-    offsetpos = pos;
-  }
-  else if(walkstate == WALK_RIGHT) {
-    int d = (offsetpos < _text.length()) ? 1 : 0;
-    _visibletext = _text.substr(offsetpos + d);
-    offsetpos = offsetpos + d;
-  }
-  else {
-    _visibletext = _text;
-    offsetpos = 0;
-  }
-  while(true) {
-    int textwidth = font.textWidth(_visibletext);
-    if(textwidth > w - BORDER - 4 + 3) {
-      if(walkstate == WALK_LEFT) {
-        _visibletext = _visibletext.substr(0, _visibletext.length()-1);
-      }
-      else if(walkstate == WALK_RIGHT) {
-        _visibletext = _visibletext.substr(0, _visibletext.length()-1);
-      }
-      else {
-        if(offsetpos < pos) {
-          _visibletext = _visibletext.substr(1);
-          offsetpos++;
-        }
-        else {
-          _visibletext = _visibletext.substr(0, _visibletext.length() - 1);
-        }
-      }
-    }
-    else {
-      break;
-    }
-  }
+	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 
-  walkstate = NOOP;
+	switch(walkstate) {
+	case WalkLeft:
+		visibleText = _text.substr(pos, std::string::npos);
+		offsetPos = pos;
+		break;
 
-  p.drawText(BORDER - 4 + 3, height()/2+5 + 1 + 1 + 1, font, _visibletext);
+	case WalkRight:
+		{
+			int delta = (offsetPos < _text.length()) ? 1 : 0;
+			visibleText = _text.substr(offsetPos + delta);
+			offsetPos = offsetPos + delta;
+		}
+		break;
 
-  if(readOnly()) return;
+	case Noop:
+		break;
+	}
 
-  if(hasKeyboardFocus()) {
-    size_t px = font.textWidth(_visibletext.substr(0, pos - offsetpos));
-    p.drawLine(px + BORDER - 1 - 4 + 3, 6,
-               px + BORDER - 1 - 4 + 3, height() - 7);
-  }
+	while(true)
+	{
+		int textWidth = font.textWidth(visibleText);
+		if(textWidth <= (w - BORDER - 4 + 3))
+		{
+			break;
+		}
+
+		switch(walkstate) {
+		case WalkLeft:
+			visibleText = visibleText.substr(0, visibleText.length() - 1);
+			break;
+
+		case WalkRight:
+			visibleText = visibleText.substr(0, visibleText.length() - 1);
+			break;
+
+		case Noop:
+			if(offsetPos < pos)
+			{
+				visibleText = visibleText.substr(1);
+				offsetPos++;
+			}
+			else
+			{
+				visibleText = visibleText.substr(0, visibleText.length() - 1);
+			}
+			break;
+		}
+	}
+
+	walkstate = Noop;
+
+	p.drawText(BORDER - 4 + 3, height() / 2 + 5 + 1 + 1 + 1, font, visibleText);
+
+	if(readOnly())
+	{
+		return;
+	}
+
+	if(hasKeyboardFocus())
+	{
+		size_t px = font.textWidth(visibleText.substr(0, pos - offsetPos));
+		p.drawLine(px + BORDER - 1 - 4 + 3, 6,
+		           px + BORDER - 1 - 4 + 3, height() - 7);
+	}
 }
 
-#ifdef TEST_LINEEDIT
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_LINEEDIT*/
+} // GUI::

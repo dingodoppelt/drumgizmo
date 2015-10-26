@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_FILEBROWSER_H__
-#define __DRUMGIZMO_FILEBROWSER_H__
+#pragma once
 
 #include "widget.h"
 
@@ -35,45 +34,50 @@
 #include "label.h"
 #include "image.h"
 #include "directory.h"
+#include "notifier.h"
 
 namespace GUI {
 
 class FileBrowser : public Widget {
 public:
-  struct private_data;
+	struct private_data;
 
-  FileBrowser(Widget *parent);
-  ~FileBrowser();
+	FileBrowser(Widget *parent);
+	~FileBrowser();
 
-  void setPath(std::string path);
+	void setPath(const std::string& path);
 
-  bool isFocusable() { return true; }
+	Notifier<const std::string&> fileSelectNotifier; // (const std::string& path)
 
-  void registerFileSelectHandler(void (*handler)(void *, std::string),
-                                 void *ptr);
-
-  virtual void repaintEvent(RepaintEvent *e);
-
-  virtual void resize(int w, int h);
+	// From Widget:
+	bool isFocusable() override { return true; }
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void resize(int w, int h) override;
 
 private:
 	void listSelectionChanged();
 	void selectButtonClicked();
 	void cancelButtonClicked();
+	void handleKeyEvent();
 
-  struct private_data *prv;
+	Directory dir;
+#ifdef WIN32
+	bool above_root;
+	bool in_root;
+#endif
 
-  GUI::Label lbl_path;
-  GUI::LineEdit lineedit;
+	void cancel();
+	void changeDir();
 
-  GUI::ListBox listbox;
+	Label lbl_path;
 
-  GUI::Button btn_sel;
-  GUI::Button btn_esc;
+	LineEdit lineedit;
+	ListBox listbox;
 
-  Image back;
+	Button btn_sel;
+	Button btn_esc;
+
+	Image back;
 };
 
-};
-
-#endif/*__DRUMGIZMO_FILEBROWSER_H__*/
+} // GUI::

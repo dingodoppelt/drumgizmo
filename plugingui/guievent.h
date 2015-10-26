@@ -119,19 +119,19 @@ public:
 	std::string text;
 
 	enum {
-		KEY_UNKNOWN   =-1,
-		KEY_LEFT      = 1,
-		KEY_RIGHT     = 2,
-		KEY_UP        = 3,
-		KEY_DOWN      = 4,
-		KEY_DELETE    = 5,
-		KEY_BACKSPACE = 6,
-		KEY_HOME      = 7,
-		KEY_END       = 8,
-		KEY_PGDOWN    = 9,
-		KEY_PGUP      = 10,
-		KEY_ENTER     = 11,
-		KEY_CHARACTER = 0xffff // character data is stored in 'text'
+		KeyUnknown   = -1,
+		KeyLeft      =  1,
+		KeyRight     =  2,
+		KeyUp        =  3,
+		KeyDown      =  4,
+		KeyDelete    =  5,
+		KeyBackspace =  6,
+		KeyHome      =  7,
+		KeyEnd       =  8,
+		KeyPageDown  =  9,
+		KeyPageUp    =  10,
+		KeyEnter     =  11,
+		KeyCharacter =  0xffff // character data is stored in 'text'
 	};
 };
 

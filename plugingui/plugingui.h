@@ -68,8 +68,6 @@ public:
   Window *window;
   EventHandler *eventhandler;
 
-  FileBrowser *filebrowser;
-
   Label *lbl;
   LineEdit *lineedit;
   ProgressBar *progress;
@@ -93,11 +91,14 @@ private:
 	void kitBrowseClick();
 	void midimapBrowseClick();
 	void closeEventHandler();
+	void selectKitFile(const std::string& filename);
+	void selectMapFile(const std::string& filename);
 
   // Humanized velocity controls:
-  CheckBox *velocityCheck;
-  Knob *attackKnob;
-  Knob *falloffKnob;
+  CheckBox* velocityCheck;
+  Knob* attackKnob;
+  Knob* falloffKnob;
+	FileBrowser* fileBrowser;
 
   volatile bool running;
   volatile bool closing;

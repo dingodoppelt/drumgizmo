@@ -45,239 +45,216 @@
 #include <direct.h>
 #endif
 
-struct GUI::FileBrowser::private_data {
-  GUI::LineEdit *lineedit;
-  GUI::ListBox *listbox;
-  void (*filesel_handler)(void *, std::string);
-  void *ptr;
-  Directory *dir;
-#ifdef WIN32
-  bool above_root;
-  bool in_root;
-#endif
-};
+namespace GUI {
 
-static void cancel(void *ptr)
+FileBrowser::FileBrowser(Widget *parent)
+	: Widget(parent)
+	, dir(Directory::cwd())
+	, lbl_path(this)
+	, lineedit(this)
+	, listbox(this)
+	, btn_sel(this)
+	, btn_esc(this)
+	, back(":bg.png")
 {
-  GUI::FileBrowser *fp = (GUI::FileBrowser *)ptr;
-  fp->hide();
+#ifdef WIN32
+	above_root = false;
+#endif
+
+	lbl_path.setText("Path:");
+
+	//lineedit.setReadOnly(true);
+	CONNECT(&lineedit, enterPressedNotifier, this, &FileBrowser::handleKeyEvent);
+	CONNECT(&listbox, selectionNotifier,
+	        this, &FileBrowser::listSelectionChanged);
+
+	btn_sel.setText("Select");
+	CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
+
+	btn_esc.setText("Cancel");
+	CONNECT(&btn_esc, clickNotifier, this, &FileBrowser::cancelButtonClicked);
+
+	changeDir();
 }
 
-static void changeDir(void *ptr)
+FileBrowser::~FileBrowser()
 {
-  struct GUI::FileBrowser::private_data *prv =
-    (struct GUI::FileBrowser::private_data *) ptr;
-  
-  GUI::ListBox *lb = prv->listbox;
-  GUI::LineEdit *le = prv->lineedit;
-  std::string value = lb->selectedValue(); 
-  GUI::Directory* dir = prv->dir;
+}
 
-//  if(!Directory::isDir(dir->path() + dir->seperator())) {
+void FileBrowser::setPath(const std::string& path)
+{
+	INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
+
+	if(!path.empty())
+	{
+		dir.setPath(Directory::pathDirectory(path));
+	}
+	else
+	{
+		dir.setPath(Directory::pathDirectory(Directory::cwd()));
+	}
+
+	listbox.clear();
+
+	changeDir();
+}
+
+void FileBrowser::resize(int w, int h)
+{
+	Widget::resize(w,h);
+
+	int offset = 0;
+	int brd = 5; // border
+	int btn_h = 30;
+
+	offset += brd;
+
+	lbl_path.move(0, offset);
+	lineedit.move(60, offset);
+
+	offset += btn_h;
+
+	lbl_path.resize(60, btn_h);
+	lineedit.resize(w - 60 - brd, btn_h);
+
+	offset += brd;
+
+	listbox.move(brd, offset);
+	listbox.resize(w - 1 - 2*brd, h - btn_h - 2*brd - offset);
+
+	btn_esc.move(brd, h - btn_h - brd);
+	btn_esc.resize((w - 1 - 2*brd) / 2 - brd / 2, btn_h);
+
+	btn_sel.move(brd + w / 2 - brd / 2, h - btn_h - brd);
+	btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
+}
+
+void FileBrowser::repaintEvent(RepaintEvent *e)
+{
+	Painter p(this);
+	p.drawImageStretched(0,0, &back, width(), height());
+}
+
+void FileBrowser::listSelectionChanged()
+{
+	changeDir();
+}
+
+void FileBrowser::selectButtonClicked()
+{
+	changeDir();
+}
+
+void FileBrowser::cancelButtonClicked()
+{
+	cancel();
+}
+
+void FileBrowser::handleKeyEvent()
+{
+	listbox.clearSelectedValue();
+
+	std::string value = lineedit.text();
+	if((value.size() > 1) && (value[0] == '@'))
+	{
+		DEBUG(filebrowser, "Selecting ref-file '%s'\n", value.c_str());
+		fileSelectNotifier(value);
+		return;
+	}
+
+	dir.setPath(lineedit.text());
+	changeDir();
+}
+
+void FileBrowser::cancel()
+{
+	hide();
+}
+
+void FileBrowser::changeDir()
+{
+	std::string value = listbox.selectedValue();
+
+//  if(!Directory::isDir(dir->path() + dir->seperator()))
+//  {
 //    return;
 //  }
 
-  lb->clear();
-  
-  INFO(filebrowser, "Changing path to '%s'\n",
-       (dir->path() + dir->seperator() + value).c_str());
- 
-#ifdef WIN32
-  if(prv->above_root && !value.empty()) {
-    dir->setPath(value + dir->seperator());
-    value.clear();
-    prv->above_root = false;
-  }
-#endif
+	listbox.clear();
 
-  if(value.empty() && !dir->isDir() && GUI::Directory::exists(dir->path())) {
-    DEBUG(filebrowser, "Selecting file '%s'\n", dir->path().c_str());
-    if(prv->filesel_handler) prv->filesel_handler(prv->ptr, dir->path().c_str());
-    return;
-  }
-
-  if(!value.empty() && dir->fileExists(value)) {
-    std::string file = dir->path() + dir->seperator() + value;
-    DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
-    if(prv->filesel_handler) prv->filesel_handler(prv->ptr, file);
-    return;
-  }
-
-  std::vector<GUI::ListBoxBasic::Item> items;
+	INFO(filebrowser, "Changing path to '%s'\n",
+	     (dir.path() + dir.seperator() + value).c_str());
 
 #ifdef WIN32
-  if(GUI::Directory::isRoot(dir->path()) && value == "..") {
-   DEBUG(filebrowser, "Showing partitions...\n");
-   GUI::Directory::DriveList entries = dir->drives();
-   for(GUI::Directory::DriveList::iterator it = entries.begin();
-       it != entries.end(); it++) {  
-      GUI::ListBoxBasic::Item item;
-      std::string name = (*it).name;
-      item.name = name;
-      item.value = name;
-      items.push_back(item);
-    } 
-    prv->above_root = true;
-  } else {
+	if(above_root && !value.empty())
+	{
+		dir.setPath(value + dir.seperator());
+		value.clear();
+		above_root = false;
+	}
 #endif
-    
-    if(!value.empty() && !dir->cd(value)) {
-      DEBUG(filebrowser, "Error changing to '%s'\n", 
-            (dir->path() + dir->seperator() + value).c_str());
-      return;
-    }
-    
-    GUI::Directory::EntryList entries = dir->entryList();
 
-    if(entries.empty()) {
-      dir->cdUp();
-      entries = dir->entryList();
-    }
+	if(value.empty() && !dir.isDir() && Directory::exists(dir.path()))
+	{
+		DEBUG(filebrowser, "Selecting file '%s'\n", dir.path().c_str());
+		fileSelectNotifier(dir.path());
+		return;
+	}
 
-    DEBUG(filebrowser, "Setting path of lineedit to %s\n",
-          dir->path().c_str()); 
-    le->setText(dir->path());
+	if(!value.empty() && dir.fileExists(value))
+	{
+	  std::string file = dir.path() + dir.seperator() + value;
+	  DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
+	  fileSelectNotifier(file);
+	  return;
+	}
 
-    for(GUI::Directory::EntryList::iterator it = entries.begin();
-        it != entries.end(); it++) { 
-      GUI::ListBoxBasic::Item item;
-      std::string name = *it;
-      item.name = name;
-      item.value = name;
-      items.push_back(item);
-    }
+	std::vector<ListBoxBasic::Item> items;
+
 #ifdef WIN32
-  }
+	if(Directory::isRoot(dir.path()) && (value == ".."))
+	{
+		DEBUG(filebrowser, "Showing partitions...\n");
+		for(auto drive : dir.drives())
+		{
+			ListBoxBasic::Item item;
+			item.name = drive.name;
+			item.value = drive.name;
+			items.push_back(item);
+		}
+		above_root = true;
+	}
+	else
 #endif
-  lb->addItems(items);
+	{
+		if(!value.empty() && !dir.cd(value))
+		{
+			DEBUG(filebrowser, "Error changing to '%s'\n",
+			      (dir.path() + dir.seperator() + value).c_str());
+			return;
+		}
+
+		Directory::EntryList entries = dir.entryList();
+
+		if(entries.empty())
+		{
+			dir.cdUp();
+			entries = dir.entryList();
+		}
+
+		DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir.path().c_str());
+		lineedit.setText(dir.path());
+
+		for(auto entry : entries)
+		{
+			ListBoxBasic::Item item;
+			item.name = entry;
+			item.value = entry;
+			items.push_back(item);
+		}
+	}
+
+	listbox.addItems(items);
 }
 
-static void handleKeyEvent(void *ptr) {
-  struct GUI::FileBrowser::private_data *prv =
-    (struct GUI::FileBrowser::private_data *) ptr;
-
-  GUI::ListBox *lb = prv->listbox;
-  lb->clearSelectedValue();  
-  GUI::LineEdit *le = prv->lineedit;
-
-  std::string value = le->text();
-  if(value.size() > 1 && value[0] == '@') {
-    DEBUG(filebrowser, "Selecting ref-file '%s'\n", value.c_str());
-    if(prv->filesel_handler) {
-      prv->filesel_handler(prv->ptr, value);
-    }
-    return;
-  }
-
-  prv->dir->setPath(le->text());
-  changeDir(ptr);
-}
-
-GUI::FileBrowser::FileBrowser(GUI::Widget *parent)
-  : GUI::Widget(parent),
-    lbl_path(this), lineedit(this), listbox(this), btn_sel(this), btn_esc(this),
-    back(":bg.png")
-{
-  prv = new struct GUI::FileBrowser::private_data();
-  prv->filesel_handler = NULL;
-
-  prv->dir = new Directory(Directory::cwd());
-#ifdef WIN32  
-  prv->above_root = false;
-#endif
-
-  lbl_path.setText("Path:");
-
-//  lineedit.setReadOnly(true);
-  prv->lineedit = &lineedit;
-  prv->lineedit->registerEnterPressedHandler(handleKeyEvent, prv);
-
-  prv->listbox = &listbox;
-  CONNECT(&listbox, selectionNotifier, this, &FileBrowser::listSelectionChanged);
-
-  btn_sel.setText("Select");
-  CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
-
-  btn_esc.setText("Cancel");
-  CONNECT(&btn_esc, clickNotifier, this, &FileBrowser::cancelButtonClicked);
-
-  changeDir(prv);
-
-  resize(200, 190);
-}
-
-GUI::FileBrowser::~FileBrowser()
-{
-  //  delete prv->listbox;
-  delete prv;
-}
-
-void GUI::FileBrowser::setPath(std::string path)
-{
-  INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
-  if(path.empty()) path = Directory::cwd();
-
-  prv->dir->setPath(Directory::pathDirectory(path));
-  prv->listbox->clear();
-
-  changeDir(prv);
-}
-
-void GUI::FileBrowser::resize(int w, int h)
-{
-  GUI::Widget::resize(w,h);
-
-  int offset = 0;
-  int brd = 5; // border
-  int btn_h = 30;
-
-  offset += brd;
-
-  lbl_path.move(0, offset);
-  lineedit.move(60, offset);
-
-  offset += btn_h;
-
-  lbl_path.resize(60, btn_h);
-  lineedit.resize(w - 60 - brd, btn_h);
-
-  offset += brd;
-
-  listbox.move(brd, offset);
-  listbox.resize(w - 1 - 2*brd, h - btn_h - 2*brd - offset);
-
-  btn_esc.move(brd, h - btn_h - brd);
-  btn_esc.resize((w - 1 - 2*brd) / 2 - brd / 2, btn_h);
-
-  btn_sel.move(brd + w / 2 - brd / 2, h - btn_h - brd);
-  btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
-}
-
-void GUI::FileBrowser::registerFileSelectHandler(void (*handler)(void *,
-                                                                 std::string),
-                                                 void *ptr)
-{
-  prv->filesel_handler = handler;
-  prv->ptr = ptr;
-}
-
-void GUI::FileBrowser::repaintEvent(GUI::RepaintEvent *e)
-{
-  Painter p(this);
-  p.drawImageStretched(0,0, &back, width(), height());
-}
-
-void GUI::FileBrowser::listSelectionChanged()
-{
-	changeDir(prv);
-}
-
-void GUI::FileBrowser::selectButtonClicked()
-{
-	changeDir(prv);
-}
-
-void GUI::FileBrowser::cancelButtonClicked()
-{
-	cancel(this);
-}
+} // GUI::

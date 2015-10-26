@@ -96,22 +96,22 @@ void Knob::keyEvent(KeyEvent *e)
 
 	float value = currentValue;
 	switch(e->keycode) {
-	case KeyEvent::KEY_UP:
+	case KeyEvent::KeyUp:
 		value += 0.01;
 		break;
-	case KeyEvent::KEY_DOWN:
+	case KeyEvent::KeyDown:
 		value -= 0.01;
 		break;
-	case KeyEvent::KEY_RIGHT:
+	case KeyEvent::KeyRight:
 		value += 0.01;
 		break;
-	case KeyEvent::KEY_LEFT:
+	case KeyEvent::KeyLeft:
 		value -= 0.01;
 		break;
-	case KeyEvent::KEY_HOME:
+	case KeyEvent::KeyHome:
 		value = 0;
 		break;
-	case KeyEvent::KEY_END:
+	case KeyEvent::KeyEnd:
 		value = 1;
 		break;
 	default:

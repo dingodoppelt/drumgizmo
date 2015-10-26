@@ -201,7 +201,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 	}
 
 	switch(e->keycode) {
-	case KeyEvent::KEY_UP:
+	case KeyEvent::KeyUp:
 		marked--;
 		if(marked < 0)
 		{
@@ -214,7 +214,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		}
 		break;
 
-	case KeyEvent::KEY_DOWN:
+	case KeyEvent::KeyDown:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -232,7 +232,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		}
 		break;
 
-	case KeyEvent::KEY_HOME:
+	case KeyEvent::KeyHome:
 		marked = 0;
 		if(marked < scroll.value())
 		{
@@ -240,7 +240,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		}
 		break;
 
-	case KeyEvent::KEY_END:
+	case KeyEvent::KeyEnd:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -253,7 +253,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		}
 		break;
 
-	case KeyEvent::KEY_CHARACTER:
+	case KeyEvent::KeyCharacter:
 		if(e->text == " ")
 		{
 			setSelection(marked);
@@ -261,7 +261,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		}
 		break;
 
-	case KeyEvent::KEY_ENTER:
+	case KeyEvent::KeyEnter:
 		setSelection(marked);
 		selectionNotifier();
 		break;

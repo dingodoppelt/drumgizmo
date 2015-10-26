@@ -97,18 +97,18 @@ static void onKeyboard(PuglView* view, bool press, uint32_t key)
     printf("%d\n", key);
  
     switch(key) {
-      case PUGL_KEY_LEFT: e->keycode = GUI::KeyEvent::KEY_LEFT; break;
-      case PUGL_KEY_RIGHT: e->keycode = GUI::KeyEvent::KEY_RIGHT; break;
-      case PUGL_KEY_UP: e->keycode = GUI::KeyEvent::KEY_UP; break;
-      case PUGL_KEY_DOWN: e->keycode = GUI::KeyEvent::KEY_DOWN; break;
-      case PUGL_KEY_PAGE_UP: e->keycode = GUI::KeyEvent::KEY_PGDOWN; break;
-      case PUGL_KEY_PAGE_DOWN: e->keycode = GUI::KeyEvent::KEY_PGUP; break;
-      default: e->keycode = GUI::KeyEvent::KEY_UNKNOWN; break;
+      case PUGL_KEY_LEFT: e->keycode = GUI::KeyEvent::KeyLeft; break;
+      case PUGL_KEY_RIGHT: e->keycode = GUI::KeyEvent::KeyRight; break;
+      case PUGL_KEY_UP: e->keycode = GUI::KeyEvent::KeyUp; break;
+      case PUGL_KEY_DOWN: e->keycode = GUI::KeyEvent::KeyDown; break;
+      case PUGL_KEY_PAGE_UP: e->keycode = GUI::KeyEvent::KeyPageDown; break;
+      case PUGL_KEY_PAGE_DOWN: e->keycode = GUI::KeyEvent::KeyPageUp; break;
+      default: e->keycode = GUI::KeyEvent::KeyUnknown; break;
     }
 
     // TODO: perform character type check
-    if(e->keycode == GUI::KeyEvent::KEY_UNKNOWN) {
-      e->keycode = GUI::KeyEvent::KEY_CHARACTER;
+    if(e->keycode == GUI::KeyEvent::KeyUnknown) {
+      e->keycode = GUI::KeyEvent::KeyCharacter;
       e->text.assign(1, (char)key); 
     }
 

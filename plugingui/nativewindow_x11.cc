@@ -484,26 +484,26 @@ Event* NativeWindowX11::getNextEvent()
 		keyEvent->window_id = xevent.xkey.window;
 
 		switch(xevent.xkey.keycode) {
-		case 113: keyEvent->keycode = KeyEvent::KEY_LEFT; break;
-		case 114: keyEvent->keycode = KeyEvent::KEY_RIGHT; break;
-		case 111: keyEvent->keycode = KeyEvent::KEY_UP; break;
-		case 116: keyEvent->keycode = KeyEvent::KEY_DOWN; break;
-		case 119: keyEvent->keycode = KeyEvent::KEY_DELETE; break;
-		case 22:  keyEvent->keycode = KeyEvent::KEY_BACKSPACE; break;
-		case 110: keyEvent->keycode = KeyEvent::KEY_HOME; break;
-		case 115: keyEvent->keycode = KeyEvent::KEY_END; break;
-		case 117: keyEvent->keycode = KeyEvent::KEY_PGDOWN; break;
-		case 112: keyEvent->keycode = KeyEvent::KEY_PGUP; break;
-		case 36:  keyEvent->keycode = KeyEvent::KEY_ENTER; break;
-		default:  keyEvent->keycode = KeyEvent::KEY_UNKNOWN; break;
+		case 113: keyEvent->keycode = KeyEvent::KeyLeft; break;
+		case 114: keyEvent->keycode = KeyEvent::KeyRight; break;
+		case 111: keyEvent->keycode = KeyEvent::KeyUp; break;
+		case 116: keyEvent->keycode = KeyEvent::KeyDown; break;
+		case 119: keyEvent->keycode = KeyEvent::KeyDelete; break;
+		case 22:  keyEvent->keycode = KeyEvent::KeyBackspace; break;
+		case 110: keyEvent->keycode = KeyEvent::KeyHome; break;
+		case 115: keyEvent->keycode = KeyEvent::KeyEnd; break;
+		case 117: keyEvent->keycode = KeyEvent::KeyPageDown; break;
+		case 112: keyEvent->keycode = KeyEvent::KeyPageUp; break;
+		case 36:  keyEvent->keycode = KeyEvent::KeyEnter; break;
+		default:  keyEvent->keycode = KeyEvent::KeyUnknown; break;
 		}
 
 		char stringBuffer[1024];
 		int size = XLookupString(&xevent.xkey, stringBuffer,
 		                         sizeof(stringBuffer), nullptr, nullptr);
-		if(size && keyEvent->keycode == KeyEvent::KEY_UNKNOWN)
+		if(size && keyEvent->keycode == KeyEvent::KeyUnknown)
 		{
-			keyEvent->keycode = KeyEvent::KEY_CHARACTER;
+			keyEvent->keycode = KeyEvent::KeyCharacter;
 		}
 
 		keyEvent->text.append(stringBuffer, size);
