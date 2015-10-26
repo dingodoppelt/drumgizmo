@@ -40,8 +40,6 @@ namespace GUI {
 
 class FileBrowser : public Widget {
 public:
-	struct private_data;
-
 	FileBrowser(Widget *parent);
 	~FileBrowser();
 
