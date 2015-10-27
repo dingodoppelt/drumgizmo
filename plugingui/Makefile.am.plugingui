@@ -37,9 +37,9 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/plugingui/lodepng/lodepng.cpp
 
-PLUGIN_GUI_LIBS = $(GUI_LIBS) $(PTHREAD_LIBS) $(ZLIB_LIBS)
+PLUGIN_GUI_LIBS = $(GUI_LIBS) $(PTHREAD_LIBS)
 
-PLUGIN_GUI_CFLAGS = $(GUI_CFLAGS) $(ZLIB_CFLAGS) -I$(top_srcdir)/hugin \
+PLUGIN_GUI_CFLAGS = $(GUI_CFLAGS) -I$(top_srcdir)/hugin \
 									-DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX $(PTHREAD_CFLAGS) \
 									-I$(top_srcdir)/pugl/pugl \
 									-DLODEPNG_NO_COMPILE_ENCODER \
