@@ -254,14 +254,14 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 	}
 
 
-	for(auto it = directories.begin(); it != directories.end(); ++it)
+	for(auto directory : directories)
 	{
-		entries.push_back(*it);
+		entries.push_back(directory);
 	}
 
-	for(auto it = files.begin(); it != files.end(); ++it)
+	for(auto file : files)
 	{
-		entries.push_back(*it);
+		entries.push_back(file);
 	}
 
 

@@ -74,11 +74,11 @@ void ListBoxBasic::addItem(std::string name, std::string value)
 	addItems(items);
 }
 
-void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &is)
+void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &items)
 {
-	for(auto i = is.begin(); i != is.end(); ++i)
+	for(auto item : items)
 	{
-		items.push_back(*i);
+		items.push_back(item);
 	}
 
 	if(selected == -1)
