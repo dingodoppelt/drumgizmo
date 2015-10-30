@@ -74,9 +74,9 @@ void ListBoxBasic::addItem(std::string name, std::string value)
 	addItems(items);
 }
 
-void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &items)
+void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &newItems)
 {
-	for(auto item : items)
+	for(auto& item : newItems)
 	{
 		items.push_back(item);
 	}
