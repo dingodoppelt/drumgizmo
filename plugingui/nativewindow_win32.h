@@ -24,13 +24,11 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NATIVEWINDOW_WIN32_H__
-#define __DRUMGIZMO_NATIVEWINDOW_WIN32_H__
-
-#ifdef WIN32
+#pragma once
 
 #include "nativewindow.h"
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 typedef HWND WNDID;
 
@@ -41,31 +39,30 @@ class Event;
 
 class NativeWindowWin32 : public NativeWindow {
 public:
-  NativeWindowWin32(GUI::Window *window);
-  ~NativeWindowWin32();
+	NativeWindowWin32(Window *window);
+	~NativeWindowWin32();
 
-  void setFixedSize(int width, int height);
-  void resize(int width, int height);
-  void move(int x, int y);
-  void show();
-  void setCaption(const std::string &caption);
-  void hide();
-  void handleBuffer();
-  void redraw();
-  void grabMouse(bool grab);
+	void setFixedSize(int width, int height) override;
+	void resize(int width, int height) override;
+	void move(int x, int y) override;
+	void show() override;
+	void setCaption(const std::string &caption) override;
+	void hide() override;
+	void handleBuffer() override;
+	void redraw() override;
+	void grabMouse(bool grab) override;
 
-  bool hasEvent();
-  Event *getNextEvent();
+	bool hasEvent() override;
+	Event *getNextEvent() override;
 
-  // Needed by dialogProc
-  GUI::Window *window;
-	WNDID	m_hwnd;
-	char *m_className;
-  Event *event;
+private:
+	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+
+	// Needed by dialogProc
+	Window* window;
+	WNDID m_hwnd = 0;
+	char* m_className = nullptr;
+	Event* event = nullptr;
 };
 
-};
-
-#endif/*WIN32*/
-
-#endif/*__DRUMGIZMO_NATIVEWINDOW_WIN32_H__*/
+} // GUI::

@@ -26,49 +26,56 @@
  */
 #include "nativewindow_win32.h"
 
-#ifdef WIN32
-
 #include "window.h"
 
-LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+#include <cstring>
+
+namespace GUI {
+
+LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
+                                               WPARAM wp, LPARAM lp)
 {
-  GUI::NativeWindowWin32 *native =
-    (GUI::NativeWindowWin32 *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	NativeWindowWin32 *native =
+		(NativeWindowWin32 *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
-  // NOTE: 'native' is NULL intil the WM_CREATE message has been handled. 
-  if(!native) return DefWindowProc(hwnd, msg, wp, lp);
+	// NOTE: 'native' is nullptr intil the WM_CREATE message has been handled.
+	if(!native)
+	{
+		return DefWindowProc(hwnd, msg, wp, lp);
+	}
 
-  GUI::Window *window = native->window;
+	Window *window = native->window;
 
 	switch(msg) {
 	case WM_SIZE:
-    {
-      static bool first = true;
-      if(!first) {
-        GUI::ResizeEvent *e = new GUI::ResizeEvent();
-        e->width = LOWORD(lp);
-        e->height = HIWORD(lp);
-        native->event = e;
-        first = false;
-      }
-    }
+		{
+			static bool first = true;
+			if(!first)
+			{
+				ResizeEvent *e = new ResizeEvent();
+				e->width = LOWORD(lp);
+				e->height = HIWORD(lp);
+				native->event = e;
+				first = false;
+			}
+		}
 		break;
 
 	case WM_MOVE:
-    {
-//      GUI::MoveEvent *e = new GUI::MoveEvent();
+		{
+//      MoveEvent *e = new MoveEvent();
 //      e->x = (int)(short) LOWORD(lp);
 //      e->y = (int)(short) HIWORD(lp);
 //      native->event = e;
-    }
+		}
 		break;
 
 	case WM_CLOSE:
-    {
-      GUI::CloseEvent *e = new GUI::CloseEvent();
-      native->event = e;
-    }
-    break;
+		{
+			CloseEvent *e = new CloseEvent();
+			native->event = e;
+		}
+		break;
 //		HWND child, old;
 //		old	= 0;
 
@@ -83,31 +90,30 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 //		else PostQuitMessage(0);
 //		return 0;
 	case WM_MOUSEMOVE:
-    {
-      
-      GUI::MouseMoveEvent *e = new GUI::MouseMoveEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
-      native->event = e;
-    }
+		{
+			MouseMoveEvent *e = new MouseMoveEvent();
+			e->x = (int)(short) LOWORD(lp);
+			e->y = (int)(short) HIWORD(lp);
+			native->event = e;
+		}
 		break;
 
 	case WM_MOUSEWHEEL:
-    {
-      GUI::ScrollEvent *e = new GUI::ScrollEvent();
+		{
+			ScrollEvent *e = new ScrollEvent();
 
-      // NOTE: lp is coordinates in screen space, not client space.
-      POINT p;
-      p.x = (int)(short) LOWORD(lp);
-      p.y = (int)(short) HIWORD(lp);
-      ScreenToClient(hwnd, &p);
+			// NOTE: lp is coordinates in screen space, not client space.
+			POINT p;
+			p.x = (int)(short) LOWORD(lp);
+			p.y = (int)(short) HIWORD(lp);
+			ScreenToClient(hwnd, &p);
 
-      e->x = p.x;
-      e->y = p.y;
-      e->delta = -1 * (short)HIWORD(wp) / 60;
-      native->event = e;
-    }
- 		break;
+			e->x = p.x;
+			e->y = p.y;
+			e->delta = -1 * (short)HIWORD(wp) / 60;
+			native->event = e;
+		}
+		break;
 
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDBLCLK:
@@ -118,287 +124,305 @@ LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_MBUTTONUP:
 	case WM_MBUTTONDBLCLK:
 	case WM_MBUTTONDOWN:
-    {
-      GUI::ButtonEvent *e = new GUI::ButtonEvent();
-      e->x = (int)(short) LOWORD(lp);
-      e->y = (int)(short) HIWORD(lp);
+		{
+			ButtonEvent *e = new ButtonEvent();
+			e->x = (int)(short) LOWORD(lp);
+			e->y = (int)(short) HIWORD(lp);
 
-      if(msg == WM_LBUTTONUP ||
-         msg == WM_LBUTTONDBLCLK ||
-         msg == WM_LBUTTONDOWN) e->button = GUI::ButtonEvent::Left;
-      else if(msg == WM_RBUTTONUP ||
-         msg == WM_RBUTTONDBLCLK ||
-         msg == WM_RBUTTONDOWN) e->button = GUI::ButtonEvent::Middle;
-      else if(msg == WM_MBUTTONUP ||
-         msg == WM_MBUTTONDBLCLK ||
-         msg == WM_MBUTTONDOWN) e->button = GUI::ButtonEvent::Right;
-      else {
-	      delete e;
-	      break; // unknown button
-      }
+			if(msg == WM_LBUTTONUP ||
+			   msg == WM_LBUTTONDBLCLK ||
+			   msg == WM_LBUTTONDOWN)
+			{
+				e->button = ButtonEvent::Left;
+			}
+			else if(msg == WM_RBUTTONUP ||
+			        msg == WM_RBUTTONDBLCLK ||
+			        msg == WM_RBUTTONDOWN)
+			{
+				e->button = ButtonEvent::Middle;
+			}
+			else if(msg == WM_MBUTTONUP ||
+			        msg == WM_MBUTTONDBLCLK ||
+			        msg == WM_MBUTTONDOWN)
+			{
+				e->button = ButtonEvent::Right;
+			}
+			else
+			{
+				delete e;
+				break; // unknown button
+			}
 
-      if(msg == WM_LBUTTONUP ||
-         msg == WM_RBUTTONUP ||
-         msg == WM_MBUTTONUP) e->direction = GUI::ButtonEvent::Up;
-      else if(msg == WM_LBUTTONDOWN ||
-         msg == WM_RBUTTONDOWN ||
-         msg == WM_MBUTTONDOWN) e->direction = GUI::ButtonEvent::Down;
-      else {
+			if(msg == WM_LBUTTONUP ||
+			   msg == WM_RBUTTONUP ||
+			   msg == WM_MBUTTONUP)
+			{
+				e->direction = ButtonEvent::Up;
+			}
+			else if(msg == WM_LBUTTONDOWN ||
+			        msg == WM_RBUTTONDOWN ||
+			        msg == WM_MBUTTONDOWN)
+			{
+				e->direction = ButtonEvent::Down;
+			}
+			else
+			{
 	      delete e;
 	      break; // unknown direction
-      }
+			}
 
-      e->doubleclick = (msg == WM_LBUTTONDBLCLK ||
-                        msg == WM_RBUTTONDBLCLK ||
-                        msg == WM_MBUTTONDBLCLK);
+			e->doubleclick = (msg == WM_LBUTTONDBLCLK ||
+			                  msg == WM_RBUTTONDBLCLK ||
+			                  msg == WM_MBUTTONDBLCLK);
 
-      native->event = e;
-    }
+			native->event = e;
+		}
 		break;
 
 	case WM_KEYDOWN:
-    {
-      GUI::KeyEvent *e = new GUI::KeyEvent();
-      //printf("wp: %d\n", wp);
-      switch(wp) {
-      case 37: e->keycode = GUI::KeyEvent::KeyLeft; break;
-      case 39: e->keycode = GUI::KeyEvent::KeyRight; break;
-      case 38: e->keycode = GUI::KeyEvent::KeyUp; break;
-      case 40: e->keycode = GUI::KeyEvent::KeyDown; break;
-      case 8:  e->keycode = GUI::KeyEvent::KeyBackspace; break;
-      case 46: e->keycode = GUI::KeyEvent::KeyDelete; break;
-      case 36: e->keycode = GUI::KeyEvent::KeyHome; break;
-      case 35: e->keycode = GUI::KeyEvent::KeyEnd; break;
-      case 33: e->keycode = GUI::KeyEvent::KeyPageUp; break;
-      case 34: e->keycode = GUI::KeyEvent::KeyPageDown; break;
-      case 13: e->keycode = GUI::KeyEvent::KeyEnter; break;
-      default: e->keycode = GUI::KeyEvent::KeyUnknown; break;
-      }
-      e->text = "";
-      e->direction = GUI::KeyEvent::Up;
-      native->event = e;
-    }
+		{
+			KeyEvent *e = new KeyEvent();
+			//printf("wp: %d\n", wp);
+			switch(wp) {
+			case 37: e->keycode = KeyEvent::KeyLeft; break;
+			case 39: e->keycode = KeyEvent::KeyRight; break;
+			case 38: e->keycode = KeyEvent::KeyUp; break;
+			case 40: e->keycode = KeyEvent::KeyDown; break;
+			case 8:  e->keycode = KeyEvent::KeyBackspace; break;
+			case 46: e->keycode = KeyEvent::KeyDelete; break;
+			case 36: e->keycode = KeyEvent::KeyHome; break;
+			case 35: e->keycode = KeyEvent::KeyEnd; break;
+			case 33: e->keycode = KeyEvent::KeyPageUp; break;
+			case 34: e->keycode = KeyEvent::KeyPageDown; break;
+			case 13: e->keycode = KeyEvent::KeyEnter; break;
+			default: e->keycode = KeyEvent::KeyUnknown; break;
+			}
+			e->text = "";
+			e->direction = KeyEvent::Up;
+			native->event = e;
+		}
 		break;
 
 	case WM_CHAR:
-    {
-      //printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
-      if(wp >= ' ') { // Filter control chars.
-        GUI::KeyEvent *e = new GUI::KeyEvent();
-        e->keycode = GUI::KeyEvent::KeyCharacter;
-        e->text += (char)wp;
-        e->direction = GUI::KeyEvent::Up;
-        native->event = e;
-      }
-    }
+		{
+			//printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
+			if(wp >= ' ') // Filter control chars.
+			{
+				KeyEvent *e = new KeyEvent();
+				e->keycode = KeyEvent::KeyCharacter;
+				e->text += (char)wp;
+				e->direction = KeyEvent::Up;
+				native->event = e;
+			}
+		}
 		break;
 
 	case WM_PAINT:
-    {
-      GUI::RepaintEvent *e = new GUI::RepaintEvent();
-      e->x = 0;
-      e->y = 0;
-      e->width = 100;
-      e->height = 100;
-      native->event = e;
+		{
+			RepaintEvent *e = new RepaintEvent();
+			e->x = 0;
+			e->y = 0;
+			e->width = 100;
+			e->height = 100;
+			native->event = e;
 
-      // Move to window.h (in class)
-      HDC pDC;
-      HBITMAP old;
-      HBITMAP ourbitmap;
-      int * framebuf;
-      GUI::PixelBuffer &px = window->wpixbuf;
+			// Move to window.h (in class)
+			HDC pDC;
+			HBITMAP old;
+			HBITMAP ourbitmap;
+			int * framebuf;
+			PixelBuffer &px = window->wpixbuf;
 
-      { // Create bitmap (move to window.cc)
-        HDC hDC;
-        BITMAPINFO bitmapinfo;
-        hDC = CreateCompatibleDC(NULL);
-        bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bitmapinfo.bmiHeader.biWidth = px.width;
-        bitmapinfo.bmiHeader.biHeight = -px.height; /* top-down */
-        bitmapinfo.bmiHeader.biPlanes = 1;
-        bitmapinfo.bmiHeader.biBitCount = 32;
-        bitmapinfo.bmiHeader.biCompression = BI_RGB;
-        bitmapinfo.bmiHeader.biSizeImage = 0;
-        bitmapinfo.bmiHeader.biClrUsed = 256;
-        bitmapinfo.bmiHeader.biClrImportant = 256;
-        ourbitmap=CreateDIBSection(hDC, &bitmapinfo,
-                                   DIB_RGB_COLORS, (void**)&framebuf, 0, 0);
-        pDC=CreateCompatibleDC(NULL);
-        old = (HBITMAP__*)SelectObject(pDC, ourbitmap);
-        DeleteDC(hDC);
-      }
+			{ // Create bitmap (move to window.cc)
+				HDC hDC;
+				BITMAPINFO bitmapinfo;
+				hDC = CreateCompatibleDC(nullptr);
+				bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+				bitmapinfo.bmiHeader.biWidth = px.width;
+				bitmapinfo.bmiHeader.biHeight = -px.height; /* top-down */
+				bitmapinfo.bmiHeader.biPlanes = 1;
+				bitmapinfo.bmiHeader.biBitCount = 32;
+				bitmapinfo.bmiHeader.biCompression = BI_RGB;
+				bitmapinfo.bmiHeader.biSizeImage = 0;
+				bitmapinfo.bmiHeader.biClrUsed = 256;
+				bitmapinfo.bmiHeader.biClrImportant = 256;
+				ourbitmap=CreateDIBSection(hDC, &bitmapinfo,
+				                           DIB_RGB_COLORS, (void**)&framebuf, 0, 0);
+				pDC=CreateCompatibleDC(nullptr);
+				old = (HBITMAP__*)SelectObject(pDC, ourbitmap);
+				DeleteDC(hDC);
+			}
 
-      { // Copy GUI::PixelBuffer to framebuffer (move to window.cc)
-        int i,j,k;
-        for (k=0,i=0;i<(int)px.height;i++) {
-          for (j=0;j<(int)px.width;j++,k++) {
-            *(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
-                              px.buf[(j + i * px.width) * 3 + 1],
-                              px.buf[(j + i * px.width) * 3 + 0]);
-          }
-        }
-      }
-      
-      PAINTSTRUCT	ps;
-      HDC	hdc = BeginPaint(native->m_hwnd, &ps);
-      BitBlt(hdc, 0, 0, px.width, px.height, pDC, 0, 0, SRCCOPY);
-      EndPaint(native->m_hwnd, &ps);
+			{ // Copy PixelBuffer to framebuffer (move to window.cc)
+				int i,j,k;
+				for (k=0,i=0;i<(int)px.height;i++)
+				{
+					for (j=0;j<(int)px.width;j++,k++)
+					{
+						*(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
+						                  px.buf[(j + i * px.width) * 3 + 1],
+						                  px.buf[(j + i * px.width) * 3 + 0]);
+					}
+				}
+			}
 
-      { // Destroy bitmap (move to window.cc)
-        SelectObject(pDC,old);
-        DeleteDC(pDC);
-        DeleteObject(ourbitmap);
-        
-      }
-    }
+			PAINTSTRUCT	ps;
+			HDC	hdc = BeginPaint(native->m_hwnd, &ps);
+			BitBlt(hdc, 0, 0, px.width, px.height, pDC, 0, 0, SRCCOPY);
+			EndPaint(native->m_hwnd, &ps);
+
+			{ // Destroy bitmap (move to window.cc)
+				SelectObject(pDC,old);
+				DeleteDC(pDC);
+				DeleteObject(ourbitmap);
+			}
+		}
+
 		return DefWindowProc(hwnd, msg, wp, lp);
 	}
 
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
 
-// Delared in eventhandler.cc
-LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-
-GUI::NativeWindowWin32::NativeWindowWin32(GUI::Window *window)
-  : GUI::NativeWindow()
+NativeWindowWin32::NativeWindowWin32(Window *window)
+	: window(window)
 {
-  this->window = window;
-
 	WNDCLASSEX wcex;
 	WNDID wndId;
 
-	m_hwnd = 0;
-	m_className = NULL;
-  event = NULL;
+	std::memset(&wcex, 0, sizeof(wcex));
 
-	memset(&wcex, 0, sizeof(wcex));
-	
 	//Time to register a window class.
-  //Generic flags and everything. cbWndExtra is the size of a pointer to an
-  // object - we need this in the wndproc handler.
-	
+	//Generic flags and everything. cbWndExtra is the size of a pointer to an
+	// object - we need this in the wndproc handler.
+
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_DBLCLKS;//class_style;
 	wcex.lpfnWndProc = (WNDPROC)dialogProc;
-  wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-  // Set data:
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	// Set data:
 	wcex.cbWndExtra = sizeof(NativeWindowWin32*); // Size of data.
-	wcex.hInstance = GetModuleHandle(NULL);
+	wcex.hInstance = GetModuleHandle(nullptr);
 
-  //	if(ex_style && WS_EX_TRANSPARENT == WS_EX_TRANSPARENT) {
-  //		wcex.hbrBackground = NULL;
-  //	} else {
-  wcex.hbrBackground = NULL;//(HBRUSH) COLOR_BACKGROUND + 1;
-  //	}
-	
+	//	if(ex_style && WS_EX_TRANSPARENT == WS_EX_TRANSPARENT) {
+	//		wcex.hbrBackground = nullptr;
+	//	} else {
+	wcex.hbrBackground = nullptr;//(HBRUSH) COLOR_BACKGROUND + 1;
+	//	}
+
 	wcex.lpszClassName = m_className = strdup("DrumGizmoClass");
 
 	RegisterClassEx(&wcex);
 
-  /*
+	/*
 	if(parent) {
 		style = style | WS_CHILD;
 		wndId = parent->getWndId();
 	} else {
-  */
-  //style = style | WS_OVERLAPPEDWINDOW;
-		wndId = 0;
-    //	}
+	*/
+	//style = style | WS_OVERLAPPEDWINDOW;
+	wndId = 0;
+	//	}
 
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
-                          "DGBasisWidget",
-                          (WS_OVERLAPPEDWINDOW | WS_VISIBLE),
-                          window->x(), window->y(),
-                          window->width(), window->height(),
-                          wndId, NULL,
-                          GetModuleHandle(NULL), NULL);
+	                        "DGBasisWidget",
+	                        (WS_OVERLAPPEDWINDOW | WS_VISIBLE),
+	                        window->x(), window->y(),
+	                        window->width(), window->height(),
+	                        wndId, nullptr,
+	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 }
 
-GUI::NativeWindowWin32::~NativeWindowWin32()
+NativeWindowWin32::~NativeWindowWin32()
 {
-	UnregisterClass(m_className, GetModuleHandle(NULL));
+	UnregisterClass(m_className, GetModuleHandle(nullptr));
 	free(m_className);
 }
 
-void GUI::NativeWindowWin32::setFixedSize(int width, int height)
+void NativeWindowWin32::setFixedSize(int width, int height)
 {
-  resize(width, height);
-  LONG style =  GetWindowLong(m_hwnd, GWL_STYLE);
-  style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-  SetWindowLong(m_hwnd, GWL_STYLE, style);
+	resize(width, height);
+	LONG style =  GetWindowLong(m_hwnd, GWL_STYLE);
+	style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+	SetWindowLong(m_hwnd, GWL_STYLE, style);
 }
 
-void GUI::NativeWindowWin32::resize(int width, int height)
+void NativeWindowWin32::resize(int width, int height)
 {
-  SetWindowPos(m_hwnd, NULL, -1, -1, (int)width, (int)height, SWP_NOMOVE);
-  RECT r;
-  GetClientRect(m_hwnd, &r);
-  int w = width - r.right;
-  int h = height - r.bottom;
+	SetWindowPos(m_hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
+	RECT r;
+	GetClientRect(m_hwnd, &r);
+	int w = width - r.right;
+	int h = height - r.bottom;
 
-  SetWindowPos(m_hwnd, NULL, -1, -1, width + w, height + h, SWP_NOMOVE);
+	SetWindowPos(m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
-void GUI::NativeWindowWin32::move(int x, int y)
+void NativeWindowWin32::move(int x, int y)
 {
-  SetWindowPos(m_hwnd, NULL, (int)x, (int)y, -1, -1, SWP_NOSIZE);
+	SetWindowPos(m_hwnd, nullptr, (int)x, (int)y, -1, -1, SWP_NOSIZE);
 }
 
-void GUI::NativeWindowWin32::show()
+void NativeWindowWin32::show()
 {
-  ShowWindow(m_hwnd, SW_SHOW);
+	ShowWindow(m_hwnd, SW_SHOW);
 }
 
-void GUI::NativeWindowWin32::handleBuffer()
+void NativeWindowWin32::handleBuffer()
 {
 }
 
-void GUI::NativeWindowWin32::hide()
+void NativeWindowWin32::hide()
 {
-  ShowWindow(m_hwnd, SW_HIDE);
+	ShowWindow(m_hwnd, SW_HIDE);
 }
 
-void GUI::NativeWindowWin32::redraw()
+void NativeWindowWin32::redraw()
 {
-  RedrawWindow(m_hwnd, NULL, NULL, RDW_ERASE|RDW_INVALIDATE);
-  UpdateWindow(m_hwnd);
+	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
+	UpdateWindow(m_hwnd);
 }
 
-void GUI::NativeWindowWin32::setCaption(const std::string &caption)
+void NativeWindowWin32::setCaption(const std::string &caption)
 {
-  SetWindowText(m_hwnd, caption.c_str());
+	SetWindowText(m_hwnd, caption.c_str());
 }
 
-void GUI::NativeWindowWin32::grabMouse(bool grab)
+void NativeWindowWin32::grabMouse(bool grab)
 {
-  if(grab) SetCapture(m_hwnd);
-  else ReleaseCapture();
+	if(grab)
+	{
+		SetCapture(m_hwnd);
+	}
+	else
+	{
+		ReleaseCapture();
+	}
 }
 
-bool GUI::NativeWindowWin32::hasEvent()
+bool NativeWindowWin32::hasEvent()
 {
-	MSG	msg;
-  return PeekMessage(&msg, NULL, 0, 0, 0) != 0;
+	MSG msg;
+	return PeekMessage(&msg, nullptr, 0, 0, 0) != 0;
 }
 
-GUI::Event *GUI::NativeWindowWin32::getNextEvent()
+Event *NativeWindowWin32::getNextEvent()
 {
-  Event *event = NULL;
+	Event *event = nullptr;
 
-	MSG	msg;
-	if(GetMessage(&msg, NULL, 0, 0)) {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
+	MSG msg;
+	if(GetMessage(&msg, nullptr, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 
-  event = this->event;
-  this->event = NULL;
+	event = this->event;
+	this->event = nullptr;
 
-  return event;
+	return event;
 }
 
-#endif/*WIN32*/
+} // GUI::
