@@ -24,11 +24,10 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_FONT_H__
-#define __DRUMGIZMO_FONT_H__
+#pragma once
 
 #include <string>
-#include <map>
+#include <array>
 
 #include "pixelbuffer.h"
 #include "image.h"
@@ -37,27 +36,29 @@ namespace GUI {
 
 class Font {
 public:
-  Font(std::string fontfile = ":font.png");
-  
-  void setFace(std::string face);
-  std::string face();
+	Font(const std::string& fontfile = ":font.png");
 
-  void setSize(size_t points);
-  size_t size();
+	size_t textWidth(const std::string& text);
+	size_t textHeight(const std::string& text = "");
 
-  size_t textWidth(std::string text);
-  size_t textHeight(std::string text = "");
-
-  PixelBufferAlpha *render(std::string text);
+	PixelBufferAlpha *render(const std::string& text);
 
 private:
-  Image img_font;
+	Image img_font;
 
-  std::map<char, int> character_offset;
-  std::map<char, size_t> character_width;
-  std::map<char, int> character_pre_bias;
-  std::map<char, int> character_post_bias;
+	struct Character {
+		int offset = 0;
+		size_t width = 0;
+		int pre_bias = 0;
+		int post_bias = 0;
+	};
+
+	std::array<Character, 255> characters;
+
+//	std::map<char, int> character_offset;
+//	std::map<char, size_t> character_width;
+//	std::map<char, int> character_pre_bias;
+//	std::map<char, int> character_post_bias;
 };
 
-};
-#endif/*__DRUMGIZMO_FONT_H__*/
+} // GUI::

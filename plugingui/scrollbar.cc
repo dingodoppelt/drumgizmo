@@ -66,9 +66,15 @@ int GUI::ScrollBar::maximum()
 
 void GUI::ScrollBar::setValue(int value)
 {
+  if(value > max - ran) value = max - ran;
+  if(value < 0) value = 0;
+
+  if(val == value)
+  {
+	  return;
+  }
+
   val = value;
-  if(val > max - ran) val = max - ran;
-  if(val < 0) val = 0;
 
   if(handler) handler(ptr);
 

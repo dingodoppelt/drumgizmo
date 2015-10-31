@@ -26,106 +26,95 @@
  */
 #include "font.h"
 
-#ifdef X11
-#include <X11/Xlib.h>
-#endif/*X11*/
+namespace GUI {
 
-GUI::Font::Font(std::string fontfile)
-  : img_font(fontfile)
+Font::Font(const std::string& fontfile)
+	: img_font(fontfile)
 {
-  int px = 0;
-  int c;
-  for(c = 0; c < 255 && px < (int)img_font.width(); c++) {
-    character_offset[c] = px + 1;
-    character_pre_bias[c] = 0;
-    character_post_bias[c] = 0;
-    if(c > 0) {
-      character_width[c - 1] =
-        character_offset[c] - character_offset[c - 1] - 1;
-    }
-    px++;
-    GUI::Colour c;
-    while(px < (int)img_font.width()) {
-      c = img_font.getPixel(px, 0);
-      // Find next purple pixel in top row:
-      if(c.red == 1 && c.green == 0 && c.blue == 1 && c.alpha == 1) break;
-      px++;
-    } 
-  }
-  c++;
-  character_width[c - 1] = character_offset[c] - character_offset[c - 1] - 1;
-}
-  
-void GUI::Font::setFace(std::string face)
-{
-  face = face;
-}
+	size_t px = 0;
+	size_t c;
 
-std::string GUI::Font::face()
-{
-  return "";//face;
-}
+	for(c = 0; c < characters.size() && px < img_font.width(); ++c)
+	{
+		auto& character = characters[c];
+		character.offset = px + 1;
+		character.pre_bias = 0;
+		character.post_bias = 0;
 
-void GUI::Font::setSize(size_t points)
-{
-  points = points;
-}
+		if(c > 0)
+		{
+			characters[c - 1].width =
+				character.offset - characters[c - 1].offset - 1;
+		}
 
-size_t GUI::Font::size()
-{
-  return 0;
+		++px;
+
+		Colour pixel;
+		while(px < img_font.width())
+		{
+			pixel = img_font.getPixel(px, 0);
+
+			// Find next purple pixel in top row:
+			if((pixel.red == 1) && (pixel.green == 0) &&
+			   (pixel.blue == 1) && (pixel.alpha == 1))
+			{
+				break;
+			}
+
+			++px;
+		}
+
+		characters[c] = character;
+	}
+
+	++c;
+
+	characters[c - 1].width = characters[c].offset - characters[c - 1].offset - 1;
 }
 
-size_t GUI::Font::textWidth(std::string text)
+size_t Font::textWidth(const std::string& text)
 {
-  size_t len = 0;
+	size_t len = 0;
 
-  for(size_t i = 0; i < text.length(); i++) {
-    unsigned int cha = text[i];
-    len += character_width[(char)cha] + 1 + character_post_bias[(char)cha];
-  }
+	for(size_t i = 0; i < text.length(); i++)
+	{
+		unsigned int cha = text[i];
+		auto& character = characters[cha];
+		len += character.width + 1 + character.post_bias;
+	}
 
-  return len;
+	return len;
 }
 
-size_t GUI::Font::textHeight(std::string text)
+size_t Font::textHeight(const std::string& text)
 {
-  return img_font.height();
+	return img_font.height();
 }
 
-GUI::PixelBufferAlpha *GUI::Font::render(std::string text)
+PixelBufferAlpha *Font::render(const std::string& text)
 {
-  int border = 1;
-  PixelBufferAlpha *pb =
-    new PixelBufferAlpha(textWidth(text), textHeight(text));
+	int border = 1;
+	PixelBufferAlpha *pb =
+		new PixelBufferAlpha(textWidth(text), textHeight(text));
 
-  int x_offset = 0;
-  for(size_t i = 0; i < text.length(); i++) {
-    unsigned int cha = text[i];
-    for(size_t x = 0; x < character_width[(char)cha]; x++) {
-      for(size_t y = 0; y < img_font.height(); y++) {
-        Colour c = img_font.getPixel(x + (character_offset[(char)cha]), y);
-        pb->setPixel(x + x_offset + character_pre_bias[(char)cha], y,
-                     c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
-      }
-    }
-    x_offset += character_width[(char)cha] + border +
-      character_post_bias[(char)cha];
-  }
+	int x_offset = 0;
+	for(size_t i = 0; i < text.length(); ++i)
+	{
+		unsigned int cha = text[i];
+		auto& character = characters[cha];
+		for(size_t x = 0; x < character.width; ++x)
+		{
+			for(size_t y = 0; y < img_font.height(); ++y)
+			{
+				Colour c = img_font.getPixel(x + character.offset, y);
+				pb->setPixel(x + x_offset + character.pre_bias, y,
+				             c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
+			}
+		}
+		x_offset += character.width + border + character.post_bias;
+	}
 
-  return pb;
+	return pb;
 }
 
-#ifdef TEST_FONT
-//deps:
-//cflags:
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_FONT*/
+} // GUI::

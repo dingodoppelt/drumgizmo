@@ -91,6 +91,7 @@ void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &newItems)
 	int numitems = height() / (font.textHeight() + padding);
 	scroll.setRange(numitems);
 	scroll.setMaximum(items.size());
+	repaintEvent(nullptr);
 }
 
 void ListBoxBasic::clear()
@@ -163,7 +164,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent *e)
 	for(int idx = skip; (idx < (int)items.size()) && (idx < (skip + numitems));
 	    idx++)
 	{
-		ListBoxBasic::Item *i = &items[idx];
+		auto& item = items[idx];
 		if(idx == selected)
 		{
 			p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 0.5));
@@ -183,7 +184,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent *e)
 
 		p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 
-		p.drawText(2, yoffset + font.textHeight(), font, i->name);
+		p.drawText(2, yoffset + font.textHeight(), font, item.name);
 		yoffset += font.textHeight() + padding;
 	}
 }
@@ -202,11 +203,12 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 
 	switch(e->keycode) {
 	case KeyEvent::KeyUp:
-		marked--;
-		if(marked < 0)
+		if(marked == 0)
 		{
-			marked = 0;
+			return;
 		}
+
+		marked--;
 
 		if(marked < scroll.value())
 		{
@@ -219,11 +221,12 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
 
-			marked++;
-			if(marked > ((int)items.size() - 1))
+			if(marked == ((int)items.size() - 1))
 			{
-				marked = (int)items.size() - 1;
+				return;
 			}
+
+			marked++;
 
 			if(marked > (scroll.value() + numitems - 1))
 			{

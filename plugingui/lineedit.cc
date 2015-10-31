@@ -124,13 +124,30 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 	{
 		switch(keyEvent->keycode) {
 		case KeyEvent::KeyLeft:
-			if(pos)
+			if(pos == 0)
 			{
-				pos--;
+				return;
 			}
+
+			pos--;
+
 			if(offsetPos >= pos)
 			{
 				walkstate = WalkLeft;
+			}
+			break;
+
+		case KeyEvent::KeyRight:
+			if(pos == _text.length())
+			{
+				return;
+			}
+
+			pos++;
+
+			if((pos < _text.length()) && ((offsetPos + visibleText.length()) <= pos))
+			{
+				walkstate = WalkRight;
 			}
 			break;
 
@@ -144,17 +161,6 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			pos = _text.length();
 			visibleText = _text;
 			offsetPos = 0;
-			break;
-
-		case KeyEvent::KeyRight:
-			if(pos < _text.length())
-			{
-				pos++;
-			}
-			if((pos < _text.length()) && ((offsetPos + visibleText.length()) <= pos))
-			{
-				walkstate = WalkRight;
-			}
 			break;
 
 		case KeyEvent::KeyDelete:
