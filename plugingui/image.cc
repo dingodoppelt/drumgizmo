@@ -76,9 +76,13 @@ void Image::setError(int err)
 
 void Image::load(const char* data, size_t size)
 {
+	unsigned int iw, ih;
 	unsigned int res = lodepng_decode32((unsigned char**)&image_data,
-	                                    &_width, &_height,
+	                                    &iw, &ih,
 	                                    (const unsigned char*)data, size);
+
+	_width = iw;
+	_height = ih;
 
 	if(res != 0)
 	{
