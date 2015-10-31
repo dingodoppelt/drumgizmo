@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_IMAGE_H__
-#define __DRUMGIZMO_IMAGE_H__
+#pragma once
 
 #include <string>
 
@@ -36,24 +35,22 @@ namespace GUI {
 
 class Image {
 public:
-  Image(const char* data, size_t size);
-  Image(std::string filename);
-  ~Image();
+	Image(const char* data, size_t size);
+	Image(const std::string& filename);
+	~Image();
 
-  size_t width();
-  size_t height();
+	size_t width();
+	size_t height();
 
-  Colour getPixel(size_t x, size_t y);
+	Colour getPixel(size_t x, size_t y);
 
 private:
-  void setError(int err);
+	void setError(int err);
 
-  void load(const char* data, size_t size);
+	void load(const char* data, size_t size);
 
-  size_t w, h;
-  unsigned char *image_data;
+	size_t _width, _height;
+	unsigned char* image_data;
 };
 
-};
-
-#endif/*__DRUMGIZMO_IMAGE_H__*/
+} // GUI::
