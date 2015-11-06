@@ -35,7 +35,7 @@ namespace GUI {
 class Window;
 class NativeWindowX11 : public NativeWindow {
 public:
-	NativeWindowX11(Window* window);
+	NativeWindowX11(Window& window);
 	~NativeWindowX11();
 
 	// From NativeWindow:
@@ -58,7 +58,7 @@ private:
 	GC gc;
 	XImage* buffer;
 
-	Window* window;
+	Window& window;
 
 	int last_click;
 

@@ -60,10 +60,10 @@ GUI::Window::Window()
 
 #ifndef PUGL
 #ifdef X11
-  native = new NativeWindowX11(this);
+  native = new NativeWindowX11(*this);
 #endif/*X11*/
 #ifdef WIN32
-  native = new NativeWindowWin32(this);
+  native = new NativeWindowWin32(*this);
 #endif/*WIN32*/
 #else/*Use pugl*/
   native = new NativeWindowPugl(this);

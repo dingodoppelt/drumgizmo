@@ -35,9 +35,8 @@
 
 namespace GUI {
 
-NativeWindowX11::NativeWindowX11(Window* window)
-	: NativeWindow()
-	, buffer(nullptr)
+NativeWindowX11::NativeWindowX11(Window& window)
+	: buffer(nullptr)
 	, window(window)
 {
 	display = XOpenDisplay(nullptr);
@@ -58,8 +57,8 @@ NativeWindowX11::NativeWindowX11(Window* window)
 	unsigned long border = 0;
 	xwindow = XCreateSimpleWindow(display,
 	                              rootWindow,
-	                              window->x(), window->y(),
-	                              window->width(), window->height(),
+	                              window.x(), window.y(),
+	                              window.width(), window.height(),
 	                              border,
 	                              blackColor, blackColor);
 
@@ -121,9 +120,9 @@ void NativeWindowX11::setFixedSize(int width, int height)
 	size_hints->min_width = size_hints->max_width = width;
 	size_hints->min_height = size_hints->max_height = height;
 
-	//size_hints->min_aspect.x = (float)window->width()/(float)window->height();
-	//size_hints->max_aspect.x = (float)window->width()/(float)window->height();
-	//size_hints->min_aspect.y = (float)window->width()/(float)window->height();
+	//size_hints->min_aspect.x = (float)window.width()/(float)window.height();
+	//size_hints->max_aspect.x = (float)window.width()/(float)window.height();
+	//size_hints->min_aspect.y = (float)window.width()/(float)window.height();
 	//size_hints->max_aspect.y = size_hints->min_aspect.y;
 
 	XSetWMNormalHints(display, xwindow, size_hints);
@@ -299,9 +298,9 @@ void NativeWindowX11::handleBuffer()
 		XDestroyImage(buffer);
 	}
 
-	buffer = createImageFromBuffer(window->wpixbuf.buf,
-	                               window->wpixbuf.width,
-	                               window->wpixbuf.height);
+	buffer = createImageFromBuffer(window.wpixbuf.buf,
+	                               window.wpixbuf.width,
+	                               window.wpixbuf.height);
 }
 
 void NativeWindowX11::redraw()
@@ -313,11 +312,11 @@ void NativeWindowX11::redraw()
 
 	if(buffer == nullptr)
 	{
-		window->updateBuffer();
+		window.updateBuffer();
 	}
 
 	XPutImage(display, xwindow, gc, buffer, 0, 0, 0, 0,
-	          window->width(), window->height());
+	          window.width(), window.height());
 	XFlush(display);
 }
 
