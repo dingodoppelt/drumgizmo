@@ -39,7 +39,7 @@ class Event;
 
 class NativeWindowWin32 : public NativeWindow {
 public:
-	NativeWindowWin32(Window *window);
+	NativeWindowWin32(Window& window);
 	~NativeWindowWin32();
 
 	void setFixedSize(int width, int height) override;
@@ -53,13 +53,12 @@ public:
 	void grabMouse(bool grab) override;
 
 	bool hasEvent() override;
-	Event *getNextEvent() override;
+	Event* getNextEvent() override;
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
-	// Needed by dialogProc
-	Window* window;
+	Window& window;
 	WNDID m_hwnd = 0;
 	char* m_className = nullptr;
 	Event* event = nullptr;

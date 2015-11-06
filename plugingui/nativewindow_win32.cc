@@ -35,8 +35,8 @@ namespace GUI {
 LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
                                                WPARAM wp, LPARAM lp)
 {
-	NativeWindowWin32 *native =
-		(NativeWindowWin32 *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	NativeWindowWin32* native =
+		(NativeWindowWin32*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
 	// NOTE: 'native' is nullptr intil the WM_CREATE message has been handled.
 	if(!native)
@@ -44,7 +44,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 		return DefWindowProc(hwnd, msg, wp, lp);
 	}
 
-	Window *window = native->window;
+	Window& window = native->window;
 
 	switch(msg) {
 	case WM_SIZE:
@@ -52,10 +52,10 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			static bool first = true;
 			if(!first)
 			{
-				ResizeEvent *e = new ResizeEvent();
-				e->width = LOWORD(lp);
-				e->height = HIWORD(lp);
-				native->event = e;
+				ResizeEvent* resizeEvent = new ResizeEvent();
+				resizeEvent->width = LOWORD(lp);
+				resizeEvent->height = HIWORD(lp);
+				native->event = resizeEvent;
 				first = false;
 			}
 		}
@@ -63,17 +63,17 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_MOVE:
 		{
-//      MoveEvent *e = new MoveEvent();
-//      e->x = (int)(short) LOWORD(lp);
-//      e->y = (int)(short) HIWORD(lp);
-//      native->event = e;
+//      MoveEvent* moveEvent = new MoveEvent();
+//      moveEvent->x = (short)LOWORD(lp);
+//      moveEvent->y = (short)HIWORD(lp);
+//      native->event = moveEvent;
 		}
 		break;
 
 	case WM_CLOSE:
 		{
-			CloseEvent *e = new CloseEvent();
-			native->event = e;
+			CloseEvent* closeEvent = new CloseEvent();
+			native->event = closeEvent;
 		}
 		break;
 //		HWND child, old;
@@ -91,27 +91,27 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 //		return 0;
 	case WM_MOUSEMOVE:
 		{
-			MouseMoveEvent *e = new MouseMoveEvent();
-			e->x = (int)(short) LOWORD(lp);
-			e->y = (int)(short) HIWORD(lp);
-			native->event = e;
+			MouseMoveEvent* mouseMoveEvent = new MouseMoveEvent();
+			mouseMoveEvent->x = (short)LOWORD(lp);
+			mouseMoveEvent->y = (short)HIWORD(lp);
+			native->event = mouseMoveEvent;
 		}
 		break;
 
 	case WM_MOUSEWHEEL:
 		{
-			ScrollEvent *e = new ScrollEvent();
+			ScrollEvent* scrollEvent = new ScrollEvent();
 
 			// NOTE: lp is coordinates in screen space, not client space.
 			POINT p;
-			p.x = (int)(short) LOWORD(lp);
-			p.y = (int)(short) HIWORD(lp);
+			p.x = (short)LOWORD(lp);
+			p.y = (short)HIWORD(lp);
 			ScreenToClient(hwnd, &p);
 
-			e->x = p.x;
-			e->y = p.y;
-			e->delta = -1 * (short)HIWORD(wp) / 60;
-			native->event = e;
+			scrollEvent->x = p.x;
+			scrollEvent->y = p.y;
+			scrollEvent->delta = -1 * (short)HIWORD(wp) / 60;
+			native->event = scrollEvent;
 		}
 		break;
 
@@ -125,31 +125,32 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	case WM_MBUTTONDBLCLK:
 	case WM_MBUTTONDOWN:
 		{
-			ButtonEvent *e = new ButtonEvent();
-			e->x = (int)(short) LOWORD(lp);
-			e->y = (int)(short) HIWORD(lp);
+			ButtonEvent* buttonEvent = new ButtonEvent();
+
+			buttonEvent->x = (short)LOWORD(lp);
+			buttonEvent->y = (short)HIWORD(lp);
 
 			if(msg == WM_LBUTTONUP ||
 			   msg == WM_LBUTTONDBLCLK ||
 			   msg == WM_LBUTTONDOWN)
 			{
-				e->button = ButtonEvent::Left;
+				buttonEvent->button = ButtonEvent::Left;
 			}
 			else if(msg == WM_RBUTTONUP ||
 			        msg == WM_RBUTTONDBLCLK ||
 			        msg == WM_RBUTTONDOWN)
 			{
-				e->button = ButtonEvent::Middle;
+				buttonEvent->button = ButtonEvent::Middle;
 			}
 			else if(msg == WM_MBUTTONUP ||
 			        msg == WM_MBUTTONDBLCLK ||
 			        msg == WM_MBUTTONDOWN)
 			{
-				e->button = ButtonEvent::Right;
+				buttonEvent->button = ButtonEvent::Right;
 			}
 			else
 			{
-				delete e;
+				delete buttonEvent;
 				break; // unknown button
 			}
 
@@ -157,117 +158,118 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			   msg == WM_RBUTTONUP ||
 			   msg == WM_MBUTTONUP)
 			{
-				e->direction = ButtonEvent::Up;
+				buttonEvent->direction = ButtonEvent::Up;
 			}
 			else if(msg == WM_LBUTTONDOWN ||
 			        msg == WM_RBUTTONDOWN ||
 			        msg == WM_MBUTTONDOWN)
 			{
-				e->direction = ButtonEvent::Down;
+				buttonEvent->direction = ButtonEvent::Down;
 			}
 			else
 			{
-	      delete e;
+	      delete buttonEvent;
 	      break; // unknown direction
 			}
 
-			e->doubleclick = (msg == WM_LBUTTONDBLCLK ||
-			                  msg == WM_RBUTTONDBLCLK ||
-			                  msg == WM_MBUTTONDBLCLK);
+			buttonEvent->doubleclick = (msg == WM_LBUTTONDBLCLK ||
+			                            msg == WM_RBUTTONDBLCLK ||
+			                            msg == WM_MBUTTONDBLCLK);
 
-			native->event = e;
+			native->event = buttonEvent;
 		}
 		break;
 
 	case WM_KEYDOWN:
 		{
-			KeyEvent *e = new KeyEvent();
-			//printf("wp: %d\n", wp);
+			KeyEvent* keyEvent = new KeyEvent();
+
 			switch(wp) {
-			case 37: e->keycode = KeyEvent::KeyLeft; break;
-			case 39: e->keycode = KeyEvent::KeyRight; break;
-			case 38: e->keycode = KeyEvent::KeyUp; break;
-			case 40: e->keycode = KeyEvent::KeyDown; break;
-			case 8:  e->keycode = KeyEvent::KeyBackspace; break;
-			case 46: e->keycode = KeyEvent::KeyDelete; break;
-			case 36: e->keycode = KeyEvent::KeyHome; break;
-			case 35: e->keycode = KeyEvent::KeyEnd; break;
-			case 33: e->keycode = KeyEvent::KeyPageUp; break;
-			case 34: e->keycode = KeyEvent::KeyPageDown; break;
-			case 13: e->keycode = KeyEvent::KeyEnter; break;
-			default: e->keycode = KeyEvent::KeyUnknown; break;
+			case VK_LEFT:   keyEvent->keycode = KeyEvent::KeyLeft;      break;
+			case VK_RIGHT:  keyEvent->keycode = KeyEvent::KeyRight;     break;
+			case VK_UP:     keyEvent->keycode = KeyEvent::KeyUp;        break;
+			case VK_DOWN:   keyEvent->keycode = KeyEvent::KeyDown;      break;
+			case VK_BACK:   keyEvent->keycode = KeyEvent::KeyBackspace; break;
+			case VK_DELETE: keyEvent->keycode = KeyEvent::KeyDelete;    break;
+			case VK_HOME:   keyEvent->keycode = KeyEvent::KeyHome;      break;
+			case VK_END:    keyEvent->keycode = KeyEvent::KeyEnd;       break;
+			case VK_PRIOR:  keyEvent->keycode = KeyEvent::KeyPageUp;    break;
+			case VK_NEXT:   keyEvent->keycode = KeyEvent::KeyPageDown;  break;
+			case VK_RETURN: keyEvent->keycode = KeyEvent::KeyEnter;     break;
+			default:        keyEvent->keycode = KeyEvent::KeyUnknown;   break;
 			}
-			e->text = "";
-			e->direction = KeyEvent::Up;
-			native->event = e;
+
+			keyEvent->text = "";
+			keyEvent->direction = KeyEvent::Up;
+
+			native->event = keyEvent;
 		}
 		break;
 
 	case WM_CHAR:
 		{
-			//printf("WM_CHAR %d %d\n", (int)lp, (int)wp);
 			if(wp >= ' ') // Filter control chars.
 			{
-				KeyEvent *e = new KeyEvent();
-				e->keycode = KeyEvent::KeyCharacter;
-				e->text += (char)wp;
-				e->direction = KeyEvent::Up;
-				native->event = e;
+				KeyEvent* keyEvent = new KeyEvent();
+				keyEvent->keycode = KeyEvent::KeyCharacter;
+				keyEvent->text += (char)wp;
+				keyEvent->direction = KeyEvent::Up;
+				native->event = keyEvent;
 			}
 		}
 		break;
 
 	case WM_PAINT:
 		{
-			RepaintEvent *e = new RepaintEvent();
-			e->x = 0;
-			e->y = 0;
-			e->width = 100;
-			e->height = 100;
-			native->event = e;
+			RepaintEvent* repaintEvent = new RepaintEvent();
+			repaintEvent->x = 0;
+			repaintEvent->y = 0;
+			repaintEvent->width = 100;
+			repaintEvent->height = 100;
+			native->event = repaintEvent;
 
 			// Move to window.h (in class)
 			HDC pDC;
 			HBITMAP old;
 			HBITMAP ourbitmap;
-			int * framebuf;
-			PixelBuffer &px = window->wpixbuf;
+			int* framebuf;
+			PixelBuffer& px = window.wpixbuf;
 
-			{ // Create bitmap (move to window.cc)
+			{ // Create bitmap
 				HDC hDC;
 				BITMAPINFO bitmapinfo;
 				hDC = CreateCompatibleDC(nullptr);
 				bitmapinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 				bitmapinfo.bmiHeader.biWidth = px.width;
-				bitmapinfo.bmiHeader.biHeight = -px.height; /* top-down */
+				bitmapinfo.bmiHeader.biHeight = -px.height; // top-down
 				bitmapinfo.bmiHeader.biPlanes = 1;
 				bitmapinfo.bmiHeader.biBitCount = 32;
 				bitmapinfo.bmiHeader.biCompression = BI_RGB;
 				bitmapinfo.bmiHeader.biSizeImage = 0;
 				bitmapinfo.bmiHeader.biClrUsed = 256;
 				bitmapinfo.bmiHeader.biClrImportant = 256;
-				ourbitmap=CreateDIBSection(hDC, &bitmapinfo,
-				                           DIB_RGB_COLORS, (void**)&framebuf, 0, 0);
+				ourbitmap = CreateDIBSection(hDC, &bitmapinfo,
+				                             DIB_RGB_COLORS, (void**)&framebuf, 0, 0);
 				pDC=CreateCompatibleDC(nullptr);
 				old = (HBITMAP__*)SelectObject(pDC, ourbitmap);
 				DeleteDC(hDC);
 			}
 
-			{ // Copy PixelBuffer to framebuffer (move to window.cc)
-				int i,j,k;
-				for (k=0,i=0;i<(int)px.height;i++)
+			{ // Copy PixelBuffer to framebuffer
+				int i, j, k;
+				for(k = 0, i = 0; i < (int)px.height; ++i)
 				{
-					for (j=0;j<(int)px.width;j++,k++)
+					for(j = 0; j < (int)px.width; ++j, ++k)
 					{
-						*(framebuf+k)=RGB(px.buf[(j + i * px.width) * 3 + 2],
-						                  px.buf[(j + i * px.width) * 3 + 1],
-						                  px.buf[(j + i * px.width) * 3 + 0]);
+						*(framebuf + k) = RGB(px.buf[(j + i * px.width) * 3 + 2],
+						                      px.buf[(j + i * px.width) * 3 + 1],
+						                      px.buf[(j + i * px.width) * 3 + 0]);
 					}
 				}
 			}
 
-			PAINTSTRUCT	ps;
-			HDC	hdc = BeginPaint(native->m_hwnd, &ps);
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(native->m_hwnd, &ps);
 			BitBlt(hdc, 0, 0, px.width, px.height, pDC, 0, 0, SRCCOPY);
 			EndPaint(native->m_hwnd, &ps);
 
@@ -284,7 +286,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
 
-NativeWindowWin32::NativeWindowWin32(Window *window)
+NativeWindowWin32::NativeWindowWin32(Window& window)
 	: window(window)
 {
 	WNDCLASSEX wcex;
@@ -327,8 +329,8 @@ NativeWindowWin32::NativeWindowWin32(Window *window)
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
 	                        "DGBasisWidget",
 	                        (WS_OVERLAPPEDWINDOW | WS_VISIBLE),
-	                        window->x(), window->y(),
-	                        window->width(), window->height(),
+	                        window.x(), window.y(),
+	                        window.width(), window.height(),
 	                        wndId, nullptr,
 	                        GetModuleHandle(nullptr), nullptr);
 
@@ -408,9 +410,9 @@ bool NativeWindowWin32::hasEvent()
 	return PeekMessage(&msg, nullptr, 0, 0, 0) != 0;
 }
 
-Event *NativeWindowWin32::getNextEvent()
+Event* NativeWindowWin32::getNextEvent()
 {
-	Event *event = nullptr;
+	Event* event = nullptr;
 
 	MSG msg;
 	if(GetMessage(&msg, nullptr, 0, 0))
