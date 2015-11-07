@@ -35,15 +35,17 @@ namespace GUI {
 
 Widget::Widget(Widget *parent)
 	: pixbuf(1, 1)
+	, parent(parent)
+	, _window(nullptr)
 {
 	_width = _height = 10;
 
-	this->parent = parent;
 	if(parent)
 	{
 		parent->addChild(this);
 		_window = parent->window();
 	}
+
 	_width = _height = 0;
 	_visible = true;
 }
@@ -173,7 +175,7 @@ Window *Widget::window()
 
 void Widget::repaint_r(RepaintEvent *e)
 {
-	Painter p(this); // make sure pixbuf refcount is incremented.
+	Painter p(*this); // make sure pixbuf refcount is incremented.
 
 	repaintEvent(e);
 

@@ -36,7 +36,7 @@ class Window;
 
 class EventHandler {
 public:
-	EventHandler(NativeWindow *nativeWindow, Window *window);
+	EventHandler(NativeWindow& nativeWindow, Window& window);
 
 	//! \brief Process all evebts currently in the event queue.
 	void processEvents();
@@ -51,8 +51,8 @@ public:
 	Notifier<> closeNotifier;
 
 private:
-	Window *window;
-	NativeWindow *nativeWindow;
+	Window& window;
+	NativeWindow& nativeWindow;
 
 	// Used to ignore mouse button release after a double click.
 	bool lastWasDoubleClick;

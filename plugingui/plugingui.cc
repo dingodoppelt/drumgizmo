@@ -84,7 +84,7 @@ void PluginGUI::stopThread()
 
 void PluginGUI::handleMessage(Message *msg)
 {
-  Painter p(window);// Make sure we only redraw buffer one time.
+  Painter p(*window);// Make sure we only redraw buffer one time.
 
   switch(msg->type()) {
   case Message::LoadStatus:

@@ -144,10 +144,10 @@ void Knob::repaintEvent(RepaintEvent *e)
 	int center_x = width() / 2;
 	int center_y = height() / 2;
 
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
-	p.drawImageStretched(0, 0, &img_knob, diameter, diameter);
+	p.drawImageStretched(0, 0, img_knob, diameter, diameter);
 
 	char buf[64];
 	sprintf(buf, "%.2f", currentValue * maximum);

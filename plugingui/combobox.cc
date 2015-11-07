@@ -115,7 +115,7 @@ static void drawArrow(Painter &p, int x, int y, int w, int h)
 
 void ComboBox::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -128,7 +128,7 @@ void ComboBox::repaintEvent(RepaintEvent *e)
 		return;
 	}
 
-	p.drawBox(0, 0, &box, w, h);
+	p.drawBox(0, 0, box, w, h);
 
 	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 	p.drawText(BORDER - 4 + 3, height()/2+5 + 1 + 1, font, _text);

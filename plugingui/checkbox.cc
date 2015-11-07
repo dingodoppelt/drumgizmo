@@ -83,32 +83,32 @@ void CheckBox::keyEvent(KeyEvent *e)
 
 void CheckBox::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
 	if(state)
 	{
-		p.drawImage(0, (knob.height() - bg_on.height()) / 2, &bg_on);
+		p.drawImage(0, (knob.height() - bg_on.height()) / 2, bg_on);
 		if(middle)
 		{
-			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
+			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, knob);
 		}
 		else
 		{
-			p.drawImage(bg_on.width() - 40 + 2, 0, &knob);
+			p.drawImage(bg_on.width() - 40 + 2, 0, knob);
 		}
 	}
 	else
 	{
-		p.drawImage(0, (knob.height() - bg_off.height()) / 2, &bg_off);
+		p.drawImage(0, (knob.height() - bg_off.height()) / 2, bg_off);
 		if(middle)
 		{
-			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, &knob);
+			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, knob);
 		}
 		else
 		{
-			p.drawImage(0, 0, &knob);
+			p.drawImage(0, 0, knob);
 		}
 	}
 }

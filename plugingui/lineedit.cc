@@ -213,7 +213,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 
 void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -224,7 +224,7 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 		return;
 	}
 
-	p.drawBox(0, 0, &box, w, h);
+	p.drawBox(0, 0, box, w, h);
 
 	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 

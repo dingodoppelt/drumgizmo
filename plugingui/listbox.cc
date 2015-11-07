@@ -101,7 +101,7 @@ void ListBox::clearSelectedValue()
 
 void ListBox::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -112,7 +112,7 @@ void ListBox::repaintEvent(RepaintEvent *e)
 		return;
 	}
 
-	p.drawBox(0, 0, &box, w, h);
+	p.drawBox(0, 0, box, w, h);
 }
 
 void ListBox::resize(int width, int height)

@@ -36,6 +36,6 @@ GUI::VerticalLine::VerticalLine(GUI::Widget *parent)
 void GUI::VerticalLine::repaintEvent(RepaintEvent *e)
 {
   (void)e;
-  GUI::Painter p(this);
-  p.drawImageStretched(0, 0, &vline, width(), height());
+  GUI::Painter p(*this);
+  p.drawImageStretched(0, 0, vline, width(), height());
 }

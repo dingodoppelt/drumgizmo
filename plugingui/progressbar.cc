@@ -71,14 +71,14 @@ void GUI::ProgressBar::setProgress(float progress)
 
 void GUI::ProgressBar::repaintEvent(GUI::RepaintEvent *e)
 {
-  Painter p(this);
+  Painter p(*this);
 
   int max = width() * _progress;
 
   p.clear();
 
   int brd = 4;
-  p.drawBar(0, 0, &bar_bg, width(), height());
+  p.drawBar(0, 0, bar_bg, width(), height());
 
   GUI::Painter::Bar *b = NULL;
   switch(state) {
@@ -87,7 +87,7 @@ void GUI::ProgressBar::repaintEvent(GUI::RepaintEvent *e)
   case blue: b = &bar_blue; break;
   default: break;    
   }
-  if(b) p.drawBar(brd, 0, b, max - 2*brd, height());
+  if(b) p.drawBar(brd, 0, *b, max - 2*brd, height());
 }
 
 #ifdef TEST_PROGRESSBAR

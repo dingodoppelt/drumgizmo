@@ -44,7 +44,7 @@ void Label::setText(std::string text)
 
 void Label::repaintEvent(GUI::RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 

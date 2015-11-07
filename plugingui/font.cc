@@ -72,7 +72,7 @@ Font::Font(const std::string& fontfile)
 	characters[c - 1].width = characters[c].offset - characters[c - 1].offset - 1;
 }
 
-size_t Font::textWidth(const std::string& text)
+size_t Font::textWidth(const std::string& text) const
 {
 	size_t len = 0;
 
@@ -86,12 +86,12 @@ size_t Font::textWidth(const std::string& text)
 	return len;
 }
 
-size_t Font::textHeight(const std::string& text)
+size_t Font::textHeight(const std::string& text) const
 {
 	return img_font.height();
 }
 
-PixelBufferAlpha *Font::render(const std::string& text)
+PixelBufferAlpha *Font::render(const std::string& text) const
 {
 	int border = 1;
 	PixelBufferAlpha *pb =

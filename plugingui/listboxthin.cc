@@ -96,7 +96,7 @@ std::string ListBoxThin::selectedValue()
 
 void ListBoxThin::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -107,7 +107,7 @@ void ListBoxThin::repaintEvent(RepaintEvent *e)
 		return;
 	}
 
-	p.drawBox(0, 0, &box, w, h);
+	p.drawBox(0, 0, box, w, h);
 }
 
 void ListBoxThin::resize(int width, int height)

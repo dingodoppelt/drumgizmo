@@ -92,17 +92,17 @@ void Image::load(const char* data, size_t size)
 	}
 }
 
-size_t Image::width()
+size_t Image::width() const
 {
 	return _width;
 }
 
-size_t Image::height()
+size_t Image::height() const
 {
 	return _height;
 }
 
-Colour Image::getPixel(size_t x, size_t y)
+Colour Image::getPixel(size_t x, size_t y) const
 {
 	if(x > _width || y > _height)
 	{

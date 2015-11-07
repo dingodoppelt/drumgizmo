@@ -39,10 +39,10 @@ public:
 	Image(const std::string& filename);
 	~Image();
 
-	size_t width();
-	size_t height();
+	size_t width() const;
+	size_t height() const;
 
-	Colour getPixel(size_t x, size_t y);
+	Colour getPixel(size_t x, size_t y) const;
 
 private:
 	void setError(int err);

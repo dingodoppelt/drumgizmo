@@ -142,7 +142,7 @@ void ListBoxBasic::clearSelectedValue()
 
 void ListBoxBasic::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -154,7 +154,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent *e)
 		return;
 	}
 
-	p.drawImageStretched(0, 0, &bg_img, w, h);
+	p.drawImageStretched(0, 0, bg_img, w, h);
 
 	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 

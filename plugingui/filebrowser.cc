@@ -131,8 +131,8 @@ void FileBrowser::resize(int w, int h)
 
 void FileBrowser::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
-	p.drawImageStretched(0,0, &back, width(), height());
+	Painter p(*this);
+	p.drawImageStretched(0,0, back, width(), height());
 }
 
 void FileBrowser::listSelectionChanged()

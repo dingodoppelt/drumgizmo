@@ -38,10 +38,10 @@ class Font {
 public:
 	Font(const std::string& fontfile = ":font.png");
 
-	size_t textWidth(const std::string& text);
-	size_t textHeight(const std::string& text = "");
+	size_t textWidth(const std::string& text) const;
+	size_t textHeight(const std::string& text = "") const;
 
-	PixelBufferAlpha *render(const std::string& text);
+	PixelBufferAlpha *render(const std::string& text) const;
 
 private:
 	Image img_font;
@@ -54,11 +54,6 @@ private:
 	};
 
 	std::array<Character, 255> characters;
-
-//	std::map<char, int> character_offset;
-//	std::map<char, size_t> character_width;
-//	std::map<char, int> character_pre_bias;
-//	std::map<char, int> character_post_bias;
 };
 
 } // GUI::

@@ -69,7 +69,7 @@ GUI::Window::Window()
   native = new NativeWindowPugl(this);
 #endif
 
-  eventhandler = new GUI::EventHandler(native, this);
+  eventhandler = new GUI::EventHandler(*native, *this);
 }
 
 GUI::Window::~Window()
@@ -92,10 +92,9 @@ void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
 {
   if(!visible()) return;
 
-  Painter p(this);
-  p.drawImageStretched(0,0, &back, width(), height());
-  p.drawImage(width() - logo.width(),
-              height() - logo.height(), &logo);
+  Painter p(*this);
+  p.drawImageStretched(0,0, back, width(), height());
+  p.drawImage(width() - logo.width(), height() - logo.height(), logo);
 }
 
 void GUI::Window::setFixedSize(int w, int h)

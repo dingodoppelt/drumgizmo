@@ -31,7 +31,7 @@
 
 namespace GUI {
 
-EventHandler::EventHandler(NativeWindow *nativeWindow, Window *window)
+EventHandler::EventHandler(NativeWindow& nativeWindow, Window& window)
 	: window(window)
 	, nativeWindow(nativeWindow)
 //	, last_click(0)
@@ -40,12 +40,12 @@ EventHandler::EventHandler(NativeWindow *nativeWindow, Window *window)
 
 bool EventHandler::hasEvent()
 {
-	return nativeWindow->hasEvent();
+	return nativeWindow.hasEvent();
 }
 
 Event *EventHandler::getNextEvent()
 {
-	return nativeWindow->getNextEvent();
+	return nativeWindow.getNextEvent();
 }
 
 void EventHandler::processEvents()
@@ -63,16 +63,16 @@ void EventHandler::processEvents()
 
 		switch(event->type()) {
 		case Event::Repaint:
-			window->redraw();
+			window.redraw();
 			break;
 
 		case Event::Resize:
 			{
 				auto resizeEvent = static_cast<ResizeEvent*>(event);
-				if((resizeEvent->width != window->width()) ||
-				   (resizeEvent->height != window->height()))
+				if((resizeEvent->width != window.width()) ||
+				   (resizeEvent->height != window.height()))
 				{
-					window->resized(resizeEvent->width, resizeEvent->height);
+					window.resized(resizeEvent->width, resizeEvent->height);
 				}
 			}
 			break;
@@ -81,8 +81,8 @@ void EventHandler::processEvents()
 			{
 				auto moveEvent = static_cast<MouseMoveEvent*>(event);
 
-				auto widget = window->find(moveEvent->x, moveEvent->y);
-				auto oldwidget = window->mouseFocus();
+				auto widget = window.find(moveEvent->x, moveEvent->y);
+				auto oldwidget = window.mouseFocus();
 				if(widget != oldwidget)
 				{
 					// Send focus leave to oldwidget
@@ -97,16 +97,16 @@ void EventHandler::processEvents()
 						widget->mouseEnterEvent();
 					}
 
-					window->setMouseFocus(widget);
+					window.setMouseFocus(widget);
 				}
 
-				if(window->buttonDownFocus())
+				if(window.buttonDownFocus())
 				{
-					auto widget = window->buttonDownFocus();
+					auto widget = window.buttonDownFocus();
 					moveEvent->x -= widget->windowX();
 					moveEvent->y -= widget->windowY();
 
-					window->buttonDownFocus()->mouseMoveEvent(moveEvent);
+					window.buttonDownFocus()->mouseMoveEvent(moveEvent);
 					break;
 				}
 
@@ -131,13 +131,13 @@ void EventHandler::processEvents()
 
 				lastWasDoubleClick = buttonEvent->doubleclick;
 
-				auto widget = window->find(buttonEvent->x, buttonEvent->y);
+				auto widget = window.find(buttonEvent->x, buttonEvent->y);
 
-				if(window->buttonDownFocus())
+				if(window.buttonDownFocus())
 				{
 					if(buttonEvent->direction == ButtonEvent::Up)
 					{
-						auto widget = window->buttonDownFocus();
+						auto widget = window.buttonDownFocus();
 						buttonEvent->x -= widget->windowX();
 						buttonEvent->y -= widget->windowY();
 
@@ -146,7 +146,7 @@ void EventHandler::processEvents()
 					}
 					else // Event::Button::Down
 					{
-						window->setButtonDownFocus(nullptr);
+						window.setButtonDownFocus(nullptr);
 					}
 				}
 
@@ -160,12 +160,12 @@ void EventHandler::processEvents()
 					if((buttonEvent->direction == ButtonEvent::Down) &&
 					   widget->catchMouse())
 					{
-						window->setButtonDownFocus(widget);
+						window.setButtonDownFocus(widget);
 					}
 
 					if(widget->isFocusable())
 					{
-						window->setKeyboardFocus(widget);
+						window.setKeyboardFocus(widget);
 					}
 				}
 			}
@@ -175,7 +175,7 @@ void EventHandler::processEvents()
 			{
 				auto scrollEvent = static_cast<ScrollEvent*>(event);
 
-				auto widget = window->find(scrollEvent->x, scrollEvent->y);
+				auto widget = window.find(scrollEvent->x, scrollEvent->y);
 				if(widget)
 				{
 					scrollEvent->x -= widget->windowX();
@@ -189,9 +189,9 @@ void EventHandler::processEvents()
 		case Event::Key:
 			{
 				auto keyEvent = static_cast<KeyEvent*>(event);
-				if(window->keyboardFocus())
+				if(window.keyboardFocus())
 				{
-					window->keyboardFocus()->keyEvent(keyEvent);
+					window.keyboardFocus()->keyEvent(keyEvent);
 				}
 			}
 			break;

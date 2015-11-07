@@ -104,7 +104,7 @@ void GUI::Slider::repaintEvent(GUI::RepaintEvent *e)
 {
   //DEBUG(slider, "Slider::repaintEvent (%f)\n", val);
 
-  Painter p(this);
+  Painter p(*this);
 
   float alpha = 0.8;
 

@@ -50,7 +50,7 @@ void LED::repaintEvent(RepaintEvent *e)
 	size_t h = height() - 1;
 	size_t w = width() - 1;
 
-	Painter p(this);
+	Painter p(*this);
 	float alpha = 0.9;
 	switch(state) {
 	case Red:

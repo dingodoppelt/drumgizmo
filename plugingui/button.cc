@@ -106,7 +106,7 @@ void Button::buttonEvent(ButtonEvent *e)
 
 void Button::repaintEvent(RepaintEvent *e)
 {
-	Painter p(this);
+	Painter p(*this);
 
 	p.clear();
 
@@ -119,10 +119,10 @@ void Button::repaintEvent(RepaintEvent *e)
 
 	switch(draw_state) {
 	case up:
-		p.drawBox(0, 0, &box_up, w, h);
+		p.drawBox(0, 0, box_up, w, h);
 		break;
 	case down:
-		p.drawBox(0, 0, &box_down, w, h);
+		p.drawBox(0, 0, box_down, w, h);
 		break;
 	}
 

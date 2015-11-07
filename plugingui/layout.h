@@ -38,7 +38,7 @@ public:
 	LayoutItem();
 	virtual ~LayoutItem();
 
-	void setLayoutParent(Layout *parent);
+	void setLayoutParent(Layout* parent);
 
 	virtual void resize(int width, int height) = 0;
 	virtual void move(size_t x, size_t y) = 0;
@@ -48,7 +48,7 @@ public:
 	virtual size_t height() = 0;
 
 private:
-	Layout *parent;
+	Layout* parent;
 };
 
 //! \brief Abtract Layout class.

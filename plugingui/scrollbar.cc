@@ -107,11 +107,11 @@ static void drawArrow(GUI::Painter &p, int x, int y, int w, int h)
 
 void GUI::ScrollBar::repaintEvent(RepaintEvent *e)
 {
-  GUI::Painter p(this);
+  GUI::Painter p(*this);
 
   p.clear();
 
-  p.drawImageStretched(0, 0, &bg_img, width(), height());
+  p.drawImageStretched(0, 0, bg_img, width(), height());
 
   p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
   if(!max) return;
