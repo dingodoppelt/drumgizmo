@@ -52,7 +52,7 @@ Image::~Image()
 	free(image_data);
 }
 
-void Image::setError(int err)
+void Image::setError()
 {
 	Resource rc(":png_error");
 
@@ -86,8 +86,8 @@ void Image::load(const char* data, size_t size)
 
 	if(res != 0)
 	{
-		ERR(image, "[read_png_file] Error during init_io");
-		setError(3);
+		ERR(image, "Error in lodepng_decode32: %d", res);
+		setError();
 		return;
 	}
 }
