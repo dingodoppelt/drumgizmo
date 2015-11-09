@@ -58,32 +58,28 @@ public:
 	                        int width, int height);
 
 	typedef struct {
-		Image *topLeft;
-		Image *top;
-		Image *topRight;
-		Image *left;
-		Image *right;
-		Image *bottomLeft;
-		Image *bottom;
-		Image *bottomRight;
-		Image *center;
+		Image* topLeft;
+		Image* top;
+		Image* topRight;
+		Image* left;
+		Image* right;
+		Image* bottomLeft;
+		Image* bottom;
+		Image* bottomRight;
+		Image* center;
 	} Box;
 	void drawBox(int x, int y, const Box& box, int width, int height);
 
 	typedef struct {
-		Image *left;
-		Image *right;
-		Image *center;
+		Image* left;
+		Image* right;
+		Image* center;
 	} Bar;
 	void drawBar(int x, int y, const Bar& bar, int width, int height);
 
 	void clear();
 
 private:
-	void plot(int x, int y, double c);
-	double fpart(double x);
-	double rfpart(double x);
-
 	Widget& widget;
 	PixelBufferAlpha* pixbuf;
 	Colour colour;

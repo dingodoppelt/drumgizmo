@@ -59,8 +59,14 @@ void Painter::setColour(const Colour& colour)
 	this->colour = colour;
 }
 
-void Painter::plot(int x, int y, double c)
+static void plot(PixelBufferAlpha* pixbuf, const Colour& colour,
+                 int x, int y, double c)
 {
+	if((x >= (int)pixbuf->width) || (y >= (int)pixbuf->height))
+	{
+		return;
+	}
+
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
 	pixbuf->addPixel(x, y,
 	                 (unsigned char)(colour.red * 255.0),
@@ -70,12 +76,12 @@ void Painter::plot(int x, int y, double c)
 
 }
 
-double Painter::fpart(double x)
+static inline double fpart(double x)
 {
 	return x - std::floor(x);// fractional part of x
 }
 
-double Painter::rfpart(double x)
+static inline double rfpart(double x)
 {
 	return 1 - fpart(x); // reverse fractional part of x
 }
@@ -108,11 +114,11 @@ void Painter::drawLine(int x0, int y0, int x1, int y1)
 
 	if(steep)
 	{
-		plot(ypxl1, xpxl1, 1);
+		plot(pixbuf, colour, ypxl1, xpxl1, 1);
 	}
 	else
 	{
-		plot(xpxl1, ypxl1, 1);
+		plot(pixbuf, colour, xpxl1, ypxl1, 1);
 	}
 
 	double intery = yend + gradient; // first y-intersection for the main loop
@@ -126,11 +132,11 @@ void Painter::drawLine(int x0, int y0, int x1, int y1)
 
 	if(steep)
 	{
-		plot(ypxl2, xpxl2, 1);
+		plot(pixbuf, colour, ypxl2, xpxl2, 1);
 	}
 	else
 	{
-		plot(xpxl2, ypxl2, 1);
+		plot(pixbuf, colour, xpxl2, ypxl2, 1);
 	}
 
 	// main loop
@@ -138,13 +144,13 @@ void Painter::drawLine(int x0, int y0, int x1, int y1)
 	{
 		if(steep)
 		{
-			plot(std::floor(intery)  , x, rfpart(intery));
-			plot(std::floor(intery)+1, x,  fpart(intery));
+			plot(pixbuf, colour, std::floor(intery)  , x, rfpart(intery));
+			plot(pixbuf, colour, std::floor(intery)+1, x,  fpart(intery));
 		}
 		else
 		{
-			plot(x, std::floor(intery),  rfpart(intery));
-			plot(x, std::floor(intery)+1, fpart(intery));
+			plot(pixbuf, colour, x, std::floor(intery),  rfpart(intery));
+			plot(pixbuf, colour, x, std::floor(intery)+1, fpart(intery));
 		}
 		intery += gradient;
 	}
@@ -182,27 +188,48 @@ void Painter::drawText(int x0, int y0, const Font &font,
 {
 	PixelBufferAlpha* textbuf = font.render(text);
 
+	y0 -= textbuf->height; // The y0 offset (baseline) is the bottom of the text.
+
+	// If the text offset is outside the buffer; skip it.
+	if((x0 > (int)pixbuf->width) || (y0 > (int)pixbuf->height))
+	{
+		return;
+	}
+
+	// Make sure we don't try to draw outside the pixbuf.
+	int renderWidth = textbuf->width;
+	if(renderWidth > (int)(pixbuf->width - x0))
+	{
+		renderWidth = pixbuf->width - x0;
+	}
+
+	int renderHeight = textbuf->height;
+	if(renderHeight > ((int)pixbuf->height - y0))
+	{
+		renderHeight = ((int)pixbuf->height - y0);
+	}
+
 	if(nocolour)
 	{
-		for(size_t x = 0; x < textbuf->width; ++x)
+		for(int y = 0; y < renderHeight; ++y)
 		{
-			for(size_t y = 0; y < textbuf->height; ++y)
+			for(int x = 0; x < renderWidth; ++x)
 			{
 				unsigned char r, g, b, a;
 				textbuf->pixel(x, y, &r, &g, &b, &a);
-				pixbuf->addPixel(x + x0, y + y0 - textbuf->height, r, g, b, a);
+				pixbuf->addPixel(x + x0, y + y0, r, g, b, a);
 			}
 		}
 	}
 	else
 	{
-		for(size_t x = 0; x < textbuf->width; ++x)
+		for(int y = 0; y < renderHeight; ++y)
 		{
-			for(size_t y = 0; y < textbuf->height; ++y)
+			for(int x = 0; x < renderWidth; ++x)
 			{
 				unsigned char r,g,b,a;
 				textbuf->pixel(x, y, &r, &g, &b, &a);
-				pixbuf->addPixel(x + x0, y + y0 - textbuf->height,
+				pixbuf->addPixel(x + x0, y + y0,
 				                 colour.red * 255,
 				                 colour.green * 255,
 				                 colour.blue * 255,
@@ -322,6 +349,17 @@ void Painter::drawImage(int x0, int y0, const Image& image)
 	size_t fw = image.width();
 	size_t fh = image.height();
 
+	// Make sure we don't try to draw outside the pixbuf.
+	if(fw > (pixbuf->width - x0))
+	{
+		fw = (pixbuf->width - x0);
+	}
+
+	if(fh > (pixbuf->height - y0))
+	{
+		fh = (pixbuf->height - y0);
+	}
+
 	for(size_t y = 0; y < fh; ++y)
 	{
 		for(size_t x = 0; x < fw; ++x)
@@ -333,9 +371,9 @@ void Painter::drawImage(int x0, int y0, const Image& image)
 }
 
 void Painter::drawImageStretched(int x0, int y0, const Image& image,
-                                 int w, int h)
+                                 int width, int height)
 {
-	if((w < 1) || (h < 1))
+	if((width < 1) || (height < 1))
 	{
 		return;
 	}
@@ -343,12 +381,23 @@ void Painter::drawImageStretched(int x0, int y0, const Image& image,
 	float fw = image.width();
 	float fh = image.height();
 
-	for(int y = 0; y < h; ++y)
+	// Make sure we don't try to draw outside the pixbuf.
+	if(width > (int)(pixbuf->width - x0))
 	{
-		for(int x = 0; x < w; ++x)
+		width = pixbuf->width - x0;
+	}
+
+	if(height > (int)(pixbuf->height - y0))
+	{
+		height = pixbuf->height - y0;
+	}
+
+	for(int y = 0; y < height; ++y)
+	{
+		for(int x = 0; x < width; ++x)
 		{
-			int lx = ((float)x / (float)w) * fw;
-			int ly = ((float)y / (float)h) * fh;
+			int lx = ((float)x / (float)width) * fw;
+			int ly = ((float)y / (float)height) * fh;
 			Colour c = image.getPixel(lx, ly);
 			pixbuf->addPixel(x0 + x, y0 + y, c);
 		}

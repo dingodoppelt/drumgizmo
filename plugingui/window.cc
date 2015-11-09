@@ -178,8 +178,20 @@ void GUI::Window::updateBuffer()
   std::vector<PixelBufferAlpha *>::iterator pli = pl.begin();
   while(pli != pl.end()) {
     PixelBufferAlpha *pb = *pli;
-    for(size_t x = 0; x < pb->width; x++) {
-      for(size_t y = 0; y < pb->height; y++) {
+    size_t updateWidth = pb->width;
+    size_t updateHeight = pb->height;
+    if(updateWidth > (wpixbuf.width - pb->x))
+    {
+	    updateWidth = (wpixbuf.width - pb->x);
+    }
+
+    if(updateHeight > (wpixbuf.height - pb->y))
+    {
+	    updateHeight = (wpixbuf.height - pb->y);
+    }
+
+    for(size_t x = 0; x < updateWidth; x++) {
+      for(size_t y = 0; y < updateHeight; y++) {
         unsigned char r,g,b,a;
         pb->pixel(x,y,&r,&g,&b,&a);
         wpixbuf.setPixel(x + pb->x, y + pb->y, r, g, b, a);

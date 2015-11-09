@@ -24,68 +24,64 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_PIXELBUFFER_H__
-#define __DRUMGIZMO_PIXELBUFFER_H__
-
-#include <stdlib.h>
+#pragma once
 
 #include "colour.h"
+
+#include <stdlib.h>
 
 namespace GUI {
 
 class PixelBuffer {
 public:
-  PixelBuffer(size_t width, size_t height);
-  ~PixelBuffer();
+	PixelBuffer(size_t width, size_t height);
+	~PixelBuffer();
 
-  void realloc(size_t width, size_t height);
+	void realloc(size_t width, size_t height);
 
-  void setPixel(size_t x, size_t y,
-                unsigned char red,
-                unsigned char green,
-                unsigned char blue,
-                unsigned char alpha);
+	void setPixel(size_t x, size_t y,
+	              unsigned char red,
+	              unsigned char green,
+	              unsigned char blue,
+	              unsigned char alpha);
 
-  unsigned char *buf;
-  size_t width;
-  size_t height;
+	unsigned char* buf;
+	size_t width;
+	size_t height;
 };
 
 class PixelBufferAlpha {
 public:
-  PixelBufferAlpha(size_t width, size_t height);
-  ~PixelBufferAlpha();
+	PixelBufferAlpha(size_t width, size_t height);
+	~PixelBufferAlpha();
 
-  int idx;
-  size_t x, y;
+	void realloc(size_t width, size_t height);
 
-  void realloc(size_t width, size_t height);
+	void setPixel(size_t x, size_t y,
+	              unsigned char red,
+	              unsigned char green,
+	              unsigned char blue,
+	              unsigned char alpha);
 
-  void setPixel(size_t x, size_t y,
-                unsigned char red,
-                unsigned char green,
-                unsigned char blue,
-                unsigned char alpha);
+	void addPixel(size_t x, size_t y,
+	              unsigned char red,
+	              unsigned char green,
+	              unsigned char blue,
+	              unsigned char alpha);
 
-  void addPixel(size_t x, size_t y,
-                unsigned char red,
-                unsigned char green,
-                unsigned char blue,
-                unsigned char alpha);
+	void addPixel(size_t x, size_t y, Colour c);
 
-  void addPixel(size_t x, size_t y, Colour c);
+	void pixel(size_t x, size_t y,
+	           unsigned char* red,
+	           unsigned char* green,
+	           unsigned char* blue,
+	           unsigned char* alpha);
 
-  void pixel(size_t x, size_t y,
-             unsigned char *red,
-             unsigned char *green,
-             unsigned char *blue,
-             unsigned char *alpha);
-
-  unsigned char *buf;
-  size_t width;
-  size_t height;
+	unsigned char* buf;
+	size_t width;
+	size_t height;
+	size_t x;
+	size_t y;
 };
 
-};
-
-#endif/*__DRUMGIZMO_PIXELBUFFER_H__*/
+} // GUI::
