@@ -93,7 +93,7 @@ void PluginGUI::handleMessage(Message *msg)
       progress->setProgress((float)ls->numer_of_files_loaded /
                             (float)ls->number_of_files);
       if(ls->numer_of_files_loaded == ls->number_of_files) {
-        progress->setState(ProgressBar::green);
+        progress->setState(ProgressBarState::Green);
       }
     }
     break;
@@ -102,9 +102,9 @@ void PluginGUI::handleMessage(Message *msg)
       LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
       progress2->setProgress(1);
       if(ls->success) {
-        progress2->setState(ProgressBar::green);
+        progress2->setState(ProgressBarState::Green);
       } else {
-        progress2->setState(ProgressBar::red);
+        progress2->setState(ProgressBarState::Red);
       }
     }
     break;
@@ -114,18 +114,18 @@ void PluginGUI::handleMessage(Message *msg)
       lineedit->setText(settings->drumkitfile);
       if(settings->drumkit_loaded) {
         progress->setProgress(1);
-        progress->setState(ProgressBar::green);
+        progress->setState(ProgressBarState::Green);
       } else {
         progress->setProgress(0);
-        progress->setState(ProgressBar::blue);
+        progress->setState(ProgressBarState::Blue);
       }
       lineedit2->setText(settings->midimapfile);
       if(settings->midimap_loaded) {
         progress2->setProgress(1);
-        progress2->setState(ProgressBar::green);
+        progress2->setState(ProgressBarState::Green);
       } else {
         progress2->setProgress(0);
-        progress2->setState(ProgressBar::blue);
+        progress2->setState(ProgressBarState::Blue);
       }
       velocityCheck->setChecked(settings->enable_velocity_modifier);
       attackKnob->setValue(settings->velocity_modifier_weight);
@@ -195,7 +195,7 @@ void PluginGUI::selectKitFile(const std::string& filename)
 	config->save();
 
 	progress->setProgress(0);
-	progress->setState(ProgressBar::blue);
+	progress->setState(ProgressBarState::Blue);
 
 	LoadDrumKitMessage *msg = new LoadDrumKitMessage();
 	msg->drumkitfile = drumkit;
@@ -220,7 +220,7 @@ void PluginGUI::selectMapFile(const std::string& filename)
 	/*
 	  if(gui->changeMidimapHandler)
 	  gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
-	  gui->progress2->setState(ProgressBar::green);
+	  gui->progress2->setState(ProgressBarState::Green);
 	*/
 }
 
@@ -442,10 +442,10 @@ void PluginGUI::attackValueChanged(float value)
 #ifdef STANDALONE
   int i = value * 4;
   switch(i) {
-  case 0: progress->setState(ProgressBar::off); break;
-  case 1: progress->setState(ProgressBar::blue); break;
-  case 2: progress->setState(ProgressBar::green); break;
-  case 3: progress->setState(ProgressBar::red); break;
+  case 0: progress->setState(ProgressBarState::Off); break;
+  case 1: progress->setState(ProgressBarState::Blue); break;
+  case 2: progress->setState(ProgressBarState::Green); break;
+  case 3: progress->setState(ProgressBarState::Red); break;
   default: break;
   }
 #endif

@@ -24,48 +24,47 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_PROGRESSBAR_H__
-#define __DRUMGIZMO_PROGRESSBAR_H__
+#pragma once
 
 #include "widget.h"
-
-#include <string>
 
 #include "guievent.h"
 #include "painter.h"
 
 namespace GUI {
 
+enum class ProgressBarState
+{
+	Red,
+	Green,
+	Blue,
+	Off
+};
+
 class ProgressBar : public Widget {
 public:
-  ProgressBar(Widget *parent);
+	ProgressBar(Widget *parent);
+	~ProgressBar();
 
-  float progress();
-  void setProgress(float progress);
+	float progress();
+	void setProgress(float progress);
 
-  typedef enum {
-    red,
-    green,
-    blue,
-    off
-  } state_t;
-  void setState(state_t state);
+	void setState(ProgressBarState state);
 
-  //protected:
-  virtual void repaintEvent(RepaintEvent *e);
+protected:
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent *e) override;
 
 private:
-  state_t state;
+	ProgressBarState state;
 
-  Painter::Bar bar_bg;
+	Painter::Bar bar_bg;
 
-  Painter::Bar bar_green;
-  Painter::Bar bar_blue;
-  Painter::Bar bar_red;
+	Painter::Bar bar_green;
+	Painter::Bar bar_blue;
+	Painter::Bar bar_red;
 
-  float _progress;
+	float _progress;
 };
 
-};
-
-#endif/*__DRUMGIZMO_PROGRESSBAR_H__*/
+} // GUI::
