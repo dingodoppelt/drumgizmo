@@ -43,7 +43,7 @@ public:
 	bool isFocusable() override { return true; }
 	bool catchMouse() override { return true; }
 
-	void setText(std::string text);
+	void setText(const std::string& text);
 
 	Notifier<> clickNotifier;
 
@@ -51,8 +51,8 @@ protected:
 	virtual void clicked() {}
 
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
-	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* e) override;
+	virtual void buttonEvent(ButtonEvent* e) override;
 	virtual void mouseLeaveEvent() override;
 	virtual void mouseEnterEvent() override;
 

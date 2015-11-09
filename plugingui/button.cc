@@ -132,7 +132,7 @@ void Button::repaintEvent(RepaintEvent *e)
 	           height()/2+5+1+(draw_state==up?0:1), font, text, true);
 }
 
-void Button::setText(std::string text)
+void Button::setText(const std::string& text)
 {
 	this->text = text;
 	repaintEvent(nullptr);
