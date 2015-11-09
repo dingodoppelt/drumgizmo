@@ -49,7 +49,7 @@ Image::Image(const std::string& filename)
 
 Image::~Image()
 {
-	delete[] image_data;
+	free(image_data);
 }
 
 void Image::setError(int err)
@@ -70,7 +70,7 @@ void Image::setError(int err)
 	_height = ih;
 
 	size_t image_size = rc.size() - (sizeof(iw) + sizeof(ih));
-	image_data = new unsigned char[image_size];
+	image_data = (unsigned char*)malloc(image_size);
 	memcpy(image_data, p, image_size);
 }
 
