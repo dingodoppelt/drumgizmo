@@ -1,9 +1,19 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = engine gui resampler lv2 configfile
+TESTS = resource engine gui resampler lv2 configfile
 
 check_PROGRAMS = $(TESTS)
+
+resource_CXXFLAGS = -DOUTPUT=\"resource\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/hugin
+resource_LDFLAGS = $(CPPUNIT_LIBS)
+resource_SOURCES = \
+	$(top_srcdir)/plugingui/resource.cc \
+	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/hugin/hugin.c \
+	test.cc \
+	resource_test.cc
 
 engine_CXXFLAGS = -DOUTPUT=\"engine\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \

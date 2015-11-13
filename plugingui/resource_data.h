@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_RESOURCE_DATA_H__
-#define __DRUMGIZMO_RESOURCE_DATA_H__
+#pragma once
 
 typedef struct {
 	const char *name;
@@ -34,5 +33,3 @@ typedef struct {
 } rc_data_t;
 
 extern const rc_data_t rc_data[];
-
-#endif/*__DRUMGIZMO_RESOURCE_DATA_H__*/

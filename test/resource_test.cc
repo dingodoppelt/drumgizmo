@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            resource.h
+ *            resource_test.cc
  *
- *  Sun Mar 17 19:38:03 CET 2013
- *  Copyright 2013 Bent Bisballe Nyeng
+ *  Fri Nov 13 18:50:52 CET 2015
+ *  Copyright 2015 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,27 +24,49 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
+#include <cppunit/extensions/HelperMacros.h>
 
-#include <string>
+#include "../plugingui/resource.h"
 
-namespace GUI {
-
-class Resource {
+class ResourceTester : public GUI::Resource {
 public:
-	Resource(const std::string& name);
+	ResourceTester(const std::string& name)
+		: Resource(name)
+	{}
 
-	const char* data();
-	size_t size();
-
-	bool valid();
-
-protected:
-	std::string externalData;
-	bool isValid = false;
-	bool isInternal = false;
-	const char *internalData = nullptr;
-	size_t internalSize = 0;
+	bool probeIsInternal()
+	{
+		return isInternal;
+	}
 };
 
-} // GUI::
+class ResourceTest : public CppUnit::TestFixture
+{
+	CPPUNIT_TEST_SUITE(ResourceTest);
+	CPPUNIT_TEST(externalReadTest);
+	CPPUNIT_TEST(internalReadTest);
+	CPPUNIT_TEST_SUITE_END();
+
+public:
+	void setUp() {}
+	void tearDown() {}
+
+	void externalReadTest()
+	{
+		ResourceTester rc("kit/0000.wav");
+		CPPUNIT_ASSERT(!rc.probeIsInternal());
+		CPPUNIT_ASSERT(rc.valid());
+		CPPUNIT_ASSERT_EQUAL((size_t)46, rc.size());
+	}
+
+	void internalReadTest()
+	{
+		ResourceTester rc(":bg.png");
+		CPPUNIT_ASSERT(rc.probeIsInternal());
+		CPPUNIT_ASSERT(rc.valid());
+		CPPUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
+	}
+};
+
+// Registers the fixture into the 'registry'
+CPPUNIT_TEST_SUITE_REGISTRATION(ResourceTest);

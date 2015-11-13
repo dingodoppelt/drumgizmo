@@ -26,94 +26,119 @@
  */
 #include "resource.h"
 
-#include <stdio.h>
 #include <hugin.hpp>
+#include <cstdio>
+
+// rcgen generated file containing rc_data declaration.
 #include "resource_data.h"
 
-GUI::Resource::Resource(std::string name)
+namespace GUI {
+
+// Internal resources start with a colon.
+static bool nameIsInternal(const std::string& name)
 {
-  is_valid = false;
-  is_internal = false;
+	return name.size() && (name[0] == ':');
+}
 
-  if(name.length() == 0) return;
-  if(name[0] == ':') {
-    i_data = NULL;
-    i_size = 0;
+Resource::Resource(const std::string& name)
+{
+	if(nameIsInternal(name))
+	{
+		// Use internal resource:
 
-    // Use internal resource:
-    const rc_data_t *p = rc_data;
-    while(p->name[0] == ':') {
-      if(std::string(p->name) == name) {
-        i_data = p->data;
-        i_size = p->size;
-        break;
-      }
-      p++;
-    }
+		// Find internal resource in rc_data.
+		const rc_data_t* p = rc_data;
+		while(p->name) // last entry in rc_data has the name := ""
+		{
+			if(name == p->name)
+			{
+				internalData = p->data;
+				internalSize = p->size;
+				break;
+			}
+			++p;
+		}
 
-    // We did not find the named resource.
-    if(i_data == NULL) {
-      ERR(rc, "Could not find '%s'\n", name.c_str());
-      return;
-    }
+		// We did not find the named resource.
+		if(internalData == nullptr)
+		{
+			ERR(rc, "Could not find '%s'\n", name.c_str());
+			return;
+		}
 
-    is_internal = true;
-  } else {
-    // Read from file:
-    FILE *fp = fopen(name.c_str(), "r");
-    if(!fp) return;
-    char buf[32];
-    while(!feof(fp)) {
-      size_t sz = fread(buf, 1, sizeof(buf), fp);
-      e_data.append(buf, sz);
-    }
-    fclose(fp);
-    is_internal = false;
+		isInternal = true;
+	}
+	else
+	{
+		// Read from file:
+		std::FILE *fp = std::fopen(name.c_str(), "rb");
+		if(!fp)
+		{
+			return;
+		}
+
+		// Get the file size
+		std::fseek(fp, 0, SEEK_END);
+		size_t filesize = ftell(fp);
+
+		// Reserve space in the string for the data.
+		externalData.reserve(filesize);
+
+		// Rewind and read...
+		std::rewind(fp);
+
+		char buffer[32];
+		while(!std::feof(fp))
+		{
+			size_t size = std::fread(buffer, 1, sizeof(buffer), fp);
+			externalData.append(buffer, size);
+		}
+
+		std::fclose(fp);
+
+		isInternal = false;
  }
 
-  is_valid = true;
+	isValid = true;
 }
 
-const char *GUI::Resource::data()
+const char *Resource::data()
 {
-  if(is_valid == false) return NULL;
-  if(is_internal) {
-    return i_data;
-  } else {
-    return e_data.data();
-  }
-  return NULL;
+	if(isValid == false)
+	{
+		return nullptr;
+	}
+
+	if(isInternal)
+	{
+		return internalData;
+	}
+	else
+	{
+		return externalData.data();
+	}
 }
 
-size_t GUI::Resource::size()
+size_t Resource::size()
 {
-  if(is_valid == false) return 0;
-  if(is_internal) {
-    return i_size;
-  } else {
-    return e_data.length();
-  }
-  return 0;
+	if(isValid == false)
+	{
+	  return 0;
+	}
+
+	if(isInternal)
+	{
+		return internalSize;
+	}
+	else
+	{
+		return externalData.length();
+	}
 }
 
-bool GUI::Resource::valid()
+bool Resource::valid()
 {
-  return is_valid;
+	return isValid;
 }
 
-#ifdef TEST_RESOURCE
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_RESOURCE*/
+} // GUI::
