@@ -31,12 +31,6 @@
 
 namespace GUI {
 
-void scrolled(void *ptr)
-{
-	ListBoxBasic *l = (ListBoxBasic *)ptr;
-	l->repaintEvent(NULL);
-}
-
 ListBoxBasic::ListBoxBasic(Widget *parent)
 	: Widget(parent)
 	, scroll(this)
@@ -45,7 +39,8 @@ ListBoxBasic::ListBoxBasic(Widget *parent)
 	scroll.move(0,0);
 	scroll.resize(18, 100);
 
-	scroll.registerValueChangeHandler(scrolled, this);
+	CONNECT(&scroll, valueChangeNotifier,
+	        this, &ListBoxBasic::onScrollBarValueChange);
 
 	padding = 4;
 	btn_size = 18;
@@ -61,10 +56,14 @@ ListBoxBasic::~ListBoxBasic()
 void ListBoxBasic::setSelection(int index)
 {
 	selected = index;
+	if(marked == -1)
+	{
+		marked = index;
+	}
 	valueChangedNotifier();
 }
 
-void ListBoxBasic::addItem(std::string name, std::string value)
+void ListBoxBasic::addItem(const std::string& name, const std::string& value)
 {
 	std::vector<ListBoxBasic::Item> items;
 	ListBoxBasic::Item item;
@@ -74,7 +73,7 @@ void ListBoxBasic::addItem(std::string name, std::string value)
 	addItems(items);
 }
 
-void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &newItems)
+void ListBoxBasic::addItems(const std::vector<ListBoxBasic::Item>& newItems)
 {
 	for(auto& item : newItems)
 	{
@@ -83,10 +82,9 @@ void ListBoxBasic::addItems(std::vector<ListBoxBasic::Item> &newItems)
 
 	if(selected == -1)
 	{
-		setSelection((int)items.size() - 1);
+		//setSelection((int)items.size() - 1);
+		setSelection(0);
 	}
-
-	setSelection(0);
 
 	int numitems = height() / (font.textHeight() + padding);
 	scroll.setRange(numitems);
@@ -98,6 +96,7 @@ void ListBoxBasic::clear()
 {
 	items.clear();
 	setSelection(-1);
+	marked = -1;
 	scroll.setValue(0);
 	repaintEvent(nullptr);
 }
@@ -140,7 +139,12 @@ void ListBoxBasic::clearSelectedValue()
 	setSelection(-1);
 }
 
-void ListBoxBasic::repaintEvent(RepaintEvent *e)
+void ListBoxBasic::onScrollBarValueChange(int value)
+{
+	repaintEvent(NULL);
+}
+
+void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
@@ -189,19 +193,20 @@ void ListBoxBasic::repaintEvent(RepaintEvent *e)
 	}
 }
 
-void ListBoxBasic::scrollEvent(ScrollEvent *e)
+void ListBoxBasic::scrollEvent(ScrollEvent* scrollEvent)
 {
-	scroll.scrollEvent(e);
+	// forward scroll event to scroll bar.
+	scroll.scrollEvent(scrollEvent);
 }
 
-void ListBoxBasic::keyEvent(KeyEvent *e)
+void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 {
-	if(e->direction != KeyEvent::Up)
+	if(keyEvent->direction != KeyEvent::Down)
 	{
 		return;
 	}
 
-	switch(e->keycode) {
+	switch(keyEvent->keycode) {
 	case KeyEvent::KeyUp:
 		if(marked == 0)
 		{
@@ -257,7 +262,7 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 		break;
 
 	case KeyEvent::KeyCharacter:
-		if(e->text == " ")
+		if(keyEvent->text == " ")
 		{
 			setSelection(marked);
 			//selectionNotifier();
@@ -276,13 +281,14 @@ void ListBoxBasic::keyEvent(KeyEvent *e)
 	repaintEvent(nullptr);
 }
 
-void ListBoxBasic::buttonEvent(ButtonEvent *e)
+void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 {
-	if((e->x > ((int)width() - btn_size)) && (e->y < ((int)width() - 1)))
+	if((buttonEvent->x > ((int)width() - btn_size)) &&
+	   (buttonEvent->y < ((int)width() - 1)))
 	{
-		if(e->y > 0 && e->y < btn_size)
+		if(buttonEvent->y > 0 && buttonEvent->y < btn_size)
 		{
-			if(e->direction == ButtonEvent::Up)
+			if(buttonEvent->direction == ButtonEvent::Up)
 			{
 				return;
 			}
@@ -290,9 +296,10 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 			return;
 		}
 
-		if(e->y > ((int)height() - btn_size) && e->y < ((int)height() - 1))
+		if(buttonEvent->y > ((int)height() - btn_size) &&
+		   buttonEvent->y < ((int)height() - 1))
 		{
-			if(e->direction == ButtonEvent::Up)
+			if(buttonEvent->direction == ButtonEvent::Up)
 			{
 				return;
 			}
@@ -301,14 +308,14 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 		}
 	}
 
-	if(e->direction == ButtonEvent::Up)
+	if(buttonEvent->direction == ButtonEvent::Up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;
 		for(int idx = skip; idx < (int)items.size(); idx++)
 		{
 			yoffset += font.textHeight() + padding;
-			if(e->y < (int)yoffset - (padding / 2))
+			if(buttonEvent->y < (int)yoffset - (padding / 2))
 			{
 				setSelection(idx);
 				marked = selected;
@@ -320,14 +327,14 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 		repaintEvent(nullptr);
 	}
 
-	if(e->direction != ButtonEvent::Up)
+	if(buttonEvent->direction != ButtonEvent::Up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;
 		for(int idx = skip; idx < (int)items.size(); idx++)
 		{
 			yoffset += font.textHeight() + padding;
-			if(e->y < ((int)yoffset - (padding / 2)))
+			if(buttonEvent->y < ((int)yoffset - (padding / 2)))
 			{
 				marked = idx;
 				break;
@@ -337,7 +344,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent *e)
 		repaintEvent(nullptr);
 	}
 
-	if(e->doubleclick)
+	if(buttonEvent->doubleclick)
 	{
 		selectionNotifier();
 	}

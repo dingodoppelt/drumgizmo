@@ -24,52 +24,49 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_SCROLLBAR_H__
-#define __DRUMGIZMO_SCROLLBAR_H__
+#pragma once
 
 #include "widget.h"
 #include "image.h"
+#include "notifier.h"
 
 namespace GUI {
 
 class ScrollBar : public Widget {
+	friend class ListBoxBasic;
 public:
-  ScrollBar(Widget *parent);
+	ScrollBar(Widget *parent);
 
-  bool catchMouse() { return true; }
+	void setRange(int range);
+	int range();
 
-  void setRange(int range);
-  int range();
+	void setMaximum(int max);
+	int maximum();
 
-  void setMaximum(int max);
-  int maximum();
+	void addValue(int delta);
+	void setValue(int value);
+	int value();
 
-  void setValue(int value);
-  int value();
+	Notifier<int> valueChangeNotifier; // (int value)
 
-  void registerValueChangeHandler(void (*handler)(void *), void *ptr);
-
-  void repaintEvent(RepaintEvent *e);
-  void scrollEvent(ScrollEvent *e);
-  void buttonEvent(ButtonEvent *e);
-  void mouseMoveEvent(MouseMoveEvent *e);
+protected:
+	// From Widget:
+	bool catchMouse() override { return true; }
+	void scrollEvent(ScrollEvent* scrollEvent) override;
+	void repaintEvent(RepaintEvent* repaintEvent) override;
+	void buttonEvent(ButtonEvent* buttonEvent) override;
+	void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 
 private:
-  int max;
-  int val;
-  int ran;
+	int maxValue;
+	int currentValue;
+	int rangeValue;
 
-  int yoffset;
-  int value_offset;
-  bool dragging;
+	int yOffset;
+	int valueOffset;
+	bool dragging;
 
-  Image bg_img;
-
-  void (*handler)(void *);
-  void *ptr;
+	Image bg_img;
 };
 
-};
-
-
-#endif/*__DRUMGIZMO_SCROLLBAR_H__*/
+} // GUI::

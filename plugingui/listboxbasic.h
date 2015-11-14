@@ -48,8 +48,8 @@ public:
 	ListBoxBasic(Widget *parent);
 	~ListBoxBasic();
 
-	void addItem(std::string name, std::string value);
-	void addItems(std::vector<Item> &items);
+	void addItem(const std::string& name, const std::string& value);
+	void addItems(const std::vector<Item>& items);
 
 	void clear();
 	bool selectItem(int index);
@@ -58,19 +58,23 @@ public:
 
 	void clearSelectedValue();
 
-	// From Widget:
-	bool isFocusable() override { return true; }
-	virtual void repaintEvent(RepaintEvent *e) override;
-	virtual void buttonEvent(ButtonEvent *e) override;
-	virtual void scrollEvent(ScrollEvent *e) override;
-	virtual void keyEvent(KeyEvent *e) override;
-	virtual void resize(int w, int h) override;
-
 	Notifier<> selectionNotifier;
 	Notifier<> clickNotifier;
 	Notifier<> valueChangedNotifier;
 
-private:
+	// From Widget:
+	virtual void resize(int w, int h) override;
+
+protected:
+	void onScrollBarValueChange(int value);
+
+	// From Widget:
+	bool isFocusable() override { return true; }
+	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void buttonEvent(ButtonEvent *e) override;
+	virtual void keyEvent(KeyEvent *e) override;
+	virtual void scrollEvent(ScrollEvent *e) override;
+
 	ScrollBar scroll;
 
 	Image bg_img;

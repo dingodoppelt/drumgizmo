@@ -30,162 +30,180 @@
 
 #include "painter.h"
 
-GUI::ScrollBar::ScrollBar(GUI::Widget *parent)
-  : GUI::Widget(parent), bg_img(":widget_c.png")
+namespace GUI {
+
+ScrollBar::ScrollBar(Widget *parent)
+	: Widget(parent)
+	, bg_img(":widget_c.png")
 {
-  handler = NULL;
-  ptr = NULL;
 }
 
-void GUI::ScrollBar::setRange(int r)
+void ScrollBar::setRange(int r)
 {
-  DEBUG(scroll, "%d\n", r);
-  ran = r;
-  setValue(value());
-  repaintEvent(NULL);
+	rangeValue = r;
+	setValue(value());
+	repaintEvent(nullptr);
 }
 
-int GUI::ScrollBar::range()
+int ScrollBar::range()
 {
-  return ran;
+	return rangeValue;
 }
 
-void GUI::ScrollBar::setMaximum(int m)
+void ScrollBar::setMaximum(int m)
 {
-  DEBUG(scroll, "%d\n", m);
-  max = m;
-  if(max < ran) ran = max;
-  setValue(value());
-  repaintEvent(NULL);
+	maxValue = m;
+	if(maxValue < rangeValue)
+	{
+		rangeValue = maxValue;
+	}
+	setValue(value());
+	repaintEvent(nullptr);
 }
 
-int GUI::ScrollBar::maximum()
+int ScrollBar::maximum()
 {
-  return max;
+	return maxValue;
 }
 
-void GUI::ScrollBar::setValue(int value)
+void ScrollBar::addValue(int delta)
 {
-  if(value > max - ran) value = max - ran;
-  if(value < 0) value = 0;
-
-  if(val == value)
-  {
-	  return;
-  }
-
-  val = value;
-
-  if(handler) handler(ptr);
-
-  repaintEvent(NULL);
+	setValue(value() + delta);
 }
 
-int GUI::ScrollBar::value()
+void ScrollBar::setValue(int value)
 {
-  return val;
+	if(value > (maxValue - rangeValue))
+	{
+		value = maxValue - rangeValue;
+	}
+
+	if(value < 0)
+	{
+		value = 0;
+	}
+
+	if(currentValue == value)
+	{
+		return;
+	}
+
+	currentValue = value;
+
+	valueChangeNotifier(value);
+
+	repaintEvent(nullptr);
 }
 
-void GUI::ScrollBar::registerValueChangeHandler(void (*handler)(void *),
-                                                void *ptr)
+int ScrollBar::value()
 {
-  this->handler = handler;
-  this->ptr = ptr;
+	return currentValue;
 }
 
-static void drawArrow(GUI::Painter &p, int x, int y, int w, int h)
+//! Draw an up/down arrow at (x,y) with the bounding box size (w,h)
+//! If h is negative the arrow will point down, if positive it will point up.
+static void drawArrow(Painter &p, int x, int y, int w, int h)
 {
-  if(h < 0) y -= h;
+	if(h < 0)
+	{
+		y -= h;
+	}
 
-  p.drawLine(x, y, x+(w/2), y+h);
-  p.drawLine(x+(w/2), y+h, x+w, y);
+	p.drawLine(x, y, x + (w / 2), y + h);
+	p.drawLine(x + (w / 2), y + h, x + w, y);
 
-  y++;
-  p.drawLine(x, y, x+(w/2), y+h);
-  p.drawLine(x+(w/2), y+h, x+w, y);
+	++y;
+	p.drawLine(x, y, x + (w / 2), y + h);
+	p.drawLine(x + (w / 2), y + h, x + w, y);
 }
 
-void GUI::ScrollBar::repaintEvent(RepaintEvent *e)
+void ScrollBar::repaintEvent(RepaintEvent* repaintEvent)
 {
-  GUI::Painter p(*this);
+	Painter p(*this);
 
-  p.clear();
+	p.clear();
 
-  p.drawImageStretched(0, 0, bg_img, width(), height());
+	p.drawImageStretched(0, 0, bg_img, width(), height());
 
-  p.setColour(GUI::Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
-  if(!max) return;
+	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+	if(!maxValue)
+	{
+		return;
+	}
 
-  {
-  int h = height() - 2 * width() - 3;
-  int offset = width() + 2;
+	{
+		int h = height() - 2 * width() - 3;
+		int offset = width() + 2;
 
-  int y_val1 = (val * h) / max; 
-  int y_val2 = ((val + ran) * h) / max;  
+		int y_val1 = (currentValue * h) / maxValue;
+		int y_val2 = ((currentValue + rangeValue) * h) / maxValue;
 
-  p.drawFilledRectangle(2, y_val1 + offset, width() - 1, y_val2 + offset);
-  }
+		p.drawFilledRectangle(2, y_val1 + offset, width() - 1, y_val2 + offset);
+	}
 
-  p.drawLine(0, 0, 0, height());
+	p.drawLine(0, 0, 0, height());
 
-  drawArrow(p, width()/4, width()/4, width()/2, -1 * (width()/3));
-  p.drawLine(0, width(), width(), width());
+	drawArrow(p, width()/4, width()/4, width()/2, -1 * (width()/3));
+	p.drawLine(0, width(), width(), width());
 
-  drawArrow(p, width()/4, height() - width() + width()/4, width()/2, width()/3);
-  p.drawLine(0, height() - width(), width(), height() - width());
+	drawArrow(p, width()/4, height() - width() + width()/4, width()/2, width()/3);
+	p.drawLine(0, height() - width(), width(), height() - width());
 }
 
-void GUI::ScrollBar::scrollEvent(ScrollEvent *e)
+void ScrollBar::scrollEvent(ScrollEvent* scrollEvent)
 {
-  setValue(value() + e->delta);
+	setValue(value() + scrollEvent->delta);
 }
 
-void GUI::ScrollBar::mouseMoveEvent(MouseMoveEvent *e)
+void ScrollBar::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 {
-  if(!dragging) return;
+	if(!dragging)
+	{
+		return;
+	}
 
-  float delta = yoffset - e->y;
+	float delta = yOffset - mouseMoveEvent->y;
 
-  int h = height() - 2 * width() - 3;
-  delta /= (float)h / (float)max;
+	int h = height() - 2 * width() - 3;
+	delta /= (float)h / (float)maxValue;
 
-  int newval = value_offset - delta;
-  if(newval != value()) setValue(newval);
+	int newval = valueOffset - delta;
+	if(newval != value())
+	{
+		setValue(newval);
+	}
 }
 
-void GUI::ScrollBar::buttonEvent(ButtonEvent *e)
+void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 {
-  if(e->y < (int)width() && e->y > 0) {
-    if(e->direction == ButtonEvent::Up) setValue(value() - 1);
-    return;
-  }
+	if((buttonEvent->y < (int)width()) && buttonEvent->y > 0)
+	{
+		if(buttonEvent->direction == ButtonEvent::Down)
+		{
+			addValue(-1);
+		}
 
-  if(e->y > (int)height() - (int)width() && e->y < (int)height()) {
-    if(e->direction == ButtonEvent::Up) setValue(value() + 1);
-    return;
-  }
+		return;
+	}
 
-  if(e->direction == ButtonEvent::Down) {
-    yoffset = e->y;
-    value_offset = value();
-  }
+	if((buttonEvent->y > ((int)height() - (int)width())) &&
+	   (buttonEvent->y < (int)height()))
+	{
+		if(buttonEvent->direction == ButtonEvent::Down)
+		{
+			addValue(1);
+		}
 
-  dragging = (e->direction == ButtonEvent::Down);
+		return;
+	}
+
+	if(buttonEvent->direction == ButtonEvent::Down)
+	{
+		yOffset = buttonEvent->y;
+		valueOffset = value();
+	}
+
+	dragging = (buttonEvent->direction == ButtonEvent::Down);
 }
 
-#ifdef TEST_SCROLLBAR
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_SCROLLBAR*/
+} // GUI::
