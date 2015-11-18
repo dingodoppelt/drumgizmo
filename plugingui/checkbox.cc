@@ -32,7 +32,7 @@
 
 namespace GUI {
 
-CheckBox::CheckBox(Widget *parent)
+CheckBox::CheckBox(Widget* parent)
 	: Widget(parent)
 	, bg_on(":switch_back_on.png")
 	, bg_off(":switch_back_off.png")
@@ -42,9 +42,9 @@ CheckBox::CheckBox(Widget *parent)
 {
 }
 
-void CheckBox::buttonEvent(ButtonEvent *e)
+void CheckBox::buttonEvent(ButtonEvent* buttonEvent)
 {
-	if(e->direction == ButtonEvent::Up || e->doubleclick)
+	if((buttonEvent->direction == Direction::up) || buttonEvent->doubleClick)
 	{
 		middle = false;
 		internalSetChecked(!state);
@@ -63,11 +63,11 @@ void CheckBox::setText(std::string text)
 	repaintEvent(nullptr);
 }
 
-void CheckBox::keyEvent(KeyEvent *e)
+void CheckBox::keyEvent(KeyEvent* keyEvent)
 {
-	if(e->keycode == KeyEvent::KeyCharacter && e->text == " ")
+	if(keyEvent->keycode == Key::character && keyEvent->text == " ")
 	{
-		if(e->direction == KeyEvent::Up)
+		if(keyEvent->direction == Direction::up)
 		{
 			middle = false;
 			internalSetChecked(!state);
@@ -81,7 +81,7 @@ void CheckBox::keyEvent(KeyEvent *e)
 	}
 }
 
-void CheckBox::repaintEvent(RepaintEvent *e)
+void CheckBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 

@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_SLIDER_H__
-#define __DRUMGIZMO_SLIDER_H__
+#pragma once
 
 #include "widget.h"
 
@@ -33,38 +32,32 @@ namespace GUI {
 
 class Slider : public Widget {
 public:
-  Slider(Widget *parent);
+	Slider(Widget* parent);
 
-  bool catchMouse() { return true; }
+	// From Widget:
+	bool catchMouse() override { return true; }
 
-  void setValue(float value);
-  float value();
+	void setValue(float value);
+	float value();
 
-  void registerClickHandler(void (*handler)(void *), void *ptr);
+	Notifier<> clickNotifier;
 
-  //protected:
-  virtual void clicked() {}
-
-  virtual void repaintEvent(RepaintEvent *e);
-  virtual void buttonEvent(ButtonEvent *e);
-  virtual void mouseMoveEvent(MouseMoveEvent *e);
+protected:
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
+	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 
 private:
-  typedef enum {
-    up,
-    down
-  } state_t;
+	enum class State {
+		up,
+		down
+	};
 
-  float val;
-  float maximum;
-  float minimum;
+	float currentValue;
+	float maximum;
+	float minimum;
 
-  state_t state;
-
-  void (*handler)(void *);
-  void *ptr;
+	State state;
 };
 
-};
-
-#endif/*__DRUMGIZMO_SLIDER_H__*/
+} // GUI::

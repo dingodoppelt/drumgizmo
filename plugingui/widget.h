@@ -45,15 +45,16 @@ public:
 	virtual void show();
 	virtual void hide();
 
-	virtual void resize(int width, int height);
-	virtual void move(size_t x, size_t y);
+	// From LayoutItem
+	virtual void resize(int width, int height) override;
+	virtual void move(size_t x, size_t y) override;
+	virtual size_t x() override;
+	virtual size_t y() override;
+	virtual size_t width() override;
+	virtual size_t height() override;
 
-	virtual size_t x();
-	virtual size_t y();
 	virtual size_t windowX();
 	virtual size_t windowY();
-	virtual size_t width();
-	virtual size_t height();
 
 	virtual bool isFocusable() { return false; }
 	virtual bool catchMouse() { return false; }
@@ -61,23 +62,23 @@ public:
 	void addChild(Widget *widget);
 	void removeChild(Widget *widget);
 
-	virtual void repaintEvent(RepaintEvent *e) {}
-	virtual void mouseMoveEvent(MouseMoveEvent *e) {}
-	virtual void buttonEvent(ButtonEvent *e) {}
-	virtual void scrollEvent(ScrollEvent *e) {}
-	virtual void keyEvent(KeyEvent *e) {}
+	virtual void repaintEvent(RepaintEvent* repaintEvent) {}
+	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) {}
+	virtual void buttonEvent(ButtonEvent* buttonEvent) {}
+	virtual void scrollEvent(ScrollEvent* scrollEvent) {}
+	virtual void keyEvent(KeyEvent* keyEvent) {}
 
 	virtual void mouseLeaveEvent() {}
 	virtual void mouseEnterEvent() {}
 
-	Widget *find(size_t x, size_t y);
+	Widget* find(size_t x, size_t y);
 
-	virtual Window *window();
+	virtual Window* window();
 
-	void repaint_r(RepaintEvent *e);
+	void repaint_r(RepaintEvent* repaintEvent);
 
 	PixelBufferAlpha pixbuf;
-	std::vector<PixelBufferAlpha *> getPixelBuffers();
+	std::vector<PixelBufferAlpha*> getPixelBuffers();
 
 	bool hasKeyboardFocus();
 

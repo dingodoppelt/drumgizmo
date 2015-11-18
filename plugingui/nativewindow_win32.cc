@@ -134,19 +134,19 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			   msg == WM_LBUTTONDBLCLK ||
 			   msg == WM_LBUTTONDOWN)
 			{
-				buttonEvent->button = ButtonEvent::Left;
+				buttonEvent->button = MouseButton::left;
 			}
 			else if(msg == WM_RBUTTONUP ||
 			        msg == WM_RBUTTONDBLCLK ||
 			        msg == WM_RBUTTONDOWN)
 			{
-				buttonEvent->button = ButtonEvent::Middle;
+				buttonEvent->button = MouseButton::middle;
 			}
 			else if(msg == WM_MBUTTONUP ||
 			        msg == WM_MBUTTONDBLCLK ||
 			        msg == WM_MBUTTONDOWN)
 			{
-				buttonEvent->button = ButtonEvent::Right;
+				buttonEvent->button = MouseButton::right;
 			}
 			else
 			{
@@ -158,13 +158,13 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			   msg == WM_RBUTTONUP ||
 			   msg == WM_MBUTTONUP)
 			{
-				buttonEvent->direction = ButtonEvent::Up;
+				buttonEvent->direction = Direction::up;
 			}
 			else if(msg == WM_LBUTTONDOWN ||
 			        msg == WM_RBUTTONDOWN ||
 			        msg == WM_MBUTTONDOWN)
 			{
-				buttonEvent->direction = ButtonEvent::Down;
+				buttonEvent->direction = Direction::down;
 			}
 			else
 			{
@@ -172,7 +172,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	      break; // unknown direction
 			}
 
-			buttonEvent->doubleclick = (msg == WM_LBUTTONDBLCLK ||
+			buttonEvent->doubleClick = (msg == WM_LBUTTONDBLCLK ||
 			                            msg == WM_RBUTTONDBLCLK ||
 			                            msg == WM_MBUTTONDBLCLK);
 
@@ -185,22 +185,22 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			KeyEvent* keyEvent = new KeyEvent();
 
 			switch(wp) {
-			case VK_LEFT:   keyEvent->keycode = KeyEvent::KeyLeft;      break;
-			case VK_RIGHT:  keyEvent->keycode = KeyEvent::KeyRight;     break;
-			case VK_UP:     keyEvent->keycode = KeyEvent::KeyUp;        break;
-			case VK_DOWN:   keyEvent->keycode = KeyEvent::KeyDown;      break;
-			case VK_BACK:   keyEvent->keycode = KeyEvent::KeyBackspace; break;
-			case VK_DELETE: keyEvent->keycode = KeyEvent::KeyDelete;    break;
-			case VK_HOME:   keyEvent->keycode = KeyEvent::KeyHome;      break;
-			case VK_END:    keyEvent->keycode = KeyEvent::KeyEnd;       break;
-			case VK_PRIOR:  keyEvent->keycode = KeyEvent::KeyPageUp;    break;
-			case VK_NEXT:   keyEvent->keycode = KeyEvent::KeyPageDown;  break;
-			case VK_RETURN: keyEvent->keycode = KeyEvent::KeyEnter;     break;
-			default:        keyEvent->keycode = KeyEvent::KeyUnknown;   break;
+			case VK_LEFT:   keyEvent->keycode = Key::left;      break;
+			case VK_RIGHT:  keyEvent->keycode = Key::right;     break;
+			case VK_UP:     keyEvent->keycode = Key::up;        break;
+			case VK_DOWN:   keyEvent->keycode = Key::down;      break;
+			case VK_BACK:   keyEvent->keycode = Key::backspace; break;
+			case VK_DELETE: keyEvent->keycode = Key::deleteKey;    break;
+			case VK_HOME:   keyEvent->keycode = Key::home;      break;
+			case VK_END:    keyEvent->keycode = Key::end;       break;
+			case VK_PRIOR:  keyEvent->keycode = Key::pageUp;    break;
+			case VK_NEXT:   keyEvent->keycode = Key::pageDown;  break;
+			case VK_RETURN: keyEvent->keycode = Key::enter;     break;
+			default:        keyEvent->keycode = Key::unknown;   break;
 			}
 
 			keyEvent->text = "";
-			keyEvent->direction = KeyEvent::Up;
+			keyEvent->direction = Direction::up;
 
 			native->event = keyEvent;
 		}
@@ -211,9 +211,9 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			if(wp >= ' ') // Filter control chars.
 			{
 				KeyEvent* keyEvent = new KeyEvent();
-				keyEvent->keycode = KeyEvent::KeyCharacter;
+				keyEvent->keycode = Key::character;
 				keyEvent->text += (char)wp;
-				keyEvent->direction = KeyEvent::Up;
+				keyEvent->direction = Direction::up;
 				native->event = keyEvent;
 			}
 		}

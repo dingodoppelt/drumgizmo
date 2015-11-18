@@ -178,7 +178,7 @@ void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 {
 	if((buttonEvent->y < (int)width()) && buttonEvent->y > 0)
 	{
-		if(buttonEvent->direction == ButtonEvent::Down)
+		if(buttonEvent->direction == Direction::down)
 		{
 			addValue(-1);
 		}
@@ -189,7 +189,7 @@ void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 	if((buttonEvent->y > ((int)height() - (int)width())) &&
 	   (buttonEvent->y < (int)height()))
 	{
-		if(buttonEvent->direction == ButtonEvent::Down)
+		if(buttonEvent->direction == Direction::down)
 		{
 			addValue(1);
 		}
@@ -197,13 +197,13 @@ void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 		return;
 	}
 
-	if(buttonEvent->direction == ButtonEvent::Down)
+	if(buttonEvent->direction == Direction::down)
 	{
 		yOffset = buttonEvent->y;
 		valueOffset = value();
 	}
 
-	dragging = (buttonEvent->direction == ButtonEvent::Down);
+	dragging = (buttonEvent->direction == Direction::down);
 }
 
 } // GUI::

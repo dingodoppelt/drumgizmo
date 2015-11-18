@@ -32,8 +32,6 @@
 
 namespace GUI {
 
-class RepaintEvent;
-
 class Label : public Widget {
 public:
 	Label(Widget *parent);
@@ -42,7 +40,7 @@ public:
 
 protected:
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
 	std::string _text;

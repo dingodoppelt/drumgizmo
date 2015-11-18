@@ -62,11 +62,11 @@ void EventHandler::processEvents()
 		}
 
 		switch(event->type()) {
-		case Event::Repaint:
+		case EventType::repaint:
 			window.redraw();
 			break;
 
-		case Event::Resize:
+		case EventType::resize:
 			{
 				auto resizeEvent = static_cast<ResizeEvent*>(event);
 				if((resizeEvent->width != window.width()) ||
@@ -77,7 +77,7 @@ void EventHandler::processEvents()
 			}
 			break;
 
-		case Event::MouseMove:
+		case EventType::mouseMove:
 			{
 				auto moveEvent = static_cast<MouseMoveEvent*>(event);
 
@@ -119,7 +119,7 @@ void EventHandler::processEvents()
 			}
 			break;
 
-		case Event::Button:
+		case EventType::button:
 			{
 				if(lastWasDoubleClick)
 				{
@@ -129,13 +129,13 @@ void EventHandler::processEvents()
 
 				auto buttonEvent = static_cast<ButtonEvent*>(event);
 
-				lastWasDoubleClick = buttonEvent->doubleclick;
+				lastWasDoubleClick = buttonEvent->doubleClick;
 
 				auto widget = window.find(buttonEvent->x, buttonEvent->y);
 
 				if(window.buttonDownFocus())
 				{
-					if(buttonEvent->direction == ButtonEvent::Up)
+					if(buttonEvent->direction == Direction::up)
 					{
 						auto widget = window.buttonDownFocus();
 						buttonEvent->x -= widget->windowX();
@@ -157,7 +157,7 @@ void EventHandler::processEvents()
 
 					widget->buttonEvent(buttonEvent);
 
-					if((buttonEvent->direction == ButtonEvent::Down) &&
+					if((buttonEvent->direction == Direction::down) &&
 					   widget->catchMouse())
 					{
 						window.setButtonDownFocus(widget);
@@ -171,7 +171,7 @@ void EventHandler::processEvents()
 			}
 			break;
 
-		case Event::Scroll:
+		case EventType::scroll:
 			{
 				auto scrollEvent = static_cast<ScrollEvent*>(event);
 
@@ -186,7 +186,7 @@ void EventHandler::processEvents()
 			}
 			break;
 
-		case Event::Key:
+		case EventType::key:
 			{
 				auto keyEvent = static_cast<KeyEvent*>(event);
 				if(window.keyboardFocus())
@@ -196,7 +196,7 @@ void EventHandler::processEvents()
 			}
 			break;
 
-		case Event::Close:
+		case EventType::close:
 			closeNotifier();
 			break;
 		}

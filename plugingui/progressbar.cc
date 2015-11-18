@@ -90,7 +90,7 @@ void ProgressBar::setProgress(float progress)
 	repaintEvent(nullptr);
 }
 
-void ProgressBar::repaintEvent(RepaintEvent *e)
+void ProgressBar::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 

@@ -37,12 +37,12 @@ namespace GUI {
 
 void ComboBox::listboxSelectHandler()
 {
-	ButtonEvent e;
-	e.direction = ButtonEvent::Down;
-	buttonEvent(&e);
+	ButtonEvent buttonEvent;
+	buttonEvent.direction = Direction::down;
+	this->buttonEvent(&buttonEvent);
 }
 
-ComboBox::ComboBox(Widget *parent)
+ComboBox::ComboBox(Widget* parent)
 	: Widget(parent)
 	, listbox(parent)
 {
@@ -113,7 +113,7 @@ static void drawArrow(Painter &p, int x, int y, int w, int h)
 	p.drawLine(x+(w/2), y+h, x+w, y);
 }
 
-void ComboBox::repaintEvent(RepaintEvent *e)
+void ComboBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
@@ -148,7 +148,7 @@ void ComboBox::repaintEvent(RepaintEvent *e)
 	}
 }
 
-void ComboBox::scrollEvent(ScrollEvent *e)
+void ComboBox::scrollEvent(ScrollEvent* scrollEvent)
 {
 	/*
 	scroll_offset += e->delta;
@@ -164,16 +164,16 @@ void ComboBox::scrollEvent(ScrollEvent *e)
 	*/
 }
 
-void ComboBox::keyEvent(KeyEvent *e)
+void ComboBox::keyEvent(KeyEvent* keyEvent)
 {
-	if(e->direction != KeyEvent::Up)
+	if(keyEvent->direction != Direction::up)
 	{
 		return;
 	}
 
 	/*
-	switch(e->keycode) {
-	case KeyEvent::KeyUp:
+	switch(keyEvent->keycode) {
+	case Key::up:
 		{
 			selected--;
 			if(selected < 0)
@@ -190,7 +190,7 @@ void ComboBox::keyEvent(KeyEvent *e)
 			}
 		}
 		break;
-	case KeyEvent::KeyDown:
+	case Key::down:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -210,10 +210,10 @@ void ComboBox::keyEvent(KeyEvent *e)
 			}
 		}
 		break;
-	case KeyEvent::KeyHome:
+	case Key::home:
 		selected = 0;
 		break;
-	case KeyEvent::KeyEnd:
+	case Key::end:
 		selected = items.size() - 1;
 		break;
 	default:
@@ -224,9 +224,9 @@ void ComboBox::keyEvent(KeyEvent *e)
 	*/
 }
 
-void ComboBox::buttonEvent(ButtonEvent *e)
+void ComboBox::buttonEvent(ButtonEvent* buttonEvent)
 {
-	if(e->direction != ButtonEvent::Down)
+	if(buttonEvent->direction != Direction::down)
 	{
 		return;
 	}

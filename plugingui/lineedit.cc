@@ -96,7 +96,7 @@ void LineEdit::buttonEvent(ButtonEvent *buttonEvent)
 		return;
 	}
 
-	if(buttonEvent->direction == ButtonEvent::Down)
+	if(buttonEvent->direction == Direction::down)
 	{
 		for(int i = 0; i < (int)visibleText.length(); ++i)
 		{
@@ -120,10 +120,10 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 
 	bool change = false;
 
-	if(keyEvent->direction == KeyEvent::Up)
+	if(keyEvent->direction == Direction::up)
 	{
 		switch(keyEvent->keycode) {
-		case KeyEvent::KeyLeft:
+		case Key::left:
 			if(pos == 0)
 			{
 				return;
@@ -137,7 +137,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			}
 			break;
 
-		case KeyEvent::KeyRight:
+		case Key::right:
 			if(pos == _text.length())
 			{
 				return;
@@ -151,19 +151,19 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			}
 			break;
 
-		case KeyEvent::KeyHome:
+		case Key::home:
 			pos = 0;
 			visibleText = _text;
 			offsetPos = 0;
 			break;
 
-		case KeyEvent::KeyEnd:
+		case Key::end:
 			pos = _text.length();
 			visibleText = _text;
 			offsetPos = 0;
 			break;
 
-		case KeyEvent::KeyDelete:
+		case Key::deleteKey:
 			if(pos < _text.length())
 			{
 				std::string t = _text.substr(0, pos);
@@ -173,7 +173,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			}
 			break;
 
-		case KeyEvent::KeyBackspace:
+		case Key::backspace:
 			if(pos > 0)
 			{
 				std::string t = _text.substr(0, pos - 1);
@@ -184,7 +184,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			}
 			break;
 
-		case KeyEvent::KeyCharacter:
+		case Key::character:
 			{
 				std::string pre = _text.substr(0, pos);
 				std::string post = _text.substr(pos, std::string::npos);
@@ -194,7 +194,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			}
 			break;
 
-		case KeyEvent::KeyEnter:
+		case Key::enter:
 			enterPressedNotifier();
 	    break;
 

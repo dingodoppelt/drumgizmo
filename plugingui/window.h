@@ -59,7 +59,7 @@ public:
 
   void addChild(Widget *widget);
 
-  void repaintEvent(GUI::RepaintEvent *e);
+  void repaintEvent(GUI::RepaintEvent* repaintEvent);
 
   void beginPaint();
   void endPaint();

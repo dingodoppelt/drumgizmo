@@ -173,17 +173,17 @@ Window *Widget::window()
 	return _window;
 }
 
-void Widget::repaint_r(RepaintEvent *e)
+void Widget::repaint_r(RepaintEvent* repaintEvent)
 {
 	Painter p(*this); // make sure pixbuf refcount is incremented.
 
-	repaintEvent(e);
+	this->repaintEvent(repaintEvent);
 
 	std::vector<Widget*>::iterator i = children.begin();
 	while(i != children.end())
 	{
 		Widget *w = *i;
-		w->repaint_r(e);
+		w->repaint_r(repaintEvent);
 		i++;
 	}
 }

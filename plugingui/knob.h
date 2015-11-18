@@ -51,11 +51,11 @@ protected:
 	virtual void clicked() {}
 
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
-	virtual void buttonEvent(ButtonEvent *e) override;
-	virtual void mouseMoveEvent(MouseMoveEvent *e) override;
-	virtual void scrollEvent(ScrollEvent *e) override;
-	virtual void keyEvent(KeyEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
+	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
+	virtual void scrollEvent(ScrollEvent* scrollEvent) override;
+	virtual void keyEvent(KeyEvent* keyEvent) override;
 
 private:
 	//! Sets the internal value and sends out the changed notification.

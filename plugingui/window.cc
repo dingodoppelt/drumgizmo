@@ -88,7 +88,7 @@ void GUI::Window::setCaption(std::string caption)
   native->setCaption(caption);
 }
 
-void GUI::Window::repaintEvent(GUI::RepaintEvent *e)
+void GUI::Window::repaintEvent(GUI::RepaintEvent* repaintEvent)
 {
   if(!visible()) return;
 

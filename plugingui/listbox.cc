@@ -99,7 +99,7 @@ void ListBox::clearSelectedValue()
 	basic.clearSelectedValue();
 }
 
-void ListBox::repaintEvent(RepaintEvent *e)
+void ListBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 

@@ -53,7 +53,7 @@ public:
 
 protected:
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
 	ProgressBarState state;

@@ -446,25 +446,26 @@ Event* NativeWindowX11::getNextEvent()
 			buttonEvent->y = xevent.xbutton.y;
 			switch(xevent.xbutton.button) {
 			case 1:
-				buttonEvent->button = ButtonEvent::Left;
+				buttonEvent->button = MouseButton::left;
 				break;
 			case 2:
-				buttonEvent->button = ButtonEvent::Middle;
+				buttonEvent->button = MouseButton::middle;
 				break;
 			case 3:
-				buttonEvent->button = ButtonEvent::Right;
+				buttonEvent->button = MouseButton::right;
 				break;
 			default:
 				WARN(X11, "Unknown button %d, setting to Left\n",
 				     xevent.xbutton.button);
-				buttonEvent->button = ButtonEvent::Left;
+				buttonEvent->button = MouseButton::left;
 				break;
 			}
 
 			buttonEvent->direction =
-				(xevent.type == ButtonPress) ? ButtonEvent::Down : ButtonEvent::Up;
+				(xevent.type == ButtonPress) ?
+				Direction::down : Direction::up;
 
-			buttonEvent->doubleclick =
+			buttonEvent->doubleClick =
 				(xevent.type == ButtonPress) &&
 				((xevent.xbutton.time - last_click) < 200);
 
@@ -483,32 +484,32 @@ Event* NativeWindowX11::getNextEvent()
 		keyEvent->window_id = xevent.xkey.window;
 
 		switch(xevent.xkey.keycode) {
-		case 113: keyEvent->keycode = KeyEvent::KeyLeft; break;
-		case 114: keyEvent->keycode = KeyEvent::KeyRight; break;
-		case 111: keyEvent->keycode = KeyEvent::KeyUp; break;
-		case 116: keyEvent->keycode = KeyEvent::KeyDown; break;
-		case 119: keyEvent->keycode = KeyEvent::KeyDelete; break;
-		case 22:  keyEvent->keycode = KeyEvent::KeyBackspace; break;
-		case 110: keyEvent->keycode = KeyEvent::KeyHome; break;
-		case 115: keyEvent->keycode = KeyEvent::KeyEnd; break;
-		case 117: keyEvent->keycode = KeyEvent::KeyPageDown; break;
-		case 112: keyEvent->keycode = KeyEvent::KeyPageUp; break;
-		case 36:  keyEvent->keycode = KeyEvent::KeyEnter; break;
-		default:  keyEvent->keycode = KeyEvent::KeyUnknown; break;
+		case 113: keyEvent->keycode = Key::left; break;
+		case 114: keyEvent->keycode = Key::right; break;
+		case 111: keyEvent->keycode = Key::up; break;
+		case 116: keyEvent->keycode = Key::down; break;
+		case 119: keyEvent->keycode = Key::deleteKey; break;
+		case 22:  keyEvent->keycode = Key::backspace; break;
+		case 110: keyEvent->keycode = Key::home; break;
+		case 115: keyEvent->keycode = Key::end; break;
+		case 117: keyEvent->keycode = Key::pageDown; break;
+		case 112: keyEvent->keycode = Key::pageUp; break;
+		case 36:  keyEvent->keycode = Key::enter; break;
+		default:  keyEvent->keycode = Key::unknown; break;
 		}
 
 		char stringBuffer[1024];
 		int size = XLookupString(&xevent.xkey, stringBuffer,
 		                         sizeof(stringBuffer), nullptr, nullptr);
-		if(size && keyEvent->keycode == KeyEvent::KeyUnknown)
+		if(size && keyEvent->keycode == Key::unknown)
 		{
-			keyEvent->keycode = KeyEvent::KeyCharacter;
+			keyEvent->keycode = Key::character;
 		}
 
 		keyEvent->text.append(stringBuffer, size);
 
 		keyEvent->direction =
-			(xevent.type == KeyPress) ? KeyEvent::Down : KeyEvent::Up;
+			(xevent.type == KeyPress) ? Direction::down : Direction::up;
 
 		event = keyEvent;
 	}

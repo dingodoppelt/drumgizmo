@@ -42,7 +42,7 @@ void Label::setText(std::string text)
 	repaintEvent(nullptr);
 }
 
-void Label::repaintEvent(GUI::RepaintEvent *e)
+void Label::repaintEvent(GUI::RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 

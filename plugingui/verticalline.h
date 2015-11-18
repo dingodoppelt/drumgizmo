@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_VERTICALLINE_H__
-#define __DRUMGIZMO_VERTICALLINE_H__
+#pragma once
 
 #include "widget.h"
 #include "image.h"
@@ -34,15 +33,14 @@ namespace GUI {
 
 class VerticalLine : public Widget {
 public:
-  VerticalLine(Widget *parent);
+	VerticalLine(Widget* parent);
 
-  //protected:
-  virtual void repaintEvent(RepaintEvent *e);
+protected:
+	// From Widget:
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
-  Image vline;
+	Image vline;
 };
 
-};
-
-#endif/*__DRUMGIZMO_VERTICALLINE_H__*/
+} // GUI::

@@ -28,14 +28,18 @@
 
 #include "painter.h"
 
-GUI::VerticalLine::VerticalLine(GUI::Widget *parent)
-  : Widget(parent), vline(":vertline.png")
+namespace GUI {
+
+VerticalLine::VerticalLine(Widget *parent)
+	: Widget(parent)
+	, vline(":vertline.png")
 {
 }
 
-void GUI::VerticalLine::repaintEvent(RepaintEvent *e)
+void VerticalLine::repaintEvent(RepaintEvent* repaintEvent)
 {
-  (void)e;
-  GUI::Painter p(*this);
-  p.drawImageStretched(0, 0, vline, width(), height());
+	Painter p(*this);
+	p.drawImageStretched(0, 0, vline, width(), height());
 }
+
+} // GUI::

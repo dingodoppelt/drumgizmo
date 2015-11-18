@@ -70,10 +70,10 @@ protected:
 
 	// From Widget:
 	bool isFocusable() override { return true; }
-	virtual void repaintEvent(RepaintEvent *e) override;
-	virtual void buttonEvent(ButtonEvent *e) override;
-	virtual void keyEvent(KeyEvent *e) override;
-	virtual void scrollEvent(ScrollEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
+	virtual void keyEvent(KeyEvent* keyEvent) override;
+	virtual void scrollEvent(ScrollEvent* scrollEvent) override;
 
 	ScrollBar scroll;
 

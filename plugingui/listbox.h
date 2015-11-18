@@ -50,7 +50,7 @@ public:
 	void clearSelectedValue();
 
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 	virtual void resize(int w, int h) override;
 
 	// Forwarded notifiers from ListBoxBasic::basic

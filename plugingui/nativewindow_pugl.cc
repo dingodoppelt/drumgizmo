@@ -83,7 +83,7 @@ static void onMouse(PuglView* view, int button, bool press, int x, int y)
   e->y = y;
   e->button = button;
   e->direction = press?1:-1;
-  e->doubleclick = false; 
+  e->doubleClick = false; 
 
   eventq.push_back(e);
 }
@@ -97,18 +97,18 @@ static void onKeyboard(PuglView* view, bool press, uint32_t key)
     printf("%d\n", key);
  
     switch(key) {
-      case PUGL_KEY_LEFT: e->keycode = GUI::KeyEvent::KeyLeft; break;
-      case PUGL_KEY_RIGHT: e->keycode = GUI::KeyEvent::KeyRight; break;
-      case PUGL_KEY_UP: e->keycode = GUI::KeyEvent::KeyUp; break;
-      case PUGL_KEY_DOWN: e->keycode = GUI::KeyEvent::KeyDown; break;
-      case PUGL_KEY_PAGE_UP: e->keycode = GUI::KeyEvent::KeyPageDown; break;
-      case PUGL_KEY_PAGE_DOWN: e->keycode = GUI::KeyEvent::KeyPageUp; break;
-      default: e->keycode = GUI::KeyEvent::KeyUnknown; break;
+      case PUGL_KEY_LEFT: e->keycode = GUI::Key::left; break;
+      case PUGL_KEY_RIGHT: e->keycode = GUI::Key::right; break;
+      case PUGL_KEY_UP: e->keycode = GUI::Key::up; break;
+      case PUGL_KEY_DOWN: e->keycode = GUI::Key::down; break;
+      case PUGL_KEY_PAGE_UP: e->keycode = GUI::Key::pageDown; break;
+      case PUGL_KEY_PAGE_DOWN: e->keycode = GUI::Key::pageUp; break;
+      default: e->keycode = GUI::Key::unknown; break;
     }
 
     // TODO: perform character type check
-    if(e->keycode == GUI::KeyEvent::KeyUnknown) {
-      e->keycode = GUI::KeyEvent::KeyCharacter;
+    if(e->keycode == GUI::Key::unknown) {
+      e->keycode = GUI::Key::character;
       e->text.assign(1, (char)key); 
     }
 

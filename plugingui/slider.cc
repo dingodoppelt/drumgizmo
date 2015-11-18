@@ -31,128 +31,132 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
-GUI::Slider::Slider(Widget *parent)
-  : GUI::Widget(parent)
+namespace GUI {
+
+Slider::Slider(Widget *parent)
+	: Widget(parent)
 {
-  state = up;
+	state = State::up;
 
-  val = 0.0;
-  maximum = 1.0;
-  minimum = 0.0;
-
-  handler = NULL;
-  ptr = NULL;
+	currentValue = 0.0;
+	maximum = 1.0;
+	minimum = 0.0;
 }
 
-void GUI::Slider::setValue(float v)
+void Slider::setValue(float newValue)
 {
-  val = v;
-  if(handler) handler(ptr);
-  repaintEvent(NULL);
+	currentValue = newValue;
+	repaintEvent(nullptr);
+	clickNotifier();
 }
 
-float GUI::Slider::value()
+float Slider::value()
 {
-  return val;
+	return currentValue;
 }
 
-void GUI::Slider::registerClickHandler(void (*handler)(void *), void *ptr)
+void Slider::repaintEvent(RepaintEvent* repaintEvent)
 {
-  this->handler = handler;
-  this->ptr = ptr;
+	Painter p(*this);
+
+	float alpha = 0.8;
+
+	int xpos = (int)((currentValue / maximum) * (float)(width() - 1));
+
+	if(hasKeyboardFocus())
+	{
+		p.setColour(Colour(0.6, alpha));
+	}
+	else
+	{
+		p.setColour(Colour(0.5, alpha));
+	}
+
+	p.drawFilledRectangle(0,0,width(),height());
+
+	//p.setColour(Colour(0.1, alpha));
+	//p.drawRectangle(0,0,width()-1,height() - 1);
+
+	p.setColour(Colour(1, 0, 0, alpha));
+	p.drawLine(xpos, 0, xpos, height() - 1);
+
+	//p.setColour(Colour(0.8, alpha));
+	//switch(state) {
+	//case State::up:
+	//	p.drawLine(0, 0, 0, height() - 1);
+	//	p.drawLine(0, 0, width() - 1, 0);
+	//	break;
+	//case State::down:
+	//	p.drawLine(width() - 1, 0, width() - 1, height() - 1);
+	//	p.drawLine(width() - 1, height() - 1, 0, height() - 1);
+	//	break;
+	//}
+
+	p.setColour(Colour(0.3, alpha));
+	p.drawPoint(0, height() - 1);
+	p.drawPoint(width() - 1, 0);
 }
 
-void GUI::Slider::mouseMoveEvent(MouseMoveEvent *e)
+void Slider::buttonEvent(ButtonEvent* buttonEvent)
 {
-  if(state == down) {
-    val = maximum / (float)width() * (float)e->x;
+	if(buttonEvent->direction == Direction::down)
+	{
+		state = State::down;
+		currentValue = maximum / (float)width() * (float)buttonEvent->x;
 
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
+		if(currentValue < 0)
+		{
+			currentValue = 0;
+		}
 
-    if(handler) handler(ptr);
-    repaintEvent(NULL);
-  }
+		if(currentValue > 1)
+		{
+			currentValue = 1;
+		}
+
+		repaintEvent(nullptr);
+		clickNotifier();
+	}
+
+	if(buttonEvent->direction == Direction::up)
+	{
+		state = State::up;
+		currentValue = maximum / (float)width() * (float)buttonEvent->x;
+
+		if(currentValue < 0)
+		{
+			currentValue = 0;
+		}
+
+		if(currentValue > 1)
+		{
+			currentValue = 1;
+		}
+
+		repaintEvent(nullptr);
+		clickNotifier();
+	}
 }
 
-void GUI::Slider::buttonEvent(ButtonEvent *e)
+void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 {
-  if(e->direction == ButtonEvent::Down) {
-    state = down;
-    val = maximum / (float)width() * (float)e->x;
+	if(state == State::down)
+	{
+		currentValue = maximum / (float)width() * (float)mouseMoveEvent->x;
 
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
+		if(currentValue < 0)
+		{
+			currentValue = 0;
+		}
 
-    if(handler) handler(ptr);
-    repaintEvent(NULL);
-  }
-  if(e->direction == ButtonEvent::Up) {
-    state = up;
-    val = maximum / (float)width() * (float)e->x;
-    
-    if(val < 0) val = 0;
-    if(val > 1) val = 1;
+		if(currentValue > 1)
+		{
+			currentValue = 1;
+		}
 
-    repaintEvent(NULL);
-    clicked();
-    if(handler) handler(ptr);
-  }
+		repaintEvent(nullptr);
+		clickNotifier();
+	}
 }
 
-void GUI::Slider::repaintEvent(GUI::RepaintEvent *e)
-{
-  //DEBUG(slider, "Slider::repaintEvent (%f)\n", val);
-
-  Painter p(*this);
-
-  float alpha = 0.8;
-
-  int xpos = (int)((val / maximum) * (float)(width() - 1));
-
-  if(hasKeyboardFocus()) {
-    p.setColour(Colour(0.6, alpha));
-  } else {
-    p.setColour(Colour(0.5, alpha));
-  }
-  p.drawFilledRectangle(0,0,width(),height());
-  /*
-  p.setColour(Colour(0.1, alpha));
-  p.drawRectangle(0,0,width()-1,height()-1);
-  */
-  p.setColour(Colour(1, 0, 0, alpha));
-  p.drawLine(xpos, 0, xpos, height()-1);
-  /*
-  p.setColour(Colour(0.8, alpha));
-  switch(state) {
-  case up:
-    p.drawLine(0,0,0,height()-1);
-    p.drawLine(0,0,width()-1,0);
-    break;
-  case down:
-    p.drawLine(width()-1,0, width()-1,height()-1);
-    p.drawLine(width()-1,height()-1,0, height()-1);
-    break;
-  }
-  */
-  p.setColour(Colour(0.3, alpha));
-  p.drawPoint(0,height()-1);
-  p.drawPoint(width()-1,0);
-}
-
-#ifdef TEST_SLIDER
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_SLIDER*/
+} // GUI::

@@ -201,13 +201,13 @@ void ListBoxBasic::scrollEvent(ScrollEvent* scrollEvent)
 
 void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 {
-	if(keyEvent->direction != KeyEvent::Down)
+	if(keyEvent->direction != Direction::down)
 	{
 		return;
 	}
 
 	switch(keyEvent->keycode) {
-	case KeyEvent::KeyUp:
+	case Key::up:
 		if(marked == 0)
 		{
 			return;
@@ -221,7 +221,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		}
 		break;
 
-	case KeyEvent::KeyDown:
+	case Key::down:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -240,7 +240,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		}
 		break;
 
-	case KeyEvent::KeyHome:
+	case Key::home:
 		marked = 0;
 		if(marked < scroll.value())
 		{
@@ -248,7 +248,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		}
 		break;
 
-	case KeyEvent::KeyEnd:
+	case Key::end:
 		{
 			// Number of items that can be displayed at a time.
 			int numitems = height() / (font.textHeight() + padding);
@@ -261,7 +261,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		}
 		break;
 
-	case KeyEvent::KeyCharacter:
+	case Key::character:
 		if(keyEvent->text == " ")
 		{
 			setSelection(marked);
@@ -269,7 +269,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		}
 		break;
 
-	case KeyEvent::KeyEnter:
+	case Key::enter:
 		setSelection(marked);
 		selectionNotifier();
 		break;
@@ -288,7 +288,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 	{
 		if(buttonEvent->y > 0 && buttonEvent->y < btn_size)
 		{
-			if(buttonEvent->direction == ButtonEvent::Up)
+			if(buttonEvent->direction == Direction::up)
 			{
 				return;
 			}
@@ -299,7 +299,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 		if(buttonEvent->y > ((int)height() - btn_size) &&
 		   buttonEvent->y < ((int)height() - 1))
 		{
-			if(buttonEvent->direction == ButtonEvent::Up)
+			if(buttonEvent->direction == Direction::up)
 			{
 				return;
 			}
@@ -308,7 +308,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 		}
 	}
 
-	if(buttonEvent->direction == ButtonEvent::Up)
+	if(buttonEvent->direction == Direction::up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;
@@ -327,7 +327,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 		repaintEvent(nullptr);
 	}
 
-	if(buttonEvent->direction != ButtonEvent::Up)
+	if(buttonEvent->direction != Direction::up)
 	{
 		int skip = scroll.value();
 		size_t yoffset = padding / 2;
@@ -344,7 +344,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 		repaintEvent(nullptr);
 	}
 
-	if(buttonEvent->doubleclick)
+	if(buttonEvent->doubleClick)
 	{
 		selectionNotifier();
 	}

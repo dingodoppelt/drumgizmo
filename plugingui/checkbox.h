@@ -50,9 +50,9 @@ protected:
 	virtual void clicked() {}
 
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent *e) override;
-	virtual void buttonEvent(ButtonEvent *e) override;
-	virtual void keyEvent(KeyEvent *e) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
+	virtual void keyEvent(KeyEvent* keyEvent) override;
 
 private:
 	void internalSetChecked(bool checked);

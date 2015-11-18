@@ -81,9 +81,9 @@ Button::~Button()
 	delete(box_down.center);
 }
 
-void Button::buttonEvent(ButtonEvent *e)
+void Button::buttonEvent(ButtonEvent* buttonEvent)
 {
-	if(e->direction == ButtonEvent::Down)
+	if(buttonEvent->direction == Direction::down)
 	{
 		draw_state = down;
 		button_state = down;
@@ -91,7 +91,7 @@ void Button::buttonEvent(ButtonEvent *e)
 		repaintEvent(nullptr);
 	}
 
-	if(e->direction == ButtonEvent::Up)
+	if(buttonEvent->direction == Direction::up)
 	{
 		draw_state = up;
 		button_state = up;
@@ -104,7 +104,7 @@ void Button::buttonEvent(ButtonEvent *e)
 	}
 }
 
-void Button::repaintEvent(RepaintEvent *e)
+void Button::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 

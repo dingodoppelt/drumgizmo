@@ -50,7 +50,7 @@ public:
 	std::string selectedValue();
 
 	// From Widget:
-	virtual void repaintEvent(GUI::RepaintEvent *e) override;
+	virtual void repaintEvent(GUI::RepaintEvent* repaintEvent) override;
 	virtual void resize(int w, int h) override;
 
 	// Forwarded notifier from ListBoxBasic::basic

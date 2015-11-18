@@ -45,7 +45,7 @@ public:
 
 protected:
 	// From Widget:
-	void repaintEvent(RepaintEvent *e) override;
+	void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
 	state_t state;

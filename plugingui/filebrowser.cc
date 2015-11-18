@@ -129,7 +129,7 @@ void FileBrowser::resize(int w, int h)
 	btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
 }
 
-void FileBrowser::repaintEvent(RepaintEvent *e)
+void FileBrowser::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 	p.drawImageStretched(0,0, back, width(), height());

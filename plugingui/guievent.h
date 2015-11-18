@@ -37,20 +37,21 @@
 
 namespace GUI {
 
+enum class EventType {
+	mouseMove,
+	repaint,
+	button,
+	scroll,
+	key,
+	close,
+	resize
+};
+
 class Event {
 public:
-	typedef enum {
-		MouseMove,
-		Repaint,
-		Button,
-		Scroll,
-		Key,
-		Close,
-		Resize
-	} Type;
 	virtual ~Event() {}
 
-	virtual Type type() = 0;
+	virtual EventType type() = 0;
 
 #ifdef X11
 	::Window window_id;
@@ -59,36 +60,40 @@ public:
 
 class MouseMoveEvent : public Event {
 public:
-	Type type() { return MouseMove; }
+	EventType type() { return EventType::mouseMove; }
 
 	int x;
 	int y;
+};
+
+
+enum class Direction {
+	up,
+	down,
+};
+
+enum class MouseButton {
+	right,
+	middle,
+	left,
 };
 
 class ButtonEvent : public Event {
 public:
-	Type type() { return Button; }
+	EventType type() { return EventType::button; }
 
 	int x;
 	int y;
 
-	enum {
-		Up,
-		Down,
-	} direction;
+	Direction direction;
+	MouseButton button;
 
-	enum {
-		Right,
-		Middle,
-		Left,
-	} button;
-
-	bool doubleclick;
+	bool doubleClick;
 };
 
 class ScrollEvent : public Event {
 public:
-	Type type() { return Scroll; }
+	EventType type() { return EventType::scroll; }
 
 	int x;
 	int y;
@@ -98,7 +103,7 @@ public:
 
 class RepaintEvent : public Event {
 public:
-	Type type() { return Repaint; }
+	EventType type() { return EventType::repaint; }
 
 	int x;
 	int y;
@@ -106,43 +111,40 @@ public:
 	size_t height;
 };
 
+enum class Key {
+	unknown,
+	left,
+	right,
+	up,
+	down,
+	deleteKey,
+	backspace,
+	home,
+	end,
+	pageDown,
+	pageUp,
+	enter,
+	character, //!< The actual character is stored in KeyEvent::text
+};
+
 class KeyEvent : public Event {
 public:
-	Type type() { return Key; }
+	EventType type() { return EventType::key; }
 
-	enum {
-		Up,
-		Down,
-	} direction;
+	Direction direction;
 
-	int keycode;
+	Key keycode;
 	std::string text;
-
-	enum {
-		KeyUnknown   = -1,
-		KeyLeft      =  1,
-		KeyRight     =  2,
-		KeyUp        =  3,
-		KeyDown      =  4,
-		KeyDelete    =  5,
-		KeyBackspace =  6,
-		KeyHome      =  7,
-		KeyEnd       =  8,
-		KeyPageDown  =  9,
-		KeyPageUp    =  10,
-		KeyEnter     =  11,
-		KeyCharacter =  0xffff // character data is stored in 'text'
-	};
 };
 
 class CloseEvent : public Event {
 public:
-	Type type() { return Close; }
+	EventType type() { return EventType::close; }
 };
 
 class ResizeEvent : public Event {
 public:
-	Type type() { return Resize; }
+	EventType type() { return EventType::resize; }
 
 	size_t width;
 	size_t height;

@@ -94,7 +94,7 @@ std::string ListBoxThin::selectedValue()
 	return basic.selectedValue();
 }
 
-void ListBoxThin::repaintEvent(RepaintEvent *e)
+void ListBoxThin::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
