@@ -1,7 +1,6 @@
 noinst_PROGRAMS = plugingui rcgen
 
 include Makefile.am.plugingui
-#include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 plugingui_LDADD = $(SNDFILE_LIBS) $(PTHREAD_LIBS) $(EXPAT_LIBS) \
 	 -ldl $(PLUGIN_GUI_LIBS)
@@ -58,4 +57,3 @@ EXTRA_DIST = \
 	widget.h \
 	window.h \
 	lodepng/lodepng.h
-

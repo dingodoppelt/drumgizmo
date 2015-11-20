@@ -124,6 +124,8 @@ AC_SUBST(GUI_CFLAGS)
 AC_SUBST(GUI_LIBS)
 
 AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
+AM_CONDITIONAL([ENABLE_WIN32], [test "x$enable_gui" = "xwin32"])
+AM_CONDITIONAL([ENABLE_X11], [test "x$enable_gui" = "xx11"])
 
 dnl ======================
 dnl Compile unit tests
@@ -228,7 +230,7 @@ AS_IF(
     [AC_MSG_RESULT([*** input dummy plugin disabled per user request ***])
      have_input_dummy=no]
   )
-   
+
   dnl *** Test
   AC_ARG_ENABLE([input_test],
 		AS_HELP_STRING([--disable-input-test], [Disable input test plugin [default=enabled]]),,

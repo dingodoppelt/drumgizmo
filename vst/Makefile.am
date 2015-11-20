@@ -40,7 +40,7 @@ libdg_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
 
 nodist_libdrumgizmo_vst_la_SOURCES = \
-  $(VST_SOURCES)
+	$(VST_SOURCES)
 
 libdrumgizmo_vst_la_SOURCES = \
 	drumgizmo_vst.cc \
@@ -51,4 +51,3 @@ libdrumgizmo_vst_la_LDFLAGS = -no-undefined -shared
 libdrumgizmo_vst_la_LIBADD = libdg.la
 libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui
-
