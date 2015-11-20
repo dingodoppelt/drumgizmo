@@ -120,7 +120,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 
 	bool change = false;
 
-	if(keyEvent->direction == Direction::up)
+	if(keyEvent->direction == Direction::down)
 	{
 		switch(keyEvent->keycode) {
 		case Key::left:
