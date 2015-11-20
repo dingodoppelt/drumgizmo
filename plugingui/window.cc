@@ -27,11 +27,6 @@
 #include "window.h"
 
 #include "painter.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <string.h>
 #include <hugin.hpp>
 
 #ifndef PUGL
@@ -45,212 +40,252 @@
 #include "nativewindow_pugl.h"
 #endif
 
-GUI::Window::Window() 
-  : Widget(NULL), wpixbuf(100, 100), back(":bg.png"), logo(":logo.png")
-{
-  _x = _y = 100;
-  _width = wpixbuf.width;
-  _height = wpixbuf.height;
+namespace GUI {
 
-  refcount = 0;
-  max_refcount = 0;
-  _keyboardFocus = this;
-  _buttonDownFocus = NULL;
-  _mouseFocus = NULL;
+Window::Window()
+	: Widget(nullptr)
+	, wpixbuf(100, 100)
+{
+	// Make sure we have a valid size when initialising the NativeWindow
+	_width = wpixbuf.width;
+	_height = wpixbuf.height;
 
 #ifndef PUGL
 #ifdef X11
-  native = new NativeWindowX11(*this);
+	native = new NativeWindowX11(*this);
 #endif/*X11*/
 #ifdef WIN32
-  native = new NativeWindowWin32(*this);
+	native = new NativeWindowWin32(*this);
 #endif/*WIN32*/
 #else/*Use pugl*/
-  native = new NativeWindowPugl(this);
+	native = new NativeWindowPugl(this);
 #endif
 
-  eventhandler = new GUI::EventHandler(*native, *this);
+	eventhandler = new EventHandler(*native, *this);
 }
 
-GUI::Window::~Window()
+Window::~Window()
 {
-  delete native;
-  delete eventhandler;
+	delete native;
+	delete eventhandler;
 }
 
-GUI::EventHandler *GUI::Window::eventHandler()
+void Window::setFixedSize(int w, int h)
 {
-  return eventhandler;
+	native->setFixedSize(w, h);
+	resize(w,h);
 }
 
-void GUI::Window::setCaption(std::string caption)
+void Window::setCaption(const std::string& caption)
 {
-  native->setCaption(caption);
+	native->setCaption(caption);
 }
 
-void GUI::Window::repaintEvent(GUI::RepaintEvent* repaintEvent)
+void Window::resize(int width, int height)
 {
-  if(!visible()) return;
+	if((width < 1) || (height < 1))
+	{
+		return;
+	}
 
-  Painter p(*this);
-  p.drawImageStretched(0,0, back, width(), height());
-  p.drawImage(width() - logo.width(), height() - logo.height(), logo);
+	resized(width, height);
+	Widget::resize(width, height);
+	native->resize(width, height);
 }
 
-void GUI::Window::setFixedSize(int w, int h)
+void Window::move(size_t x, size_t y)
 {
-  native->setFixedSize(w, h);
-  resize(w,h);
+	native->move(x, y);
+
+	// Make sure widget corrdinates are updated.
+	Widget::move(x, y);
 }
 
-void GUI::Window::resize(int width, int height)
+size_t Window::x()
 {
-  if(width < 1 || height < 1) return;
-
-  // This needs to be done on all platoforms when setFixedSize is introduced.
-  //#ifdef WIN32
-  // Fix to force buffer size reallocation
-  // FIXME: This should've been done indirectly through a WM_SIZE message in the
-  //  EventHandler...
-  resized(width, height);
-  //#endif
-
-  Widget::resize(width, height);
-  native->resize(width, height);
+	return _x;
 }
 
-void GUI::Window::move(size_t x, size_t y)
+size_t Window::y()
 {
-  native->move(x, y);
-
-  // Make sure widget corrds are updated.
-  Widget::move(x, y);
+	return _y;
 }
 
-size_t GUI::Window::x() { return _x; }
-size_t GUI::Window::y() { return _y; }
-size_t GUI::Window::width() { return _width; }
-size_t GUI::Window::height() { return _height; }
-size_t GUI::Window::windowX() { return 0; }
-size_t GUI::Window::windowY() { return 0; }
-
-void GUI::Window::show()
+size_t Window::width()
 {
-  repaintChildren(NULL);
-  native->show();
+	return _width;
 }
 
-void GUI::Window::hide()
+size_t Window::height()
 {
-  native->hide();
+	return _height;
 }
 
-GUI::Window *GUI::Window::window()
+size_t Window::windowX()
 {
-  return this;
+	return 0;
 }
 
-void GUI::Window::beginPaint()
+size_t Window::windowY()
 {
-  refcount++;
-  if(refcount > max_refcount) max_refcount = refcount;
+	return 0;
 }
 
-void GUI::Window::endPaint()
+void Window::show()
 {
-  if(refcount) refcount--;
-
-  if(!refcount) {
-    if(max_refcount > 1) { // Did we go deep enough for a buffer update?
-      updateBuffer();
-      redraw();
-    }
-    max_refcount = 0;
-  }
+	repaintChildren(nullptr);
+	native->show();
 }
 
-void GUI::Window::updateBuffer()
+void Window::hide()
 {
-  DEBUG(window, "Updating buffer\n");
-  memset(wpixbuf.buf, 0, wpixbuf.width * wpixbuf.height * 3);
-
-  std::vector<PixelBufferAlpha *> pl = getPixelBuffers();
-  std::vector<PixelBufferAlpha *>::iterator pli = pl.begin();
-  while(pli != pl.end()) {
-    PixelBufferAlpha *pb = *pli;
-    size_t updateWidth = pb->width;
-    size_t updateHeight = pb->height;
-    if(updateWidth > (wpixbuf.width - pb->x))
-    {
-	    updateWidth = (wpixbuf.width - pb->x);
-    }
-
-    if(updateHeight > (wpixbuf.height - pb->y))
-    {
-	    updateHeight = (wpixbuf.height - pb->y);
-    }
-
-    for(size_t x = 0; x < updateWidth; x++) {
-      for(size_t y = 0; y < updateHeight; y++) {
-        unsigned char r,g,b,a;
-        pb->pixel(x,y,&r,&g,&b,&a);
-        wpixbuf.setPixel(x + pb->x, y + pb->y, r, g, b, a);
-      }
-    }
-    pli++;
-  }
-  native->handleBuffer();
+	native->hide();
 }
 
-void GUI::Window::resized(size_t w, size_t h)
+Window* Window::window()
 {
-  if(_width == w && _height == h) return;
-
-  _width = w;
-  _height = h;
-  wpixbuf.realloc(w, h);
-  updateBuffer();
-
-  pixbuf.realloc(w, h);
-  repaintEvent(NULL);
+	return this;
 }
 
-void GUI::Window::redraw()
+EventHandler* Window::eventHandler()
 {
-  native->redraw();
+	return eventhandler;
 }
 
-GUI::Widget *GUI::Window::keyboardFocus()
+Widget* Window::keyboardFocus()
 {
-  return _keyboardFocus;
+	return _keyboardFocus;
 }
 
-void GUI::Window::setKeyboardFocus(GUI::Widget *widget)
+void Window::setKeyboardFocus(Widget* widget)
 {
-  GUI::Widget *old_focus = _keyboardFocus;
-  _keyboardFocus = widget;
+	auto oldFocusWidget = _keyboardFocus;
+	_keyboardFocus = widget;
 
-  if(old_focus) old_focus->repaintEvent(NULL);
-  if(_keyboardFocus) _keyboardFocus->repaintEvent(NULL);
+	if(oldFocusWidget)
+	{
+		oldFocusWidget->repaintEvent(nullptr);
+	}
+
+	if(_keyboardFocus)
+	{
+		_keyboardFocus->repaintEvent(nullptr);
+	}
 }
 
-GUI::Widget *GUI::Window::buttonDownFocus()
+Widget* Window::buttonDownFocus()
 {
-  return _buttonDownFocus;
+	return _buttonDownFocus;
 }
 
-void GUI::Window::setButtonDownFocus(GUI::Widget *widget)
+void Window::setButtonDownFocus(Widget* widget)
 {
-  _buttonDownFocus = widget;
-  native->grabMouse(widget != NULL);
+	_buttonDownFocus = widget;
+	native->grabMouse(widget != nullptr);
 }
 
-GUI::Widget *GUI::Window::mouseFocus()
+Widget* Window::mouseFocus()
 {
-  return _mouseFocus;
+	return _mouseFocus;
 }
 
-void GUI::Window::setMouseFocus(GUI::Widget *widget)
+void Window::setMouseFocus(Widget* widget)
 {
-  _mouseFocus = widget;
+	_mouseFocus = widget;
 }
+
+void Window::redraw()
+{
+	native->redraw();
+}
+
+void Window::resized(size_t width, size_t height)
+{
+	if((_width == width) && (_height == height))
+	{
+		return;
+	}
+
+	_width = width;
+	_height = height;
+
+	wpixbuf.realloc(width, height);
+	updateBuffer();
+
+	pixbuf.realloc(width, height);
+	repaintEvent(nullptr);
+}
+
+void Window::updateBuffer()
+{
+	//DEBUG(window, "Updating buffer\n");
+	for(auto pixelBuffer : getPixelBuffers())
+	{
+		size_t updateWidth = pixelBuffer->width;
+		size_t updateHeight = pixelBuffer->height;
+
+		if(updateWidth > (wpixbuf.width - pixelBuffer->x))
+		{
+			updateWidth = (wpixbuf.width - pixelBuffer->x);
+		}
+
+		if(updateHeight > (wpixbuf.height - pixelBuffer->y))
+		{
+			updateHeight = (wpixbuf.height - pixelBuffer->y);
+		}
+
+		unsigned char r,g,b,a;
+		for(size_t y = 0; y < updateHeight; y++)
+		{
+			for(size_t x = 0; x < updateWidth; x++)
+			{
+				pixelBuffer->pixel(x, y, &r, &g, &b, &a);
+				wpixbuf.setPixel(x + pixelBuffer->x, y + pixelBuffer->y, r, g, b, a);
+			}
+		}
+	}
+
+	native->handleBuffer();
+}
+
+void Window::beginPaint()
+{
+	++refcount;
+	if(refcount > maxRefcount)
+	{
+		maxRefcount = refcount;
+	}
+}
+
+void Window::endPaint()
+{
+	if(refcount)
+	{
+		--refcount;
+	}
+
+	if(!refcount)
+	{
+		// Did we go deep enough for a buffer update?
+		if(maxRefcount > 1)
+		{
+			updateBuffer();
+			redraw();
+		}
+		maxRefcount = 0;
+	}
+}
+
+void Window::repaintEvent(RepaintEvent* repaintEvent)
+{
+	if(!visible())
+	{
+		return;
+	}
+
+	Painter p(*this);
+	p.drawImageStretched(0,0, back, width(), height());
+	p.drawImage(width() - logo.width(), height() - logo.height(), logo);
+}
+
+} // GUI::

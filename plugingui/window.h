@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_WINDOW_H__
-#define __DRUMGIZMO_WINDOW_H__
+#pragma once
 
 #include "widget.h"
 
@@ -38,68 +37,70 @@ namespace GUI {
 
 class Window : public Widget {
 public:
-  Window();
-  ~Window();
+	Window();
+	~Window();
 
-  void show();
-  void hide();
+	void setFixedSize(int width, int height);
+	void setCaption(const std::string& caption);
 
-  void setFixedSize(int width, int height);
-  void resize(int width, int height);
-  void move(size_t x, size_t y);
+	// From Widget:
+	void resize(int width, int height) override;
+	void move(size_t x, size_t y) override;
+	size_t x() override;
+	size_t y() override;
+	size_t width() override;
+	size_t height() override;
+	size_t windowX() override;
+	size_t windowY() override;
+	void show() override;
+	void hide() override;
+	Window* window() override;
 
-  size_t x();
-  size_t y();
-  size_t windowX();
-  size_t windowY();
-  size_t width();
-  size_t height();
+	EventHandler* eventHandler();
 
-  void setCaption(std::string caption);
+	Widget* keyboardFocus();
+	void setKeyboardFocus(Widget* widget);
 
-  void addChild(Widget *widget);
+	Widget* buttonDownFocus();
+	void setButtonDownFocus(Widget* widget);
 
-  void repaintEvent(GUI::RepaintEvent* repaintEvent);
-
-  void beginPaint();
-  void endPaint();
-
-  Window *window();
-
-  EventHandler *eventHandler();
-
-  // handlers
-  virtual void redraw();
-  void resized(size_t w, size_t h);
-
-  Widget *keyboardFocus();
-  void setKeyboardFocus(Widget *widget);
-
-  Widget *buttonDownFocus();
-  void setButtonDownFocus(Widget *widget);
-
-  Widget *mouseFocus();
-  void setMouseFocus(Widget *widget);
-
-  PixelBuffer wpixbuf;
-  void updateBuffer();
+	Widget* mouseFocus();
+	void setMouseFocus(Widget* widget);
 
 protected:
-  size_t refcount;
+	// For the EventHandler
+	friend class EventHandler;
+	void redraw();
+	void resized(size_t w, size_t h);
+	void updateBuffer();
 
-  Widget *_keyboardFocus;
-  Widget *_buttonDownFocus;
-  Widget *_mouseFocus;
+	// For the Painter
+	friend class Painter;
+	void beginPaint();
+	void endPaint();
 
-  NativeWindow *native;
-  EventHandler *eventhandler;
+	// From Widget:
+	void repaintEvent(RepaintEvent* repaintEvent) override;
 
-  Image back;
-  Image logo;
+	// For the NativweWindow
+	friend class NativeWindowX11;
+	friend class NativeWindowWin32;
+	friend class NativeWindowPugl;
+	PixelBuffer wpixbuf;
 
-  size_t max_refcount;
+	size_t refcount{0};
+
+	Widget* _keyboardFocus{nullptr};
+	Widget* _buttonDownFocus{nullptr};
+	Widget* _mouseFocus{nullptr};
+
+	NativeWindow* native{nullptr};
+	EventHandler* eventhandler{nullptr};
+
+	Image back{":bg.png"};
+	Image logo{":logo.png"};
+
+	size_t maxRefcount{0};
 };
 
-};
-
-#endif/*__DRUMGIZMO_WINDOW_H__*/
+} // GUI::
