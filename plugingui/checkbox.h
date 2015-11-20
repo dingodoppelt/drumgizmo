@@ -40,6 +40,7 @@ public:
 
 	// From Widget:
 	bool isFocusable() override { return true; }
+	bool catchMouse() override { return true; }
 
 	bool checked();
 	void setChecked(bool checked);
@@ -47,12 +48,12 @@ public:
 	Notifier<bool> stateChangedNotifier;
 
 protected:
-	virtual void clicked() {}
-
 	// From Widget:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
 	virtual void keyEvent(KeyEvent* keyEvent) override;
+	virtual void mouseLeaveEvent() override;
+	virtual void mouseEnterEvent() override;
 
 private:
 	void internalSetChecked(bool checked);
@@ -63,6 +64,8 @@ private:
 
 	bool state;
 	bool middle;
+	bool buttonDown = false;
+	bool inCheckbox = false;
 
 	std::string _text;
 };

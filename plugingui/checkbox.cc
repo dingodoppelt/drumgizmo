@@ -46,11 +46,16 @@ void CheckBox::buttonEvent(ButtonEvent* buttonEvent)
 {
 	if((buttonEvent->direction == Direction::up) || buttonEvent->doubleClick)
 	{
+		buttonDown = false;
 		middle = false;
-		internalSetChecked(!state);
+		if(inCheckbox)
+		{
+			internalSetChecked(!state);
+		}
 	}
 	else
 	{
+		buttonDown = true;
 		middle = true;
 	}
 
@@ -87,29 +92,21 @@ void CheckBox::repaintEvent(RepaintEvent* repaintEvent)
 
 	p.clear();
 
+	p.drawImage(0, (knob.height() - bg_on.height()) / 2, state ? bg_on : bg_off);
+
+	if(middle)
+	{
+		p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, knob);
+		return;
+	}
+
 	if(state)
 	{
-		p.drawImage(0, (knob.height() - bg_on.height()) / 2, bg_on);
-		if(middle)
-		{
-			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, knob);
-		}
-		else
-		{
-			p.drawImage(bg_on.width() - 40 + 2, 0, knob);
-		}
+		p.drawImage(bg_on.width() - 40 + 2, 0, knob);
 	}
 	else
 	{
-		p.drawImage(0, (knob.height() - bg_off.height()) / 2, bg_off);
-		if(middle)
-		{
-			p.drawImage((bg_on.width() - knob.width()) / 2 + 1, 0, knob);
-		}
-		else
-		{
-			p.drawImage(0, 0, knob);
-		}
+		p.drawImage(0, 0, knob);
 	}
 }
 
@@ -121,6 +118,26 @@ bool CheckBox::checked()
 void CheckBox::setChecked(bool c)
 {
 	internalSetChecked(c);
+}
+
+void CheckBox::mouseLeaveEvent()
+{
+	inCheckbox = false;
+	if(buttonDown)
+	{
+		middle = false;
+		repaintEvent(nullptr);
+	}
+}
+
+void CheckBox::mouseEnterEvent()
+{
+	inCheckbox = true;
+	if(buttonDown)
+	{
+		middle = true;
+		repaintEvent(nullptr);
+	}
 }
 
 void CheckBox::internalSetChecked(bool checked)
