@@ -183,7 +183,7 @@ void Painter::clear()
 	}
 }
 
-void Painter::drawText(int x0, int y0, const Font &font,
+void Painter::drawText(int x0, int y0, const Font& font,
                        const std::string& text, bool nocolour)
 {
 	PixelBufferAlpha* textbuf = font.render(text);

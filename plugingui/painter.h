@@ -46,7 +46,7 @@ public:
 	void setColour(const Colour& colour);
 
 	void drawLine(int x1, int y1, int x2, int y2);
-	void drawText(int x, int y, const Font &font, const std::string& text,
+	void drawText(int x, int y, const Font& font, const std::string& text,
 	              bool nocolour = false);
 	void drawRectangle(int x1, int y1, int x2, int y2);
 	void drawFilledRectangle(int x1, int y1, int x2, int y2);
