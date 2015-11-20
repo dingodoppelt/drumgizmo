@@ -141,7 +141,7 @@ void ListBoxBasic::clearSelectedValue()
 
 void ListBoxBasic::onScrollBarValueChange(int value)
 {
-	repaintEvent(NULL);
+	repaintEvent(nullptr);
 }
 
 void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
@@ -153,7 +153,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 	int w = width();
 	int h = height();
 
-	if(w == 0 || h == 0)
+	if((w == 0) || (h == 0))
 	{
 		return;
 	}

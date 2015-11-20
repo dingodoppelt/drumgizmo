@@ -159,7 +159,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 	std::vector<std::string> files;
 
 	struct dirent *entry;
-	while((entry = readdir(dir)) != NULL)
+	while((entry = readdir(dir)) != nullptr)
 	{
 		std::string name = entry->d_name;
 		if(name == ".")
