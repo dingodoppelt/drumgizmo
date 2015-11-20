@@ -38,8 +38,9 @@ namespace GUI {
 class Window;
 
 class Widget : public Listener, LayoutItem {
+	friend class Painter;
 public:
-	Widget(Widget *parent);
+	Widget(Widget* parent);
 	virtual ~Widget();
 
 	virtual void show();
@@ -59,15 +60,14 @@ public:
 	virtual bool isFocusable() { return false; }
 	virtual bool catchMouse() { return false; }
 
-	void addChild(Widget *widget);
-	void removeChild(Widget *widget);
+	void addChild(Widget* widget);
+	void removeChild(Widget* widget);
 
 	virtual void repaintEvent(RepaintEvent* repaintEvent) {}
 	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) {}
 	virtual void buttonEvent(ButtonEvent* buttonEvent) {}
 	virtual void scrollEvent(ScrollEvent* scrollEvent) {}
 	virtual void keyEvent(KeyEvent* keyEvent) {}
-
 	virtual void mouseLeaveEvent() {}
 	virtual void mouseEnterEvent() {}
 
@@ -75,25 +75,29 @@ public:
 
 	virtual Window* window();
 
-	void repaint_r(RepaintEvent* repaintEvent);
-
-	PixelBufferAlpha pixbuf;
 	std::vector<PixelBufferAlpha*> getPixelBuffers();
 
 	bool hasKeyboardFocus();
-
-	Widget *parent;
 
 	bool visible();
 	void setVisible(bool visible);
 
 protected:
-	std::vector<Widget*> children;
-	Window *_window;
-	size_t _x, _y, _width, _height;
+	void repaintChildren(RepaintEvent* repaintEvent);
 
-private:
-	bool _visible;
+	PixelBufferAlpha pixbuf{0,0};
+
+	std::vector<Widget*> children;
+
+	Widget* parent = nullptr;
+	Window* _window = nullptr;
+
+	size_t _x{0};
+	size_t _y{0};
+	size_t _width{0};
+	size_t _height{0};
+
+	bool _visible = true;
 };
 
 } // GUI::

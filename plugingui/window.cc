@@ -136,7 +136,7 @@ size_t GUI::Window::windowY() { return 0; }
 
 void GUI::Window::show()
 {
-  repaint_r(NULL);
+  repaintChildren(NULL);
   native->show();
 }
 

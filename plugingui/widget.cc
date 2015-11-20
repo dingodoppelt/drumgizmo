@@ -33,13 +33,9 @@
 
 namespace GUI {
 
-Widget::Widget(Widget *parent)
-	: pixbuf(1, 1)
-	, parent(parent)
-	, _window(nullptr)
+Widget::Widget(Widget* parent)
+	: parent(parent)
 {
-	_width = _height = 10;
-
 	if(parent)
 	{
 		parent->addChild(this);
@@ -68,9 +64,9 @@ void Widget::hide()
 	setVisible(false);
 }
 
-void Widget::setVisible(bool v)
+void Widget::setVisible(bool visible)
 {
-	_visible = v;
+	_visible = visible;
 	repaintEvent(nullptr);
 }
 
@@ -79,28 +75,27 @@ bool Widget::visible()
 	return _visible;
 }
 
-void Widget::addChild(Widget *widget)
+void Widget::addChild(Widget* widget)
 {
 	children.push_back(widget);
 }
 
-void Widget::removeChild(Widget *widget)
+void Widget::removeChild(Widget* widget)
 {
-	std::vector<Widget *>::iterator i = children.begin();
-	while(i != children.end())
+	for(auto i = children.begin(); i != children.end(); ++i)
 	{
 		if(*i == widget)
 		{
 			children.erase(i);
 			return;
 		}
-		i++;
 	}
 }
 
 void Widget::resize(int width, int height)
 {
-	if(width < 1 || height < 1)
+	if((width < 1) || (height < 1) ||
+	   (((size_t)width == _width) && ((size_t)height == _height)))
 	{
 		return;
 	}
@@ -116,10 +111,25 @@ void Widget::move(size_t x, size_t y)
 	_y = y;
 }
 
-size_t Widget::x() { return _x; }
-size_t Widget::y() { return _y; }
-size_t Widget::width() { return _width; }
-size_t Widget::height() { return _height; }
+size_t Widget::x()
+{
+	return _x;
+}
+
+size_t Widget::y()
+{
+	return _y;
+}
+
+size_t Widget::width()
+{
+	return _width;
+}
+
+size_t Widget::height()
+{
+	return _height;
+}
 
 size_t Widget::windowX()
 {
@@ -143,24 +153,22 @@ size_t Widget::windowY()
 	return window_y;
 }
 
-Widget *Widget::find(size_t x, size_t y)
+Widget* Widget::find(size_t x, size_t y)
 {
-	std::vector<Widget*>::reverse_iterator i = children.rbegin();
-	while(i != children.rend())
+	for(auto i = children.rbegin(); i != children.rend(); ++i)
 	{
-		Widget *w = *i;
-		if(w->visible())
+		Widget* widget = *i;
+		if(widget->visible())
 		{
-			if(w->x() <= x && (w->x() + w->width()) >= x &&
-			   w->y() <= y && w->y() + w->height() >= y)
+			if((widget->x() <= x) && ((widget->x() + widget->width()) >= x) &&
+			   (widget->y() <= y) && ((widget->y() + widget->height()) >= y))
 			{
-				return w->find(x - w->x(), y - w->y());
+				return widget->find(x - widget->x(), y - widget->y());
 			}
 		}
-		i++;
 	}
 
-	if(x > width() || x < 0 || y > height() || y < 0)
+	if((x > width()) || (y > height()))
 	{
 		return nullptr;
 	}
@@ -168,53 +176,48 @@ Widget *Widget::find(size_t x, size_t y)
 	return this;
 }
 
-Window *Widget::window()
+Window* Widget::window()
 {
 	return _window;
 }
 
-void Widget::repaint_r(RepaintEvent* repaintEvent)
+std::vector<PixelBufferAlpha*> Widget::getPixelBuffers()
 {
-	Painter p(*this); // make sure pixbuf refcount is incremented.
-
-	this->repaintEvent(repaintEvent);
-
-	std::vector<Widget*>::iterator i = children.begin();
-	while(i != children.end())
-	{
-		Widget *w = *i;
-		w->repaint_r(repaintEvent);
-		i++;
-	}
-}
-
-std::vector<PixelBufferAlpha *> Widget::getPixelBuffers()
-{
-	std::vector<PixelBufferAlpha *> pbs;
+	std::vector<PixelBufferAlpha*> pixelBuffers;
 
 	pixbuf.x = windowX();
 	pixbuf.y = windowY();
 
-	pbs.push_back(&pixbuf);
+	pixelBuffers.push_back(&pixbuf);
 
-	std::vector<Widget*>::iterator i = children.begin();
-	while(i != children.end())
+	for(auto child : children)
 	{
-		Widget *w = *i;
-		if(w->visible())
+		if(child->visible())
 		{
-			std::vector<PixelBufferAlpha *> pbs0 = w->getPixelBuffers();
-			pbs.insert(pbs.end(), pbs0.begin(), pbs0.end());
+			auto childPixelBuffers = child->getPixelBuffers();
+			pixelBuffers.insert(pixelBuffers.end(),
+			                    childPixelBuffers.begin(), childPixelBuffers.end());
 		}
-		i++;
 	}
 
-	return pbs;
+	return pixelBuffers;
 }
 
 bool Widget::hasKeyboardFocus()
 {
 	return window()->keyboardFocus() == this;
+}
+
+void Widget::repaintChildren(RepaintEvent* repaintEvent)
+{
+	Painter p(*this); // make sure pixbuf refcount is incremented.
+
+	this->repaintEvent(repaintEvent);
+
+	for(auto child : children)
+	{
+		child->repaintChildren(repaintEvent);
+	}
 }
 
 } // GUI::
