@@ -28,6 +28,8 @@
 
 #include "widget.h"
 
+#include "font.h"
+
 #include <string>
 
 namespace GUI {
@@ -44,6 +46,8 @@ protected:
 
 private:
 	std::string _text;
+	Font font{":fontemboss.png"};
+
 };
 
 } // GUI::

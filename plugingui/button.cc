@@ -126,7 +126,6 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 		break;
 	}
 
-	Font font(":fontemboss.png");
 	p.setColour(Colour(0.1));
 	p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1),
 	           height()/2+5+1+(draw_state==up?0:1), font, text, true);

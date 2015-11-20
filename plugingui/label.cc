@@ -33,6 +33,7 @@ namespace GUI {
 
 Label::Label(GUI::Widget *parent)
 	: Widget(parent)
+	, font(":fontemboss.png")
 {
 }
 
@@ -50,7 +51,6 @@ void Label::repaintEvent(GUI::RepaintEvent* repaintEvent)
 
 	p.setColour(Colour(1));
 
-	Font font(":fontemboss.png");
 	p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
 }
 

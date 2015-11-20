@@ -31,6 +31,7 @@
 #include "widget.h"
 #include "painter.h"
 #include "notifier.h"
+#include "font.h"
 
 namespace GUI {
 
@@ -68,6 +69,8 @@ private:
 	} state_t;
 
 	std::string text;
+
+	Font font{":fontemboss.png"};
 
 	state_t draw_state;
 	state_t button_state;

@@ -27,9 +27,8 @@
 #pragma once
 
 #include "widget.h"
-
 #include "image.h"
-
+#include "font.h"
 #include "notifier.h"
 
 namespace GUI {
@@ -75,6 +74,7 @@ private:
 	Image img_knob;
 
 	int mouse_offset_x;
+	Font font;
 };
 
 } // GUI::

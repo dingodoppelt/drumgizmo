@@ -152,7 +152,6 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 
 	char buf[64];
 	sprintf(buf, "%.2f", currentValue * maximum);
-	Font font;
 	p.drawText(center_x - font.textWidth(buf) / 2 + 1,
 	           center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
