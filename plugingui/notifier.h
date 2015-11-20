@@ -84,8 +84,9 @@ class Listener {
 public:
 	virtual ~Listener()
 	{
-		for(auto signal = signals.begin(); signal != signals.end(); ++signal) {
-			(*signal)->disconnect(this);
+		for(auto signal : signals)
+		{
+			signal->disconnect(this);
 		}
 	}
 
@@ -111,8 +112,9 @@ public:
 	//! \brief When dtor is called it will automatically disconnect all its listeners.
 	~Notifier()
 	{
-		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
-			(*slot).first->unregisterNotifier(this);
+		for(auto& slot : slots)
+		{
+			slot.first->unregisterNotifier(this);
 		}
 	}
 
@@ -123,7 +125,8 @@ public:
 	void connect(O* p, const F& fn)
 	{
 		slots[p] = std::move(construct_mem_fn(fn, p, aux::gen_int_sequence<sizeof...(Args)>{}));
-		if(p && dynamic_cast<Listener*>(p)) {
+		if(p && dynamic_cast<Listener*>(p))
+		{
 			dynamic_cast<Listener*>(p)->registerNotifier(this);
 		}
 	}
@@ -138,8 +141,9 @@ public:
 	//! Example: Notifier<int> foo; foo(42);
 	void operator()(Args... args)
 	{
-		for(auto slot = slots.begin(); slot != slots.end(); ++slot) {
-			(*slot).second(args...);
+		for(auto& slot : slots)
+		{
+			slot.second(args...);
 		}
 	}
 
