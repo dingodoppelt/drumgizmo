@@ -51,6 +51,8 @@ PLUGIN_GUI_SOURCES += $(top_srcdir)/plugingui/nativewindow_win32.cc
 endif
 
 if ENABLE_PUGL
-PLUGIN_GUI_SOURCES += $(top_srcdir)/plugingui/nativewindow_pugl.cc
+PLUGIN_GUI_SOURCES += \
+									 $(top_srcdir)/plugingui/nativewindow_pugl.cc \
+									 $(top_srcdir)/pugl/pugl/pugl_x11.c
 PLUGIN_GUI_CFLAGS += -I$(top_srcdir)/pugl/pugl
 endif

@@ -24,49 +24,47 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NATIVEWINDOW_PUGL_H__
-#define __DRUMGIZMO_NATIVEWINDOW_PUGL_H__
-#endif/*__DRUMGIZMO_NATIVEWINDOW_PUGL_H__*/
+#pragma once
 
 #include "nativewindow.h"
-
-#include "window.h"
-
 #include "pugl.h"
 
-#ifdef __APPLE__
-#    include <OpenGL/glu.h>
-#else
-#    include <GL/glu.h>
-#    include <GL/glext.h>
-#    include <GL/gl.h>
-#endif
+#include <list>
 
 namespace GUI {
 
+class Event;
 class Window;
+
 class NativeWindowPugl : public NativeWindow {
 public:
-  NativeWindowPugl(GUI::Window *window);
-  ~NativeWindowPugl();
+	NativeWindowPugl(Window *window);
+	~NativeWindowPugl();
 
-  void init();
-  void setFixedSize(int width, int height);
-  void resize(int width, int height);
-  void move(int x, int y);
-  void show();
-  void setCaption(const std::string &caption);
-  void hide();
-  void handleBuffer();
-  void redraw();
-  void grabMouse(bool grab);
+	void init();
+	void setFixedSize(int width, int height);
+	void resize(int width, int height);
+	void move(int x, int y);
+	void show();
+	void setCaption(const std::string &caption);
+	void hide();
+	void handleBuffer();
+	void redraw();
+	void grabMouse(bool grab);
 
-  bool hasEvent();
-  Event *getNextEvent();
+	bool hasEvent();
+	Event *getNextEvent();
 
 private:
-  GUI::Window *window;
-  PuglView* view;
+	Window* window{nullptr};
+	PuglView* view{nullptr};
+
+	std::list<Event*> eventq;
+
+	// Internal pugl c-callbacks
+	static void onDisplay(PuglView* view);
+	static void onMouse(PuglView* view, int button, bool press, int x, int y);
+	static void onKeyboard(PuglView* view, bool press, uint32_t key);
 };
 
-};
+} // GUI::

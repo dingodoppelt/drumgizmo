@@ -29,197 +29,218 @@
 #include <stdlib.h>
 #include <list>
 
-#include "hugin.hpp"
+#ifdef __APPLE__
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
+#include <GL/glext.h>
+#include <GL/gl.h>
+#endif
+
+#include "window.h"
 #include "guievent.h"
 
-static GUI::Window* windowptr;
-static std::list<GUI::Event*> eventq;
+#include <hugin.hpp>
 
-static void onDisplay(PuglView* view)
+namespace GUI {
+
+void NativeWindowPugl::onDisplay(PuglView* view)
 {
+	NativeWindowPugl* native = (NativeWindowPugl*)puglGetHandle(view);
+	Window* windowptr = native->window;
 
-  glDisable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-  GLuint image;
+	GLuint image;
 
-  glGenTextures(1, &image);
+	glGenTextures(1, &image);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); //GL_NEAREST = no smoothing
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); //GL_NEAREST = no smoothing
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowptr->wpixbuf.width,
-                windowptr->wpixbuf.height, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                windowptr->wpixbuf.buf);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowptr->wpixbuf.width,
+	             windowptr->wpixbuf.height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+	             windowptr->wpixbuf.buf);
 
-  glEnable(GL_TEXTURE_2D);
-  
-  glBegin(GL_QUADS);
-  glTexCoord2d(0.0, 0.0); glVertex2f(0.0, 0.0);
-  glTexCoord2d(0.0, 1.0); glVertex2f(0.0, windowptr->wpixbuf.height);
-  glTexCoord2d(1.0, 1.0); glVertex2f(windowptr->wpixbuf.width, windowptr->wpixbuf.height);
-  glTexCoord2d(1.0, 0.0); glVertex2f(windowptr->wpixbuf.width, 0.0);
-  glEnd();
+	glEnable(GL_TEXTURE_2D);
 
-  glDeleteTextures(1, &image);
-  glDisable(GL_TEXTURE_2D);
-  glFlush();
-  
-  puglPostRedisplay(view);
+	glBegin(GL_QUADS);
+	glTexCoord2d(0.0, 0.0); glVertex2f(0.0, 0.0);
+	glTexCoord2d(0.0, 1.0); glVertex2f(0.0, windowptr->wpixbuf.height);
+	glTexCoord2d(1.0, 1.0); glVertex2f(windowptr->wpixbuf.width, windowptr->wpixbuf.height);
+	glTexCoord2d(1.0, 0.0); glVertex2f(windowptr->wpixbuf.width, 0.0);
+	glEnd();
+
+	glDeleteTextures(1, &image);
+	glDisable(GL_TEXTURE_2D);
+	glFlush();
+
+	puglPostRedisplay(view);
 }
 
-static void onMouse(PuglView* view, int button, bool press, int x, int y)
+void NativeWindowPugl::onMouse(PuglView* view, int button, bool press, int x, int y)
 {
-  DEBUG(nativewindow_pugl, "Mouse %d %s at (%d,%d)\n", button,
-                            press? "down":"up", x, y);
+	NativeWindowPugl* native = (NativeWindowPugl*)puglGetHandle(view);
 
-  GUI::ButtonEvent* e = new GUI::ButtonEvent();
-  e->x = x;
-  e->y = y;
+	DEBUG(nativewindow_pugl, "Mouse %d %s at (%d,%d)\n", button,
+	      press? "down":"up", x, y);
 
-  switch(button) {
-  case 1:
-	  e->button = GUI::MouseButton::left;
-	  break;
-  case 2:
-	  e->button = GUI::MouseButton::right;
-	  break;
-  case 3:
-  default:
-	  e->button = GUI::MouseButton::middle;
-	  break;
-  }
+	ButtonEvent* e = new ButtonEvent();
+	e->x = x;
+	e->y = y;
 
-  e->direction = press ? GUI::Direction::down : GUI::Direction::up;
-  e->doubleClick = false;
+	switch(button) {
+	case 1:
+		e->button = MouseButton::left;
+		break;
+	case 2:
+		e->button = MouseButton::middle;
+		break;
+	case 3:
+	default:
+		e->button = MouseButton::right;
+		break;
+	}
 
-  eventq.push_back(e);
+	e->direction = press ? Direction::down : Direction::up;
+	e->doubleClick = false;
+
+	native->eventq.push_back(e);
 }
 
-static void onKeyboard(PuglView* view, bool press, uint32_t key) 
+void NativeWindowPugl::onKeyboard(PuglView* view, bool press, uint32_t key)
 {
-  if(press) {
-    GUI::KeyEvent* e = new GUI::KeyEvent();
-    e->direction = press ? GUI::Direction::down : GUI::Direction::up;
+	NativeWindowPugl* native = (NativeWindowPugl*)puglGetHandle(view);
 
-    printf("%d\n", key);
- 
-    switch(key) {
-      case PUGL_KEY_LEFT: e->keycode = GUI::Key::left; break;
-      case PUGL_KEY_RIGHT: e->keycode = GUI::Key::right; break;
-      case PUGL_KEY_UP: e->keycode = GUI::Key::up; break;
-      case PUGL_KEY_DOWN: e->keycode = GUI::Key::down; break;
-      case PUGL_KEY_PAGE_UP: e->keycode = GUI::Key::pageDown; break;
-      case PUGL_KEY_PAGE_DOWN: e->keycode = GUI::Key::pageUp; break;
-      default: e->keycode = GUI::Key::unknown; break;
-    }
+	KeyEvent* e = new KeyEvent();
+	e->direction = press ? Direction::down : Direction::up;
 
-    // TODO: perform character type check
-    if(e->keycode == GUI::Key::unknown) {
-      e->keycode = GUI::Key::character;
-      e->text.assign(1, (char)key); 
-    }
+	printf("%d\n", key);
 
-    printf("\t text: %s\n", e->text.c_str());
-    
-    eventq.push_back(e);
-  }
+	switch(key) {
+	case PUGL_KEY_LEFT: e->keycode = Key::left; break;
+	case PUGL_KEY_RIGHT: e->keycode = Key::right; break;
+	case PUGL_KEY_UP: e->keycode = Key::up; break;
+	case PUGL_KEY_DOWN: e->keycode = Key::down; break;
+	case PUGL_KEY_PAGE_UP: e->keycode = Key::pageDown; break;
+	case PUGL_KEY_PAGE_DOWN: e->keycode = Key::pageUp; break;
+	default: e->keycode = Key::unknown; break;
+	}
+
+	// TODO: perform character type check
+	if(e->keycode == Key::unknown)
+	{
+		e->keycode = Key::character;
+		e->text.assign(1, (char)key);
+	}
+
+	printf("\t text: %s\n", e->text.c_str());
+
+	native->eventq.push_back(e);
 }
 
-GUI::NativeWindowPugl::NativeWindowPugl(GUI::Window *window)
-  : GUI::NativeWindow()
+NativeWindowPugl::NativeWindowPugl(Window *window)
+	: window(window)
 {
-  INFO(nativewindow, "Running with PuGL native window\n");
-  this->window = window;
-  windowptr = window;
-  view = NULL;
-  init();
+	INFO(nativewindow, "Running with PuGL native window\n");
+	init();
 }
 
-GUI::NativeWindowPugl::~NativeWindowPugl()
+NativeWindowPugl::~NativeWindowPugl()
 {
-  puglDestroy(view);
+	puglDestroy(view);
 }
 
-void GUI::NativeWindowPugl::init() {
-  PuglView* old = view;
-  if(view) old = view;
-//  view = puglCreate(0, "DrumgGizmo", window->x(), window->y(), false, true);
-  view = puglCreate(0, "DrumgGizmo", 370, 330, false, true);
-  puglSetDisplayFunc(view, onDisplay);
-  puglSetMouseFunc(view, onMouse);
-  puglSetKeyboardFunc(view, onKeyboard);
+void NativeWindowPugl::init() {
+	PuglView* oldView = view;
+	if(view)
+	{
+		oldView = view;
+	}
 
-  if(old) free(old);
+//	view = puglCreate(0, "DrumgGizmo", window->x(), window->y(), false, true);
+	view = puglCreate(0, "DrumgGizmo", 370, 330, false, true);
+	puglSetHandle(view, (PuglHandle)this);
+	puglSetDisplayFunc(view, onDisplay);
+	puglSetMouseFunc(view, onMouse);
+	puglSetKeyboardFunc(view, onKeyboard);
+
+	if(oldView)
+	{
+		free(oldView);
+	}
 }
 
-void GUI::NativeWindowPugl::setFixedSize(int width, int height)
+void NativeWindowPugl::setFixedSize(int width, int height)
 {
-//  redraw();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::resize(int width, int height)
+void NativeWindowPugl::resize(int width, int height)
 {
-//  DEBUG(nativewindow_pugl, "Resizing to %dx%d\n", width, height);
-//  init();
-//  redraw();
+//	DEBUG(nativewindow_pugl, "Resizing to %dx%d\n", width, height);
+//	init();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::move(int x, int y)
+void NativeWindowPugl::move(int x, int y)
 {
-//  redraw();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::show()
+void NativeWindowPugl::show()
 {
-//  redraw();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::hide()
+void NativeWindowPugl::hide()
 {
-//  redraw();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::handleBuffer()
+void NativeWindowPugl::handleBuffer()
 {
-  onDisplay(view);
+	onDisplay(view);
 }
 
-void GUI::NativeWindowPugl::redraw()
+void NativeWindowPugl::redraw()
 {
-//  handleBuffer();
+//	handleBuffer();
 }
 
-void GUI::NativeWindowPugl::setCaption(const std::string &caption)
+void NativeWindowPugl::setCaption(const std::string &caption)
 {
-//  redraw();
+//	redraw();
 }
 
-void GUI::NativeWindowPugl::grabMouse(bool grab)
+void NativeWindowPugl::grabMouse(bool grab)
 {
-//  redraw();
+//	redraw();
 }
 
-bool GUI::NativeWindowPugl::hasEvent()
+bool NativeWindowPugl::hasEvent()
 {
-  // dirty hack - assume that this function is called enough times to get fluent gui
-  // ^^ Bad assumption
-  puglProcessEvents(view);
-  return !eventq.empty();
+	// dirty hack - assume that this function is called enough times to get fluent gui
+	// ^^ Bad assumption
+	puglProcessEvents(view);
+	return !eventq.empty();
 }
 
-GUI::Event *GUI::NativeWindowPugl::getNextEvent()
+Event *NativeWindowPugl::getNextEvent()
 {
-  Event *event = NULL;
-  
-  if(!eventq.empty()) {
-    event = eventq.front();
-    eventq.pop_front();
-  }
-  return event;
+	Event *event = nullptr;
+
+	if(!eventq.empty()) {
+		event = eventq.front();
+		eventq.pop_front();
+	}
+	return event;
 }
+
+} // GUI::
