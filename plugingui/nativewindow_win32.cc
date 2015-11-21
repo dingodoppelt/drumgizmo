@@ -312,7 +312,7 @@ NativeWindowWin32::NativeWindowWin32(Window& window)
 	wcex.hbrBackground = nullptr;//(HBRUSH) COLOR_BACKGROUND + 1;
 	//	}
 
-	wcex.lpszClassName = m_className = strdup("DrumGizmoClass");
+	wcex.lpszClassName = m_className = (char*)"DrumGizmoClass";
 
 	RegisterClassEx(&wcex);
 

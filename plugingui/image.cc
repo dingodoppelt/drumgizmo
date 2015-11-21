@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <cstdint>
+#include <cstdlib>
 
 #include <hugin.hpp>
 
@@ -49,7 +50,7 @@ Image::Image(const std::string& filename)
 
 Image::~Image()
 {
-	free(image_data);
+	std::free(image_data);
 }
 
 void Image::setError()
@@ -70,7 +71,7 @@ void Image::setError()
 	_height = ih;
 
 	size_t image_size = rc.size() - (sizeof(iw) + sizeof(ih));
-	image_data = (unsigned char*)malloc(image_size);
+	image_data = (unsigned char*)std::malloc(image_size);
 	memcpy(image_data, p, image_size);
 }
 
