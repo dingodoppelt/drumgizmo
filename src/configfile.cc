@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -65,7 +66,7 @@ static std::string configPath()
     configpath = szPath;
   }
 #else
-  std::string configpath = strdup(getenv("HOME"));
+  std::string configpath = getenv("HOME");
 #endif
   configpath += SEP;
   configpath += CONFIGDIRNAME;
