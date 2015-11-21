@@ -181,6 +181,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 		break;
 
 	case WM_KEYDOWN:
+	case WM_KEYUP:
 		{
 			KeyEvent* keyEvent = new KeyEvent();
 
@@ -200,7 +201,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			}
 
 			keyEvent->text = "";
-			keyEvent->direction = Direction::up;
+			keyEvent->direction = (msg == WM_KEYDOWN) ? Direction::down : Direction::up;
 
 			native->event = keyEvent;
 		}
@@ -312,7 +313,10 @@ NativeWindowWin32::NativeWindowWin32(Window& window)
 	wcex.hbrBackground = nullptr;//(HBRUSH) COLOR_BACKGROUND + 1;
 	//	}
 
-	wcex.lpszClassName = m_className = (char*)"DrumGizmoClass";
+	const char* name = "DrumGizmoClass";
+	char* c_name = (char*)malloc(strlen(name) + 1);
+	strcpy(c_name, name);
+	wcex.lpszClassName = m_className = c_name;
 
 	RegisterClassEx(&wcex);
 
