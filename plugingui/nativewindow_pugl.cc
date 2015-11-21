@@ -81,9 +81,22 @@ static void onMouse(PuglView* view, int button, bool press, int x, int y)
   GUI::ButtonEvent* e = new GUI::ButtonEvent();
   e->x = x;
   e->y = y;
-  e->button = button;
-  e->direction = press?1:-1;
-  e->doubleClick = false; 
+
+  switch(button) {
+  case 1:
+	  e->button = GUI::MouseButton::left;
+	  break;
+  case 2:
+	  e->button = GUI::MouseButton::right;
+	  break;
+  case 3:
+  default:
+	  e->button = GUI::MouseButton::middle;
+	  break;
+  }
+
+  e->direction = press ? GUI::Direction::down : GUI::Direction::up;
+  e->doubleClick = false;
 
   eventq.push_back(e);
 }
@@ -92,7 +105,7 @@ static void onKeyboard(PuglView* view, bool press, uint32_t key)
 {
   if(press) {
     GUI::KeyEvent* e = new GUI::KeyEvent();
-    e->direction = press?-1:1;
+    e->direction = press ? GUI::Direction::down : GUI::Direction::up;
 
     printf("%d\n", key);
  
