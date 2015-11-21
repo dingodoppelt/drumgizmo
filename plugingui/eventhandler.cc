@@ -144,7 +144,7 @@ void EventHandler::processEvents()
 						widget->buttonEvent(buttonEvent);
 						break;
 					}
-					else // Event::Button::Down
+					else // Direction::down
 					{
 						window.setButtonDownFocus(nullptr);
 					}
