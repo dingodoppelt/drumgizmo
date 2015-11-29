@@ -75,6 +75,10 @@ public:
 	//! \brief Read a single event from the event queue.
 	//! \return A pointer to the event or nullptr is none exists.
 	virtual Event *getNextEvent() = 0;
+
+	//! \brief Read next event without popping it from the event queue.
+	//! \return A pointer to the event or nullptr is none exists.
+	virtual Event* peekNextEvent() = 0;
 };
 
 } // GUI::

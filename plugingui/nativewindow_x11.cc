@@ -353,30 +353,29 @@ Event* NativeWindowX11::getNextEvent()
 		return nullptr;
 	}
 
-	Event* event = nullptr;
+	XEvent xEvent;
+	XNextEvent(display, &xEvent);
+	return translateXMessage(xEvent);
+}
 
-	XEvent xevent;
-	XNextEvent(display, &xevent);
+Event* NativeWindowX11::peekNextEvent()
+{
+	if(display == nullptr)
+	{
+		return nullptr;
+	}
+
+	XEvent peekXEvent;
+	XPeekEvent(display, &peekXEvent);
+	return translateXMessage(peekXEvent);
+}
+
+Event* NativeWindowX11::translateXMessage(XEvent& xevent)
+{
+	Event* event = nullptr;
 
 	if(xevent.type == MotionNotify)
 	{
-		while(true) // Hack to make sure only the last event is played.
-		{
-			if(!hasEvent())
-			{
-				break;
-			}
-
-			XEvent peekXEvent;
-			XPeekEvent(display, &peekXEvent);
-			if(peekXEvent.type != MotionNotify)
-			{
-				break;
-			}
-
-			XNextEvent(display, &xevent);
-		}
-
 		auto mouseMoveEvent = new MouseMoveEvent();
 		mouseMoveEvent->window_id = xevent.xmotion.window;
 		mouseMoveEvent->x = xevent.xmotion.x;
@@ -411,26 +410,6 @@ Event* NativeWindowX11::getNextEvent()
 		if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
 		{
 			int scroll = 1;
-			while(true) // Hack to make sure only the last event is played.
-			{
-				if(!hasEvent())
-				{
-					break;
-				}
-
-				XEvent peekXEvent;
-				XPeekEvent(display, &peekXEvent);
-
-				if((peekXEvent.type != ButtonPress) &&
-				   (peekXEvent.type != ButtonRelease))
-				{
-					break;
-				}
-
-				scroll += 1;
-				XNextEvent(display, &xevent);
-			}
-
 			auto scrollEvent = new ScrollEvent();
 			scrollEvent->window_id = xevent.xbutton.window;
 			scrollEvent->x = xevent.xbutton.x;
@@ -455,7 +434,7 @@ Event* NativeWindowX11::getNextEvent()
 				buttonEvent->button = MouseButton::right;
 				break;
 			default:
-				WARN(X11, "Unknown button %d, setting to Left\n",
+				WARN(X11, "Unknown button %d, setting to MouseButton::left\n",
 				     xevent.xbutton.button);
 				buttonEvent->button = MouseButton::left;
 				break;
@@ -479,7 +458,6 @@ Event* NativeWindowX11::getNextEvent()
 
 	if(xevent.type == KeyPress || xevent.type == KeyRelease)
 	{
-		//printf("key: %d\n", xevent.xkey.keycode);
 		auto keyEvent = new KeyEvent();
 		keyEvent->window_id = xevent.xkey.window;
 

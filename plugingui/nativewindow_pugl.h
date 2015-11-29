@@ -54,6 +54,7 @@ public:
 
 	bool hasEvent();
 	Event *getNextEvent();
+	Event *peekNextEvent();
 
 private:
 	Window* window{nullptr};

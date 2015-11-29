@@ -48,6 +48,11 @@ Event *EventHandler::getNextEvent()
 	return nativeWindow.getNextEvent();
 }
 
+Event *EventHandler::peekNextEvent()
+{
+	return nativeWindow.peekNextEvent();
+}
+
 void EventHandler::processEvents()
 {
 	while(hasEvent())
@@ -68,6 +73,22 @@ void EventHandler::processEvents()
 
 		case EventType::resize:
 			{
+				while(true)
+				{
+					if(!hasEvent())
+					{
+						break;
+					}
+
+					auto peekEvent = peekNextEvent();
+					if(!peekEvent || (peekEvent->type() != EventType::resize))
+					{
+						break;
+					}
+
+					event = getNextEvent();
+				}
+
 				auto resizeEvent = static_cast<ResizeEvent*>(event);
 				if((resizeEvent->width != window.width()) ||
 				   (resizeEvent->height != window.height()))
@@ -79,6 +100,22 @@ void EventHandler::processEvents()
 
 		case EventType::mouseMove:
 			{
+				while(true)
+				{
+					if(!hasEvent())
+					{
+						break;
+					}
+
+					auto peekEvent = peekNextEvent();
+					if(!peekEvent || (peekEvent->type() != EventType::mouseMove))
+					{
+						break;
+					}
+
+					event = getNextEvent();
+				}
+
 				auto moveEvent = static_cast<MouseMoveEvent*>(event);
 
 				auto widget = window.find(moveEvent->x, moveEvent->y);
@@ -173,7 +210,27 @@ void EventHandler::processEvents()
 
 		case EventType::scroll:
 			{
+				int delta = 0;
+				while(true)
+				{
+					if(!hasEvent())
+					{
+						break;
+					}
+
+					auto peekEvent = peekNextEvent();
+					if(!peekEvent || (peekEvent->type() != EventType::scroll))
+					{
+						break;
+					}
+
+					auto scrollEvent = static_cast<ScrollEvent*>(event);
+					delta += scrollEvent->delta;
+					event = getNextEvent();
+				}
+
 				auto scrollEvent = static_cast<ScrollEvent*>(event);
+				scrollEvent->delta += delta;
 
 				auto widget = window.find(scrollEvent->x, scrollEvent->y);
 				if(widget)
@@ -188,6 +245,9 @@ void EventHandler::processEvents()
 
 		case EventType::key:
 			{
+
+				// TODO: Filter out multiple arrow events.
+
 				auto keyEvent = static_cast<KeyEvent*>(event);
 				if(window.keyboardFocus())
 				{

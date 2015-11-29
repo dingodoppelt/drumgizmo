@@ -38,7 +38,7 @@ class EventHandler {
 public:
 	EventHandler(NativeWindow& nativeWindow, Window& window);
 
-	//! \brief Process all evebts currently in the event queue.
+	//! \brief Process all events currently in the event queue.
 	void processEvents();
 
 	//! \brief Query if any events are currently in the event queue.
@@ -47,6 +47,10 @@ public:
 	//! \brief Get a single event from the event queue.
 	//! \return A pointer to the event or nullptr if there are none.
 	Event *getNextEvent();
+
+	//! \brief Get a single event from the event queue without popping it.
+	//! \return A pointer to the event or nullptr if there are none.
+	Event *peekNextEvent();
 
 	Notifier<> closeNotifier;
 

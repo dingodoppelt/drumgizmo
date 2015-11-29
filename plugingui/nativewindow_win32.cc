@@ -411,7 +411,7 @@ void NativeWindowWin32::grabMouse(bool grab)
 bool NativeWindowWin32::hasEvent()
 {
 	MSG msg;
-	return PeekMessage(&msg, nullptr, 0, 0, 0) != 0;
+	return PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) != 0;
 }
 
 Event* NativeWindowWin32::getNextEvent()
@@ -420,6 +420,23 @@ Event* NativeWindowWin32::getNextEvent()
 
 	MSG msg;
 	if(GetMessage(&msg, nullptr, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	event = this->event;
+	this->event = nullptr;
+
+	return event;
+}
+
+Event* NativeWindowWin32::peekNextEvent()
+{
+	Event* event = nullptr;
+
+	MSG msg;
+	if(PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

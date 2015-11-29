@@ -54,6 +54,7 @@ public:
 
 	bool hasEvent() override;
 	Event* getNextEvent() override;
+	Event* peekNextEvent() override;
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);

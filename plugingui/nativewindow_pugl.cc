@@ -243,4 +243,14 @@ Event *NativeWindowPugl::getNextEvent()
 	return event;
 }
 
+Event *NativeWindowPugl::peekNextEvent()
+{
+	Event *event = nullptr;
+
+	if(!eventq.empty()) {
+		event = eventq.front();
+	}
+	return event;
+}
+
 } // GUI::

@@ -50,8 +50,10 @@ public:
 	void grabMouse(bool grab) override;
 	bool hasEvent() override;
 	Event* getNextEvent() override;
+	Event* peekNextEvent() override;
 
 private:
+	Event* translateXMessage(XEvent& xevent);
 	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
 
 	::Window xwindow;
