@@ -37,7 +37,7 @@ namespace GUI {
 
 class Window;
 
-class Widget : public Listener, LayoutItem {
+class Widget : public Listener, public LayoutItem {
 	friend class Painter;
 public:
 	Widget(Widget* parent);
@@ -49,8 +49,8 @@ public:
 	// From LayoutItem
 	virtual void resize(int width, int height) override;
 	virtual void move(size_t x, size_t y) override;
-	virtual size_t x() override;
-	virtual size_t y() override;
+	virtual int x() override;
+	virtual int y() override;
 	virtual size_t width() override;
 	virtual size_t height() override;
 
@@ -71,7 +71,7 @@ public:
 	virtual void mouseLeaveEvent() {}
 	virtual void mouseEnterEvent() {}
 
-	Widget* find(size_t x, size_t y);
+	Widget* find(int x, int y);
 
 	virtual Window* window();
 
@@ -81,6 +81,8 @@ public:
 
 	bool visible();
 	void setVisible(bool visible);
+
+	Notifier<int, int> sizeChangeNotifier; // (int, width, int height)
 
 protected:
 	void repaintChildren(RepaintEvent* repaintEvent);
@@ -92,8 +94,8 @@ protected:
 	Widget* parent = nullptr;
 	Window* _window = nullptr;
 
-	size_t _x{0};
-	size_t _y{0};
+	int _x{0};
+	int _y{0};
 	size_t _width{0};
 	size_t _height{0};
 

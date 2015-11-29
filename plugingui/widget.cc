@@ -103,6 +103,8 @@ void Widget::resize(int width, int height)
 	_width = width;
 	_height = height;
 	pixbuf.realloc(width, height);
+
+	sizeChangeNotifier(width, height);
 }
 
 void Widget::move(size_t x, size_t y)
@@ -111,12 +113,12 @@ void Widget::move(size_t x, size_t y)
 	_y = y;
 }
 
-size_t Widget::x()
+int Widget::x()
 {
 	return _x;
 }
 
-size_t Widget::y()
+int Widget::y()
 {
 	return _y;
 }
@@ -153,24 +155,19 @@ size_t Widget::windowY()
 	return window_y;
 }
 
-Widget* Widget::find(size_t x, size_t y)
+Widget* Widget::find(int x, int y)
 {
 	for(auto i = children.rbegin(); i != children.rend(); ++i)
 	{
 		Widget* widget = *i;
 		if(widget->visible())
 		{
-			if((widget->x() <= x) && ((widget->x() + widget->width()) >= x) &&
-			   (widget->y() <= y) && ((widget->y() + widget->height()) >= y))
+			if((x >= widget->x()) && (x < (widget->x() + (int)widget->width())) &&
+			   (y >= widget->y()) && (y < (widget->y() + (int)widget->height())))
 			{
 				return widget->find(x - widget->x(), y - widget->y());
 			}
 		}
-	}
-
-	if((x > width()) || (y > height()))
-	{
-		return nullptr;
 	}
 
 	return this;
