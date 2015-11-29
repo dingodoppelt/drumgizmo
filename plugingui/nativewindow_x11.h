@@ -53,7 +53,7 @@ public:
 	Event* peekNextEvent() override;
 
 private:
-	Event* translateXMessage(XEvent& xevent);
+	Event* translateXMessage(XEvent& xevent, bool peek = false);
 	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
 
 	::Window xwindow;

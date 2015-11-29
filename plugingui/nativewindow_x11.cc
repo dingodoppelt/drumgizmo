@@ -367,136 +367,151 @@ Event* NativeWindowX11::peekNextEvent()
 
 	XEvent peekXEvent;
 	XPeekEvent(display, &peekXEvent);
-	return translateXMessage(peekXEvent);
+	return translateXMessage(peekXEvent, true);
 }
 
-Event* NativeWindowX11::translateXMessage(XEvent& xevent)
+	Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 {
 	Event* event = nullptr;
 
-	if(xevent.type == MotionNotify)
-	{
-		auto mouseMoveEvent = new MouseMoveEvent();
-		mouseMoveEvent->window_id = xevent.xmotion.window;
-		mouseMoveEvent->x = xevent.xmotion.x;
-		mouseMoveEvent->y = xevent.xmotion.y;
-		event = mouseMoveEvent;
-	}
-
-	if(xevent.type == Expose && xevent.xexpose.count == 0)
-	{
-		auto repaintEvent = new RepaintEvent();
-		repaintEvent->window_id = xevent.xexpose.window;
-		repaintEvent->x = xevent.xexpose.x;
-		repaintEvent->y = xevent.xexpose.y;
-		repaintEvent->width = xevent.xexpose.width;
-		repaintEvent->height = xevent.xexpose.height;
-		event = repaintEvent;
-	}
-
-	if(xevent.type == ConfigureNotify)
-	{
-		auto resizeEvent = new ResizeEvent();
-		resizeEvent->window_id = xevent.xconfigure.window;
-		//resizeEvent->x = xevent.xconfigure.x;
-		//resizeEvent->y = xevent.xconfigure.y;
-		resizeEvent->width = xevent.xconfigure.width;
-		resizeEvent->height = xevent.xconfigure.height;
-		event = resizeEvent;
-	}
-
-	if(xevent.type == ButtonPress || xevent.type == ButtonRelease)
-	{
-		if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
+	switch(xevent.type) {
+	case MotionNotify:
 		{
-			int scroll = 1;
-			auto scrollEvent = new ScrollEvent();
-			scrollEvent->window_id = xevent.xbutton.window;
-			scrollEvent->x = xevent.xbutton.x;
-			scrollEvent->y = xevent.xbutton.y;
-			scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
-			event = scrollEvent;
+			auto mouseMoveEvent = new MouseMoveEvent();
+			mouseMoveEvent->window_id = xevent.xmotion.window;
+			mouseMoveEvent->x = xevent.xmotion.x;
+			mouseMoveEvent->y = xevent.xmotion.y;
+			event = mouseMoveEvent;
 		}
-		else
+		break;
+
+	case Expose:
+		if(xevent.xexpose.count == 0)
 		{
-			auto buttonEvent = new ButtonEvent();
-			buttonEvent->window_id = xevent.xbutton.window;
-			buttonEvent->x = xevent.xbutton.x;
-			buttonEvent->y = xevent.xbutton.y;
-			switch(xevent.xbutton.button) {
-			case 1:
-				buttonEvent->button = MouseButton::left;
-				break;
-			case 2:
-				buttonEvent->button = MouseButton::middle;
-				break;
-			case 3:
-				buttonEvent->button = MouseButton::right;
-				break;
-			default:
-				WARN(X11, "Unknown button %d, setting to MouseButton::left\n",
-				     xevent.xbutton.button);
-				buttonEvent->button = MouseButton::left;
-				break;
-			}
+			auto repaintEvent = new RepaintEvent();
+			repaintEvent->window_id = xevent.xexpose.window;
+			repaintEvent->x = xevent.xexpose.x;
+			repaintEvent->y = xevent.xexpose.y;
+			repaintEvent->width = xevent.xexpose.width;
+			repaintEvent->height = xevent.xexpose.height;
+			event = repaintEvent;
+		}
+		break;
 
-			buttonEvent->direction =
-				(xevent.type == ButtonPress) ?
-				Direction::down : Direction::up;
+	case ConfigureNotify:
+		{
+			auto resizeEvent = new ResizeEvent();
+			resizeEvent->window_id = xevent.xconfigure.window;
+			//resizeEvent->x = xevent.xconfigure.x;
+			//resizeEvent->y = xevent.xconfigure.y;
+			resizeEvent->width = xevent.xconfigure.width;
+			resizeEvent->height = xevent.xconfigure.height;
+			event = resizeEvent;
+		}
+		break;
 
-			buttonEvent->doubleClick =
-				(xevent.type == ButtonPress) &&
-				((xevent.xbutton.time - last_click) < 200);
-
-			if(xevent.type == ButtonPress)
+	case ButtonPress:
+	case ButtonRelease:
+		{
+			if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
 			{
-				last_click = xevent.xbutton.time;
+				int scroll = 1;
+				auto scrollEvent = new ScrollEvent();
+				scrollEvent->window_id = xevent.xbutton.window;
+				scrollEvent->x = xevent.xbutton.x;
+				scrollEvent->y = xevent.xbutton.y;
+				scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
+				event = scrollEvent;
 			}
-			event = buttonEvent;
+			else
+			{
+				auto buttonEvent = new ButtonEvent();
+				buttonEvent->window_id = xevent.xbutton.window;
+				buttonEvent->x = xevent.xbutton.x;
+				buttonEvent->y = xevent.xbutton.y;
+				switch(xevent.xbutton.button) {
+				case 1:
+					buttonEvent->button = MouseButton::left;
+					break;
+				case 2:
+					buttonEvent->button = MouseButton::middle;
+					break;
+				case 3:
+					buttonEvent->button = MouseButton::right;
+					break;
+				default:
+					WARN(X11, "Unknown button %d, setting to MouseButton::left\n",
+					     xevent.xbutton.button);
+					buttonEvent->button = MouseButton::left;
+					break;
+				}
+
+				buttonEvent->direction =
+					(xevent.type == ButtonPress) ?
+					Direction::down : Direction::up;
+
+				buttonEvent->doubleClick =
+					(xevent.type == ButtonPress) &&
+					((xevent.xbutton.time - last_click) < 200);
+
+				if(!peek && (xevent.type == ButtonPress))
+				{
+					last_click = xevent.xbutton.time;
+				}
+				event = buttonEvent;
+			}
 		}
-	}
+		break;
 
-	if(xevent.type == KeyPress || xevent.type == KeyRelease)
-	{
-		auto keyEvent = new KeyEvent();
-		keyEvent->window_id = xevent.xkey.window;
-
-		switch(xevent.xkey.keycode) {
-		case 113: keyEvent->keycode = Key::left; break;
-		case 114: keyEvent->keycode = Key::right; break;
-		case 111: keyEvent->keycode = Key::up; break;
-		case 116: keyEvent->keycode = Key::down; break;
-		case 119: keyEvent->keycode = Key::deleteKey; break;
-		case 22:  keyEvent->keycode = Key::backspace; break;
-		case 110: keyEvent->keycode = Key::home; break;
-		case 115: keyEvent->keycode = Key::end; break;
-		case 117: keyEvent->keycode = Key::pageDown; break;
-		case 112: keyEvent->keycode = Key::pageUp; break;
-		case 36:  keyEvent->keycode = Key::enter; break;
-		default:  keyEvent->keycode = Key::unknown; break;
-		}
-
-		char stringBuffer[1024];
-		int size = XLookupString(&xevent.xkey, stringBuffer,
-		                         sizeof(stringBuffer), nullptr, nullptr);
-		if(size && keyEvent->keycode == Key::unknown)
+	case KeyPress:
+	case KeyRelease:
 		{
-			keyEvent->keycode = Key::character;
+			auto keyEvent = new KeyEvent();
+			keyEvent->window_id = xevent.xkey.window;
+
+			switch(xevent.xkey.keycode) {
+			case 113: keyEvent->keycode = Key::left; break;
+			case 114: keyEvent->keycode = Key::right; break;
+			case 111: keyEvent->keycode = Key::up; break;
+			case 116: keyEvent->keycode = Key::down; break;
+			case 119: keyEvent->keycode = Key::deleteKey; break;
+			case 22:  keyEvent->keycode = Key::backspace; break;
+			case 110: keyEvent->keycode = Key::home; break;
+			case 115: keyEvent->keycode = Key::end; break;
+			case 117: keyEvent->keycode = Key::pageDown; break;
+			case 112: keyEvent->keycode = Key::pageUp; break;
+			case 36:  keyEvent->keycode = Key::enter; break;
+			default:  keyEvent->keycode = Key::unknown; break;
+			}
+
+			char stringBuffer[1024];
+			int size = XLookupString(&xevent.xkey, stringBuffer,
+		                         sizeof(stringBuffer), nullptr, nullptr);
+			if(size && keyEvent->keycode == Key::unknown)
+			{
+				keyEvent->keycode = Key::character;
+			}
+
+			keyEvent->text.append(stringBuffer, size);
+
+			keyEvent->direction =
+				(xevent.type == KeyPress) ? Direction::down : Direction::up;
+
+			event = keyEvent;
 		}
+		break;
 
-		keyEvent->text.append(stringBuffer, size);
+	case ClientMessage:
+		if(((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
+		{
+			auto closeEvent = new CloseEvent();
+			event = closeEvent;
+		}
+		break;
 
-		keyEvent->direction =
-			(xevent.type == KeyPress) ? Direction::down : Direction::up;
-
-		event = keyEvent;
-	}
-
-	if((xevent.type == ClientMessage) &&
-	   ((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
-	{
-		auto closeEvent = new CloseEvent();
-		event = closeEvent;
+	default:
+		WARN(X11, "Unhandled xevent.type: %d\n", xevent.type);
+		break;
 	}
 
 	return event;
