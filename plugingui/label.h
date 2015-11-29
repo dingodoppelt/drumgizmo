@@ -34,11 +34,21 @@
 
 namespace GUI {
 
+enum class TextAlignment {
+	left,
+	center,
+	right,
+};
+
 class Label : public Widget {
 public:
 	Label(Widget *parent);
 
-	void setText(std::string text);
+	void setText(const std::string& text);
+
+	void setAlignment(TextAlignment alignment);
+
+	void resizeToText();
 
 protected:
 	// From Widget:
@@ -47,7 +57,8 @@ protected:
 private:
 	std::string _text;
 	Font font{":fontemboss.png"};
-
+	TextAlignment alignment{TextAlignment::left};
+	int border{0};
 };
 
 } // GUI::

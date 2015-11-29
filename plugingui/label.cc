@@ -31,19 +31,28 @@
 
 namespace GUI {
 
-Label::Label(GUI::Widget *parent)
+Label::Label(Widget *parent)
 	: Widget(parent)
-	, font(":fontemboss.png")
 {
 }
 
-void Label::setText(std::string text)
+void Label::setText(const std::string& text)
 {
 	_text = text;
 	repaintEvent(nullptr);
 }
 
-void Label::repaintEvent(GUI::RepaintEvent* repaintEvent)
+void Label::setAlignment(TextAlignment alignment)
+{
+	this->alignment = alignment;
+}
+
+void Label::resizeToText()
+{
+	resize(font.textWidth(_text) + border, font.textHeight());
+}
+
+void Label::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
@@ -51,7 +60,20 @@ void Label::repaintEvent(GUI::RepaintEvent* repaintEvent)
 
 	p.setColour(Colour(1));
 
-	p.drawText(10, (height() + font.textHeight()) / 2, font, _text, true);
+	int offset = 0;
+	switch(alignment) {
+	case TextAlignment::left:
+		offset = border;
+		break;
+	case TextAlignment::center:
+		offset = (width() - font.textWidth(_text)) / 2;
+		break;
+	case TextAlignment::right:
+		offset = width() - font.textWidth(_text) - border;
+		break;
+	}
+
+	p.drawText(offset, (height() + font.textHeight()) / 2, font, _text, true);
 }
 
 } // GUI::
