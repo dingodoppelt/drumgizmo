@@ -38,8 +38,14 @@ VerticalLine::VerticalLine(Widget *parent)
 
 void VerticalLine::repaintEvent(RepaintEvent* repaintEvent)
 {
+	if(height() < 2)
+	{
+		return;
+	}
+
 	Painter p(*this);
-	p.drawImageStretched(0, 0, vline, width(), height());
+	p.drawImageStretched(0, (height() - vline.height()) / 2,
+	                     vline, width(), vline.height());
 }
 
 } // GUI::
