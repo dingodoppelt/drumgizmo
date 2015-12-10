@@ -51,8 +51,13 @@ void LayoutItem::setLayoutParent(Layout *p)
 }
 
 Layout::Layout(LayoutItem *parent)
+	: parent(parent)
 {
-	this->parent = parent;
+	auto widget = dynamic_cast<Widget*>(parent);
+	if(widget)
+	{
+		CONNECT(widget, sizeChangeNotifier, this, &Layout::sizeChanged);
+	}
 }
 
 void Layout::addItem(LayoutItem *item)
@@ -78,6 +83,11 @@ void Layout::removeItem(LayoutItem *item)
 	layout();
 }
 
+void Layout::sizeChanged(int width, int height)
+{
+	layout();
+}
+
 //
 // BoxLayout
 //
@@ -85,12 +95,18 @@ void Layout::removeItem(LayoutItem *item)
 BoxLayout::BoxLayout(LayoutItem *parent)
 	: Layout(parent)
 {
-	resize_children = true;
 }
 
-void BoxLayout::setResizeChildren(bool resize_children)
+void BoxLayout::setResizeChildren(bool resizeChildren)
 {
-	this->resize_children = resize_children;
+	this->resizeChildren = resizeChildren;
+	layout();
+}
+
+void BoxLayout::setSpacing(size_t spacing)
+{
+	this->spacing = spacing;
+	layout();
 }
 
 //
@@ -98,7 +114,8 @@ void BoxLayout::setResizeChildren(bool resize_children)
 //
 
 VBoxLayout::VBoxLayout(LayoutItem *parent)
-	: BoxLayout(parent), align(HALIGN_CENTER)
+	: BoxLayout(parent)
+	, align(HAlignment::center)
 {
 }
 
@@ -106,17 +123,39 @@ void VBoxLayout::layout()
 {
 	size_t y = 0;
 	size_t w = parent->width();
-	size_t h = parent->height() / items.size();
+	//size_t h = parent->height() / items.size();
 
 	LayoutItemList::iterator i = items.begin();
 	while(i != items.end())
 	{
 		LayoutItem *item = *i;
-		if(resize_children)item->resize(w, h);
-		item->move(0, y);
-		y += h;
+		if(resizeChildren)
+		{
+			item->resize(w, parent->height() / items.size());
+		}
+
+		size_t x = 0;
+		switch(align) {
+		case HAlignment::left:
+			x = 0;
+			break;
+		case HAlignment::center:
+			x = (w / 2) - (item->width() / 2);
+			break;
+		case HAlignment::right:
+			x = w - item->width();
+			break;
+		}
+
+		item->move(x, y);
+		y += item->height() + spacing;
 		++i;
 	}
+}
+
+void VBoxLayout::setHAlignment(HAlignment alignment)
+{
+	align = alignment;
 }
 
 //
@@ -125,13 +164,18 @@ void VBoxLayout::layout()
 
 HBoxLayout::HBoxLayout(LayoutItem *parent)
 	: BoxLayout(parent)
-	, align(VALIGN_CENTER)
+	, align(VAlignment::center)
 {
 }
 
 void HBoxLayout::layout()
 {
-	size_t w = parent->width() / items.size();
+	if(items.empty())
+	{
+		return;
+	}
+
+//	size_t w = parent->width() / items.size();
 	size_t h = parent->height();
 	size_t x = 0;
 
@@ -139,35 +183,35 @@ void HBoxLayout::layout()
 	while(i != items.end())
 	{
 		LayoutItem *item = *i;
-		if(resize_children)
+		if(resizeChildren)
 		{
-			item->resize(w, h);
+			item->resize(parent->width() / items.size(), h);
 			item->move(x, 0);
 		}
 		else
 		{
 			size_t y = 0;
 			switch(align) {
-			case VALIGN_TOP:
+			case VAlignment::top:
 				y = 0;
 				break;
-			case VALIGN_CENTER:
+			case VAlignment::center:
 				y = (h / 2) - (item->height() / 2);
 				break;
-			case VALIGN_BOTTOM:
+			case VAlignment::bottom:
 				y = h - item->height();
 				break;
 			}
 
-			int diff = w - item->width();
+			int diff = 0;//w - item->width();
 			item->move(x + diff / 2, y);
 		}
-		x += w;
+		x += item->width() + spacing;
 		++i;
 	}
 }
 
-void HBoxLayout::setVAlignment(alignment_t alignment)
+void HBoxLayout::setVAlignment(VAlignment alignment)
 {
 	align = alignment;
 }

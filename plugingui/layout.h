@@ -29,6 +29,8 @@
 #include <list>
 #include <cstdlib>
 
+#include "notifier.h"
+
 namespace GUI {
 
 class Layout;
@@ -42,8 +44,8 @@ public:
 
 	virtual void resize(int width, int height) = 0;
 	virtual void move(size_t x, size_t y) = 0;
-	virtual size_t x() = 0;
-	virtual size_t y() = 0;
+	virtual int x() = 0;
+	virtual int y() = 0;
 	virtual size_t width() = 0;
 	virtual size_t height() = 0;
 
@@ -52,7 +54,7 @@ private:
 };
 
 //! \brief Abtract Layout class.
-class Layout
+class Layout : public Listener
 {
 public:
 	Layout(LayoutItem *parent);
@@ -65,6 +67,8 @@ public:
 	virtual void layout() = 0;
 
 protected:
+	void sizeChanged(int width, int height);
+
 	LayoutItem *parent;
 	typedef std::list<LayoutItem *> LayoutItemList;
 	LayoutItemList items;
@@ -78,11 +82,20 @@ public:
 	//! \brief Set to false to only move the items, not scale them.
 	void setResizeChildren(bool resize_children);
 
+	void setSpacing(size_t spacing);
+
 	// From Layout:
 	virtual void layout() override  = 0;
 
 protected:
-	bool resize_children;
+	bool resizeChildren{false};
+	size_t spacing{0};
+};
+
+enum class HAlignment {
+	left,
+	center,
+	right,
 };
 
 //! \brief A Layout that lays out its elements vertically.
@@ -90,19 +103,19 @@ class VBoxLayout : public BoxLayout {
 public:
 	VBoxLayout(LayoutItem *parent);
 
-	typedef enum {
-		HALIGN_LEFT,
-		HALIGN_CENTER,
-		HALIGN_RIGHT,
-	} alignment_t;
-
-	void setHAlignment(alignment_t alignment);
+	void setHAlignment(HAlignment alignment);
 
 	// From BoxLayout:
 	virtual void layout() override;
 
 protected:
-	alignment_t align;
+	HAlignment align;
+};
+
+enum class VAlignment {
+	top,
+	center,
+	bottom,
 };
 
 //! \brief A Layout that lays out its elements vertically.
@@ -110,19 +123,13 @@ class HBoxLayout : public BoxLayout {
 public:
 	HBoxLayout(LayoutItem *parent);
 
-	typedef enum {
-		VALIGN_TOP,
-		VALIGN_CENTER,
-		VALIGN_BOTTOM,
-	} alignment_t;
-
-	void setVAlignment(alignment_t alignment);
+	void setVAlignment(VAlignment alignment);
 
 	// From BoxLayout:
 	virtual void layout() override;
 
 protected:
-	alignment_t align;
+	VAlignment align;
 };
 
 } // GUI::
