@@ -26,8 +26,8 @@
  */
 #include "window.h"
 
-#include "painter.h"
 #include <hugin.hpp>
+#include "painter.h"
 
 #ifndef PUGL
 #ifdef X11
@@ -101,26 +101,6 @@ void Window::move(size_t x, size_t y)
 	Widget::move(x, y);
 }
 
-size_t Window::x()
-{
-	return _x;
-}
-
-size_t Window::y()
-{
-	return _y;
-}
-
-size_t Window::width()
-{
-	return _width;
-}
-
-size_t Window::height()
-{
-	return _height;
-}
-
 size_t Window::windowX()
 {
 	return 0;
@@ -192,6 +172,7 @@ Widget* Window::mouseFocus()
 void Window::setMouseFocus(Widget* widget)
 {
 	_mouseFocus = widget;
+
 }
 
 void Window::redraw()
@@ -214,6 +195,9 @@ void Window::resized(size_t width, size_t height)
 
 	pixbuf.realloc(width, height);
 	repaintEvent(nullptr);
+
+	// Notify Widget
+	sizeChangeNotifier(width, height);
 }
 
 void Window::updateBuffer()
@@ -223,6 +207,12 @@ void Window::updateBuffer()
 	{
 		size_t updateWidth = pixelBuffer->width;
 		size_t updateHeight = pixelBuffer->height;
+
+		// Skip buffer if not inside window.
+		if((wpixbuf.width < pixelBuffer->x) || (wpixbuf.height < pixelBuffer->y))
+		{
+			continue;
+		}
 
 		if(updateWidth > (wpixbuf.width - pixelBuffer->x))
 		{
@@ -274,18 +264,6 @@ void Window::endPaint()
 		}
 		maxRefcount = 0;
 	}
-}
-
-void Window::repaintEvent(RepaintEvent* repaintEvent)
-{
-	if(!visible())
-	{
-		return;
-	}
-
-	Painter p(*this);
-	p.drawImageStretched(0,0, back, width(), height());
-	p.drawImage(width() - logo.width(), height() - logo.height(), logo);
 }
 
 } // GUI::

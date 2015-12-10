@@ -46,10 +46,6 @@ public:
 	// From Widget:
 	void resize(int width, int height) override;
 	void move(size_t x, size_t y) override;
-	size_t x() override;
-	size_t y() override;
-	size_t width() override;
-	size_t height() override;
 	size_t windowX() override;
 	size_t windowY() override;
 	void show() override;
@@ -79,10 +75,7 @@ protected:
 	void beginPaint();
 	void endPaint();
 
-	// From Widget:
-	void repaintEvent(RepaintEvent* repaintEvent) override;
-
-	// For the NativweWindow
+	// For the NativeWindow
 	friend class NativeWindowX11;
 	friend class NativeWindowWin32;
 	friend class NativeWindowPugl;
@@ -96,9 +89,6 @@ protected:
 
 	NativeWindow* native{nullptr};
 	EventHandler* eventhandler{nullptr};
-
-	Image back{":bg.png"};
-	Image logo{":logo.png"};
 
 	size_t maxRefcount{0};
 };
