@@ -63,16 +63,16 @@ private:
 	Font font;
 
 	std::string _text;
-	size_t pos = 0;
+	size_t pos{0};
 	std::string visibleText;
-	size_t offsetPos = 0;
+	size_t offsetPos{0};
 
 	enum state_t {
 		Noop,
 		WalkLeft,
 		WalkRight,
 	};
-	state_t walkstate;
+	state_t walkstate{Noop};
 
 	bool readonly;
 };

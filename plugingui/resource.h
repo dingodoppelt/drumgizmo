@@ -41,10 +41,10 @@ public:
 
 protected:
 	std::string externalData;
-	bool isValid = false;
-	bool isInternal = false;
-	const char *internalData = nullptr;
-	size_t internalSize = 0;
+	bool isValid{false};
+	bool isInternal{false};
+	const char *internalData{nullptr};
+	size_t internalSize{0};
 };
 
 } // GUI::

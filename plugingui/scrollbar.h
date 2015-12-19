@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <limits>
+
 #include "widget.h"
 #include "image.h"
 #include "notifier.h"
@@ -58,13 +60,13 @@ protected:
 	void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 
 private:
-	int maxValue;
-	int currentValue;
-	int rangeValue;
+	int maxValue{100};
+	int currentValue{0};
+	int rangeValue{10};
 
-	int yOffset;
-	int valueOffset;
-	bool dragging;
+	int yOffset{0};
+	int valueOffset{0};
+	bool dragging{false};
 
 	Image bg_img;
 };
