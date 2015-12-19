@@ -41,19 +41,24 @@ public:
 	size_t textWidth(const std::string& text) const;
 	size_t textHeight(const std::string& text = "") const;
 
+	void setLetterSpacing(int letterSpacing);
+	int letterSpacing() const;
+
 	PixelBufferAlpha *render(const std::string& text) const;
 
 private:
 	Image img_font;
 
-	struct Character {
-		int offset = 0;
-		size_t width = 0;
-		int pre_bias = 0;
-		int post_bias = 0;
+	class Character {
+	public:
+		int offset{0};
+		size_t width{0};
+		int pre_bias{0};
+		int post_bias{0};
 	};
 
 	std::array<Character, 255> characters;
+	int spacing{1};
 };
 
 } // GUI::

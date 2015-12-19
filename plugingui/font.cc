@@ -38,8 +38,6 @@ Font::Font(const std::string& fontfile)
 	{
 		auto& character = characters[c];
 		character.offset = px + 1;
-		character.pre_bias = 0;
-		character.post_bias = 0;
 
 		if(c > 0)
 		{
@@ -76,11 +74,10 @@ size_t Font::textWidth(const std::string& text) const
 {
 	size_t len = 0;
 
-	for(size_t i = 0; i < text.length(); i++)
+	for(auto cha : text)
 	{
-		unsigned int cha = text[i];
 		auto& character = characters[cha];
-		len += character.width + 1 + character.post_bias;
+		len += character.width + spacing + character.post_bias;
 	}
 
 	return len;
@@ -91,16 +88,24 @@ size_t Font::textHeight(const std::string& text) const
 	return img_font.height();
 }
 
+void Font::setLetterSpacing(int letterSpacing)
+{
+	spacing = letterSpacing;
+}
+
+int Font::letterSpacing() const
+{
+	return spacing;
+}
+
 PixelBufferAlpha *Font::render(const std::string& text) const
 {
-	int border = 1;
 	PixelBufferAlpha *pb =
 		new PixelBufferAlpha(textWidth(text), textHeight(text));
 
 	int x_offset = 0;
-	for(size_t i = 0; i < text.length(); ++i)
+	for(auto cha : text)
 	{
-		unsigned int cha = text[i];
 		auto& character = characters[cha];
 		for(size_t x = 0; x < character.width; ++x)
 		{
@@ -111,7 +116,7 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 				             c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
 			}
 		}
-		x_offset += character.width + border + character.post_bias;
+		x_offset += character.width + spacing + character.post_bias;
 	}
 
 	return pb;
