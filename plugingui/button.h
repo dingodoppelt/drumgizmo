@@ -58,7 +58,7 @@ protected:
 	virtual void mouseEnterEvent() override;
 
 private:
-	bool in_button;
+	bool in_button{false};
 
 	Painter::Box box_up;
 	Painter::Box box_down;
@@ -72,8 +72,8 @@ private:
 
 	Font font{":fontemboss.png"};
 
-	state_t draw_state;
-	state_t button_state;
+	state_t draw_state{up};
+	state_t button_state{up};
 };
 
 } // GUI::

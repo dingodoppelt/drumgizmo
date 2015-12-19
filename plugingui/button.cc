@@ -110,6 +110,9 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 
 	p.clear();
 
+	int padTop = 3;
+	int padLeft = 0;
+
 	int w = width();
 	int h = height();
 	if(w == 0 || h == 0)
@@ -119,16 +122,17 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 
 	switch(draw_state) {
 	case up:
-		p.drawBox(0, 0, box_up, w, h);
+		p.drawBox(padLeft, padTop, box_up, w - padLeft, h - padTop);
 		break;
 	case down:
-		p.drawBox(0, 0, box_down, w, h);
+		p.drawBox(padLeft, padTop, box_down, w - padLeft, h - padTop);
 		break;
 	}
 
 	p.setColour(Colour(0.1));
-	p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1),
-	           height()/2+5+1+(draw_state==up?0:1), font, text, true);
+	p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1) + (padLeft / 2),
+	           height()/2+5+1+(draw_state==up?0:1) + (padTop / 2), font, text,
+	           true);
 }
 
 void Button::setText(const std::string& text)
