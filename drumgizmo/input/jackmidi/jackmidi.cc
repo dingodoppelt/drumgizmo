@@ -60,8 +60,8 @@ public:
 private:
   void loadMap(std::string map) {}
 
-  JackClient *jackclient;
-  jack_port_t *midi_port;
+  JackClient *jackclient{nullptr};
+  jack_port_t *midi_port{nullptr};
 
   size_t pos;
 

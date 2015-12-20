@@ -27,8 +27,9 @@ libdir = $(INPUT_PLUGIN_DIR)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/include $(SMF_CFLAGS) \
 	$(EXPAT_CFLAGS) -I$(top_srcdir)/hugin -DWITH_HUG_MUTEX
-midifile_la_LDFLAGS = $(SMF_LIBS) $(EXPAT_LIBS) -module -avoid-version -shared
-midifile_la_LIBADD =
+midifile_la_LDFLAGS = -module -avoid-version -shared
+midifile_la_LIBADD = $(EXPAT_LIBS) $(SMF_LIBS) 
+midifile_la_CXXFLAGS =$(EXPAT_CFLAGS)
 midifile_la_SOURCES = $(midifilebuildsources)
 
 install-exec-hook:

@@ -28,6 +28,7 @@
 
 #include <audiotypes.h>
 #include <string>
+#include <memory.h>
 
 #include <sndfile.h>
 
@@ -48,8 +49,8 @@ public:
 
 private:
   SF_INFO sf_info;
-  SNDFILE **fh;
-  size_t channels;
+	SNDFILE **fh{nullptr};
+	size_t channels{0};
 
   // Parameters
   std::string filename;
@@ -60,6 +61,7 @@ WavFile::WavFile()
   fh = NULL;
   filename = "output";
 
+  memset(&sf_info, 0, sizeof(sf_info));
   sf_info.channels = 1;//channels;
   sf_info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
   sf_info.samplerate = 44100;

@@ -57,10 +57,10 @@ public:
   size_t samplerate();
 
 private:
-  JackClient *jackclient;
-  jack_port_t *output_port[64];
-  size_t nchannels;
-  sample_t **channels;
+	JackClient *jackclient{nullptr};
+	jack_port_t *output_port[64] = {};
+	size_t nchannels{0};
+	sample_t **channels{nullptr};
   Semaphore sem;
 };
 

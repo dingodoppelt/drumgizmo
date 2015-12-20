@@ -89,11 +89,11 @@ private:
   Semaphore run_semaphore;
   Semaphore semaphore;
   Mutex mutex;
-  volatile bool running;
+	volatile bool running{false};
   std::list<AudioFile*> load_queue;
-  size_t total_num_audiofiles;
-  size_t fraction;
-  size_t loaded;
+	size_t total_num_audiofiles{0};
+	size_t fraction{1};
+	size_t loaded{0};
 };
 
 #endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/

@@ -52,15 +52,15 @@ public:
   size_t samplerate();
 
 private:
-  snd_pcm_t *handle;
-  snd_pcm_hw_params_t *params;
-  sample_t *data;
-  size_t channels;
+	snd_pcm_t *handle{nullptr};
+	snd_pcm_hw_params_t *params{nullptr};
+	sample_t *data{nullptr};
+	size_t channels{0};
 
   // Parameters
   std::string device;
-  unsigned int srate;
-  snd_pcm_uframes_t frames;
+	unsigned int srate{0};
+	snd_pcm_uframes_t frames{0};
 };
 
 Alsa::Alsa()
