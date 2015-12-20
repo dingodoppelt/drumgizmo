@@ -38,8 +38,8 @@ public:
   void wait();
 
 private:
-  struct semaphore_private_t *prv;
-  const char *name;
+	struct semaphore_private_t *prv{nullptr};
+	const char *name{nullptr};
 };
 
 #endif/*__PRACRO_SEMAPHORE_H__*/

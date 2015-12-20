@@ -28,6 +28,8 @@
 
 #include <hugin.hpp>
 
+#include <limits>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -53,7 +55,7 @@ Semaphore::Semaphore(const char *name)
 #ifdef WIN32
   prv->semaphore = CreateSemaphore(NULL,  // default security attributes
                                    0, // initial count
-                                   2147483647, // maximum count (Max LONG)
+                                   std::numeric_limits<LONG>::max(),
                                    NULL); // unnamed semaphore
 #else
   sem_init(&prv->semaphore, 0, 0);
@@ -70,7 +72,7 @@ Semaphore::~Semaphore()
   sem_destroy(&prv->semaphore);
 #endif
 
-  if(prv) delete prv;
+  delete prv;
 }
 
 void Semaphore::post()
