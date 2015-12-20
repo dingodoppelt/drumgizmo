@@ -47,14 +47,14 @@ protected:
   int readData(char *data, size_t size);
 
 private:
-  FILE *fd;
+	FILE *fd{nullptr};
   Instrument &instrument;
-  Sample *s;
+	Sample *s{nullptr};
 
   std::string path;
 
-  level_t lower;
-  level_t upper;
+	level_t lower{0};
+	level_t upper{0};
 };
 
 #endif/*__DRUMGIZMO_INSTRUMENTPARSER_H__*/

@@ -56,13 +56,13 @@ public:
   size_t samplerate();
 
 private:
-  void *magic;
+	void *magic{nullptr};
 
   std::string _file;
 
   std::string _name;
   std::string _description;
-  size_t _samplerate;
+	size_t _samplerate{0};
 
   VersionStr _version;
 };

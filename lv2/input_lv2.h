@@ -47,10 +47,10 @@ public:
   event_t *run(size_t pos, size_t len, size_t *nevents);
   void post();
 
-  LV2_Atom_Sequence *eventPort;
+	LV2_Atom_Sequence *eventPort{nullptr};
 
 private:
-  Instruments *instruments;
+	Instruments *instruments{nullptr};
 };
 
 #endif/*__DRUMGIZMO_INPUT_LV2_H__*/

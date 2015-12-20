@@ -46,10 +46,10 @@ protected:
   
 private:
 #ifdef WIN32
-  HANDLE tid;
+	HANDLE tid{nullptr};
   static DWORD WINAPI
 #else
-  pthread_t tid;
+  pthread_t tid{0};
   static void*
 #endif/*WIN32*/
     thread_run(void *data);
