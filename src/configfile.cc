@@ -65,7 +65,7 @@ static std::string configPath()
     configpath = szPath;
   }
 #else
-  std::string configpath = strdup(getenv("HOME"));
+  std::string configpath = getenv("HOME");
 #endif
   configpath += SEP;
   configpath += CONFIGDIRNAME;
