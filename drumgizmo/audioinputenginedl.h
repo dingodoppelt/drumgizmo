@@ -57,19 +57,21 @@ public:
   void post();
 
 private:
-  void *ptr;
-  input_create_func_t i_create;
-  input_destroy_func_t i_destroy;
-  input_init_func_t i_init;
-  input_setparm_func_t i_setparm;
-  input_start_func_t i_start;
-  input_stop_func_t i_stop;
-  input_pre_func_t i_pre;
-  input_run_func_t i_run;
-  input_post_func_t i_post;
+  void *ptr{nullptr};
+  input_create_func_t i_create{nullptr};
+  input_destroy_func_t i_destroy{nullptr};
+  input_init_func_t i_init{nullptr};
+  input_setparm_func_t i_setparm{nullptr};
+  input_start_func_t i_start{nullptr};
+  input_stop_func_t i_stop{nullptr};
+  input_pre_func_t i_pre{nullptr};
+  input_run_func_t i_run{nullptr};
+  input_post_func_t i_post{nullptr};
 
   bool is_jack_plugin;
-  JackClient *jackclient;
+  JackClient *jackclient{nullptr};
+
+	void *lib{nullptr};
 };
 
 #endif/*__DRUMGIZMO_AUDIOINPUTENGINEDL_H__*/

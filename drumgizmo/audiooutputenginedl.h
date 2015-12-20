@@ -68,21 +68,23 @@ public:
   size_t samplerate();
 
 private:
-  void *ptr;
-  output_create_func_t o_create;
-  output_destroy_func_t o_destroy;
-  output_init_func_t o_init;
-  output_setparm_func_t o_setparm;
-  output_start_func_t o_start;
-  output_stop_func_t o_stop;
-  output_pre_func_t o_pre;
-  output_run_func_t o_run;
-  output_post_func_t o_post;
-  output_bufsize_func_t o_bufsize;
-  output_samplerate_func_t o_samplerate;
+  void *ptr{nullptr};
+  output_create_func_t o_create{nullptr};
+  output_destroy_func_t o_destroy{nullptr};
+  output_init_func_t o_init{nullptr};
+  output_setparm_func_t o_setparm{nullptr};
+  output_start_func_t o_start{nullptr};
+  output_stop_func_t o_stop{nullptr};
+  output_pre_func_t o_pre{nullptr};
+  output_run_func_t o_run{nullptr};
+  output_post_func_t o_post{nullptr};
+  output_bufsize_func_t o_bufsize{nullptr};
+  output_samplerate_func_t o_samplerate{nullptr};
 
   bool is_jack_plugin;
-  JackClient *jackclient;
+  JackClient *jackclient{nullptr};
+
+	void* lib{nullptr};
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINEDL_H__*/

@@ -41,7 +41,7 @@ AudioInputEngineDL::AudioInputEngineDL(std::string name)
   is_jack_plugin = strstr(name.c_str(), "jack");
 
   std::string plugin = INPUT_PLUGIN_DIR"/" + name + ".so";
-  void *lib = dlopen(plugin.c_str(), RTLD_LAZY);
+  lib = dlopen(plugin.c_str(), RTLD_LAZY);
   if(!lib) {
     printf("Cannot load device: %s\n", dlerror());
     return;
@@ -124,6 +124,8 @@ AudioInputEngineDL::~AudioInputEngineDL()
 {
   i_destroy(ptr);
   if(is_jack_plugin) close_jack_client();
+  dlclose(lib);
+  lib = nullptr;
 }
 
 bool AudioInputEngineDL::init(Instruments &instruments)
