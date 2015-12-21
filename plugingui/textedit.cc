@@ -97,7 +97,7 @@ void TextEdit::setText(const std::string& text)
 	int ran = height() / font.textHeight();
 
 	DEBUG(textedit, "Setting range and max of scrollbar to '%d' and '%d'\n",
-	      ran, preprocessedtext.size());
+	      ran, (int)preprocessedtext.size());
 
 	scroll.setRange(ran);
 	scroll.setMaximum(preprocessedtext.size());
