@@ -39,6 +39,12 @@ NativeWindowX11::NativeWindowX11(Window& window)
 	: buffer(nullptr)
 	, window(window)
 {
+	auto status = XInitThreads();
+	if(status)
+	{
+		ERR(X11, "Could not initialise threaded Xlib calls (XInitThreads)");
+	}
+
 	display = XOpenDisplay(nullptr);
 	if(display  == nullptr)
 	{
