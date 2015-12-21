@@ -38,6 +38,7 @@ DG_SRC = \
 DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
 
 GUI_SRC = \
+	@top_srcdir@/plugingui/dgwindow.cc \
 	@top_srcdir@/plugingui/nativewindow_win32.cc \
 	@top_srcdir@/plugingui/plugingui.cc \
 	@top_srcdir@/plugingui/pluginconfig.cc \
