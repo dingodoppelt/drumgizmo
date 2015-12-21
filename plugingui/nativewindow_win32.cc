@@ -166,11 +166,6 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			{
 				buttonEvent->direction = Direction::down;
 			}
-			else
-			{
-	      delete buttonEvent;
-	      break; // unknown direction
-			}
 
 			buttonEvent->doubleClick = (msg == WM_LBUTTONDBLCLK ||
 			                            msg == WM_RBUTTONDBLCLK ||
@@ -191,7 +186,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			case VK_UP:     keyEvent->keycode = Key::up;        break;
 			case VK_DOWN:   keyEvent->keycode = Key::down;      break;
 			case VK_BACK:   keyEvent->keycode = Key::backspace; break;
-			case VK_DELETE: keyEvent->keycode = Key::deleteKey;    break;
+			case VK_DELETE: keyEvent->keycode = Key::deleteKey; break;
 			case VK_HOME:   keyEvent->keycode = Key::home;      break;
 			case VK_END:    keyEvent->keycode = Key::end;       break;
 			case VK_PRIOR:  keyEvent->keycode = Key::pageUp;    break;
@@ -201,7 +196,8 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			}
 
 			keyEvent->text = "";
-			keyEvent->direction = (msg == WM_KEYDOWN) ? Direction::down : Direction::up;
+			keyEvent->direction =
+				(msg == WM_KEYDOWN) ? Direction::down : Direction::up;
 
 			native->event = keyEvent;
 		}
