@@ -195,6 +195,11 @@ DGWindow::DGWindow(MessageHandler& messageHandler, Config& config)
 	CONNECT(&humanizeControls->falloffKnob, valueChangedNotifier,
 	        this, &DGWindow::falloffValueChanged);
 
+	// Store pointers for PluginGUI access:
+	velocityCheck = &humanizeControls->velocityCheck;
+	attackKnob = &humanizeControls->attackKnob;
+	falloffKnob = &humanizeControls->falloffKnob;
+
 	VerticalLine *l3 = new VerticalLine(this);
 	l3->resize(width() - 40, vlineSpacing);
 	layout.addItem(l3);
