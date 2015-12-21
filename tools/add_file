@@ -2,28 +2,30 @@
 PROJECT="DrumGizmo"
 
 function allfile() {
+  if [ "$USER" == "nemo" ]
+  then
+    NAME="Jonas Suhr Christensen"; EMAIL="jsc@umbraculum.org"
+  fi
+  if [ "$USER" == "deva" ]
+  then
+    NAME="Bent Bisballe Nyeng"; EMAIL="deva@aasimon.org"
+  fi
+  if [ "$USER" == "senator" ]
+  then
+    NAME="Lars Bisballe Jensen"; EMAIL="elsenator@gmail.com"
+  fi
+  if [ "$USER" == "chaot" ]
+  then
+    NAME="André Nusser"; EMAIL="andre.nusser@googlemail.com"
+  fi
+
   echo "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */" > $1;
   echo "/***************************************************************************" >> $1;
   echo " *            $1" >> $1;
   echo " *" >> $1 ;
   echo " *  `date`" >> $1;
-  echo -n " *  Copyright " >> $1
-  echo -n `date +%Y | xargs` >> $1
-  if [ "$USER" == "nemo" ];
-  then
-      echo " Jonas Suhr Christensen" >> $1;
-      echo " *  jsc@umbraculum.org" >> $1;
-  fi
-  if [ "$USER" == "deva" ];
-  then
-      echo " Bent Bisballe Nyeng" >> $1;
-      echo " *  deva@aasimon.org" >> $1;
-  fi
-  if [ "$USER" == "senator" ];
-  then
-      echo " Lars Bisballe Jensen" >> $1;
-      echo " *  elsenator@gmail.com" >> $1;
-  fi
+  echo " *  Copyright "`date +%Y | xargs`" $NAME" >> $1;
+  echo " *  $EMAIL" >> $1;
   echo " ****************************************************************************/" >> $1;
   echo "" >> $1;
   echo "/*" >> $1;
@@ -60,9 +62,7 @@ function hfile() {
   allfile $1;
   local hn=`echo $1 | tr 'a-z.' 'A-Z_'`
   local pr=`echo $PROJECT | tr 'a-z.' 'A-Z_'`
-  echo "#ifndef __${pr}_${hn}__" >> $1;
-  echo "#define __${pr}_${hn}__" >> $1;
-  echo "#endif/*__${pr}_${hn}__*/" >> $1;
+  echo "#pragma once" >> $1;
 }
 
 if [ "$#" = "1" ]; then
