@@ -27,522 +27,222 @@
 #include "plugingui.h"
 
 #include <hugin.hpp>
-#include <stdio.h>
-
-#include "knob.h"
-#include "verticalline.h"
-#include "../version.h"
 
 #include "pluginconfig.h"
 #include "messagehandler.h"
 
 namespace GUI {
 
-/*
-void closeClick(void *ptr)
-{
-  PluginGUI *gui = (PluginGUI*)ptr;
-  if(gui->windowClosedHandler) gui->windowClosedHandler(gui->windowClosedPtr);
-}
-*/
-
 PluginGUI::PluginGUI()
-  : MessageReceiver(MSGRCV_UI)
-  , initialised(false)
-  , sem("plugingui")
+	: MessageReceiver(MSGRCV_UI)
 {
-  windowClosedHandler = NULL;
-  changeMidimapHandler = NULL;
-
-  window = NULL;
- 
-  running = true;
-  closing = false;
-
 #ifdef USE_THREAD
-  run();
+	run();
 #else
-  init();
+	init();
 #endif/*USE_THREAD*/
 
-  sem.wait();
+	sem.wait();
 }
 
 PluginGUI::~PluginGUI()
 {
-  stopThread();
+	stopThread();
 }
-
-void PluginGUI::stopThread()
-{
-  if(running) {
-    running = false;
-    wait_stop();
-  }
-}
-
 
 void PluginGUI::handleMessage(Message *msg)
 {
-  Painter p(*window);// Make sure we only redraw buffer one time.
+	Painter p(*window);// Make sure we only redraw buffer once (set refcount to 1)
 
-  switch(msg->type()) {
-  case Message::LoadStatus:
-    {
-      LoadStatusMessage *ls = (LoadStatusMessage*)msg;
-      progress->setProgress((float)ls->numer_of_files_loaded /
-                            (float)ls->number_of_files);
-      if(ls->numer_of_files_loaded == ls->number_of_files) {
-        progress->setState(ProgressBarState::Green);
-      }
-    }
-    break;
-  case Message::LoadStatusMidimap:
-    {
-      LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
-      progress2->setProgress(1);
-      if(ls->success) {
-        progress2->setState(ProgressBarState::Green);
-      } else {
-        progress2->setState(ProgressBarState::Red);
-      }
-    }
-    break;
-  case Message::EngineSettingsMessage:
-    {
-      EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
-      lineedit->setText(settings->drumkitfile);
-      if(settings->drumkit_loaded) {
-        progress->setProgress(1);
-        progress->setState(ProgressBarState::Green);
-      } else {
-        progress->setProgress(0);
-        progress->setState(ProgressBarState::Blue);
-      }
-      lineedit2->setText(settings->midimapfile);
-      if(settings->midimap_loaded) {
-        progress2->setProgress(1);
-        progress2->setState(ProgressBarState::Green);
-      } else {
-        progress2->setProgress(0);
-        progress2->setState(ProgressBarState::Blue);
-      }
-      velocityCheck->setChecked(settings->enable_velocity_modifier);
-      attackKnob->setValue(settings->velocity_modifier_weight);
-      falloffKnob->setValue(settings->velocity_modifier_falloff);
-      
-    }
-  default:
-    break;
-  }
+	switch(msg->type()) {
+	case Message::LoadStatus:
+		{
+			LoadStatusMessage *ls = (LoadStatusMessage*)msg;
+			window->drumkitFileProgress->setProgress((float)ls->numer_of_files_loaded /
+			                              (float)ls->number_of_files);
+			if(ls->numer_of_files_loaded == ls->number_of_files)
+			{
+				window->drumkitFileProgress->setState(ProgressBarState::Green);
+			}
+		}
+		break;
+	case Message::LoadStatusMidimap:
+		{
+			LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
+			window->midimapFileProgress->setProgress(1);
+			if(ls->success)
+			{
+				window->midimapFileProgress->setState(ProgressBarState::Green);
+			}
+			else
+			{
+				window->midimapFileProgress->setState(ProgressBarState::Red);
+			}
+		}
+		break;
+	case Message::EngineSettingsMessage:
+		{
+			EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
+			window->lineedit->setText(settings->drumkitfile);
+			if(settings->drumkit_loaded)
+			{
+				window->drumkitFileProgress->setProgress(1);
+				window->drumkitFileProgress->setState(ProgressBarState::Green);
+			}
+			else
+			{
+				window->drumkitFileProgress->setProgress(0);
+				window->drumkitFileProgress->setState(ProgressBarState::Blue);
+			}
+			window->lineedit2->setText(settings->midimapfile);
+			if(settings->midimap_loaded)
+			{
+				window->midimapFileProgress->setProgress(1);
+				window->midimapFileProgress->setState(ProgressBarState::Green);
+			}
+			else
+			{
+				window->midimapFileProgress->setProgress(0);
+				window->midimapFileProgress->setState(ProgressBarState::Blue);
+			}
+			window->velocityCheck->setChecked(settings->enable_velocity_modifier);
+			window->attackKnob->setValue(settings->velocity_modifier_weight);
+			window->falloffKnob->setValue(settings->velocity_modifier_falloff);
+		}
+	default:
+		break;
+	}
 }
 
 void PluginGUI::thread_main()
 {
-  init();
+	init();
 
-  { // Request all engine settings
-    EngineSettingsMessage *msg = new EngineSettingsMessage();
-    msghandler.sendMessage(MSGRCV_ENGINE, msg);
-  }
+	{ // Request all engine settings
+		EngineSettingsMessage *msg = new EngineSettingsMessage();
+		msghandler.sendMessage(MSGRCV_ENGINE, msg);
+	}
 
-  while(running) {
+	while(processEvents())
+	{
 #ifdef WIN32
-    SleepEx(50, FALSE);
+		SleepEx(50, FALSE);
 #else
-    usleep(50000);
+		usleep(50000);
 #endif/*WIN32*/
+	}
 
-    //    DEBUG(gui, "loop");
+	deinit();
+}
 
-    window->eventHandler()->processEvents();
-    handleMessages();
+bool PluginGUI::processEvents()
+{
+	if(!initialised)
+	{
+		return running;
+	}
 
-#ifdef STANDALONE
-    if(closing) {
-	    if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
-	    break;
-    }
-#endif
-  }
+	window->eventHandler()->processEvents();
+	handleMessages();
 
-  deinit();
+	if(closing)
+	{
+		closeNotifier();
+		closing = false;
+		return false;
+	}
+
+	return running;
+}
+
+void PluginGUI::stopThread()
+{
+	if(running)
+	{
+		running = false;
+		wait_stop();
+	}
+}
+
+void PluginGUI::init()
+{
+	DEBUG(gui, "init");
+
+	config = new Config();
+	config->load();
+
+	window = new DGWindow(msghandler, *config);
+
+	auto eventHandler = window->eventHandler();
+	CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
+
+	window->show();
+
+	sem.post();
+
+	initialised = true;
 }
 
 void PluginGUI::deinit()
 {
-  if(config) {
-    config->save();
-    delete config;
-  }
-  if(window) delete window;
+	if(config)
+	{
+		config->save();
+		delete config;
+	}
+
+	if(window)
+	{
+		delete window;
+	}
+}
+
+void PluginGUI::show()
+{
+	while(!initialised)
+	{
+		usleep(10000);
+	}
+
+	if(!window)
+	{
+		init();
+	}
+
+	if(window)
+	{
+		window->show();
+	}
+}
+
+void PluginGUI::hide()
+{
+	while(!initialised)
+	{
+		usleep(10000);
+	}
+
+	if(window)
+	{
+		window->hide();
+	}
+}
+
+void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void* ptr)
+{
+	windowClosedHandler = handler;
+	windowClosedPtr = ptr;
 }
 
 void PluginGUI::closeEventHandler()
 {
 	closing = true;
-}
-
-void PluginGUI::selectKitFile(const std::string& filename)
-{
-	lineedit->setText(filename);
-
-	fileBrowser->hide();
-
-	std::string drumkit = lineedit->text();
-
-	config->lastkit = drumkit;
-	config->save();
-
-	progress->setProgress(0);
-	progress->setState(ProgressBarState::Blue);
-
-	LoadDrumKitMessage *msg = new LoadDrumKitMessage();
-	msg->drumkitfile = drumkit;
-
-	msghandler.sendMessage(MSGRCV_ENGINE, msg);
-}
-
-void PluginGUI::selectMapFile(const std::string& filename)
-{
-	lineedit2->setText(filename);
-	fileBrowser->hide();
-
-	std::string midimap = lineedit2->text();
-
-	config->lastmidimap = midimap;
-	config->save();
-
-	LoadMidimapMessage *msg = new LoadMidimapMessage();
-	msg->midimapfile = midimap;
-	msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-	/*
-	  if(gui->changeMidimapHandler)
-	  gui->changeMidimapHandler(gui->changeMidimapPtr, midimap.c_str());
-	  gui->progress2->setState(ProgressBarState::Green);
-	*/
-}
-
-void PluginGUI::init()
-{
-  DEBUG(gui, "init");
-
-  config = new Config();
-  config->load();
-
-  window = new Window();
-  auto eventHandler = window->eventHandler();
-  CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
-
-  window->setFixedSize(370, 330);
-  window->setCaption("DrumGizmo v" VERSION);
-
-  Label *lbl_title = new Label(window);
-  lbl_title->setText("DrumGizmo");
-  lbl_title->move(127, 7);
-  lbl_title->resize(200, 20);
-  
-  VerticalLine *l1 = new VerticalLine(window);
-  l1->move(20, 30);
-  l1->resize(window->width() - 40, 2);
-
-#define OFFSET1 17
-#define OFFSET2 38
-#define OFFSET3 20
-
-#define XOFFSET 20
-  // Drumkit file
-  {
-    int y = 37;
-    Label *lbl = new Label(window);
-    lbl->setText("Drumkit file:");
-    lbl->move(XOFFSET - 4, y);
-    lbl->resize(100, 20);
-
-    y += OFFSET1;
-    lineedit = new LineEdit(window);
-    lineedit->move(XOFFSET, y);
-    lineedit->resize(243, 29);
-    lineedit->setReadOnly(true);
-
-    Button *btn_brw = new Button(window);
-    btn_brw->setText("Browse...");
-    btn_brw->move(266, y - 6 + 4);
-    btn_brw->resize(85, 35 + 6 - 4);
-//    btn_brw->registerClickHandler(kitBrowseClick, this);
-    CONNECT(btn_brw, clickNotifier, this, &PluginGUI::kitBrowseClick);
-
-    y += OFFSET2;
-    progress = new ProgressBar(window);
-    progress->move(XOFFSET, y);
-    progress->resize(window->width() - 2*XOFFSET, 11);
-
-    y += OFFSET3;
-    VerticalLine *l = new VerticalLine(window);
-    l->move(XOFFSET, y);
-    l->resize(window->width() - 2*XOFFSET, 2);
-  }
-
-  // Midimap file
-  {
-    int y = 120;
-    lbl2 = new Label(window);
-    lbl2->setText("Midimap file:");
-    lbl2->move(XOFFSET - 4, y);
-    lbl2->resize(100, 20);
-    
-    y += OFFSET1;
-    lineedit2 = new LineEdit(window);
-    lineedit2->move(XOFFSET, y);
-    lineedit2->resize(243, 29);
-    lineedit2->setReadOnly(true);
-
-    Button *btn_brw = new Button(window);
-    btn_brw->setText("Browse...");
-    btn_brw->move(266, y - 6 + 4);
-    btn_brw->resize(85, 35 + 6 - 4);
-    CONNECT(btn_brw, clickNotifier, this, &PluginGUI::midimapBrowseClick);
-
-    y += OFFSET2;
-    progress2 = new ProgressBar(window);
-    progress2->move(XOFFSET, y);
-    progress2->resize(window->width() - 2*XOFFSET, 11);
-
-    y += OFFSET3;
-    VerticalLine *l = new VerticalLine(window);
-    l->move(XOFFSET, y);
-    l->resize(window->width() - 2*XOFFSET, 2);
-  }
-
-  {
-    int y = 203;
-#define OFFSET4 21
-
-    // Enable Velocity
-    Label *lbl_velocity = new Label(window);
-    lbl_velocity->resize(78 ,20);
-    lbl_velocity->move(16, y);
-    lbl_velocity->setText("Humanizer");
-
-    velocityCheck = new CheckBox(window);
-    //velocityCheck->setText("Enable Velocity Modifier");
-    velocityCheck->move(26, y + OFFSET4);
-    velocityCheck->resize(59,38);
-    CONNECT(velocityCheck, stateChangedNotifier, this, &PluginGUI::velocityCheckClick);
-
-    // Velocity Weight Modifier:
-    {
-      Label *lbl_weight = new Label(window);
-      lbl_weight->setText("Attack");
-      lbl_weight->move(107, y);
-      lbl_weight->resize(100, 20);
-      
-      attackKnob = new Knob(window);
-      attackKnob->move(109, y + OFFSET4 - 4);
-      attackKnob->resize(57, 57);
-      CONNECT(attackKnob, valueChangedNotifier, this, &PluginGUI::attackValueChanged);
-    }
-    
-    // Velocity Falloff Modifier:
-    {
-      Label *lbl_falloff = new Label(window);
-      lbl_falloff->setText("Release");
-      lbl_falloff->move(202 - 17 - 7, y);
-      lbl_falloff->resize(100, 20);
-      
-      falloffKnob = new Knob(window);
-      falloffKnob->move(202 - 13 - 5,  y + OFFSET4 - 4);
-      falloffKnob->resize(57, 57);
-      CONNECT(falloffKnob, valueChangedNotifier, this, &PluginGUI::falloffValueChanged);
-    }
-  }
-
-  VerticalLine *l2 = new VerticalLine(window);
-  l2->move(20, 310 - 15 - 9);
-  l2->resize(window->width() - 40, 2);
-
-  Label *lbl_version = new Label(window);
-  lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
-  lbl_version->move(16, 300);
-  lbl_version->resize(window->width(), 20);
-  /*
-  {
-    ComboBox *cmb = new ComboBox(window);
-    cmb->addItem("Foo", "Bar");
-    cmb->addItem("Hello", "World");
-    cmb->move(10,10);
-    cmb->resize(70, 30);
-  }
-  */
-  // Create file browser
-  fileBrowser = new FileBrowser(window);
-  fileBrowser->move(0, 0);
-  fileBrowser->resize(window->width() - 1, window->height() - 1);
-  fileBrowser->hide();
-
-  // Enable quit button
-//  Button *btn_quit = new Button(window);
-//  btn_quit->setText("Quit");
-//  btn_quit->move(50,280);
-//  btn_quit->resize(80,80);
-//  btn_quit->registerClickHandler(quit, this);
-
-  window->show();
-
-  sem.post();
-
-  initialised = true;
-}
-
-void PluginGUI::show()
-{
-  while(!initialised) usleep(10000);
-
-  if(!window) init();
-
-  window->show();
-}
-
-void PluginGUI::hide()
-{
-  while(!initialised) usleep(10000);
-
-  if(window) window->hide();
-}
-
-void PluginGUI::processEvents()
-{
-  if(!initialised) return;
-
-  if(closing) {
-    if(windowClosedHandler) windowClosedHandler(windowClosedPtr);
-    closing = false;
-  }
-
-#ifndef USE_THREAD
-  window->eventHandler()->processEvents(window);
-#endif/*USE_THREAD*/
-}
-
-void PluginGUI::setWindowClosedCallback(void (*handler)(void *), void *ptr)
-{
-  windowClosedHandler = handler;
-  windowClosedPtr = ptr;
-}
-
-void PluginGUI::attackValueChanged(float value)
-{
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
-                             value);
-
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-#ifdef STANDALONE
-  int i = value * 4;
-  switch(i) {
-  case 0: progress->setState(ProgressBarState::Off); break;
-  case 1: progress->setState(ProgressBarState::Blue); break;
-  case 2: progress->setState(ProgressBarState::Green); break;
-  case 3: progress->setState(ProgressBarState::Red); break;
-  default: break;
-  }
-#endif
-}
-
-void PluginGUI::falloffValueChanged(float value)
-{
-  ChangeSettingMessage *msg =
-    new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
-                             value);
-  msghandler.sendMessage(MSGRCV_ENGINE, msg);
-
-#ifdef STANDALONE
-  progress->setProgress(value);
-#endif
-}
-
-void PluginGUI::velocityCheckClick(bool checked)
-{
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
-		                         checked);
-	msghandler.sendMessage(MSGRCV_ENGINE, msg);
-}
-
-void PluginGUI::kitBrowseClick()
-{
-	std::string path = lineedit->text();
-	if(path == "")
+	closeNotifier();
+	// Call old-style notifier if one is registered.
+	if(windowClosedHandler)
 	{
-		path = config->lastkit;
+		windowClosedHandler(windowClosedPtr);
 	}
-
-	if(path == "")
-	{
-		path = lineedit2->text();
-	}
-
-	fileBrowser->setPath(path);
-	CONNECT(fileBrowser, fileSelectNotifier, this, &PluginGUI::selectKitFile);
-	fileBrowser->show();
-}
-
-void PluginGUI::midimapBrowseClick()
-{
-	std::string path = lineedit2->text();
-	if(path == "")
-	{
-		path = config->lastmidimap;
-	}
-
-	if(path == "")
-	{
-		path = lineedit->text();
-	}
-
-	fileBrowser->setPath(path);
-	CONNECT(fileBrowser, fileSelectNotifier, this, &PluginGUI::selectMapFile);
-	fileBrowser->show();
 }
 
 } // GUI::
-
-#ifdef STANDALONE
-
-class Engine : public MessageHandler {
-public:
-  void handleMessage(Message *msg) {}
-};
-
-void stop(void *ptr)
-{
-  DEBUG(stop, "Stopping...\n");
-  bool *running = (bool*)ptr;
-  *running = false;
-}
-
-int main()
-{
-  INFO(example, "We are up and running");
-
-  bool running = true;
-
-  GUI::PluginGUI gui;
-  gui.setWindowClosedCallback(stop, &running);
-
-  // gui.show();
-
-  while(running) {
-#ifdef WIN32
-    SleepEx(1000, FALSE);
-#else
-    sleep(1);
-#endif
-  }
-
-  return 0;
-}
-
-#endif/*STANDALONE*/

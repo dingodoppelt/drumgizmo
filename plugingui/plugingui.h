@@ -26,18 +26,11 @@
  */
 #pragma once
 
-#include "window.h"
+#include "dgwindow.h"
 #include "eventhandler.h"
 
-#include "label.h"
-#include "lineedit.h"
-#include "checkbox.h"
-#include "button.h"
-#include "knob.h"
-#include "progressbar.h"
 #include "pluginconfig.h"
 
-#include "filebrowser.h"
 
 #include "thread.h"
 #include "semaphore.h"
@@ -49,63 +42,49 @@ namespace GUI {
 
 class PluginGUI : public Thread, public MessageReceiver, public Listener {
 public:
-  PluginGUI();
-  virtual ~PluginGUI();
+	PluginGUI();
+	virtual ~PluginGUI();
 
-  void thread_main();
-  void stopThread();
+	void thread_main();
 
-  void init();
-  void deinit();
+	//! Process all events and messages in queue
+	//! \return true if not closing, returns false if closing.
+	bool processEvents();
 
-  void show();
-  void hide();
-  void processEvents();
-  void setWindowClosedCallback(void (*handler)(void *), void *ptr);
+	void stopThread();
 
-  void handleMessage(Message *msg);
+	void init();
+	void deinit();
 
-  Window *window;
-  EventHandler *eventhandler;
+	void show();
+	void hide();
 
-  Label *lbl;
-  LineEdit *lineedit;
-  ProgressBar *progress;
 
-  Label *lbl2;
-  LineEdit *lineedit2;
-  ProgressBar *progress2;
+	void handleMessage(Message* msg);
 
-  Config *config;
+	DGWindow* window{nullptr};
+	EventHandler* eventhandler;
 
-  void (*windowClosedHandler)(void *);
-  void *windowClosedPtr;
 
-  void (*changeMidimapHandler)(void *, const char *);
-  void *changeMidimapPtr;
+	Config* config;
+
+	Notifier<> closeNotifier;
+
+	// Support old interface a little while longer..
+	void setWindowClosedCallback(void (*handler)(void*), void* ptr);
 
 private:
-  void attackValueChanged(float value);
-  void falloffValueChanged(float value);
-  void velocityCheckClick(bool checked);
-	void kitBrowseClick();
-	void midimapBrowseClick();
 	void closeEventHandler();
-	void selectKitFile(const std::string& filename);
-	void selectMapFile(const std::string& filename);
 
-  // Humanized velocity controls:
-  CheckBox* velocityCheck;
-  Knob* attackKnob;
-  Knob* falloffKnob;
-	FileBrowser* fileBrowser;
+	volatile bool running{true};
+	volatile bool closing{false};
+	volatile bool initialised{false};
 
-  volatile bool running;
-  volatile bool closing;
-  volatile bool initialised;
+	Semaphore sem{"plugingui"};
 
-  Semaphore sem;
+	// For the old-style notifier.
+	void (*windowClosedHandler)(void *){nullptr};
+	void *windowClosedPtr{nullptr};
 };
 
 } // GUI::
-

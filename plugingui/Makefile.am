@@ -11,6 +11,7 @@ plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
 plugingui_SOURCES = \
+	testmain.cc \
 	$(PLUGIN_GUI_SOURCES) \
 	$(top_srcdir)/src/configfile.cc \
 	$(top_srcdir)/src/thread.cc \
