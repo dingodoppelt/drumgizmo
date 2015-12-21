@@ -16,6 +16,7 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/checkbox.cc \
 	$(top_srcdir)/plugingui/slider.cc \
 	$(top_srcdir)/plugingui/scrollbar.cc \
+	$(top_srcdir)/plugingui/textedit.cc \
 	$(top_srcdir)/plugingui/layout.cc \
 	$(top_srcdir)/plugingui/listbox.cc \
 	$(top_srcdir)/plugingui/listboxthin.cc \

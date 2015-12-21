@@ -9,6 +9,8 @@ DG_SRC = \
 DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
 
 GUI_SRC = \
+	testmain.cc \
+	dgwindow.cc \
 	nativewindow_win32.cc \
 	plugingui.cc \
 	pluginconfig.cc \
@@ -27,6 +29,7 @@ GUI_SRC = \
 	checkbox.cc \
 	slider.cc \
 	scrollbar.cc \
+	textedit.cc \
 	listbox.cc \
 	listboxthin.cc \
 	listboxbasic.cc \
@@ -53,7 +56,8 @@ DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX -DDISABLE_HUGIN
 all:
 	gcc $(DBG_CFLAGS) ../hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) ../hugin/hugin_syslog.c -c
-	g++ -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) hugin.o hugin_syslog.o $(DG_SRC) ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) -o plugingui.exe
+	gcc LooplessSizeMove.c -c
+	g++ -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) hugin.o hugin_syslog.o LooplessSizeMove.o $(DG_SRC) ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) -o plugingui.exe
 
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
