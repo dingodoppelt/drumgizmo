@@ -249,6 +249,9 @@ void CacheManager::close(cacheid_t id)
 
 void CacheManager::setFrameSize(size_t framesize)
 {
+	MutexAutolock le(m_events);
+	MutexAutolock li(m_ids);
+
 	if(framesize > this->framesize)
 	{
 		delete[] nodata;
@@ -256,7 +259,31 @@ void CacheManager::setFrameSize(size_t framesize)
 
 		for(size_t i = 0; i < framesize; ++i)
 		{
-			nodata[i] = 0;
+			nodata[i] = 0.0f;
+		}
+	}
+
+	// Run through all active cache_ts and disable them.
+	for(auto it = id2cache.begin(); it != id2cache.end(); ++it)
+	{
+		cacheid_t cacheid = it - id2cache.begin();
+
+		// Look up id in available ids:
+		bool found = false;
+		for(auto i = availableids.begin(); i != availableids.end(); ++i)
+		{
+			if(cacheid == *i)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if(!found)
+		{
+			// Force use of nodata in all of the rest of the next() calls.
+			it->localpos = CHUNKSIZE(framesize);
+			it->ready = false;
 		}
 	}
 
