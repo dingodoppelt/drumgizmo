@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CACHEMANAGER_H__
-#define __DRUMGIZMO_CACHEMANAGER_H__
+#pragma once
 
 #include <string>
 #include <list>
@@ -37,6 +36,7 @@
 
 #include "audiotypes.h"
 #include "audiofile.h"
+#include "cacheaudiofile.h"
 
 #define CACHE_DUMMYID -2
 #define CACHE_NOID -1
@@ -44,9 +44,20 @@
 #define CHUNK_MULTIPLIER 16
 
 class AudioFile;
-typedef int cacheid_t;
-class AFile;
+class CacheAudioFile;
+class CacheAudioFiles;
 
+typedef int cacheid_t;
+
+class CacheChannel {
+public:
+	size_t channel;
+	sample_t* samples;
+	size_t num_samples;
+	volatile bool* ready;
+};
+
+class CacheChannels : public std::list<CacheChannel> {};
 
 //TODO:
 // 1: Move nodata initialisation to init method.
@@ -72,146 +83,139 @@ class AFile;
 
 class CacheManager : public Thread {
 public:
-  /**
-   * Empty constructor...
-   */
-  CacheManager();
+	/**
+	 * Empty constructor...
+	 */
+	CacheManager();
 
-  /**
-   * Destroy object and stop thread if needed.
-   */
-  ~CacheManager();
+	/**
+	 * Destroy object and stop thread if needed.
+	 */
+	~CacheManager();
 
-  /**
-   * Initialise cache manager and allocate needed resources
-   * This method starts the cache manager thread.
-   * This method blocks until the thread has been started.
-   * @param poolsize The maximum number of parellel events supported. 
-   */
-  void init(size_t poolsize, bool threaded);
+	/**
+	 * Initialise cache manager and allocate needed resources
+	 * This method starts the cache manager thread.
+	 * This method blocks until the thread has been started.
+	 * @param poolsize The maximum number of parellel events supported.
+	 */
+	void init(size_t poolsize, bool threaded);
 
-  /**
-   * Stop thread and clean up resources.
-   * This method blocks until the thread has stopped.
-   */
-  void deinit();
+	/**
+	 * Stop thread and clean up resources.
+	 * This method blocks until the thread has stopped.
+	 */
+	void deinit();
 
-  /**
-   * Register new cache entry.
-   * Prepares an entry in the cache manager for future disk streaming.
-   * @param file A pointer to the file which is to be streamed from.
-   * @param initial_samples_needed The number of samples needed in the first
-   *  read that is not nessecarily of framesize. This is the number of samples
-   *  from the input event offset to the end of the frame in which it resides.
-   *  initial_samples_needed <= framesize.
-   * @param channel The channel to which the cache id will be bound.
-   * @param [out] new_id The newly created cache id.
-   * @return A pointer to the first buffer containing the
-   *  'initial_samples_needed' number of samples.
-   */
-  sample_t *open(AudioFile *file, size_t initial_samples_needed, int channel,
-                 cacheid_t &new_id);
+	/**
+	 * Register new cache entry.
+	 * Prepares an entry in the cache manager for future disk streaming.
+	 * @param file A pointer to the file which is to be streamed from.
+	 * @param initial_samples_needed The number of samples needed in the first
+	 *  read that is not nessecarily of framesize. This is the number of samples
+	 *  from the input event offset to the end of the frame in which it resides.
+	 *  initial_samples_needed <= framesize.
+	 * @param channel The channel to which the cache id will be bound.
+	 * @param [out] new_id The newly created cache id.
+	 * @return A pointer to the first buffer containing the
+	 *  'initial_samples_needed' number of samples.
+	 */
+	sample_t *open(AudioFile *file, size_t initial_samples_needed, int channel,
+	               cacheid_t &new_id);
 
-  /**
-   * Get next buffer.
-   * Returns the next buffer for reading based on cache id.
-   * This function will (if needed) schedule a new disk read to make sure that
-   * data is available in the next call to this method.
-   * @param id The cache id to read from.
-   * @param [out] size The size of the returned buffer.
-   * @return A pointer to the buffer.
-   */
-  sample_t *next(cacheid_t id, size_t &size);
+	/**
+	 * Get next buffer.
+	 * Returns the next buffer for reading based on cache id.
+	 * This function will (if needed) schedule a new disk read to make sure that
+	 * data is available in the next call to this method.
+	 * @param id The cache id to read from.
+	 * @param [out] size The size of the returned buffer.
+	 * @return A pointer to the buffer.
+	 */
+	sample_t *next(cacheid_t id, size_t &size);
 
-  /**
-   * Unregister cache entry.
-   * Close associated file handles and free associated buffers.
-   * @param id The cache id to close.
-   */
-  void close(cacheid_t id);
+	/**
+	 * Unregister cache entry.
+	 * Close associated file handles and free associated buffers.
+	 * @param id The cache id to close.
+	 */
+	void close(cacheid_t id);
 
-  /**
-   * Set internal framesize used when iterating through cache buffers.
-   */
-  void setFrameSize(size_t framesize);
+	/**
+	 * Set internal framesize used when iterating through cache buffers.
+	 */
+	void setFrameSize(size_t framesize);
 
-  /**
-   * Control reader thread.
-   * Set to true to make reading happen threaded, false to do all reading sync.
-   */
-  void setAsyncMode(bool async);
-
-  ///! Internal thread main method - needs to be public.
-  void thread_main();
-
-  class Channel {
-  public:
-    size_t channel;
-    sample_t* samples;
-    size_t num_samples;
-    volatile bool* ready;
-  };
+	/**
+	 * Control reader thread.
+	 * Set to true to make reading happen threaded, false to do all reading sync.
+	 */
+	void setAsyncMode(bool async);
 
 private:
-  size_t framesize;
-  sample_t *nodata;
+	///! Internal thread main method
+	void thread_main();
 
-  typedef struct {
-    AFile *afile;
-    size_t channel;
-    size_t pos; //< File possition
-    volatile bool ready;
-    sample_t *front;
-    sample_t *back;
-    size_t localpos; //< Intra buffer (front) position.
+	size_t framesize;
+	sample_t *nodata;
 
-    sample_t* preloaded_samples; // NULL means not active.
-    size_t preloaded_samples_size;
+	typedef struct {
+		CacheAudioFile* afile;
+		size_t channel;
+		size_t pos; //< File possition
+		volatile bool ready;
+		sample_t *front;
+		sample_t *back;
+		size_t localpos; //< Intra buffer (front) position.
 
-  } cache_t;
+		sample_t* preloaded_samples; // NULL means not active.
+		size_t preloaded_samples_size;
 
-  typedef enum {
-    LOADNEXT = 0,
-    CLOSE = 1
-  } cmd_t;
+	} cache_t;
 
-  typedef struct {
-    cmd_t cmd;
+	typedef enum {
+		LOADNEXT = 0,
+		CLOSE = 1
+	} cmd_t;
 
-    // For close event:
-    cacheid_t id;
+	typedef struct {
+		cmd_t cmd;
 
-    // For load next event:
-    size_t pos;
-    AFile *afile;
-    std::list<CacheManager::Channel> channels;
-  } cevent_t;
+		// For close event:
+		cacheid_t id;
 
-  cevent_t createLoadNextEvent(AFile *afile, size_t channel, size_t pos,
-                               sample_t* buffer, volatile bool* ready);
-  cevent_t createCloseEvent(cacheid_t id);
+		// For load next event:
+		size_t pos;
+		CacheAudioFile* afile;
+		CacheChannels channels;
+	} cevent_t;
 
-  void handleLoadNextEvent(cevent_t& e);
-  void handleCloseEvent(cevent_t& e);
+	cevent_t createLoadNextEvent(CacheAudioFile* afile, size_t channel,
+	                             size_t pos, sample_t* buffer,
+	                             volatile bool* ready);
+	cevent_t createCloseEvent(cacheid_t id);
 
-  void handleEvent(cevent_t& e);
-  void pushEvent(cevent_t& e);
+	void handleLoadNextEvent(cevent_t& e);
+	void handleCloseEvent(cevent_t& e);
+	void handleCloseCache(cacheid_t& cacheid);
 
-  std::vector<cache_t> id2cache; 
+	void handleEvent(cevent_t& e);
+	void pushEvent(cevent_t& e);
 
-  // Protected by mutex:
-  std::list<cevent_t> eventqueue;
-  std::list<cacheid_t> availableids; 
-  
-  Mutex m_events;
-  Mutex m_ids;
+	std::vector<cache_t> id2cache;
 
-  bool threaded; // Indicates if we are running in thread mode or offline mode.
-  Semaphore sem;
-  Semaphore sem_run;
-  bool running;
+	// Protected by mutex:
+	std::list<cevent_t> eventqueue;
+	std::list<cacheid_t> availableids;
 
-  std::map<std::string, AFile*> files;
+	Mutex m_events;
+	Mutex m_ids;
+
+	bool threaded; // Indicates if we are running in thread mode or offline mode.
+	Semaphore sem;
+	Semaphore sem_run;
+	bool running;
+
+	CacheAudioFiles files;
+	//std::map<std::string, CacheAudioFile*> files;
 };
-
-#endif/*__DRUMGIZMO_CACHEMANAGER_H__*/

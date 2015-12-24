@@ -54,6 +54,8 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/lineedit.cc \
 	@top_srcdir@/plugingui/led.cc \
 	@top_srcdir@/plugingui/layout.cc \
+	@top_srcdir@/plugingui/cacheaudiofile.cc \
+	@top_srcdir@/plugingui/cachemanager.cc \
 	@top_srcdir@/plugingui/checkbox.cc \
 	@top_srcdir@/plugingui/slider.cc \
 	@top_srcdir@/plugingui/scrollbar.cc \
