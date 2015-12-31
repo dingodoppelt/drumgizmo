@@ -63,10 +63,10 @@ public:
 	void handleMessage(Message* msg);
 
 	DGWindow* window{nullptr};
-	EventHandler* eventhandler;
+	EventHandler* eventhandler{nullptr};
 
 
-	Config* config;
+	Config* config{nullptr};
 
 	Notifier<> closeNotifier;
 

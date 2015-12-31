@@ -56,17 +56,17 @@ private:
 	Event* translateXMessage(XEvent& xevent, bool peek = false);
 	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
 
-	::Window xwindow;
-	GC gc;
-	XImage* buffer;
+	::Window xwindow{0};
+	GC gc{0};
+	XImage* buffer{nullptr};
 
 	Window& window;
 
-	int last_click;
+	int last_click{0};
 
-	Display* display;
-	int screen;
-	Atom wmDeleteMessage;
+	Display* display{nullptr};
+	int screen{0};
+	Atom wmDeleteMessage{0};
 };
 
 } // GUI::

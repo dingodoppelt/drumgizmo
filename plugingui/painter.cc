@@ -193,6 +193,7 @@ void Painter::drawText(int x0, int y0, const Font& font,
 	// If the text offset is outside the buffer; skip it.
 	if((x0 > (int)pixbuf->width) || (y0 > (int)pixbuf->height))
 	{
+		delete textbuf;
 		return;
 	}
 

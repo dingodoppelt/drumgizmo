@@ -264,7 +264,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 		entries.push_back(file);
 	}
 
-
+	closedir(dir);
 	return entries;
 }
 
