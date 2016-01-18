@@ -122,8 +122,8 @@ int CliMain::run(int argc, char *argv[])
 {
   int c;
 
-  const char *hugin_filter = "+all";
-  unsigned int hugin_flags = HUG_FLAG_OUTPUT_TO_STDOUT;
+  std::string hugin_filter;
+  unsigned int hugin_flags = HUG_FLAG_DEFAULT;
 
   std::string outputengine;
   std::string inputengine;
@@ -215,12 +215,14 @@ int CliMain::run(int argc, char *argv[])
   }
 
   hug_status_t status = hug_init(hugin_flags,
-                                 HUG_OPTION_FILTER, hugin_filter,
+                                 HUG_OPTION_FILTER, hugin_filter.c_str(),
                                  HUG_OPTION_END);
   if(status != HUG_STATUS_OK) {
     printf("Error: %d\n", status);
     return 1;
   }
+
+  DEBUG(drumgizmo, "Debug enabled.");
 
   if(inputengine == "") {
     printf("Missing input engine\n");
@@ -263,6 +265,7 @@ int CliMain::run(int argc, char *argv[])
 
   if(outputengine == "") {
     printf("Missing output engine\n");
+    delete ie;
     return 1;
   }
 
@@ -307,6 +310,8 @@ int CliMain::run(int argc, char *argv[])
       if(kitfile != "") {
         printf("Can only handle a single kitfile.\n");
         printf(usage_str, argv[0]);
+        delete ie;
+        delete oe;
         return 1;
       }
       kitfile = argv[optind++];
@@ -315,6 +320,8 @@ int CliMain::run(int argc, char *argv[])
   } else {
     printf("Missing kitfile.\n");
     printf(usage_str, argv[0]);
+    delete ie;
+    delete oe;
     return 1;
   }
   
@@ -346,6 +353,8 @@ int CliMain::run(int argc, char *argv[])
 
   if(!gizmo.init()) {
     printf("Failed init engine.\n");
+    delete ie;
+    delete oe;
     return 1;
   }
 
