@@ -12,7 +12,7 @@ then
 	echo "======================"
 	echo "All tests are now run."
 	echo "======================"
-	make -C .. check
+	make check
 else
 	for TST in "$@"
 	do
