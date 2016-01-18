@@ -34,10 +34,6 @@
 
 #include <hugin.hpp>
 
-#ifndef HUG_FLAG_DEFAULT
-#define HUG_FLAG_DEFAULT 0
-#endif
-
 #include "drumgizmo.h"
 #include "drumgizmoc.h"
 
@@ -123,7 +119,10 @@ int CliMain::run(int argc, char *argv[])
   int c;
 
   std::string hugin_filter;
-  unsigned int hugin_flags = HUG_FLAG_DEFAULT;
+  unsigned int hugin_flags = 0;
+#ifndef DISABLE_HUGIN
+  hugin_flags = HUG_FLAG_DEFAULT;
+#endif/*DISABLE_HUGIN*/
 
   std::string outputengine;
   std::string inputengine;
