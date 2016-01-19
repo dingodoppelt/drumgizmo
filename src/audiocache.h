@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            cachemanager.h
+ *            audiocache.h
  *
  *  Fri Apr 10 10:39:24 CEST 2015
  *  Copyright 2015 Jonas Suhr Christensen
@@ -102,7 +102,7 @@ public:
 	//! \return A pointer to the buffer.
 	sample_t* next(cacheid_t id, size_t &size);
 
-	//! Returns if the next chunk of the supplied id has been read form disk.
+	//! Returns if the next chunk of the supplied id has been read from disk.
 	bool isReady(cacheid_t id);
 
 	//! Unregister cache entry.
