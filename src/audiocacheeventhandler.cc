@@ -26,6 +26,8 @@
  */
 #include "audiocacheeventhandler.h"
 
+#include <assert.h>
+
 #include "audiocachefile.h"
 #include "audiocache.h"
 #include "audiocacheidmanager.h"
@@ -165,6 +167,9 @@ void AudioCacheEventHandler::pushCloseEvent(cacheid_t id)
 
 void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 {
+	// We should already locked when this method is called.
+	assert(!mutex.try_lock());
+
 	if(this->chunksize == chunksize)
 	{
 		return;
@@ -192,8 +197,6 @@ AudioCacheFile& AudioCacheEventHandler::openFile(const std::string& filename)
 
 void AudioCacheEventHandler::clearEvents()
 {
-	std::lock_guard<std::mutex> l(mutex);
-
 	// Iterate all events ignoring load events and handling close events.
 	for(auto& event : *eventqueue)
 	{
