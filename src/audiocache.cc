@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            cachemanager.cc
+ *            audiocache.cc
  *
  *  Fri Apr 10 10:39:24 CEST 2015
  *  Copyright 2015 Jonas Suhr Christensen
@@ -75,7 +75,7 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 	// Register a new id for this cache session.
 	id = idManager.registerID({});
 
-	// If we are out of availabel ids we get CACHE_DUMMYID
+	// If we are out of available ids we get CACHE_DUMMYID
 	if(id == CACHE_DUMMYID)
 	{
 		// Use nodata buffer instead.
