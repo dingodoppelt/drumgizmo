@@ -54,12 +54,12 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   , freewheel(false)
 {
   is_stopping = false;
-  cacheManager.init(1000, true); // start thread
+  audioCache.init(1000); // start thread
 }
 
 DrumGizmo::~DrumGizmo()
 {
-  cacheManager.deinit(); // stop thread
+  audioCache.deinit(); // stop thread
 }
 
 bool DrumGizmo::loadkit(std::string file)
@@ -185,8 +185,8 @@ void DrumGizmo::setFrameSize(size_t framesize)
     // Update framesize in drumkitloader and cachemanager:
     loader.setFrameSize(framesize);
     printf("loader.setFrameSize\n"); fflush(stdout);
-    cacheManager.setFrameSize(framesize);
-    printf("cacheManager.setFrameSize\n"); fflush(stdout);
+    audioCache.setFrameSize(framesize);
+    printf("audioCache.setFrameSize\n"); fflush(stdout);
   }
 }
 
@@ -196,7 +196,7 @@ void DrumGizmo::setFreeWheel(bool freewheel)
   // than realtime.
   if(freewheel != this->freewheel) {
     this->freewheel = freewheel;
-    cacheManager.setAsyncMode(!freewheel);
+    audioCache.setAsyncMode(!freewheel);
   }
 }
 
@@ -424,7 +424,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
         if(evt->cache_id == CACHE_NOID) {
           size_t initial_chunksize = (pos + sz) - evt->offset;
-          evt->buffer = cacheManager.open(af, initial_chunksize,
+          evt->buffer = audioCache.open(af, initial_chunksize,
                                           af->filechannel, evt->cache_id);
           evt->buffer_size = initial_chunksize;
         }
@@ -484,13 +484,13 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
         evt->t += evt->buffer_size; // Add internal buffer counter to "global" event counter.
 
         if((evt->t < af->size) && (evt->rampdown != 0)) {
-          evt->buffer = cacheManager.next(evt->cache_id, evt->buffer_size);
+          evt->buffer = audioCache.next(evt->cache_id, evt->buffer_size);
         } else {
           removeevent = true;
         }
 
         if(removeevent) {
-          cacheManager.close(evt->cache_id);
+          audioCache.close(evt->cache_id);
         }
         }
       }

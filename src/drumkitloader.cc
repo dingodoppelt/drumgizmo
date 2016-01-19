@@ -30,7 +30,6 @@
 
 #include "drumkitparser.h"
 #include "drumgizmo.h"
-#include "cachemanager.h"
 
 DrumKitLoader::DrumKitLoader()
   : semaphore("drumkitloader")

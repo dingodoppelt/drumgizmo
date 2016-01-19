@@ -35,7 +35,7 @@
 #include "audiofile.h"
 #include "audio.h"
 #include "mutex.h"
-#include "cachemanager.h"
+#include "audiocache.h"
 
 typedef unsigned int timepos_t;
 

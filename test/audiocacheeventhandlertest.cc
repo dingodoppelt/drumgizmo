@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            cacheaudiofile.h
+ *            audiocacheeventhandlertest.cc
  *
- *  Thu Dec 24 12:17:58 CET 2015
- *  Copyright 2015 Bent Bisballe Nyeng
+ *  Thu Jan  7 15:44:14 CET 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,40 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
+#include <cppunit/extensions/HelperMacros.h>
 
-#include <string>
-#include <list>
-#include <map>
+#include <audiocacheeventhandler.h>
 
-#include <sndfile.h>
-
-class CacheChannels;
-
-class CacheAudioFile {
-	friend class CacheAudioFiles;
+class TestableAudioCacheEventHandler
+	: public AudioCacheEventHandler
+{
 public:
-	CacheAudioFile(const std::string& filename);
-	~CacheAudioFile();
-
-	size_t getSize() const;
-	const std::string& getFilename() const;
-
-	void readChunk(const CacheChannels& channels,
-	               size_t pos, size_t num_samples);
-
-private:
-	int ref{0};
-	SNDFILE* fh{nullptr};
-	SF_INFO sf_info;
-	std::string filename;
+	
 };
 
-class CacheAudioFiles {
-public:
-	CacheAudioFile& getAudioFile(const std::string filename);
-	void release(const std::string filename);
+class AudioCacheEventHandlerTest : public CppUnit::TestFixture
+{
+	CPPUNIT_TEST_SUITE(AudioCacheEventHandlerTest);
+	CPPUNIT_TEST(threadedTest);
+	CPPUNIT_TEST_SUITE_END();
 
-private:
-	std::map<std::string, CacheAudioFile*> audiofiles;
+public:
+	void setUp() {}
+	void tearDown() {}
+
+	void threadedTest()
+	{
+		AudioCacheIDManager idManager;
+		idManager.init(10);
+
+		AudioCacheEventHandler eventHandler(idManager);
+	}
 };
+
+// Registers the fixture into the 'registry'
+CPPUNIT_TEST_SUITE_REGISTRATION(AudioCacheEventHandlerTest);
