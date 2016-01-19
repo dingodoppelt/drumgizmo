@@ -37,7 +37,7 @@
 #include "drumkit.h"
 
 #include "drumkitloader.h"
-#include "cachemanager.h"
+#include "audiocache.h"
 
 #include "mutex.h"
 
@@ -96,8 +96,7 @@ private:
 
   std::map<std::string, AudioFile *> audiofiles;
 
-  CacheManager cacheManager;
-
+  AudioCache audioCache;
   DrumKit kit;
 
   size_t framesize;

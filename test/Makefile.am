@@ -1,7 +1,8 @@
 # Rules for the test code (use `make check` to execute)
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
-TESTS = resource engine gui resampler lv2 cachemanager configfile
+TESTS = resource engine gui resampler lv2 configfile audiocache \
+	audiocachefile audiocacheidmanager audiocacheeventhandler
 
 check_PROGRAMS = $(TESTS)
 
@@ -15,19 +16,62 @@ resource_SOURCES = \
 	test.cc \
 	resource_test.cc
 
-cachemanager_CXXFLAGS = -DOUTPUT=\"cachemanager\" $(CPPUNIT_CFLAGS) \
+audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" $(CPPUNIT_CFLAGS) \
+t of them. Unit tests added.
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
-cachemanager_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
-cachemanager_SOURCES = \
-	$(top_srcdir)/src/cachemanager.cc \
+audiocache_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocache_SOURCES = \
+	$(top_srcdir)/src/audiocache.cc \
+	$(top_srcdir)/src/audiocacheeventhandler.cc \
+	$(top_srcdir)/src/audiocachefile.cc \
+	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	test.cc \
-	cachemanagertest.cc
+	audiocachetest.cc
+
+audiocachefile_CXXFLAGS = -DOUTPUT=\"audiocachefile\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
+audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocachefile_SOURCES = \
+	$(top_srcdir)/src/audiocachefile.cc \
+	$(top_srcdir)/src/thread.cc \
+	$(top_srcdir)/src/mutex.cc \
+	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/configuration.cc \
+	$(top_srcdir)/src/audiofile.cc \
+	test.cc \
+	audiocachefiletest.cc
+
+audiocacheidmanager_CXXFLAGS = -DOUTPUT=\"audiocacheidmanager\" \
+	$(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(SNDFILE_CFLAGS)
+audiocacheidmanager_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocacheidmanager_SOURCES = \
+	$(top_srcdir)/src/audiocacheidmanager.cc \
+	test.cc \
+	audiocacheidmanagertest.cc
+
+audiocacheeventhandler_CXXFLAGS = -DOUTPUT=\"audiocacheeventhandler\" \
+	$(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
+audiocacheeventhandler_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocacheeventhandler_SOURCES = \
+	$(top_srcdir)/src/audiocacheeventhandler.cc \
+	$(top_srcdir)/src/audiocacheidmanager.cc \
+	$(top_srcdir)/src/audiocachefile.cc \
+	$(top_srcdir)/src/mutex.cc \
+	$(top_srcdir)/src/thread.cc \
+	$(top_srcdir)/src/semaphore.cc \
+	test.cc \
+	audiocacheeventhandlertest.cc
 
 engine_CXXFLAGS = -DOUTPUT=\"engine\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \

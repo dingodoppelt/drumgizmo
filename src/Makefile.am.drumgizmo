@@ -1,11 +1,13 @@
 DRUMGIZMO_SOURCES = \
+	$(top_srcdir)/src/audiocachefile.cc \
+	$(top_srcdir)/src/audiocache.cc \
+	$(top_srcdir)/src/audiocacheeventhandler.cc \
+	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/audioinputenginemidi.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/channel.cc \
 	$(top_srcdir)/src/channelmixer.cc \
 	$(top_srcdir)/src/chresampler.cc \
-	$(top_srcdir)/src/cacheaudiofile.cc \
-	$(top_srcdir)/src/cachemanager.cc \
 	$(top_srcdir)/src/configfile.cc \
 	$(top_srcdir)/src/cachemanager.cc \
 	$(top_srcdir)/src/configuration.cc \

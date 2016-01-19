@@ -24,17 +24,15 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "cacheaudiofile.h"
+#include "audiocachefile.h"
 
 #include <assert.h>
 
 #include <hugin.hpp>
 
-#include <audiotypes.h>
+#include "audiocache.h"
 
-#include "cachemanager.h"
-
-CacheAudioFile::CacheAudioFile(const std::string& filename)
+AudioCacheFile::AudioCacheFile(const std::string& filename)
 	: filename(filename)
 {
 	fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
@@ -43,9 +41,14 @@ CacheAudioFile::CacheAudioFile(const std::string& filename)
 		ERR(audiofile,"SNDFILE Error (%s): %s\n",
 		    filename.c_str(), sf_strerror(fh));
 	}
+
+	if(sf_info.frames == 0)
+	{
+		printf("sf_info.frames == 0\n");
+	}
 }
 
-CacheAudioFile::~CacheAudioFile()
+AudioCacheFile::~AudioCacheFile()
 {
 	if(fh)
 	{
@@ -54,33 +57,33 @@ CacheAudioFile::~CacheAudioFile()
 	}
 }
 
-size_t CacheAudioFile::getSize() const
+size_t AudioCacheFile::getSize() const
 {
 	return sf_info.frames;
 }
 
-const std::string& CacheAudioFile::getFilename() const
+const std::string& AudioCacheFile::getFilename() const
 {
 	return filename;
 }
 
-void CacheAudioFile::readChunk(const CacheChannels& channels,
+size_t AudioCacheFile::getChannelCount()
+{
+	return sf_info.channels;
+}
+
+void AudioCacheFile::readChunk(const CacheChannels& channels,
                                size_t pos, size_t num_samples)
 {
-	if(fh == nullptr)
-	{
-		printf("File handle is null.\n");
-		return;
-	}
+	assert(fh != nullptr); // File handle must never be nullptr
 
 	if(pos > sf_info.frames)
 	{
-		printf("pos > sf_info.frames\n");
+		printf("pos (%d) > sf_info.frames (%d)\n", pos, (int)sf_info.frames);
 		return;
 	}
 
-	sf_seek(fh, pos,
-	        SEEK_SET);
+	sf_seek(fh, pos, SEEK_SET);
 
 	size_t size = sf_info.frames - pos;
 	if(size > num_samples)
@@ -118,28 +121,35 @@ void CacheAudioFile::readChunk(const CacheChannels& channels,
 	}
 }
 
-CacheAudioFile& CacheAudioFiles::getAudioFile(const std::string filename)
+AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 {
+	AudioCacheFile* cacheAudioFile = nullptr;
+
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
-		it = audiofiles.insert(audiofiles.begin(), std::make_pair(filename, new CacheAudioFile(filename)));
-		//it = audiofiles.find(filename);
+		cacheAudioFile = new AudioCacheFile(filename);
+		audiofiles.insert(std::make_pair(filename, cacheAudioFile));
+	}
+	else
+	{
+		cacheAudioFile = it->second;
 	}
 
-	auto afile = it->second;
+	assert(cacheAudioFile);
 
 	// Increase ref count.
-	++afile->ref;
+	++cacheAudioFile->ref;
 
-	return *afile;
+	return *cacheAudioFile;
 }
 
-void CacheAudioFiles::release(const std::string filename)
+void AudioCacheFiles::releaseFile(const std::string& filename)
 {
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
+		assert(false); // This should never happen!
 		return; // not open
 	}
 
