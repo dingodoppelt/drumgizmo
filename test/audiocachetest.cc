@@ -30,7 +30,7 @@
 #include <audiocache.h>
 #include <unistd.h>
 
-#define FRAMESIZE 64//1024
+#define FRAMESIZE 64
 
 class AudioCacheTest : public CppUnit::TestFixture
 {
@@ -74,7 +74,7 @@ public:
 		cacheid_t id;
 
 		for(size_t initial_samples_needed = 0;
-		    initial_samples_needed < (framesize - 1); ++initial_samples_needed)
+		    initial_samples_needed < (framesize + 1); ++initial_samples_needed)
 		{
 
 			printf("open: initial_samples_needed: %d\n", initial_samples_needed);
