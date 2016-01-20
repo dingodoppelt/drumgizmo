@@ -17,7 +17,6 @@ resource_SOURCES = \
 	resource_test.cc
 
 audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" $(CPPUNIT_CFLAGS) \
-t of them. Unit tests added.
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 audiocache_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
