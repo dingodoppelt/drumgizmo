@@ -67,8 +67,6 @@ public:
   int loadConfig(const char *config, size_t size);
   int run(int num_samples);
 
-
-
 private:
   LilvWorld* world;
   const LilvPlugins* plugins;  
@@ -76,8 +74,6 @@ private:
 	const LilvPlugin* plugin;
 
   LilvInstance* instance;
-
-  size_t buffer_size;
 };
 
 #endif/*__DRUMGIZMO_LV2_TEST_HOST_H__*/
