@@ -37,3 +37,5 @@ test/gui
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
+test/*.log
+test/*.trs
