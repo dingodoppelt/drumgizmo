@@ -30,7 +30,7 @@
 
 class TestableAudioCacheIDManager : public AudioCacheIDManager {
 public:
-	int getAvailableIds()
+	int getAvailableIDs()
 	{
 		return availableids.size();
 	}
@@ -52,21 +52,21 @@ public:
 		manager.init(2);
 
 		cache_t c1; c1.afile = (AudioCacheFile*)1;
-		auto id1 = manager.registerId(c1);
+		auto id1 = manager.registerID(c1);
 		CPPUNIT_ASSERT(id1 != CACHE_DUMMYID);
 		CPPUNIT_ASSERT(id1 != CACHE_NOID);
-		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIds());
+		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
 		cache_t c2; c2.afile = (AudioCacheFile*)2;
-		auto id2 = manager.registerId(c2);
+		auto id2 = manager.registerID(c2);
 		CPPUNIT_ASSERT(id2 != CACHE_DUMMYID);
 		CPPUNIT_ASSERT(id2 != CACHE_NOID);
-		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIds());
+		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t c3; c3.afile = (AudioCacheFile*)3;
-		auto id3 = manager.registerId(c3);
+		auto id3 = manager.registerID(c3);
 		CPPUNIT_ASSERT(id3 == CACHE_DUMMYID);
-		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIds());
+		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t& tc1 = manager.getCache(id1);
 		CPPUNIT_ASSERT_EQUAL(c1.afile, tc1.afile);
@@ -74,23 +74,23 @@ public:
 		cache_t& tc2 = manager.getCache(id2);
 		CPPUNIT_ASSERT_EQUAL(c2.afile, tc2.afile);
 
-		manager.releaseId(id1);
-		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIds());
+		manager.releaseID(id1);
+		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
 		cache_t c4; c4.afile = (AudioCacheFile*)4;
-		auto id4 = manager.registerId(c4);
+		auto id4 = manager.registerID(c4);
 		CPPUNIT_ASSERT(id4 != CACHE_DUMMYID);
 		CPPUNIT_ASSERT(id4 != CACHE_NOID);
-		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIds());
+		CPPUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t& tc4 = manager.getCache(id4);
 		CPPUNIT_ASSERT_EQUAL(c4.afile, tc4.afile);
 
-		manager.releaseId(id2);
-		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIds());
+		manager.releaseID(id2);
+		CPPUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
-		manager.releaseId(id4);
-		CPPUNIT_ASSERT_EQUAL(2, manager.getAvailableIds());
+		manager.releaseID(id4);
+		CPPUNIT_ASSERT_EQUAL(2, manager.getAvailableIDs());
 	}
 };
 
