@@ -36,9 +36,7 @@
 
 #include "drumgizmo.h"
 #include "drumgizmoc.h"
-
-#include "audiooutputenginedl.h"
-#include "audioinputenginedl.h"
+#include "enginefactory.h"
 
 #include "event.h"
 
@@ -228,7 +226,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  AudioInputEngine *ie = new AudioInputEngineDL(inputengine);
+  auto ie = createInputEngine(inputengine);
 
   if(ie == NULL) {
     printf("Invalid input engine: %s\n", inputengine.c_str());
@@ -264,11 +262,10 @@ int CliMain::run(int argc, char *argv[])
 
   if(outputengine == "") {
     printf("Missing output engine\n");
-    delete ie;
     return 1;
   }
 
-  AudioOutputEngineDL *oe = new AudioOutputEngineDL(outputengine);
+  auto oe = createOutputEngine(outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());
@@ -309,8 +306,6 @@ int CliMain::run(int argc, char *argv[])
       if(kitfile != "") {
         printf("Can only handle a single kitfile.\n");
         printf(usage_str, argv[0]);
-        delete ie;
-        delete oe;
         return 1;
       }
       kitfile = argv[optind++];
@@ -319,14 +314,12 @@ int CliMain::run(int argc, char *argv[])
   } else {
     printf("Missing kitfile.\n");
     printf(usage_str, argv[0]);
-    delete ie;
-    delete oe;
     return 1;
   }
   
   printf("Using kitfile: %s\n", kitfile.c_str());
 
-  DrumGizmo gizmo(oe, ie);
+  DrumGizmo gizmo(oe.get(), ie.get());
 
 	gizmo.setFrameSize(oe->getBufferSize());
 
@@ -354,17 +347,12 @@ int CliMain::run(int argc, char *argv[])
 
   if(!gizmo.init()) {
     printf("Failed init engine.\n");
-    delete ie;
-    delete oe;
     return 1;
   }
 
   gizmo.run(endpos);
 
   printf("Quit.\n"); fflush(stdout);
-
-  delete oe;
-  delete ie;
 
   hug_close();
 

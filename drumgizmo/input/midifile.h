@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            audiooutputengine.h
+ *            minifile.h
  *
- *  Thu Sep 16 10:27:01 CEST 2010
- *  Copyright 2010 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Mi 20. Jan 16:07:57 CET 2016
+ *  Copyright 2016 Christian Glöckner
+ *  cgloeckner@freenet.de
  ****************************************************************************/
 
 /*
@@ -24,39 +24,43 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOOUTPUTENGINE_H__
-#define __DRUMGIZMO_AUDIOOUTPUTENGINE_H__
-
+#pragma once
 #include <string>
-#include <stdlib.h>
-#include <audiotypes.h>
 
-#include "channel.h"
+#include <event.h>
+#include <smf.h>
 
-class AudioOutputEngine {
-public:
-  virtual ~AudioOutputEngine() {}
+#include <audioinputengine.h>
+#include <midimapper.h>
+#include <midimapparser.h>
 
-  virtual bool init(Channels channels) = 0;
+#define NOTE_ON 0x90
 
-  virtual void setParm(std::string parm, std::string value) = 0;
-
-  virtual bool start() = 0;
-  virtual void stop() = 0;
-
-  virtual void pre(size_t nsamples) = 0;
-  virtual void run(int ch, sample_t *samples, size_t nsamples) = 0;
-  virtual void post(size_t nsamples) = 0;
-
-  // Reimplement this if you wish to use internal buffer directly.
-  virtual sample_t *getBuffer(int ch) { return NULL; }
-
-  /*
-   * Overload this method to force engine to use different buffer size.
-   */
-  virtual size_t getBufferSize() { return 1024; }
-  
-  virtual size_t samplerate() { return 44100; }
+class MidifileInputEngine
+	: public AudioInputEngine {
+	public:
+		MidifileInputEngine();
+		~MidifileInputEngine();
+		
+		// based on AudioInputEngine
+		bool isMidiEngine() override;
+		bool init(Instruments &instruments) override;
+		void setParm(std::string parm, std::string value) override;
+		bool start() override;
+		void stop() override;
+		void pre() override;
+		event_t* run(size_t pos, size_t len, size_t* nevents) override;
+		void post() override;
+		
+	private:
+		smf_t* smf;
+		smf_event_t* current_event;
+		
+		MidiMapper midiMapper;
+		
+		std::string file, midimap;
+		float speed;
+		int track;
+		bool loop;
+		double offset;
 };
-
-#endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/
