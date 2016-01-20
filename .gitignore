@@ -32,3 +32,5 @@ test/result_*.xml
 test/resampler
 test/engine
 test/gui
+test/lv2
+test/resource
