@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            enginefactory.cc
+ *            alsa.h
  *
- *  Mi 20. Jan 10:46:07 CET 2016
+ *  Do 21. Jan 16:48:32 CET 2016
  *  Copyright 2016 Christian Glöckner
  *  cgloeckner@freenet.de
  ****************************************************************************/
@@ -24,52 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "enginefactory.h"
-#include "jackclient.h"
+#pragma once
 
-#define HAVE_INPUT_MIDIFILE 1
-#define HAVE_OUTPUT_WAVFILE 1
-#define HAVE_OUTPUT_ALSA 1
+// Use the newer ALSA API
+#define ALSA_PCM_NEW_HW_PARAMS_API
 
-#ifdef HAVE_INPUT_MIDIFILE
-#include "input/midifile.h"
-#endif
+#include <audiotypes.h>
+#include <alsa/asoundlib.h>
 
-#ifdef HAVE_OUTPUT_WAVFILE
-#include "output/wavfile.h"
-#endif
+#include "audiooutputengine.h"
 
-#ifdef HAVE_OUTPUT_ALSA
-#include "output/alsa.h"
-#endif
-
-InputEnginePtr createInputEngine(std::string const & name) {
-#ifdef HAVE_INPUT_MIDIFILE
-	if (name == "midifile") {
-		return std::make_unique<MidifileInputEngine>();
-	}
-#endif
-	
-	// todo: add more engines
-	
-	printf("Unsupported input engine: %s\n", name.c_str());
-	return nullptr;
-}
-
-OutputEnginePtr createOutputEngine(std::string const & name) {
-#ifdef HAVE_OUTPUT_WAVFILE
-	if (name == "wavfile") {
-		return std::make_unique<WavfileOutputEngine>();
-	}
-#endif
-#ifdef HAVE_OUTPUT_ALSA
-	if (name == "alsa") {
-		return std::make_unique<AlsaOutputEngine>();
-	}
-#endif
-
-	// todo: add more engines
-	
-	printf("Unsupported output engine: %s\n", name.c_str());
-	return nullptr;
-}
+class AlsaOutputEngine
+	: public AudioOutputEngine {
+	public:
+		AlsaOutputEngine();
+		~AlsaOutputEngine();
+		
+		// based on AudioOutputEngine
+		bool init(Channels chan) override;
+		void setParm(std::string parm, std::string value) override;
+		bool start() override;
+		void stop() override;
+		void pre(size_t nsamples) override;
+		void run(int ch, sample_t* samples, size_t nsamples) override;
+		void post(size_t nsamples) override;
+		size_t samplerate() override;
+		
+	private:
+		snd_pcm_t* handle;
+		snd_pcm_hw_params_t* params;
+		std::vector<sample_t> data;
+		size_t num_channels;
+		
+		std::string dev;
+		unsigned int srate; // samplerate
+		snd_pcm_uframes_t frames;
+};

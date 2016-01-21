@@ -8,9 +8,11 @@ SUBDIRS = input output
 
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) $(SMF_LIBS) -ldl $(JACK_LIBS)
+drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS)
 
-drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(SMF_CFLAGS) $(EXPAT_CFLAGS) \
+drumgizmo_LDFLAGS = 
+
+drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(JACK_CFLAGS) $(SSEFLAGS) \
@@ -23,17 +25,32 @@ drumgizmo_SOURCES = \
 	drumgizmoc.cc \
 	jackclient.cc \
 	enginefactory.cc \
-	input/midifile.cc \
-	output/wavfile.cc \
 	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c
 
+#if HAVE_INPUT_MIDIFILE
+drumgizmo_CXXFLAGS += $(SMF_CFLAGS)
+drumgizmo_LDADD += $(SMF_LIBS)
+drumgizmo_SOURCES += input/midifile.cc
+#drumgizmo_CXXFLAGS += HAVE_INPUT_MIDIFILE
+#endif # HAVE_INPUT_MIDIFILE
+
+#if HAVE_OUTPUT_WAVFILE
+drumgizmo_SOURCES += output/wavfile.cc
+#drumgizmo_CXXFLAGS += HAVE_OUTPUT_WAVFILE
+#endif # HAVE_OUTPUT_WAVFILE
+
+#if HAVE_OUTPUT_ALSA
+drumgizmo_CXXFLAGS += $(ALSA_CFLAGS)
+drumgizmo_LDFLAGS += $(ALSA_LIBS)
+drumgizmo_SOURCES += output/alsa.cc
+#drumgizmo_CXXFLAGS += HAVE_OUTPUT_ALSA
+#endif # HAVE_OUTPUT_ALSA
+
 EXTRA_DIST = \
 	drumgizmoc.h \
 	jackclient.h \
-	enginefactory.h \
-	input/midifile.h \
-	output/wavfile.h
+	enginefactory.h
 
-endif
+endif # ENABLE_CLI
