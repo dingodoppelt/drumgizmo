@@ -46,6 +46,7 @@ MidifileInputEngine::~MidifileInputEngine() {
 }
 
 bool MidifileInputEngine::isMidiEngine() {
+	return true;
 }
 
 bool MidifileInputEngine::init(Instruments& instruments) {
