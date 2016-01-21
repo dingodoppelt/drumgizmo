@@ -24,8 +24,6 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cassert>
-
 #include "wavfile.h"
 
 WavfileOutputEngine::WavfileOutputEngine()
@@ -89,8 +87,6 @@ void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
 		return;
 	}
 	
-	assert(channels[ch] != nullptr);
-	assert(samples != nullptr);
 	sf_writef_float(channels[ch], samples, nsamples);
 }
 
