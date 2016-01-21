@@ -29,24 +29,24 @@ drumgizmo_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c
 
-#if HAVE_INPUT_MIDIFILE
+if HAVE_INPUT_MIDIFILE
 drumgizmo_CXXFLAGS += $(SMF_CFLAGS)
 drumgizmo_LDADD += $(SMF_LIBS)
 drumgizmo_SOURCES += input/midifile.cc
-#drumgizmo_CXXFLAGS += HAVE_INPUT_MIDIFILE
-#endif # HAVE_INPUT_MIDIFILE
+drumgizmo_CXXFLAGS += -DHAVE_INPUT_MIDIFILE
+endif # HAVE_INPUT_MIDIFILE
 
-#if HAVE_OUTPUT_WAVFILE
+if HAVE_OUTPUT_WAVFILE
 drumgizmo_SOURCES += output/wavfile.cc
-#drumgizmo_CXXFLAGS += HAVE_OUTPUT_WAVFILE
-#endif # HAVE_OUTPUT_WAVFILE
+drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_WAVFILE
+endif # HAVE_OUTPUT_WAVFILE
 
-#if HAVE_OUTPUT_ALSA
+if HAVE_OUTPUT_ALSA
 drumgizmo_CXXFLAGS += $(ALSA_CFLAGS)
 drumgizmo_LDFLAGS += $(ALSA_LIBS)
 drumgizmo_SOURCES += output/alsa.cc
-#drumgizmo_CXXFLAGS += HAVE_OUTPUT_ALSA
-#endif # HAVE_OUTPUT_ALSA
+drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_ALSA
+endif # HAVE_OUTPUT_ALSA
 
 EXTRA_DIST = \
 	drumgizmoc.h \
