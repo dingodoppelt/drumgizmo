@@ -82,7 +82,7 @@ void WavfileOutputEngine::pre(size_t nsamples) {
 }
 
 void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
-	if (ch >= channels.size()) {
+	if (static_cast<unsigned int>(ch) >= channels.size()) {
 		printf("Invalid channel %d (%lu channels available)", ch, channels.size());
 		return;
 	}
