@@ -123,6 +123,8 @@ void AudioCacheFile::readChunk(const CacheChannels& channels,
 
 AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	AudioCacheFile* cacheAudioFile = nullptr;
 
 	auto it = audiofiles.find(filename);
@@ -146,6 +148,8 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 
 void AudioCacheFiles::releaseFile(const std::string& filename)
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
