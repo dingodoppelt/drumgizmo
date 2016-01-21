@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <cassert>
+
 #include "wavfile.h"
 
 WavfileOutputEngine::WavfileOutputEngine()
@@ -31,7 +33,7 @@ WavfileOutputEngine::WavfileOutputEngine()
 	, channels{}
 	, file{"output"} {
 	info.frames = 0;
-	info.samplerrate = 44100;
+	info.samplerate = 44100;
 	info.channels = 1;
 	info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
 	info.sections = 0;
@@ -46,13 +48,13 @@ WavfileOutputEngine::~WavfileOutputEngine() {
 	}
 }
 
-bool WavfileOutputEngine::init(Channels channels) {
+bool WavfileOutputEngine::init(Channels data) {
 	channels.clear(),
-	channels.resize(channels.size(), nullptr);
-	for (auto i = 0u; i < channels.size(); ++i) {
+	channels.resize(data.size()); // value-initialized with null
+	for (auto i = 0u; i < data.size(); ++i) {
 		// write channel to file
-		auto fname = file + channels[i]->name + "-" + std::to_string(i);
-		channels[i] = sf_open(fname, SFM_WRITE, &info);
+		auto fname = file + data[i].name + "-" + std::to_string(i) + ".wav";
+		channels[i] = sf_open(fname.c_str(), SFM_WRITE, &info);
 		if (channels[i] == nullptr) {
 			printf("Write error...\n");
 			return false;
@@ -64,10 +66,10 @@ bool WavfileOutputEngine::init(Channels channels) {
 void WavfileOutputEngine::setParm(std::string parm, std::string value) {
 	if (parm == "file") {
 		file = value;
-	} else if (parm == "srate") {[
+	} else if (parm == "srate") {
 		info.samplerate = std::stoi(value);
 	} else {
-		printf("Unsupported wavfile parameter '%s'\n", parm);
+		printf("Unsupported wavfile parameter '%s'\n", parm.c_str());
 	}
 }
 
@@ -83,11 +85,13 @@ void WavfileOutputEngine::pre(size_t nsamples) {
 
 void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
 	if (ch >= channels.size()) {
-		printf("Invalid channel %d (%d channels available)", ch, channels.size());
+		printf("Invalid channel %d (%lu channels available)", ch, channels.size());
 		return;
 	}
 	
-	sf_writef_float(channels[ch], samples, nsampels);
+	assert(channels[ch] != nullptr);
+	assert(samples != nullptr);
+	sf_writef_float(channels[ch], samples, nsamples);
 }
 
 void WavfileOutputEngine::post(size_t nsamples) {

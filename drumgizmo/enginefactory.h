@@ -29,6 +29,7 @@
 #include "cpp11fix.h" // required for c++11
 
 #include "audioinputengine.h"
+#include "audiooutputengine.h"
 
 using InputEnginePtr = std::unique_ptr<AudioInputEngine>;
 using OutputEnginePtr = std::unique_ptr<AudioOutputEngine>;

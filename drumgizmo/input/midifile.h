@@ -34,8 +34,6 @@
 #include <midimapper.h>
 #include <midimapparser.h>
 
-#define NOTE_ON 0x90
-
 class MidifileInputEngine
 	: public AudioInputEngine {
 	public:
@@ -56,7 +54,7 @@ class MidifileInputEngine
 		smf_t* smf;
 		smf_event_t* current_event;
 		
-		MidiMapper midiMapper;
+		MidiMapper midi_mapper;
 		
 		std::string file, midimap;
 		float speed;
