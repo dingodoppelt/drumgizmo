@@ -25,18 +25,58 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
+#include <list>
+#include <string>
 #include <memory>
 #include "cpp11fix.h" // required for c++11
 
 #include "audioinputengine.h"
 #include "audiooutputengine.h"
 
-// todo: ifdef jack enabled
-#include "jackclient.h"
+#if defined(HAVE_INPUT_JACKMIDI) || defined(HAVE_OUTPUT_JACKAUDIO)
+	#define USE_JACK
+	#include "jackclient.h"
+#endif
 
-using JackClientPtr = std::unique_ptr<JackClient>;
-using InputEnginePtr = std::unique_ptr<AudioInputEngine>;
-using OutputEnginePtr = std::unique_ptr<AudioOutputEngine>;
+#ifdef HAVE_INPUT_DUMMY
+	#include "input/inputdummy.h"
+#endif
 
-InputEnginePtr createInputEngine(JackClientPtr& jack, std::string const & name);
-OutputEnginePtr createOutputEngine(JackClientPtr& jack, std::string const & name);
+#ifdef HAVE_INPUT_MIDIFILE
+	#include "input/midifile.h"
+#endif
+
+#ifdef HAVE_OUTPUT_DUMMY
+	#include "output/outputdummy.h"
+#endif
+
+#ifdef HAVE_OUTPUT_WAVFILE
+	#include "output/wavfile.h"
+#endif
+
+#ifdef HAVE_OUTPUT_ALSA
+	#include "output/alsa.h"
+#endif
+
+#ifdef HAVE_OUTPUT_JACKAUDIO
+	#include "output/jackaudio.h"
+#endif
+
+class EngineFactory {
+	private:
+		std::list<std::string> input, output; // available engines
+#ifdef USE_JACK
+		std::unique_ptr<JackClient> jack;
+		
+		void prepareJack();
+#endif
+		
+	public:
+		EngineFactory();
+		
+		std::list<std::string> const & getInputEngines() const;
+		std::list<std::string> const & getOutputEngines() const;
+		
+		std::unique_ptr<AudioInputEngine> createInput(std::string const & name);
+		std::unique_ptr<AudioOutputEngine> createOutput(std::string const & name);
+};

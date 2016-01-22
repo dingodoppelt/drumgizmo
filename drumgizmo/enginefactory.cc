@@ -29,31 +29,53 @@
 #include "enginefactory.h"
 #include "jackclient.h"
 
+EngineFactory::EngineFactory()
+	: input{}
+	, output{}
+#ifdef USE_JACK
+	, jack{nullptr}
+#endif
+{
+	// list available input engines
 #ifdef HAVE_INPUT_DUMMY
-#include "input/inputdummy.h"
+	input.push_back("inputdummy");
 #endif
-
 #ifdef HAVE_INPUT_MIDIFILE
-#include "input/midifile.h"
+	input.push_back("midifile");
 #endif
-
+	
+	// list available output engines
 #ifdef HAVE_OUTPUT_DUMMY
-#include "output/outputdummy.h"
+	output.push_back("outputdummy");
 #endif
-
 #ifdef HAVE_OUTPUT_WAVFILE
-#include "output/wavfile.h"
+	output.push_back("wavfile");
 #endif
-
 #ifdef HAVE_OUTPUT_ALSA
-#include "output/alsa.h"
+	output.push_back("alsa");
 #endif
-
 #ifdef HAVE_OUTPUT_JACKAUDIO
-#include "output/jackaudio.h"
+	output.push_back("jackaudio");
+#endif
+}
+
+#ifdef USE_JACK
+void EngineFactory::prepareJack() {
+	if (jack == nullptr) {
+		jack = std::make_unique<JackClient>();
+	}
+}
 #endif
 
-InputEnginePtr createInputEngine(JackClientPtr& jack, std::string const & name) {
+std::list<std::string> const & EngineFactory::getInputEngines() const {
+	return input;
+}
+
+std::list<std::string> const & EngineFactory::getOutputEngines() const {
+	return output;
+}
+
+std::unique_ptr<AudioInputEngine> EngineFactory::createInput(std::string const & name) {
 #ifdef HAVE_INPUT_DUMMY
 	if (name == "dummy") {
 		return std::make_unique<DummyInputEngine>();
@@ -67,11 +89,11 @@ InputEnginePtr createInputEngine(JackClientPtr& jack, std::string const & name) 
 	
 	// todo: add more engines
 	
-	std::cerr << "Unsupported input engine '" << name << "'\n";
+	std::cerr << "[EngineFactory] Unsupported input engine '" << name << "'\n";
 	return nullptr;
 }
 
-OutputEnginePtr createOutputEngine(JackClientPtr& jack, std::string const & name) {
+std::unique_ptr<AudioOutputEngine> EngineFactory::createOutput(std::string const & name) {
 #ifdef HAVE_OUTPUT_DUMMY
 	if (name == "dummy") {
 		return std::make_unique<DummyOutputEngine>();
@@ -89,15 +111,13 @@ OutputEnginePtr createOutputEngine(JackClientPtr& jack, std::string const & name
 #endif
 #ifdef HAVE_OUTPUT_JACKAUDIO
 	if (name == "jackaudio") {
-		if (jack.get() == nullptr) {
-			jack = std::make_unique<JackClient>();
-		}
+		prepareJack();
 		return std::make_unique<JackaudioOutputEngine>(*jack);
 	}
 #endif
 	
 	// todo: add more engines
 	
-	std::cerr << "Unsupported output engine '" << name << "'\n";
+	std::cerr << "[EngineFactory] Unsupported output engine '" << name << "'\n";
 	return nullptr;
 }

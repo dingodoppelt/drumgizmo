@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <iostream>
+
 #include <config.h>
 #include <getopt.h>
 
@@ -226,9 +228,19 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  JackClientPtr client{nullptr};
-  
-  auto ie = createInputEngine(client, inputengine);
+	EngineFactory factory;
+	std::cout << "Available Input Engines = { ";
+	for (auto const & name: factory.getInputEngines()) {
+		std::cout << name << " ";
+	}
+	std::cout << "}\n";
+	std::cout << "Available Output Engines = { ";
+	for (auto const & name: factory.getOutputEngines()) {
+		std::cout << name << " ";
+	}
+	std::cout << "}\n";
+	
+	auto ie = factory.createInput(inputengine);
 
   if(ie == NULL) {
     printf("Invalid input engine: %s\n", inputengine.c_str());
@@ -267,7 +279,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  auto oe = createOutputEngine(client, outputengine);
+  auto oe = factory.createOutput(outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());
