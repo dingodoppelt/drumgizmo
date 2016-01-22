@@ -49,7 +49,11 @@
 #include "output/alsa.h"
 #endif
 
-InputEnginePtr createInputEngine(std::string const & name) {
+#ifdef HAVE_OUTPUT_JACKAUDIO
+#include "output/jackaudio.h"
+#endif
+
+InputEnginePtr createInputEngine(JackClientPtr& jack, std::string const & name) {
 #ifdef HAVE_INPUT_DUMMY
 	if (name == "dummy") {
 		return std::make_unique<DummyInputEngine>();
@@ -67,7 +71,7 @@ InputEnginePtr createInputEngine(std::string const & name) {
 	return nullptr;
 }
 
-OutputEnginePtr createOutputEngine(std::string const & name) {
+OutputEnginePtr createOutputEngine(JackClientPtr& jack, std::string const & name) {
 #ifdef HAVE_OUTPUT_DUMMY
 	if (name == "dummy") {
 		return std::make_unique<DummyOutputEngine>();
@@ -81,6 +85,14 @@ OutputEnginePtr createOutputEngine(std::string const & name) {
 #ifdef HAVE_OUTPUT_ALSA
 	if (name == "alsa") {
 		return std::make_unique<AlsaOutputEngine>();
+	}
+#endif
+#ifdef HAVE_OUTPUT_JACKAUDIO
+	if (name == "jackaudio") {
+		if (jack.get() == nullptr) {
+			jack = std::make_unique<JackClient>();
+		}
+		return std::make_unique<JackaudioOutputEngine>(*jack);
 	}
 #endif
 	

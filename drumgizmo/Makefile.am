@@ -58,6 +58,13 @@ drumgizmo_SOURCES += output/alsa.cc
 drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_ALSA
 endif # HAVE_OUTPUT_ALSA
 
+if HAVE_OUTPUT_JACKAUDIO
+drumgizmo_CXXFLAGS += $(JACK_CFLAGS)
+drumgizmo_LDFLAGS += $(JACK_LIBS)
+drumgizmo_SOURCES += output/jackaudio.cc
+drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_JACKAUDIO
+endif # HAVE_OUTPUT_JACKAUDIO
+
 EXTRA_DIST = \
 	drumgizmoc.h \
 	jackclient.h \

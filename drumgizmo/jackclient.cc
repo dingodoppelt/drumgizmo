@@ -24,77 +24,85 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <cassert>
+
 #include "jackclient.h"
 
-extern "C"
-{
-  int _wrap_jack_process(jack_nframes_t nframes, void *arg){
-    return ((JackClient*)arg)->process(nframes);}
-}  // extern "C"
+JackProcess::~JackProcess() {
+}
+
+// --------------------------------------------------------------------
+
+JackChannel::JackChannel()
+	: samples{}
+	, client{nullptr}
+	, port{nullptr} {
+}
+
+JackChannel::JackChannel(JackClient& client, std::size_t buffer_size,
+	std::string const & name)
+	: samples{}
+	, client{client.client}
+	// register jack port for given client
+	, port{jack_port_register(this->client, name.c_str(),
+		JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0)} {
+	samples.resize(buffer_size);
+}
+
+JackChannel::~JackChannel() {
+	if (port != nullptr) {
+		assert(client != nullptr);
+		jack_port_unregister(client, port);
+	}
+}
+
+// --------------------------------------------------------------------
+
+int _wrap_jack_process(jack_nframes_t nframes, void* arg){
+	return static_cast<JackClient*>(arg)->process(nframes);
+}
 
 JackClient::JackClient()
-  : refcnt(0)
-{
+	: client{nullptr}
+	, processes{}
+	, is_active{false} {
 	jack_status_t status;
-
-	jack_client = jack_client_open("DrumGizmo", JackNullOption, &status);
-
-  jack_set_process_callback(jack_client, _wrap_jack_process, this);
-
-  active = false;
+	client = jack_client_open("DrumGizmo", JackNullOption, &status);
+	jack_set_process_callback(client, _wrap_jack_process, this);
 }
 
-JackClient::~JackClient()
-{
-	jack_client_close(jack_client);
+JackClient::~JackClient() {
+	if (client != nullptr) {
+		jack_client_close(client);
+	}
 }
 
-/*
-void JackClient::addJackProcess(JackProcess *process)
-{
-  jack_processes.insert(process);
-}
-*/
-
-void JackClient::removeJackProcess(JackProcess *process)
-{
-  jack_processes.erase(process);
+void JackClient::add(JackProcess& process) {
+	processes.insert(&process);
 }
 
-void JackClient::activate()
-{
-	if(!active) jack_activate(jack_client);
-  active = true;
+void JackClient::remove(JackProcess& process) {
+	processes.erase(&process);
 }
 
-int JackClient::process(jack_nframes_t nframes)
-{
-  std::set<JackProcess *>::iterator i = jack_processes.begin();
-  while(i != jack_processes.end()) {
-    JackProcess *jp = *i;
-    jp->jack_process(nframes);
-    i++;
-  }
+void JackClient::activate() {
+	if (!is_active) {
+		jack_activate(client);
+	}
+	is_active = true;
+}
 
+int JackClient::process(jack_nframes_t num_frames) {
+	for (auto& ptr: processes) {
+		ptr->process(num_frames);
+	}
 	return 0;
 }
 
-JackClient *jackclient = NULL;
-
-JackClient *init_jack_client()
-{
-  if(jackclient == NULL) jackclient = new JackClient();
-  jackclient->refcnt++;
-  return jackclient;
-
+std::size_t JackClient::getBufferSize() const {
+	return jack_get_buffer_size(client);
 }
-void close_jack_client()
-{
-  if(jackclient) {
-    jackclient->refcnt--;
-    if(jackclient->refcnt == 0) {
-      delete jackclient;
-      jackclient = NULL;
-    }
-  }
+
+std::size_t JackClient::getSampleRate() const {
+	return jack_get_sample_rate(client);
 }

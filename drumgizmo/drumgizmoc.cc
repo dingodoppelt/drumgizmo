@@ -226,7 +226,9 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  auto ie = createInputEngine(inputengine);
+  JackClientPtr client{nullptr};
+  
+  auto ie = createInputEngine(client, inputengine);
 
   if(ie == NULL) {
     printf("Invalid input engine: %s\n", inputengine.c_str());
@@ -265,7 +267,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  auto oe = createOutputEngine(outputengine);
+  auto oe = createOutputEngine(client, outputengine);
 
   if(oe == NULL) {
     printf("Invalid output engine: %s\n", outputengine.c_str());

@@ -31,8 +31,12 @@
 #include "audioinputengine.h"
 #include "audiooutputengine.h"
 
+// todo: ifdef jack enabled
+#include "jackclient.h"
+
+using JackClientPtr = std::unique_ptr<JackClient>;
 using InputEnginePtr = std::unique_ptr<AudioInputEngine>;
 using OutputEnginePtr = std::unique_ptr<AudioOutputEngine>;
 
-InputEnginePtr createInputEngine(std::string const & name);
-OutputEnginePtr createOutputEngine(std::string const & name);
+InputEnginePtr createInputEngine(JackClientPtr& jack, std::string const & name);
+OutputEnginePtr createOutputEngine(JackClientPtr& jack, std::string const & name);

@@ -24,44 +24,54 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_JACKCLIENT_H__
-#define __DRUMGIZMO_JACKCLIENT_H__
-
-#include <jack/jack.h>
+#pragma once
+#include <vector>
+#include <string>
 #include <set>
 
+#include <jack/jack.h>
+
+#include <audiotypes.h>
+
+class JackClient;
+
 class JackProcess {
-public:
-  virtual ~JackProcess() {}
-  virtual void jack_process(jack_nframes_t nframes) = 0;
+	public:
+		virtual ~JackProcess();
+		virtual void process(jack_nframes_t num_frames) = 0;
 };
+
+// --------------------------------------------------------------------
+
+struct JackChannel {
+	std::vector<sample_t> samples;
+	jack_client_t* const client;
+	jack_port_t* const port;
+	
+	JackChannel();
+	JackChannel(JackClient& client, std::size_t buffer_size,
+		std::string const & name);
+	~JackChannel();
+};
+
+// --------------------------------------------------------------------
 
 class JackClient {
-public:
-  JackClient();
-  ~JackClient();
-
-  void addJackProcess(JackProcess *process)
-  {
-    jack_processes.insert(process);
-  }
-
-  void removeJackProcess(JackProcess *process);
-
-  void activate();
-  int process(jack_nframes_t nframes);
-
-	jack_client_t *jack_client;
-
-  // Sort of private...
-  int refcnt;
-
-private:
-  std::set<JackProcess *> jack_processes;
-  bool active;
+	friend struct JackChannel;
+	
+	public:
+		JackClient();
+		~JackClient();
+		
+		void add(JackProcess& process);
+		void remove(JackProcess& process);
+		void activate();
+		int process(jack_nframes_t num_frames);
+		std::size_t getBufferSize() const;
+		std::size_t getSampleRate() const;
+		
+	private:
+		jack_client_t* client;
+		std::set<JackProcess*> processes;
+		bool is_active;
 };
-
-JackClient *init_jack_client();
-void close_jack_client();
-
-#endif/*__DRUMGIZMO_JACKCLIENT_H__*/
