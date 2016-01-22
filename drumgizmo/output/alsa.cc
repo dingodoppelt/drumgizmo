@@ -55,10 +55,8 @@ AlsaOutputEngine::AlsaOutputEngine()
 }
 
 AlsaOutputEngine::~AlsaOutputEngine() {
-	if (params) {
-		// snd_pcm_hw_params_alloca uses std alloc
-		free(params);
-	}
+	// note: cannot release `params` (seg fault but why?)
+	
 	if (handle != nullptr) {
 		snd_pcm_close(handle);
 	}
