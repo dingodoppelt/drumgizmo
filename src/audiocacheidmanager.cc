@@ -57,7 +57,7 @@ cache_t& AudioCacheIDManager::getCache(cacheid_t id)
 	assert(id != CACHE_NOID);
 	assert(id != CACHE_DUMMYID);
 	assert(id >= 0);
-	assert(id < id2cache.size());
+	assert(id < (int)id2cache.size());
 	assert(id2cache[id].id == id);
 
 	return id2cache[id];
