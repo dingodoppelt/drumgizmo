@@ -79,7 +79,7 @@ void AudioCacheFile::readChunk(const CacheChannels& channels,
 
 	if(pos > sf_info.frames)
 	{
-		printf("pos (%d) > sf_info.frames (%d)\n", pos, (int)sf_info.frames);
+		printf("pos (%d) > sf_info.frames (%d)\n", (int)pos, (int)sf_info.frames);
 		return;
 	}
 
