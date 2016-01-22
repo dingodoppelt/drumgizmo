@@ -27,7 +27,6 @@
 #include <iostream>
 
 #include "enginefactory.h"
-#include "jackclient.h"
 
 EngineFactory::EngineFactory()
 	: input{}

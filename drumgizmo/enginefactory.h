@@ -65,6 +65,7 @@
 class EngineFactory {
 	private:
 		std::list<std::string> input, output; // available engines
+		
 #ifdef USE_JACK
 		std::unique_ptr<JackClient> jack;
 		
