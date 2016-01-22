@@ -30,9 +30,9 @@
 #include "jackaudio.h"
 
 JackaudioOutputEngine::JackaudioOutputEngine(JackClient& client)
-	: client{client}
+	: client(client) // wanna use initializer braces here but jenkins fails
 	, channels{}
-	, sema("jackaudio") {
+	, sema{"jackaudio"} {
 	client.add(*this);
 }
 
