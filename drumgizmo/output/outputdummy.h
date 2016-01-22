@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            dummy.h
+ *            outputdummy.h
  *
  *  Fr 22. Jan 08:15:04 CET 2016
  *  Copyright 2016 Christian Glöckner

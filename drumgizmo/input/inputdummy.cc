@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            dummy.cc
+ *            inputdummy.cc
  *
  *  Fr 22. Jan 08:14:58 CET 2016
  *  Copyright 2016 Christian Glöckner
