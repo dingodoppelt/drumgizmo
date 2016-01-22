@@ -29,12 +29,22 @@ drumgizmo_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c
 
+if HAVE_INPUT_DUMMY
+drumgizmo_SOURCES += input/inputdummy.cc
+drumgizmo_CXXFLAGS += -DHAVE_INPUT_DUMMY
+endif # HAVE_INPUT_DUMMY
+
 if HAVE_INPUT_MIDIFILE
 drumgizmo_CXXFLAGS += $(SMF_CFLAGS)
 drumgizmo_LDADD += $(SMF_LIBS)
 drumgizmo_SOURCES += input/midifile.cc
 drumgizmo_CXXFLAGS += -DHAVE_INPUT_MIDIFILE
 endif # HAVE_INPUT_MIDIFILE
+
+if HAVE_OUTPUT_DUMMY
+drumgizmo_SOURCES += output/outputdummy.cc
+drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_DUMMY
+endif # HAVE_OUTPUT_DUMMY
 
 if HAVE_OUTPUT_WAVFILE
 drumgizmo_SOURCES += output/wavfile.cc

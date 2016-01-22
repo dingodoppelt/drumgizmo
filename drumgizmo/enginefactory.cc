@@ -27,12 +27,16 @@
 #include "enginefactory.h"
 #include "jackclient.h"
 
-#define HAVE_INPUT_MIDIFILE 1
-#define HAVE_OUTPUT_WAVFILE 1
-#define HAVE_OUTPUT_ALSA 1
+#ifdef HAVE_INPUT_DUMMY
+#include "input/inputdummy.h"
+#endif
 
 #ifdef HAVE_INPUT_MIDIFILE
 #include "input/midifile.h"
+#endif
+
+#ifdef HAVE_OUTPUT_DUMMY
+#include "output/outputdummy.h"
 #endif
 
 #ifdef HAVE_OUTPUT_WAVFILE
@@ -44,6 +48,11 @@
 #endif
 
 InputEnginePtr createInputEngine(std::string const & name) {
+#ifdef HAVE_INPUT_DUMMY
+	if (name == "dummy") {
+		return std::make_unique<DummyInputEngine>();
+	}
+#endif
 #ifdef HAVE_INPUT_MIDIFILE
 	if (name == "midifile") {
 		return std::make_unique<MidifileInputEngine>();
@@ -57,6 +66,11 @@ InputEnginePtr createInputEngine(std::string const & name) {
 }
 
 OutputEnginePtr createOutputEngine(std::string const & name) {
+#ifdef HAVE_OUTPUT_DUMMY
+	if (name == "dummy") {
+		return std::make_unique<DummyOutputEngine>();
+	}
+#endif
 #ifdef HAVE_OUTPUT_WAVFILE
 	if (name == "wavfile") {
 		return std::make_unique<WavfileOutputEngine>();
@@ -67,7 +81,7 @@ OutputEnginePtr createOutputEngine(std::string const & name) {
 		return std::make_unique<AlsaOutputEngine>();
 	}
 #endif
-
+	
 	// todo: add more engines
 	
 	printf("Unsupported output engine: %s\n", name.c_str());
