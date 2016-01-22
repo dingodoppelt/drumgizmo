@@ -178,7 +178,7 @@ void DrumGizmo::setFrameSize(size_t framesize)
   }
 
   if(this->framesize != framesize) {
-    printf("New framesize: %d\n", framesize);
+    printf("New framesize: %d\n", (int)framesize);
 
     this->framesize = framesize;
 

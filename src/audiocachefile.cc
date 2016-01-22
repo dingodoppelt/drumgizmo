@@ -77,7 +77,7 @@ void AudioCacheFile::readChunk(const CacheChannels& channels,
 {
 	assert(fh != nullptr); // File handle must never be nullptr
 
-	if(pos > sf_info.frames)
+	if((int)pos > sf_info.frames)
 	{
 		printf("pos (%d) > sf_info.frames (%d)\n", (int)pos, (int)sf_info.frames);
 		return;
