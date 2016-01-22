@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <iostream>
+
 #include "wavfile.h"
 
 WavfileOutputEngine::WavfileOutputEngine()
@@ -54,7 +56,8 @@ bool WavfileOutputEngine::init(Channels data) {
 		auto fname = file + data[i].name + "-" + std::to_string(i) + ".wav";
 		channels[i] = sf_open(fname.c_str(), SFM_WRITE, &info);
 		if (channels[i] == nullptr) {
-			printf("Write error...\n");
+			std::cerr << "[WaffileOutputEngine] Failed to initialize "
+				<< "channel #" << i << "\n";
 			return false;
 		}
 	}
@@ -63,11 +66,21 @@ bool WavfileOutputEngine::init(Channels data) {
 
 void WavfileOutputEngine::setParm(std::string parm, std::string value) {
 	if (parm == "file") {
+		// apply output filename prefix
 		file = value;
+		
 	} else if (parm == "srate") {
-		info.samplerate = std::stoi(value);
+		// try to apply samplerate
+		try {
+			info.samplerate = std::stoi(value);
+		} catch (...) {
+			std::cerr << "[WavfileOutputEngine] Invalid samplerate "
+				<< value << "\n";
+		}
+		
 	} else {
-		printf("Unsupported wavfile parameter '%s'\n", parm.c_str());
+		std::cerr << "[WavfileOutputEngine] Unsupported parameter '"
+			<< parm << "'\n";
 	}
 }
 
@@ -83,7 +96,8 @@ void WavfileOutputEngine::pre(size_t nsamples) {
 
 void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
 	if (static_cast<unsigned int>(ch) >= channels.size()) {
-		printf("Invalid channel %d (%d channels available)", ch, static_cast<int>(channels.size()));
+		std::cerr << "[WavfileOutputEngine] cannot access channel #"
+			<< ch << " (" << channels.size() << " channels available)\n";
 		return;
 	}
 	

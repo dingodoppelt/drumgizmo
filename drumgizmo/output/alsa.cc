@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <iostream>
+
 #include "alsa.h"
 
 int const BUFFER_SIZE = 40960;
@@ -55,7 +57,7 @@ AlsaOutputEngine::AlsaOutputEngine()
 }
 
 AlsaOutputEngine::~AlsaOutputEngine() {
-	// note: cannot release `params` (seg fault but why?)
+	// note: do NOT release `params`, it was allocated by `alloca()`
 	
 	if (handle != nullptr) {
 		snd_pcm_close(handle);
@@ -69,7 +71,8 @@ bool AlsaOutputEngine::init(Channels channels) {
 		AlsaInitError::test(value, "snd_pcm_open");
 		num_channels = channels.size();
 		if (handle == nullptr) {
-			printf("No handle!\n");
+			std::cerr << "[AlsaOutputEngine] Failed to acquire "
+				<< "hardware handle\n";
 			return false;
 		}
 		// Allocate and init a hardware parameters object
@@ -91,8 +94,8 @@ bool AlsaOutputEngine::init(Channels channels) {
 		AlsaInitError::test(value, "snd_pcm_hw_params");
 		
 	} catch (AlsaInitError const & error) {
-		printf("%s failed: %s\n", error.msg.c_str(), snd_strerror(error.code));
-		fflush(stdout);
+		std::cerr << "[AlsaOutputEngine] " << error.msg << " failed: "
+			<< snd_strerror(error.code) << std::endl;
 		return false;
 	}
 	
@@ -104,11 +107,27 @@ bool AlsaOutputEngine::init(Channels channels) {
 
 void AlsaOutputEngine::setParm(std::string parm, std::string value) {
 	if (parm == "dev") {
+		// apply hardware device name
 		dev = value;
+		
 	} else if (parm == "frames") {
-		frames = std::stoi(value);
+		// try to apply hardware buffer size
+		try {
+			frames = std::stoi(value);
+		} catch (...) {
+			std::cerr << "[AlsaOutputEngine] Invalid buffer size "
+				<< value << "\n";
+		}
 	} else if (parm == "srate") {
-		srate = std::stoi(value);
+		try {
+			srate = std::stoi(value);
+		} catch (...) {
+			std::cerr << "[AlsaOutputEngine] Invalid samplerate "
+				<< value << "\n";
+		}
+	} else {
+		std::cerr << "[AlsaOutputEngine] Unsupported parameter '"
+			<< parm << "'\n";
 	}
 }
 

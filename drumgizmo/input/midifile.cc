@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <iostream>
+
 #include "midifile.h"
 
 int const NOTE_ON = 0x90;
@@ -51,27 +53,28 @@ bool MidifileInputEngine::isMidiEngine() {
 
 bool MidifileInputEngine::init(Instruments& instruments) {
 	if (file == "") {
-		fprintf(stderr, "Missing midifile argument 'file'\n");
+		std::cerr << "[MidifileInputEngine] Missing midi filename\n";
 		return false;
 	}
 	if (midimap == "") {
-		fprintf(stderr, "Missing midimapfile argument 'midimap'.\n");
+		std::cerr << "[MidifileInputEngine] Missing midimap filename\n";
 		return false;
 	}
 	smf = smf_load(file.c_str());
 	if (smf == nullptr) {
-		fprintf(stderr, "Could not open midifile '%s'.\n", file.c_str());
+		std::cerr << "[MidifileInputEngine] Failed to load midifile '"
+			<< file << "'\n";
 		return false;
 	}
 	MidiMapParser p{midimap};
 	if (p.parse()) {
-		fprintf(stderr, "Could not parse midimapfile '%s'.\n", midimap.c_str());
+		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
+			<< midimap << "'\n";
 		return false;
 	}
 	midi_mapper.midimap = p.midimap;
 	for (auto i = 0u; i < instruments.size(); ++i) {
 		auto name = instruments[i]->name();
-		printf("%d : %s\n", i, name.c_str());
 		midi_mapper.instrmap[name] = i;
 	}
 	return true;
@@ -79,15 +82,28 @@ bool MidifileInputEngine::init(Instruments& instruments) {
 
 void MidifileInputEngine::setParm(std::string parm, std::string value) {
 	if(parm == "file") {
+		// apply midi input filename
 		file = value;
+		
 	} else if(parm == "speed") {
-		speed = std::stof(value);
+		// try to apply speed
+		 try {
+			speed = std::stof(value);
+		} catch (...) {
+			std::cerr << "[MidifileInputEngine] Invalid speed "
+				<< value << "\n";
+		}
 	} else if (parm == "midimap") {
+		// apply midimap filename
 		midimap = value;
+		
 	} else if (parm == "loop") {
+		// apply looping
 		loop = true;
+		
 	} else {
-		printf("Unsupported midifile parameter '%s'\n", parm.c_str());
+		std::cerr << "[MidifileInputEngine] Unsupported parameter '"
+			<< parm << "'\n";
 	}
 }
 

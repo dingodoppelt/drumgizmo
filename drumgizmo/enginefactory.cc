@@ -24,6 +24,8 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
+#include <iostream>
+
 #include "enginefactory.h"
 #include "jackclient.h"
 
@@ -61,7 +63,7 @@ InputEnginePtr createInputEngine(std::string const & name) {
 	
 	// todo: add more engines
 	
-	printf("Unsupported input engine: %s\n", name.c_str());
+	std::cerr << "Unsupported input engine '" << name << "'\n";
 	return nullptr;
 }
 
@@ -84,6 +86,6 @@ OutputEnginePtr createOutputEngine(std::string const & name) {
 	
 	// todo: add more engines
 	
-	printf("Unsupported output engine: %s\n", name.c_str());
+	std::cerr << "Unsupported output engine '" << name << "'\n";
 	return nullptr;
 }
