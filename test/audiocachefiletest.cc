@@ -99,12 +99,9 @@ public:
 		volatile bool ready[13];
 		for(size_t c = 0; c < 13; ++c)
 		{
-			for(int c = 0; c < 13; ++c)
+			for(size_t i = 0; i < bufferSize; ++i)
 			{
-				for(int i = 0; i < bufferSize; ++i)
-				{
-					samples[c][i] = 42;
-				}
+				samples[c][i] = 42;
 			}
 
 			channels.push_back(
@@ -142,9 +139,9 @@ public:
 			}
 
 			sample_t diff[13] = {0.0};
-			for(int c = 0; c < 13; ++c)
+			for(size_t c = 0; c < 13; ++c)
 			{
-				for(int i = 0; i < readSize; ++i)
+				for(size_t i = 0; i < readSize; ++i)
 				{
 					diff[c] += abs(refFile[c]->data[i + offset] - samples[c][i]);
 				}
