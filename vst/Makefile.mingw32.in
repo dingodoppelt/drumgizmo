@@ -7,6 +7,10 @@ VST_SRC = \
 VST_CFLAGS=-I$(VST_BASE)
 
 DG_SRC = \
+	@top_srcdir@/src/audiocachefile.cc \
+	@top_srcdir@/src/audiocache.cc \
+	@top_srcdir@/src/audiocacheeventhandler.cc \
+	@top_srcdir@/src/audiocacheidmanager.cc \
 	@top_srcdir@/src/audioinputenginemidi.cc \
 	@top_srcdir@/src/audiofile.cc \
 	@top_srcdir@/src/channel.cc \
@@ -54,8 +58,6 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/lineedit.cc \
 	@top_srcdir@/plugingui/led.cc \
 	@top_srcdir@/plugingui/layout.cc \
-	@top_srcdir@/plugingui/cacheaudiofile.cc \
-	@top_srcdir@/plugingui/cachemanager.cc \
 	@top_srcdir@/plugingui/checkbox.cc \
 	@top_srcdir@/plugingui/slider.cc \
 	@top_srcdir@/plugingui/scrollbar.cc \
