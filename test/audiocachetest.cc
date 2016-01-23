@@ -74,7 +74,8 @@ public:
 		cacheid_t id;
 
 		for(size_t initial_samples_needed = 0;
-		    initial_samples_needed < (framesize + 1); ++initial_samples_needed)
+		    initial_samples_needed < (size_t)(framesize + 1);
+		    ++initial_samples_needed)
 		{
 
 			printf("open: initial_samples_needed: %d\n", initial_samples_needed);
