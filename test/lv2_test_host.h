@@ -24,56 +24,53 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_LV2_TEST_HOST_H__
-#define __DRUMGIZMO_LV2_TEST_HOST_H__
+#pragma once
 
 #include <lilv/lilv.h>
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 
 class LV2TestHost {
 public:
-  class Sequence {
-  public:
-    Sequence(void *buffer, size_t buffer_size);
-    void clear();
-    void addMidiNote(uint64_t pos, uint8_t key, int8_t velocity);
-    void *data();
+	class Sequence {
+	public:
+		Sequence(void *buffer, size_t buffer_size);
+		void clear();
+		void addMidiNote(uint64_t pos, uint8_t key, int8_t velocity);
+		void *data();
 
-  private:
-    void *buffer;
-    size_t buffer_size;
-    LV2_Atom_Sequence *seq;
-  };
+	private:
+		void *buffer;
+		size_t buffer_size;
+		LV2_Atom_Sequence *seq;
+	};
 
-  LV2TestHost(const char *lv2_path);
-  ~LV2TestHost();
+	LV2TestHost(const char *lv2_path);
+	~LV2TestHost();
 
-  int open(const char *plugin_uri);
-  int close();
+	int open(const char *plugin_uri);
+	int close();
 
-  int verify();
+	int verify();
 
-  //void getMetadata();
-  //int getPorts();
+	//void getMetadata();
+	//int getPorts();
 
-  int createInstance();
-  int destroyInstance();
+	int createInstance(size_t samplerate);
+	int destroyInstance();
 
-  int connectPort(int port, void *portdata);
+	int connectPort(int port, void *portdata);
 
-  int activate();
-  int deactivate();
+	int activate();
+	int deactivate();
 
-  int loadConfig(const char *config, size_t size);
-  int run(int num_samples);
+	int loadConfig(const char *config, size_t size);
+	int run(int num_samples);
 
 private:
-  LilvWorld* world;
-  const LilvPlugins* plugins;  
+	LilvWorld* world;
+	const LilvPlugins* plugins;
 	LilvNode* uri;
 	const LilvPlugin* plugin;
 
-  LilvInstance* instance;
+	LilvInstance* instance;
 };
-
-#endif/*__DRUMGIZMO_LV2_TEST_HOST_H__*/

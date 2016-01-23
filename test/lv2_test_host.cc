@@ -42,6 +42,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <string>
+
 class Base64 {
 public:
 	Base64()
@@ -64,36 +65,44 @@ public:
 	std::string write(const char *in, size_t size)
 	{
 		std::string out;
-		
+
 		BIO_write((BIO*)bio, in, size);
 
 		size_t osize = BIO_ctrl_pending((BIO*)mbio);
 		char *outbuf = (char*)malloc(osize);
 
 		int len = BIO_read((BIO*)mbio, outbuf, osize);
-		if(len < 1) return "";
+		if(len < 1)
+		{
+			return "";
+		}
+
 		out.append(outbuf, len);
 
 		free(outbuf);
-		
+
 		return out;
 	}
-	
+
 	std::string flush()
 	{
 		std::string out;
-		
+
 		(void)BIO_flush((BIO*)bio);
 
 		size_t size = BIO_ctrl_pending((BIO*)mbio);
 		char *outbuf = (char*)malloc(size);
 
 		int len = BIO_read((BIO*)mbio, outbuf, size);
-		if(len < 1) return "";
+		if(len < 1)
+		{
+			return "";
+		}
+
 		out.append(outbuf, len);
 
 		free(outbuf);
-		
+
 		return out;
 	}
 
@@ -107,13 +116,15 @@ private:
 
 
 // TODO: Use map<int, std::string> instead
-static char** uris = NULL;
+static char** uris = nullptr;
 static size_t n_uris = 0;
 
 static LV2_URID map_uri(LV2_URID_Map_Handle handle, const char* uri)
 {
-	for(size_t i = 0; i < n_uris; ++i) {
-		if(!strcmp(uris[i], uri)) {
+	for(size_t i = 0; i < n_uris; ++i)
+	{
+		if(!strcmp(uris[i], uri))
+		{
 			return i + 1;
 		}
 	}
@@ -126,22 +137,23 @@ static LV2_URID map_uri(LV2_URID_Map_Handle handle, const char* uri)
 
 static const char* unmap_uri(LV2_URID_Map_Handle handle, LV2_URID urid)
 {
-	if(urid > 0 && urid <= n_uris) {
+	if((urid > 0) && (urid <= n_uris))
+	{
 		return uris[urid - 1];
 	}
-	return NULL;
+	return nullptr;
 }
 
-LV2_URID_Map       map           = { NULL, map_uri };
+LV2_URID_Map       map           = { nullptr, map_uri };
 LV2_Feature        map_feature   = { LV2_URID_MAP_URI, &map };
-LV2_URID_Unmap     unmap         = { NULL, unmap_uri };
+LV2_URID_Unmap     unmap         = { nullptr, unmap_uri };
 LV2_Feature        unmap_feature = { LV2_URID_UNMAP_URI, &unmap };
-const LV2_Feature* features[]    = { &map_feature, &unmap_feature, NULL };
+const LV2_Feature* features[]    = { &map_feature, &unmap_feature, nullptr };
 
 LV2TestHost::Sequence::Sequence(void *buffer, size_t buffer_size)
 {
-  this->buffer = buffer;
-  this->buffer_size = buffer_size;
+	this->buffer = buffer;
+	this->buffer_size = buffer_size;
 
 	seq = (LV2_Atom_Sequence *)buffer;
 
@@ -152,15 +164,14 @@ LV2TestHost::Sequence::Sequence(void *buffer, size_t buffer_size)
 }
 
 // Keep this to support atom extension from lv2 < 1.10
-static inline void
-_lv2_atom_sequence_clear(LV2_Atom_Sequence* seq)
+static inline void _lv2_atom_sequence_clear(LV2_Atom_Sequence* seq)
 {
-  seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
+	seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 }
 
 void LV2TestHost::Sequence::clear()
 {
-  _lv2_atom_sequence_clear(seq);
+	_lv2_atom_sequence_clear(seq);
 }
 
 // Keep this to support atom extension from lv2 < 1.10
@@ -169,18 +180,19 @@ _lv2_atom_sequence_append_event(LV2_Atom_Sequence*    seq,
                                 uint32_t              capacity,
                                 const LV2_Atom_Event* event)
 {
-  const uint32_t total_size = (uint32_t)sizeof(*event) + event->body.size;
+	const uint32_t total_size = (uint32_t)sizeof(*event) + event->body.size;
 
-  if (capacity - seq->atom.size < total_size) {
-    return NULL;
-  }
+	if(capacity - seq->atom.size < total_size)
+	{
+	  return nullptr;
+	}
 
-  LV2_Atom_Event* e = lv2_atom_sequence_end(&seq->body, seq->atom.size);
-  memcpy(e, event, total_size);
-  
-  seq->atom.size += lv2_atom_pad_size(total_size);
-  
-  return e;
+	LV2_Atom_Event* e = lv2_atom_sequence_end(&seq->body, seq->atom.size);
+	memcpy(e, event, total_size);
+
+	seq->atom.size += lv2_atom_pad_size(total_size);
+
+	return e;
 }
 
 void LV2TestHost::Sequence::addMidiNote(uint64_t pos,
@@ -197,66 +209,88 @@ void LV2TestHost::Sequence::addMidiNote(uint64_t pos,
 	ev.event.time.frames = pos;// sample position
 	ev.event.body.type = map.map(map.handle, LV2_MIDI__MidiEvent);
 	ev.event.body.size = sizeof(ev.msg);
- 
+
 	ev.msg[0] = note_on;
 	ev.msg[1] = key;
 	ev.msg[2] = velocity;
 
 	LV2_Atom_Event *e =
 		_lv2_atom_sequence_append_event(seq, this->buffer_size, &ev.event);
-  (void)e;
+	(void)e;
 }
 
 void *LV2TestHost::Sequence::data()
 {
-  return buffer;
+	return buffer;
 }
 
 LV2TestHost::LV2TestHost(const char *lv2_path)
 {
-	if(lv2_path) {
-    setenv("LV2_PATH", lv2_path, 1);
-  }
+	if(lv2_path)
+	{
+		setenv("LV2_PATH", lv2_path, 1);
+	}
 
 	world = lilv_world_new();
-  if(world == NULL) return;
+	if(world == nullptr)
+	{
+		return;
+	}
 
 	lilv_world_load_all(world);
 }
 
 LV2TestHost::~LV2TestHost()
 {
-	if(world) lilv_world_free(world);
+	if(world)
+	{
+		lilv_world_free(world);
+	}
 }
 
 int LV2TestHost::open(const char *plugin_uri)
 {
-  if(world == NULL) return 1;
+	if(world == nullptr)
+	{
+		return 1;
+	}
 
 	plugins = lilv_world_get_all_plugins(world);
-  if(plugins == NULL) return 2;
+	if(plugins == nullptr)
+	{
+		return 2;
+	}
 
 	uri = lilv_new_uri(world, plugin_uri);
-	if(uri == NULL) return 3;
+	if(uri == nullptr)
+	{
+		return 3;
+	}
 
 	plugin = lilv_plugins_get_by_uri(plugins, uri);
-  if(plugin == NULL) return 4;
+	if(plugin == nullptr)
+	{
+		return 4;
+	}
 
-
-  return 0;
+	return 0;
 }
 
 int LV2TestHost::verify()
 {
 	bool verify = lilv_plugin_verify(plugin);
-  if(!verify) return 1;
-  return 0;
+	if(!verify)
+	{
+		return 1;
+	}
+
+	return 0;
 }
 
 int LV2TestHost::close()
 {
-  // plugin is a const pointer; nothing to close here.
-  return 0;
+	// plugin is a const pointer; nothing to close here.
+	return 0;
 }
 
 /* // Get metadata
@@ -330,29 +364,37 @@ int LV2TestHost::getPorts()
 	}
 }
 */
-int LV2TestHost::createInstance()
+int LV2TestHost::createInstance(size_t samplerate)
 {
-	instance = lilv_plugin_instantiate(plugin, 48000, features);
-  if(instance == NULL) return 1;
-  return 0;
+	instance = lilv_plugin_instantiate(plugin, samplerate, features);
+	if(instance == nullptr)
+	{
+		return 1;
+	}
+
+	return 0;
 }
 
 int LV2TestHost::destroyInstance()
 {
-  if(instance) lilv_instance_free(instance);
-  return 0;
+	if(instance)
+	{
+		lilv_instance_free(instance);
+	}
+
+	return 0;
 }
 
 int LV2TestHost::activate()
 {
 	lilv_instance_activate(instance);
-  return 0;
+	return 0;
 }
 
 int LV2TestHost::deactivate()
 {
 	lilv_instance_deactivate(instance);
-  return 0;
+	return 0;
 }
 
 int LV2TestHost::loadConfig(const char *config, size_t size)
@@ -379,26 +421,26 @@ int LV2TestHost::loadConfig(const char *config, size_t size)
 	{
 		LilvState* restore_state =
 			lilv_state_new_from_string(world, &map, ttl_config);
-		
-		lilv_state_restore(restore_state, instance, NULL, NULL,
-											 LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE,
-											 features);
+
+		lilv_state_restore(restore_state, instance, nullptr, nullptr,
+		                   LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE,
+		                   features);
 	}
 
-  return 0;
+	return 0;
 }
 
 int LV2TestHost::connectPort(int port, void *portdata)
 {
-  //  if(lilv_port_is_a(p, port, lv2_ControlPort)) ...
+	//  if(lilv_port_is_a(p, port, lv2_ControlPort)) ...
 
 	lilv_instance_connect_port(instance, port, portdata);
 
-  return 0;
+	return 0;
 }
 
 int LV2TestHost::run(int num_samples)
 {
-  lilv_instance_run(instance, num_samples);
-  return 0;
+	lilv_instance_run(instance, num_samples);
+	return 0;
 }

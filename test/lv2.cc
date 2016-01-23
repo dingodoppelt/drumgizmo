@@ -86,7 +86,7 @@ public:
 		res = h.verify();
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
-		res = h.createInstance();
+		res = h.createInstance(44100);
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
@@ -151,7 +151,7 @@ public:
 		res = h.verify();
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
-		res = h.createInstance();
+		res = h.createInstance(44100);
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
@@ -224,7 +224,7 @@ public:
 		res = h.verify();
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
-		res = h.createInstance();
+		res = h.createInstance(44100);
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
@@ -270,7 +270,8 @@ public:
 		res = h.connectPort(0, seq.data());
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
-		for(int i = 1; i <= 16; i++) {
+		for(int i = 1; i <= 16; i++)
+		{
 			memset(pcm_buffer, 1, sizeof(pcm_buffer));
 			res += h.connectPort(i, pcm_buffer[i-1]);
 		}
@@ -282,19 +283,19 @@ public:
 		sleep(1); // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 10; i++)
+		{
 			res = h.run(10);
+			sleep(1);
 			CPPUNIT_ASSERT_EQUAL(0, res);
 
-			/*
-			printf("Iteration:\n");
-			for(int k = 0; k < 4; k++) {
-				printf("#%d ", k);
-				for(int j = 0; j < 10; j++) printf("[%f]", pcm_buffer[k][j]);
-				printf("\n");
-			}
-			printf("\n");
-			*/
+			//printf("Iteration:\n");
+			//for(int k = 0; k < 4; k++) {
+			//	printf("#%d ", k);
+			//	for(int j = 0; j < 10; j++) printf("[%f]", pcm_buffer[k][j]);
+			//	printf("\n");
+			//}
+			//printf("\n");
 
 			seq.clear();
 		}
@@ -302,6 +303,7 @@ public:
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(10);
+		sleep(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		/*
@@ -321,9 +323,12 @@ public:
 
 		comp_val.u = 1040744448; // floating point value 0.133301....
 
-		for(int k = 0; k < 4; k++) {
-			for(int j = 0; j < 10; j++) {
-	      CPPUNIT_ASSERT_EQUAL(((j==0)?comp_val.f:0), pcm_buffer[k][j]);
+		for(int k = 0; k < 4; k++)
+		{
+			for(int j = 0; j < 10; j++)
+			{
+				CPPUNIT_ASSERT_EQUAL(((j==0)?comp_val.f:0), pcm_buffer[k][j]);
+//				printf("[%f]", pcm_buffer[k][j]);
 			}
 		}
 		seq.clear();
