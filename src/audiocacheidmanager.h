@@ -33,6 +33,7 @@
 #include <audiotypes.h>
 
 #include <mutex>
+#include "mutex.h"
 
 class AudioCacheFile;
 

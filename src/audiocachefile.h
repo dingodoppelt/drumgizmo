@@ -35,6 +35,8 @@
 
 #include <audiotypes.h>
 
+#include "mutex.h"
+
 class CacheChannel {
 public:
 	size_t channel;
