@@ -47,11 +47,11 @@ private:
 namespace std {
 	class mutex
 		: public Mutex {
-	public:
-		bool try_lock()
-		{
-			return trylock();
-		}
+//	public:
+//		bool try_lock()
+//		{
+//			return trylock();
+//		}
 	};
 }
 #endif
