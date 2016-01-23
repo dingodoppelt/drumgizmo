@@ -1,0 +1,755 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<instrument version="2.0" name="ride-multi-channel">
+ <samples>
+  <sample name="ride_1" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_2" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_3" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_4" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_5" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_6" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_7" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_8" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_9" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_10" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_11" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_12" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_13" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_14" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_15" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_16" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_17" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_18" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_19" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_20" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_21" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_22" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_23" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_24" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_25" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_26" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_27" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_28" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_29" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_30" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_31" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_32" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_33" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_34" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_35" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_36" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_37" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_38" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_39" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_40" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_41" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_42" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_43" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_44" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_45" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_46" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_47" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_48" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_49" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+  <sample name="ride_50" power="0.0522209">
+   <audiofile channel="ch1" file="ride-multi-channel.wav" filechannel="1"/>
+   <audiofile channel="ch2" file="ride-multi-channel.wav" filechannel="2"/>
+   <audiofile channel="ch3" file="ride-multi-channel.wav" filechannel="3"/>
+   <audiofile channel="ch4" file="ride-multi-channel.wav" filechannel="4"/>
+   <audiofile channel="ch5" file="ride-multi-channel.wav" filechannel="5"/>
+   <audiofile channel="ch6" file="ride-multi-channel.wav" filechannel="6"/>
+   <audiofile channel="ch7" file="ride-multi-channel.wav" filechannel="7"/>
+   <audiofile channel="ch8" file="ride-multi-channel.wav" filechannel="8"/>
+   <audiofile channel="ch9" file="ride-multi-channel.wav" filechannel="9"/>
+   <audiofile channel="ch10" file="ride-multi-channel.wav" filechannel="10"/>
+   <audiofile channel="ch11" file="ride-multi-channel.wav" filechannel="11"/>
+   <audiofile channel="ch12" file="ride-multi-channel.wav" filechannel="12"/>
+   <audiofile channel="ch13" file="ride-multi-channel.wav" filechannel="13"/>
+  </sample>
+ </samples>
+</instrument>
