@@ -43,6 +43,7 @@ test/audiocacheeventhandler
 test/audiocachefile
 test/audiocacheidmanager
 test/configfile
+test/memchecker
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
