@@ -25,31 +25,42 @@
  *  along with Pracro; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __PRACRO_MUTEX_H__
-#define __PRACRO_MUTEX_H__
+#pragma once
 
 struct mutex_private_t;
 
 class Mutex {
 public:
-  Mutex();
-  ~Mutex();
+	Mutex();
+	~Mutex();
 
-  bool trylock();
-  void lock();
-  void unlock();
+	bool trylock();
+	void lock();
+	void unlock();
 
 private:
-  struct mutex_private_t* prv;
+	struct mutex_private_t* prv;
 };
+
+#ifdef WIN32
+// Hack: mingw doesn't have std::mutex
+namespace std {
+	class mutex
+		: public Mutex {
+	public:
+		bool try_lock()
+		{
+			return trylock();
+		}
+	};
+}
+#endif
 
 class MutexAutolock {
 public:
-  MutexAutolock(Mutex &mutex);
-  ~MutexAutolock();
+	MutexAutolock(Mutex &mutex);
+	~MutexAutolock();
 
 private:
-  Mutex &mutex;
+	Mutex &mutex;
 };
-
-#endif/*__PRACRO_MUTEX_H__*/
