@@ -35,6 +35,12 @@
 
 #define DG_URI "http://drumgizmo.org/lv2"
 
+enum class Ports {
+	FreeWheel = 0,
+	MidiPort,
+	AudioPortOffset,
+};
+
 /**
  * Tests that should be performed:
  * -------------------------------
@@ -127,7 +133,7 @@ public:
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
-		sleep(1); // wait for kit to get loaded (async),
+		usleep(1000); // wait for kit to get loaded (async),
 
 		res = h.run(100);
 		CPPUNIT_ASSERT_EQUAL(0, res);
@@ -191,15 +197,19 @@ public:
 
 		// Port buffers:
 		char sequence_buffer[4096];
+		bool freeWheel = false;
+
+		// Free wheel port
+		res = h.connectPort((int)Ports::FreeWheel, (void*)&freeWheel);
 
 		LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
-		res = h.connectPort(0, seq.data());
+		res = h.connectPort((int)Ports::MidiPort, seq.data());
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
-		sleep(1); // wait for kit to get loaded (async),
+		usleep(1000); // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(100);
@@ -265,15 +275,22 @@ public:
 		// Port buffers:
 		char sequence_buffer[4096];
 		float pcm_buffer[16][10];
+		bool freeWheel = true;
+
+		// Free wheel port
+		res = h.connectPort((int)Ports::FreeWheel, (void*)&freeWheel);
 
 		LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
-		res = h.connectPort(0, seq.data());
+		res = h.connectPort((int)Ports::MidiPort, seq.data());
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
-		for(int i = 1; i <= 16; i++)
+		for(int i = 0; i < 16; ++i)
 		{
-			memset(pcm_buffer, 1, sizeof(pcm_buffer));
-			res += h.connectPort(i, pcm_buffer[i-1]);
+			for(int j = 0; j < 10; ++j)
+			{
+				pcm_buffer[i][j] = 0.42;
+			}
+			res += h.connectPort((int)Ports::AudioPortOffset + i, pcm_buffer[i]);
 		}
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
@@ -286,11 +303,11 @@ public:
 		for(int i = 0; i < 10; i++)
 		{
 			res = h.run(10);
-			sleep(1);
+			usleep(1000);
 			CPPUNIT_ASSERT_EQUAL(0, res);
 
 			//printf("Iteration:\n");
-			//for(int k = 0; k < 4; k++) {
+			//for(int k = 0; k < 16; k++) {
 			//	printf("#%d ", k);
 			//	for(int j = 0; j < 10; j++) printf("[%f]", pcm_buffer[k][j]);
 			//	printf("\n");
@@ -303,7 +320,7 @@ public:
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(10);
-		sleep(1);
+		usleep(1000);
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		/*
@@ -327,8 +344,7 @@ public:
 		{
 			for(int j = 0; j < 10; j++)
 			{
-				CPPUNIT_ASSERT_EQUAL(((j==0)?comp_val.f:0), pcm_buffer[k][j]);
-//				printf("[%f]", pcm_buffer[k][j]);
+				CPPUNIT_ASSERT_EQUAL(((j==5)?comp_val.f:0), pcm_buffer[k][j]);
 			}
 		}
 		seq.clear();
