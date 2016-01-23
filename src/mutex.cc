@@ -31,6 +31,7 @@
 #include <windows.h>
 #else
 #include <pthread.h>
+#include <errno.h>
 #endif
 
 struct mutex_private_t {
@@ -67,6 +68,15 @@ Mutex::~Mutex()
 	}
 }
 
+bool Mutex::try_lock()
+{
+#ifdef WIN32
+	return WaitForSingleObject(prv->mutex, 0) == WAIT_OBJECT_0;
+#else
+	return pthread_mutex_trylock(&prv->mutex) != EBUSY;
+#endif
+}
+
 void Mutex::lock()
 {
 #ifdef WIN32
@@ -85,16 +95,6 @@ void Mutex::unlock()
 	pthread_mutex_unlock(&prv->mutex);
 #endif
 }
-
-#ifdef WIN32
-// Hack: mingw doesn't have std::mutex
-namespace std {
-bool mutex::try_lock()
-{
-	return Mutex::trylock();
-}
-}
-#endif
 
 MutexAutolock::MutexAutolock(Mutex &m)
 	: mutex(m)
