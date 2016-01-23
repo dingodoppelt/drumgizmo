@@ -45,14 +45,11 @@ private:
 #ifdef WIN32
 // Hack: mingw doesn't have std::mutex
 namespace std {
-	class mutex
-		: public Mutex {
-//	public:
-//		bool try_lock()
-//		{
-//			return trylock();
-//		}
-	};
+class mutex
+	: public Mutex {
+public:
+	bool try_lock();
+};
 }
 #endif
 

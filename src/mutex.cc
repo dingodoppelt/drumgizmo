@@ -35,121 +35,74 @@
 
 struct mutex_private_t {
 #ifdef WIN32
-  HANDLE mutex; 
+	HANDLE mutex;
 #else
-  pthread_mutex_t mutex;
+	pthread_mutex_t mutex;
 #endif
 };
 
 Mutex::Mutex()
 {
-  prv = new struct mutex_private_t();
+	prv = new struct mutex_private_t();
 #ifdef WIN32
-  prv->mutex = CreateMutex(NULL,  // default security attributes
-                           FALSE, // initially not owned
-                           NULL); // unnamed mutex
+	prv->mutex = CreateMutex(nullptr,  // default security attributes
+	                         FALSE, // initially not owned
+	                         nullptr); // unnamed mutex
 #else
-  pthread_mutex_init (&prv->mutex, NULL);
+	pthread_mutex_init (&prv->mutex, nullptr);
 #endif
 }
 
 Mutex::~Mutex()
 {
 #ifdef WIN32
-  CloseHandle(prv->mutex);
+	CloseHandle(prv->mutex);
 #else
-  pthread_mutex_destroy(&prv->mutex);
+	pthread_mutex_destroy(&prv->mutex);
 #endif
 
-  if(prv) delete prv;
+	if(prv)
+	{
+	  delete prv;
+	}
 }
 
 void Mutex::lock()
 {
 #ifdef WIN32
-  WaitForSingleObject(prv->mutex, // handle to mutex
-                      INFINITE);  // no time-out interval
+	WaitForSingleObject(prv->mutex, // handle to mutex
+	                    INFINITE);  // no time-out interval
 #else
-  pthread_mutex_lock(&prv->mutex);
+	pthread_mutex_lock(&prv->mutex);
 #endif
 }
 
 void Mutex::unlock()
 {
 #ifdef WIN32
-  ReleaseMutex(prv->mutex);
+	ReleaseMutex(prv->mutex);
 #else
-  pthread_mutex_unlock(&prv->mutex);
+	pthread_mutex_unlock(&prv->mutex);
 #endif
 }
 
-MutexAutolock::MutexAutolock(Mutex &m)
-  : mutex(m)
+#ifdef WIN32
+// Hack: mingw doesn't have std::mutex
+namespace std {
+bool mutex::try_lock()
 {
-  mutex.lock();
+	return Mutex::trylock();
+}
+}
+#endif
+
+MutexAutolock::MutexAutolock(Mutex &m)
+	: mutex(m)
+{
+	mutex.lock();
 }
 
 MutexAutolock::~MutexAutolock()
 {
-  mutex.unlock();
+	mutex.unlock();
 }
-
-#ifdef TEST_MUTEX
-//deps:
-//cflags: $(PTHREAD_CFLAGS)
-//libs: $(PTHREAD_LIBS)
-#include <test.h>
-
-#include <unistd.h>
-
-volatile int cnt = 0;
-
-static void* thread_run(void *data)
-{
-  Mutex *mutex = (Mutex*)data;
-  mutex->lock();
-  cnt++;
-  mutex->unlock();
-  return NULL;
-}
-
-TEST_BEGIN;
-
-Mutex mutex;
-
-mutex.lock();
-TEST_FALSE(mutex.trylock(), "Testing if trylock works negative.");
-mutex.unlock();
-TEST_TRUE(mutex.trylock(), "Testing if trylock works positive.");
-mutex.unlock();
-
-mutex.lock();
-
-pthread_attr_t attr;
-pthread_t tid;
-pthread_attr_init(&attr);
-pthread_create(&tid, &attr, thread_run, &mutex);
-
-sleep(1);
-TEST_EQUAL_INT(cnt, 0, "Testing if lock prevent cnt from increasing.");
-mutex.unlock();
-
-sleep(1);
-TEST_EQUAL_INT(cnt, 1, "Testing if unlock makes cnt increase.");
-
-pthread_join(tid, NULL);
-pthread_attr_destroy(&attr);
-
-{
-  TEST_TRUE(mutex.trylock(), "Testing if autolock has not yet locked the mutex.");
-  mutex.unlock();
-  MutexAutolock mlock(mutex);
-  TEST_FALSE(mutex.trylock(), "Testing if autolock worked.");
-}
-
-TEST_TRUE(mutex.trylock(), "Testing if autolock has released the lock on the mutex.");
-mutex.unlock();
-
-TEST_END;
-
-#endif/*TEST_MUTEX*/
