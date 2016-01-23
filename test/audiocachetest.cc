@@ -78,7 +78,7 @@ public:
 		    ++initial_samples_needed)
 		{
 
-			printf("open: initial_samples_needed: %d\n", initial_samples_needed);
+			printf("open: initial_samples_needed: %d\n", (int)initial_samples_needed);
 			sample_t *samples =
 				audioCache.open(&audioFile, initial_samples_needed, channel, id);
 			size_t size = initial_samples_needed;
@@ -118,8 +118,9 @@ public:
 					{
 						printf("-----> offset: %d, size: %d, diff: %d,"
 						       " i: %d, size: %d, block-diff: %d\n",
-						       offset, audioFileRef.size, audioFileRef.size - offset,
-						       i, size, size - i);
+						       (int)offset, (int)audioFileRef.size,
+						       (int)(audioFileRef.size - offset),
+						       (int)i, (int)size, (int)(size - i));
 					}
 					CPPUNIT_ASSERT_EQUAL(audioFileRef.data[offset], samples[i]);
 					++offset;
