@@ -146,7 +146,12 @@ void DrumKitLoader::thread_main()
       AudioFile *audiofile = load_queue.front();
       load_queue.pop_front();
       filename = audiofile->filename;
-      audiofile->load(framesize * CHUNK_MULTIPLIER + framesize);
+      size_t preload_size = framesize * CHUNK_MULTIPLIER + framesize;
+      if(preload_size < 1024)
+      {
+	      preload_size = 1024;
+      }
+      audiofile->load(preload_size);
     }
 
     loaded++;
