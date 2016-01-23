@@ -79,7 +79,7 @@ public:
 
 	void readTestHelper(size_t bufferSize)
 	{
-		printf("Test buffer size: %d samples\n", bufferSize);
+		printf("Test buffer size: %d samples\n", (int)bufferSize);
 
 		std::string filename = "kit/ride-multi-channel.wav";
 		AudioFile* refFile[13];
@@ -128,7 +128,7 @@ public:
 			}
 			else
 			{
-				printf("Last read: %d samples\n", readSize);
+				printf("Last read: %d samples\n", (int)readSize);
 			}
 
 			file.readChunk(channels, offset, readSize);
