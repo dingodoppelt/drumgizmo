@@ -35,6 +35,7 @@
 #include "events.h"
 #include "audiofile.h"
 #include "drumkit.h"
+#include "memchecker.h"
 
 #include "drumkitloader.h"
 #include "audiocache.h"
@@ -101,6 +102,7 @@ protected:
 
 	AudioCache audioCache;
 	DrumKit kit;
+	Memchecker memchecker;
 
 	size_t framesize;
 	bool freewheel;
