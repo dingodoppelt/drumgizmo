@@ -202,7 +202,7 @@ void AudioCacheEventHandler::clearEvents()
 	{
 		if(event.eventType == EventType::Close)
 		{
-			handleCloseEvent(event);
+			handleCloseCache(event.id); // This method does not lock.
 		}
 	}
 
@@ -216,17 +216,15 @@ void AudioCacheEventHandler::handleLoadNextEvent(CacheEvent& event)
 
 void AudioCacheEventHandler::handleCloseEvent(CacheEvent& e)
 {
+	std::lock_guard<std::mutex> lock(mutex);
 	handleCloseCache(e.id);
 }
 
 void AudioCacheEventHandler::handleCloseCache(cacheid_t cacheid)
 {
 	auto& cache = idManager.getCache(cacheid);
-	{
-		std::lock_guard<std::mutex> lock(mutex);
 
-		files.releaseFile(cache.afile->getFilename());
-	}
+	files.releaseFile(cache.afile->getFilename());
 
 	delete[] cache.front;
 	delete[] cache.back;
