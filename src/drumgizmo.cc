@@ -178,15 +178,13 @@ void DrumGizmo::setFrameSize(size_t framesize)
   }
 
   if(this->framesize != framesize) {
-    printf("New framesize: %d\n", (int)framesize);
+	  DEBUG(drumgizmo, "New framesize: %d\n", (int)framesize);
 
     this->framesize = framesize;
 
     // Update framesize in drumkitloader and cachemanager:
     loader.setFrameSize(framesize);
-    printf("loader.setFrameSize\n"); fflush(stdout);
     audioCache.setFrameSize(framesize);
-    printf("audioCache.setFrameSize\n"); fflush(stdout);
   }
 }
 
@@ -359,7 +357,6 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
   size_t kitpos = pos * resampler[0].ratio();
   size_t insize = sizeof(resampler_input_buffer[0]) / sizeof(sample_t);
 
-  //printf("ratio: %f\n", resampler[c].ratio());
   while(resampler[0].getOutputSampleCount() > 0) {
     for(size_t c = 0; c < kit.channels.size(); c++) {
       if(resampler[c].getInputSampleCount() == 0) {
