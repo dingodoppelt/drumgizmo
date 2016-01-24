@@ -29,20 +29,24 @@
 #include "drumkit.h"
 
 #include <string>
+// includes cstdint automatically and is needed for the PRIu64 macro
+#include <cinttypes>
 
-class Memchecker
+class MemChecker
 {
 public:
-	 //! Checks if there is enough memory left to load drumkit into RAM.
-	 //! \param drumkit The drumkit for which it is checked if there's enough memory left.
-	 //! \return True iff there is enough memory left.
+	//! Checks if there is enough memory left to load drumkit into RAM.
+	//! \param drumkit The drumkit for which it is checked if there's enough memory left.
+	//! \return True iff there is enough memory left.
 	bool enoughFreeMemory(const DrumKit& drumkit) const;
 
 protected:
 	// Computes how much RAM (in bytes) is left.
-	size_t calcFreeMemory() const;
+	uint64_t calcFreeMemory() const;
+
 	// Computes how much memory the drumkit takes when loaded into RAM (in bytes).
-	size_t calcNeededMemory(const DrumKit& drumkit) const;
+	uint64_t calcNeededMemory(const DrumKit& drumkit) const;
+
 	// Computes the number of bytes per channel of <filename> using libsnd.
-	size_t calcBytesPerChannel(const std::string& filename) const;
+	uint64_t calcBytesPerChannel(const std::string& filename) const;
 };

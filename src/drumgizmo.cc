@@ -87,8 +87,8 @@ bool DrumGizmo::loadkit(std::string file)
 	// Check if there is enough free RAM to load the drumkit.
 	if(!memchecker.enoughFreeMemory(kit))
 	{
-		ERR(drumgizmo, "Not enough free RAM to load the drumkit.");
-		return false;
+		printf("WARNING: There doesn't seem to be enough RAM available to load the kit.\n"
+		       "Trying to load it anyway...\n");              
 	}
 
 	loader.loadKit(&kit);

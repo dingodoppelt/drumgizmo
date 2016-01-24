@@ -41,11 +41,11 @@
 #include "../src/drumkit.h"
 #include "../src/drumkitparser.h"
 
-class test_memchecker
+class MemCheckerTest
 	: public CppUnit::TestFixture
-	, public Memchecker
+	, public MemChecker
 {
-	CPPUNIT_TEST_SUITE(test_memchecker);
+	CPPUNIT_TEST_SUITE(MemCheckerTest);
 	CPPUNIT_TEST(small_drumkit);
 	CPPUNIT_TEST(huge_drumkit);
 	CPPUNIT_TEST(correct_size);
@@ -54,8 +54,8 @@ class test_memchecker
 private:
 	DrumKit kit;
 
-	const std::string smallKitPath = "kit/small_kit.xml";
-	const std::string hugeKitPath = "kit/huge_kit.xml";
+	const std::string small_kit_path = "kit/small_kit.xml";
+	const std::string huge_kit_path = "kit/huge_kit.xml";
 	const std::string audiofile = "kit/ride-multi-channel.wav";
 public:
 	void setUp()
@@ -70,7 +70,7 @@ public:
 	void small_drumkit()
 	{
 		// load the small kit
-		DrumKitParser parser(smallKitPath, kit);
+		DrumKitParser parser(small_kit_path, kit);
 		CPPUNIT_ASSERT(!parser.parse());
 
 		// check if the memchecker thinks it fits into memory
@@ -80,7 +80,7 @@ public:
 	void huge_drumkit()
 	{
 		// load the huge kit
-		DrumKitParser parser(hugeKitPath, kit);
+		DrumKitParser parser(huge_kit_path, kit);
 		CPPUNIT_ASSERT(!parser.parse());
 
 		// check if the memchecker thinks it doesn't fit into memory
@@ -90,23 +90,27 @@ public:
 	void correct_size()
 	{
 		// check if the memchecker reports the right audiofile size
-		CPPUNIT_ASSERT_EQUAL((size_t)2199332, calcBytesPerChannel(audiofile));
+		uint64_t bytes_per_channel = 2199332;
+		CPPUNIT_ASSERT_EQUAL(bytes_per_channel, calcBytesPerChannel(audiofile));
 
 		// load the huge kit
-		DrumKitParser parser(hugeKitPath, kit);
+		DrumKitParser parser(huge_kit_path, kit);
 		CPPUNIT_ASSERT(!parser.parse());
 
 		// check if the protected method of the memchecker reports the correct size
-		CPPUNIT_ASSERT_EQUAL((size_t)71478290000, calcNeededMemory(kit));
+		uint64_t needed_memory = 71478290000;
+		CPPUNIT_ASSERT_EQUAL(needed_memory, calcNeededMemory(kit));
 	}
 
 	void check_free_ram()
 	{
 		// check if the protected method reports a sane value of free ram
-		size_t free_memory = calcFreeMemory();
-		CPPUNIT_ASSERT(free_memory >= (size_t)1000 && free_memory <= (size_t)50000000000);
+		uint64_t free_memory = calcFreeMemory();
+		uint64_t min_free_memory = 1000;
+		uint64_t max_free_memory = 50000000000;
+		CPPUNIT_ASSERT(free_memory >= min_free_memory && free_memory <= max_free_memory);
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(test_memchecker);
+CPPUNIT_TEST_SUITE_REGISTRATION(MemCheckerTest);

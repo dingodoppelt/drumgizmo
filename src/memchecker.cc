@@ -27,25 +27,25 @@
 #include "memchecker.h"
 
 #ifdef WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #else
-	#include <sys/sysinfo.h>
+#include <sys/sysinfo.h>
 #endif
 #include <sndfile.h>
 #include <hugin.hpp>
 
-bool Memchecker::enoughFreeMemory(const DrumKit& drumkit) const
+bool MemChecker::enoughFreeMemory(const DrumKit& drumkit) const
 {
-	size_t freeMemory = calcFreeMemory();
-	size_t neededMemory = calcNeededMemory(drumkit);
+	uint64_t free_memory = calcFreeMemory();
+	uint64_t needed_memory = calcNeededMemory(drumkit);
 
-	return freeMemory >= neededMemory;
+	return free_memory >= needed_memory;
 }
 
-size_t Memchecker::calcFreeMemory() const
+uint64_t MemChecker::calcFreeMemory() const
 {
-	size_t free_memory(0);
+	uint64_t free_memory = 0;
 
 	// Platform specific calculation of the amount of free memory.
 #ifdef WIN32
@@ -55,18 +55,18 @@ size_t Memchecker::calcFreeMemory() const
 	free_memory = status.ullAvailPhys;
 #else
 	struct sysinfo sys_info;
-	sysinfo (&sys_info);
+	sysinfo(&sys_info);
 	free_memory = sys_info.freeram * sys_info.mem_unit;
 #endif
 
-	DEBUG(memchecker, "Calculated %llu free memory.\n", (long long unsigned int)free_memory);
+	DEBUG(memchecker, "Calculated %" PRIu64 " free memory.\n", free_memory);
 
 	return free_memory;
 }
 
-size_t Memchecker::calcNeededMemory(const DrumKit& drumkit) const
+uint64_t MemChecker::calcNeededMemory(const DrumKit& drumkit) const
 {
-	size_t needed_memory(0);
+	uint64_t needed_memory = 0;
 
 	// Calculate memory usage of all instruments of drumkit.
 	for(auto instrument : drumkit.instruments)
@@ -80,12 +80,12 @@ size_t Memchecker::calcNeededMemory(const DrumKit& drumkit) const
 		}
 	}
 
-	DEBUG(memchecker, "Calculated %llu needed memory.\n", (long long unsigned int)needed_memory);
+	DEBUG(memchecker, "Calculated %" PRIu64 " needed memory.\n", needed_memory);
 
 	return needed_memory;
 }
 
-size_t Memchecker::calcBytesPerChannel(const std::string& filename) const
+uint64_t MemChecker::calcBytesPerChannel(const std::string& filename) const
 {
 	SF_INFO sf_info;
 
