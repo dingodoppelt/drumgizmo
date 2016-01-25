@@ -28,7 +28,6 @@
 #include <list>
 #include <string>
 #include <memory>
-#include "cpp11fix.h" // required for c++11
 
 #include "audioinputengine.h"
 #include "audiooutputengine.h"
@@ -44,6 +43,10 @@
 
 #ifdef HAVE_INPUT_MIDIFILE
 	#include "input/midifile.h"
+#endif
+
+#ifdef HAVE_INPUT_JACKMIDI
+	#include "input/jackmidi.h"
 #endif
 
 #ifdef HAVE_OUTPUT_DUMMY

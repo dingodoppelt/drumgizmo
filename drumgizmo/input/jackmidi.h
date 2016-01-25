@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            jackaudio.h
+ *            jackmidi.h
  *
- *  Fr 22. Jan 09:43:30 CET 2016
+ *  Mo 25. Jan 11:26:06 CET 2016
  *  Copyright 2016 Christian Glöckner
  *  cgloeckner@freenet.de
  ****************************************************************************/
@@ -25,42 +25,43 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
-#include <vector>
-#include <semaphore.h>
+#include <memory>
+#include <jack/jack.h>
+#include <jack/midiport.h>
 
-#include "audiooutputengine.h"
+#include "audioinputengine.h"
+#include "midimapper.h"
+#include "midimapparser.h"
 #include "../jackclient.h"
 
-class JackAudioOutputEngine
-	: public AudioOutputEngine
+class JackMidiInputEngine
+	: public AudioInputEngine
 	, public JackProcess {
 	public:
-		JackAudioOutputEngine(JackClient& client);
-		~JackAudioOutputEngine();
+		JackMidiInputEngine(JackClient& client);
+		~JackMidiInputEngine();
 		
-		// based on AudioOutputEngine
-		bool init(Channels chan) override;
+		// based on AudioInputEngine
+		bool isMidiEngine() override;
+		bool init(Instruments& instruments) override;
 		void setParm(std::string parm, std::string value) override;
 		bool start() override;
 		void stop() override;
-		void pre(size_t nsamples) override;
-		void run(int ch, sample_t* samples, size_t nsamples) override;
-		void post(size_t nsamples) override;
-		size_t getBufferSize() override;
-		size_t samplerate() override;
+		void pre() override;
+		event_t* run(size_t pos, size_t len, size_t* nevents) override;
+		void post() override;
 		
 		// based on JackProcess
 		void process(jack_nframes_t num_frames) override;
 		
 	private:
-		struct Channel {
-			JackPort port;
-			std::vector<sample_t> samples;
-			
-			Channel(JackClient& client, std::string const & name, std::size_t buffer_size);
-		};
-		
 		JackClient& client;
-		std::vector<Channel> channels;
-		Semaphore sema;
+		std::unique_ptr<JackPort> port;
+		
+		std::string midimap;
+		MidiMapper midi_mapper;
+		std::size_t pos;
+		
+		event_t* list;
+		size_t listsize;
 };

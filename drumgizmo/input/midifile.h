@@ -30,9 +30,9 @@
 #include <event.h>
 #include <smf.h>
 
-#include <audioinputengine.h>
-#include <midimapper.h>
-#include <midimapparser.h>
+#include "audioinputengine.h"
+#include "midimapper.h"
+#include "midimapparser.h"
 
 class MidifileInputEngine
 	: public AudioInputEngine {

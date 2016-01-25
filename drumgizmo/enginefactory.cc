@@ -26,6 +26,7 @@
  */
 #include <iostream>
 
+#include "cpp11fix.h" // required for c++11
 #include "enginefactory.h"
 
 EngineFactory::EngineFactory()
@@ -41,6 +42,9 @@ EngineFactory::EngineFactory()
 #endif
 #ifdef HAVE_INPUT_MIDIFILE
 	input.push_back("midifile");
+#endif
+#ifdef HAVE_INPUT_JACKMIDI
+	input.push_back("jackmidi");
 #endif
 	
 	// list available output engines
@@ -85,6 +89,12 @@ std::unique_ptr<AudioInputEngine> EngineFactory::createInput(std::string const &
 		return std::make_unique<MidifileInputEngine>();
 	}
 #endif
+#ifdef HAVE_INPUT_JACKMIDI
+	if (name == "jackmidi") {
+		prepareJack();
+		return std::make_unique<JackMidiInputEngine>(*jack);
+	}
+#endif
 	
 	// todo: add more engines
 	
@@ -111,7 +121,7 @@ std::unique_ptr<AudioOutputEngine> EngineFactory::createOutput(std::string const
 #ifdef HAVE_OUTPUT_JACKAUDIO
 	if (name == "jackaudio") {
 		prepareJack();
-		return std::make_unique<JackaudioOutputEngine>(*jack);
+		return std::make_unique<JackAudioOutputEngine>(*jack);
 	}
 #endif
 	

@@ -43,21 +43,23 @@ class JackProcess {
 
 // --------------------------------------------------------------------
 
-struct JackChannel {
-	std::vector<sample_t> samples;
-	jack_client_t* const client;
-	jack_port_t* const port;
-	
-	JackChannel();
-	JackChannel(JackClient& client, std::size_t buffer_size,
-		std::string const & name);
-	~JackChannel();
+// RAII-wrapper for jack_port_t
+class JackPort {
+	public:
+		JackPort(JackClient& client, std::string const & name, const char * type, JackPortFlags flags);
+		~JackPort();
+		
+		void* getBuffer(jack_nframes_t num_frames);
+		
+	private:
+		jack_client_t* const client;
+		jack_port_t* const port;
 };
 
 // --------------------------------------------------------------------
 
 class JackClient {
-	friend struct JackChannel;
+	friend struct JackPort;
 	
 	public:
 		JackClient();

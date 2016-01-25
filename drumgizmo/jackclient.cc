@@ -33,27 +33,21 @@ JackProcess::~JackProcess() {
 
 // --------------------------------------------------------------------
 
-JackChannel::JackChannel()
-	: samples{}
-	, client{nullptr}
-	, port{nullptr} {
-}
-
-JackChannel::JackChannel(JackClient& client, std::size_t buffer_size,
-	std::string const & name)
-	: samples{}
-	, client{client.client}
+JackPort::JackPort(JackClient& client, std::string const & name, const char * type, JackPortFlags flags)
+	: client{client.client}
 	// register jack port for given client
-	, port{jack_port_register(this->client, name.c_str(),
-		JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0)} {
-	samples.resize(buffer_size);
+	, port{jack_port_register(this->client, name.c_str(), type, flags, 0)} {
 }
 
-JackChannel::~JackChannel() {
+JackPort::~JackPort() {
 	if (port != nullptr) {
 		assert(client != nullptr);
 		jack_port_unregister(client, port);
 	}
+}
+
+void* JackPort::getBuffer(jack_nframes_t num_frames) {
+	return jack_port_get_buffer(port, num_frames);
 }
 
 // --------------------------------------------------------------------

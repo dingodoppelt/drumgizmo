@@ -41,6 +41,11 @@ drumgizmo_SOURCES += input/midifile.cc
 drumgizmo_CXXFLAGS += -DHAVE_INPUT_MIDIFILE
 endif # HAVE_INPUT_MIDIFILE
 
+if HAVE_INPUT_JACKMIDI
+drumgizmo_SOURCES += input/jackmidi.cc
+drumgizmo_CXXFLAGS += -DHAVE_INPUT_JACKMIDI
+endif # HAVE_INPUT_JACKMIDI
+
 if HAVE_OUTPUT_DUMMY
 drumgizmo_SOURCES += output/outputdummy.cc
 drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_DUMMY
