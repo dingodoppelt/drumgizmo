@@ -39,8 +39,9 @@ JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	, port{nullptr}
 	, midimap{}
 	, midi_mapper{}
+	, pos{0u}
 	, list{nullptr}
-	, pos{0u} {
+	, listsize{0u} {
 	client.add(*this);
 }
 
