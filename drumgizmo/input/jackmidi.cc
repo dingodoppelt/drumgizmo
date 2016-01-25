@@ -35,7 +35,7 @@ int const NOTE_ON = 0x90;
 JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	: AudioInputEngine{}
 	, JackProcess{}
-	, client{client}
+	, client(client)
 	, port{nullptr}
 	, midimap{}
 	, midi_mapper{}
