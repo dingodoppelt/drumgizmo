@@ -575,17 +575,6 @@ AC_CONFIG_FILES(
 	plugingui/Makefile
 	include/Makefile
 	man/Makefile
-  test/Makefile
-	drumgizmo/Makefile
-	drumgizmo/input/Makefile
-	drumgizmo/input/dummy/Makefile
-	drumgizmo/input/test/Makefile
-	drumgizmo/input/jackmidi/Makefile
-	drumgizmo/input/midifile/Makefile
-	drumgizmo/output/Makefile
-	drumgizmo/output/dummy/Makefile
-	drumgizmo/output/alsa/Makefile
-	drumgizmo/output/jackaudio/Makefile
-	drumgizmo/output/wavfile/Makefile)
+	test/Makefile)
 
 AC_OUTPUT()
