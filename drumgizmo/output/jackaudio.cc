@@ -51,7 +51,7 @@ bool JackAudioOutputEngine::init(Channels data) {
 		// initialize new channel
 		channels.emplace_back(client, name, buffer_size);
 		
-		if (channels.back().port == nullptr) {
+		if (channels.back().port.port == nullptr) {
 			std::cerr << "[JackAudioOutputEngine] Cannot create jack "
 				<< "port for channel #" << i << "\n";
 			return false;
@@ -90,7 +90,7 @@ void JackAudioOutputEngine::process(jack_nframes_t num_frames) {
 	
 	for (auto& channel: channels) {
 		auto ptr = static_cast<jack_default_audio_sample_t*>(
-			jack_port_get_buffer(channel.port, num_frames));
+			jack_port_get_buffer(channel.port.port, num_frames));
 		for (auto i = 0u; i < num_frames; ++i) {
 			ptr[i] = channel.samples[i];
 		}
@@ -107,7 +107,7 @@ size_t JackAudioOutputEngine::samplerate() {
 }
 
 JackAudioOutputEngine::Channel::Channel(JackClient& client, std::string const & name, std::size_t buffer_size)
-	: port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0}
+	: port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput}
 	, samples{} {
 	samples.resize(buffer_size);
 }

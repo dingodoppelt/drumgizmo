@@ -46,10 +46,6 @@ JackPort::~JackPort() {
 	}
 }
 
-void* JackPort::getBuffer(jack_nframes_t num_frames) {
-	return jack_port_get_buffer(port, num_frames);
-}
-
 // --------------------------------------------------------------------
 
 int _wrap_jack_process(jack_nframes_t nframes, void* arg){

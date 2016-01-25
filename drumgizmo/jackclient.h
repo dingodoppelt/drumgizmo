@@ -44,16 +44,12 @@ class JackProcess {
 // --------------------------------------------------------------------
 
 // RAII-wrapper for jack_port_t
-class JackPort {
-	public:
-		JackPort(JackClient& client, std::string const & name, const char * type, JackPortFlags flags);
-		~JackPort();
-		
-		void* getBuffer(jack_nframes_t num_frames);
-		
-	private:
-		jack_client_t* const client;
-		jack_port_t* const port;
+struct JackPort {
+	JackPort(JackClient& client, std::string const & name, const char * type, JackPortFlags flags);
+	~JackPort();
+	
+	jack_client_t* const client;
+	jack_port_t* const port;
 };
 
 // --------------------------------------------------------------------
