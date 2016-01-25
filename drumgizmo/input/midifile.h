@@ -34,7 +34,8 @@
 #include "midimapper.h"
 #include "midimapparser.h"
 
-class MidifileInputEngine : public AudioInputEngine
+class MidifileInputEngine
+	: public AudioInputEngine
 {
 public:
 	MidifileInputEngine();
@@ -42,17 +43,17 @@ public:
 
 	// based on AudioInputEngine
 	bool isMidiEngine() override;
-	bool init(Instruments &instruments) override;
+	bool init(Instruments& instruments) override;
 	void setParm(std::string parm, std::string value) override;
 	bool start() override;
 	void stop() override;
 	void pre() override;
-	event_t *run(size_t pos, size_t len, size_t *nevents) override;
+	event_t* run(size_t pos, size_t len, size_t* nevents) override;
 	void post() override;
 
 private:
-	smf_t *smf;
-	smf_event_t *current_event;
+	smf_t* smf;
+	smf_event_t* current_event;
 
 	MidiMapper midi_mapper;
 

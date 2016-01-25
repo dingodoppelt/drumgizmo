@@ -32,11 +32,10 @@ JackProcess::~JackProcess() {}
 
 // --------------------------------------------------------------------
 
-JackPort::JackPort(JackClient &client, std::string const &name,
+JackPort::JackPort(JackClient &client, const std::string &name,
                    const char *type, JackPortFlags flags)
-    : client{client.client} // register jack port for given client
-      ,
-      port{jack_port_register(this->client, name.c_str(), type, flags, 0)}
+	: client{client.client} // register jack port for given client
+	, port{jack_port_register(this->client, name.c_str(), type, flags, 0)}
 {
 }
 
@@ -51,12 +50,15 @@ JackPort::~JackPort()
 
 // --------------------------------------------------------------------
 
-int _wrap_jack_process(jack_nframes_t nframes, void *arg)
+static int _wrap_jack_process(jack_nframes_t nframes, void *arg)
 {
 	return static_cast<JackClient *>(arg)->process(nframes);
 }
 
-JackClient::JackClient() : client{nullptr}, processes{}, is_active{false}
+JackClient::JackClient()
+	: client{nullptr}
+	, processes{}
+	, is_active{false}
 {
 	jack_status_t status;
 	client = jack_client_open("DrumGizmo", JackNullOption, &status);
@@ -71,9 +73,15 @@ JackClient::~JackClient()
 	}
 }
 
-void JackClient::add(JackProcess &process) { processes.insert(&process); }
+void JackClient::add(JackProcess &process)
+{
+	processes.insert(&process);
+}
 
-void JackClient::remove(JackProcess &process) { processes.erase(&process); }
+void JackClient::remove(JackProcess &process)
+{
+	processes.erase(&process);
+}
 
 void JackClient::activate()
 {
@@ -86,7 +94,7 @@ void JackClient::activate()
 
 int JackClient::process(jack_nframes_t num_frames)
 {
-	for (auto &ptr : processes)
+	for (auto& ptr : processes)
 	{
 		ptr->process(num_frames);
 	}

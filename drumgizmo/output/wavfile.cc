@@ -28,7 +28,10 @@
 
 #include "wavfile.h"
 
-WavfileOutputEngine::WavfileOutputEngine() : info{}, channels{}, file{"output"}
+WavfileOutputEngine::WavfileOutputEngine()
+	: info{}
+	, channels{}
+	, file{"output"}
 {
 	info.frames = 0;
 	info.samplerate = 44100;

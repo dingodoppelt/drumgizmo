@@ -32,7 +32,8 @@
 
 #include "audiooutputengine.h"
 
-class WavfileOutputEngine : public AudioOutputEngine
+class WavfileOutputEngine
+	: public AudioOutputEngine
 {
 public:
 	WavfileOutputEngine();
@@ -44,13 +45,13 @@ public:
 	bool start() override;
 	void stop() override;
 	void pre(size_t nsamples) override;
-	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
 	size_t samplerate() override;
 
 private:
 	SF_INFO info;
-	std::vector<SNDFILE *> channels;
+	std::vector<SNDFILE*> channels;
 	size_t num_channels;
 
 	std::string file;

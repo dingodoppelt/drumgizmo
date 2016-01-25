@@ -30,12 +30,17 @@
 #include "jackaudio.h"
 
 JackAudioOutputEngine::JackAudioOutputEngine(JackClient &client)
-    : client(client), channels{}, sema{"jackaudio"}
+	: client(client)
+	, channels{}
+	, sema{"jackaudio"}
 {
 	client.add(*this);
 }
 
-JackAudioOutputEngine::~JackAudioOutputEngine() { client.remove(*this); }
+JackAudioOutputEngine::~JackAudioOutputEngine()
+{
+	client.remove(*this);
+}
 
 bool JackAudioOutputEngine::init(Channels data)
 {
@@ -61,7 +66,9 @@ bool JackAudioOutputEngine::init(Channels data)
 	return true;
 }
 
-void JackAudioOutputEngine::setParm(std::string parm, std::string value) {}
+void JackAudioOutputEngine::setParm(std::string parm, std::string value)
+{
+}
 
 bool JackAudioOutputEngine::start()
 {
@@ -69,9 +76,13 @@ bool JackAudioOutputEngine::start()
 	return true;
 }
 
-void JackAudioOutputEngine::stop() {}
+void JackAudioOutputEngine::stop()
+{
+}
 
-void JackAudioOutputEngine::pre(size_t nsamples) {}
+void JackAudioOutputEngine::pre(size_t nsamples)
+{
+}
 
 void JackAudioOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
 {
@@ -81,7 +92,10 @@ void JackAudioOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
 	}
 }
 
-void JackAudioOutputEngine::post(size_t nsamples) { sema.wait(); }
+void JackAudioOutputEngine::post(size_t nsamples)
+{
+	sema.wait();
+}
 
 void JackAudioOutputEngine::process(jack_nframes_t num_frames)
 {
@@ -99,14 +113,21 @@ void JackAudioOutputEngine::process(jack_nframes_t num_frames)
 	sema.post();
 }
 
-size_t JackAudioOutputEngine::getBufferSize() { return client.getBufferSize(); }
+size_t JackAudioOutputEngine::getBufferSize()
+{
+	return client.getBufferSize();
+}
 
-size_t JackAudioOutputEngine::samplerate() { return client.getSampleRate(); }
+size_t JackAudioOutputEngine::samplerate()
+{
+	return client.getSampleRate();
+}
 
 JackAudioOutputEngine::Channel::Channel(JackClient &client,
-                                        std::string const &name,
+                                        const std::string &name,
                                         std::size_t buffer_size)
-    : port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput}, samples{}
+	: port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput}
+	, samples{}
 {
 	samples.resize(buffer_size);
 }

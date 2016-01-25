@@ -13,9 +13,7 @@ drumgizmo_LDFLAGS =
 drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
-	$(JACK_CFLAGS) $(SSEFLAGS) \
-	-DINPUT_PLUGIN_DIR=\"${INPUT_PLUGIN_DIR}\" \
-	-DOUTPUT_PLUGIN_DIR=\"${OUTPUT_PLUGIN_DIR}\"
+	$(JACK_CFLAGS) $(SSEFLAGS)
 
 drumgizmo_CFLAGS = -DWITH_HUG_MUTEX -DWITH_HUG_FILTER
 
@@ -71,6 +69,13 @@ endif # HAVE_OUTPUT_JACKAUDIO
 EXTRA_DIST = \
 	drumgizmoc.h \
 	jackclient.h \
-	enginefactory.h
+	enginefactory.h \
+	input/inputdummy.h \
+	input/jackmidi.h \
+	input/midifile.h \
+	output/alsa.h \
+	output/jackaudio.h \
+	output/outputdummy.h \
+	output/wavfile.h
 
 endif # ENABLE_CLI

@@ -29,9 +29,11 @@
 #include "cpp11fix.h" // required for c++11
 #include "enginefactory.h"
 
-EngineFactory::EngineFactory() : input{}, output {}
+EngineFactory::EngineFactory()
+	: input{}
+	, output{}
 #ifdef USE_JACK
-, jack { nullptr }
+	, jack { nullptr }
 #endif
 {
 // list available input engines
@@ -70,18 +72,18 @@ void EngineFactory::prepareJack()
 }
 #endif
 
-std::list<std::string> const &EngineFactory::getInputEngines() const
+const std::list<std::string>& EngineFactory::getInputEngines() const
 {
 	return input;
 }
 
-std::list<std::string> const &EngineFactory::getOutputEngines() const
+const std::list<std::string>& EngineFactory::getOutputEngines() const
 {
 	return output;
 }
 
 std::unique_ptr<AudioInputEngine>
-EngineFactory::createInput(std::string const &name)
+EngineFactory::createInput(const std::string& name)
 {
 #ifdef HAVE_INPUT_DUMMY
 	if (name == "dummy")
@@ -110,7 +112,7 @@ EngineFactory::createInput(std::string const &name)
 }
 
 std::unique_ptr<AudioOutputEngine>
-EngineFactory::createOutput(std::string const &name)
+EngineFactory::createOutput(const std::string& name)
 {
 #ifdef HAVE_OUTPUT_DUMMY
 	if (name == "dummy")

@@ -47,7 +47,7 @@ public:
 // RAII-wrapper for jack_port_t
 struct JackPort
 {
-	JackPort(JackClient &client, std::string const &name, const char *type,
+	JackPort(JackClient &client, const std::string &name, const char *type,
 	         JackPortFlags flags);
 	~JackPort();
 

@@ -34,7 +34,8 @@
 
 #include "audiooutputengine.h"
 
-class AlsaOutputEngine : public AudioOutputEngine
+class AlsaOutputEngine
+	: public AudioOutputEngine
 {
 public:
 	AlsaOutputEngine();
@@ -46,13 +47,13 @@ public:
 	bool start() override;
 	void stop() override;
 	void pre(size_t nsamples) override;
-	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
 	size_t samplerate() override;
 
 private:
-	snd_pcm_t *handle;
-	snd_pcm_hw_params_t *params;
+	snd_pcm_t* handle;
+	snd_pcm_hw_params_t* params;
 	std::vector<sample_t> data;
 	size_t num_channels;
 

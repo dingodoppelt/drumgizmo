@@ -67,7 +67,16 @@
 
 class EngineFactory
 {
-private:
+public:
+	EngineFactory();
+
+	const std::list<std::string>& getInputEngines() const;
+	const std::list<std::string>& getOutputEngines() const;
+
+	std::unique_ptr<AudioInputEngine> createInput(const std::string& name);
+	std::unique_ptr<AudioOutputEngine> createOutput(const std::string& name);
+
+protected:
 	std::list<std::string> input, output; // available engines
 
 #ifdef USE_JACK
@@ -76,12 +85,4 @@ private:
 	void prepareJack();
 #endif
 
-public:
-	EngineFactory();
-
-	std::list<std::string> const &getInputEngines() const;
-	std::list<std::string> const &getOutputEngines() const;
-
-	std::unique_ptr<AudioInputEngine> createInput(std::string const &name);
-	std::unique_ptr<AudioOutputEngine> createOutput(std::string const &name);
 };

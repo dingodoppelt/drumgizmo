@@ -34,11 +34,11 @@ public:
 	~DummyInputEngine();
 
 	// based on AudioInputEngine
-	bool init(Instruments &instruments) override;
+	bool init(Instruments& instruments) override;
 	void setParm(std::string parm, std::string value) override;
 	bool start() override;
 	void stop() override;
 	void pre() override;
-	event_t *run(size_t pos, size_t len, size_t *nevents) override;
+	event_t* run(size_t pos, size_t len, size_t* nevents) override;
 	void post() override;
 };

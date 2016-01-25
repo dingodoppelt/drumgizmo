@@ -33,11 +33,11 @@ int const BUFFER_SIZE = 40960;
 struct AlsaInitError
 {
 	int const code;
-	std::string const msg;
+	const std::string msg;
 
-	AlsaInitError(int op_code, std::string const &msg) : code{code}, msg{msg} {}
+	AlsaInitError(int op_code, const std::string &msg) : code{code}, msg{msg} {}
 
-	static inline void test(int code, std::string const &msg)
+	static inline void test(int code, const std::string &msg)
 	{
 		if (code < 0)
 		{
@@ -47,8 +47,13 @@ struct AlsaInitError
 };
 
 AlsaOutputEngine::AlsaOutputEngine()
-    : handle{nullptr}, params{nullptr}, data{}, num_channels{0u},
-      dev{"default"}, srate{44100}, frames{32}
+	: handle{nullptr}
+	, params{nullptr}
+	, data{}
+	, num_channels{0u}
+	, dev{"default"}
+	, srate{44100}
+	, frames{32}
 {
 }
 
@@ -144,11 +149,18 @@ void AlsaOutputEngine::setParm(std::string parm, std::string value)
 	}
 }
 
-bool AlsaOutputEngine::start() { return true; }
+bool AlsaOutputEngine::start()
+{ 
+	return true;
+}
 
-void AlsaOutputEngine::stop() {}
+void AlsaOutputEngine::stop()
+{
+}
 
-void AlsaOutputEngine::pre(size_t nsamples) {}
+void AlsaOutputEngine::pre(size_t nsamples)
+{
+}
 
 void AlsaOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
 {
@@ -165,4 +177,7 @@ void AlsaOutputEngine::post(size_t nsamples)
 	snd_pcm_writei(handle, data.data(), nsamples);
 }
 
-size_t AlsaOutputEngine::samplerate() { return srate; }
+size_t AlsaOutputEngine::samplerate()
+{
+	return srate;
+}

@@ -27,7 +27,8 @@
 #pragma once
 #include "audiooutputengine.h"
 
-class DummyOutputEngine : public AudioOutputEngine
+class DummyOutputEngine
+	: public AudioOutputEngine
 {
 public:
 	DummyOutputEngine();
@@ -39,6 +40,6 @@ public:
 	bool start() override;
 	void stop() override;
 	void pre(size_t nsamples) override;
-	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
 };

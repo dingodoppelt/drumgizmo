@@ -26,24 +26,42 @@
  */
 #include "inputdummy.h"
 
-DummyInputEngine::DummyInputEngine() {}
+DummyInputEngine::DummyInputEngine()
+{
+}
 
-DummyInputEngine::~DummyInputEngine() {}
+DummyInputEngine::~DummyInputEngine()
+{
+}
 
-bool DummyInputEngine::init(Instruments &instruments) { return true; }
+bool DummyInputEngine::init(Instruments& instruments)
+{
+	return true;
+}
 
-void DummyInputEngine::setParm(std::string parm, std::string value) {}
+void DummyInputEngine::setParm(std::string parm, std::string value)
+{
+}
 
-bool DummyInputEngine::start() { return true; }
+bool DummyInputEngine::start()
+{
+	return true;
+}
 
-void DummyInputEngine::stop() {}
+void DummyInputEngine::stop()
+{
+}
 
-void DummyInputEngine::pre() {}
+void DummyInputEngine::pre()
+{
+}
 
-event_t *DummyInputEngine::run(size_t pos, size_t len, size_t *nevents)
+event_t* DummyInputEngine::run(size_t pos, size_t len, size_t* nevents)
 {
 	nevents = 0u;
 	return nullptr;
 }
 
-void DummyInputEngine::post() {}
+void DummyInputEngine::post()
+{
+}

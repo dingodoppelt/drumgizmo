@@ -30,11 +30,18 @@
 #include "cpp11fix.h" // required for c++11
 #include "jackmidi.h"
 
-int const NOTE_ON = 0x90;
+static int const NOTE_ON = 0x90;
 
 JackMidiInputEngine::JackMidiInputEngine(JackClient &client)
-    : AudioInputEngine{}, JackProcess{}, client(client), port{nullptr},
-      midimap{}, midi_mapper{}, pos{0u}, list{nullptr}, listsize{0u}
+	: AudioInputEngine{}
+	, JackProcess{}
+	, client(client)
+	, port{nullptr}
+	, midimap{}
+	, midi_mapper{}
+	, pos{0u}
+	, list{nullptr}
+	, listsize{0u}
 {
 	client.add(*this);
 }
@@ -96,8 +103,7 @@ event_t *JackMidiInputEngine::run(size_t pos, size_t len, size_t *nevents)
 {
 	*nevents = listsize;
 	event_t *l = list;
-	printf("Owning raw pointer at drumgizmo/input/jackmidi.cc - GET RID OF "
-	       "THEM!\n");
+	// todo: get rid of malloc
 	list = (event_t *)malloc(sizeof(event_t) * 1000);
 	listsize = 0;
 	return l;

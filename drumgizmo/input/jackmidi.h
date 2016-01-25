@@ -34,7 +34,9 @@
 #include "midimapparser.h"
 #include "../jackclient.h"
 
-class JackMidiInputEngine : public AudioInputEngine, public JackProcess
+class JackMidiInputEngine
+	: public AudioInputEngine
+	, public JackProcess
 {
 public:
 	JackMidiInputEngine(JackClient &client);
@@ -42,12 +44,12 @@ public:
 
 	// based on AudioInputEngine
 	bool isMidiEngine() override;
-	bool init(Instruments &instruments) override;
+	bool init(Instruments& instruments) override;
 	void setParm(std::string parm, std::string value) override;
 	bool start() override;
 	void stop() override;
 	void pre() override;
-	event_t *run(size_t pos, size_t len, size_t *nevents) override;
+	event_t* run(size_t pos, size_t len, size_t* nevents) override;
 	void post() override;
 
 	// based on JackProcess
@@ -61,6 +63,6 @@ private:
 	MidiMapper midi_mapper;
 	std::size_t pos;
 
-	event_t *list;
+	event_t* list;
 	size_t listsize;
 };

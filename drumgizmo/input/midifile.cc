@@ -28,13 +28,17 @@
 
 #include "midifile.h"
 
-int const NOTE_ON = 0x90;
+static int const NOTE_ON = 0x90;
 
 MidifileInputEngine::MidifileInputEngine()
-    : smf{nullptr}, current_event{nullptr}, file{}, midimap{}, speed{1.f},
-      track{-1} // all tracks
-      ,
-      loop{false}, offset{0.0}
+	: smf{nullptr}
+	, current_event{nullptr}
+	, file{}
+	, midimap{}
+	, speed{1.f}
+	, track{-1} // all tracks
+	, loop{false}
+	, offset{0.0}
 {
 }
 
@@ -46,9 +50,12 @@ MidifileInputEngine::~MidifileInputEngine()
 	}
 }
 
-bool MidifileInputEngine::isMidiEngine() { return true; }
+bool MidifileInputEngine::isMidiEngine()
+{
+	return true;
+}
 
-bool MidifileInputEngine::init(Instruments &instruments)
+bool MidifileInputEngine::init(Instruments& instruments)
 {
 	if (file == "")
 	{
@@ -119,11 +126,18 @@ void MidifileInputEngine::setParm(std::string parm, std::string value)
 	}
 }
 
-bool MidifileInputEngine::start() { return true; }
+bool MidifileInputEngine::start()
+{
+	return true;
+}
 
-void MidifileInputEngine::stop() {}
+void MidifileInputEngine::stop()
+{
+}
 
-void MidifileInputEngine::pre() {}
+void MidifileInputEngine::pre()
+{
+}
 
 event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 {
@@ -151,8 +165,7 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 
 				if (evs == nullptr)
 				{
-					printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID "
-					       "OF THEM!\n");
+					// todo: get rid of malloc
 					evs = (event_t *)malloc(sizeof(event_t) * 1000);
 				}
 
@@ -193,8 +206,7 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 		{
 			if (evs == nullptr)
 			{
-				printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID OF "
-				       "THEM!\n");
+				// todo: get rid of malloc
 				evs = (event_t *)malloc(sizeof(event_t) * 1000);
 			}
 			evs[num_events].type = TYPE_STOP;
@@ -206,4 +218,6 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 	return evs;
 }
 
-void MidifileInputEngine::post() {}
+void MidifileInputEngine::post()
+{
+}

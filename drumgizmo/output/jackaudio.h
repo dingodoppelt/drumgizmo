@@ -31,7 +31,9 @@
 #include "audiooutputengine.h"
 #include "../jackclient.h"
 
-class JackAudioOutputEngine : public AudioOutputEngine, public JackProcess
+class JackAudioOutputEngine
+	: public AudioOutputEngine
+	, public JackProcess
 {
 public:
 	JackAudioOutputEngine(JackClient &client);
@@ -43,7 +45,7 @@ public:
 	bool start() override;
 	void stop() override;
 	void pre(size_t nsamples) override;
-	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
 	size_t getBufferSize() override;
 	size_t samplerate() override;
@@ -57,11 +59,11 @@ private:
 		JackPort port;
 		std::vector<sample_t> samples;
 
-		Channel(JackClient &client, std::string const &name,
+		Channel(JackClient& client, const std::string &name,
 		        std::size_t buffer_size);
 	};
 
-	JackClient &client;
+	JackClient& client;
 	std::vector<Channel> channels;
 	Semaphore sema;
 };
