@@ -4,8 +4,6 @@ if ENABLE_CLI
 
 include $(top_srcdir)/src/Makefile.am.drumgizmo 
 
-SUBDIRS = input output
-
 bin_PROGRAMS = drumgizmo
 
 drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS)
