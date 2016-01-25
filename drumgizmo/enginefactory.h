@@ -65,23 +65,39 @@
 #include "output/jackaudio.h"
 #endif
 
+//! Factory for various input- and output engines
 class EngineFactory
 {
 public:
+	//! Initialized lists of available engines (depending on enabled settings)
 	EngineFactory();
 
+	//! Query list of available input engines' names
+	//! \return const reference to the list
 	const std::list<std::string>& getInputEngines() const;
+	
+	//! Query list of available output engines' names
+	//! \return const reference to the list
 	const std::list<std::string>& getOutputEngines() const;
 
+	//! Create input engine by name
+	//! \param name Name of the input engine that should be initialized
+	//! \return unique_ptr to input engine or nullptr if engine is not supported
 	std::unique_ptr<AudioInputEngine> createInput(const std::string& name);
+	
+	//! Create input engine by name
+	//! \param name Name of the output engine that should be initialized
+	//! \return unique_ptr to input engine or nullptr if engine is not supported
 	std::unique_ptr<AudioOutputEngine> createOutput(const std::string& name);
 
 protected:
 	std::list<std::string> input, output; // available engines
 
 #ifdef USE_JACK
+	// Client that is used by all jack-related engines
 	std::unique_ptr<JackClient> jack;
 
+	// Utility to initialize jack (once)
 	void prepareJack();
 #endif
 
