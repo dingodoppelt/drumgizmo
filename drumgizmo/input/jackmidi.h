@@ -29,21 +29,20 @@
 #include <jack/jack.h>
 #include <jack/midiport.h>
 
-#include "audioinputengine.h"
+#include "audioinputenginemidi.h"
 #include "midimapper.h"
 #include "midimapparser.h"
 #include "../jackclient.h"
 
 class JackMidiInputEngine
-	: public AudioInputEngine
+	: public AudioInputEngineMidi
 	, public JackProcess
 {
 public:
 	JackMidiInputEngine(JackClient &client);
 	~JackMidiInputEngine();
 
-	// based on AudioInputEngine
-	bool isMidiEngine() override;
+	// based on AudioInputEngineMidi
 	bool init(Instruments& instruments) override;
 	void setParm(std::string parm, std::string value) override;
 	bool start() override;
@@ -59,8 +58,6 @@ private:
 	JackClient &client;
 	std::unique_ptr<JackPort> port;
 
-	std::string midimap;
-	MidiMapper midi_mapper;
 	std::size_t pos;
 
 	event_t* list;

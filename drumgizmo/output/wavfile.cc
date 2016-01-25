@@ -29,7 +29,8 @@
 #include "wavfile.h"
 
 WavfileOutputEngine::WavfileOutputEngine()
-	: info{}
+	: AudioOutputEngine{}
+	, info{}
 	, channels{}
 	, file{"output"}
 {

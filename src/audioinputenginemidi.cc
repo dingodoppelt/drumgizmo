@@ -38,19 +38,19 @@ AudioInputEngineMidi::AudioInputEngineMidi()
   is_valid = false;
 }
 
-bool AudioInputEngineMidi::loadMidiMap(std::string _f, Instruments &instruments)
+bool AudioInputEngineMidi::loadMidiMap(std::string file, Instruments &instruments)
 {
-  std::string f = _f;
+  std::string f = file;
 
   if(refs.load()) {
-    if(_f.size() > 1 && _f[0] == '@') {
-      f = refs.getValue(_f.substr(1));
+    if(file.size() > 1 && file[0] == '@') {
+      f = refs.getValue(file.substr(1));
     }
   } else {
     ERR(drumkitparser, "Error reading refs.conf");
   }
 
-  file = "";
+  midimap = "";
   is_valid = false;
 
   DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
@@ -70,7 +70,7 @@ bool AudioInputEngineMidi::loadMidiMap(std::string _f, Instruments &instruments)
     mmap.instrmap[instruments[i]->name()] = i;
   }
 
-  file = _f;
+  midimap = file;
   is_valid = true;
 
   return true;
@@ -78,7 +78,7 @@ bool AudioInputEngineMidi::loadMidiMap(std::string _f, Instruments &instruments)
 
 std::string AudioInputEngineMidi::midimapFile()
 {
-  return file;
+  return midimap;
 }
 
 bool AudioInputEngineMidi::isValid()

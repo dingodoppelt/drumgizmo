@@ -31,10 +31,10 @@
 static int const NOTE_ON = 0x90;
 
 MidifileInputEngine::MidifileInputEngine()
-	: smf{nullptr}
+	: AudioInputEngineMidi{}
+	, smf{nullptr}
 	, current_event{nullptr}
 	, file{}
-	, midimap{}
 	, speed{1.f}
 	, track{-1} // all tracks
 	, loop{false}
@@ -48,11 +48,6 @@ MidifileInputEngine::~MidifileInputEngine()
 	{
 		smf_delete(smf);
 	}
-}
-
-bool MidifileInputEngine::isMidiEngine()
-{
-	return true;
 }
 
 bool MidifileInputEngine::init(Instruments& instruments)
@@ -74,18 +69,10 @@ bool MidifileInputEngine::init(Instruments& instruments)
 		          << "'\n";
 		return false;
 	}
-	MidiMapParser p{midimap};
-	if (p.parse())
-	{
+	if (!loadMidiMap(midimap, instruments)) {
 		std::cerr << "[MidifileInputEngine] Failed to parse midimap '" << midimap
 		          << "'\n";
 		return false;
-	}
-	midi_mapper.midimap = p.midimap;
-	for (auto i = 0u; i < instruments.size(); ++i)
-	{
-		auto name = instruments[i]->name();
-		midi_mapper.instrmap[name] = i;
 	}
 	return true;
 }
@@ -176,7 +163,7 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 				size_t evpos = current_event->time_seconds * (44100.0 / speed);
 				evs[num_events].offset = evpos - pos;
 
-				int i = midi_mapper.lookup(key);
+				int i = mmap.lookup(key);
 				if (i != -1)
 				{
 					evs[num_events].instrument = i;

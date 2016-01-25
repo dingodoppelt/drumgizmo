@@ -62,7 +62,7 @@ public:
 
 protected:
   MidiMapper mmap;
-  std::string file;
+  std::string midimap;
   bool is_valid;
 
   ConfigFile refs;

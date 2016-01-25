@@ -30,7 +30,8 @@
 #include "jackaudio.h"
 
 JackAudioOutputEngine::JackAudioOutputEngine(JackClient &client)
-	: client(client)
+	: AudioOutputEngine{}
+	, client(client)
 	, channels{}
 	, sema{"jackaudio"}
 {

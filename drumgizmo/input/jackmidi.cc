@@ -33,12 +33,10 @@
 static int const NOTE_ON = 0x90;
 
 JackMidiInputEngine::JackMidiInputEngine(JackClient &client)
-	: AudioInputEngine{}
+	: AudioInputEngineMidi{}
 	, JackProcess{}
 	, client(client)
 	, port{nullptr}
-	, midimap{}
-	, midi_mapper{}
 	, pos{0u}
 	, list{nullptr}
 	, listsize{0u}
@@ -46,29 +44,17 @@ JackMidiInputEngine::JackMidiInputEngine(JackClient &client)
 	client.add(*this);
 }
 
-JackMidiInputEngine::~JackMidiInputEngine() { client.remove(*this); }
-
-bool JackMidiInputEngine::isMidiEngine() { return true; }
-
-bool JackMidiInputEngine::init(Instruments &instruments)
+JackMidiInputEngine::~JackMidiInputEngine()
 {
-	if (midimap == "")
-	{
-		std::cerr << "[JackMidiInputEngine] Missing midimap filename\n";
-		return false;
-	}
-	MidiMapParser p{midimap};
-	if (p.parse())
-	{
-		std::cerr << "[JackmidiInputEngine] Failed to parse midimap '" << midimap
+	client.remove(*this);
+}
+
+bool JackMidiInputEngine::init(Instruments& instruments)
+{
+	if (!loadMidiMap(midimap, instruments)) {
+		std::cerr << "[MidifileInputEngine] Failed to parse midimap '" << midimap
 		          << "'\n";
 		return false;
-	}
-	midi_mapper.midimap = p.midimap;
-	for (auto i = 0u; i < instruments.size(); ++i)
-	{
-		auto name = instruments[i]->name();
-		midi_mapper.instrmap[name] = i;
 	}
 	port = std::make_unique<JackPort>(client, "drumgizmo_midiin",
 	                                  JACK_DEFAULT_MIDI_TYPE, JackPortIsInput);
@@ -95,9 +81,13 @@ bool JackMidiInputEngine::start()
 	return true;
 }
 
-void JackMidiInputEngine::stop() {}
+void JackMidiInputEngine::stop()
+{
+}
 
-void JackMidiInputEngine::pre() {}
+void JackMidiInputEngine::pre()
+{
+}
 
 event_t *JackMidiInputEngine::run(size_t pos, size_t len, size_t *nevents)
 {
@@ -109,7 +99,9 @@ event_t *JackMidiInputEngine::run(size_t pos, size_t len, size_t *nevents)
 	return l;
 }
 
-void JackMidiInputEngine::post() {}
+void JackMidiInputEngine::post()
+{
+}
 
 void JackMidiInputEngine::process(jack_nframes_t num_frames)
 {
@@ -132,7 +124,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		int key = event.buffer[1];
 		int velocity = event.buffer[2];
 		printf("Event key:%d vel:%d\n", key, velocity);
-		int k = midi_mapper.lookup(key);
+		int k = mmap.lookup(key);
 		if (k != -1 && velocity)
 		{
 			list[listsize].type = TYPE_ONSET;
@@ -145,9 +137,3 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 	jack_midi_clear_buffer(buffer);
 	pos += num_frames;
 }
-
-/*
-    DrumKit* kit;
-    size_t pos;
-    EventQueue *eventqueue;
-*/

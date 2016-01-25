@@ -30,19 +30,18 @@
 #include <event.h>
 #include <smf.h>
 
-#include "audioinputengine.h"
+#include "audioinputenginemidi.h"
 #include "midimapper.h"
 #include "midimapparser.h"
 
 class MidifileInputEngine
-	: public AudioInputEngine
+	: public AudioInputEngineMidi
 {
 public:
 	MidifileInputEngine();
 	~MidifileInputEngine();
 
-	// based on AudioInputEngine
-	bool isMidiEngine() override;
+	// based on AudioInputEngineMidi
 	bool init(Instruments& instruments) override;
 	void setParm(std::string parm, std::string value) override;
 	bool start() override;
@@ -55,9 +54,7 @@ private:
 	smf_t* smf;
 	smf_event_t* current_event;
 
-	MidiMapper midi_mapper;
-
-	std::string file, midimap;
+	std::string file;
 	float speed;
 	int track;
 	bool loop;
