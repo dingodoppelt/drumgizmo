@@ -29,14 +29,12 @@
 #include "cpp11fix.h" // required for c++11
 #include "enginefactory.h"
 
-EngineFactory::EngineFactory()
-	: input{}
-	, output{}
+EngineFactory::EngineFactory() : input{}, output {}
 #ifdef USE_JACK
-	, jack{nullptr}
+, jack { nullptr }
 #endif
 {
-	// list available input engines
+// list available input engines
 #ifdef HAVE_INPUT_DUMMY
 	input.push_back("inputdummy");
 #endif
@@ -46,8 +44,8 @@ EngineFactory::EngineFactory()
 #ifdef HAVE_INPUT_JACKMIDI
 	input.push_back("jackmidi");
 #endif
-	
-	// list available output engines
+
+// list available output engines
 #ifdef HAVE_OUTPUT_DUMMY
 	output.push_back("outputdummy");
 #endif
@@ -63,70 +61,85 @@ EngineFactory::EngineFactory()
 }
 
 #ifdef USE_JACK
-void EngineFactory::prepareJack() {
-	if (jack == nullptr) {
+void EngineFactory::prepareJack()
+{
+	if (jack == nullptr)
+	{
 		jack = std::make_unique<JackClient>();
 	}
 }
 #endif
 
-std::list<std::string> const & EngineFactory::getInputEngines() const {
+std::list<std::string> const &EngineFactory::getInputEngines() const
+{
 	return input;
 }
 
-std::list<std::string> const & EngineFactory::getOutputEngines() const {
+std::list<std::string> const &EngineFactory::getOutputEngines() const
+{
 	return output;
 }
 
-std::unique_ptr<AudioInputEngine> EngineFactory::createInput(std::string const & name) {
+std::unique_ptr<AudioInputEngine>
+EngineFactory::createInput(std::string const &name)
+{
 #ifdef HAVE_INPUT_DUMMY
-	if (name == "dummy") {
+	if (name == "dummy")
+	{
 		return std::make_unique<DummyInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_MIDIFILE
-	if (name == "midifile") {
+	if (name == "midifile")
+	{
 		return std::make_unique<MidifileInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_JACKMIDI
-	if (name == "jackmidi") {
+	if (name == "jackmidi")
+	{
 		prepareJack();
 		return std::make_unique<JackMidiInputEngine>(*jack);
 	}
 #endif
-	
+
 	// todo: add more engines
-	
+
 	std::cerr << "[EngineFactory] Unsupported input engine '" << name << "'\n";
 	return nullptr;
 }
 
-std::unique_ptr<AudioOutputEngine> EngineFactory::createOutput(std::string const & name) {
+std::unique_ptr<AudioOutputEngine>
+EngineFactory::createOutput(std::string const &name)
+{
 #ifdef HAVE_OUTPUT_DUMMY
-	if (name == "dummy") {
+	if (name == "dummy")
+	{
 		return std::make_unique<DummyOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_WAVFILE
-	if (name == "wavfile") {
+	if (name == "wavfile")
+	{
 		return std::make_unique<WavfileOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_ALSA
-	if (name == "alsa") {
+	if (name == "alsa")
+	{
 		return std::make_unique<AlsaOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_JACKAUDIO
-	if (name == "jackaudio") {
+	if (name == "jackaudio")
+	{
 		prepareJack();
 		return std::make_unique<JackAudioOutputEngine>(*jack);
 	}
 #endif
-	
+
 	// todo: add more engines
-	
+
 	std::cerr << "[EngineFactory] Unsupported output engine '" << name << "'\n";
 	return nullptr;
 }

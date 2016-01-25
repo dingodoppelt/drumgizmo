@@ -27,18 +27,18 @@
 #pragma once
 #include "audiooutputengine.h"
 
-class DummyOutputEngine
-	: public AudioOutputEngine {
-	public:
-		DummyOutputEngine();
-		~DummyOutputEngine();
-		
-		// based on AudioOutputEngine
-		bool init(Channels chan) override;
-		void setParm(std::string parm, std::string value) override;
-		bool start() override;
-		void stop() override;
-		void pre(size_t nsamples) override;
-		void run(int ch, sample_t* samples, size_t nsamples) override;
-		void post(size_t nsamples) override;
+class DummyOutputEngine : public AudioOutputEngine
+{
+public:
+	DummyOutputEngine();
+	~DummyOutputEngine();
+
+	// based on AudioOutputEngine
+	bool init(Channels chan) override;
+	void setParm(std::string parm, std::string value) override;
+	bool start() override;
+	void stop() override;
+	void pre(size_t nsamples) override;
+	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void post(size_t nsamples) override;
 };

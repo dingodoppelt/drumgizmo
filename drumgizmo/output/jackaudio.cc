@@ -29,31 +29,31 @@
 
 #include "jackaudio.h"
 
-JackAudioOutputEngine::JackAudioOutputEngine(JackClient& client)
-	: client(client) // wanna use initializer braces here but jenkins fails
-	, channels{}
-	, sema{"jackaudio"} {
+JackAudioOutputEngine::JackAudioOutputEngine(JackClient &client)
+    : client(client), channels{}, sema{"jackaudio"}
+{
 	client.add(*this);
 }
 
-JackAudioOutputEngine::~JackAudioOutputEngine() {
-	client.remove(*this);
-}
+JackAudioOutputEngine::~JackAudioOutputEngine() { client.remove(*this); }
 
-bool JackAudioOutputEngine::init(Channels data) {
+bool JackAudioOutputEngine::init(Channels data)
+{
 	channels.clear();
 	channels.reserve(data.size());
 	auto i = 0u;
 	auto const buffer_size = getBufferSize();
-	
-	for (auto const & elem: data) {
+
+	for (auto const &elem : data)
+	{
 		auto name = std::to_string(i) + "-" + elem.name;
 		// initialize new channel
 		channels.emplace_back(client, name, buffer_size);
-		
-		if (channels.back().port.port == nullptr) {
+
+		if (channels.back().port.port == nullptr)
+		{
 			std::cerr << "[JackAudioOutputEngine] Cannot create jack "
-				<< "port for channel #" << i << "\n";
+			          << "port for channel #" << i << "\n";
 			return false;
 		}
 		++i;
@@ -61,53 +61,52 @@ bool JackAudioOutputEngine::init(Channels data) {
 	return true;
 }
 
-void JackAudioOutputEngine::setParm(std::string parm, std::string value) {
-}
+void JackAudioOutputEngine::setParm(std::string parm, std::string value) {}
 
-bool JackAudioOutputEngine::start() {
+bool JackAudioOutputEngine::start()
+{
 	client.activate();
 	return true;
 }
 
-void JackAudioOutputEngine::stop() {
-}
+void JackAudioOutputEngine::stop() {}
 
-void JackAudioOutputEngine::pre(size_t nsamples) {
-}
+void JackAudioOutputEngine::pre(size_t nsamples) {}
 
-void JackAudioOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
-	for (auto i = 0u; i < nsamples; ++i) {
+void JackAudioOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
+{
+	for (auto i = 0u; i < nsamples; ++i)
+	{
 		channels[ch].samples[i] = samples[i];
 	}
 }
 
-void JackAudioOutputEngine::post(size_t nsamples) {
-	sema.wait();
-}
+void JackAudioOutputEngine::post(size_t nsamples) { sema.wait(); }
 
-void JackAudioOutputEngine::process(jack_nframes_t num_frames) {
+void JackAudioOutputEngine::process(jack_nframes_t num_frames)
+{
 	assert(num_frames == getBufferSize());
-	
-	for (auto& channel: channels) {
-		auto ptr = static_cast<jack_default_audio_sample_t*>(
-			jack_port_get_buffer(channel.port.port, num_frames));
-		for (auto i = 0u; i < num_frames; ++i) {
+
+	for (auto &channel : channels)
+	{
+		auto ptr = static_cast<jack_default_audio_sample_t *>(
+		    jack_port_get_buffer(channel.port.port, num_frames));
+		for (auto i = 0u; i < num_frames; ++i)
+		{
 			ptr[i] = channel.samples[i];
 		}
 	}
 	sema.post();
 }
 
-size_t JackAudioOutputEngine::getBufferSize() {
-	return client.getBufferSize();
-}
+size_t JackAudioOutputEngine::getBufferSize() { return client.getBufferSize(); }
 
-size_t JackAudioOutputEngine::samplerate() {
-	return client.getSampleRate();
-}
+size_t JackAudioOutputEngine::samplerate() { return client.getSampleRate(); }
 
-JackAudioOutputEngine::Channel::Channel(JackClient& client, std::string const & name, std::size_t buffer_size)
-	: port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput}
-	, samples{} {
+JackAudioOutputEngine::Channel::Channel(JackClient &client,
+                                        std::string const &name,
+                                        std::size_t buffer_size)
+    : port{client, name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput}, samples{}
+{
 	samples.resize(buffer_size);
 }

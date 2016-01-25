@@ -31,116 +31,131 @@
 int const NOTE_ON = 0x90;
 
 MidifileInputEngine::MidifileInputEngine()
-	: smf{nullptr}
-	, current_event{nullptr}
-	, file{}
-	, midimap{}
-	, speed{1.f}
-	, track{-1} // all tracks
-	, loop{false}
-	, offset{0.0} {
+    : smf{nullptr}, current_event{nullptr}, file{}, midimap{}, speed{1.f},
+      track{-1} // all tracks
+      ,
+      loop{false}, offset{0.0}
+{
 }
 
-MidifileInputEngine::~MidifileInputEngine() {
-	if (smf != nullptr) {
+MidifileInputEngine::~MidifileInputEngine()
+{
+	if (smf != nullptr)
+	{
 		smf_delete(smf);
 	}
 }
 
-bool MidifileInputEngine::isMidiEngine() {
-	return true;
-}
+bool MidifileInputEngine::isMidiEngine() { return true; }
 
-bool MidifileInputEngine::init(Instruments& instruments) {
-	if (file == "") {
+bool MidifileInputEngine::init(Instruments &instruments)
+{
+	if (file == "")
+	{
 		std::cerr << "[MidifileInputEngine] Missing midi filename\n";
 		return false;
 	}
-	if (midimap == "") {
+	if (midimap == "")
+	{
 		std::cerr << "[MidifileInputEngine] Missing midimap filename\n";
 		return false;
 	}
 	smf = smf_load(file.c_str());
-	if (smf == nullptr) {
-		std::cerr << "[MidifileInputEngine] Failed to load midifile '"
-			<< file << "'\n";
+	if (smf == nullptr)
+	{
+		std::cerr << "[MidifileInputEngine] Failed to load midifile '" << file
+		          << "'\n";
 		return false;
 	}
 	MidiMapParser p{midimap};
-	if (p.parse()) {
-		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
-			<< midimap << "'\n";
+	if (p.parse())
+	{
+		std::cerr << "[MidifileInputEngine] Failed to parse midimap '" << midimap
+		          << "'\n";
 		return false;
 	}
 	midi_mapper.midimap = p.midimap;
-	for (auto i = 0u; i < instruments.size(); ++i) {
+	for (auto i = 0u; i < instruments.size(); ++i)
+	{
 		auto name = instruments[i]->name();
 		midi_mapper.instrmap[name] = i;
 	}
 	return true;
 }
 
-void MidifileInputEngine::setParm(std::string parm, std::string value) {
-	if(parm == "file") {
+void MidifileInputEngine::setParm(std::string parm, std::string value)
+{
+	if (parm == "file")
+	{
 		// apply midi input filename
 		file = value;
-		
-	} else if(parm == "speed") {
+	}
+	else if (parm == "speed")
+	{
 		// try to apply speed
-		 try {
+		try
+		{
 			speed = std::stof(value);
-		} catch (...) {
-			std::cerr << "[MidifileInputEngine] Invalid speed "
-				<< value << "\n";
 		}
-	} else if (parm == "midimap") {
+		catch (...)
+		{
+			std::cerr << "[MidifileInputEngine] Invalid speed " << value << "\n";
+		}
+	}
+	else if (parm == "midimap")
+	{
 		// apply midimap filename
 		midimap = value;
-		
-	} else if (parm == "loop") {
+	}
+	else if (parm == "loop")
+	{
 		// apply looping
 		loop = true;
-		
-	} else {
-		std::cerr << "[MidifileInputEngine] Unsupported parameter '"
-			<< parm << "'\n";
+	}
+	else
+	{
+		std::cerr << "[MidifileInputEngine] Unsupported parameter '" << parm
+		          << "'\n";
 	}
 }
 
-bool MidifileInputEngine::start() {
-	return true;
-}
+bool MidifileInputEngine::start() { return true; }
 
-void MidifileInputEngine::stop() {
-}
+void MidifileInputEngine::stop() {}
 
-void MidifileInputEngine::pre() {
-}
+void MidifileInputEngine::pre() {}
 
-event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents) {
-	event_t* evs{nullptr};
+event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
+{
+	event_t *evs{nullptr};
 	size_t num_events{0u};
-	
+
 	double current_max_time = (1.0 + pos + len) / (44100.0 / speed);
 	current_max_time -= offset;
 	//  double cur_min_time = (double)(pos) / (44100.0 / speed);
-	
-	if(!current_event) {
+
+	if (!current_event)
+	{
 		current_event = smf_get_next_event(smf);
 	}
-	
-	while(current_event && current_event->time_seconds < current_max_time) {
-		if(!smf_event_is_metadata(current_event)) {
-			if( (current_event->midi_buffer_length == 3) &&
-				((current_event->midi_buffer[0] & NOTE_ON) == NOTE_ON) &&
-				(track == -1 || current_event->track_number == track) &&
-				current_event->midi_buffer[2] > 0) {
-				
-				if(evs == nullptr) {
-					printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID OF THEM!\n");
+
+	while (current_event && current_event->time_seconds < current_max_time)
+	{
+		if (!smf_event_is_metadata(current_event))
+		{
+			if ((current_event->midi_buffer_length == 3) &&
+			    ((current_event->midi_buffer[0] & NOTE_ON) == NOTE_ON) &&
+			    (track == -1 || current_event->track_number == track) &&
+			    current_event->midi_buffer[2] > 0)
+			{
+
+				if (evs == nullptr)
+				{
+					printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID "
+					       "OF THEM!\n");
 					evs = (event_t *)malloc(sizeof(event_t) * 1000);
 				}
-				
+
 				int key = current_event->midi_buffer[1];
 				int velocity = current_event->midi_buffer[2];
 
@@ -149,29 +164,37 @@ event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents) {
 				evs[num_events].offset = evpos - pos;
 
 				int i = midi_mapper.lookup(key);
-				if(i != -1) {
+				if (i != -1)
+				{
 					evs[num_events].instrument = i;
 					evs[num_events].velocity = velocity / 127.0;
-        
+
 					++num_events;
-					if(num_events > 999) {
+					if (num_events > 999)
+					{
 						fprintf(stderr, "PANIC!\n");
 						break;
 					}
 				}
 			}
 		}
-    
+
 		current_event = smf_get_next_event(smf);
 	}
 
-	if(!current_event) {
-		if(loop) {
+	if (!current_event)
+	{
+		if (loop)
+		{
 			smf_rewind(smf);
 			offset += current_max_time;
-		} else {
-			if(evs == nullptr) {
-				printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID OF THEM!\n");
+		}
+		else
+		{
+			if (evs == nullptr)
+			{
+				printf("Owning raw pointer at drumgizmo/input/midifile.cc - GET RID OF "
+				       "THEM!\n");
 				evs = (event_t *)malloc(sizeof(event_t) * 1000);
 			}
 			evs[num_events].type = TYPE_STOP;
@@ -183,5 +206,4 @@ event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents) {
 	return evs;
 }
 
-void MidifileInputEngine::post() {
-}
+void MidifileInputEngine::post() {}

@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            cli.cc
+ *            drumgizmoc.cc
  *
  *  Thu Sep 16 10:23:22 CEST 2010
  *  Copyright 2010 Bent Bisballe Nyeng

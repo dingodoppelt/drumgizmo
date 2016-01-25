@@ -35,41 +35,45 @@
 
 class JackClient;
 
-class JackProcess {
-	public:
-		virtual ~JackProcess();
-		virtual void process(jack_nframes_t num_frames) = 0;
+class JackProcess
+{
+public:
+	virtual ~JackProcess();
+	virtual void process(jack_nframes_t num_frames) = 0;
 };
 
 // --------------------------------------------------------------------
 
 // RAII-wrapper for jack_port_t
-struct JackPort {
-	JackPort(JackClient& client, std::string const & name, const char * type, JackPortFlags flags);
+struct JackPort
+{
+	JackPort(JackClient &client, std::string const &name, const char *type,
+	         JackPortFlags flags);
 	~JackPort();
-	
-	jack_client_t* const client;
-	jack_port_t* const port;
+
+	jack_client_t *const client;
+	jack_port_t *const port;
 };
 
 // --------------------------------------------------------------------
 
-class JackClient {
+class JackClient
+{
 	friend struct JackPort;
-	
-	public:
-		JackClient();
-		~JackClient();
-		
-		void add(JackProcess& process);
-		void remove(JackProcess& process);
-		void activate();
-		int process(jack_nframes_t num_frames);
-		std::size_t getBufferSize() const;
-		std::size_t getSampleRate() const;
-		
-	private:
-		jack_client_t* client;
-		std::set<JackProcess*> processes;
-		bool is_active;
+
+public:
+	JackClient();
+	~JackClient();
+
+	void add(JackProcess &process);
+	void remove(JackProcess &process);
+	void activate();
+	int process(jack_nframes_t num_frames);
+	std::size_t getBufferSize() const;
+	std::size_t getSampleRate() const;
+
+private:
+	jack_client_t *client;
+	std::set<JackProcess *> processes;
+	bool is_active;
 };

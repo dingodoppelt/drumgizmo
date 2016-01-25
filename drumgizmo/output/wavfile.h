@@ -32,26 +32,26 @@
 
 #include "audiooutputengine.h"
 
-class WavfileOutputEngine
-	: public AudioOutputEngine {
-	public:
-		WavfileOutputEngine();
-		~WavfileOutputEngine();
-		
-		// based on AudioOutputEngine
-		bool init(Channels data) override;
-		void setParm(std::string parm, std::string value) override;
-		bool start() override;
-		void stop() override;
-		void pre(size_t nsamples) override;
-		void run(int ch, sample_t* samples, size_t nsamples) override;
-		void post(size_t nsamples) override;
-		size_t samplerate() override;
-		
-	private:
-		SF_INFO info;
-		std::vector<SNDFILE*> channels;
-		size_t num_channels;
-		
-		std::string file;
+class WavfileOutputEngine : public AudioOutputEngine
+{
+public:
+	WavfileOutputEngine();
+	~WavfileOutputEngine();
+
+	// based on AudioOutputEngine
+	bool init(Channels data) override;
+	void setParm(std::string parm, std::string value) override;
+	bool start() override;
+	void stop() override;
+	void pre(size_t nsamples) override;
+	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void post(size_t nsamples) override;
+	size_t samplerate() override;
+
+private:
+	SF_INFO info;
+	std::vector<SNDFILE *> channels;
+	size_t num_channels;
+
+	std::string file;
 };

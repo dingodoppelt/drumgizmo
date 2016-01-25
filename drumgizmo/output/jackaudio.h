@@ -31,36 +31,37 @@
 #include "audiooutputengine.h"
 #include "../jackclient.h"
 
-class JackAudioOutputEngine
-	: public AudioOutputEngine
-	, public JackProcess {
-	public:
-		JackAudioOutputEngine(JackClient& client);
-		~JackAudioOutputEngine();
-		
-		// based on AudioOutputEngine
-		bool init(Channels chan) override;
-		void setParm(std::string parm, std::string value) override;
-		bool start() override;
-		void stop() override;
-		void pre(size_t nsamples) override;
-		void run(int ch, sample_t* samples, size_t nsamples) override;
-		void post(size_t nsamples) override;
-		size_t getBufferSize() override;
-		size_t samplerate() override;
-		
-		// based on JackProcess
-		void process(jack_nframes_t num_frames) override;
-		
-	private:
-		struct Channel {
-			JackPort port;
-			std::vector<sample_t> samples;
-			
-			Channel(JackClient& client, std::string const & name, std::size_t buffer_size);
-		};
-		
-		JackClient& client;
-		std::vector<Channel> channels;
-		Semaphore sema;
+class JackAudioOutputEngine : public AudioOutputEngine, public JackProcess
+{
+public:
+	JackAudioOutputEngine(JackClient &client);
+	~JackAudioOutputEngine();
+
+	// based on AudioOutputEngine
+	bool init(Channels chan) override;
+	void setParm(std::string parm, std::string value) override;
+	bool start() override;
+	void stop() override;
+	void pre(size_t nsamples) override;
+	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void post(size_t nsamples) override;
+	size_t getBufferSize() override;
+	size_t samplerate() override;
+
+	// based on JackProcess
+	void process(jack_nframes_t num_frames) override;
+
+private:
+	struct Channel
+	{
+		JackPort port;
+		std::vector<sample_t> samples;
+
+		Channel(JackClient &client, std::string const &name,
+		        std::size_t buffer_size);
+	};
+
+	JackClient &client;
+	std::vector<Channel> channels;
+	Semaphore sema;
 };

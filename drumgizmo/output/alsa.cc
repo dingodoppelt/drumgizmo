@@ -30,57 +30,59 @@
 
 int const BUFFER_SIZE = 40960;
 
-struct AlsaInitError {
+struct AlsaInitError
+{
 	int const code;
 	std::string const msg;
-	
-	AlsaInitError(int op_code, std::string const & msg)
-		: code{code}
-		, msg{msg} {
-	}
-	
-	static inline void test(int code, std::string const & msg) {
-		if (code < 0) {
+
+	AlsaInitError(int op_code, std::string const &msg) : code{code}, msg{msg} {}
+
+	static inline void test(int code, std::string const &msg)
+	{
+		if (code < 0)
+		{
 			throw AlsaInitError(code, msg);
 		}
 	}
 };
 
 AlsaOutputEngine::AlsaOutputEngine()
-	: handle{nullptr}
-	, params{nullptr}
-	, data{}
-	, num_channels{0u}
-	, dev{"default"}
-	, srate{44100}
-	, frames{32} {
+    : handle{nullptr}, params{nullptr}, data{}, num_channels{0u},
+      dev{"default"}, srate{44100}, frames{32}
+{
 }
 
-AlsaOutputEngine::~AlsaOutputEngine() {
+AlsaOutputEngine::~AlsaOutputEngine()
+{
 	// note: do NOT release `params`, it was allocated by `alloca()`
-	
-	if (handle != nullptr) {
+
+	if (handle != nullptr)
+	{
 		snd_pcm_close(handle);
 	}
 }
 
-bool AlsaOutputEngine::init(Channels channels) {
+bool AlsaOutputEngine::init(Channels channels)
+{
 	// try to initialize alsa
-	try {
+	try
+	{
 		int value = snd_pcm_open(&handle, dev.c_str(), SND_PCM_STREAM_PLAYBACK, 0);
 		AlsaInitError::test(value, "snd_pcm_open");
 		num_channels = channels.size();
-		if (handle == nullptr) {
+		if (handle == nullptr)
+		{
 			std::cerr << "[AlsaOutputEngine] Failed to acquire "
-				<< "hardware handle\n";
+			          << "hardware handle\n";
 			return false;
 		}
 		// Allocate and init a hardware parameters object
 		snd_pcm_hw_params_alloca(&params);
 		value = snd_pcm_hw_params_any(handle, params);
 		AlsaInitError::test(value, "snd_pcm_hw_params_any");
-		
-		value = snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
+
+		value = snd_pcm_hw_params_set_access(handle, params,
+		                                     SND_PCM_ACCESS_RW_INTERLEAVED);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_access");
 		value = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_FLOAT);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_format");
@@ -92,67 +94,75 @@ bool AlsaOutputEngine::init(Channels channels) {
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_period_size_near");
 		value = snd_pcm_hw_params(handle, params);
 		AlsaInitError::test(value, "snd_pcm_hw_params");
-		
-	} catch (AlsaInitError const & error) {
-		std::cerr << "[AlsaOutputEngine] " << error.msg << " failed: "
-			<< snd_strerror(error.code) << std::endl;
+	}
+	catch (AlsaInitError const &error)
+	{
+		std::cerr << "[AlsaOutputEngine] " << error.msg
+		          << " failed: " << snd_strerror(error.code) << std::endl;
 		return false;
 	}
-	
+
 	data.clear();
 	data.resize(BUFFER_SIZE * num_channels);
-	
+
 	return true;
 }
 
-void AlsaOutputEngine::setParm(std::string parm, std::string value) {
-	if (parm == "dev") {
+void AlsaOutputEngine::setParm(std::string parm, std::string value)
+{
+	if (parm == "dev")
+	{
 		// apply hardware device name
 		dev = value;
-		
-	} else if (parm == "frames") {
+	}
+	else if (parm == "frames")
+	{
 		// try to apply hardware buffer size
-		try {
+		try
+		{
 			frames = std::stoi(value);
-		} catch (...) {
-			std::cerr << "[AlsaOutputEngine] Invalid buffer size "
-				<< value << "\n";
 		}
-	} else if (parm == "srate") {
-		try {
+		catch (...)
+		{
+			std::cerr << "[AlsaOutputEngine] Invalid buffer size " << value << "\n";
+		}
+	}
+	else if (parm == "srate")
+	{
+		try
+		{
 			srate = std::stoi(value);
-		} catch (...) {
-			std::cerr << "[AlsaOutputEngine] Invalid samplerate "
-				<< value << "\n";
 		}
-	} else {
-		std::cerr << "[AlsaOutputEngine] Unsupported parameter '"
-			<< parm << "'\n";
+		catch (...)
+		{
+			std::cerr << "[AlsaOutputEngine] Invalid samplerate " << value << "\n";
+		}
+	}
+	else
+	{
+		std::cerr << "[AlsaOutputEngine] Unsupported parameter '" << parm << "'\n";
 	}
 }
 
-bool AlsaOutputEngine::start() {
-	return true;
-}
+bool AlsaOutputEngine::start() { return true; }
 
-void AlsaOutputEngine::stop() {
-}
+void AlsaOutputEngine::stop() {}
 
-void AlsaOutputEngine::pre(size_t nsamples) {
-}
+void AlsaOutputEngine::pre(size_t nsamples) {}
 
-void AlsaOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
+void AlsaOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
+{
 	// Write channel data in interleaved buffer
-	for (auto i = 0u; i < nsamples; ++i) {
+	for (auto i = 0u; i < nsamples; ++i)
+	{
 		data[i * num_channels + ch] = samples[i];
 	}
 }
 
-void AlsaOutputEngine::post(size_t nsamples) {
+void AlsaOutputEngine::post(size_t nsamples)
+{
 	// Write the interleaved buffer to the soundcard
 	snd_pcm_writei(handle, data.data(), nsamples);
 }
 
-size_t AlsaOutputEngine::samplerate() {
-	return srate;
-}
+size_t AlsaOutputEngine::samplerate() { return srate; }

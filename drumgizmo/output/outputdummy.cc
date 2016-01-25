@@ -26,31 +26,20 @@
  */
 #include "outputdummy.h"
 
-DummyOutputEngine::DummyOutputEngine() {
-}
+DummyOutputEngine::DummyOutputEngine() {}
 
-DummyOutputEngine::~DummyOutputEngine() {
-}
+DummyOutputEngine::~DummyOutputEngine() {}
 
-bool DummyOutputEngine::init(Channels data) {
-	return true;
-}
+bool DummyOutputEngine::init(Channels data) { return true; }
 
-void DummyOutputEngine::setParm(std::string parm, std::string value) {
-}
+void DummyOutputEngine::setParm(std::string parm, std::string value) {}
 
-bool DummyOutputEngine::start() {
-	return true;
-}
+bool DummyOutputEngine::start() { return true; }
 
-void DummyOutputEngine::stop() {
-}
+void DummyOutputEngine::stop() {}
 
-void DummyOutputEngine::pre(size_t nsamples) {
-}
+void DummyOutputEngine::pre(size_t nsamples) {}
 
-void DummyOutputEngine::run(int ch, sample_t* samples, size_t nsamples) {
-}
+void DummyOutputEngine::run(int ch, sample_t *samples, size_t nsamples) {}
 
-void DummyOutputEngine::post(size_t nsamples) {
-}
+void DummyOutputEngine::post(size_t nsamples) {}

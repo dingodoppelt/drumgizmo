@@ -34,34 +34,33 @@
 #include "midimapparser.h"
 #include "../jackclient.h"
 
-class JackMidiInputEngine
-	: public AudioInputEngine
-	, public JackProcess {
-	public:
-		JackMidiInputEngine(JackClient& client);
-		~JackMidiInputEngine();
-		
-		// based on AudioInputEngine
-		bool isMidiEngine() override;
-		bool init(Instruments& instruments) override;
-		void setParm(std::string parm, std::string value) override;
-		bool start() override;
-		void stop() override;
-		void pre() override;
-		event_t* run(size_t pos, size_t len, size_t* nevents) override;
-		void post() override;
-		
-		// based on JackProcess
-		void process(jack_nframes_t num_frames) override;
-		
-	private:
-		JackClient& client;
-		std::unique_ptr<JackPort> port;
-		
-		std::string midimap;
-		MidiMapper midi_mapper;
-		std::size_t pos;
-		
-		event_t* list;
-		size_t listsize;
+class JackMidiInputEngine : public AudioInputEngine, public JackProcess
+{
+public:
+	JackMidiInputEngine(JackClient &client);
+	~JackMidiInputEngine();
+
+	// based on AudioInputEngine
+	bool isMidiEngine() override;
+	bool init(Instruments &instruments) override;
+	void setParm(std::string parm, std::string value) override;
+	bool start() override;
+	void stop() override;
+	void pre() override;
+	event_t *run(size_t pos, size_t len, size_t *nevents) override;
+	void post() override;
+
+	// based on JackProcess
+	void process(jack_nframes_t num_frames) override;
+
+private:
+	JackClient &client;
+	std::unique_ptr<JackPort> port;
+
+	std::string midimap;
+	MidiMapper midi_mapper;
+	std::size_t pos;
+
+	event_t *list;
+	size_t listsize;
 };

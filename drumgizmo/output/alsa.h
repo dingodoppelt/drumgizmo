@@ -34,29 +34,29 @@
 
 #include "audiooutputengine.h"
 
-class AlsaOutputEngine
-	: public AudioOutputEngine {
-	public:
-		AlsaOutputEngine();
-		~AlsaOutputEngine();
-		
-		// based on AudioOutputEngine
-		bool init(Channels chan) override;
-		void setParm(std::string parm, std::string value) override;
-		bool start() override;
-		void stop() override;
-		void pre(size_t nsamples) override;
-		void run(int ch, sample_t* samples, size_t nsamples) override;
-		void post(size_t nsamples) override;
-		size_t samplerate() override;
-		
-	private:
-		snd_pcm_t* handle;
-		snd_pcm_hw_params_t* params;
-		std::vector<sample_t> data;
-		size_t num_channels;
-		
-		std::string dev;
-		unsigned int srate; // samplerate
-		snd_pcm_uframes_t frames;
+class AlsaOutputEngine : public AudioOutputEngine
+{
+public:
+	AlsaOutputEngine();
+	~AlsaOutputEngine();
+
+	// based on AudioOutputEngine
+	bool init(Channels chan) override;
+	void setParm(std::string parm, std::string value) override;
+	bool start() override;
+	void stop() override;
+	void pre(size_t nsamples) override;
+	void run(int ch, sample_t *samples, size_t nsamples) override;
+	void post(size_t nsamples) override;
+	size_t samplerate() override;
+
+private:
+	snd_pcm_t *handle;
+	snd_pcm_hw_params_t *params;
+	std::vector<sample_t> data;
+	size_t num_channels;
+
+	std::string dev;
+	unsigned int srate; // samplerate
+	snd_pcm_uframes_t frames;
 };
