@@ -39,3 +39,4 @@ PointerAlignment: Left
 SpaceBeforeAssignmentOperators: true
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+SpaceBeforeParens: Never
