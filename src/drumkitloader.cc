@@ -43,6 +43,7 @@ DrumKitLoader::~DrumKitLoader()
 {
 	DEBUG(loader, "~DrumKitLoader() pre\n");
   if(running) {
+	  framesize_semaphore.post();
     stop();
   }
 	DEBUG(loader, "~DrumKitLoader() post\n");
