@@ -39,7 +39,8 @@ DG_SRC = \
 	@top_srcdir@/src/thread.cc \
 	@top_srcdir@/src/velocity.cc \
 	@top_srcdir@/src/versionstr.cc
-DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
+DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2
+# -DDISABLE_HUGIN
 
 GUI_SRC = \
 	@top_srcdir@/plugingui/dgwindow.cc \
@@ -83,7 +84,8 @@ DBG_SRC = \
 	@top_srcdir@/hugin/hugin.c \
 	@top_srcdir@/hugin/hugin_syslog.c
 
-DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX -DDISABLE_HUGIN
+DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+# -DDISABLE_HUGIN
 
 #
 # http://old.nabble.com/using-VC%2B%2B-.lib-with-mingw-td23151303.html
