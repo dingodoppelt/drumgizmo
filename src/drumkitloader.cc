@@ -41,9 +41,11 @@ DrumKitLoader::DrumKitLoader()
 
 DrumKitLoader::~DrumKitLoader()
 {
+	DEBUG(loader, "~DrumKitLoader() pre\n");
   if(running) {
     stop();
   }
+	DEBUG(loader, "~DrumKitLoader() post\n");
 }
 
 void DrumKitLoader::stop()

@@ -40,11 +40,14 @@
 
 AudioCache::~AudioCache()
 {
+	DEBUG(cache, "~AudioCache() pre\n");
 
 	// TODO: Run through all active cacheids and release them/close their files.
 
 	deinit();
 	delete[] nodata;
+
+	DEBUG(cache, "~AudioCache() post\n");
 }
 
 void AudioCache::init(size_t poolsize)
@@ -222,9 +225,13 @@ void AudioCache::close(cacheid_t id)
 
 void AudioCache::setFrameSize(size_t framesize)
 {
+	printf("%s\n", __PRETTY_FUNCTION__);
+
 	// Make sure the event handler thread is stalled while we set the framesize
 	// state.
 	std::lock_guard<AudioCacheEventHandler> eventHandlerLock(eventHandler);
+
+	printf("A\n");
 
 	// NOTE: Not threaded...
 	//std::lock_guard<AudioCacheIDManager> idManagerLock(idManager);
@@ -242,7 +249,11 @@ void AudioCache::setFrameSize(size_t framesize)
 
 	this->framesize = framesize;
 
+	printf("B\n");
+
 	eventHandler.setChunkSize(CHUNKSIZE(framesize));
+
+	printf("C\n");
 }
 
 size_t AudioCache::frameSize() const
