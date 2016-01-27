@@ -92,11 +92,9 @@ void AudioCacheEventHandler::stop()
 	}
 
 	running = false;
-	if(threaded)
-	{
-		sem.post();
-		wait_stop();
-	}
+
+	sem.post();
+	wait_stop();
 }
 
 void AudioCacheEventHandler::setThreaded(bool threaded)
