@@ -52,6 +52,7 @@ class AudioCacheFileTest : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE(AudioCacheFileTest);
 	CPPUNIT_TEST(refTest);
 	CPPUNIT_TEST(readTest);
+	CPPUNIT_TEST(noFileTest);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -180,6 +181,57 @@ public:
 		}
 	}
 
+	void noFileTest()
+	{
+		size_t bufferSize = 64;
+		std::string filename = "kits/no-such-file.wav";
+
+		AudioCacheFile file(filename);
+		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
+		CPPUNIT_ASSERT_EQUAL(0u, file.getSize());
+		CPPUNIT_ASSERT_EQUAL(0u, file.getChannelCount());
+
+		CacheChannels channels;
+
+		sample_t samples[13][bufferSize];
+		volatile bool ready[13];
+		for(size_t c = 0; c < 13; ++c)
+		{
+			for(size_t i = 0; i < bufferSize; ++i)
+			{
+				samples[c][i] = 42.0f;
+			}
+
+			channels.push_back(
+				{
+					c, // channel
+					samples[c], // samples
+					bufferSize, // max_num_samples
+					&ready[c] // ready
+				}
+			);
+		}
+
+		for(size_t c = 0; c < 13; ++c)
+		{
+			ready[c] = false;
+		}
+
+		file.readChunk(channels, 0, bufferSize);
+
+		for(size_t c = 0; c < 13; ++c)
+		{
+			CPPUNIT_ASSERT_EQUAL(false, ready[c]?true:false);
+		}
+
+		for(size_t c = 0; c < 13; ++c)
+		{
+			for(size_t i = 0; i < bufferSize; ++i)
+			{
+				CPPUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
+			}
+		}
+	}
 };
 
 // Registers the fixture into the 'registry'

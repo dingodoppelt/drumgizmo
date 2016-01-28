@@ -30,16 +30,21 @@
 
 #include <hugin.hpp>
 
+#include <cstring>
+
 #include "audiocache.h"
 
 AudioCacheFile::AudioCacheFile(const std::string& filename)
 	: filename(filename)
 {
+	std::memset(&sf_info, 0, sizeof(SF_INFO));
+
 	fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!fh)
 	{
 		ERR(audiofile,"SNDFILE Error (%s): %s\n",
 		    filename.c_str(), sf_strerror(fh));
+		return;
 	}
 
 	if(sf_info.frames == 0)
@@ -75,7 +80,11 @@ size_t AudioCacheFile::getChannelCount()
 void AudioCacheFile::readChunk(const CacheChannels& channels,
                                size_t pos, size_t num_samples)
 {
-	assert(fh != nullptr); // File handle must never be nullptr
+	//assert(fh != nullptr); // File handle must never be nullptr
+	if(!fh)
+	{
+		return;
+	}
 
 	if((int)pos > sf_info.frames)
 	{
