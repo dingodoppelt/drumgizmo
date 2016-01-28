@@ -52,10 +52,10 @@ public:
 	CacheChannels channels;
 };
 
-AudioCacheEventHandler::AudioCacheEventHandler(AudioCacheIDManager& idManager)
+AudioCacheEventHandler::AudioCacheEventHandler(AudioCacheIDManager& id_manager)
 	// Hack to be able to forward declare CacheEvent:
 	: eventqueue(new std::list<CacheEvent>())
-	, idManager(idManager)
+	, id_manager(id_manager)
 {
 }
 
@@ -64,8 +64,8 @@ AudioCacheEventHandler::~AudioCacheEventHandler()
 	// Close all ids already enqueued to be closed.
 	clearEvents();
 
-	auto activeIDs = idManager.getActiveIDs();
-	for(auto id : activeIDs)
+	auto active_ids = id_manager.getActiveIDs();
+	for(auto id : active_ids)
 	{
 		handleCloseCache(id);
 	}
@@ -139,10 +139,10 @@ void AudioCacheEventHandler::pushLoadNextEvent(AudioCacheFile* afile,
                                                size_t pos, sample_t* buffer,
                                                volatile bool* ready)
 {
-	CacheEvent e;
-	e.eventType = EventType::LoadNext;
-	e.pos = pos;
-	e.afile = afile;
+	CacheEvent cache_event;
+	cache_event.eventType = EventType::LoadNext;
+	cache_event.pos = pos;
+	cache_event.afile = afile;
 
 	CacheChannel c;
 	c.channel = channel;
@@ -151,18 +151,18 @@ void AudioCacheEventHandler::pushLoadNextEvent(AudioCacheFile* afile,
 	*ready = false;
 	c.ready = ready;
 
-	e.channels.insert(e.channels.end(), c);
+	cache_event.channels.insert(cache_event.channels.end(), c);
 
-	pushEvent(e);
+	pushEvent(cache_event);
 }
 
 void AudioCacheEventHandler::pushCloseEvent(cacheid_t id)
 {
-	CacheEvent e;
-	e.eventType = EventType::Close;
-	e.id = id;
+	CacheEvent cache_event;
+	cache_event.eventType = EventType::Close;
+	cache_event.id = id;
 
-	pushEvent(e);
+	pushEvent(cache_event);
 }
 
 void AudioCacheEventHandler::setChunkSize(size_t chunksize)
@@ -185,7 +185,7 @@ void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 	DEBUG(cache, "2)\n");
 
 	// Skip all active cacheids and make their buffers point at nodata.
-	idManager.disableActive();
+	id_manager.disableActive();
 
 	DEBUG(cache, "3)\n");
 
@@ -217,38 +217,39 @@ void AudioCacheEventHandler::clearEvents()
 	eventqueue->clear();
 }
 
-void AudioCacheEventHandler::handleLoadNextEvent(CacheEvent& event)
+void AudioCacheEventHandler::handleLoadNextEvent(CacheEvent& cache_event)
 {
-	event.afile->readChunk(event.channels, event.pos, chunksize);
+	cache_event.afile->readChunk(cache_event.channels, cache_event.pos,
+	                             chunksize);
 }
 
-void AudioCacheEventHandler::handleCloseEvent(CacheEvent& e)
+void AudioCacheEventHandler::handleCloseEvent(CacheEvent& cache_event)
 {
 	std::lock_guard<std::mutex> lock(mutex);
-	handleCloseCache(e.id);
+	handleCloseCache(cache_event.id);
 }
 
 void AudioCacheEventHandler::handleCloseCache(cacheid_t cacheid)
 {
-	auto& cache = idManager.getCache(cacheid);
+	auto& cache = id_manager.getCache(cacheid);
 
 	files.releaseFile(cache.afile->getFilename());
 
 	delete[] cache.front;
 	delete[] cache.back;
 
-	idManager.releaseID(cacheid);
+	id_manager.releaseID(cacheid);
 }
 
-void AudioCacheEventHandler::handleEvent(CacheEvent& e)
+void AudioCacheEventHandler::handleEvent(CacheEvent& cache_event)
 {
-	switch(e.eventType)
+	switch(cache_event.eventType)
 	{
 	case EventType::LoadNext:
-		handleLoadNextEvent(e);
+		handleLoadNextEvent(cache_event);
 		break;
 	case EventType::Close:
-		handleCloseEvent(e);
+		handleCloseEvent(cache_event);
 		break;
 	}
 }
@@ -268,25 +269,25 @@ void AudioCacheEventHandler::thread_main()
 			continue;
 		}
 
-		CacheEvent e = eventqueue->front();
+		CacheEvent cache_event = eventqueue->front();
 		eventqueue->pop_front();
 		mutex.unlock();
 
-		// TODO: Skip event if e.pos < cache.pos
-		//if(!e.active)
+		// TODO: Skip event if cache_event.pos < cache.pos
+		//if(!cache_event.active)
 		//{
 		//	continue;
 		//}
 
-		handleEvent(e);
+		handleEvent(cache_event);
 	}
 }
 
-void AudioCacheEventHandler::pushEvent(CacheEvent& event)
+void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 {
 	if(!threaded)
 	{
-		handleEvent(event);
+		handleEvent(cache_event);
 		return;
 	}
 
@@ -295,18 +296,19 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& event)
 
 		bool found = false;
 
-		if(event.eventType == EventType::LoadNext)
+		if(cache_event.eventType == EventType::LoadNext)
 		{
-			for(auto& queuedEvent : *eventqueue)
+			for(auto& queued_event : *eventqueue)
 			{
-				if((queuedEvent.eventType == EventType::LoadNext) &&
-				   (event.afile->getFilename() == queuedEvent.afile->getFilename()) &&
-				   (event.pos == queuedEvent.pos))
+				if((queued_event.eventType == EventType::LoadNext) &&
+				   (cache_event.afile->getFilename() ==
+				    queued_event.afile->getFilename()) &&
+				   (cache_event.pos == queued_event.pos))
 				{
 					// Append channel and buffer to the existing event.
-					queuedEvent.channels.insert(queuedEvent.channels.end(),
-					                            event.channels.begin(),
-					                            event.channels.end());
+					queued_event.channels.insert(queued_event.channels.end(),
+					                             cache_event.channels.begin(),
+					                             cache_event.channels.end());
 					found = true;
 					break;
 				}
@@ -316,7 +318,7 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& event)
 		if(!found)
 		{
 			// The event was not already on the list, create a new one.
-			eventqueue->push_back(event);
+			eventqueue->push_back(cache_event);
 		}
 	}
 

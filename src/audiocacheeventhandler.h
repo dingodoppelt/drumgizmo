@@ -43,7 +43,7 @@ class AudioCacheEventHandler
 	: protected Thread
 {
 public:
-	AudioCacheEventHandler(AudioCacheIDManager& idManager);
+	AudioCacheEventHandler(AudioCacheIDManager& id_manager);
 	~AudioCacheEventHandler();
 
 	//! Start event handler thread.
@@ -80,22 +80,26 @@ public:
 	AudioCacheFile& openFile(const std::string& filename);
 
 protected:
-	AudioCacheFiles files;
-
-	std::mutex mutex;
-
 	void clearEvents();
 
-	void handleLoadNextEvent(CacheEvent& e);
-	void handleCloseEvent(CacheEvent& e);
+	void handleLoadNextEvent(CacheEvent& cache_event);
+
+	//! Lock the mutex and calls handleCloseCache
+	void handleCloseEvent(CacheEvent& cache_event);
+
+	//! Close decrease the file ref and release the cache id.
 	void handleCloseCache(cacheid_t cacheid);
 
-	void handleEvent(CacheEvent& e);
+	void handleEvent(CacheEvent& cache_event);
 
 	// From Thread
 	void thread_main() override;
 
-	void pushEvent(CacheEvent& e);
+	void pushEvent(CacheEvent& cache_event);
+
+	AudioCacheFiles files;
+
+	std::mutex mutex;
 
 	std::list<CacheEvent>* eventqueue;
 
@@ -104,7 +108,7 @@ protected:
 	Semaphore sem_run;
 	bool running{false};
 
-	AudioCacheIDManager& idManager;
+	AudioCacheIDManager& id_manager;
 
 	size_t chunksize{1024};
 };

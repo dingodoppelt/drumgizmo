@@ -31,7 +31,8 @@
 #include <audiocachefile.h>
 #include <audiofile.h>
 
-class TestableAudioCacheFiles : public AudioCacheFiles
+class TestableAudioCacheFiles
+	: public AudioCacheFiles
 {
 public:
 	//CacheAudioFile& getAudioFile(const std::string& filename);
@@ -47,7 +48,8 @@ public:
 	}
 };
 
-class AudioCacheFileTest : public CppUnit::TestFixture
+class AudioCacheFileTest
+	: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(AudioCacheFileTest);
 	CPPUNIT_TEST(refTest);
@@ -78,16 +80,16 @@ public:
 		CPPUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 	}
 
-	void readTestHelper(size_t bufferSize)
+	void readTestHelper(size_t buffer_size)
 	{
-		printf("Test buffer size: %d samples\n", (int)bufferSize);
+		printf("Test buffer size: %d samples\n", (int)buffer_size);
 
 		std::string filename = "kit/ride-multi-channel.wav";
-		AudioFile* refFile[13];
+		AudioFile* ref_file[13];
 		for(size_t c = 0; c < 13; ++c)
 		{
-			refFile[c] = new AudioFile(filename, c);
-			refFile[c]->load();
+			ref_file[c] = new AudioFile(filename, c);
+			ref_file[c]->load();
 		}
 
 		AudioCacheFile file(filename);
@@ -96,11 +98,11 @@ public:
 
 		CacheChannels channels;
 
-		sample_t samples[13][bufferSize];
+		sample_t samples[13][buffer_size];
 		volatile bool ready[13];
 		for(size_t c = 0; c < 13; ++c)
 		{
-			for(size_t i = 0; i < bufferSize; ++i)
+			for(size_t i = 0; i < buffer_size; ++i)
 			{
 				samples[c][i] = 42;
 			}
@@ -109,30 +111,30 @@ public:
 				{
 					c, // channel
 					samples[c], // samples
-					bufferSize, // max_num_samples
+					buffer_size, // max_num_samples
 					&ready[c] // ready
 				}
 			);
 		}
 
-		for(size_t offset = 0; offset < file.getSize(); offset += bufferSize)
+		for(size_t offset = 0; offset < file.getSize(); offset += buffer_size)
 		{
 			for(size_t c = 0; c < 13; ++c)
 			{
 				ready[c] = false;
 			}
 
-			size_t readSize = file.getSize() - offset;
-			if(readSize > bufferSize)
+			size_t read_size = file.getSize() - offset;
+			if(read_size > buffer_size)
 			{
-				readSize = bufferSize;
+				read_size = buffer_size;
 			}
 			else
 			{
-				printf("Last read: %d samples\n", (int)readSize);
+				printf("Last read: %d samples\n", (int)read_size);
 			}
 
-			file.readChunk(channels, offset, readSize);
+			file.readChunk(channels, offset, read_size);
 
 			for(size_t c = 0; c < 13; ++c)
 			{
@@ -142,9 +144,9 @@ public:
 			sample_t diff[13] = {0.0};
 			for(size_t c = 0; c < 13; ++c)
 			{
-				for(size_t i = 0; i < readSize; ++i)
+				for(size_t i = 0; i < read_size; ++i)
 				{
-					diff[c] += abs(refFile[c]->data[i + offset] - samples[c][i]);
+					diff[c] += abs(ref_file[c]->data[i + offset] - samples[c][i]);
 				}
 			}
 
@@ -156,34 +158,34 @@ public:
 
 		for(size_t c = 0; c < 13; ++c)
 		{
-			delete refFile[c];
+			delete ref_file[c];
 		}
 	}
 
 	void readTest()
 	{
 		// Exhaustive test for 1...64
-		for(size_t bufferSize = 1; bufferSize < 64; ++bufferSize)
+		for(size_t buffer_size = 1; buffer_size < 64; ++buffer_size)
 		{
-			readTestHelper(bufferSize);
+			readTestHelper(buffer_size);
 		}
 
 		// Binary test for 64 .. 4096
-		for(size_t bufferSize = 64; bufferSize < 4096; bufferSize *= 2)
+		for(size_t buffer_size = 64; buffer_size < 4096; buffer_size *= 2)
 		{
-			readTestHelper(bufferSize);
+			readTestHelper(buffer_size);
 		}
 
 		// And some sporadic tests for some "wierd" sizes.
-		for(size_t bufferSize = 65; bufferSize < 4096; bufferSize *= 1.1)
+		for(size_t buffer_size = 65; buffer_size < 4096; buffer_size *= 1.1)
 		{
-			readTestHelper(bufferSize);
+			readTestHelper(buffer_size);
 		}
 	}
 
 	void noFileTest()
 	{
-		size_t bufferSize = 64;
+		size_t buffer_size = 64;
 		std::string filename = "kits/no-such-file.wav";
 
 		AudioCacheFile file(filename);
@@ -193,11 +195,11 @@ public:
 
 		CacheChannels channels;
 
-		sample_t samples[13][bufferSize];
+		sample_t samples[13][buffer_size];
 		volatile bool ready[13];
 		for(size_t c = 0; c < 13; ++c)
 		{
-			for(size_t i = 0; i < bufferSize; ++i)
+			for(size_t i = 0; i < buffer_size; ++i)
 			{
 				samples[c][i] = 42.0f;
 			}
@@ -206,7 +208,7 @@ public:
 				{
 					c, // channel
 					samples[c], // samples
-					bufferSize, // max_num_samples
+					buffer_size, // max_num_samples
 					&ready[c] // ready
 				}
 			);
@@ -217,7 +219,7 @@ public:
 			ready[c] = false;
 		}
 
-		file.readChunk(channels, 0, bufferSize);
+		file.readChunk(channels, 0, buffer_size);
 
 		for(size_t c = 0; c < 13; ++c)
 		{
@@ -226,7 +228,7 @@ public:
 
 		for(size_t c = 0; c < 13; ++c)
 		{
-			for(size_t i = 0; i < bufferSize; ++i)
+			for(size_t i = 0; i < buffer_size; ++i)
 			{
 				CPPUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
 			}

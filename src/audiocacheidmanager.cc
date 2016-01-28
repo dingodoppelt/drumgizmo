@@ -29,10 +29,6 @@
 #include <limits>
 #include <assert.h>
 
-AudioCacheIDManager::AudioCacheIDManager()
-{
-}
-
 AudioCacheIDManager::~AudioCacheIDManager()
 {
 	assert(availableids.size() == id2cache.size()); // All ids should be released.
@@ -114,15 +110,15 @@ void AudioCacheIDManager::disableActive()
 
 std::vector<cacheid_t> AudioCacheIDManager::getActiveIDs()
 {
-	std::vector<cacheid_t> activeIDs;
+	std::vector<cacheid_t> active_ids;
 
 	for(auto& cache : id2cache)
 	{
 		if(cache.id != CACHE_NOID)
 		{
-			activeIDs.push_back(cache.id);
+			active_ids.push_back(cache.id);
 		}
 	}
 
-	return activeIDs;
+	return active_ids;
 }

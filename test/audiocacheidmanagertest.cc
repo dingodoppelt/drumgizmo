@@ -28,7 +28,9 @@
 
 #include <audiocacheidmanager.h>
 
-class TestableAudioCacheIDManager : public AudioCacheIDManager {
+class TestableAudioCacheIDManager
+	: public AudioCacheIDManager
+{
 public:
 	int getAvailableIDs()
 	{
@@ -36,7 +38,8 @@ public:
 	}
 };
 
-class AudioCacheIDManagerTest : public CppUnit::TestFixture
+class AudioCacheIDManagerTest
+	: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(AudioCacheIDManagerTest);
 	CPPUNIT_TEST(registerReleaseTest);

@@ -39,29 +39,6 @@
 
 #define CHUNK_MULTIPLIER 16
 
-
-//TODO:
-// 1: Move nodata initialisation to init method.
-// 2: Make semaphore in thread to block init call until thread has been started.
-
-//// next
-// Pre: preloaded contains 2 x framesize. chunk size is framesize.
-// allocate 2 chunks and copy initial_samples_needed to first buffer from
-// preloaded data and enough to fill up the second buffer from preloaded
-// returns the first buffer and its size in &size.
-// get id from "free stack" and store pointers to buffers in id vector.
-// event: open sndfile handle (if not already open) and increase refcount
-
-//// next
-// Return which ever buffer is the front, swap them and add event to load the
-// next chunk.
-
-//// close
-// decrement file handle refcounter and close file if it is 0.
-// free the 2 buffers
-// (do not erase from the id vector), push index to
-// "free stack" for reuse.
-
 class AudioCache {
 public:
 	AudioCache() = default;
@@ -129,8 +106,8 @@ public:
 private:
 	size_t framesize{0};
 	sample_t *nodata{nullptr};
-	size_t numberOfUnderruns{0};
+	size_t number_of_underruns{0};
 
-	AudioCacheIDManager idManager;
-	AudioCacheEventHandler eventHandler{idManager};
+	AudioCacheIDManager id_manager;
+	AudioCacheEventHandler event_handler{id_manager};
 };

@@ -28,14 +28,8 @@
 
 #include <audiocacheeventhandler.h>
 
-class TestableAudioCacheEventHandler
-	: public AudioCacheEventHandler
-{
-public:
-	
-};
-
-class AudioCacheEventHandlerTest : public CppUnit::TestFixture
+class AudioCacheEventHandlerTest
+	: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(AudioCacheEventHandlerTest);
 	CPPUNIT_TEST(threadedTest);
@@ -47,10 +41,10 @@ public:
 
 	void threadedTest()
 	{
-		AudioCacheIDManager idManager;
-		idManager.init(10);
+		AudioCacheIDManager id_manager;
+		id_manager.init(10);
 
-		AudioCacheEventHandler eventHandler(idManager);
+		AudioCacheEventHandler event_handler(id_manager);
 	}
 };
 

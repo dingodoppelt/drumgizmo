@@ -60,21 +60,25 @@ typedef struct {
 class AudioCacheIDManager {
 	friend class AudioCacheEventHandler;
 public:
-	AudioCacheIDManager();
+	AudioCacheIDManager() = default;
 	~AudioCacheIDManager();
 
+	//! Initialise id lists with specified capacity.
+	//! Exceeding this capacity will result in CACHE_DUMMYID on calls to
+	//! registerID.
 	void init(unsigned int capacity);
 
-	// #thread safe
-	// #hard real-time safe
+	//! Get the cache object connected with the specified cacheid.
+	//! Note: The cacheid MUST be active.
 	cache_t& getCache(cacheid_t id);
 
-	// Thread safe
-	// Real-time safe
+	//! Reserve a new cache object and return its cacheid.
+	//! The contents of the supplied cache object will be copied to the new
+	//! cache object.
 	cacheid_t registerID(const cache_t& cache);
 
-	// Thread safe
-	// Real-time safe
+	//! Release a cache object and its correseponding cacheid.
+	//! After this call the cacheid can no longer be used.
 	void releaseID(cacheid_t id);
 
 protected:

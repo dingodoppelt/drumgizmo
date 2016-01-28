@@ -42,8 +42,6 @@ AudioCache::~AudioCache()
 {
 	DEBUG(cache, "~AudioCache() pre\n");
 
-	// TODO: Run through all active cacheids and release them/close their files.
-
 	deinit();
 	delete[] nodata;
 
@@ -54,13 +52,13 @@ void AudioCache::init(size_t poolsize)
 {
 	setAsyncMode(true);
 
-	idManager.init(poolsize);
-	eventHandler.start();
+	id_manager.init(poolsize);
+	event_handler.start();
 }
 
 void AudioCache::deinit()
 {
-	eventHandler.stop();
+	event_handler.stop();
 }
 
 // Invariant: initial_samples_needed < preloaded audio data
@@ -76,7 +74,7 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 	}
 
 	// Register a new id for this cache session.
-	id = idManager.registerID({});
+	id = id_manager.registerID({});
 
 	// If we are out of available ids we get CACHE_DUMMYID
 	if(id == CACHE_DUMMYID)
@@ -87,9 +85,9 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 	}
 
 	// Get the cache_t connected with the registered id.
-	cache_t& c = idManager.getCache(id);
+	cache_t& c = id_manager.getCache(id);
 
-	c.afile = &eventHandler.openFile(file->filename);
+	c.afile = &event_handler.openFile(file->filename);
 	c.channel = channel;
 
 	// Next call to 'next()' will read from this point.
@@ -124,7 +122,8 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 			c.back = new sample_t[CHUNKSIZE(framesize)];
 		}
 
-		eventHandler.pushLoadNextEvent(c.afile, c.channel, c.pos, c.back, &c.ready);
+		event_handler.pushLoadNextEvent(c.afile, c.channel, c.pos,
+		                                c.back, &c.ready);
 	}
 
 	return c.preloaded_samples; // return preloaded data
@@ -140,7 +139,7 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 		return nodata;
 	}
 
-	cache_t& c = idManager.getCache(id);
+	cache_t& c = id_manager.getCache(id);
 
 	if(c.preloaded_samples)
 	{
@@ -172,7 +171,7 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 	if(!c.ready)
 	{
 		// Just return silence.
-		++numberOfUnderruns;
+		++number_of_underruns;
 		return nodata;
 	}
 
@@ -193,7 +192,8 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 			c.back = new sample_t[CHUNKSIZE(framesize)];
 		}
 
-		eventHandler.pushLoadNextEvent(c.afile, c.channel, c.pos, c.back, &c.ready);
+		event_handler.pushLoadNextEvent(c.afile, c.channel, c.pos,
+		                                c.back, &c.ready);
 	}
 
 	// We should always have a front buffer at this point.
@@ -209,7 +209,7 @@ bool AudioCache::isReady(cacheid_t id)
 		return true;
 	}
 
-	cache_t& cache = idManager.getCache(id);
+	cache_t& cache = id_manager.getCache(id);
 	return cache.ready;
 }
 
@@ -220,7 +220,7 @@ void AudioCache::close(cacheid_t id)
 		return;
 	}
 
-	eventHandler.pushCloseEvent(id);
+	event_handler.pushCloseEvent(id);
 }
 
 void AudioCache::setFrameSize(size_t framesize)
@@ -229,12 +229,10 @@ void AudioCache::setFrameSize(size_t framesize)
 
 	// Make sure the event handler thread is stalled while we set the framesize
 	// state.
-	std::lock_guard<AudioCacheEventHandler> eventHandlerLock(eventHandler);
-
-	DEBUG(cache, "A\n");
+	std::lock_guard<AudioCacheEventHandler> event_handler_lock(event_handler);
 
 	// NOTE: Not threaded...
-	//std::lock_guard<AudioCacheIDManager> idManagerLock(idManager);
+	//std::lock_guard<AudioCacheIDManager> id_manager_lock(id_manager);
 
 	if(framesize > this->framesize)
 	{
@@ -249,11 +247,7 @@ void AudioCache::setFrameSize(size_t framesize)
 
 	this->framesize = framesize;
 
-	DEBUG(cache, "B\n");
-
-	eventHandler.setChunkSize(CHUNKSIZE(framesize));
-
-	DEBUG(cache, "C\n");
+	event_handler.setChunkSize(CHUNKSIZE(framesize));
 }
 
 size_t AudioCache::frameSize() const
@@ -263,23 +257,20 @@ size_t AudioCache::frameSize() const
 
 void AudioCache::setAsyncMode(bool async)
 {
-	// TODO: Clean out read queue.
-	// TODO: Block until reader thread is idle, otherwise we might screw up the
-	// buffers...?
-	eventHandler.setThreaded(async);
+	event_handler.setThreaded(async);
 }
 
 bool AudioCache::asyncMode() const
 {
-	return eventHandler.getThreaded();
+	return event_handler.getThreaded();
 }
 
 size_t AudioCache::getNumberOfUnderruns() const
 {
-	return numberOfUnderruns;
+	return number_of_underruns;
 }
 
 void AudioCache::resetNumberOfUnderruns()
 {
-	numberOfUnderruns = 0;
+	number_of_underruns = 0;
 }

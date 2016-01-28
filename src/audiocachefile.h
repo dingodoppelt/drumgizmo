@@ -29,20 +29,21 @@
 #include <string>
 #include <list>
 #include <map>
+
 #include <mutex>
+#include "mutex.h"
 
 #include <sndfile.h>
 
 #include <audiotypes.h>
 
-#include "mutex.h"
-
+//! Channel data container in the cache world.
 class CacheChannel {
 public:
-	size_t channel;
-	sample_t* samples;
-	size_t num_samples;
-	volatile bool* ready;
+	size_t channel; //< Channel number
+	sample_t* samples; //< Sample buffer pointer.
+	size_t num_samples; //< Number of samples in the sample buffer
+	volatile bool* ready; //< Is set to tru when the loading is done.
 };
 
 using CacheChannels = std::list<CacheChannel>;

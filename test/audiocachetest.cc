@@ -32,7 +32,8 @@
 
 #define FRAMESIZE 64
 
-class AudioCacheTest : public CppUnit::TestFixture
+class AudioCacheTest
+	: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(AudioCacheTest);
 	CPPUNIT_TEST(singleChannelNonThreaded);
@@ -54,22 +55,22 @@ public:
 	                int framesize)
 	{
 		// Reference file:
-		AudioFile audioFileRef(filename, channel);
-		printf("audioFileRef.load\n");
-		audioFileRef.load(ALL_SAMPLES);
+		AudioFile audio_file_ref(filename, channel);
+		printf("audio_file_ref.load\n");
+		audio_file_ref.load(ALL_SAMPLES);
 
 		// Input file:
-		AudioFile audioFile(filename, channel);
-		printf("audioFile.load\n");
-		audioFile.load(4096);
+		AudioFile audio_file(filename, channel);
+		printf("audio_file.load\n");
+		audio_file.load(4096);
 
-		AudioCache audioCache;
-		printf("audioCache.init\n");
-		audioCache.init(100);
-		audioCache.setAsyncMode(threaded);
+		AudioCache audio_cache;
+		printf("audio_cache.init\n");
+		audio_cache.init(100);
+		audio_cache.setAsyncMode(threaded);
 
 		// Set initial (upper limit) framesize
-		audioCache.setFrameSize(framesize);
+		audio_cache.setFrameSize(framesize);
 
 		cacheid_t id;
 
@@ -80,25 +81,25 @@ public:
 
 			printf("open: initial_samples_needed: %d\n", (int)initial_samples_needed);
 			sample_t *samples =
-				audioCache.open(&audioFile, initial_samples_needed, channel, id);
+				audio_cache.open(&audio_file, initial_samples_needed, channel, id);
 			size_t size = initial_samples_needed;
 			size_t offset = 0;
 
 			// Test pre cache:
 			for(size_t i = 0; i < size; ++i)
 			{
-				CPPUNIT_ASSERT_EQUAL(audioFileRef.data[offset], samples[i]);
+				CPPUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 				++offset;
 			}
 
 			// Test the rest
-			while(offset < audioFileRef.size)
+			while(offset < audio_file_ref.size)
 			{
 				if(threaded)
 				{
 					// Wait until we are finished reading
 					int timeout = 1000;
-					while(!audioCache.isReady(id))
+					while(!audio_cache.isReady(id))
 					{
 						usleep(1000);
 						if(--timeout == 0)
@@ -108,26 +109,26 @@ public:
 					}
 				}
 
-				samples = audioCache.next(id, size);
+				samples = audio_cache.next(id, size);
 
-				CPPUNIT_ASSERT_EQUAL(0, (int)audioCache.getNumberOfUnderruns());
+				CPPUNIT_ASSERT_EQUAL(0, (int)audio_cache.getNumberOfUnderruns());
 
-				for(size_t i = 0; (i < size) && (offset < audioFileRef.size); ++i)
+				for(size_t i = 0; (i < size) && (offset < audio_file_ref.size); ++i)
 				{
-					if(audioFileRef.data[offset] != samples[i])
+					if(audio_file_ref.data[offset] != samples[i])
 					{
 						printf("-----> offset: %d, size: %d, diff: %d,"
 						       " i: %d, size: %d, block-diff: %d\n",
-						       (int)offset, (int)audioFileRef.size,
-						       (int)(audioFileRef.size - offset),
+						       (int)offset, (int)audio_file_ref.size,
+						       (int)(audio_file_ref.size - offset),
 						       (int)i, (int)size, (int)(size - i));
 					}
-					CPPUNIT_ASSERT_EQUAL(audioFileRef.data[offset], samples[i]);
+					CPPUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 					++offset;
 				}
 			}
 
-			audioCache.close(id);
+			audio_cache.close(id);
 		}
 
 		printf("done\n");
