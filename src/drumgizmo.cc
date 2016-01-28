@@ -220,8 +220,10 @@ void DrumGizmo::setFreeWheel(bool freewheel)
 void DrumGizmo::run(int endpos)
 {
 	size_t pos = 0;
-	size_t nsamples = 1024;//oe->getBufferSize();
+	size_t nsamples = oe->getBufferSize();
 	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
+	setFrameSize(oe->getBufferSize());
 
 	ie->start();
 	oe->start();
