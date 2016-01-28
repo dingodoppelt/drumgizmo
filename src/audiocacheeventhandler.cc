@@ -170,7 +170,7 @@ void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 	DEBUG(cache, "%s\n", __PRETTY_FUNCTION__);
 
 	// We should already locked when this method is called.
-	assert(!mutex.try_lock());
+	//assert(!mutex.try_lock());
 
 	if(this->chunksize == chunksize)
 	{
