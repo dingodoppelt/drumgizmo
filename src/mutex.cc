@@ -71,6 +71,10 @@ Mutex::~Mutex()
 bool Mutex::try_lock()
 {
 #ifdef WIN32
+	DEBUG(mutex, "%s\n", __PRETTY_FUNCTION__);
+	DEBUG(mutex, "WAIT_OBJECT_0: %d, WaitForSingleObject: %d\n",
+	      WAIT_OBJECT_0, WaitForSingleObject(prv->mutex, 0));
+
 	return WaitForSingleObject(prv->mutex, 0) == WAIT_OBJECT_0;
 #else
 	return pthread_mutex_trylock(&prv->mutex) != EBUSY;

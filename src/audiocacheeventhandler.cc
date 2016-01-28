@@ -165,6 +165,8 @@ void AudioCacheEventHandler::pushCloseEvent(cacheid_t id)
 
 void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 {
+	DEBUG(cache, "%s\n", __PRETTY_FUNCTION__);
+
 	// We should already locked when this method is called.
 	assert(!mutex.try_lock());
 
@@ -173,11 +175,17 @@ void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 		return;
 	}
 
+	DEBUG(cache, "1)\n");
+
 	// Remove all events from event queue.
 	clearEvents();
 
+	DEBUG(cache, "2)\n");
+
 	// Skip all active cacheids and make their buffers point at nodata.
 	idManager.disableActive();
+
+	DEBUG(cache, "3)\n");
 
 	this->chunksize = chunksize;
 }
