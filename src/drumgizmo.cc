@@ -45,6 +45,10 @@
 
 #include "nolocale.h"
 
+#ifdef WITH_RESAMPLER
+#undef WITH_RESAMPLER
+#endif
+
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : MessageReceiver(MSGRCV_ENGINE)
   , loader()
@@ -514,6 +518,7 @@ int DrumGizmo::samplerate()
 
 void DrumGizmo::setSamplerate(int samplerate)
 {
+	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
   Conf::samplerate = samplerate;
 #ifdef WITH_RESAMPLER
   for(int i = 0; i < MAX_NUM_CHANNELS; i++) {
