@@ -32,6 +32,8 @@
 #include <drumgizmo.h>
 
 #include <hugin.hpp>
+#include <stdlib.h>
+#include <string>
 
 #define NUM_PROGRAMS 0
 #define NUM_PARAMS 0
@@ -90,9 +92,31 @@ AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 DrumGizmoVst::DrumGizmoVst(audioMasterCallback audioMaster)
 	: AudioEffectX(audioMaster, NUM_PROGRAMS, NUM_PARAMS)
 {
-	hug_status_t status = hug_init(
-	    HUG_FLAG_OUTPUT_TO_SYSLOG | HUG_FLAG_USE_MUTEX, HUG_OPTION_SYSLOG_HOST,
-	    "192.168.0.10", HUG_OPTION_SYSLOG_PORT, 514, HUG_OPTION_END);
+	hug_status_t status = HUG_STATUS_OK;
+
+	int hugin_flags = HUG_FLAG_USE_MUTEX;
+
+	const char* syslog_host_env = getenv("DG_SYSLOG_HOST");
+
+	if(syslog_host_env)
+	{
+		std::string syslog_host = syslog_host_env;
+		int syslog_port = 514;
+		const char* syslog_port_env = getenv("DG_SYSLOG_PORT");
+		if(syslog_port_env)
+		{
+			syslog_port = atoi(syslog_port_env);
+		}
+
+		status = hug_init(hugin_flags | HUG_FLAG_OUTPUT_TO_SYSLOG,
+		                  HUG_OPTION_SYSLOG_HOST, syslog_host.c_str(),
+		                  HUG_OPTION_SYSLOG_PORT, syslog_port,
+		                  HUG_OPTION_END);
+	}
+	else
+	{
+		status = hug_init(hugin_flags);
+	}
 
 	if(status != HUG_STATUS_OK)
 	{
