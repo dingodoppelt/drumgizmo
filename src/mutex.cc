@@ -27,6 +27,8 @@
  */
 #include "mutex.h"
 
+#include <hugin.hpp>
+
 #ifdef WIN32
 #include <windows.h>
 #else
