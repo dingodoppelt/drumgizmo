@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOFILE_H__
-#define __DRUMGIZMO_AUDIOFILE_H__
+#pragma once
 
 #include <string>
 #include <map>
@@ -36,74 +35,31 @@
 #include "mutex.h"
 #include "audio.h"
 
-/*
-  Plan for lazy loading of audio (Brainstorming)
-    * Encapsulate data array?
-      - Speed issues?
-      - Other suggestion
-        * Trigger on read begin and read done
-          - readnext(instrument)?
-        * size_t current latest loaded sample
-        * run in own thread? threads in drumgizmo??
-          - Add soundfile-loader-class which run in its own thread
-    * Add pre-loading constant
-    * Pointer to pos in audio stream (maybe just last position read)
-    * Strategy for how to handle pre-loading of remaining file
-      - Is it acceptable only to handle sequential reading of data (no random access)?
-
-   Thread A                                                  Thread B
-
-   :preload constant (user defined)
-   :speed modifier constant (in which time must 
-    sample n be loaded relative to trigger time) 
-  ----------                                                           ------
-  | Loader |   <------- Trigger load of InstrumentSample n  --------- | DG   | 
-  ----------                                                           ------
-    Load                  (int- right most loaded sample --> If current sample pos loaded
-      |            --------- |                                   |
-    Wave Into --> | SndFile | <----- Read data (directly from array)
-                   ---------  
-*/
-
-//#define LAZYLOAD
-
 #define ALL_SAMPLES -1
 
 class AudioFile {
 public:
-  AudioFile(std::string filename, int filechannel);
-  ~AudioFile();
+	AudioFile(const std::string& filename, int filechannel);
+	~AudioFile();
 
-  void load(int num_samples = ALL_SAMPLES);
-  void unload();
+	void load(int num_samples = ALL_SAMPLES);
+	void unload();
 
-  bool isLoaded();
+	bool isLoaded();
 
-  volatile size_t size; // Full size of the file
-  volatile size_t preloadedsize; // Number of samples preloaded (in data)
-  sample_t *data;
+	volatile size_t size{0}; // Full size of the file
+	volatile size_t preloadedsize{0}; // Number of samples preloaded (in data)
+	sample_t *data{nullptr};
 
-  std::string filename;
+	std::string filename;
 
-#ifdef LAZYLOAD
-//  SF_INFO sf_info;
-//  SNDFILE *fh;
-//  bool completely_loaded;
-  void init();
-  void reset();
-  void loadNext();
-  sample_t* preloaded_data; 
-#endif/*LAZYLOAD*/
+	bool isValid();
 
-  bool isValid();
+	Mutex mutex;
 
-  Mutex mutex;
-
-  int filechannel;
+	int filechannel;
 
 private:
-  void *magic;
-  volatile bool is_loaded;
+	void *magic;
+	volatile bool is_loaded;
 };
-
-#endif/*__DRUMGIZMO_AUDIOFILE_H__*/

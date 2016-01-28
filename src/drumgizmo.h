@@ -53,52 +53,54 @@
 #define REFSFILE "refs.conf"
 #define RESAMPLER_INPUT_BUFFER 64
 
-class DrumGizmo : public MessageReceiver {
+class DrumGizmo
+	: public MessageReceiver
+{
 public:
-  DrumGizmo(AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
-  virtual ~DrumGizmo();
+	DrumGizmo(AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
+	virtual ~DrumGizmo();
 
-  bool loadkit(std::string kitfile);
+	bool loadkit(std::string kitfile);
 
-  bool init();
+	bool init();
 
-  bool run(size_t pos, sample_t *samples, size_t nsamples);
-  void stop();
+	bool run(size_t pos, sample_t *samples, size_t nsamples);
+	void stop();
 
-  void getSamples(int ch, int pos, sample_t *s, size_t sz);
+	void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
-  std::string configString();
-  bool setConfigString(std::string cfg);
+	std::string configString();
+	bool setConfigString(std::string cfg);
 
-  void handleMessage(Message *msg);
+	void handleMessage(Message *msg);
 
-  int samplerate();
-  void setSamplerate(int samplerate);
+	int samplerate();
+	void setSamplerate(int samplerate);
 
-  void setFrameSize(size_t framesize);
+	void setFrameSize(size_t framesize);
 
-  void setFreeWheel(bool freewheel);
+	void setFreeWheel(bool freewheel);
 
-private:
-  DrumKitLoader loader;
+protected:
+	DrumKitLoader loader;
 
-  Mutex mutex;
-  bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
+	Mutex mutex;
+	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
 
-  AudioOutputEngine *oe;
-  AudioInputEngine *ie;
+	AudioOutputEngine *oe;
+	AudioInputEngine *ie;
 
-  std::list< Event* > activeevents[MAX_NUM_CHANNELS];
+	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
-  CHResampler resampler[MAX_NUM_CHANNELS];
-  sample_t resampler_output_buffer[MAX_NUM_CHANNELS][4096];
-  sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
+	CHResampler resampler[MAX_NUM_CHANNELS];
+	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][4096];
+	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 
-  std::map<std::string, AudioFile *> audiofiles;
+	std::map<std::string, AudioFile *> audiofiles;
 
-  AudioCache audioCache;
-  DrumKit kit;
+	AudioCache audioCache;
+	DrumKit kit;
 
-  size_t framesize;
-  bool freewheel;
+	size_t framesize;
+	bool freewheel;
 };

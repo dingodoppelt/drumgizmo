@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKITLOADER_H__
-#define __DRUMGIZMO_DRUMKITLOADER_H__
+#pragma once
 
 #include <string>
 #include <list>
@@ -36,69 +35,51 @@
 
 #include "drumkit.h"
 
-/**
- * This class is responsible for loading the drumkits in its own thread.
- * All interaction calls are simply modifying queues and not doing any
- * work in-sync with the caller.
- * This means that if loadKit(...) is called, one cannot assume that the
- * drumkit has actually been loaded when the call returns.
- */
-class DrumKitLoader : public Thread {
+//! This class is responsible for loading the drumkits in its own thread.
+//! All interaction calls are simply modifying queues and not doing any
+//! work in-sync with the caller.
+//! This means that if loadKit(...) is called, one cannot assume that the
+//! drumkit has actually been loaded when the call returns.
+class DrumKitLoader
+	: public Thread
+{
 public:
-  /**
-   * The constrcutor starts the loader thread.
-   */
-  DrumKitLoader();
+	//! The constrcutor starts the loader thread.
+	DrumKitLoader();
 
-  /**
-   * The destructor signals the thread to stop and waits to merge before
-   * returning (ie. deleting the object will garantuee that the thread has
-   * been stopped).
-   */
-  ~DrumKitLoader();
+	//! The destructor signals the thread to stop and waits to merge before
+	//! returning (ie. deleting the object will garantuee that the thread has
+	//! been stopped).
+	~DrumKitLoader();
 
-  /**
-   * Signal the loader to start loading all audio files contained in kit.
-   * All other AudioFiles in queue will be removed before the new ones are
-   * scheduled.
-   */
-  void loadKit(DrumKit *kit);
-  
-  // I have no idea what this does..
-  //void reset(AudioFile* af);
+	//! Signal the loader to start loading all audio files contained in kit.
+	//! All other AudioFiles in queue will be removed before the new ones are
+	//! scheduled.
+	void loadKit(DrumKit *kit);
 
-  void thread_main();
+	void thread_main();
 
-  /**
-   * Simply reports if the load queue is empty (i.e. all AudioFiles has been
-   * loaded).
-   */
-  bool isDone();
+	//! Simply reports if the load queue is empty (i.e. all AudioFiles has been
+	//! loaded).
+	bool isDone();
 
-  /**
-   * Signal the loader to stop and wait until it has.
-   */
-  void stop();
+	//! Signal the loader to stop and wait until it has.
+	void stop();
 
-  /**
-   * Skip all queued AudioFiles.
-   */
-  void skip();
+	//! Skip all queued AudioFiles.
+	void skip();
 
-  void setFrameSize(size_t framesize);
+	void setFrameSize(size_t framesize);
 
-private:
-  Semaphore run_semaphore;
-  Semaphore semaphore;
-  Semaphore framesize_semaphore;
-  Mutex mutex;
+protected:
+	Semaphore run_semaphore;
+	Semaphore semaphore;
+	Semaphore framesize_semaphore;
+	Mutex mutex;
 	volatile bool running{false};
-  std::list<AudioFile*> load_queue;
+	std::list<AudioFile*> load_queue;
 	size_t total_num_audiofiles{0};
 	size_t fraction{1};
 	size_t loaded{0};
-
 	size_t framesize{0};
 };
-
-#endif/*__DRUMGIZMO_DRUMKITLOADER_H__*/
