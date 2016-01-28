@@ -37,7 +37,8 @@
 #include "audiocacheidmanager.h"
 #include "audiocacheeventhandler.h"
 
-#define CHUNK_MULTIPLIER 16
+// 20 seconds * 96kHz * sizeof(float) * 16 channels / 16 samples buffer size
+#define CHUNK_MULTIPLIER (20 * 96000 * 4 * 16 / 16) //16
 
 
 //TODO:
