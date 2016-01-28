@@ -147,7 +147,7 @@ int CliMain::run(int argc, char *argv[])
       {"help", no_argument, 0, 'h'},
       {0, 0, 0, 0}
     };
-
+    
     c = getopt_long(argc, argv, "hvpo:O:i:I:e:a"
 #ifndef DISABLE_HUGIN
                     "D:"
@@ -228,7 +228,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  AudioInputEngineDL *ie = new AudioInputEngineDL(inputengine);
+  AudioInputEngine *ie = new AudioInputEngineDL(inputengine);
 
   if(ie == NULL) {
     printf("Invalid input engine: %s\n", inputengine.c_str());
@@ -327,10 +327,6 @@ int CliMain::run(int argc, char *argv[])
   printf("Using kitfile: %s\n", kitfile.c_str());
 
   DrumGizmo gizmo(oe, ie);
-  oe->setEngine(&gizmo);
-  ie->setEngine(&gizmo);
-
-  gizmo.setFrameSize(oe->getBufferSize());
 
   if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
@@ -361,22 +357,7 @@ int CliMain::run(int argc, char *argv[])
     return 1;
   }
 
-  size_t pos = 0;
-  size_t nsamples = oe->getBufferSize();
-  sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
-
-  ie->start();
-  oe->start();
-
-  while(gizmo.run(pos, samples, nsamples) == true) {
-    pos += nsamples;
-    if(endpos != -1 && pos >= (size_t)endpos) break;
-  }
-
-  ie->stop();
-  oe->stop();
-
-  free(samples);
+  gizmo.run(endpos);
 
   printf("Quit.\n"); fflush(stdout);
 

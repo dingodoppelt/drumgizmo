@@ -31,13 +31,7 @@
 
 class Test {
 public:
-  Test()
-    : p(0.1)
-    , instr(-1)
-    , nth(-1)
-    , nth_counter(0)
-  {}
-
+  Test() { p = 0.1; instr = -1; len = -1; }
   ~Test() {}
 
   bool init(int instruments, char *inames[]);
@@ -54,14 +48,11 @@ public:
 private:
   float p;
   int instr;
-  int nth;
-  int nth_counter;
-  int num_instruments;
+  int len;
 };
 
 bool Test::init(int instruments, char *inames[])
 {
-  num_instruments = instruments;
   return true;
 }
 
@@ -69,7 +60,7 @@ void Test::setParm(std::string parm, std::string value)
 {
   if(parm == "p") p = atof(value.c_str());
   if(parm == "instr") instr = atoi(value.c_str());
-  if(parm == "nth") nth = atoi(value.c_str());
+  if(parm == "len") len = atoi(value.c_str());
 }
 
 bool Test::start()
@@ -85,46 +76,23 @@ void Test::pre()
 {
 }
 
-#define BUFFER_MAX 1000
 event_t *Test::run(size_t pos, size_t nsamples, size_t *nevents)
 {
-  *nevents = 0;
-  event_t *evs = (event_t *)malloc(sizeof(event_t) * BUFFER_MAX);
-
-  for(size_t i = 0; i < nsamples; ++i) {
-
-    if(nth != -1) {
-      if(nth_counter < nth) {
-        ++nth_counter;
-        continue;
-      }
-      nth_counter = 0;
-    } else {
-      if((float)rand() / (float)RAND_MAX > p) {
-        continue;
-      }
-    }
-
-    evs[*nevents].type = TYPE_ONSET;
-
-    if(instr != -1) {
-      // Use specified instrument
-      evs[*nevents].instrument = instr;
-    } else {
-      // Use random instrument
-      evs[*nevents].instrument = rand() % num_instruments;
-    }
-
-    evs[*nevents].velocity = (float)rand()/(float)RAND_MAX;
-    evs[*nevents].offset = nsamples?rand()%nsamples:0;
-
-    (*nevents)++;
-
-    if(*nevents == BUFFER_MAX) {
-      break;
-    }
+  if((float)rand() / (float)RAND_MAX > p) {
+    *nevents = 0;
+    return NULL;
   }
 
+  *nevents = 1;
+  event_t *evs = (event_t *)malloc(sizeof(event_t));
+  evs[0].type = TYPE_ONSET;
+  if(len != -1 && (int)pos > len * 44100) evs[0].type = TYPE_STOP;
+
+  if(instr != -1) evs[0].instrument = instr;
+  else evs[0].instrument = rand() % 32;
+
+  evs[0].velocity = (float)rand()/(float)RAND_MAX;
+  evs[0].offset = nsamples?rand()%nsamples:0;
   return evs;
 }
 

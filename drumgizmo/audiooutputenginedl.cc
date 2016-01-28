@@ -195,8 +195,3 @@ size_t AudioOutputEngineDL::samplerate()
   if(o_samplerate) return o_samplerate(ptr);
   return 44100;
 }
-
-void AudioOutputEngineDL::setEngine(DrumGizmo* drumgizmo)
-{
-  jackclient->setEngine(drumgizmo);
-}
