@@ -158,7 +158,8 @@ void DrumKitLoader::thread_main()
       {
 	      preload_size = 1024;
       }
-      audiofile->load(preload_size);
+      (void)preload_size;
+      audiofile->load(ALL_SAMPLES); // Note: Change this to enable diskstreaming
     }
 
     loaded++;
