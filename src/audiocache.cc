@@ -225,13 +225,13 @@ void AudioCache::close(cacheid_t id)
 
 void AudioCache::setFrameSize(size_t framesize)
 {
-	printf("%s\n", __PRETTY_FUNCTION__);
+	DEBUG(cache, "%s\n", __PRETTY_FUNCTION__);
 
 	// Make sure the event handler thread is stalled while we set the framesize
 	// state.
 	std::lock_guard<AudioCacheEventHandler> eventHandlerLock(eventHandler);
 
-	printf("A\n");
+	DEBUG(cache, "A\n");
 
 	// NOTE: Not threaded...
 	//std::lock_guard<AudioCacheIDManager> idManagerLock(idManager);
@@ -249,11 +249,11 @@ void AudioCache::setFrameSize(size_t framesize)
 
 	this->framesize = framesize;
 
-	printf("B\n");
+	DEBUG(cache, "B\n");
 
 	eventHandler.setChunkSize(CHUNKSIZE(framesize));
 
-	printf("C\n");
+	DEBUG(cache, "C\n");
 }
 
 size_t AudioCache::frameSize() const
