@@ -69,9 +69,13 @@ void DrumKitLoader::skip()
 
 void DrumKitLoader::setFrameSize(size_t framesize)
 {
+	DEBUG(loader, "%s pre\n", __PRETTY_FUNCTION__);
+	{
   MutexAutolock l(mutex);
   this->framesize = framesize;
   framesize_semaphore.post(); // Signal that the framesize has been set.
+	}
+	DEBUG(loader, "%s post\n", __PRETTY_FUNCTION__);
 }
 
 bool DrumKitLoader::isDone()
