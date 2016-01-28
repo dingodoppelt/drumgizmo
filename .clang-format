@@ -1,0 +1,42 @@
+Language: Cpp
+Standard: Cpp11
+
+# Use SmartTabs
+UseTab: ForIndentation
+IndentWidth: 4
+TabWidth: 4
+ConstructorInitializerIndentWidth: 4
+
+NamespaceIndentation: None
+
+# Use Allman brace style.
+BreakBeforeBraces: Allman
+
+# CTOR initializers should be
+# Class::Class()
+#   : Foo()
+#   , bar(1 ,2)
+#   , bas("hello")
+BreakConstructorInitializersBeforeComma: true
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: false
+
+# Always expand curlies.
+AllowShortFunctionsOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+
+# Do not indent case labels
+IndentCaseLabels: false
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+SpaceBeforeAssignmentOperators: true
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceBeforeParens: Never

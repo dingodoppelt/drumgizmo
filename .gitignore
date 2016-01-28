@@ -17,6 +17,8 @@ libtool
 ltmain.sh
 missing
 stamp-h1
+compile
+config.h.in~
 test-driver
 *.o
 *.a
