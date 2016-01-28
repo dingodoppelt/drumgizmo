@@ -328,6 +328,8 @@ int CliMain::run(int argc, char *argv[])
 
   DrumGizmo gizmo(oe, ie);
 
+	gizmo.setFrameSize(oe->getBufferSize());
+
   if(kitfile == "" || !gizmo.loadkit(kitfile)) {
     printf("Failed to load \"%s\".\n", kitfile.c_str());
     return 1;
