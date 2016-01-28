@@ -28,6 +28,8 @@
 
 #include <assert.h>
 
+#include <hugin.hpp>
+
 #include "audiocachefile.h"
 #include "audiocache.h"
 #include "audiocacheidmanager.h"
