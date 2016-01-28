@@ -45,10 +45,6 @@
 
 #include "nolocale.h"
 
-#ifdef WITH_RESAMPLER
-#undef WITH_RESAMPLER
-#endif
-
 DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
   : MessageReceiver(MSGRCV_ENGINE)
   , loader()
