@@ -79,7 +79,7 @@ bool Mutex::try_lock()
 
 	DWORD result = WaitForSingleObject(prv->mutex, 0);
 
-	DEBUG(mutex, "WAIT_OBJECT_0: %lu, WAIT_TIMEOUT: %lu, result: %u\n",
+	DEBUG(mutex, "WAIT_OBJECT_0: %lu, WAIT_TIMEOUT: %lu, result: %lu\n",
 	      WAIT_OBJECT_0, WAIT_TIMEOUT, result);
 
 	return result != WAIT_TIMEOUT;
