@@ -217,6 +217,30 @@ void DrumGizmo::setFreeWheel(bool freewheel)
 	}
 }
 
+void DrumGizmo::run(int endpos)
+{
+	size_t pos = 0;
+	size_t nsamples = 1024;//oe->getBufferSize();
+	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
+	ie->start();
+	oe->start();
+
+	while(run(pos, samples, nsamples) == true)
+	{
+		pos += nsamples;
+		if((endpos != -1) && (pos >= (size_t)endpos))
+		{
+			break;
+		}
+	}
+
+	ie->stop();
+	oe->stop();
+
+	free(samples);
+}
+
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
 	setFrameSize(nsamples);

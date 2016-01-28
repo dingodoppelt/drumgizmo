@@ -64,6 +64,7 @@ public:
 
 	bool init();
 
+	void run(int endpos);
 	bool run(size_t pos, sample_t *samples, size_t nsamples);
 	void stop();
 
