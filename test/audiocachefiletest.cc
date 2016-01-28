@@ -188,8 +188,8 @@ public:
 
 		AudioCacheFile file(filename);
 		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
-		CPPUNIT_ASSERT_EQUAL(0u, file.getSize());
-		CPPUNIT_ASSERT_EQUAL(0u, file.getChannelCount());
+		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
+		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());
 
 		CacheChannels channels;
 
