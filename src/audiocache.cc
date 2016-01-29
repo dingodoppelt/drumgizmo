@@ -28,7 +28,6 @@
 
 #include <mutex>
 
-#include <string.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -105,7 +104,15 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	}
 	else
 	{
-		// cropped_size is the preload chunk size cropped to sample length.
+		// Make sure that the preload-data made available to the next() calls
+		// fit on frame boundary:
+		//
+		// [                  all preloaded data                    ]
+		// [ initial ][ biggest multiple of full frames ][ the rest ]
+		// \                                            /
+		//  \----------------------v-------------------/
+		//                     cropped_size
+		
 		cropped_size = file.preloadedsize - c.localpos;
 		cropped_size -= cropped_size % framesize;
 		cropped_size += initial_samples_needed;
