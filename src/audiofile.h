@@ -45,7 +45,7 @@ public:
 	void load(int num_samples = ALL_SAMPLES);
 	void unload();
 
-	bool isLoaded();
+	bool isLoaded() const;
 
 	volatile size_t size{0}; // Full size of the file
 	volatile size_t preloadedsize{0}; // Number of samples preloaded (in data)
@@ -53,7 +53,7 @@ public:
 
 	std::string filename;
 
-	bool isValid();
+	bool isValid() const;
 
 	Mutex mutex;
 

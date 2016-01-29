@@ -67,7 +67,7 @@ public:
 	//! \param [out] new_id The newly created cache id.
 	//! \return A pointer to the first buffer containing the
 	//!  'initial_samples_needed' number of samples.
-	sample_t* open(AudioFile* file, size_t initial_samples_needed, int channel,
+	sample_t* open(const AudioFile& file, size_t initial_samples_needed, int channel,
 	               cacheid_t& new_id);
 
 	//! Get next buffer.
@@ -79,7 +79,7 @@ public:
 	//! \return A pointer to the buffer.
 	sample_t* next(cacheid_t id, size_t &size);
 
-	//! Returns if the next chunk of the supplied id has been read from disk.
+	//! Returns true iff the next chunk of the supplied id has been read from disk.
 	bool isReady(cacheid_t id);
 
 	//! Unregister cache entry.
@@ -105,7 +105,7 @@ public:
 
 private:
 	size_t framesize{0};
-	sample_t *nodata{nullptr};
+	sample_t* nodata{nullptr};
 	size_t number_of_underruns{0};
 
 	AudioCacheIDManager id_manager;
