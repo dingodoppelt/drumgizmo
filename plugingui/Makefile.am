@@ -45,6 +45,7 @@ EXTRA_DIST = \
 	nativewindow.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \
+	notifier.h \
 	painter.h \
 	pixelbuffer.h \
 	pluginconfig.h \
