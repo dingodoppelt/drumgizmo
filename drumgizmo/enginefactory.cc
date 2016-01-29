@@ -31,14 +31,9 @@
 
 EngineFactory::EngineFactory()
 	: input{}
-	, output
-{
-}
+	, output{}
 #ifdef USE_JACK
-, jack
-{
-	nullptr
-}
+	, jack{nullptr}
 #endif
 {
 // list available input engines

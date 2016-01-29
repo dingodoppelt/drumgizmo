@@ -30,16 +30,13 @@
 
 WavfileOutputEngine::WavfileOutputEngine()
 	: AudioOutputEngine{}
-	, info{}
+	, info{0}
 	, channels{}
 	, file{"output"}
 {
-	info.frames = 0;
 	info.samplerate = 44100;
 	info.channels = 1;
 	info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-	info.sections = 0;
-	info.seekable = 0;
 }
 
 WavfileOutputEngine::~WavfileOutputEngine()

@@ -60,7 +60,7 @@ private:
 		std::vector<sample_t> samples;
 
 		Channel(JackClient& client, const std::string& name,
-		    std::size_t buffer_size);
+		        std::size_t buffer_size);
 	};
 
 	JackClient& client;
