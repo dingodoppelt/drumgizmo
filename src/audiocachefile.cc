@@ -38,7 +38,7 @@ AudioCacheFile::AudioCacheFile(const std::string& filename,
                                std::vector<sample_t>& read_buffer)
 	: filename(filename), read_buffer(read_buffer)
 {
-	std::memset(&sf_info, 0, sizeof(SF_INFO)); // XXX Is this really necessary?
+	std::memset(&sf_info, 0, sizeof(SF_INFO));
 
 	fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!fh)
@@ -50,7 +50,7 @@ AudioCacheFile::AudioCacheFile(const std::string& filename,
 
 	if(sf_info.frames == 0)
 	{
-		printf("sf_info.frames == 0\n"); // XXX Shouldn't that be debug output?
+		WARN(cache, "sf_info.frames == 0\n");
 	}
 }
 
@@ -135,7 +135,7 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
-		cacheAudioFile = new AudioCacheFile(filename, read_buffer); // XXX why create a pointer and not move it into the map such that it is the owner?
+		cacheAudioFile = new AudioCacheFile(filename, read_buffer);
 		audiofiles.insert(std::make_pair(filename, cacheAudioFile));
 	}
 	else
