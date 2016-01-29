@@ -56,7 +56,7 @@ AudioFile::~AudioFile()
 	unload();
 }
 
-bool AudioFile::isValid()
+bool AudioFile::isValid() const
 {
 	return this == magic;
 }
@@ -147,7 +147,7 @@ void AudioFile::load(int num_samples)
 	is_loaded = true;
 }
 
-bool AudioFile::isLoaded()
+bool AudioFile::isLoaded() const
 {
 	return is_loaded;
 }

@@ -477,59 +477,59 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 typedef float vNsf __attribute__ ((vector_size(sizeof(sample_t)*N)));
 #endif/*SSE*/
 
-void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
+void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 {
 	std::list< Event* >::iterator i = activeevents[ch].begin();
 	for(; i != activeevents[ch].end(); ++i)
 	{
 		bool removeevent = false;
 
-		Event *event = *i;
+		Event* event = *i;
 
 		Event::type_t type = event->type();
 		switch(type) {
 		case Event::sample:
 			{
-				EventSample *evt = (EventSample *)event;
-				AudioFile *af = evt->file;
+				EventSample& evt = *static_cast<EventSample*>(event);
+				AudioFile& af = *evt.file;
 
-				if(!af->isLoaded() || !af->isValid() || (s == nullptr))
+				if(!af.isLoaded() || !af.isValid() || (s == nullptr))
 				{
 					removeevent = true;
 					break;
 				}
 
 				// Don't handle event now is is scheduled for a future iteration?
-				if(evt->offset > (pos + sz))
+				if(evt.offset > (pos + sz))
 				{
 					continue;
 				}
 
-				if(evt->cache_id == CACHE_NOID)
+				if(evt.cache_id == CACHE_NOID)
 				{
-					size_t initial_chunksize = (pos + sz) - evt->offset;
-					evt->buffer = audioCache.open(af, initial_chunksize,
-					                              af->filechannel, evt->cache_id);
-					evt->buffer_size = initial_chunksize;
+					size_t initial_chunksize = (pos + sz) - evt.offset;
+					evt.buffer = audioCache.open(af, initial_chunksize,
+					                              af.filechannel, evt.cache_id);
+					evt.buffer_size = initial_chunksize;
 				}
 
 				{
-					MutexAutolock l(af->mutex);
+					MutexAutolock l(af.mutex);
 
 					size_t n = 0; // default start point is 0.
 
 					// If we are not at offset 0 in current buffer:
-					if(evt->offset > (size_t)pos)
+					if(evt.offset > (size_t)pos)
 					{
-						n = evt->offset - pos;
+						n = evt.offset - pos;
 					}
 
 					size_t end = sz; // default end point is the end of the buffer.
 
 					// Find the end point intra-buffer
-					if((evt->t + end - n) > af->size)
+					if((evt.t + end - n) > af.size)
 					{
-						end = af->size - evt->t + n;
+						end = af.size - evt.t + n;
 					}
 
 					// This should not be necessary but make absolutely sure that we do
@@ -540,7 +540,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 					}
 
 					size_t t = 0; // Internal buffer counter
-					if(evt->rampdown == NO_RAMPDOWN)
+					if(evt.rampdown == NO_RAMPDOWN)
 					{
 
 #ifdef SSE
@@ -548,40 +548,40 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
 						// Force source addr to be 16 byte aligned...
 						// (might skip 1 or 2 samples)
-						while((size_t)&evt->buffer[t] % 16)
+						while((size_t)&evt.buffer[t] % 16)
 						{
 							++t;
 						}
 
-						for(; (n < optend) && (t < evt->buffer_size); n += N)
+						for(; (n < optend) && (t < evt.buffer_size); n += N)
 						{
-							*(vNsf*)&(s[n]) += *(vNsf*)&(evt->buffer[t]);
+							*(vNsf*)&(s[n]) += *(vNsf*)&(evt.buffer[t]);
 							t += N;
 						}
 #endif
-						for(; (n < end) && (t < evt->buffer_size); ++n)
+						for(; (n < end) && (t < evt.buffer_size); ++n)
 						{
-							s[n] += evt->buffer[t];
+							s[n] += evt.buffer[t];
 							++t;
 						}
 					}
 					else
 					{ // Ramp down in progress.
-						for(; (n < end) && (t < evt->buffer_size) && evt->rampdown; ++n)
+						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown; ++n)
 						{
-							float scale = (float)evt->rampdown/(float)evt->ramp_start;
-							s[n] += evt->buffer[t] * scale;
+							float scale = (float)evt.rampdown/(float)evt.ramp_start;
+							s[n] += evt.buffer[t] * scale;
 							++t;
-							evt->rampdown--;
+							evt.rampdown--;
 						}
 					}
 
 					// Add internal buffer counter to "global" event counter.
-					evt->t += evt->buffer_size;
+					evt.t += evt.buffer_size;
 
-					if((evt->t < af->size) && (evt->rampdown != 0))
+					if((evt.t < af.size) && (evt.rampdown != 0))
 					{
-						evt->buffer = audioCache.next(evt->cache_id, evt->buffer_size);
+						evt.buffer = audioCache.next(evt.cache_id, evt.buffer_size);
 					}
 					else
 					{
@@ -590,7 +590,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t *s, size_t sz)
 
 					if(removeevent)
 					{
-						audioCache.close(evt->cache_id);
+						audioCache.close(evt.cache_id);
 					}
 				}
 			}

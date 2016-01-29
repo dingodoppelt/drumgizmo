@@ -31,7 +31,7 @@
 
 AudioCacheIDManager::~AudioCacheIDManager()
 {
-	assert(availableids.size() == id2cache.size()); // All ids should be released.
+	assert(available_ids.size() == id2cache.size()); // All ids should be released.
 }
 
 void AudioCacheIDManager::init(unsigned int capacity)
@@ -39,10 +39,10 @@ void AudioCacheIDManager::init(unsigned int capacity)
 	std::lock_guard<std::mutex> guard(mutex);
 
 	id2cache.resize(capacity);
-	availableids.resize(capacity);
+	available_ids.resize(capacity);
 	for(size_t i = 0; i < capacity; ++i)
 	{
-		availableids[i] = i;
+		available_ids[i] = i;
 	}
 }
 
@@ -65,14 +65,14 @@ cacheid_t AudioCacheIDManager::registerID(const cache_t& cache)
 
 	cacheid_t id = CACHE_NOID;
 
-	if(availableids.empty())
+	if(available_ids.empty())
 	{
 		return CACHE_DUMMYID;
 	}
 	else
 	{
-		id = availableids.back();
-		availableids.pop_back();
+		id = available_ids.back();
+		available_ids.pop_back();
 	}
 
 	assert(id2cache[id].id == CACHE_NOID); // Make sure it is not already in use
@@ -91,7 +91,7 @@ void AudioCacheIDManager::releaseID(cacheid_t id)
 
 	id2cache[id].id = CACHE_NOID;
 
-	availableids.push_back(id);
+	available_ids.push_back(id);
 }
 
 void AudioCacheIDManager::disableActive()

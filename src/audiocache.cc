@@ -28,7 +28,6 @@
 
 #include <mutex>
 
-#include <string.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -62,10 +61,10 @@ void AudioCache::deinit()
 }
 
 // Invariant: initial_samples_needed < preloaded audio data
-sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
+sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
                            int channel, cacheid_t& id)
 {
-	if(!file->isValid())
+	if(!file.isValid())
 	{
 		// File preload not yet ready - skip this sample.
 		id = CACHE_DUMMYID;
@@ -87,7 +86,7 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 	// Get the cache_t connected with the registered id.
 	cache_t& c = id_manager.getCache(id);
 
-	c.afile = &event_handler.openFile(file->filename);
+	c.afile = &event_handler.openFile(file.filename);
 	c.channel = channel;
 
 	// Next call to 'next()' will read from this point.
@@ -96,26 +95,37 @@ sample_t* AudioCache::open(AudioFile* file, size_t initial_samples_needed,
 	c.front = nullptr; // This is allocated when needed.
 	c.back = nullptr; // This is allocated when needed.
 
-	// cropped_size is the preload chunk size cropped to sample length.
-	size_t cropped_size = file->preloadedsize - c.localpos;
-	cropped_size /= framesize;
-	cropped_size *= framesize;
-	cropped_size += initial_samples_needed;
+	size_t cropped_size;
 
-	if(file->preloadedsize == file->size)
+	if(file.preloadedsize == file.size)
 	{
 		// We have preloaded the entire file, so use it.
-		cropped_size = file->preloadedsize;
+		cropped_size = file.preloadedsize;
+	}
+	else
+	{
+		// Make sure that the preload-data made available to the next() calls
+		// fit on frame boundary:
+		//
+		// [                  all preloaded data                    ]
+		// [ initial ][ biggest multiple of full frames ][ the rest ]
+		// \                                            /
+		//  \----------------------v-------------------/
+		//                     cropped_size
+		
+		cropped_size = file.preloadedsize - c.localpos;
+		cropped_size -= cropped_size % framesize;
+		cropped_size += initial_samples_needed;
 	}
 
-	c.preloaded_samples = file->data;
+	c.preloaded_samples = file.data;
 	c.preloaded_samples_size = cropped_size;
 
 	// Next read from disk will read from this point.
 	c.pos = cropped_size;//c.preloaded_samples_size;
 
-	// Only load next buffer if there are more data in the file to be loaded...
-	if(c.pos < file->size)
+	// Only load next buffer if there is more data in the file to be loaded...
+	if(c.pos < file.size)
 	{
 		if(c.back == nullptr)
 		{
@@ -262,7 +272,7 @@ void AudioCache::setAsyncMode(bool async)
 
 bool AudioCache::asyncMode() const
 {
-	return event_handler.getThreaded();
+	return event_handler.isThreaded();
 }
 
 size_t AudioCache::getNumberOfUnderruns() const

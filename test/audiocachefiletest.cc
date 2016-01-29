@@ -92,7 +92,9 @@ public:
 			ref_file[c]->load();
 		}
 
-		AudioCacheFile file(filename);
+		std::vector<sample_t> read_buffer;
+
+		AudioCacheFile file(filename, read_buffer);
 		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
 		CPPUNIT_ASSERT_EQUAL(13, (int)file.getChannelCount()); // Sanity check
 
@@ -188,7 +190,9 @@ public:
 		size_t buffer_size = 64;
 		std::string filename = "kits/no-such-file.wav";
 
-		AudioCacheFile file(filename);
+		std::vector<sample_t> read_buffer;
+
+		AudioCacheFile file(filename, read_buffer);
 		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
 		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
 		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());

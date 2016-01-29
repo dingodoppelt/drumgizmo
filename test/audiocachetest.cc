@@ -81,7 +81,7 @@ public:
 
 			printf("open: initial_samples_needed: %d\n", (int)initial_samples_needed);
 			sample_t *samples =
-				audio_cache.open(&audio_file, initial_samples_needed, channel, id);
+				audio_cache.open(audio_file, initial_samples_needed, channel, id);
 			size_t size = initial_samples_needed;
 			size_t offset = 0;
 

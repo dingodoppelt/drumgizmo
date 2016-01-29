@@ -34,7 +34,7 @@ class TestableAudioCacheIDManager
 public:
 	int getAvailableIDs()
 	{
-		return availableids.size();
+		return available_ids.size();
 	}
 };
 

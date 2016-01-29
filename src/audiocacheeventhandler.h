@@ -59,7 +59,7 @@ public:
 	void setThreaded(bool threaded);
 
 	//! Get current threaded status.
-	bool getThreaded() const;
+	bool isThreaded() const;
 
 	//! Lock thread mutex.
 	//! This methods are supplied to make this class lockable by std::lock_guard
@@ -101,7 +101,7 @@ protected:
 
 	std::mutex mutex;
 
-	std::list<CacheEvent>* eventqueue;
+	std::list<CacheEvent> eventqueue;
 
 	bool threaded{false};
 	Semaphore sem;
