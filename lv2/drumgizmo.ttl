@@ -13,12 +13,13 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-@prefix doap:  <http://usefulinc.com/ns/doap#> .
-@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
-@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
-@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
-@prefix uiext: <http://lv2plug.in/ns/extensions/ui#> .
-@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix doap:   <http://usefulinc.com/ns/doap#> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+@prefix atom:   <http://lv2plug.in/ns/ext/atom#> .
+@prefix uiext:  <http://lv2plug.in/ns/extensions/ui#> .
+@prefix state:  <http://lv2plug.in/ns/ext/state#> .
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
 
 <http://drumgizmo.org/lv2-gui>
     a uiext:external ;
@@ -47,10 +48,10 @@
     lv2:maximum 1.0 ;
     lv2:designation <http://lv2plug.in/ns/lv2core#freeWheeling> ;
     lv2:portProperty lv2:toggled ;
-    lv2:portProperty epp:hasStrictBounds;
+    lv2:portProperty pprops:hasStrictBounds;
   ] , [
 		a atom:AtomPort ,
-      lv2:InputPort; 
+      lv2:InputPort;
     atom:bufferType atom:Sequence ;
     atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
     lv2:index 1 ;
