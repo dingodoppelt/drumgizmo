@@ -162,7 +162,8 @@ int CliMain::run(int argc, char* argv[])
 #endif /*DISABLE_HUGIN*/
 		                , long_options, &option_index);
 
-		if(c == -1) {
+		if(c == -1)
+		{
 			break;
 		}
 
@@ -289,7 +290,8 @@ int CliMain::run(int argc, char* argv[])
 				parm += iparms[i];
 			}
 		}
-		if(parm != "") {
+		if(parm != "")
+		{
 			ie->setParm(parm, val);
 		}
 	}
@@ -338,7 +340,8 @@ int CliMain::run(int argc, char* argv[])
 				parm += oparms[i];
 			}
 		}
-		if(parm != "") {
+		if(parm != "")
+		{
 			oe->setParm(parm, val);
 		}
 	}
