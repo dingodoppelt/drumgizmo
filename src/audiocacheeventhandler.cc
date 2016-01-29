@@ -53,9 +53,7 @@ public:
 };
 
 AudioCacheEventHandler::AudioCacheEventHandler(AudioCacheIDManager& id_manager)
-	// Hack to be able to forward declare CacheEvent:
-	: eventqueue(new std::list<CacheEvent>())
-	, id_manager(id_manager)
+	: id_manager(id_manager)
 {
 }
 
@@ -69,9 +67,6 @@ AudioCacheEventHandler::~AudioCacheEventHandler()
 	{
 		handleCloseCache(id);
 	}
-
-	// Hack to be able to forward declare CacheEvent:
-	delete eventqueue;
 }
 
 void AudioCacheEventHandler::start()
@@ -119,7 +114,7 @@ void AudioCacheEventHandler::setThreaded(bool threaded)
 	this->threaded = threaded;
 }
 
-bool AudioCacheEventHandler::getThreaded() const
+bool AudioCacheEventHandler::isThreaded() const
 {
 	return threaded;
 }
@@ -206,7 +201,7 @@ AudioCacheFile& AudioCacheEventHandler::openFile(const std::string& filename)
 void AudioCacheEventHandler::clearEvents()
 {
 	// Iterate all events ignoring load events and handling close events.
-	for(auto& event : *eventqueue)
+	for(auto& event : eventqueue)
 	{
 		if(event.eventType == EventType::Close)
 		{
@@ -214,7 +209,7 @@ void AudioCacheEventHandler::clearEvents()
 		}
 	}
 
-	eventqueue->clear();
+	eventqueue.clear();
 }
 
 void AudioCacheEventHandler::handleLoadNextEvent(CacheEvent& cache_event)
@@ -263,14 +258,14 @@ void AudioCacheEventHandler::thread_main()
 		sem.wait();
 
 		mutex.lock();
-		if(eventqueue->empty())
+		if(eventqueue.empty())
 		{
 			mutex.unlock();
 			continue;
 		}
 
-		CacheEvent cache_event = eventqueue->front();
-		eventqueue->pop_front();
+		CacheEvent cache_event = eventqueue.front();
+		eventqueue.pop_front();
 		mutex.unlock();
 
 		// TODO: Skip event if cache_event.pos < cache.pos
@@ -298,7 +293,7 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 
 		if(cache_event.eventType == EventType::LoadNext)
 		{
-			for(auto& queued_event : *eventqueue)
+			for(auto& queued_event : eventqueue)
 			{
 				if((queued_event.eventType == EventType::LoadNext) &&
 				   (cache_event.afile->getFilename() ==
@@ -318,7 +313,7 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 		if(!found)
 		{
 			// The event was not already on the list, create a new one.
-			eventqueue->push_back(cache_event);
+			eventqueue.push_back(cache_event);
 		}
 	}
 

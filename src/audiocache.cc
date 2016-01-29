@@ -272,7 +272,7 @@ void AudioCache::setAsyncMode(bool async)
 
 bool AudioCache::asyncMode() const
 {
-	return event_handler.getThreaded();
+	return event_handler.isThreaded();
 }
 
 size_t AudioCache::getNumberOfUnderruns() const
