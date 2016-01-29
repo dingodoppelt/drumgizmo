@@ -25,21 +25,20 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DRUMGIZMOC_H__
-#define __DRUMGIZMOC_H__
+#pragma once
 
 #include "messagereceiver.h"
 
-class CliMain : public MessageReceiver {
+class CliMain : public MessageReceiver
+{
 public:
-  CliMain();
-  virtual ~CliMain();
+	CliMain();
+	virtual ~CliMain();
 
-  int run(int argc, char *argv[]);
-  void handleMessage(Message *msg);
+	int run(int argc, char* argv[]);
+	void handleMessage(Message* msg);
+
 private:
-  bool loading;
+	bool loading;
 };
-
-#endif//__DRUMGIZMOC_H__
 
