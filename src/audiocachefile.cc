@@ -130,25 +130,19 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(mutex);
 
-	AudioCacheFile* cache_audio_file = nullptr;
-
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
-		cache_audio_file = new AudioCacheFile(filename, read_buffer);
-		audiofiles.insert(std::make_pair(filename, cache_audio_file));
-	}
-	else
-	{
-		cache_audio_file = it->second;
+		it = audiofiles.emplace(std::piecewise_construct, std::make_tuple(filename),
+		                        std::make_tuple(filename, std::ref(read_buffer))).first;
 	}
 
-	assert(cache_audio_file);
+	auto& cache_audio_file = it->second;
 
 	// Increase ref count.
-	++cache_audio_file->ref;
+	++cache_audio_file.ref;
 
-	return *cache_audio_file;
+	return cache_audio_file;
 }
 
 void AudioCacheFiles::releaseFile(const std::string& filename)
@@ -162,14 +156,13 @@ void AudioCacheFiles::releaseFile(const std::string& filename)
 		return; // not open
 	}
 
-	auto audiofile = it->second;
+	auto& audiofile = it->second;
 
-	assert(audiofile->ref); // If ref is not > 0 it shouldn't be in the map.
+	assert(audiofile.ref); // If ref is not > 0 it shouldn't be in the map.
 
-	--audiofile->ref;
-	if(audiofile->ref == 0)
+	--audiofile.ref;
+	if(audiofile.ref == 0)
 	{
-		delete audiofile;
 		audiofiles.erase(it);
 	}
 }
