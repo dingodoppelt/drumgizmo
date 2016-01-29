@@ -1,4 +1,8 @@
 EXTRA_DIST = \
+	audiocachefile.h \
+	audiocache.h \
+	audiocacheeventhandler.h \
+	audiocacheidmanager.h \
 	audio.h \
 	audiofile.h \
 	audioinputengine.h \
@@ -35,6 +39,10 @@ EXTRA_DIST = \
 	velocity.h \
 	versionstr.h \
  \
+	audiocachefile.cc \
+	audiocache.cc \
+	audiocacheeventhandler.cc \
+	audiocacheidmanager.cc \
 	audiofile.cc \
 	audioinputengine.cc \
 	audioinputenginemidi.cc \
