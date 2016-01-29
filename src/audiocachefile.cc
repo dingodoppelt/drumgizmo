@@ -130,25 +130,25 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(mutex);
 
-	AudioCacheFile* cacheAudioFile = nullptr;
+	AudioCacheFile* cache_audio_file = nullptr;
 
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
-		cacheAudioFile = new AudioCacheFile(filename, read_buffer);
-		audiofiles.insert(std::make_pair(filename, cacheAudioFile));
+		cache_audio_file = new AudioCacheFile(filename, read_buffer);
+		audiofiles.insert(std::make_pair(filename, cache_audio_file));
 	}
 	else
 	{
-		cacheAudioFile = it->second;
+		cache_audio_file = it->second;
 	}
 
-	assert(cacheAudioFile);
+	assert(cache_audio_file);
 
 	// Increase ref count.
-	++cacheAudioFile->ref;
+	++cache_audio_file->ref;
 
-	return *cacheAudioFile;
+	return *cache_audio_file;
 }
 
 void AudioCacheFiles::releaseFile(const std::string& filename)

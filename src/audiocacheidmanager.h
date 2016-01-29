@@ -89,5 +89,5 @@ protected:
 	std::mutex mutex;
 
 	std::vector<cache_t> id2cache;
-	std::vector<cacheid_t> availableids;
+	std::vector<cacheid_t> available_ids;
 };
