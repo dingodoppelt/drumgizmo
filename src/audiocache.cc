@@ -96,16 +96,19 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	c.front = nullptr; // This is allocated when needed.
 	c.back = nullptr; // This is allocated when needed.
 
-	// cropped_size is the preload chunk size cropped to sample length.
-	size_t cropped_size = file.preloadedsize - c.localpos;
-	cropped_size /= framesize;
-	cropped_size *= framesize;
-	cropped_size += initial_samples_needed;
+	size_t cropped_size;
 
 	if(file.preloadedsize == file.size)
 	{
 		// We have preloaded the entire file, so use it.
 		cropped_size = file.preloadedsize;
+	}
+	else
+	{
+		// cropped_size is the preload chunk size cropped to sample length.
+		cropped_size = file.preloadedsize - c.localpos;
+		cropped_size -= cropped_size % framesize;
+		cropped_size += initial_samples_needed;
 	}
 
 	c.preloaded_samples = file.data;
@@ -114,7 +117,7 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	// Next read from disk will read from this point.
 	c.pos = cropped_size;//c.preloaded_samples_size;
 
-	// Only load next buffer if there are more data in the file to be loaded...
+	// Only load next buffer if there is more data in the file to be loaded...
 	if(c.pos < file.size)
 	{
 		if(c.back == nullptr)
