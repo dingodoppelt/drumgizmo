@@ -36,7 +36,7 @@ class JackAudioOutputEngine
 	, public JackProcess
 {
 public:
-	JackAudioOutputEngine(JackClient &client);
+	JackAudioOutputEngine(JackClient& client);
 	~JackAudioOutputEngine();
 
 	// based on AudioOutputEngine
@@ -59,8 +59,8 @@ private:
 		JackPort port;
 		std::vector<sample_t> samples;
 
-		Channel(JackClient& client, const std::string &name,
-		        std::size_t buffer_size);
+		Channel(JackClient& client, const std::string& name,
+		    std::size_t buffer_size);
 	};
 
 	JackClient& client;

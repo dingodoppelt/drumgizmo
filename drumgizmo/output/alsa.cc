@@ -35,11 +35,15 @@ struct AlsaInitError
 	int const code;
 	const std::string msg;
 
-	AlsaInitError(int op_code, const std::string &msg) : code{code}, msg{msg} {}
-
-	static inline void test(int code, const std::string &msg)
+	AlsaInitError(int op_code, const std::string& msg)
+		: code{code}
+		, msg{msg}
 	{
-		if (code < 0)
+	}
+
+	static inline void test(int code, const std::string& msg)
+	{
+		if(code < 0)
 		{
 			throw AlsaInitError(code, msg);
 		}
@@ -61,7 +65,7 @@ AlsaOutputEngine::~AlsaOutputEngine()
 {
 	// note: do NOT release `params`, it was allocated by `alloca()`
 
-	if (handle != nullptr)
+	if(handle != nullptr)
 	{
 		snd_pcm_close(handle);
 	}
@@ -72,10 +76,11 @@ bool AlsaOutputEngine::init(Channels channels)
 	// try to initialize alsa
 	try
 	{
-		int value = snd_pcm_open(&handle, dev.c_str(), SND_PCM_STREAM_PLAYBACK, 0);
+		int value =
+		    snd_pcm_open(&handle, dev.c_str(), SND_PCM_STREAM_PLAYBACK, 0);
 		AlsaInitError::test(value, "snd_pcm_open");
 		num_channels = channels.size();
-		if (handle == nullptr)
+		if(handle == nullptr)
 		{
 			std::cerr << "[AlsaOutputEngine] Failed to acquire "
 			          << "hardware handle\n";
@@ -86,21 +91,23 @@ bool AlsaOutputEngine::init(Channels channels)
 		value = snd_pcm_hw_params_any(handle, params);
 		AlsaInitError::test(value, "snd_pcm_hw_params_any");
 
-		value = snd_pcm_hw_params_set_access(handle, params,
-		                                     SND_PCM_ACCESS_RW_INTERLEAVED);
+		value = snd_pcm_hw_params_set_access(
+		    handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_access");
-		value = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_FLOAT);
+		value =
+		    snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_FLOAT);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_format");
 		value = snd_pcm_hw_params_set_channels(handle, params, num_channels);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_channels");
 		value = snd_pcm_hw_params_set_rate_near(handle, params, &srate, 0);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_rate_near");
-		value = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, 0);
+		value =
+		    snd_pcm_hw_params_set_period_size_near(handle, params, &frames, 0);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_period_size_near");
 		value = snd_pcm_hw_params(handle, params);
 		AlsaInitError::test(value, "snd_pcm_hw_params");
 	}
-	catch (AlsaInitError const &error)
+	catch(AlsaInitError const& error)
 	{
 		std::cerr << "[AlsaOutputEngine] " << error.msg
 		          << " failed: " << snd_strerror(error.code) << std::endl;
@@ -115,42 +122,45 @@ bool AlsaOutputEngine::init(Channels channels)
 
 void AlsaOutputEngine::setParm(std::string parm, std::string value)
 {
-	if (parm == "dev")
+	if(parm == "dev")
 	{
 		// apply hardware device name
 		dev = value;
 	}
-	else if (parm == "frames")
+	else if(parm == "frames")
 	{
 		// try to apply hardware buffer size
 		try
 		{
 			frames = std::stoi(value);
 		}
-		catch (...)
+		catch(...)
 		{
-			std::cerr << "[AlsaOutputEngine] Invalid buffer size " << value << "\n";
+			std::cerr << "[AlsaOutputEngine] Invalid buffer size " << value
+			          << "\n";
 		}
 	}
-	else if (parm == "srate")
+	else if(parm == "srate")
 	{
 		try
 		{
 			srate = std::stoi(value);
 		}
-		catch (...)
+		catch(...)
 		{
-			std::cerr << "[AlsaOutputEngine] Invalid samplerate " << value << "\n";
+			std::cerr << "[AlsaOutputEngine] Invalid samplerate " << value
+			          << "\n";
 		}
 	}
 	else
 	{
-		std::cerr << "[AlsaOutputEngine] Unsupported parameter '" << parm << "'\n";
+		std::cerr << "[AlsaOutputEngine] Unsupported parameter '" << parm
+		          << "'\n";
 	}
 }
 
 bool AlsaOutputEngine::start()
-{ 
+{
 	return true;
 }
 
@@ -162,10 +172,10 @@ void AlsaOutputEngine::pre(size_t nsamples)
 {
 }
 
-void AlsaOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
+void AlsaOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
 {
 	// Write channel data in interleaved buffer
-	for (auto i = 0u; i < nsamples; ++i)
+	for(auto i = 0u; i < nsamples; ++i)
 	{
 		data[i * num_channels + ch] = samples[i];
 	}

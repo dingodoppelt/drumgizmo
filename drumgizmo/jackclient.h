@@ -47,12 +47,12 @@ public:
 // RAII-wrapper for jack_port_t
 struct JackPort
 {
-	JackPort(JackClient &client, const std::string &name, const char *type,
+	JackPort(JackClient& client, const std::string& name, const char* type,
 	         JackPortFlags flags);
 	~JackPort();
 
-	jack_client_t *const client;
-	jack_port_t *const port;
+	jack_client_t* const client;
+	jack_port_t* const port;
 };
 
 // --------------------------------------------------------------------
@@ -65,15 +65,15 @@ public:
 	JackClient();
 	~JackClient();
 
-	void add(JackProcess &process);
-	void remove(JackProcess &process);
+	void add(JackProcess& process);
+	void remove(JackProcess& process);
 	void activate();
 	int process(jack_nframes_t num_frames);
 	std::size_t getBufferSize() const;
 	std::size_t getSampleRate() const;
 
 private:
-	jack_client_t *client;
-	std::set<JackProcess *> processes;
+	jack_client_t* client;
+	std::set<JackProcess*> processes;
 	bool is_active;
 };

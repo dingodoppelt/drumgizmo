@@ -44,9 +44,9 @@ WavfileOutputEngine::WavfileOutputEngine()
 
 WavfileOutputEngine::~WavfileOutputEngine()
 {
-	for (auto &ptr : channels)
+	for(auto& ptr : channels)
 	{
-		if (ptr != nullptr)
+		if(ptr != nullptr)
 		{
 			sf_close(ptr);
 		}
@@ -55,13 +55,14 @@ WavfileOutputEngine::~WavfileOutputEngine()
 
 bool WavfileOutputEngine::init(Channels data)
 {
-	channels.clear(), channels.resize(data.size()); // value-initialized with null
-	for (auto i = 0u; i < data.size(); ++i)
+	channels.clear();
+	channels.resize(data.size()); // value-initialized with null
+	for(auto i = 0u; i < data.size(); ++i)
 	{
 		// write channel to file
 		auto fname = file + data[i].name + "-" + std::to_string(i) + ".wav";
 		channels[i] = sf_open(fname.c_str(), SFM_WRITE, &info);
-		if (channels[i] == nullptr)
+		if(channels[i] == nullptr)
 		{
 			std::cerr << "[WaffileOutputEngine] Failed to initialize "
 			          << "channel #" << i << "\n";
@@ -73,21 +74,22 @@ bool WavfileOutputEngine::init(Channels data)
 
 void WavfileOutputEngine::setParm(std::string parm, std::string value)
 {
-	if (parm == "file")
+	if(parm == "file")
 	{
 		// apply output filename prefix
 		file = value;
 	}
-	else if (parm == "srate")
+	else if(parm == "srate")
 	{
 		// try to apply samplerate
 		try
 		{
 			info.samplerate = std::stoi(value);
 		}
-		catch (...)
+		catch(...)
 		{
-			std::cerr << "[WavfileOutputEngine] Invalid samplerate " << value << "\n";
+			std::cerr << "[WavfileOutputEngine] Invalid samplerate " << value
+			          << "\n";
 		}
 	}
 	else
@@ -97,24 +99,36 @@ void WavfileOutputEngine::setParm(std::string parm, std::string value)
 	}
 }
 
-bool WavfileOutputEngine::start() { return true; }
-
-void WavfileOutputEngine::stop() {}
-
-void WavfileOutputEngine::pre(size_t nsamples) {}
-
-void WavfileOutputEngine::run(int ch, sample_t *samples, size_t nsamples)
+bool WavfileOutputEngine::start()
 {
-	if (static_cast<unsigned int>(ch) >= channels.size())
+	return true;
+}
+
+void WavfileOutputEngine::stop()
+{
+}
+
+void WavfileOutputEngine::pre(size_t nsamples)
+{
+}
+
+void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
+{
+	if(static_cast<unsigned int>(ch) >= channels.size())
 	{
-		std::cerr << "[WavfileOutputEngine] cannot access channel #" << ch << " ("
-		          << channels.size() << " channels available)\n";
+		std::cerr << "[WavfileOutputEngine] cannot access channel #" << ch
+		          << " (" << channels.size() << " channels available)\n";
 		return;
 	}
 
 	sf_writef_float(channels[ch], samples, nsamples);
 }
 
-void WavfileOutputEngine::post(size_t nsamples) {}
+void WavfileOutputEngine::post(size_t nsamples)
+{
+}
 
-size_t WavfileOutputEngine::samplerate() { return info.samplerate; }
+size_t WavfileOutputEngine::samplerate()
+{
+	return info.samplerate;
+}

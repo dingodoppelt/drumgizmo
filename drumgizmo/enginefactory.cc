@@ -31,9 +31,14 @@
 
 EngineFactory::EngineFactory()
 	: input{}
-	, output{}
+	, output
+{
+}
 #ifdef USE_JACK
-	, jack { nullptr }
+, jack
+{
+	nullptr
+}
 #endif
 {
 // list available input engines
@@ -65,7 +70,7 @@ EngineFactory::EngineFactory()
 #ifdef USE_JACK
 void EngineFactory::prepareJack()
 {
-	if (jack == nullptr)
+	if(jack == nullptr)
 	{
 		jack = std::make_unique<JackClient>();
 	}
@@ -82,23 +87,22 @@ const std::list<std::string>& EngineFactory::getOutputEngines() const
 	return output;
 }
 
-std::unique_ptr<AudioInputEngine>
-EngineFactory::createInput(const std::string& name)
+std::unique_ptr<AudioInputEngine> EngineFactory::createInput(const std::string& name)
 {
 #ifdef HAVE_INPUT_DUMMY
-	if (name == "dummy")
+	if(name == "dummy")
 	{
 		return std::make_unique<DummyInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_MIDIFILE
-	if (name == "midifile")
+	if(name == "midifile")
 	{
 		return std::make_unique<MidifileInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_JACKMIDI
-	if (name == "jackmidi")
+	if(name == "jackmidi")
 	{
 		prepareJack();
 		return std::make_unique<JackMidiInputEngine>(*jack);
@@ -111,29 +115,28 @@ EngineFactory::createInput(const std::string& name)
 	return nullptr;
 }
 
-std::unique_ptr<AudioOutputEngine>
-EngineFactory::createOutput(const std::string& name)
+std::unique_ptr<AudioOutputEngine> EngineFactory::createOutput(const std::string& name)
 {
 #ifdef HAVE_OUTPUT_DUMMY
-	if (name == "dummy")
+	if(name == "dummy")
 	{
 		return std::make_unique<DummyOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_WAVFILE
-	if (name == "wavfile")
+	if(name == "wavfile")
 	{
 		return std::make_unique<WavfileOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_ALSA
-	if (name == "alsa")
+	if(name == "alsa")
 	{
 		return std::make_unique<AlsaOutputEngine>();
 	}
 #endif
 #ifdef HAVE_OUTPUT_JACKAUDIO
-	if (name == "jackaudio")
+	if(name == "jackaudio")
 	{
 		prepareJack();
 		return std::make_unique<JackAudioOutputEngine>(*jack);

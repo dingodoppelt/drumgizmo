@@ -28,12 +28,14 @@
 
 #include "jackclient.h"
 
-JackProcess::~JackProcess() {}
+JackProcess::~JackProcess()
+{
+}
 
 // --------------------------------------------------------------------
 
-JackPort::JackPort(JackClient &client, const std::string &name,
-                   const char *type, JackPortFlags flags)
+JackPort::JackPort(JackClient& client, const std::string& name,
+                   const char* type, JackPortFlags flags)
 	: client{client.client} // register jack port for given client
 	, port{jack_port_register(this->client, name.c_str(), type, flags, 0)}
 {
@@ -41,7 +43,7 @@ JackPort::JackPort(JackClient &client, const std::string &name,
 
 JackPort::~JackPort()
 {
-	if (port != nullptr)
+	if(port != nullptr)
 	{
 		assert(client != nullptr);
 		jack_port_unregister(client, port);
@@ -50,15 +52,12 @@ JackPort::~JackPort()
 
 // --------------------------------------------------------------------
 
-static int _wrap_jack_process(jack_nframes_t nframes, void *arg)
+static int _wrap_jack_process(jack_nframes_t nframes, void* arg)
 {
-	return static_cast<JackClient *>(arg)->process(nframes);
+	return static_cast<JackClient*>(arg)->process(nframes);
 }
 
-JackClient::JackClient()
-	: client{nullptr}
-	, processes{}
-	, is_active{false}
+JackClient::JackClient() : client{nullptr}, processes{}, is_active{false}
 {
 	jack_status_t status;
 	client = jack_client_open("DrumGizmo", JackNullOption, &status);
@@ -67,25 +66,25 @@ JackClient::JackClient()
 
 JackClient::~JackClient()
 {
-	if (client != nullptr)
+	if(client != nullptr)
 	{
 		jack_client_close(client);
 	}
 }
 
-void JackClient::add(JackProcess &process)
+void JackClient::add(JackProcess& process)
 {
 	processes.insert(&process);
 }
 
-void JackClient::remove(JackProcess &process)
+void JackClient::remove(JackProcess& process)
 {
 	processes.erase(&process);
 }
 
 void JackClient::activate()
 {
-	if (!is_active)
+	if(!is_active)
 	{
 		jack_activate(client);
 	}
@@ -94,7 +93,7 @@ void JackClient::activate()
 
 int JackClient::process(jack_nframes_t num_frames)
 {
-	for (auto& ptr : processes)
+	for(auto& ptr : processes)
 	{
 		ptr->process(num_frames);
 	}

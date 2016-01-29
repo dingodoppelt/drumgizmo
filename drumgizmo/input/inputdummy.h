@@ -27,7 +27,8 @@
 #pragma once
 #include <audioinputengine.h>
 
-class DummyInputEngine : public AudioInputEngine
+class DummyInputEngine
+	: public AudioInputEngine
 {
 public:
 	DummyInputEngine();

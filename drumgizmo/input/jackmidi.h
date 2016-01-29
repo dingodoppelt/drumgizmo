@@ -39,7 +39,7 @@ class JackMidiInputEngine
 	, public JackProcess
 {
 public:
-	JackMidiInputEngine(JackClient &client);
+	JackMidiInputEngine(JackClient& client);
 	~JackMidiInputEngine();
 
 	// based on AudioInputEngineMidi
@@ -55,7 +55,7 @@ public:
 	void process(jack_nframes_t num_frames) override;
 
 private:
-	JackClient &client;
+	JackClient& client;
 	std::unique_ptr<JackPort> port;
 
 	std::size_t pos;

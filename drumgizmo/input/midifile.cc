@@ -44,7 +44,7 @@ MidifileInputEngine::MidifileInputEngine()
 
 MidifileInputEngine::~MidifileInputEngine()
 {
-	if (smf != nullptr)
+	if(smf != nullptr)
 	{
 		smf_delete(smf);
 	}
@@ -52,26 +52,27 @@ MidifileInputEngine::~MidifileInputEngine()
 
 bool MidifileInputEngine::init(Instruments& instruments)
 {
-	if (file == "")
+	if(file == "")
 	{
 		std::cerr << "[MidifileInputEngine] Missing midi filename\n";
 		return false;
 	}
-	if (midimap == "")
+	if(midimap == "")
 	{
 		std::cerr << "[MidifileInputEngine] Missing midimap filename\n";
 		return false;
 	}
 	smf = smf_load(file.c_str());
-	if (smf == nullptr)
+	if(smf == nullptr)
 	{
 		std::cerr << "[MidifileInputEngine] Failed to load midifile '" << file
 		          << "'\n";
 		return false;
 	}
-	if (!loadMidiMap(midimap, instruments)) {
-		std::cerr << "[MidifileInputEngine] Failed to parse midimap '" << midimap
-		          << "'\n";
+	if(!loadMidiMap(midimap, instruments))
+	{
+		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
+		          << midimap << "'\n";
 		return false;
 	}
 	return true;
@@ -79,29 +80,30 @@ bool MidifileInputEngine::init(Instruments& instruments)
 
 void MidifileInputEngine::setParm(std::string parm, std::string value)
 {
-	if (parm == "file")
+	if(parm == "file")
 	{
 		// apply midi input filename
 		file = value;
 	}
-	else if (parm == "speed")
+	else if(parm == "speed")
 	{
 		// try to apply speed
 		try
 		{
 			speed = std::stof(value);
 		}
-		catch (...)
+		catch(...)
 		{
-			std::cerr << "[MidifileInputEngine] Invalid speed " << value << "\n";
+			std::cerr << "[MidifileInputEngine] Invalid speed " << value
+			          << "\n";
 		}
 	}
-	else if (parm == "midimap")
+	else if(parm == "midimap")
 	{
 		// apply midimap filename
 		midimap = value;
 	}
-	else if (parm == "loop")
+	else if(parm == "loop")
 	{
 		// apply looping
 		loop = true;
@@ -126,34 +128,34 @@ void MidifileInputEngine::pre()
 {
 }
 
-event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
+event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t* nevents)
 {
-	event_t *evs{nullptr};
+	event_t* evs{nullptr};
 	size_t num_events{0u};
 
 	double current_max_time = (1.0 + pos + len) / (44100.0 / speed);
 	current_max_time -= offset;
 	//  double cur_min_time = (double)(pos) / (44100.0 / speed);
 
-	if (!current_event)
+	if(!current_event)
 	{
 		current_event = smf_get_next_event(smf);
 	}
 
-	while (current_event && current_event->time_seconds < current_max_time)
+	while(current_event && current_event->time_seconds < current_max_time)
 	{
-		if (!smf_event_is_metadata(current_event))
+		if(!smf_event_is_metadata(current_event))
 		{
-			if ((current_event->midi_buffer_length == 3) &&
+			if((current_event->midi_buffer_length == 3) &&
 			    ((current_event->midi_buffer[0] & NOTE_ON) == NOTE_ON) &&
 			    (track == -1 || current_event->track_number == track) &&
 			    current_event->midi_buffer[2] > 0)
 			{
 
-				if (evs == nullptr)
+				if(evs == nullptr)
 				{
 					// todo: get rid of malloc
-					evs = (event_t *)malloc(sizeof(event_t) * 1000);
+					evs = (event_t*)malloc(sizeof(event_t) * 1000);
 				}
 
 				int key = current_event->midi_buffer[1];
@@ -164,13 +166,13 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 				evs[num_events].offset = evpos - pos;
 
 				int i = mmap.lookup(key);
-				if (i != -1)
+				if(i != -1)
 				{
 					evs[num_events].instrument = i;
 					evs[num_events].velocity = velocity / 127.0;
 
 					++num_events;
-					if (num_events > 999)
+					if(num_events > 999)
 					{
 						fprintf(stderr, "PANIC!\n");
 						break;
@@ -182,19 +184,19 @@ event_t *MidifileInputEngine::run(size_t pos, size_t len, size_t *nevents)
 		current_event = smf_get_next_event(smf);
 	}
 
-	if (!current_event)
+	if(!current_event)
 	{
-		if (loop)
+		if(loop)
 		{
 			smf_rewind(smf);
 			offset += current_max_time;
 		}
 		else
 		{
-			if (evs == nullptr)
+			if(evs == nullptr)
 			{
 				// todo: get rid of malloc
-				evs = (event_t *)malloc(sizeof(event_t) * 1000);
+				evs = (event_t*)malloc(sizeof(event_t) * 1000);
 			}
 			evs[num_events].type = TYPE_STOP;
 			evs[num_events].offset = len - 1;

@@ -32,7 +32,7 @@
 
 static int const NOTE_ON = 0x90;
 
-JackMidiInputEngine::JackMidiInputEngine(JackClient &client)
+JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	: AudioInputEngineMidi{}
 	, JackProcess{}
 	, client(client)
@@ -51,19 +51,21 @@ JackMidiInputEngine::~JackMidiInputEngine()
 
 bool JackMidiInputEngine::init(Instruments& instruments)
 {
-	if (!loadMidiMap(midimap, instruments)) {
-		std::cerr << "[MidifileInputEngine] Failed to parse midimap '" << midimap
-		          << "'\n";
+	if(!loadMidiMap(midimap, instruments))
+	{
+		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
+		          << midimap << "'\n";
 		return false;
 	}
 	port = std::make_unique<JackPort>(client, "drumgizmo_midiin",
-	                                  JACK_DEFAULT_MIDI_TYPE, JackPortIsInput);
+	                                  JACK_DEFAULT_MIDI_TYPE,
+	                                  JackPortIsInput);
 	return true;
 }
 
 void JackMidiInputEngine::setParm(std::string parm, std::string value)
 {
-	if (parm == "midimap")
+	if(parm == "midimap")
 	{
 		// apply midimap filename
 		midimap = value;
@@ -89,12 +91,12 @@ void JackMidiInputEngine::pre()
 {
 }
 
-event_t *JackMidiInputEngine::run(size_t pos, size_t len, size_t *nevents)
+event_t* JackMidiInputEngine::run(size_t pos, size_t len, size_t* nevents)
 {
 	*nevents = listsize;
-	event_t *l = list;
+	event_t* l = list;
 	// todo: get rid of malloc
-	list = (event_t *)malloc(sizeof(event_t) * 1000);
+	list = (event_t*)malloc(sizeof(event_t) * 1000);
 	listsize = 0;
 	return l;
 }
@@ -106,18 +108,18 @@ void JackMidiInputEngine::post()
 void JackMidiInputEngine::process(jack_nframes_t num_frames)
 {
 	assert(port != nullptr);
-	void *buffer = jack_port_get_buffer(port->port, num_frames);
+	void* buffer = jack_port_get_buffer(port->port, num_frames);
 	jack_nframes_t num_events = jack_midi_get_event_count(buffer);
 
-	for (jack_nframes_t i = 0; i < num_events; ++i)
+	for(jack_nframes_t i = 0; i < num_events; ++i)
 	{
 		jack_midi_event_t event;
 		jack_midi_event_get(&event, buffer, i);
-		if (event.size != 3)
+		if(event.size != 3)
 		{
 			continue;
 		}
-		if ((event.buffer[0] & NOTE_ON) != NOTE_ON)
+		if((event.buffer[0] & NOTE_ON) != NOTE_ON)
 		{
 			continue;
 		}
@@ -125,7 +127,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		int velocity = event.buffer[2];
 		printf("Event key:%d vel:%d\n", key, velocity);
 		int k = mmap.lookup(key);
-		if (k != -1 && velocity)
+		if(k != -1 && velocity)
 		{
 			list[listsize].type = TYPE_ONSET;
 			list[listsize].instrument = k;
