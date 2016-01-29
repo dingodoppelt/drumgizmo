@@ -36,6 +36,7 @@ EXTRA_DIST = \
 	image.h \
 	knob.h \
 	label.h \
+	layout.h \
 	led.h \
 	lineedit.h \
 	listbox.h \
@@ -55,6 +56,7 @@ EXTRA_DIST = \
 	resource_data.h \
 	scrollbar.h \
 	slider.h \
+	textedit.h \
 	verticalline.h \
 	widget.h \
 	window.h \

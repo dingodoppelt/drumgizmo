@@ -9,5 +9,6 @@ EXTRA_DIST = \
 	hugin/hugin.c \
 	hugin/hugin_util.h \
 	hugin/hugin_syslog.h \
-	hugin/hugin_syslog.c
-
+	hugin/hugin_syslog.c \
+	hugin/hugin_filter.h \
+	hugin/hugin_filter.c

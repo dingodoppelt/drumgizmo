@@ -12,6 +12,7 @@ EXTRA_DIST = \
 	channel.h \
 	channelmixer.h \
 	chresampler.h \
+	configfile.h \
 	configuration.h \
 	configparser.h \
 	drumgizmo.h \
@@ -50,6 +51,7 @@ EXTRA_DIST = \
 	channel.cc \
 	channelmixer.cc \
 	chresampler.cc \
+	configfile.cc \
 	configuration.cc \
 	configparser.cc \
 	drumgizmo.cc \
