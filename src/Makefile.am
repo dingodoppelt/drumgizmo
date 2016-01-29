@@ -13,7 +13,6 @@ EXTRA_DIST = \
 	channelmixer.h \
 	chresampler.h \
 	configuration.h \
-	cachemanager.h \
 	configparser.h \
 	drumgizmo.h \
 	drumkit.h \
@@ -48,7 +47,6 @@ EXTRA_DIST = \
 	audioinputenginemidi.cc \
 	audiooutputengine.cc \
 	beatmapper.cc \
-	cachemanager.cc \
 	channel.cc \
 	channelmixer.cc \
 	chresampler.cc \
