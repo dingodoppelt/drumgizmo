@@ -133,6 +133,7 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
+		// Construct a new AudioCacheFile in place. The in place construction is relevant.
 		it = audiofiles.emplace(std::piecewise_construct, std::make_tuple(filename),
 		                        std::make_tuple(filename, std::ref(read_buffer))).first;
 	}
