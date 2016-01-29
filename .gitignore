@@ -36,6 +36,11 @@ test/engine
 test/gui
 test/lv2
 test/resource
+test/audiocache
+test/audiocacheeventhandler
+test/audiocachefile
+test/audiocacheidmanager
+test/configfile
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
