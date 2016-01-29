@@ -34,10 +34,11 @@
 
 #include "audiocache.h"
 
-AudioCacheFile::AudioCacheFile(const std::string& filename)
-	: filename(filename)
+AudioCacheFile::AudioCacheFile(const std::string& filename,
+                               std::vector<sample_t>& read_buffer)
+	: filename(filename), read_buffer(read_buffer)
 {
-	std::memset(&sf_info, 0, sizeof(SF_INFO));
+	std::memset(&sf_info, 0, sizeof(SF_INFO)); // XXX Is this really necessary?
 
 	fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!fh)
@@ -49,7 +50,7 @@ AudioCacheFile::AudioCacheFile(const std::string& filename)
 
 	if(sf_info.frames == 0)
 	{
-		printf("sf_info.frames == 0\n");
+		printf("sf_info.frames == 0\n"); // XXX Shouldn't that be debug output?
 	}
 }
 
@@ -101,24 +102,18 @@ void AudioCacheFile::readChunk(const CacheChannels& channels,
 		size = num_samples;
 	}
 
-	static sample_t *read_buffer = nullptr;
-	static size_t read_buffer_size = 0;
-
-	if((size * sf_info.channels) > read_buffer_size)
+	if((size * sf_info.channels) > read_buffer.size())
 	{
-		delete[] read_buffer;
-		read_buffer_size = size * sf_info.channels;
-		read_buffer = new sample_t[read_buffer_size];
-		// TODO: This buffer is never free'd on app shutdown.
+		read_buffer.resize(size * sf_info.channels);
 	}
 
-	size_t read_size = sf_readf_float(fh, read_buffer, size);
+	size_t read_size = sf_readf_float(fh, read_buffer.data(), size);
 	(void)read_size;
 
 	for(auto it = channels.begin(); it != channels.end(); ++it)
 	{
 		size_t channel = it->channel;
-		sample_t *data = it->samples;
+		sample_t* data = it->samples;
 		for (size_t i = 0; i < size; ++i)
 		{
 			data[i] = read_buffer[(i * sf_info.channels) + channel];
@@ -140,7 +135,7 @@ AudioCacheFile& AudioCacheFiles::getFile(const std::string& filename)
 	auto it = audiofiles.find(filename);
 	if(it == audiofiles.end())
 	{
-		cacheAudioFile = new AudioCacheFile(filename);
+		cacheAudioFile = new AudioCacheFile(filename, read_buffer); // XXX why create a pointer and not move it into the map such that it is the owner?
 		audiofiles.insert(std::make_pair(filename, cacheAudioFile));
 	}
 	else

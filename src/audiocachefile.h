@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 #include <mutex>
 #include "mutex.h"
@@ -43,7 +44,7 @@ public:
 	size_t channel; //< Channel number
 	sample_t* samples; //< Sample buffer pointer.
 	size_t num_samples; //< Number of samples in the sample buffer
-	volatile bool* ready; //< Is set to tru when the loading is done.
+	volatile bool* ready; //< Is set to true when the loading is done.
 };
 
 using CacheChannels = std::list<CacheChannel>;
@@ -56,7 +57,7 @@ class AudioCacheFile {
 	friend class TestableAudioCacheFiles;
 public:
 	//! Create file handle for filename.
-	AudioCacheFile(const std::string& filename);
+	AudioCacheFile(const std::string& filename, std::vector<sample_t>& read_buffer);
 
 	//! Closes file handle.
 	~AudioCacheFile();
@@ -78,6 +79,7 @@ private:
 	SNDFILE* fh{nullptr};
 	SF_INFO sf_info;
 	std::string filename;
+	std::vector<sample_t>& read_buffer;
 };
 
 class AudioCacheFiles {
@@ -95,4 +97,5 @@ public:
 protected:
 	std::map<std::string, AudioCacheFile*> audiofiles;
 	std::mutex mutex;
+	std::vector<sample_t> read_buffer;
 };
