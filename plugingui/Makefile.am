@@ -27,6 +27,7 @@ EXTRA_DIST = \
 	checkbox.h \
 	colour.h \
 	combobox.h \
+	dgwindow.h \
 	directory.h \
 	eventhandler.h \
 	filebrowser.h \
