@@ -95,7 +95,7 @@ public:
 	void releaseFile(const std::string& filename);
 
 protected:
-	std::map<std::string, AudioCacheFile*> audiofiles;
+	std::map<std::string, AudioCacheFile> audiofiles;
 	std::mutex mutex;
 	std::vector<sample_t> read_buffer;
 };

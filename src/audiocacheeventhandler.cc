@@ -41,7 +41,7 @@ enum class EventType {
 
 class CacheEvent {
 public:
-	EventType eventType;
+	EventType event_type;
 
 	// For close event:
 	cacheid_t id;
@@ -105,8 +105,7 @@ void AudioCacheEventHandler::setThreaded(bool threaded)
 	{
 		start();
 	}
-
-	if(!threaded && running)
+	else if(!threaded && running)
 	{
 		stop();
 	}
@@ -135,7 +134,7 @@ void AudioCacheEventHandler::pushLoadNextEvent(AudioCacheFile* afile,
                                                volatile bool* ready)
 {
 	CacheEvent cache_event;
-	cache_event.eventType = EventType::LoadNext;
+	cache_event.event_type = EventType::LoadNext;
 	cache_event.pos = pos;
 	cache_event.afile = afile;
 
@@ -154,7 +153,7 @@ void AudioCacheEventHandler::pushLoadNextEvent(AudioCacheFile* afile,
 void AudioCacheEventHandler::pushCloseEvent(cacheid_t id)
 {
 	CacheEvent cache_event;
-	cache_event.eventType = EventType::Close;
+	cache_event.event_type = EventType::Close;
 	cache_event.id = id;
 
 	pushEvent(cache_event);
@@ -172,17 +171,17 @@ void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 		return;
 	}
 
-	DEBUG(cache, "1)\n");
+	DEBUG(cache, "setChunkSize 1\n");
 
 	// Remove all events from event queue.
 	clearEvents();
 
-	DEBUG(cache, "2)\n");
+	DEBUG(cache, "setChunkSize 2\n");
 
 	// Skip all active cacheids and make their buffers point at nodata.
 	id_manager.disableActive();
 
-	DEBUG(cache, "3)\n");
+	DEBUG(cache, "setChunkSize 3\n");
 
 	this->chunksize = chunksize;
 }
@@ -203,7 +202,7 @@ void AudioCacheEventHandler::clearEvents()
 	// Iterate all events ignoring load events and handling close events.
 	for(auto& event : eventqueue)
 	{
-		if(event.eventType == EventType::Close)
+		if(event.event_type == EventType::Close)
 		{
 			handleCloseCache(event.id); // This method does not lock.
 		}
@@ -224,21 +223,21 @@ void AudioCacheEventHandler::handleCloseEvent(CacheEvent& cache_event)
 	handleCloseCache(cache_event.id);
 }
 
-void AudioCacheEventHandler::handleCloseCache(cacheid_t cacheid)
+void AudioCacheEventHandler::handleCloseCache(cacheid_t id)
 {
-	auto& cache = id_manager.getCache(cacheid);
+	auto& cache = id_manager.getCache(id);
 
 	files.releaseFile(cache.afile->getFilename());
 
 	delete[] cache.front;
 	delete[] cache.back;
 
-	id_manager.releaseID(cacheid);
+	id_manager.releaseID(id);
 }
 
 void AudioCacheEventHandler::handleEvent(CacheEvent& cache_event)
 {
-	switch(cache_event.eventType)
+	switch(cache_event.event_type)
 	{
 	case EventType::LoadNext:
 		handleLoadNextEvent(cache_event);
@@ -291,11 +290,11 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 
 		bool found = false;
 
-		if(cache_event.eventType == EventType::LoadNext)
+		if(cache_event.event_type == EventType::LoadNext)
 		{
 			for(auto& queued_event : eventqueue)
 			{
-				if((queued_event.eventType == EventType::LoadNext) &&
+				if((queued_event.event_type == EventType::LoadNext) &&
 				   (cache_event.afile->getFilename() ==
 				    queued_event.afile->getFilename()) &&
 				   (cache_event.pos == queued_event.pos))

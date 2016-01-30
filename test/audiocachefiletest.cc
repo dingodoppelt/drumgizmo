@@ -39,12 +39,14 @@ public:
 	//void release(const std::string& filename);
 	int getRef(const std::string& filename)
 	{
-		if(audiofiles.find(filename) == audiofiles.end())
+		auto it = audiofiles.find(filename);
+
+		if(it == audiofiles.end())
 		{
 			return -1;
 		}
 
-		return audiofiles[filename]->ref;
+		return (it->second).ref;
 	}
 };
 

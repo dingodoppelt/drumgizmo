@@ -27,7 +27,6 @@
 #pragma once
 
 #include <list>
-#include <vector>
 #include <mutex>
 
 #include "thread.h"
@@ -88,7 +87,7 @@ protected:
 	void handleCloseEvent(CacheEvent& cache_event);
 
 	//! Close decrease the file ref and release the cache id.
-	void handleCloseCache(cacheid_t cacheid);
+	void handleCloseCache(cacheid_t id);
 
 	void handleEvent(CacheEvent& cache_event);
 
