@@ -49,3 +49,6 @@ vst/Makefile.mingw32
 test/*.log
 test/*.trs
 tools/valgrind_test/*.log
+tools/performance_test/*.log
+tools/performance_test/*.dat
+tools/performance_test/*.png

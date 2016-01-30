@@ -1,0 +1,100 @@
+#!/bin/bash
+# USAGE: ./performance_test <kit> <midimap> <midifile>
+
+test_dir=$(dirname $0)
+cd $test_dir
+
+dg_path="../../drumgizmo"
+dg_log_file="drumgizmo.log"
+sample_interval=.5
+cpu_plot_file="cpu_plot"
+ram_plot_file="ram_plot"
+
+# check for right number of parameters
+if [[ $# != 3 ]]
+then
+	echo "ERROR: You didn't supply the right number of parameters."
+	echo "USAGE: ./performance_test <kit> <midimap> <midifile>"
+	echo "Exiting..."
+	exit
+fi
+
+kit="$1"
+midimap="$2"
+midifile="$3"
+
+# check for drumgizmo
+if ! [ -e $dg_path/drumgizmo ]
+then
+	echo "ERROR: The drumgizmo binary doesn't exist. Maybe you forgot to compile?"
+	echo "Exiting..."
+	exit
+fi
+
+# check for gnuplot
+if ! command -v gnuplot >/dev/null 2>&1
+then
+	echo "ERROR: Cannot find gnuplot. Maybe it isn't installed?"
+	echo "Exiting..."
+	exit
+fi
+
+# check for the existence of the passed files
+if ! [ -e "$1" ] || ! [ -e "$2" ] || ! [ -e "$3" ]
+then
+	echo "ERROR: One of the files (kit/midimap/midfile) doesn't exist."
+	echo "Exiting..."
+	exit
+fi
+
+echo "============================"
+echo "Starting the performace test"
+echo "============================"
+
+# initial data values
+cpu_data=""
+ram_data=""
+data_count=0
+
+# log ram and cpu usage of process
+function logData
+{
+	top_output="$(top -b -n 1 -p $pid | tail -n 1)"
+	top_arr=($top_output)
+
+	cpu_usage="${top_arr[6]}"
+	ram_usage="${top_arr[7]}"
+
+	cpu_data="${cpu_data}${data_count} ${cpu_usage}\n"
+	ram_data="${ram_data}${data_count} ${ram_usage}\n"
+
+	data_count=$((data_count+1))
+}
+
+# gnuplot ram and cpu usage over time 
+function plotData
+{
+	echo -e "$cpu_data" > cpu_data.dat
+	echo -e "$ram_data" > ram_data.dat
+	gnuplot performance_test.gnuplot > /dev/null 2>&1
+}
+
+# delete possibly already existing log file
+if [ -e $dg_log_file ]
+then
+	rm $dg_log_file
+fi
+
+# start dg
+$dg_path/./drumgizmo -i midifile -I file=$midifile,midimap=$midimap -o dummy $kit >> $dg_log_file &
+pid=$!
+
+# collect data while dg is running
+while ps -p $pid > /dev/null
+do
+	logData $pid
+	sleep $sample_interval
+done
+
+# plot data
+plotData
