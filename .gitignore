@@ -48,3 +48,4 @@ tst
 vst/Makefile.mingw32
 test/*.log
 test/*.trs
+tools/valgrind_test/*.log
