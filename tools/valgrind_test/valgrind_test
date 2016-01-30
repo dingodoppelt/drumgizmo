@@ -1,0 +1,21 @@
+#!/bin/bash
+
+valgrind_log_file="valgrind_test.log"
+dg_log_file="drumgizmo.log"
+valgrind_options="--leak-check=full --log-file=$valgrind_log_file --show-leak-kinds=all --track-origins=yes"
+midi_file="../../test/midi/file1.mid"
+wav_file_prefix="valgrind_test"
+midimap="../../test/kit/midimap.xml"
+drumkit="../../test/kit/kit1.xml"
+
+echo "========================================"
+echo "Starting the valgrind test"
+echo
+echo "Valgrind output file: $valgrind_log_file"
+echo "DrumGizmo output file: $dg_log_file"
+echo "========================================"
+echo
+
+sed -n '/LEAK SUMMARY:/,$p' $valgrind_log_file
+
+valgrind $valgrind_options ../../drumgizmo/./drumgizmo -i midifile -I file=$midi_file,midimap=$midimap -o wavfile -O file=$wav_file_prefix $drumkit > $dg_log_file
