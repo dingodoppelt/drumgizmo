@@ -1,21 +1,45 @@
 #!/bin/bash
 
-valgrind_log_file="valgrind_test.log"
+test_dir=$(dirname $0)
+cd $test_dir
+
+memcheck_log_file="valgrind_memcheck.log"
+helgrind_log_file="valgrind_helgrind.log"
 dg_log_file="drumgizmo.log"
-valgrind_options="--leak-check=full --log-file=$valgrind_log_file --show-leak-kinds=all --track-origins=yes"
+memcheck_options="--tool=memcheck --log-file=$memcheck_log_file --leak-check=full --show-leak-kinds=all --track-origins=yes"
+helgrind_options="--tool=helgrind --log-file=$helgrind_log_file"
 midi_file="../../test/midi/file1.mid"
 wav_file_prefix="valgrind_test"
 midimap="../../test/kit/midimap.xml"
 drumkit="../../test/kit/kit1.xml"
 
-echo "========================================"
+echo "==========================================="
 echo "Starting the valgrind test"
 echo
-echo "Valgrind output file: $valgrind_log_file"
-echo "DrumGizmo output file: $dg_log_file"
-echo "========================================"
+echo "Memcheck output file: $memcheck_log_file"
+echo "Helgrind output file: $helgrind_log_file"
+echo "==========================================="
+echo
+echo "----------------"
+echo "Running memcheck"
+echo "----------------"
 echo
 
-sed -n '/LEAK SUMMARY:/,$p' $valgrind_log_file
+# run memcheck and print summary
+valgrind $memcheck_options ../../drumgizmo/./drumgizmo -i midifile -I file=$midi_file,midimap=$midimap -o wavfile -O file=$wav_file_prefix $drumkit > /dev/null
+sed -n '/LEAK SUMMARY:/,$p' $memcheck_log_file
 
-valgrind $valgrind_options ../../drumgizmo/./drumgizmo -i midifile -I file=$midi_file,midimap=$midimap -o wavfile -O file=$wav_file_prefix $drumkit > $dg_log_file
+echo
+echo "----------------"
+echo "Running helgrind"
+echo "----------------"
+echo
+
+# run helgrind and print summary
+valgrind $helgrind_options ../../drumgizmo/./drumgizmo -i midifile -I file=$midi_file,midimap=$midimap -o wavfile -O file=$wav_file_prefix $drumkit > $dg_log_file
+sed -n '/ERROR SUMMARY:/,$p' $helgrind_log_file
+
+echo
+
+# delete created wav files
+rm *.wav
