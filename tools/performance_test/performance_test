@@ -1,14 +1,16 @@
 #!/bin/bash
 # USAGE: ./performance_test <kit> <midimap> <midifile>
+# This script needs JACK to be started or just starts it itself if it isn't.
 
 test_dir=$(dirname $0)
 cd $test_dir
 
 dg_path="../../drumgizmo"
-dg_log_file="drumgizmo.log"
 sample_interval=.5
 cpu_plot_file="cpu_plot"
 ram_plot_file="ram_plot"
+cpu_data_file="cpu_data.dat"
+ram_data_file="ram_data.dat"
 
 # check for right number of parameters
 if [[ $# != 3 ]]
@@ -23,6 +25,17 @@ kit="$1"
 midimap="$2"
 midifile="$3"
 
+# function to check for dependencies
+function check_for_dep
+{
+	if ! command -v $1 >/dev/null 2>&1
+	then
+		echo "ERROR: Cannot find $1. Maybe it isn't installed?"
+		echo "Exiting..."
+		exit
+	fi
+}
+
 # check for drumgizmo
 if ! [ -e $dg_path/drumgizmo ]
 then
@@ -31,13 +44,9 @@ then
 	exit
 fi
 
-# check for gnuplot
-if ! command -v gnuplot >/dev/null 2>&1
-then
-	echo "ERROR: Cannot find gnuplot. Maybe it isn't installed?"
-	echo "Exiting..."
-	exit
-fi
+# check for dependencies
+check_for_dep gnuplot
+check_for_dep top
 
 # check for the existence of the passed files
 if ! [ -e "$1" ] || ! [ -e "$2" ] || ! [ -e "$3" ]
@@ -55,10 +64,13 @@ echo "============================"
 cpu_data=""
 ram_data=""
 data_count=0
+avg_cpu_usage=0
 
 # log ram and cpu usage of process
 function logData
 {
+	pid=$1
+
 	top_output="$(top -b -n 1 -p $pid | tail -n 1)"
 	top_arr=($top_output)
 
@@ -68,25 +80,22 @@ function logData
 	cpu_data="${cpu_data}${data_count} ${cpu_usage}\n"
 	ram_data="${ram_data}${data_count} ${ram_usage}\n"
 
+	avg_cpu_usage="$(ps -p $pid -o %cpu | tail -n 1)"
+
 	data_count=$((data_count+1))
 }
 
 # gnuplot ram and cpu usage over time 
 function plotData
 {
-	echo -e "$cpu_data" > cpu_data.dat
-	echo -e "$ram_data" > ram_data.dat
+	echo -e "$cpu_data" > $cpu_data_file
+	echo -e "$ram_data" > $ram_data_file
 	gnuplot performance_test.gnuplot > /dev/null 2>&1
 }
 
-# delete possibly already existing log file
-if [ -e $dg_log_file ]
-then
-	rm $dg_log_file
-fi
-
 # start dg
-$dg_path/./drumgizmo -i midifile -I file=$midifile,midimap=$midimap -o dummy $kit >> $dg_log_file &
+echo $kit
+$dg_path/./drumgizmo -i midifile -I file="$midifile",midimap="$midimap" -o jackaudio "$kit" &
 pid=$!
 
 # collect data while dg is running
@@ -98,3 +107,15 @@ done
 
 # plot data
 plotData
+
+echo
+echo "-------------------------------------------------------------------"
+echo "The average CPU usage was: ${avg_cpu_usage}%"
+echo "See the data files $cpu_data_file and $ram_data_file for details."
+echo "They are nicely plotted in cpu_data.png and ram_data.png."
+echo "-------------------------------------------------------------------"
+echo
+
+echo "============================"
+echo "Finished the performace test"
+echo "============================"
