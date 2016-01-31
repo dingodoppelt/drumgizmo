@@ -174,7 +174,7 @@ void DrumKitLoader::thread_main()
 			int preload_size = framesize * CHUNK_MULTIPLIER + framesize;
 			if(preload_size < 1024)
 			{
-	      preload_size = 1024;
+				preload_size = 1024;
 			}
 
 			// Note: Remove this line to enable diskstreaming
