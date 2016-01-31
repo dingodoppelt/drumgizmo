@@ -26,14 +26,17 @@ midimap="$2"
 midifile="$3"
 
 # function to check for dependencies
-function check_for_dep
+function check_for_deps
 {
-	if ! command -v $1 >/dev/null 2>&1
-	then
-		echo "ERROR: Cannot find $1. Maybe it isn't installed?"
-		echo "Exiting..."
-		exit
-	fi
+	for dep in "$@"
+	do
+		if ! command -v $dep >/dev/null 2>&1
+		then
+			echo "ERROR: Cannot find ${dep}. Maybe it isn't installed?"
+			echo "Exiting..."
+			exit
+		fi
+	done
 }
 
 # check for drumgizmo
@@ -45,8 +48,7 @@ then
 fi
 
 # check for dependencies
-check_for_dep gnuplot
-check_for_dep top
+check_for_deps gnuplot top awk
 
 # check for the existence of the passed files
 if ! [ -e "$1" ] || ! [ -e "$2" ] || ! [ -e "$3" ]
@@ -63,26 +65,29 @@ echo "============================"
 # initial data values
 cpu_data=""
 ram_data=""
-data_count=0
-avg_cpu_usage=0
+avg_cpu_usage=""
+time_elapsed=0
 
 # log ram and cpu usage of process
 function logData
 {
 	pid=$1
 
-	top_output="$(top -b -n 1 -p $pid | grep "^ *$pid")"
+	top_output="$(top -b -n 1 -p $pid | grep "^[ ]*$pid")"
 	top_arr=($top_output)
 
 	cpu_usage="${top_arr[6]}"
 	ram_usage="${top_arr[7]}"
 
-	cpu_data="${cpu_data}${data_count} ${cpu_usage}\n"
-	ram_data="${ram_data}${data_count} ${ram_usage}\n"
+	cpu_data="${cpu_data}${time_elapsed} ${cpu_usage}\n"
+	ram_data="${ram_data}${time_elapsed} ${ram_usage}\n"
 
-	avg_cpu_usage="$(ps -p $pid -o %cpu | grep "^ *[0-9]*\.[0-9]*")"
+	avg_cpu_usage_candidate="$(ps -p $pid -o %cpu | grep "^[ ]*[0-9]*\.[0-9]*")"
+	# to make sure the process was still running when we executed the last command
+	if [ avg_cpu_usage_candidate != "" ]; then avg_cpu_usage=$avg_cpu_usage_candidate; fi
 
-	data_count=$((data_count+1))
+	# hack to allow for float addition in the bash
+	time_elapsed="$(awk "BEGIN {print $time_elapsed+$sample_interval; exit}")"
 }
 
 # gnuplot ram and cpu usage over time 
