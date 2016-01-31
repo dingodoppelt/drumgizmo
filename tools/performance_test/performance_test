@@ -71,7 +71,7 @@ function logData
 {
 	pid=$1
 
-	top_output="$(top -b -n 1 -p $pid | tail -n 1)"
+	top_output="$(top -b -n 1 -p $pid | grep "^ *$pid")"
 	top_arr=($top_output)
 
 	cpu_usage="${top_arr[6]}"
@@ -80,7 +80,7 @@ function logData
 	cpu_data="${cpu_data}${data_count} ${cpu_usage}\n"
 	ram_data="${ram_data}${data_count} ${ram_usage}\n"
 
-	avg_cpu_usage="$(ps -p $pid -o %cpu | tail -n 1)"
+	avg_cpu_usage="$(ps -p $pid -o %cpu | grep "^ *[0-9]*\.[0-9]*")"
 
 	data_count=$((data_count+1))
 }
