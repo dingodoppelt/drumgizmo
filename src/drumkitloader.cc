@@ -171,13 +171,16 @@ void DrumKitLoader::thread_main()
 			AudioFile *audiofile = load_queue.front();
 			load_queue.pop_front();
 			filename = audiofile->filename;
-			size_t preload_size = framesize * CHUNK_MULTIPLIER + framesize;
+			int preload_size = framesize * CHUNK_MULTIPLIER + framesize;
 			if(preload_size < 1024)
 			{
 	      preload_size = 1024;
 			}
-			(void)preload_size;
-			audiofile->load(ALL_SAMPLES); // Note: Change this to enable diskstreaming
+
+			// Note: Remove this line to enable diskstreaming
+			preload_size = ALL_SAMPLES;
+
+			audiofile->load(preload_size);
 		}
 
 		loaded++;
