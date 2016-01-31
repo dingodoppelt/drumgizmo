@@ -1,5 +1,5 @@
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5
-set terminal png size 400,300 enhanced font "Helvetica,10"
+set terminal png size 800,600 enhanced font "Helvetica,10"
 set xlabel "time"
 set output 'cpu_data.png'
 set ylabel "CPU usage in %"

@@ -11,6 +11,7 @@ cpu_plot_file="cpu_plot"
 ram_plot_file="ram_plot"
 cpu_data_file="cpu_data.dat"
 ram_data_file="ram_data.dat"
+dg_log_file="drumgizmo.log"
 
 # check for right number of parameters
 if [[ $# != 3 ]]
@@ -61,6 +62,7 @@ fi
 echo "============================"
 echo "Starting the performace test"
 echo "============================"
+echo
 
 # initial data values
 cpu_data=""
@@ -99,11 +101,12 @@ function plotData
 }
 
 # start dg
-echo $kit
-$dg_path/./drumgizmo -i midifile -I file="$midifile",midimap="$midimap" -o jackaudio "$kit" &
+echo "The terminal output of drumgizmo is routed to ${dg_log_file}"
+$dg_path/./drumgizmo -i midifile -I file="$midifile",midimap="$midimap" -o jackaudio "$kit" > $dg_log_file 2>&1 &
 pid=$!
 
 # collect data while dg is running
+echo "Collecting the data now. That might take a while..."
 while ps -p $pid > /dev/null
 do
 	logData $pid
