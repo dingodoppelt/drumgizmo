@@ -99,23 +99,27 @@ function logData
 
 	top_output_labels="$(top -b -n 1 -p $pid | grep "^[ ]*PID")"
 	top_output_values="$(top -b -n 1 -p $pid | grep "^[ ]*$pid")"
-	top_arr=($top_output_values)
 
-	cpu_pos=$(get_position "%CPU" "$top_output_labels")
-	ram_pos=$(get_position "%MEM" "$top_output_labels")
-
-	if [ "$cpu_pos" == "-1" ] || [ "$ram_pos" == "-1" ]
+	if [ "$top_output_values" != "" ]
 	then
-		echo "The top output doesn't look like expected."
-		echo "Exiting..."
-		exit
+		top_arr=($top_output_values)
+
+		cpu_pos=$(get_position "%CPU" "$top_output_labels")
+		ram_pos=$(get_position "%MEM" "$top_output_labels")
+
+		if [ "$cpu_pos" == "-1" ] || [ "$ram_pos" == "-1" ]
+		then
+			echo "The top output doesn't look like expected."
+			echo "Exiting..."
+			exit
+		fi
+
+		cpu_usage="${top_arr[$cpu_pos]}"
+		ram_usage="${top_arr[$ram_pos]}"
+
+		cpu_data="${cpu_data}${time_elapsed} ${cpu_usage}\n"
+		ram_data="${ram_data}${time_elapsed} ${ram_usage}\n"
 	fi
-
-	cpu_usage="${top_arr[$cpu_pos]}"
-	ram_usage="${top_arr[$ram_pos]}"
-
-	cpu_data="${cpu_data}${time_elapsed} ${cpu_usage}\n"
-	ram_data="${ram_data}${time_elapsed} ${ram_usage}\n"
 
 	avg_cpu_usage_candidate="$(ps -p $pid -o %cpu | grep "^[ ]*[0-9][0-9]*")"
 	# to make sure the process was still running when we executed the last command
