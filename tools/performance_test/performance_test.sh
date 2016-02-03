@@ -73,18 +73,51 @@ time_elapsed=0
 # log ram and cpu usage of process
 function logData
 {
+	# returns the (zero-indexed) position of $word in $line.
+	# returns -1 if $word isn't contained in $line.
+	function get_position
+	{
+		word="$1"
+		line=($2)
+
+		count=0
+		for w in "${line[@]}"
+		do
+			if [ "$w" == "$word" ]
+			then
+				echo "$count"
+				return
+			fi
+
+			count=$(($count+1))
+		done
+
+		echo "-1"
+	}
+
 	pid=$1
 
-	top_output="$(top -b -n 1 -p $pid | grep "^[ ]*$pid")"
-	top_arr=($top_output)
+	top_output_labels="$(top -b -n 1 -p $pid | grep "^[ ]*PID")"
+	top_output_values="$(top -b -n 1 -p $pid | grep "^[ ]*$pid")"
+	top_arr=($top_output_values)
 
-	cpu_usage="${top_arr[6]}"
-	ram_usage="${top_arr[7]}"
+	cpu_pos=$(get_position "%CPU" "$top_output_labels")
+	ram_pos=$(get_position "%MEM" "$top_output_labels")
+
+	if [ "$cpu_pos" == "-1" ] || [ "$ram_pos" == "-1" ]
+	then
+		echo "The top output doesn't look like expected."
+		echo "Exiting..."
+		exit
+	fi
+
+	cpu_usage="${top_arr[$cpu_pos]}"
+	ram_usage="${top_arr[$ram_pos]}"
 
 	cpu_data="${cpu_data}${time_elapsed} ${cpu_usage}\n"
 	ram_data="${ram_data}${time_elapsed} ${ram_usage}\n"
 
-	avg_cpu_usage_candidate="$(ps -p $pid -o %cpu | grep "^[ ]*[0-9]*\.[0-9]*")"
+	avg_cpu_usage_candidate="$(ps -p $pid -o %cpu | grep "^[ ]*[0-9][0-9]*")"
 	# to make sure the process was still running when we executed the last command
 	if [ avg_cpu_usage_candidate != "" ]; then avg_cpu_usage=$avg_cpu_usage_candidate; fi
 
