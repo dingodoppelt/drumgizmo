@@ -30,7 +30,7 @@
 
 WavfileOutputEngine::WavfileOutputEngine()
 	: AudioOutputEngine{}
-	, info{0}
+	, info{}
 	, channels{}
 	, file{"output"}
 {
