@@ -195,7 +195,7 @@ event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t* nevents)
 		{
 			if(evs == nullptr)
 			{
-				// todo: get rid of malloc
+				// TODO: get rid of malloc
 				evs = (event_t*)malloc(sizeof(event_t) * 1000);
 			}
 			evs[num_events].type = TYPE_STOP;

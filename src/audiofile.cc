@@ -85,7 +85,7 @@ void AudioFile::load(int num_samples)
 		return;
 	}
 
-	SF_INFO sf_info;
+	SF_INFO sf_info{};
 	SNDFILE *fh = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!fh)
 	{

@@ -87,7 +87,7 @@ uint64_t MemChecker::calcNeededMemory(const DrumKit& drumkit) const
 
 uint64_t MemChecker::calcBytesPerChannel(const std::string& filename) const
 {
-	SF_INFO sf_info;
+	SF_INFO sf_info{};
 
 	SNDFILE* f = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!f)

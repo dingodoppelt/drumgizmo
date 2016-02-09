@@ -90,6 +90,7 @@ void InstrumentParser::startTag(std::string name,
       DEBUG(instrparser, "Instrument power set to %f\n", power);
     }
     
+    // TODO get rid of new or delete it properly
     s = new Sample(attr["name"], power);
   }
 
@@ -117,6 +118,7 @@ void InstrumentParser::startTag(std::string name,
         }
     }
     filechannel = filechannel - 1; // 1-based in file, but zero-based internally
+    // TODO do those next two lines correspond with proper deletes? If not fix it.
     AudioFile *af = new AudioFile(path + "/" + attr["file"], filechannel);
     InstrumentChannel *ch = new InstrumentChannel(attr["channel"]);
     channellist.push_back(ch);
