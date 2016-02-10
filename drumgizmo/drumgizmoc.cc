@@ -100,6 +100,7 @@ CliMain::CliMain()
 
 CliMain::~CliMain()
 {
+	hug_close();
 }
 
 void CliMain::handleMessage(Message* msg)
@@ -409,8 +410,6 @@ int CliMain::run(int argc, char* argv[])
 
 	printf("Quit.\n");
 	fflush(stdout);
-
-	hug_close();
 
 	return 0;
 }
