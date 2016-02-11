@@ -23,7 +23,7 @@ EXTRA_DIST = \
 if ENABLE_VST
 plugin_LTLIBRARIES =
 plugindir = $(prefix)/lib/vst
-plugin_LTLIBRARIES += libdrumgizmo_vst.la
+plugin_LTLIBRARIES += drumgizmo_vst.la
 noinst_LTLIBRARIES = libdg.la
 endif
 
@@ -39,15 +39,15 @@ libdg_la_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	$(PLUGIN_GUI_CFLAGS) $(SSEFLAGS)\
 	-DUSE_THREAD $(SAMPLERATE_CFLAGS)
 
-nodist_libdrumgizmo_vst_la_SOURCES = \
+nodist_drumgizmo_vst_la_SOURCES = \
 	$(VST_SOURCES)
 
-libdrumgizmo_vst_la_SOURCES = \
+drumgizmo_vst_la_SOURCES = \
 	drumgizmo_vst.cc \
 	input_vst.cc \
 	output_vst.cc
 
-libdrumgizmo_vst_la_LDFLAGS = -shared
-libdrumgizmo_vst_la_LIBADD = libdg.la
-libdrumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) \
+drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version
+drumgizmo_vst_la_LIBADD = libdg.la
+drumgizmo_vst_la_CXXFLAGS = -w $(VST_CPPFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui
