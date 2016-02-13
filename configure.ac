@@ -69,7 +69,7 @@ AC_ARG_WITH([debug],
 
 AS_IF([test "x$with_debug" == "xyes"],
       [AC_MSG_WARN([*** Building with debug support!])
-	     CXXFLAGS="$CXXFLAGS -Wall -Werror -g"
+	     CXXFLAGS="$CXXFLAGS -Wall -Werror -g -Wl,--no-undefined"
 	     HUGIN_PARM=""]
 )
 
