@@ -1,3 +1,6 @@
 [submodule "hugin"]
 	path = hugin
 	url = http://git.oftal.dk/hugin.git
+[submodule "plugin/plugingizmo"]
+	path = plugin/plugingizmo
+	url = http://git.drumgizmo.org/plugingizmo.git
