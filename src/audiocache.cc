@@ -86,7 +86,7 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	// Get the cache_t connected with the registered id.
 	cache_t& c = id_manager.getCache(id);
 
-	c.afile = &event_handler.openFile(file.filename);
+	c.afile = nullptr; // File is opened when needed.
 	c.channel = channel;
 
 	// Next call to 'next()' will read from this point.
@@ -112,7 +112,7 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 		// \                                            /
 		//  \----------------------v-------------------/
 		//                     cropped_size
-		
+
 		cropped_size = file.preloadedsize - c.localpos;
 		cropped_size -= cropped_size % framesize;
 		cropped_size += initial_samples_needed;
@@ -127,6 +127,8 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	// Only load next buffer if there is more data in the file to be loaded...
 	if(c.pos < file.size)
 	{
+		c.afile = &event_handler.openFile(file.filename);
+
 		if(c.back == nullptr)
 		{
 			c.back = new sample_t[CHUNKSIZE(framesize)];
@@ -227,6 +229,13 @@ void AudioCache::close(cacheid_t id)
 {
 	if(id == CACHE_DUMMYID)
 	{
+		return;
+	}
+
+	cache_t& cache = id_manager.getCache(id);
+	if(cache.afile == nullptr)
+	{
+		// The file was never opened. It was played entirely from preloaded data.
 		return;
 	}
 
