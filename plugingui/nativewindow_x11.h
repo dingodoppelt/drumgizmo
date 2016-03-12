@@ -35,7 +35,7 @@ namespace GUI {
 class Window;
 class NativeWindowX11 : public NativeWindow {
 public:
-	NativeWindowX11(Window& window);
+	NativeWindowX11(void* native_window, Window& window);
 	~NativeWindowX11();
 
 	// From NativeWindow:

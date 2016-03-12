@@ -47,7 +47,7 @@ class File;
 
 class DGWindow : public Window {
 public:
-	DGWindow(MessageHandler& messageHandler, Config& config);
+	DGWindow(void* native_window, MessageHandler& messageHandler, Config& config);
 
 	Header* header;
 

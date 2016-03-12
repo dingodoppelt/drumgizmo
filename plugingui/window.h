@@ -37,7 +37,7 @@ namespace GUI {
 
 class Window : public Widget {
 public:
-	Window();
+	Window(void* native_window);
 	~Window();
 
 	void setFixedSize(int width, int height);

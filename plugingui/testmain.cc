@@ -52,10 +52,11 @@ public:
 		while(running)
 		{
 #ifdef WIN32
-			SleepEx(1000, FALSE);
+			SleepEx(50, FALSE);
 #else
-			sleep(1);
+			usleep(50000);
 #endif
+			gui.processEvents();
 		}
 	}
 

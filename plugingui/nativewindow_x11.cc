@@ -35,16 +35,10 @@
 
 namespace GUI {
 
-NativeWindowX11::NativeWindowX11(Window& window)
+NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	: buffer(nullptr)
 	, window(window)
 {
-	auto status = XInitThreads();
-	if(status)
-	{
-		ERR(X11, "Could not initialise threaded Xlib calls (XInitThreads)");
-	}
-
 	display = XOpenDisplay(nullptr);
 	if(display  == nullptr)
 	{
@@ -57,12 +51,20 @@ NativeWindowX11::NativeWindowX11(Window& window)
 	// Get some colors
 	int blackColor = BlackPixel(display, screen);
 
-	::Window rootWindow = DefaultRootWindow(display);
+	::Window parentWindow;
+	if(native_window)
+	{
+		parentWindow = (::Window)native_window;
+	}
+	else
+	{
+		parentWindow = DefaultRootWindow(display);
+	}
 
 	// Create the window
 	unsigned long border = 0;
 	xwindow = XCreateSimpleWindow(display,
-	                              rootWindow,
+	                              parentWindow,
 	                              window.x(), window.y(),
 	                              window.width(), window.height(),
 	                              border,

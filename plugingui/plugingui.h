@@ -40,18 +40,17 @@
 
 namespace GUI {
 
-class PluginGUI : public Thread, public MessageReceiver, public Listener {
+class PluginGUI
+	: public MessageReceiver
+	, public Listener
+{
 public:
-	PluginGUI();
+	PluginGUI(void* native_window = nullptr);
 	virtual ~PluginGUI();
-
-	void thread_main();
 
 	//! Process all events and messages in queue
 	//! \return true if not closing, returns false if closing.
 	bool processEvents();
-
-	void stopThread();
 
 	void init();
 	void deinit();
@@ -65,7 +64,6 @@ public:
 	DGWindow* window{nullptr};
 	EventHandler* eventhandler{nullptr};
 
-
 	Config* config{nullptr};
 
 	Notifier<> closeNotifier;
@@ -75,6 +73,8 @@ public:
 
 private:
 	void closeEventHandler();
+
+	void* native_window{nullptr};
 
 	volatile bool running{true};
 	volatile bool closing{false};

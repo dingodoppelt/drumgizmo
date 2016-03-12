@@ -38,7 +38,7 @@ class Window;
 
 class NativeWindowPugl : public NativeWindow {
 public:
-	NativeWindowPugl(Window *window);
+	NativeWindowPugl(void* native_window, Window& window);
 	~NativeWindowPugl();
 
 	void init();
@@ -57,7 +57,8 @@ public:
 	Event *peekNextEvent();
 
 private:
-	Window* window{nullptr};
+	Window& window;
+	void* native_window{nullptr};
 	PuglView* view{nullptr};
 
 	std::list<Event*> eventq;

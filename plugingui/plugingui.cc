@@ -33,21 +33,15 @@
 
 namespace GUI {
 
-PluginGUI::PluginGUI()
+PluginGUI::PluginGUI(void* native_window)
 	: MessageReceiver(MSGRCV_UI)
+	, native_window(native_window)
 {
-#ifdef USE_THREAD
-	run();
-#else
 	init();
-#endif/*USE_THREAD*/
-
-	sem.wait();
 }
 
 PluginGUI::~PluginGUI()
 {
-	stopThread();
 }
 
 void PluginGUI::handleMessage(Message *msg)
@@ -114,27 +108,6 @@ void PluginGUI::handleMessage(Message *msg)
 	}
 }
 
-void PluginGUI::thread_main()
-{
-	init();
-
-	{ // Request all engine settings
-		EngineSettingsMessage *msg = new EngineSettingsMessage();
-		msghandler.sendMessage(MSGRCV_ENGINE, msg);
-	}
-
-	while(processEvents())
-	{
-#ifdef WIN32
-		SleepEx(50, FALSE);
-#else
-		usleep(50000);
-#endif/*WIN32*/
-	}
-
-	deinit();
-}
-
 bool PluginGUI::processEvents()
 {
 	if(!initialised)
@@ -155,15 +128,6 @@ bool PluginGUI::processEvents()
 	return running;
 }
 
-void PluginGUI::stopThread()
-{
-	if(running)
-	{
-		running = false;
-		wait_stop();
-	}
-}
-
 void PluginGUI::init()
 {
 	DEBUG(gui, "init");
@@ -171,14 +135,17 @@ void PluginGUI::init()
 	config = new Config();
 	config->load();
 
-	window = new DGWindow(msghandler, *config);
+	window = new DGWindow(native_window, msghandler, *config);
 
 	auto eventHandler = window->eventHandler();
 	CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
 
 	window->show();
 
-	sem.post();
+	{ // Request all engine settings
+		EngineSettingsMessage *msg = new EngineSettingsMessage();
+		msghandler.sendMessage(MSGRCV_ENGINE, msg);
+	}
 
 	initialised = true;
 }

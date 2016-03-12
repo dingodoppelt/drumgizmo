@@ -47,7 +47,7 @@ namespace GUI {
 void NativeWindowPugl::onDisplay(PuglView* view)
 {
 	NativeWindowPugl* native = (NativeWindowPugl*)puglGetHandle(view);
-	Window* windowptr = native->window;
+	Window& window = native->window;
 
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -64,17 +64,17 @@ void NativeWindowPugl::onDisplay(PuglView* view)
 	glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowptr->wpixbuf.width,
-	             windowptr->wpixbuf.height, 0, GL_RGB, GL_UNSIGNED_BYTE,
-	             windowptr->wpixbuf.buf);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window.wpixbuf.width,
+	             window.wpixbuf.height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+	             window.wpixbuf.buf);
 
 	glEnable(GL_TEXTURE_2D);
 
 	glBegin(GL_QUADS);
 	glTexCoord2d(0.0, 0.0); glVertex2f(0.0, 0.0);
-	glTexCoord2d(0.0, 1.0); glVertex2f(0.0, windowptr->wpixbuf.height);
-	glTexCoord2d(1.0, 1.0); glVertex2f(windowptr->wpixbuf.width, windowptr->wpixbuf.height);
-	glTexCoord2d(1.0, 0.0); glVertex2f(windowptr->wpixbuf.width, 0.0);
+	glTexCoord2d(0.0, 1.0); glVertex2f(0.0, window.wpixbuf.height);
+	glTexCoord2d(1.0, 1.0); glVertex2f(window.wpixbuf.width, window.wpixbuf.height);
+	glTexCoord2d(1.0, 0.0); glVertex2f(window.wpixbuf.width, 0.0);
 	glEnd();
 
 	glDeleteTextures(1, &image);
@@ -145,8 +145,9 @@ void NativeWindowPugl::onKeyboard(PuglView* view, bool press, uint32_t key)
 	native->eventq.push_back(e);
 }
 
-NativeWindowPugl::NativeWindowPugl(Window *window)
+NativeWindowPugl::NativeWindowPugl(void* native_window, Window& window)
 	: window(window)
+	, native_window(native_window)
 {
 	INFO(nativewindow, "Running with PuGL native window\n");
 	init();
@@ -157,15 +158,16 @@ NativeWindowPugl::~NativeWindowPugl()
 	puglDestroy(view);
 }
 
-void NativeWindowPugl::init() {
+void NativeWindowPugl::init()
+{
 	PuglView* oldView = view;
 	if(view)
 	{
 		oldView = view;
 	}
 
-//	view = puglCreate(0, "DrumgGizmo", window->x(), window->y(), false, true);
-	view = puglCreate(0, "DrumgGizmo", 370, 330, false, true);
+//	view = puglCreate(0, "DrumgGizmo", window.x(), window.y(), false, true);
+	view = puglCreate((PuglNativeWindow)native_window, "DrumgGizmo", 370, 330, false, true);
 	puglSetHandle(view, (PuglHandle)this);
 	puglSetDisplayFunc(view, onDisplay);
 	puglSetMouseFunc(view, onMouse);

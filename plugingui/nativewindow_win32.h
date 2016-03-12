@@ -39,7 +39,7 @@ class Event;
 
 class NativeWindowWin32 : public NativeWindow {
 public:
-	NativeWindowWin32(Window& window);
+	NativeWindowWin32(void* native_window, Window& window);
 	~NativeWindowWin32();
 
 	void setFixedSize(int width, int height) override;

@@ -119,14 +119,16 @@ public:
 	Knob falloffKnob{&falloff};
 };
 
-DGWindow::DGWindow(MessageHandler& messageHandler, Config& config)
-	: messageHandler(messageHandler)
+DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
+                   Config& config)
+	: Window(native_window)
+	, messageHandler(messageHandler)
 	, config(config)
 {
 
 	int vlineSpacing = 16;
 
-	setFixedSize(370, 330);
+	resize(370, 330);
 	setCaption("DrumGizmo v" VERSION);
 
 	layout.setResizeChildren(false);
