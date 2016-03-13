@@ -55,7 +55,7 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
 	, freewheel(false)
 {
 	is_stopping = false;
-	audioCache.init(1000); // start thread
+	audioCache.init(10000); // start thread
 }
 
 DrumGizmo::~DrumGizmo()
