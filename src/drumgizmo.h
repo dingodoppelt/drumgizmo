@@ -102,7 +102,7 @@ protected:
 
 	AudioCache audioCache;
 	DrumKit kit;
-  	MemChecker memchecker;
+	MemChecker memchecker;
 
 	size_t framesize;
 	bool freewheel;

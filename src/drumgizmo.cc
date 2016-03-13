@@ -28,6 +28,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include <event.h>
 #include <audiotypes.h>
@@ -87,8 +88,9 @@ bool DrumGizmo::loadkit(std::string file)
 	// Check if there is enough free RAM to load the drumkit.
 	if(!memchecker.enoughFreeMemory(kit))
 	{
-		printf("WARNING: There doesn't seem to be enough RAM available to load the kit.\n"
-		       "Trying to load it anyway...\n");              
+		printf("WARNING: "
+		       "There doesn't seem to be enough RAM available to load the kit.\n"
+		       "Trying to load it anyway...\n");
 	}
 
 	loader.loadKit(&kit);
@@ -486,6 +488,7 @@ typedef float vNsf __attribute__ ((vector_size(sizeof(sample_t)*N)));
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 {
+	std::vector< Event* > erase_list;
 	std::list< Event* >::iterator i = activeevents[ch].begin();
 	for(; i != activeevents[ch].end(); ++i)
 	{
@@ -516,7 +519,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 				{
 					size_t initial_chunksize = (pos + sz) - evt.offset;
 					evt.buffer = audioCache.open(af, initial_chunksize,
-					                              af.filechannel, evt.cache_id);
+					                             af.filechannel, evt.cache_id);
 					evt.buffer_size = initial_chunksize;
 				}
 
@@ -568,6 +571,12 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 #endif
 						for(; (n < end) && (t < evt.buffer_size); ++n)
 						{
+							assert(n >= 0);
+							assert(n < sz);
+
+							assert(t >= 0);
+							assert(t < evt.buffer_size);
+
 							s[n] += evt.buffer[t];
 							++t;
 						}
@@ -606,10 +615,15 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 		if(removeevent)
 		{
-			delete event;
-			i = activeevents[ch].erase(i);
+			erase_list.push_back(event); // don't delete until we are out of the loop.
 			continue;
 		}
+	}
+
+	for(auto& event : erase_list)
+	{
+		activeevents[ch].remove(event);
+		delete event;
 	}
 }
 
