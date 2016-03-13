@@ -10,6 +10,8 @@ LT_INIT
 
 AC_CONFIG_HEADERS(config.h)
 
+AC_SYS_LARGEFILE
+
 need_jack=no
 
 dnl ===========================
@@ -374,7 +376,7 @@ PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
 
 AC_ARG_ENABLE([resampler],
-	AS_HELP_STRING([--enable-resampler[=lib]], 
+	AS_HELP_STRING([--enable-resampler[=lib]],
         [Enable resampling using libzita-resampler, set to 'src' to force use of libsamplerate (slow). [default=yes]]),,
         [enable_resampler="yes"])
 
@@ -562,16 +564,11 @@ AC_SUBST(CPPFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
 
-
-
-#	au/Makefile
-
 AC_CONFIG_FILES(
 	Makefile
 	tools/Makefile
 	src/Makefile
-	vst/Makefile
-	lv2/Makefile
+	plugin/Makefile
 	plugingui/Makefile
 	include/Makefile
 	man/Makefile
