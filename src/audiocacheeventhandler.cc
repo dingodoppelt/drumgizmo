@@ -213,6 +213,8 @@ void AudioCacheEventHandler::clearEvents()
 
 void AudioCacheEventHandler::handleLoadNextEvent(CacheEvent& cache_event)
 {
+	assert(cache_event.afile); // Assert that we have an audio file
+
 	cache_event.afile->readChunk(cache_event.channels, cache_event.pos,
 	                             chunksize);
 }
@@ -227,7 +229,11 @@ void AudioCacheEventHandler::handleCloseCache(cacheid_t id)
 {
 	auto& cache = id_manager.getCache(id);
 
-	files.releaseFile(cache.afile->getFilename());
+	// Only close the file if we have also opened it.
+	if(cache.afile)
+	{
+		files.releaseFile(cache.afile->getFilename());
+	}
 
 	delete[] cache.front;
 	delete[] cache.back;
@@ -267,12 +273,6 @@ void AudioCacheEventHandler::thread_main()
 		eventqueue.pop_front();
 		mutex.unlock();
 
-		// TODO: Skip event if cache_event.pos < cache.pos
-		//if(!cache_event.active)
-		//{
-		//	continue;
-		//}
-
 		handleEvent(cache_event);
 	}
 }
@@ -294,17 +294,23 @@ void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 		{
 			for(auto& queued_event : eventqueue)
 			{
-				if((queued_event.event_type == EventType::LoadNext) &&
-				   (cache_event.afile->getFilename() ==
-				    queued_event.afile->getFilename()) &&
-				   (cache_event.pos == queued_event.pos))
+				if(queued_event.event_type == EventType::LoadNext)
 				{
-					// Append channel and buffer to the existing event.
-					queued_event.channels.insert(queued_event.channels.end(),
-					                             cache_event.channels.begin(),
-					                             cache_event.channels.end());
-					found = true;
-					break;
+
+					assert(cache_event.afile); // Assert that we have an audio file
+					assert(queued_event.afile); // Assert that we have an audio file
+
+					if((cache_event.afile->getFilename() ==
+					    queued_event.afile->getFilename()) &&
+					   (cache_event.pos == queued_event.pos))
+					{
+						// Append channel and buffer to the existing event.
+						queued_event.channels.insert(queued_event.channels.end(),
+						                             cache_event.channels.begin(),
+						                             cache_event.channels.end());
+						found = true;
+						break;
+					}
 				}
 			}
 		}

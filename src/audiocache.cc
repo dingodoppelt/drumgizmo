@@ -121,8 +121,8 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	c.preloaded_samples = file.data;
 	c.preloaded_samples_size = cropped_size;
 
-	// Next read from disk will read from this point.
-	c.pos = cropped_size;//c.preloaded_samples_size;
+	// Next potential read from disk will read from this point.
+	c.pos = cropped_size;
 
 	// Only load next buffer if there is more data in the file to be loaded...
 	if(c.pos < file.size)
@@ -160,7 +160,15 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 		if(c.localpos < c.preloaded_samples_size)
 		{
 			sample_t* s = c.preloaded_samples + c.localpos;
+
+			if((c.localpos + framesize) > c.preloaded_samples_size)
+			{
+				// Only a partial frame is returned. Reflect this in the size
+				size = c.preloaded_samples_size - c.localpos;
+			}
+
 			c.localpos += framesize;
+
 			return s;
 		}
 
@@ -196,6 +204,7 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 	c.pos += CHUNKSIZE(framesize);
 
 	// Does the file have remaining unread samples?
+	assert(c.afile); // Assert that we have an audio file.
 	if(c.pos < c.afile->getSize())
 	{
 		// Do we have a back buffer to read into?
@@ -229,13 +238,6 @@ void AudioCache::close(cacheid_t id)
 {
 	if(id == CACHE_DUMMYID)
 	{
-		return;
-	}
-
-	cache_t& cache = id_manager.getCache(id);
-	if(cache.afile == nullptr)
-	{
-		// The file was never opened. It was played entirely from preloaded data.
 		return;
 	}
 
