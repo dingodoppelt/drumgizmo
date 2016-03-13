@@ -99,7 +99,6 @@ public:
 	void onShowWindow() override;
 	void onHideWindow() override;
 	void onIdle() override;
-	void resizeWindow(size_t width, size_t height) override;
 	void closeWindow() override;
 
 private:

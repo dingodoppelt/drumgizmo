@@ -166,10 +166,6 @@ void DrumGizmoPlugin::onIdle()
 	plugin_gui->processEvents();
 }
 
-void DrumGizmoPlugin::resizeWindow(size_t width, size_t height)
-{
-}
-
 void DrumGizmoPlugin::closeWindow()
 {
 }
