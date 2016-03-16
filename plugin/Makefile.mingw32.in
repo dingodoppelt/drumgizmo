@@ -1,0 +1,55 @@
+# -*- Makefile -*-
+
+include $(top_srcdir)/plugingui/Makefile.am.plugingui
+include $(top_srcdir)/src/Makefile.am.drumgizmo
+
+VST_BASE=@VST_SOURCE_PATH@
+VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
+VST_SRC = \
+	${VST_SRC_BASE}/audioeffectx.cpp \
+	${VST_SRC_BASE}/audioeffect.cpp \
+	${VST_SRC_BASE}/vstplugmain.cpp
+VST_CPPFLAGS=-I$(VST_BASE)
+
+
+DBG_SRC = \
+	@top_srcdir@/hugin/hugin.c \
+	@top_srcdir@/hugin/hugin_syslog.c
+
+DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
+# -DDISABLE_HUGIN
+
+EXPAT_CFLAGS=@EXPAT_CFLAGS@
+EXPAT_LIBS=@EXPAT_LIBS@
+
+SNDFILE_CFLAGS=@SNDFILE_CFLAGS@
+SNDFILE_LIBS=@SNDFILE_LIBS@
+
+SRC_CFLAGS=@SAMPLERATE_CFLAGS@
+SRC_LIBS=@SAMPLERATE_LIBS@
+
+ZITA_CXXFLAGS=@ZITA_CPPFLAGS@
+ZITA_LIBS=@ZITA_LIBS@
+
+SRC = \
+	$(VST_SRC) \
+	$(DRUMGIZMO_SOURCES) \
+	$(PLUGIN_GUI_SOURCES) \
+	$(top_srcdir)/plugin/plugingizmo/midievent.cc \
+	$(top_srcdir)/plugin/plugingizmo/pluginvst.cc \
+	drumgizmo_plugin.cc
+
+all:
+	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
+	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
+	g++ $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall \
+		$(DBG_CFLAGS) $(DRUMGIZMO_CPPFLAGS) $(DRUMGIZMO_LIBS) $(VST_CFLAGS) \
+		hugin.o hugin_syslog.o \
+		${SRC} \
+		${PLUGIN_GUI_CPPFLAGS} $(PLUGIN_GUI_LIBS)  \
+		-shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+
+clean:
+	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
+-I$(top_srcdir)/plugin/plugingizmo $(DRUMGIZMO_CPPFLAGS) \
+	$(PLUGIN_GUI_CPPFLAGS)

@@ -106,23 +106,23 @@ AS_IF(
   dnl ======================
   PKG_CHECK_MODULES(X11, x11 >= 1.0)
 
-  GUI_CFLAGS="-DX11 $X11_CFLAGS"
+  GUI_CPPFLAGS="-DX11 $X11_CFLAGS"
   GUI_LIBS="$X11_LIBS"],
 
   [test "x$enable_gui" = "xwin32"],
   [AC_MSG_RESULT([Setting gui backend to Win32])
-  GUI_CFLAGS="-DWIN32"
+  GUI_CPPFLAGS="-DWIN32"
   GUI_LIBS="-lgdi32 -lsetupapi -lws2_32"],
 
   [test "x$enable_gui" = "xpugl"],
   [AC_MSG_RESULT([Setting gui backend to Pugl])
-  GUI_CFLAGS="-DPUGL -I../../pugl"
+  GUI_CPPFLAGS="-DPUGL -I../../pugl"
   GUI_LIBS="-lGLU -lGL -lglut"],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
 )
 
-AC_SUBST(GUI_CFLAGS)
+AC_SUBST(GUI_CPPFLAGS)
 AC_SUBST(GUI_LIBS)
 
 AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
@@ -177,7 +177,7 @@ AS_IF(
   VST_SOURCE_PATH="$with_vst_sources"
   AC_SUBST(VST_SOURCE_PATH)
   AC_SUBST(VST_CPPFLAGS)
-  AC_CONFIG_FILES(vst/Makefile.mingw32)],
+  AC_CONFIG_FILES(plugin/Makefile.mingw32)],
 
   [AC_MSG_RESULT([*** VST plugin will not be compiled ***])
    enable_vst=no]

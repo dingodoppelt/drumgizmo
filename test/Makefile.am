@@ -120,9 +120,9 @@ configfile_SOURCES = \
 
 memchecker_CXXFLAGS = -DOUTPUT=\"memchecker\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
 memcheckere_CFLAGS = -DDISABLE_HUGIN
-memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS)
+memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
 memchecker_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
 	test.cc \
