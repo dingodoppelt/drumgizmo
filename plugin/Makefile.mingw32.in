@@ -1,8 +1,5 @@
 # -*- Makefile -*-
 
-include @top_srcdir@/plugingui/Makefile.am.plugingui
-include @top_srcdir@/src/Makefile.am.drumgizmo
-
 VST_BASE=@VST_SOURCE_PATH@
 VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
 VST_SRC = \
@@ -30,6 +27,10 @@ SRC_LIBS=@SAMPLERATE_LIBS@
 
 ZITA_CXXFLAGS=@ZITA_CPPFLAGS@
 ZITA_LIBS=@ZITA_LIBS@
+
+top_srcdir = @top_srcdir@
+include $(top_srcdir)/plugingui/Makefile.am.plugingui
+include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 SRC = \
 	$(VST_SRC) \
