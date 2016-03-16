@@ -42,7 +42,8 @@ DG_SRC = \
 	@top_srcdir@/src/thread.cc \
 	@top_srcdir@/src/velocity.cc \
 	@top_srcdir@/src/versionstr.cc
-DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2
+DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/include -I@top_srcdir@/src \
+	-I@top_srcdir@/plugin/plugingizmo -DVST -DSSE -msse -msse2
 # -DDISABLE_HUGIN
 
 GUI_SRC = \
@@ -80,7 +81,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/resource_data.cc \
 	@top_srcdir@/plugingui/lodepng/lodepng.cpp
 
-GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD -DVST @GUI_CPPFLAGS@
+GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD @GUI_CPPFLAGS@
 GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
 
 DBG_SRC = \
