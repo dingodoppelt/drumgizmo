@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <queue>
+
 #include "nativewindow.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -63,7 +65,7 @@ private:
 	Window& window;
 	WNDID m_hwnd = 0;
 	char* m_className = nullptr;
-	Event* event = nullptr;
+	std::queue<Event*> event_queue;
 };
 
 } // GUI::

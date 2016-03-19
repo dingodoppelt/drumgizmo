@@ -55,7 +55,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				ResizeEvent* resizeEvent = new ResizeEvent();
 				resizeEvent->width = LOWORD(lp);
 				resizeEvent->height = HIWORD(lp);
-				native->event = resizeEvent;
+				native->event_queue.push(resizeEvent);
 				first = false;
 			}
 		}
@@ -66,14 +66,14 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 //      MoveEvent* moveEvent = new MoveEvent();
 //      moveEvent->x = (short)LOWORD(lp);
 //      moveEvent->y = (short)HIWORD(lp);
-//      native->event = moveEvent;
+//      native->event_queue.push(moveEvent);
 		}
 		break;
 
 	case WM_CLOSE:
 		{
 			CloseEvent* closeEvent = new CloseEvent();
-			native->event = closeEvent;
+			native->event_queue.push(closeEvent);
 		}
 		break;
 //		HWND child, old;
@@ -94,7 +94,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			MouseMoveEvent* mouseMoveEvent = new MouseMoveEvent();
 			mouseMoveEvent->x = (short)LOWORD(lp);
 			mouseMoveEvent->y = (short)HIWORD(lp);
-			native->event = mouseMoveEvent;
+			native->event_queue.push(mouseMoveEvent);
 		}
 		break;
 
@@ -111,7 +111,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			scrollEvent->x = p.x;
 			scrollEvent->y = p.y;
 			scrollEvent->delta = -1 * (short)HIWORD(wp) / 60;
-			native->event = scrollEvent;
+			native->event_queue.push(scrollEvent);
 		}
 		break;
 
@@ -171,7 +171,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			                            msg == WM_RBUTTONDBLCLK ||
 			                            msg == WM_MBUTTONDBLCLK);
 
-			native->event = buttonEvent;
+			native->event_queue.push(buttonEvent);
 		}
 		break;
 
@@ -199,7 +199,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			keyEvent->direction =
 				(msg == WM_KEYDOWN) ? Direction::down : Direction::up;
 
-			native->event = keyEvent;
+			native->event_queue.push(keyEvent);
 		}
 		break;
 
@@ -211,7 +211,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				keyEvent->keycode = Key::character;
 				keyEvent->text += (char)wp;
 				keyEvent->direction = Direction::up;
-				native->event = keyEvent;
+				native->event_queue.push(keyEvent);
 			}
 		}
 		break;
@@ -223,7 +223,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			repaintEvent->y = 0;
 			repaintEvent->width = 100;
 			repaintEvent->height = 100;
-			native->event = repaintEvent;
+			native->event_queue.push(repaintEvent);
 
 			// Move to window.h (in class)
 			HDC pDC;
@@ -315,14 +315,12 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 	RegisterClassEx(&wcex);
 
-	parent_window = (HWND)native_window;
-
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
 	                        "DGBasisWidget",
 	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_VISIBLE,
 	                        window.x(), window.y(),
 	                        window.width(), window.height(),
-	                        parent_window, nullptr,
+	                        (HWND)native_window, nullptr,
 	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
@@ -397,41 +395,29 @@ void NativeWindowWin32::grabMouse(bool grab)
 
 bool NativeWindowWin32::hasEvent()
 {
-	MSG msg;
-	return PeekMessage(&msg, parent_window, 0, 0, PM_NOREMOVE) != 0;
+	return !event_queue.empty();
 }
 
 Event* NativeWindowWin32::getNextEvent()
 {
-	Event* event = nullptr;
-
-	MSG msg;
-	if(GetMessage(&msg, parent_window, 0, 0))
+	if(event_queue.empty())
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		return nullptr;
 	}
 
-	event = this->event;
-	this->event = nullptr;
-
+	auto event = event_queue.front();
+	event_queue.pop();
 	return event;
 }
 
 Event* NativeWindowWin32::peekNextEvent()
 {
-	Event* event = nullptr;
-
-	MSG msg;
-	if(PeekMessage(&msg, parent_window, 0, 0, PM_NOREMOVE))
+	if(event_queue.empty())
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		return nullptr;
 	}
 
-	event = this->event;
-	this->event = nullptr;
-
+	auto event = event_queue.front();
 	return event;
 }
 
