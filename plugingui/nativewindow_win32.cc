@@ -315,12 +315,14 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 	RegisterClassEx(&wcex);
 
+	parent_window = (HWND)native_window;
+
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
 	                        "DGBasisWidget",
 	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_VISIBLE,
 	                        window.x(), window.y(),
 	                        window.width(), window.height(),
-	                        (HWND)native_window, nullptr,
+	                        parent_window, nullptr,
 	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
@@ -396,7 +398,7 @@ void NativeWindowWin32::grabMouse(bool grab)
 bool NativeWindowWin32::hasEvent()
 {
 	MSG msg;
-	return PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE) != 0;
+	return PeekMessage(&msg, parent_window, 0, 0, PM_NOREMOVE) != 0;
 }
 
 Event* NativeWindowWin32::getNextEvent()
@@ -404,7 +406,7 @@ Event* NativeWindowWin32::getNextEvent()
 	Event* event = nullptr;
 
 	MSG msg;
-	if(GetMessage(&msg, m_hwnd, 0, 0))
+	if(GetMessage(&msg, parent_window, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -421,7 +423,7 @@ Event* NativeWindowWin32::peekNextEvent()
 	Event* event = nullptr;
 
 	MSG msg;
-	if(PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE))
+	if(PeekMessage(&msg, parent_window, 0, 0, PM_NOREMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

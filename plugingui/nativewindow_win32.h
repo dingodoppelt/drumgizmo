@@ -59,6 +59,7 @@ public:
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
+	HWND parent_window;
 	Window& window;
 	WNDID m_hwnd = 0;
 	char* m_className = nullptr;
