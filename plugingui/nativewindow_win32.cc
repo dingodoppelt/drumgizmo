@@ -372,8 +372,9 @@ void NativeWindowWin32::hide()
 
 void NativeWindowWin32::redraw()
 {
-	RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
-	UpdateWindow(m_hwnd);
+	InvalidateRect(m_hwnd, 0, TRUE);
+	//RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
+	//UpdateWindow(m_hwnd);
 }
 
 void NativeWindowWin32::setCaption(const std::string &caption)
