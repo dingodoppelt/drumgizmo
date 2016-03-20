@@ -1,5 +1,6 @@
 Makefile
 Makefile.in
+Makefile.mingw32
 aclocal.m4
 autom4te.cache/
 compile
