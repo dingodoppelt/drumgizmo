@@ -372,7 +372,7 @@ void NativeWindowWin32::hide()
 
 void NativeWindowWin32::redraw()
 {
-	if(parent_window)
+	if(parent_window == nullptr)
 	{
 		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
 		UpdateWindow(m_hwnd);
@@ -408,7 +408,7 @@ bool NativeWindowWin32::hasEvent()
 	}
 
 	// Parented windows have their event loop somewhere else.
-	if(parent_window)
+	if(parent_window == nullptr)
 	{
 		MSG msg;
 		return PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE) != 0;
@@ -427,7 +427,7 @@ Event* NativeWindowWin32::getNextEvent()
 	}
 
 	// Parented windows have their event loop somewhere else.
-	if(parent_window)
+	if(parent_window == nullptr)
 	{
 		MSG msg;
 		if(GetMessage(&msg, m_hwnd, 0, 0))
@@ -456,7 +456,7 @@ Event* NativeWindowWin32::peekNextEvent()
 	}
 
 	// Parented windows have their event loop somewhere else.
-	if(parent_window)
+	if(parent_window == nullptr)
 	{
 		MSG msg;
 		if(PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE))
