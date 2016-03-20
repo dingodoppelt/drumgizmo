@@ -286,9 +286,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 	: window(window)
 {
-	WNDCLASSEX wcex;
-
-	std::memset(&wcex, 0, sizeof(wcex));
+	WNDCLASSEX wcex{};
 
 	//Time to register a window class.
 	//Generic flags and everything. cbWndExtra is the size of a pointer to an
@@ -315,12 +313,14 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 	RegisterClassEx(&wcex);
 
+	parent_window = (HWND)native_window;
+
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
 	                        "DGBasisWidget",
 	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_VISIBLE,
 	                        window.x(), window.y(),
 	                        window.width(), window.height(),
-	                        (HWND)native_window, nullptr,
+	                        parent_window, nullptr,
 	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
@@ -372,9 +372,15 @@ void NativeWindowWin32::hide()
 
 void NativeWindowWin32::redraw()
 {
-	InvalidateRect(m_hwnd, 0, TRUE);
-	//RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
-	//UpdateWindow(m_hwnd);
+	if(parent_window)
+	{
+		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
+		UpdateWindow(m_hwnd);
+	}
+	else
+	{
+		InvalidateRect(m_hwnd, 0, TRUE);
+	}
 }
 
 void NativeWindowWin32::setCaption(const std::string &caption)
@@ -396,11 +402,41 @@ void NativeWindowWin32::grabMouse(bool grab)
 
 bool NativeWindowWin32::hasEvent()
 {
-	return !event_queue.empty();
+	if(!event_queue.empty())
+	{
+		return true;
+	}
+
+	// Parented windows have their event loop somewhere else.
+	if(parent_window)
+	{
+		MSG msg;
+		return PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE) != 0;
+	}
+
+	return false;
 }
 
 Event* NativeWindowWin32::getNextEvent()
 {
+	if(!event_queue.empty())
+	{
+		auto event = event_queue.front();
+		event_queue.pop();
+		return event;
+	}
+
+	// Parented windows have their event loop somewhere else.
+	if(parent_window)
+	{
+		MSG msg;
+		if(GetMessage(&msg, m_hwnd, 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+
 	if(event_queue.empty())
 	{
 		return nullptr;
@@ -413,6 +449,23 @@ Event* NativeWindowWin32::getNextEvent()
 
 Event* NativeWindowWin32::peekNextEvent()
 {
+	if(!event_queue.empty())
+	{
+		auto event = event_queue.front();
+		return event;
+	}
+
+	// Parented windows have their event loop somewhere else.
+	if(parent_window)
+	{
+		MSG msg;
+		if(PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+
 	if(event_queue.empty())
 	{
 		return nullptr;
