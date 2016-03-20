@@ -216,7 +216,6 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 	Painter p(*this);
 
 	p.clear();
-
 	int w = width();
 	int h = height();
 	if((w == 0) || (h == 0))
@@ -243,6 +242,8 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 		break;
 
 	case Noop:
+		visibleText = _text;
+		offsetPos = 0;
 		break;
 	}
 
