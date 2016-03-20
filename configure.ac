@@ -1,7 +1,7 @@
 AC_INIT([drumgizmo], m4_esyscmd([cat version.h | cut -d'"' -f2 | xargs echo -n]))dnl"
 
 AC_CONFIG_SRCDIR([src/drumgizmo.cc])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 AC_PROG_CXX
 AM_PROG_CC_C_O
