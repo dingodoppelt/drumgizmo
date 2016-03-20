@@ -37,6 +37,7 @@
 
 enum class Ports {
 	FreeWheel = 0,
+	Latency,
 	MidiPort,
 	AudioPortOffset,
 };
