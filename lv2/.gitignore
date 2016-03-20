@@ -1,6 +1,0 @@
-Makefile.am.test
-liblv2.la
-.deps
-.libs
-*.lo
-*.o
