@@ -57,6 +57,8 @@ DrumGizmoPlugin::DrumGizmoPlugin(audioMasterCallback audioMaster)
 DrumGizmoPlugin::DrumGizmoPlugin()
 #endif
 {
+	init();
+
 	drumgizmo = std::make_shared<DrumGizmo>(&output, &input);
 	resizeWindow(370, 330);
 	drumgizmo->setFreeWheel(true);
@@ -289,8 +291,6 @@ sample_t* DrumGizmoPlugin::Output::getBuffer(int ch)
 	{
 		return nullptr;
 	}
-
-	assert((*plugin.output_samples)[ch]);
 
 	return (*plugin.output_samples)[ch];
 }
