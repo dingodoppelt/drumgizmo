@@ -24,26 +24,24 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CONFIGPARSER_H__
-#define __DRUMGIZMO_CONFIGPARSER_H__
+#pragma once
 
 #include <map>
 
 #include "saxparser.h"
 
-class ConfigParser : public SAXParser {
+class ConfigParser :
+	public SAXParser
+{
 public:
-  ConfigParser();
+	ConfigParser();
 
-  void characterData(std::string &data);
-  void startTag(std::string name, attr_t attr);
-  void endTag(std::string name);
-  std::string value(std::string name, std::string def = "");
-  void parseError(char *buf, size_t len, std::string error, int lineno);
+	void characterData(const std::string& data) override;
+	void startTag(const std::string& name, attr_t& attr) override;
+	void endTag(const std::string& name) override;
+	std::string value(const std::string& name, const std::string& def = "");
 
 private:
-  std::map<std::string, std::string> values;
-  std::string *str;
+	std::map<std::string, std::string> values;
+	std::string* str;
 };
-
-#endif/*__DRUMGIZMO_CONFIGPARSER_H__*/

@@ -32,39 +32,40 @@
 
 ConfigParser::ConfigParser()
 {
-  str = NULL;
+	str = nullptr;
 }
 
-void ConfigParser::characterData(std::string &data)
+void ConfigParser::characterData(const std::string& data)
 {
-  if(str) str->append(data);
+	if(str)
+	{
+		str->append(data);
+	}
 }
 
-void ConfigParser::startTag(std::string name, attr_t attr)
+void ConfigParser::startTag(const std::string& name, attr_t& attr)
 {
-  if(name == "value" && attr.find("name") != attr.end()) {
-    values[attr["name"]] = "";
-    str = &values[attr["name"]];
-  }
+	if(name == "value" && attr.find("name") != attr.end())
+	{
+		values[attr["name"]] = "";
+		str = &values[attr["name"]];
+	}
 }
 
-void ConfigParser::endTag(std::string name)
+void ConfigParser::endTag(const std::string& name)
 {
-  if(name == "value") str = NULL;
+	if(name == "value")
+	{
+		str = nullptr;
+	}
 }
 
-std::string ConfigParser::value(std::string name, std::string def)
+std::string ConfigParser::value(const std::string& name, const std::string& def)
 {
-  if(values.find(name) == values.end()) return def;
-  return values[name];
-}
+	if(values.find(name) == values.end())
+	{
+		return def;
+	}
 
-void ConfigParser::parseError(char *buf, size_t len, std::string error,
-                              int lineno)
-{
-  std::string buffer;
-  buffer.append(buf, len);
-  ERR(configparser, "sax parser error '%s' at line %d. "
-      "Buffer: [%d bytes]<%s>\n",
-      error.c_str(), lineno, (int)len, buffer.c_str());
+	return values[name];
 }

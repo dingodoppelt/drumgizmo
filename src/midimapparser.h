@@ -24,29 +24,27 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIMAPPARSER_H__
-#define __DRUMGIZMO_MIDIMAPPARSER_H__
+#pragma once
 
 #include <stdio.h>
 
 #include "saxparser.h"
-
 #include "midimapper.h"
 
-class MidiMapParser : public SAXParser {
+class MidiMapParser
+	: public SAXParser
+{
 public:
-  MidiMapParser(std::string file);
-  ~MidiMapParser();
+	MidiMapParser(const std::string& file);
+	~MidiMapParser();
 
-  void startTag(std::string name, attr_t attr);
+	void startTag(const std::string& name, attr_t& attr) override;
 
-  midimap_t midimap;
+	midimap_t midimap;
 
 protected:
-  int readData(char *data, size_t size);
+	int readData(std::string& data, size_t size) override;
 
 private:
-  FILE *fd;
+	FILE* fd;
 };
-
-#endif/*__DRUMGIZMO_MIDIMAPPARSER_H__*/
