@@ -71,7 +71,7 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			{
 				ERR(instrparser, "Error parsing version number: %s, using 1.0\n", err);
 				instrument.version = VersionStr(1,0,0);
-			} 
+			}
 		}
 		else
 		{
@@ -93,10 +93,10 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			return;
 		}
 
-		float power; 
+		float power;
 		if(attr.find("power") == attr.end())
 		{
-			power = -1; 
+			power = -1;
 		}
 		else
 		{

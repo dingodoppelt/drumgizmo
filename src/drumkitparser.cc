@@ -36,7 +36,7 @@
 
 DrumKitParser::DrumKitParser(DrumKit& kit)
 	: kit(kit)
- 	, refs(REFSFILE)
+	, refs(REFSFILE)
 {
 }
 
@@ -101,7 +101,7 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 			{
 				ERR(kitparser, "Error parsing version number: %s, using 1.0\n", err);
 				kit._version = VersionStr(1,0,0);
-			} 
+			}
 		}
 		else
 		{
@@ -112,7 +112,7 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 
 	if(name == "channels")
 	{
-	
+
 	}
 
 	if(name == "channel")
