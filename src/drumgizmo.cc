@@ -53,9 +53,12 @@ DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
 	, ie(i)
 	, framesize(0)
 	, freewheel(false)
+	, events{}
 {
 	is_stopping = false;
 	audioCache.init(10000); // start thread
+	
+	events.reserve(1000);
 }
 
 DrumGizmo::~DrumGizmo()
@@ -268,15 +271,14 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 	//DEBUG(engine, "Number of active events: %d\n", activeevents[0].size());
 
-	size_t nev;
-	event_t *evs = ie->run(pos, nsamples, &nev);
+	ie->run(pos, nsamples, events);
 
-	for(size_t e = 0; e < nev; ++e)
+	for(const auto& event: events)
 	{
-		if(evs[e].type == TYPE_ONSET)
+		if(event.type == TYPE_ONSET)
 		{
 			Instrument *i = nullptr;
-			int d = evs[e].instrument;
+			int d = event.instrument;
 			/*
 			  Instruments::iterator it = kit.instruments.begin();
 			  while(d-- && it != kit.instruments.end())
@@ -298,7 +300,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 			if(i == nullptr || !i->isValid())
 			{
-				ERR(drumgizmo, "Missing Instrument %d.\n", evs[e].instrument);
+				ERR(drumgizmo, "Missing Instrument %d.\n", event.instrument);
 				continue;
 			}
 
@@ -330,7 +332,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				}
 			}
 
-			Sample *s = i->sample(evs[e].velocity, evs[e].offset + pos);
+			Sample *s = i->sample(event.velocity, event.offset + pos);
 
 			if(s == nullptr)
 			{
@@ -355,16 +357,16 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				}
 				else
 				{
-					//DEBUG(drumgizmo, "Adding event %d.\n", evs[e].offset);
+					//DEBUG(drumgizmo, "Adding event %d.\n", event.offset);
 					Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
-					evt->offset = (evs[e].offset + pos) * resampler[0].ratio();
+					evt->offset = (event.offset + pos) * resampler[0].ratio();
 					activeevents[ch.num].push_back(evt);
 				}
 				++j;
 			}
 		}
 
-		if(evs[e].type == TYPE_STOP)
+		if(event.type == TYPE_STOP)
 		{
 			is_stopping = true;
 		}
@@ -390,7 +392,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 	}
 
-	free(evs);
+	events.clear();
 
 	//
 	// Write audio

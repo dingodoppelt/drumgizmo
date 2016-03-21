@@ -56,10 +56,8 @@ void DummyInputEngine::pre()
 {
 }
 
-event_t* DummyInputEngine::run(size_t pos, size_t len, size_t* nevents)
+void DummyInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
-	nevents = 0u;
-	return nullptr;
 }
 
 void DummyInputEngine::post()

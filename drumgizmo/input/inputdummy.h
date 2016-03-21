@@ -40,6 +40,6 @@ public:
 	bool start() override;
 	void stop() override;
 	void pre() override;
-	event_t* run(size_t pos, size_t len, size_t* nevents) override;
+	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
 	void post() override;
 };

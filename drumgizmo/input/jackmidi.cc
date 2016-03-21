@@ -38,8 +38,7 @@ JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	, client(client)
 	, port{nullptr}
 	, pos{0u}
-	, list{nullptr}
-	, listsize{0u}
+	, events{}
 {
 	client.add(*this);
 }
@@ -91,14 +90,11 @@ void JackMidiInputEngine::pre()
 {
 }
 
-event_t* JackMidiInputEngine::run(size_t pos, size_t len, size_t* nevents)
+void JackMidiInputEngine::run(size_t pos, size_t len,
+                              std::vector<event_t>& events)
 {
-	*nevents = listsize;
-	event_t* l = list;
-	// todo: get rid of malloc
-	list = (event_t*)malloc(sizeof(event_t) * 1000);
-	listsize = 0;
-	return l;
+	assert(events.empty());
+	std::swap(events, this->events);
 }
 
 void JackMidiInputEngine::post()
@@ -111,6 +107,8 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 	void* buffer = jack_port_get_buffer(port->port, num_frames);
 	jack_nframes_t num_events = jack_midi_get_event_count(buffer);
 
+	assert(events.empty());
+	events.reserve(num_events);
 	for(jack_nframes_t i = 0; i < num_events; ++i)
 	{
 		jack_midi_event_t event;
@@ -129,11 +127,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		int k = mmap.lookup(key);
 		if(k != -1 && velocity)
 		{
-			list[listsize].type = TYPE_ONSET;
-			list[listsize].instrument = k;
-			list[listsize].velocity = velocity / 127.0;
-			list[listsize].offset = event.time;
-			++listsize;
+			events.push_back({TYPE_ONSET, (size_t)k, event.time, velocity / 127.f});
 		}
 	}
 	jack_midi_clear_buffer(buffer);

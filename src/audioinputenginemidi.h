@@ -51,7 +51,7 @@ public:
   virtual void stop() = 0;
 
   virtual void pre() = 0;
-  virtual event_t *run(size_t pos, size_t len, size_t *nevents) = 0;
+  virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
   virtual void post() = 0;
 
   bool loadMidiMap(std::string file, Instruments &i);

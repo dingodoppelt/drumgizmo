@@ -205,16 +205,12 @@ void DrumGizmoPlugin::Input::pre()
 {
 }
 
-event_t *DrumGizmoPlugin::Input::run(size_t pos, size_t len, size_t* nevents)
+void DrumGizmoPlugin::Input::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
-
+	assert(events.empty());
 	assert(plugin.input_events);
 
-	event_t* list;
-	size_t listsize;
-
-	list = (event_t*)malloc(sizeof(event_t) * plugin.input_events->size());
-	listsize = 0;
+	events.reserve(plugin.input_events->size());
 
 	for(auto& event : *plugin.input_events)
 	{
@@ -226,16 +222,9 @@ event_t *DrumGizmoPlugin::Input::run(size_t pos, size_t len, size_t* nevents)
 		int i = mmap.lookup(event.key);
 		if(event.velocity && (i != -1))
 		{
-				list[listsize].type = TYPE_ONSET;
-				list[listsize].instrument = i;
-				list[listsize].velocity = (float)event.velocity / 127.0f;
-				list[listsize].offset = event.getTime();
-				++listsize;
-			}
+			events.push_back({TYPE_ONSET, (size_t)i, (size_t)event.getTime(), event.velocity / 127.0f});
+		}
 	}
-
-	*nevents = listsize;
-	return list;
 }
 
 void DrumGizmoPlugin::Input::post()

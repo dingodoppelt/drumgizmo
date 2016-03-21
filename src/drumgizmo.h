@@ -106,4 +106,6 @@ protected:
 
 	size_t framesize;
 	bool freewheel;
+	
+	std::vector<event_t> events;
 };

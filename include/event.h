@@ -31,9 +31,9 @@
 #define TYPE_STOP  1
 
 typedef struct {
-  int type;
-  int instrument;
-  int offset;
+  size_t type;
+  size_t instrument;
+  size_t offset;
   float velocity;
 } event_t;
 

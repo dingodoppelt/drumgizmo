@@ -25,6 +25,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include <iostream>
+#include <cassert>
 
 #include "midifile.h"
 
@@ -39,6 +40,7 @@ MidifileInputEngine::MidifileInputEngine()
 	, track{-1} // all tracks
 	, loop{false}
 	, offset{0.0}
+	, samplerate{44100.0} // todo: via ctor arg
 {
 }
 
@@ -128,14 +130,12 @@ void MidifileInputEngine::pre()
 {
 }
 
-event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t* nevents)
+void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
-	event_t* evs{nullptr};
-	size_t num_events{0u};
+	assert(events.empty());
 
-	double current_max_time = (1.0 + pos + len) / (44100.0 / speed);
+	double current_max_time = (1.0 + pos + len) / (samplerate / speed);
 	current_max_time -= offset;
-	//  double cur_min_time = (double)(pos) / (44100.0 / speed);
 
 	if(!current_event)
 	{
@@ -151,32 +151,20 @@ event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t* nevents)
 			    (track == -1 || current_event->track_number == track) &&
 			    current_event->midi_buffer[2] > 0)
 			{
-
-				if(evs == nullptr)
-				{
-					// todo: get rid of malloc
-					evs = (event_t*)malloc(sizeof(event_t) * 1000);
-				}
-
 				int key = current_event->midi_buffer[1];
 				int velocity = current_event->midi_buffer[2];
 
-				evs[num_events].type = TYPE_ONSET;
-				size_t evpos = current_event->time_seconds * (44100.0 / speed);
-				evs[num_events].offset = evpos - pos;
+				events.emplace_back();
+				auto& event = events.back();
+				event.type = TYPE_ONSET;
+				size_t evpos = current_event->time_seconds * (samplerate / speed);
+				event.offset = evpos - pos;
 
 				int i = mmap.lookup(key);
 				if(i != -1)
 				{
-					evs[num_events].instrument = i;
-					evs[num_events].velocity = velocity / 127.0;
-
-					++num_events;
-					if(num_events > 999)
-					{
-						fprintf(stderr, "PANIC!\n");
-						break;
-					}
+					event.instrument = i;
+					event.velocity = velocity / 127.0;
 				}
 			}
 		}
@@ -193,18 +181,10 @@ event_t* MidifileInputEngine::run(size_t pos, size_t len, size_t* nevents)
 		}
 		else
 		{
-			if(evs == nullptr)
-			{
-				// TODO: get rid of malloc
-				evs = (event_t*)malloc(sizeof(event_t) * 1000);
-			}
-			evs[num_events].type = TYPE_STOP;
-			evs[num_events].offset = len - 1;
-			++num_events;
+			assert(len >= 1);
+			events.push_back({TYPE_STOP, 0, len-1, 0.f});
 		}
 	}
-	*nevents = num_events;
-	return evs;
 }
 
 void MidifileInputEngine::post()
