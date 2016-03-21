@@ -24,37 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_INSTRUMENTPARSER_H__
-#define __DRUMGIZMO_INSTRUMENTPARSER_H__
+#pragma once
 
 #include "saxparser.h"
 #include "instrument.h"
 
 #include <vector>
 
-class InstrumentParser : public SAXParser {
+class InstrumentParser
+	: public SAXParser
+{
 public:
-  InstrumentParser(const std::string &instrfile, Instrument &instrument);
-  ~InstrumentParser();
+	InstrumentParser(const std::string& instrfile, Instrument &instrument);
+	~InstrumentParser();
 
-  void startTag(std::string name,
-                std::map< std::string, std::string> attributes);
-  void endTag(std::string name);
-
-  std::vector<InstrumentChannel *> channellist;
+	std::vector<InstrumentChannel*> channellist;
 
 protected:
-  int readData(char *data, size_t size);
+	int readData(std::string& data, std::size_t size) override;
+
+	virtual void startTag(const std::string& name, attr_t& attr) override;
+	virtual void endTag(const std::string& name) override;
 
 private:
-	FILE *fd{nullptr};
-  Instrument &instrument;
-	Sample *s{nullptr};
+	FILE* fd{nullptr};
+	Instrument& instrument;
+	Sample* s{nullptr};
 
-  std::string path;
+	std::string path;
 
 	level_t lower{0};
 	level_t upper{0};
 };
-
-#endif/*__DRUMGIZMO_INSTRUMENTPARSER_H__*/

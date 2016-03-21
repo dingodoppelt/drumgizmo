@@ -24,37 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKITPARSER_H__
-#define __DRUMGIZMO_DRUMKITPARSER_H__
+#pragma once
 
 #include "saxparser.h"
 #include "drumkit.h"
 #include "configfile.h"
 
-class DrumKitParser : public SAXParser {
+class DrumKitParser
+	: public SAXParser
+{
 public:
-  DrumKitParser(const std::string &kitfile, DrumKit &kit);
-  ~DrumKitParser();
-
-  void startTag(std::string name,
-                std::map< std::string, std::string> attributes);
-  void endTag(std::string name);
+	DrumKitParser(const std::string& kitfile, DrumKit& kit);
+	~DrumKitParser();
 
 protected:
-  int readData(char *data, size_t size);
+	void startTag(const std::string& name, attr_t& attributes) override;
+	void endTag(const std::string& name) override;
+
+	int readData(std::string& data, std::size_t size) override;
 
 private:
-  FILE *fd;
-  DrumKit &kit;
-  //  Instrument *instr;
-  std::string path;
+	FILE* fd;
+	DrumKit& kit;
+	std::string path;
 
-  std::map<std::string, std::string> channelmap;
-  std::string instr_file;
-  std::string instr_name;
-  std::string instr_group;
+	std::map<std::string, std::string> channelmap;
+	std::string instr_file;
+	std::string instr_name;
+	std::string instr_group;
 
-  ConfigFile refs;
+	ConfigFile refs;
 };
-
-#endif/*__DRUMGIZMO_DRUMKITPARSER_H__*/

@@ -24,34 +24,37 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_SAXPARSER_H__
-#define __DRUMGIZMO_SAXPARSER_H__
+#pragma once
 
 #include <string>
 #include <map>
 #include <expat.h>
 
-typedef std::map< std::string, std::string> attr_t;
-
 class SAXParser {
 public:
-  SAXParser();
-  virtual ~SAXParser();
+	SAXParser();
+	virtual ~SAXParser();
 
-  int parse();
-  int parse(std::string buffer);
-  
-  virtual void characterData(std::string &data) {}
-  virtual void startTag(std::string name, attr_t attr) {}
-  virtual void endTag(std::string name) {}
+	//! Parses the data obtained by readData in chunks.
+	int parse();
 
-  virtual void parseError(char *buf, size_t len, std::string error, int lineno);
+	//! Parses all the data in the buffer.
+	int parse(const std::string& buffer);
 
 protected:
-  virtual int readData(char *data, size_t size) { return 0; }
+	using attr_t = std::map<std::string, std::string>;
+
+	virtual void characterData(const std::string& data) {}
+	virtual void startTag(const std::string& name, attr_t& attr) {}
+	virtual void endTag(const std::string& name) {}
+	virtual void parseError(const std::string& buf, std::size_t len, const std::string& error, std::size_t lineno);
+
+	virtual int readData(std::string& data, std::size_t size) { return 0; }
 
 private:
-  XML_Parser p;
-};
+	XML_Parser p;
 
-#endif/*__DRUMGIZMO_SAXPARSER_H__*/
+	static void character_hndl(void* p, const XML_Char* s, int len);
+	static void start_hndl(void* p, const char* el, const char** attr);
+	static void end_hndl(void* p, const char* el);
+};
