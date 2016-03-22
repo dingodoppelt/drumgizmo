@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 Makefile.mingw32
 aclocal.m4
+acinclude.m4
 autom4te.cache/
 compile
 config.guess
