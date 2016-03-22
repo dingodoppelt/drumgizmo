@@ -11,16 +11,16 @@
  *  This file is part of DrumGizmo.
  *
  *  DrumGizmo is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  DrumGizmo is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
@@ -48,7 +48,7 @@ static const char copyright_str[] =
     "Copyright (C) 2008-2011 Bent Bisballe Nyeng - Aasimon.org.\n"
     "This is free software.  You may redistribute copies of it under the terms "
     "of\n"
-    "the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
+    "the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
     "There is NO WARRANTY, to the extent permitted by law.\n"
     "\n"
     "Written by Bent Bisballe Nyeng (deva@aasimon.org)\n";
