@@ -300,7 +300,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 			if(i == nullptr || !i->isValid())
 			{
-				ERR(drumgizmo, "Missing Instrument %d.\n", event.instrument);
+				ERR(drumgizmo, "Missing Instrument %d.\n", (int)event.instrument);
 				continue;
 			}
 
