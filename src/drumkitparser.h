@@ -38,7 +38,7 @@ public:
 	~DrumKitParser();
 
 protected:
-	void startTag(const std::string& name, attr_t& attributes) override;
+	void startTag(const std::string& name, const attr_t& attributes) override;
 	void endTag(const std::string& name) override;
 
 	int readData(std::string& data, std::size_t size) override;

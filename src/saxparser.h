@@ -45,7 +45,7 @@ protected:
 	using attr_t = std::map<std::string, std::string>;
 
 	virtual void characterData(const std::string& data) {}
-	virtual void startTag(const std::string& name, attr_t& attr) {}
+	virtual void startTag(const std::string& name, const attr_t& attr) {}
 	virtual void endTag(const std::string& name) {}
 	virtual void parseError(const std::string& buf, std::size_t len, const std::string& error, std::size_t lineno);
 
