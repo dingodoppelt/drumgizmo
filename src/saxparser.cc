@@ -26,29 +26,30 @@
  */
 #include "saxparser.h"
 
-#include <string.h>
-#include <hugin.hpp>
 #include <sstream>
 #include <iostream>
 
+#include <hugin.hpp>
+
 SAXParser::SAXParser()
 {
-	p = XML_ParserCreate(nullptr);
-	if(!p) {
+	parser = XML_ParserCreate(nullptr);
+	if(!parser)
+	{
 		ERR(sax, "Couldn't allocate memory for parser\n");
 		// throw Exception(...); TODO
 		return;
 	}
 
-	XML_SetUserData(p, this);
-	XML_UseParserAsHandlerArg(p);
-	XML_SetElementHandler(p, start_hndl, end_hndl);
-	XML_SetCharacterDataHandler(p, character_hndl);
+	XML_SetUserData(parser, this);
+	XML_UseParserAsHandlerArg(parser);
+	XML_SetElementHandler(parser, SAXParser::startHandler, SAXParser::endHandler);
+	XML_SetCharacterDataHandler(parser, SAXParser::characterHandler);
 }
 
 SAXParser::~SAXParser()
 {
-	XML_ParserFree(p);
+	XML_ParserFree(parser);
 }
 
 int SAXParser::parseFile(const std::string& filename)
@@ -60,7 +61,8 @@ int SAXParser::parseFile(const std::string& filename)
 
 	std::ifstream file(filename, std::ifstream::in);
 
-	if(!file.is_open()) {
+	if(!file.is_open())
+	{
 		return 1;
 	}
 
@@ -68,59 +70,63 @@ int SAXParser::parseFile(const std::string& filename)
 	ss << file.rdbuf();
 	std::string str = ss.str();
 
-	parseString(str, filename);
-
-	return 0;
+	return parseString(str, filename);
 }
 
-int SAXParser::parseString(const std::string& str, const std::string& xml_source_name)
+int SAXParser::parseString(const std::string& str,
+                           const std::string& xml_source_name)
 {
 	DEBUG(sax, "parse(buffer %d bytes)\n", (int)str.length());
 
-	if(!XML_Parse(p, str.c_str(), str.length(), true)) {
-		parseError(str, XML_ErrorString(XML_GetErrorCode(p)),
-		           xml_source_name, (int)XML_GetCurrentLineNumber(p));
+	if(!XML_Parse(parser, str.c_str(), str.length(), true))
+	{
+		parseError(str, XML_ErrorString(XML_GetErrorCode(parser)),
+		           xml_source_name, (int)XML_GetCurrentLineNumber(parser));
 		return 1;
 	}
 
 	return 0;
 }
 
-void SAXParser::parseError(const std::string& buf, const std::string& error, const std::string& xml_source_name, std::size_t lineno)
+void SAXParser::parseError(const std::string& buf, const std::string& error,
+                           const std::string& xml_source_name,
+                           std::size_t lineno)
 {
-	std::cerr << "SAXParser error trying to parse from source: " << xml_source_name << "\n";
+	std::cerr << "SAXParser error trying to parse from source: " <<
+		xml_source_name << "\n";
 	std::cerr << "At line " << lineno << ": " << error << "\n";
 	std::cerr << "Buffer " << buf.size() << " bytes: \n[\n";
 	std::cerr << buf;
 	std::cerr << "\n]" << std::endl;
 }
 
-void SAXParser::character_hndl(void* p, const XML_Char* s, int len)
+void SAXParser::characterHandler(void* parser, const XML_Char* cData, int len)
 {
-	SAXParser* parser = (SAXParser*)XML_GetUserData(p);
-	std::string chars(s, len);
-	parser->characterData(chars);
+	SAXParser* sax_parser = (SAXParser*)XML_GetUserData(parser);
+	std::string chars(cData, len);
+	sax_parser->characterData(chars);
 }
 
-void SAXParser::start_hndl(void* p, const char* el, const char** attr)
+void SAXParser::startHandler(void* parser, const char* el, const char** attr)
 {
-	SAXParser* parser = (SAXParser*)XML_GetUserData(p);
+	SAXParser* sax_parser = (SAXParser*)XML_GetUserData(parser);
 
 	// Convert to comfy C++ values...
 	attr_t attributes;
 
-	while(*attr) {
+	while(*attr)
+	{
 		std::string at_name = *attr++;
 		std::string at_value = *attr++;
 
 		attributes.emplace(at_name, at_value);
 	}
 
-	parser->startTag(std::string(el), attributes);
+	sax_parser->startTag(std::string(el), attributes);
 }
 
-void SAXParser::end_hndl(void* p, const char* el)
+void SAXParser::endHandler(void* parser, const char* el)
 {
-	SAXParser* parser = (SAXParser*)XML_GetUserData(p);
-	parser->endTag(std::string(el));
+	SAXParser* sax_parser = (SAXParser*)XML_GetUserData(parser);
+	sax_parser->endTag(std::string(el));
 }

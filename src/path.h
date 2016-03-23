@@ -24,11 +24,9 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_PATH_H__
-#define __DRUMGIZMO_PATH_H__
+#pragma once
 
 #include <string>
 
-std::string getPath(std::string file);
-
-#endif/*__DRUMGIZMO_PATH_H__*/
+//! \returns path component of full filename with path.
+std::string getPath(const std::string& file);

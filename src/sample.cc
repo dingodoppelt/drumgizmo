@@ -26,60 +26,37 @@
  */
 #include "sample.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <sndfile.h>
-
-Sample::Sample(std::string name, float power)
+Sample::Sample(const std::string& name, float power)
+	: name(name)
+	, power(power)
 {
-  this->name = name;
-  this->power = power;
 }
 
 Sample::~Sample()
 {
 }
 
-void Sample::addAudioFile(Channel *c, AudioFile *a)
+void Sample::addAudioFile(InstrumentChannel* instrument_channel,
+                          AudioFile* audio_file)
 {
-  audiofiles[c] = a;
+	audiofiles[instrument_channel] = audio_file;
 }
 
-AudioFile *Sample::getAudioFile(Channel *c)
+AudioFile *Sample::getAudioFile(InstrumentChannel* instrument_channel)
 {
-  /*
-  if(audiofiles.find(c) == audiofiles.end()) return NULL;
-  return audiofiles[c];
-  */
+	/*
+	  if(audiofiles.find(c) == audiofiles.end()) return NULL;
+	  return audiofiles[c];
+	*/
 
-  AudioFiles::iterator i = audiofiles.begin();
-  while(i != audiofiles.end()) {
-    Channel *ch = i->first;
-    if(c->num == ch->num) return i->second;
-    i++;
-  }
+	for(auto& audio_file : audiofiles)
+	{
+		InstrumentChannel *ch = audio_file.first;
+		if(instrument_channel->num == ch->num)
+		{
+			return audio_file.second;
+		}
+	}
 
-  return NULL;
+	return nullptr;
 }
-
-#ifdef TEST_SAMPLE
-//deps: channel.cc audiofile.cc
-//cflags: $(SNDFILE_CFLAGS)
-//libs: $(SNDFILE_LIBS)
-#include "test.h"
-
-TEST_BEGIN;
-
-Sample s;
-InstrumentChannel c;
-InstrumentChannel c2;
-AudioFile a("test");
-
-s.addAudioFile(&c, &a);
-TEST_EQUAL(s.getAudioFile(&c), &a, "?");
-TEST_EQUAL(s.getAudioFile(&c2), NULL, "?");
-
-TEST_END;
-
-#endif/*TEST_SAMPLE*/

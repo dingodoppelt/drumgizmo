@@ -47,7 +47,7 @@ protected:
 
 private:
 	Instrument& instrument;
-	Sample* s{nullptr};
+	Sample* sample{nullptr};
 
 	std::string path;
 

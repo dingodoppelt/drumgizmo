@@ -28,69 +28,52 @@
 
 DrumKit::DrumKit()
 {
-  magic = this;
+	magic = this;
 }
 
 DrumKit::~DrumKit()
 {
-  magic = NULL;
-  clear();
+	magic = NULL;
+	clear();
 }
 
 void DrumKit::clear()
 {
-  Instruments::iterator i = instruments.begin();
-  while(i != instruments.end()) {
-    delete *i;
-    i++;
-  }
-  instruments.clear();
+	for(auto& instrument : instruments)
+	{
+		delete instrument;
+	}
 
-  channels.clear();
+	instruments.clear();
 
-  _name = "";
-  _description = "";
-  _samplerate = 44100;
+	channels.clear();
+
+	_name = "";
+	_description = "";
+	_samplerate = 44100;
 }
 
 bool DrumKit::isValid()
 {
-  return this == magic;
+	return this == magic;
 }
 
 std::string DrumKit::file()
 {
-  return _file;
+	return _file;
 }
 
 std::string DrumKit::name()
 {
-  return _name;
+	return _name;
 }
 
 std::string DrumKit::description()
 {
-  return _description;
+	return _description;
 }
 
 size_t DrumKit::samplerate()
 {
-  return _samplerate;
+	return _samplerate;
 }
-
-#ifdef TEST_DRUMKIT
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif/*TEST_DRUMKIT*/
