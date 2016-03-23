@@ -34,9 +34,10 @@
 #include "path.h"
 #include "drumgizmo.h"
 
-DrumKitParser::DrumKitParser(DrumKit& kit)
-	: kit(kit)
+DrumKitParser::DrumKitParser(Settings& setting, DrumKit& k)
+	: kit(k)
 	, refs(REFSFILE)
+	, settings(settings)
 {
 }
 
@@ -182,7 +183,7 @@ void DrumKitParser::endTag(const std::string& name)
 {
 	if(name == "instrument")
 	{
-		Instrument* instrument = new Instrument();
+		Instrument* instrument = new Instrument(settings);
 		instrument->setGroup(instr_group);
 
 		InstrumentParser parser(*instrument);

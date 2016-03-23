@@ -37,6 +37,8 @@
 #include "filebrowser.h"
 #include "layout.h"
 
+#include <settings.h>
+
 class MessageHandler;
 
 namespace GUI {
@@ -47,7 +49,8 @@ class File;
 
 class DGWindow : public Window {
 public:
-	DGWindow(void* native_window, MessageHandler& messageHandler, Config& config);
+	DGWindow(void* native_window, MessageHandler& messageHandler, Config& config,
+	         Settings& settings);
 
 	Header* header;
 
@@ -85,6 +88,8 @@ private:
 
 	Image back{":bg.png"};
 	Image logo{":logo.png"};
+
+	Settings& settings;
 };
 
 } // GUI::

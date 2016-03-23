@@ -31,6 +31,8 @@
 #include "pluginconfig.h"
 #include "messagehandler.h"
 
+#include <iostream>
+
 namespace GUI {
 
 PluginGUI::PluginGUI(void* native_window)
@@ -116,7 +118,68 @@ bool PluginGUI::processEvents()
 	}
 
 	window->eventHandler()->processEvents();
-	handleMessages();
+	//handleMessages();
+
+	static bool foo = false;
+	static int t = 0;
+	if(t != time(nullptr))
+	{
+		t = time(nullptr);
+		foo = !foo;
+		float v = settings.velocity_modifier_falloff.load();
+		v += 0.1f;
+		settings.velocity_modifier_falloff.store(v);
+	}
+
+	Painter p(*window);
+
+	// Run through all settings one at a time propagate changes to the UI.
+	if(getter.enable_velocity_modifier.hasChanged())
+	{
+		enable_velocity_modifier_notifier(getter.enable_velocity_modifier.getValue());
+	}
+
+	if(getter.velocity_modifier_falloff.hasChanged())
+	{
+		velocity_modifier_falloff_notifier(getter.velocity_modifier_falloff.getValue());
+	}
+
+	if(getter.velocity_modifier_weight.hasChanged())
+	{
+		velocity_modifier_weight_notifier(getter.velocity_modifier_weight.getValue());
+	}
+
+	if(getter.enable_velocity_randomiser.hasChanged())
+	{
+		enable_velocity_randomiser_notifier(getter.enable_velocity_randomiser.getValue());
+	}
+
+	if(getter.velocity_randomiser_weight.hasChanged())
+	{
+		velocity_randomiser_weight_notifier(getter.velocity_randomiser_weight.getValue());
+	}
+
+	if(getter.samplerate.hasChanged())
+	{
+		samplerate_notifier(getter.samplerate.getValue());
+	}
+
+	if(getter.enable_resampling.hasChanged())
+	{
+		enable_resampling_notifier(getter.enable_resampling.getValue());
+	}
+
+	if(getter.number_of_files.hasChanged() ||
+	   getter.number_of_files_loaded.hasChanged())
+	{
+		drumkit_file_progress_notifier((float)getter.number_of_files_loaded.getValue() /
+		                               (float)getter.number_of_files.getValue());
+	}
+
+	//if(getter.current_file.hasChanged())
+	//{
+	//	current_file_notifier(getter.current_file.getValue());
+	//}
 
 	if(closing)
 	{
@@ -135,7 +198,30 @@ void PluginGUI::init()
 	config = new Config();
 	config->load();
 
-	window = new DGWindow(native_window, msghandler, *config);
+	window = new DGWindow(native_window, msghandler, *config, settings);
+
+	CONNECT(this, enable_velocity_modifier_notifier,
+	        window->velocityCheck, &CheckBox::setChecked);
+
+	CONNECT(this, velocity_modifier_falloff_notifier,
+	        window->falloffKnob, &Knob::setValue);
+	CONNECT(this, velocity_modifier_weight_notifier,
+	        window->attackKnob, &Knob::setValue);
+
+
+	//CONNECT(this, enable_velocity_randomiser_notifier,
+	//        window->velocityCheck, &CheckBox::setChecked);
+	//CONNECT(this, velocity_randomiser_weight_notifier,
+	//        window->velocityCheck, &CheckBox::setChecked);
+
+	//CONNECT(this, samplerate_notifier,
+	//        window->velocityCheck, &CheckBox::setChecked);
+
+	//CONNECT(this, enable_resampling_notifier,
+	//        window->velocityCheck, &CheckBox::setChecked);
+
+	CONNECT(this, drumkit_file_progress_notifier,
+	        window->drumkitFileProgress, &ProgressBar::setProgress);
 
 	auto eventHandler = window->eventHandler();
 	CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);

@@ -372,7 +372,8 @@ int CliMain::run(int argc, char* argv[])
 
 	printf("Using kitfile: %s\n", kitfile.c_str());
 
-	DrumGizmo gizmo(oe.get(), ie.get());
+	Settings settings;
+	DrumGizmo gizmo(settings, oe.get(), ie.get());
 
 	gizmo.setFrameSize(oe->getBufferSize());
 

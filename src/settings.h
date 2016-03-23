@@ -27,14 +27,40 @@
 #pragma once
 
 #include <atomic>
+#include <string>
 #include <cassert>
 
+class MyString {
+public:
+	std::string value;
+};
+
+//! Engine settings
+struct Settings
+{
+	std::atomic<bool> enable_velocity_modifier;
+	std::atomic<float> velocity_modifier_falloff;
+	std::atomic<float> velocity_modifier_weight;
+
+	std::atomic<bool> enable_velocity_randomiser;
+	std::atomic<float> velocity_randomiser_weight;
+
+	std::atomic<double> samplerate;
+
+	std::atomic<bool> enable_resampling;
+
+	std::atomic<int> number_of_files;
+	std::atomic<int> number_of_files_loaded;
+	//std::atomic<std::string> current_file;
+
+};
+
+//! Getter utility class.
 template <typename T> class SettingRef
 {
 public:
 	SettingRef(std::atomic<T>& value)
-		: value{value}
-		, cache{}
+		: value(value)
 	{
 		// string isn't lock free either
 		assert((std::is_same<T, std::string>::value || value.is_lock_free()));
@@ -57,20 +83,7 @@ private:
 	std::atomic<T> cache;
 };
 
-struct Settings
-{
-	std::atomic<bool> enable_velocity_modifier;
-	std::atomic<float> velocity_modifier_falloff;
-	std::atomic<float> velocity_modifier_weight;
-
-	std::atomic<bool> enable_velocity_randomiser;
-	std::atomic<float> velocity_randomiser_weight;
-
-	std::atomic<int> samplerate;
-
-	std::atomic<bool> enable_resampling;
-};
-
+//! Combined getter class.
 struct SettingsGetter
 {
 	SettingRef<bool> enable_velocity_modifier;
@@ -80,9 +93,13 @@ struct SettingsGetter
 	SettingRef<bool> enable_velocity_randomiser;
 	SettingRef<float> velocity_randomiser_weight;
 
-	SettingRef<int> samplerate;
+	SettingRef<double> samplerate;
 
 	SettingRef<bool> enable_resampling;
+
+	SettingRef<int> number_of_files;
+	SettingRef<int> number_of_files_loaded;
+	//SettingRef<std::string> current_file;
 
 	SettingsGetter(Settings& settings)
 		: enable_velocity_modifier{settings.enable_velocity_modifier}
@@ -92,6 +109,9 @@ struct SettingsGetter
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
 		, samplerate{settings.samplerate}
 		, enable_resampling{settings.enable_resampling}
+		, number_of_files{settings.number_of_files}
+		, number_of_files_loaded{settings.number_of_files_loaded}
+	//, current_file{settings.current_file}
 	{
 	}
 };
@@ -99,29 +119,35 @@ struct SettingsGetter
 // lovely reminder: NO, GLOCKE. NOOOO!!
 /*
 enum class IntParams {
-    Foo = 0
+	Foo = 0
 };
 
-struct Settings {
-    std::array<std::atomic<int>, 5> ints;
+struct Settings
+{
+	std::array<std::atomic<int>, 5> ints;
 
-    Settings()
-        : ints{} {
-        //get(IntParams::Foo).store(3);
-    }
+	Settings()
+		: ints{}
+	{
+		//get(IntParams::Foo).store(3);
+	}
 
-    std::atomic<int>& get(IntParams param) {
-        return ints[(size_t)param];
-    }
+	std::atomic<int>& get(IntParams param)
+	{
+		return ints[(size_t)param];
+	}
 };
 
-struct SettingsGetter {
-    std::vector<SettingRef<int>> ints;
+struct SettingsGetter
+{
+	std::vector<SettingRef<int>> ints;
 
-    SettingsGetter(Settings& parent) {
-        for (auto& atomic: parent.ints) {
-            ints.emplace_back(atomic);
-        }
-    }
+	SettingsGetter(Settings& parent)
+	{
+		for(auto& atomic: parent.ints)
+		{
+			ints.emplace_back(atomic);
+		}
+	}
 };
 */
