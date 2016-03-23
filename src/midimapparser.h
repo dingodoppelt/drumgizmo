@@ -35,16 +35,7 @@ class MidiMapParser
 	: public SAXParser
 {
 public:
-	MidiMapParser(const std::string& file);
-	~MidiMapParser();
-
 	void startTag(const std::string& name, const attr_t& attr) override;
 
 	midimap_t midimap;
-
-protected:
-	int readData(std::string& data, size_t size) override;
-
-private:
-	FILE* fd;
 };

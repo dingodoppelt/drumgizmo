@@ -35,19 +35,17 @@ class InstrumentParser
 	: public SAXParser
 {
 public:
-	InstrumentParser(const std::string& instrfile, Instrument &instrument);
-	~InstrumentParser();
+	InstrumentParser(Instrument &instrument);
+
+	virtual int parseFile(const std::string& filename) override;
 
 	std::vector<InstrumentChannel*> channellist;
 
 protected:
-	int readData(std::string& data, std::size_t size) override;
-
 	virtual void startTag(const std::string& name, const attr_t& attr) override;
 	virtual void endTag(const std::string& name) override;
 
 private:
-	FILE* fd{nullptr};
 	Instrument& instrument;
 	Sample* s{nullptr};
 
