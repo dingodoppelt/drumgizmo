@@ -49,7 +49,6 @@ struct Settings
 	Atomic<int> number_of_files;
 	Atomic<int> number_of_files_loaded;
 	Atomic<std::string> current_file;
-
 };
 
 //! Getter utility class.

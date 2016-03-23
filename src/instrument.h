@@ -41,7 +41,6 @@
 class Instrument
 {
 	friend class InstrumentParser;
-
 public:
 	Instrument(Settings& settings);
 	~Instrument();
