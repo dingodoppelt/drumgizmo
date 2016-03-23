@@ -70,9 +70,8 @@ Sample *Instrument::sample(level_t level, size_t pos)
   }
 
   if(Conf::enable_velocity_randomiser) {
-    float r = (float)rand() / (float)RAND_MAX; // random number: [0;1]
-    r -= 0.5; // random number [-0.5;0.5]
-    r *= Conf::velocity_randomiser_weight * 2; // ex. random number [-0.1;0.1]
+    float r = rand.floatInRange(-1.0*Conf::velocity_randomiser_weight,
+                                Conf::velocity_randomiser_weight);
     level += r;
     if(level > 1.0) level = 1.0;
     if(level < 0.0) level = 0.0;
@@ -91,8 +90,7 @@ Sample *Instrument::sample(level_t level, size_t pos)
     // Version 1.0
     std::vector<Sample*> s = samples.get(level * mod);
     if(s.size() == 0) return NULL;
-    size_t idx = rand()%(s.size());
-    sample = s[idx];
+    sample = rand.choose(s);
   }
 
   if(Conf::enable_velocity_modifier) {

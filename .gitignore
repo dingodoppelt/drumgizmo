@@ -47,6 +47,7 @@ test/audiocachefile
 test/audiocacheidmanager
 test/configfile
 test/memchecker
+test/random
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32

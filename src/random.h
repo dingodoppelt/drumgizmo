@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            velocity.cc
+ *            random.h
  *
- *  Tue Jul 22 18:04:58 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Wed Mar 23 19:17:24 CET 2016
+ *  Copyright 2016 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -24,38 +24,39 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "velocity.h"
+#pragma once
 
-#include <stdlib.h>
+#include <random>
+#include <vector>
 
-Velocity::Velocity(unsigned int lower, unsigned int upper)
+class Random
 {
-  this->lower = lower;
-  this->upper = upper;
-}
+public:
+	Random();
+	Random(unsigned int seed);
 
-void Velocity::addSample(Sample *sample, float probability)
+	//! \return random int in range [<lower_bound>, <upper_bound>].
+	int intInRange(int lower_bound, int upper_bound);
+
+	//! \return random float in range [<lower_bound>, <upper_bound>].
+	float floatInRange(float lower_bound, float upper_bound);
+
+	//! \return random float drawn from a normal distribution with mean <mean>
+	//! and standard deviation <stddev>.
+	float normalDistribution(float mean, float stddev);
+
+	//! \return uniformly at random chosen element from <vec>.
+	template <typename T>
+	T& choose(std::vector<T>& vec);
+
+private:
+	std::default_random_engine generator;
+};
+
+template <typename T>
+T& Random::choose(std::vector<T>& vec)
 {
-  if(samples.find(sample) != samples.end()) {
-    samples[sample] += probability;
-  } else {
-    samples[sample] = probability;
-  }
-}
-
-Sample *Velocity::getSample()
-{
-  Sample *sample = NULL;
-
-  float x = rand.floatInRange(0, 1);
-  float sum = 0.0;
-  
-  Samples::iterator i = samples.begin();
-  while(i != samples.end() && x > sum) {
-    sum += i->second;
-    sample = i->first;
-    i++;
-  }
-
-  return sample;
+	std::uniform_int_distribution<size_t> distribution(0, vec.size()-1);
+	size_t rand_index = distribution(generator);
+	return vec[rand_index];
 }

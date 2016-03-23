@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            velocity.cc
+ *            random.cc
  *
- *  Tue Jul 22 18:04:58 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Wed Mar 23 19:17:24 CET 2016
+ *  Copyright 2016 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -24,38 +24,35 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "velocity.h"
+#include "random.h"
 
-#include <stdlib.h>
+#include <chrono>
 
-Velocity::Velocity(unsigned int lower, unsigned int upper)
+Random::Random()
+	: Random(std::chrono::system_clock::now().time_since_epoch().count())
 {
-  this->lower = lower;
-  this->upper = upper;
+
 }
 
-void Velocity::addSample(Sample *sample, float probability)
+Random::Random(unsigned int seed)
 {
-  if(samples.find(sample) != samples.end()) {
-    samples[sample] += probability;
-  } else {
-    samples[sample] = probability;
-  }
+	generator.seed(seed);
 }
 
-Sample *Velocity::getSample()
+int Random::intInRange(int lower_bound, int upper_bound)
 {
-  Sample *sample = NULL;
+	std::uniform_int_distribution<int> distribution(lower_bound, upper_bound);
+	return distribution(generator);
+}
 
-  float x = rand.floatInRange(0, 1);
-  float sum = 0.0;
-  
-  Samples::iterator i = samples.begin();
-  while(i != samples.end() && x > sum) {
-    sum += i->second;
-    sample = i->first;
-    i++;
-  }
+float Random::floatInRange(float lower_bound, float upper_bound)
+{
+	std::uniform_real_distribution<float> distribution(lower_bound, upper_bound);
+	return distribution(generator);
+}
 
-  return sample;
+float Random::normalDistribution(float mean, float stddev)
+{
+	std::normal_distribution<float> distribution(mean, stddev);
+	return distribution(generator);
 }

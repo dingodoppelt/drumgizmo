@@ -30,6 +30,7 @@
 #include <map>
 
 #include "sample.h"
+#include "random.h"
 
 class Velocity {
 public:
@@ -44,6 +45,8 @@ public:
 private:
   typedef std::map< Sample *, float > Samples;
   Samples samples;
+
+  Random rand;
 };
 
 #endif/*__DRUMGIZMO_VELOCITY_H__*/

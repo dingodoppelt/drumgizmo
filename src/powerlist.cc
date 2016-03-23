@@ -51,18 +51,6 @@
 
 #define SIZE 500
 
-// Box–Muller transform.
-// See: http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
-static float box_muller_transform(float mean, float stddev)
-{
-  float U1 = (float)rand() / (float)RAND_MAX;
-  float U2 = (float)rand() / (float)RAND_MAX;
-
-  float x = sqrt(-2.0 * log(U1)) * cos(2.0 * M_PI * U2);
-
-  return mean + stddev * x;
-}
-
 PowerList::PowerList()
 {
   power_max = 0;
@@ -242,7 +230,7 @@ Sample *PowerList::get(level_t level)
 again:
   // Select normal distributed value between
   //  (stddev/2) and (power_span-stddev/2)
-  float lvl = box_muller_transform(mean, stddev);
+  float lvl = rand.normalDistribution(mean, stddev);
 
   // Adjust this value to be in range
   //  (power_min+stddev/2) and (power_max-stddev/2)

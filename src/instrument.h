@@ -35,6 +35,7 @@
 
 #include "sample.h"
 #include "versionstr.h"
+#include "random.h"
 
 class InstrumentParser;
 class Instrument {
@@ -76,6 +77,8 @@ private:
 
   size_t lastpos;
   float mod;
+
+  Random rand;
 };
 
 //typedef std::map< std::string, Instrument > Instruments;

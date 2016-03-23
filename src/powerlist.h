@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "sample.h"
+#include "random.h"
 
 class PowerList {
 public:
@@ -46,6 +47,8 @@ private:
     Sample *sample;
     float power;
   };
+
+  Random rand;
 
   std::vector<PowerListItem> samples;
   float power_max;

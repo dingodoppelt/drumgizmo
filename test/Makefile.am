@@ -3,7 +3,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 TESTS = resource engine gui resampler lv2 configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
-	memchecker
+	memchecker random
 
 check_PROGRAMS = $(TESTS)
 
@@ -127,6 +127,16 @@ memchecker_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
 	test.cc \
 	memcheckertest.cc
+
+random_CXXFLAGS = -DOUTPUT=\"random\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+random_CFLAGS = -DDISABLE_HUGIN
+random_LDFLAGS = $(CPPUNIT_LIBS)
+random_SOURCES = \
+	$(top_srcdir)/src/random.cc \
+	test.cc \
+	randomtest.cc
 
 EXTRA_DIST = \
 	lv2_test_host.h
