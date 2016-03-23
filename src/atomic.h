@@ -35,15 +35,15 @@ class Atomic;
 
 // use std::atomic if possible
 template <typename T>
-class Atomic<T, typename std::enable_if<std::is_trivially_copyable<T>::value>::type>
+class Atomic<T, typename std::enable_if<std::is_pod<T>::value>::type>
 	: public std::atomic<T> {
 };
 
 // else work around it using a mutex
 template <typename T>
-class Atomic<T, typename std::enable_if<!std::is_trivially_copyable<T>::value>::type> {
+class Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type> {
 	public:
-		using self_type = Atomic<T, typename std::enable_if<!std::is_trivially_copyable<T>::value>::type>;
+		using self_type = Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type>;
 
 		Atomic()
 			: data{}

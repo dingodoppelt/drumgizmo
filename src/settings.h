@@ -30,28 +30,25 @@
 #include <string>
 #include <cassert>
 
-class MyString {
-public:
-	std::string value;
-};
+#include "atomic.h"
 
 //! Engine settings
 struct Settings
 {
-	std::atomic<bool> enable_velocity_modifier;
-	std::atomic<float> velocity_modifier_falloff;
-	std::atomic<float> velocity_modifier_weight;
+	Atomic<bool> enable_velocity_modifier;
+	Atomic<float> velocity_modifier_falloff;
+	Atomic<float> velocity_modifier_weight;
 
-	std::atomic<bool> enable_velocity_randomiser;
-	std::atomic<float> velocity_randomiser_weight;
+	Atomic<bool> enable_velocity_randomiser;
+	Atomic<float> velocity_randomiser_weight;
 
-	std::atomic<double> samplerate;
+	Atomic<double> samplerate;
 
-	std::atomic<bool> enable_resampling;
+	Atomic<bool> enable_resampling;
 
-	std::atomic<int> number_of_files;
-	std::atomic<int> number_of_files_loaded;
-	//std::atomic<std::string> current_file;
+	Atomic<int> number_of_files;
+	Atomic<int> number_of_files_loaded;
+	Atomic<std::string> current_file;
 
 };
 
@@ -59,7 +56,7 @@ struct Settings
 template <typename T> class SettingRef
 {
 public:
-	SettingRef(std::atomic<T>& value)
+	SettingRef(Atomic<T>& value)
 		: value(value)
 	{
 		// string isn't lock free either
@@ -79,8 +76,8 @@ public:
 	}
 
 private:
-	std::atomic<T>& value;
-	std::atomic<T> cache;
+	Atomic<T>& value;
+	Atomic<T> cache;
 };
 
 //! Combined getter class.
@@ -99,7 +96,7 @@ struct SettingsGetter
 
 	SettingRef<int> number_of_files;
 	SettingRef<int> number_of_files_loaded;
-	//SettingRef<std::string> current_file;
+	SettingRef<std::string> current_file;
 
 	SettingsGetter(Settings& settings)
 		: enable_velocity_modifier{settings.enable_velocity_modifier}
@@ -111,7 +108,7 @@ struct SettingsGetter
 		, enable_resampling{settings.enable_resampling}
 		, number_of_files{settings.number_of_files}
 		, number_of_files_loaded{settings.number_of_files_loaded}
-	//, current_file{settings.current_file}
+		, current_file{settings.current_file}
 	{
 	}
 };
