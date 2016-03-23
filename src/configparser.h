@@ -30,8 +30,8 @@
 
 #include "saxparser.h"
 
-class ConfigParser :
-	public SAXParser
+class ConfigParser
+	: public SAXParser
 {
 public:
 	ConfigParser();

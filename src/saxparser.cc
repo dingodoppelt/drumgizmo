@@ -26,9 +26,10 @@
  */
 #include "saxparser.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <hugin.hpp>
+#include <sstream>
+#include <iostream>
 
 SAXParser::SAXParser()
 {
@@ -50,54 +51,48 @@ SAXParser::~SAXParser()
 	XML_ParserFree(p);
 }
 
-int SAXParser::parse()
+int SAXParser::parseFile(const std::string& filename)
 {
-	DEBUG(sax, "parse()\n");
+	if(filename.empty())
+	{
+		return 0;
+	}
 
-	std::string buf;
-	int len;
+	std::ifstream file(filename, std::ifstream::in);
 
-	do {
-		len = readData(buf, 32);
-		if(len <= -1) {
-			parseError("", 0, "Could not read data", 0);
-			return 1;
-		}
-		if(!XML_Parse(p, (char*)buf.c_str(), len, len == 0)) {
-			parseError(buf, len, XML_ErrorString(XML_GetErrorCode(p)),
-				   (int)XML_GetCurrentLineNumber(p));
-			return 1;
-		}
+	if(!file.is_open()) {
+		return 1;
+	}
 
-		buf.clear();
-	} while(len);
+	std::stringstream ss;
+	ss << file.rdbuf();
+	std::string str = ss.str();
+
+	parseString(str, filename);
 
 	return 0;
 }
 
-int SAXParser::parse(const std::string& buffer)
+int SAXParser::parseString(const std::string& str, const std::string& xml_source_name)
 {
-	DEBUG(sax, "parse(buffer %d bytes)\n", (int)buffer.length());
+	DEBUG(sax, "parse(buffer %d bytes)\n", (int)str.length());
 
-	if(!XML_Parse(p, buffer.c_str(), buffer.length(), true)) {
-		parseError(buffer, buffer.length(),
-			   XML_ErrorString(XML_GetErrorCode(p)),
-			   (int)XML_GetCurrentLineNumber(p));
+	if(!XML_Parse(p, str.c_str(), str.length(), true)) {
+		parseError(str, XML_ErrorString(XML_GetErrorCode(p)),
+		           xml_source_name, (int)XML_GetCurrentLineNumber(p));
 		return 1;
 	}
 
 	return 0;
 }
 
-void SAXParser::parseError(const std::string& buf, std::size_t len, const std::string& error, std::size_t lineno)
+void SAXParser::parseError(const std::string& buf, const std::string& error, const std::string& xml_source_name, std::size_t lineno)
 {
-	fprintf(stderr, "SAXParser error at line %d: %s\n", (int)lineno, error.c_str());
-	fprintf(stderr, "Buffer %u bytes: \n[\n", (int)len);
-
-	fwrite((char*)buf.c_str(), len, 1, stderr);
-
-	fprintf(stderr, "\n]\n");
-	fflush(stderr);
+	std::cerr << "SAXParser error trying to parse from source: " << xml_source_name << "\n";
+	std::cerr << "At line " << lineno << ": " << error << "\n";
+	std::cerr << "Buffer " << buf.size() << " bytes: \n[\n";
+	std::cerr << buf;
+	std::cerr << "\n]" << std::endl;
 }
 
 void SAXParser::character_hndl(void* p, const XML_Char* s, int len)

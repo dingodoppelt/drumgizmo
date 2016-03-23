@@ -81,8 +81,8 @@ bool DrumGizmo::loadkit(std::string file)
 	// Delete all Channels, Instruments, Samples and AudioFiles.
 	kit.clear();
 
-	DrumKitParser parser(file, kit);
-	if(parser.parse())
+	DrumKitParser parser(kit);
+	if(parser.parseFile(file))
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
 		return false;
@@ -709,7 +709,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
 
 	std::string dkf;
 	ConfigParser p;
-	if(p.parse(cfg))
+	if(p.parseString(cfg))
 	{
 	 ERR(drumgizmo, "Config parse error.\n");
 	 return false;

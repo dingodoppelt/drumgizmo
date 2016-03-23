@@ -58,8 +58,8 @@ bool AudioInputEngineMidi::loadMidiMap(std::string file, Instruments &instrument
 
   if(f == "") return false;
 
-  MidiMapParser p(f);
-  if(p.parse()) {
+  MidiMapParser p;
+  if(p.parseFile(f)) {
     return false;
   }
 

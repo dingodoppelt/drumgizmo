@@ -34,17 +34,15 @@ class DrumKitParser
 	: public SAXParser
 {
 public:
-	DrumKitParser(const std::string& kitfile, DrumKit& kit);
-	~DrumKitParser();
+	DrumKitParser(DrumKit& kit);
+
+	virtual int parseFile(const std::string& filename) override;
 
 protected:
 	void startTag(const std::string& name, const attr_t& attributes) override;
 	void endTag(const std::string& name) override;
 
-	int readData(std::string& data, std::size_t size) override;
-
 private:
-	FILE* fd;
 	DrumKit& kit;
 	std::string path;
 

@@ -35,26 +35,17 @@
 
 #include "nolocale.h"
 
-InstrumentParser::InstrumentParser(const std::string& file, Instrument& i)
+InstrumentParser::InstrumentParser(Instrument& i)
 	: instrument(i)
 {
-	//  DEBUG(instrparser,"Parsing instrument in %s\n", file.c_str());
-	path = getPath(file);
-	fd = fopen(file.c_str(), "r");
 
-	if(!fd)
-	{
-		ERR(instrparser, "The following instrument file could not be opened: %s\n", file.c_str());
-		return;
-	}
 }
 
-InstrumentParser::~InstrumentParser()
+int InstrumentParser::parseFile(const std::string& filename)
 {
-	if(fd)
-	{
-		fclose(fd);
-	}
+	path = getPath(filename);
+
+	return SAXParser::parseFile(filename);
 }
 
 void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
@@ -232,17 +223,4 @@ void InstrumentParser::endTag(const std::string& name)
 	if(name == "instrument") {
 		instrument.finalise();
 	}
-}
-
-int InstrumentParser::readData(std::string& data, std::size_t size)
-{
-	if(!fd)
-	{
-		return -1;
-	}
-	
-	data.resize(size);
-	auto nr_of_bytes_read = fread((void*)data.data(), 1, size, fd);
-	data.resize(nr_of_bytes_read);
-	return nr_of_bytes_read;
 }

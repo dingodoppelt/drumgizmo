@@ -34,17 +34,21 @@
 #include "path.h"
 #include "drumgizmo.h"
 
-DrumKitParser::DrumKitParser(const std::string& file, DrumKit& k)
-	: kit(k)
+DrumKitParser::DrumKitParser(DrumKit& kit)
+	: kit(kit)
  	, refs(REFSFILE)
 {
-	std::string kitfile = file;
+}
+
+int DrumKitParser::parseFile(const std::string& filename)
+{
+	auto edited_filename(filename);
 
 	if(refs.load())
 	{
-		if(file.size() > 1 && file[0] == '@')
+		if(filename.size() > 1 && filename[0] == '@')
 		{
-			kitfile = refs.getValue(file.substr(1));
+			edited_filename	= refs.getValue(filename.substr(1));
 		}
 	}
 	else
@@ -52,28 +56,14 @@ DrumKitParser::DrumKitParser(const std::string& file, DrumKit& k)
 		ERR(drumkitparser, "Error reading refs.conf");
 	}
 
-	//  instr = NULL;
-	path = getPath(kitfile);
+	path = getPath(edited_filename);
+	auto result = SAXParser::parseFile(filename);
 
-	fd = fopen(kitfile.c_str(), "r");
-
-	//  DEBUG(kitparser, "Parsing drumkit in %s\n", kitfile.c_str());
-
-	if(!fd)
-	{
-		return;
+	if (result == 0) {
+		kit._file = edited_filename;
 	}
 
-	kit._file = file;
-}
-
-DrumKitParser::~DrumKitParser()
-{
-	if(fd)
-	{
-		fclose(fd);
-	}
-
+	return result;
 }
 
 void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
@@ -193,8 +183,8 @@ void DrumKitParser::endTag(const std::string& name)
 		Instrument* i = new Instrument();
 		i->setGroup(instr_group);
 		//    Instrument &i = kit.instruments[kit.instruments.size() - 1];
-		InstrumentParser parser(path + "/" + instr_file, *i);
-		parser.parse();
+		InstrumentParser parser(*i);
+		parser.parseFile(path + "/" + instr_file);
 		kit.instruments.push_back(i);
 
 		// Assign kit channel numbers to instruments channels.
@@ -232,18 +222,4 @@ void DrumKitParser::endTag(const std::string& name)
 
 		channelmap.clear();
 	}
-}
-
-int DrumKitParser::readData(std::string& data, std::size_t size)
-{
-	if(!fd)
-	{
-		return -1;
-	}
-
-	data.resize(size);
-	auto nr_of_bytes_read = fread((void*)data.data(), 1, size, fd);
-	data.resize(nr_of_bytes_read);
-	return nr_of_bytes_read;
-	return fread((char*)data.c_str(), 1, size, fd);
 }

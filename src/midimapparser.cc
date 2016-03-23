@@ -26,19 +26,6 @@
  */
 #include "midimapparser.h"
 
-MidiMapParser::MidiMapParser(const std::string& file)
-{
-	fd = fopen(file.c_str(), "r");
-}
-
-MidiMapParser::~MidiMapParser()
-{
-	if(fd)
-	{
-		fclose(fd);
-	}
-}
-
 void MidiMapParser::startTag(const std::string& name, const attr_t& attr)
 {
 	if(name == "map")
@@ -48,17 +35,4 @@ void MidiMapParser::startTag(const std::string& name, const attr_t& attr)
 			midimap[std::stoi(attr.at("note"))] = attr.at("instr");
 		}
 	}
-}
-
-int MidiMapParser::readData(std::string& data, std::size_t size)
-{
-	if(!fd)
-	{
-		return -1;
-	}
-
-	data.resize(size);
-	auto nr_of_bytes_read = fread((void*)data.data(), 1, size, fd);
-	data.resize(nr_of_bytes_read);
-	return nr_of_bytes_read;
 }
