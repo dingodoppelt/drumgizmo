@@ -236,6 +236,13 @@ void InstrumentParser::endTag(const std::string& name)
 
 int InstrumentParser::readData(std::string& data, std::size_t size)
 {
-	if(!fd) return -1;
-	return fread((char*)data.c_str(), 1, size, fd);
+	if(!fd)
+	{
+		return -1;
+	}
+	
+	data.resize(size);
+	auto nr_of_bytes_read = fread((void*)data.data(), 1, size, fd);
+	data.resize(nr_of_bytes_read);
+	return nr_of_bytes_read;
 }
