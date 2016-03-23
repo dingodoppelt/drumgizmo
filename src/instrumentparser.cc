@@ -57,24 +57,24 @@ InstrumentParser::~InstrumentParser()
 	}
 }
 
-void InstrumentParser::startTag(const std::string& name, attr_t& attr)
+void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 {
 	if(name == "instrument")
 	{
 		if(attr.find("name") != attr.end())
 		{
-			instrument._name = attr["name"];
+			instrument._name = attr.at("name");
 		}
 
 		if(attr.find("description") != attr.end())
 		{
-			instrument._description = attr["description"];
+			instrument._description = attr.at("description");
 		}
 
 		if(attr.find("version") != attr.end())
 		{
 			try {
-				instrument.version = VersionStr(attr["version"]);
+				instrument.version = VersionStr(attr.at("version"));
 			}
 			catch(const char *err)
 			{
@@ -109,12 +109,12 @@ void InstrumentParser::startTag(const std::string& name, attr_t& attr)
 		}
 		else
 		{
-			power = atof_nol(attr["power"].c_str());
+			power = atof_nol(attr.at("power").c_str());
 			DEBUG(instrparser, "Instrument power set to %f\n", power);
 		}
 
 		// TODO get rid of new or delete it properly
-		s = new Sample(attr["name"], power);
+		s = new Sample(attr.at("name"), power);
 	}
 
 	if(name == "audiofile")
@@ -140,7 +140,7 @@ void InstrumentParser::startTag(const std::string& name, attr_t& attr)
 		int filechannel = 1; // default, override with optional attribute
 		if(attr.find("filechannel") != attr.end())
 		{
-			filechannel = std::stoi(attr["filechannel"]);
+			filechannel = std::stoi(attr.at("filechannel"));
 			if(filechannel < 1)
 			{
 				ERR(instrparser,"Invalid value for attribute 'filechannel'.\n");
@@ -150,8 +150,8 @@ void InstrumentParser::startTag(const std::string& name, attr_t& attr)
 
 		filechannel = filechannel - 1; // 1-based in file, but zero-based internally
 		// TODO do those next two lines correspond with proper deletes? If not fix it.
-		AudioFile *af = new AudioFile(path + "/" + attr["file"], filechannel);
-		InstrumentChannel *ch = new InstrumentChannel(attr["channel"]);
+		AudioFile *af = new AudioFile(path + "/" + attr.at("file"), filechannel);
+		InstrumentChannel *ch = new InstrumentChannel(attr.at("channel"));
 		channellist.push_back(ch);
 		s->addAudioFile(ch, af);
 		instrument.audiofiles.push_back(af);
@@ -176,8 +176,8 @@ void InstrumentParser::startTag(const std::string& name, attr_t& attr)
 			return;
 		}
 
-		lower = atof_nol(attr["lower"].c_str());
-		upper = atof_nol(attr["upper"].c_str());
+		lower = atof_nol(attr.at("lower").c_str());
+		upper = atof_nol(attr.at("upper").c_str());
 	}
 
 	if(name == "sampleref")
@@ -192,7 +192,7 @@ void InstrumentParser::startTag(const std::string& name, attr_t& attr)
 		std::vector<Sample *>::iterator i = instrument.samplelist.begin();
 		while(i != instrument.samplelist.end())
 		{
-			if((*i)->name == attr["name"])
+			if((*i)->name == attr.at("name"))
 			{
 				sample = *i;
 				break;

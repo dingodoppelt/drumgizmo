@@ -37,7 +37,7 @@ public:
 	ConfigParser();
 
 	void characterData(const std::string& data) override;
-	void startTag(const std::string& name, attr_t& attr) override;
+	void startTag(const std::string& name, const attr_t& attr) override;
 	void endTag(const std::string& name) override;
 	std::string value(const std::string& name, const std::string& def = "");
 

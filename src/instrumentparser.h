@@ -43,7 +43,7 @@ public:
 protected:
 	int readData(std::string& data, std::size_t size) override;
 
-	virtual void startTag(const std::string& name, attr_t& attr) override;
+	virtual void startTag(const std::string& name, const attr_t& attr) override;
 	virtual void endTag(const std::string& name) override;
 
 private:
