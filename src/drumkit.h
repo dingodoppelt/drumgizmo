@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_DRUMKIT_H__
-#define __DRUMGIZMO_DRUMKIT_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -34,37 +33,35 @@
 #include "instrument.h"
 #include "versionstr.h"
 
-class DrumKitParser;
-class DrumKit {
-  friend class DrumKitParser;
+class DrumKit
+{
+	friend class DrumKitParser;
 public:
-  DrumKit();
-  ~DrumKit();
+	DrumKit();
+	~DrumKit();
 
-  std::string file();
+	std::string file();
 
-  std::string name();
-  std::string description();
-  
-  Instruments instruments;
-  Channels channels;
- 
-  void clear();
+	std::string name();
+	std::string description();
 
-  bool isValid();
+	Instruments instruments;
+	Channels channels;
 
-  size_t samplerate();
+	void clear();
+
+	bool isValid();
+
+	size_t samplerate();
 
 private:
 	void *magic{nullptr};
 
-  std::string _file;
+	std::string _file;
 
-  std::string _name;
-  std::string _description;
+	std::string _name;
+	std::string _description;
 	size_t _samplerate{0};
 
-  VersionStr _version;
+	VersionStr _version;
 };
-
-#endif/*__DRUMGIZMO_DRUMKIT_H__*/

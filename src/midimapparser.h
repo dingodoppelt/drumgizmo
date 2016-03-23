@@ -26,8 +26,6 @@
  */
 #pragma once
 
-#include <stdio.h>
-
 #include "saxparser.h"
 #include "midimapper.h"
 

@@ -36,7 +36,7 @@
 
 DrumKitParser::DrumKitParser(DrumKit& kit)
 	: kit(kit)
- 	, refs(REFSFILE)
+	, refs(REFSFILE)
 {
 }
 
@@ -46,9 +46,9 @@ int DrumKitParser::parseFile(const std::string& filename)
 
 	if(refs.load())
 	{
-		if(filename.size() > 1 && filename[0] == '@')
+		if((filename.size() > 1) && (filename[0] == '@'))
 		{
-			edited_filename	= refs.getValue(filename.substr(1));
+			edited_filename = refs.getValue(filename.substr(1));
 		}
 	}
 	else
@@ -59,7 +59,8 @@ int DrumKitParser::parseFile(const std::string& filename)
 	path = getPath(edited_filename);
 	auto result = SAXParser::parseFile(filename);
 
-	if (result == 0) {
+	if(result == 0)
+	{
 		kit._file = edited_filename;
 	}
 
@@ -101,7 +102,7 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 			{
 				ERR(kitparser, "Error parsing version number: %s, using 1.0\n", err);
 				kit._version = VersionStr(1,0,0);
-			} 
+			}
 		}
 		else
 		{
@@ -112,7 +113,7 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 
 	if(name == "channels")
 	{
-	
+
 	}
 
 	if(name == "channel")
@@ -140,6 +141,7 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 			ERR(kitparser, "Missing name in instrument tag.\n");
 			return;
 		}
+
 		if(attr.find("file") == attr.end())
 		{
 			ERR(kitparser, "Missing file in instrument tag.\n");
@@ -180,12 +182,14 @@ void DrumKitParser::endTag(const std::string& name)
 {
 	if(name == "instrument")
 	{
-		Instrument* i = new Instrument();
-		i->setGroup(instr_group);
-		//    Instrument &i = kit.instruments[kit.instruments.size() - 1];
-		InstrumentParser parser(*i);
+		Instrument* instrument = new Instrument();
+		instrument->setGroup(instr_group);
+
+		InstrumentParser parser(*instrument);
 		parser.parseFile(path + "/" + instr_file);
-		kit.instruments.push_back(i);
+
+		// Transfer ownership to the DrumKit object.
+		kit.instruments.push_back(instrument);
 
 		// Assign kit channel numbers to instruments channels.
 		std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
@@ -206,16 +210,18 @@ void DrumKitParser::endTag(const std::string& name)
 					c->num = kit.channels[cnt].num;
 				}
 			}
+
 			if(c->num == NO_CHANNEL)
 			{
 				ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
-				      c->name.c_str(), i->name().c_str());
+				      c->name.c_str(), instrument->name().c_str());
 			}
-			else {
+			else
+			{
 				/*
-				   DEBUG(kitparser, "Assigned channel '%s' to number %d in instrument '%s'\n",
-				   c->name.c_str(), c->num, i.name().c_str());
-				   */
+				  DEBUG(kitparser, "Assigned channel '%s' to number %d in instrument '%s'\n",
+				  c->name.c_str(), c->num, i.name().c_str());
+				*/
 			}
 			ic++;
 		}

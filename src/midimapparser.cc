@@ -30,7 +30,8 @@ void MidiMapParser::startTag(const std::string& name, const attr_t& attr)
 {
 	if(name == "map")
 	{
-		if(attr.find("note") != attr.end() && attr.find("instr") != attr.end())
+		if((attr.find("note") != attr.end()) &&
+		   (attr.find("instr") != attr.end()))
 		{
 			midimap[std::stoi(attr.at("note"))] = attr.at("instr");
 		}
