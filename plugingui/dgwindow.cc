@@ -120,10 +120,11 @@ public:
 };
 
 DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
-                   Config& config)
+                   Config& config, Settings& settings)
 	: Window(native_window)
 	, messageHandler(messageHandler)
 	, config(config)
+	, settings(settings)
 {
 
 	int vlineSpacing = 16;
@@ -233,11 +234,12 @@ void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void DGWindow::attackValueChanged(float value)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
-														 value);
+	//ChangeSettingMessage *msg =
+	//	new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
+	//													 value);
+	//messageHandler.sendMessage(MSGRCV_ENGINE, msg);
 
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.velocity_modifier_weight.store(value);
 
 #ifdef STANDALONE
 	int i = value * 4;
@@ -253,10 +255,12 @@ void DGWindow::attackValueChanged(float value)
 
 void DGWindow::falloffValueChanged(float value)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
-		                         value);
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	//ChangeSettingMessage *msg =
+	//	new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
+	//	                         value);
+	//messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+
+	settings.velocity_modifier_falloff.store(value);
 
 #ifdef STANDALONE
 	drumkitFileProgress->setProgress(value);
@@ -265,10 +269,11 @@ void DGWindow::falloffValueChanged(float value)
 
 void DGWindow::velocityCheckClick(bool checked)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
-		                         checked);
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+//	ChangeSettingMessage *msg =
+//		new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
+//		                         checked);
+//	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.enable_velocity_modifier.store(checked);
 }
 
 void DGWindow::kitBrowseClick()

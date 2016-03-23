@@ -50,6 +50,8 @@
 
 #include "configfile.h"
 
+#include "settings.h"
+
 #define MAX_NUM_CHANNELS 64
 #define REFSFILE "refs.conf"
 #define RESAMPLER_INPUT_BUFFER 64
@@ -58,7 +60,8 @@ class DrumGizmo
 	: public MessageReceiver
 {
 public:
-	DrumGizmo(AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
+	DrumGizmo(Settings& settings,
+	          AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
 	virtual ~DrumGizmo();
 
 	bool loadkit(std::string kitfile);
@@ -106,6 +109,7 @@ protected:
 
 	size_t framesize;
 	bool freewheel;
-	
+
 	std::vector<event_t> events;
+	Settings& settings;
 };

@@ -154,6 +154,8 @@ private:
 	Output output{*this};
 	const std::vector<float*>* output_samples{nullptr};
 
+	Settings settings;
+
 	std::shared_ptr<GUI::PluginGUI> plugin_gui;
 	std::shared_ptr<DrumGizmo> drumgizmo;
 };
