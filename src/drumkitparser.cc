@@ -57,7 +57,7 @@ int DrumKitParser::parseFile(const std::string& filename)
 	}
 
 	path = getPath(edited_filename);
-	auto result = SAXParser::parseFile(filename);
+	auto result = SAXParser::parseFile(edited_filename);
 
 	if(result == 0)
 	{
