@@ -76,19 +76,18 @@ DrumKitParser::~DrumKitParser()
 
 }
 
-void DrumKitParser::startTag(const std::string& name,
-                             attr_t& attr)
+void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 {
 	if(name == "drumkit")
 	{
 		if(attr.find("name") != attr.end())
 		{
-			kit._name = attr["name"];
+			kit._name = attr.at("name");
 		}
 
 		if(attr.find("samplerate") != attr.end())
 		{
-			kit._samplerate = std::stoi(attr["samplerate"]);
+			kit._samplerate = std::stoi(attr.at("samplerate"));
 		}
 		else
 		{
@@ -99,14 +98,14 @@ void DrumKitParser::startTag(const std::string& name,
 
 		if(attr.find("description") != attr.end())
 		{
-			kit._description = attr["description"];
+			kit._description = attr.at("description");
 		}
 
 		if(attr.find("version") != attr.end())
 		{
 			try
 			{
-				kit._version = VersionStr(attr["version"]);
+				kit._version = VersionStr(attr.at("version"));
 			}
 			catch(const char *err)
 			{
@@ -134,7 +133,7 @@ void DrumKitParser::startTag(const std::string& name,
 			return;
 		}
 
-		Channel c(attr["name"]);
+		Channel c(attr.at("name"));
 		c.num = kit.channels.size();
 		kit.channels.push_back(c);
 	}
@@ -157,11 +156,11 @@ void DrumKitParser::startTag(const std::string& name,
 			return;
 		}
 
-		instr_name = attr["name"];
-		instr_file = attr["file"];
+		instr_name = attr.at("name");
+		instr_file = attr.at("file");
 		if(attr.find("group") != attr.end())
 		{
-			instr_group = attr["group"];
+			instr_group = attr.at("group");
 		}
 		else
 		{
@@ -183,7 +182,7 @@ void DrumKitParser::startTag(const std::string& name,
 			return;
 		}
 
-		channelmap[attr["in"]] = attr["out"];
+		channelmap[attr.at("in")] = attr.at("out");
 	}
 }
 

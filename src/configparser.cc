@@ -43,12 +43,12 @@ void ConfigParser::characterData(const std::string& data)
 	}
 }
 
-void ConfigParser::startTag(const std::string& name, attr_t& attr)
+void ConfigParser::startTag(const std::string& name, const attr_t& attr)
 {
 	if(name == "value" && attr.find("name") != attr.end())
 	{
-		values[attr["name"]] = "";
-		str = &values[attr["name"]];
+		values[attr.at("name")] = "";
+		str = &values[attr.at("name")];
 	}
 }
 
