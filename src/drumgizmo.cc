@@ -46,18 +46,20 @@
 
 #include "nolocale.h"
 
-DrumGizmo::DrumGizmo(AudioOutputEngine *o, AudioInputEngine *i)
+DrumGizmo::DrumGizmo(Settings& settings,
+                     AudioOutputEngine *o, AudioInputEngine *i)
 	: MessageReceiver(MSGRCV_ENGINE)
-	, loader()
+	, loader(settings)
 	, oe(o)
 	, ie(i)
 	, framesize(0)
 	, freewheel(false)
 	, events{}
+	, settings(settings)
 {
 	is_stopping = false;
 	audioCache.init(10000); // start thread
-	
+
 	events.reserve(1000);
 }
 
@@ -81,7 +83,7 @@ bool DrumGizmo::loadkit(std::string file)
 	// Delete all Channels, Instruments, Samples and AudioFiles.
 	kit.clear();
 
-	DrumKitParser parser(kit);
+	DrumKitParser parser(settings, kit);
 	if(parser.parseFile(file))
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());

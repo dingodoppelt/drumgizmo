@@ -31,9 +31,10 @@
 #include "drumkitparser.h"
 #include "drumgizmo.h"
 
-DrumKitLoader::DrumKitLoader()
+DrumKitLoader::DrumKitLoader(Settings& settings)
 	: semaphore("drumkitloader")
 	, framesize(0)
+	, settings(settings)
 {
 	run();
 	run_semaphore.wait(); // Wait for the thread to actually start.
@@ -187,11 +188,14 @@ void DrumKitLoader::thread_main()
 
 		if(loaded % fraction == 0 || loaded == total_num_audiofiles)
 		{
-			LoadStatusMessage *ls = new LoadStatusMessage();
-			ls->number_of_files = total_num_audiofiles;
-			ls->numer_of_files_loaded = loaded;
-			ls->current_file = filename;
-			msghandler.sendMessage(MSGRCV_UI, ls);
+			//LoadStatusMessage *ls = new LoadStatusMessage();
+			//ls->number_of_files = total_num_audiofiles;
+			//ls->numer_of_files_loaded = loaded;
+			//ls->current_file = filename;
+			//msghandler.sendMessage(MSGRCV_UI, ls);
+			settings.number_of_files.store(total_num_audiofiles);
+			settings.number_of_files_loaded.store(loaded);
+			//settings.current_file.store(filename);
 		}
 	}
 

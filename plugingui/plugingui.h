@@ -31,9 +31,7 @@
 
 #include "pluginconfig.h"
 
-
-#include "thread.h"
-#include "semaphore.h"
+#include <settings.h>
 
 #include "messagereceiver.h"
 #include "notifier.h"
@@ -68,6 +66,21 @@ public:
 
 	Notifier<> closeNotifier;
 
+	// Setting notifiers:
+	Notifier<bool> enable_velocity_modifier_notifier;
+	Notifier<float> velocity_modifier_falloff_notifier;
+	Notifier<float> velocity_modifier_weight_notifier;
+
+	Notifier<bool> enable_velocity_randomiser_notifier;
+	Notifier<float> velocity_randomiser_weight_notifier;
+
+	Notifier<double> samplerate_notifier;
+
+	Notifier<bool> enable_resampling_notifier;
+
+	Notifier<float> drumkit_file_progress_notifier;
+	//Notifier<std::string> current_file_notifier;
+
 	// Support old interface a little while longer..
 	void setWindowClosedCallback(void (*handler)(void*), void* ptr);
 
@@ -80,11 +93,12 @@ private:
 	volatile bool closing{false};
 	volatile bool initialised{false};
 
-	Semaphore sem{"plugingui"};
-
 	// For the old-style notifier.
 	void (*windowClosedHandler)(void *){nullptr};
 	void *windowClosedPtr{nullptr};
+
+	Settings settings;
+	SettingsGetter getter{settings};
 };
 
 } // GUI::

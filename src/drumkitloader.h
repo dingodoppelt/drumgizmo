@@ -34,6 +34,7 @@
 #include "mutex.h"
 
 #include "drumkit.h"
+#include "settings.h"
 
 //! This class is responsible for loading the drumkits in its own thread.
 //! All interaction calls are simply modifying queues and not doing any
@@ -45,7 +46,7 @@ class DrumKitLoader
 {
 public:
 	//! The constrcutor starts the loader thread.
-	DrumKitLoader();
+	DrumKitLoader(Settings& settings);
 
 	//! The destructor signals the thread to stop and waits to merge before
 	//! returning (ie. deleting the object will garantuee that the thread has
@@ -82,4 +83,5 @@ protected:
 	size_t fraction{1};
 	size_t loaded{0};
 	size_t framesize{0};
+	Settings& settings;
 };

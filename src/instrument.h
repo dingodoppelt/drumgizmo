@@ -36,13 +36,14 @@
 #include "versionstr.h"
 #include "random.h"
 
-class InstrumentParser;
+#include "settings.h"
+
 class Instrument
 {
 	friend class InstrumentParser;
 
 public:
-	Instrument();
+	Instrument(Settings& settings);
 	~Instrument();
 
 	Sample* sample(level_t level, size_t pos);
@@ -78,6 +79,8 @@ private:
 
 	size_t lastpos;
 	float mod;
+	Settings& settings;
+};
 
 	Random rand;
 };
