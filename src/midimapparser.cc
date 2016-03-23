@@ -57,5 +57,8 @@ int MidiMapParser::readData(std::string& data, std::size_t size)
 		return -1;
 	}
 
-	return fread((char*)data.c_str(), 1, size, fd);
+	data.resize(size);
+	auto nr_of_bytes_read = fread((void*)data.data(), 1, size, fd);
+	data.resize(nr_of_bytes_read);
+	return nr_of_bytes_read;
 }
