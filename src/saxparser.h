@@ -29,17 +29,18 @@
 #include <string>
 #include <map>
 #include <expat.h>
+#include <fstream>
 
 class SAXParser {
 public:
 	SAXParser();
 	virtual ~SAXParser();
 
-	//! Parses the data obtained by readData in chunks.
-	int parse();
+	//! Parses the data from the file.
+	virtual int parseFile(const std::string& filename);
 
 	//! Parses all the data in the buffer.
-	int parse(const std::string& buffer);
+	virtual int parseString(const std::string& str, const std::string& xml_source_name = "");
 
 protected:
 	using attr_t = std::map<std::string, std::string>;
@@ -47,12 +48,11 @@ protected:
 	virtual void characterData(const std::string& data) {}
 	virtual void startTag(const std::string& name, const attr_t& attr) {}
 	virtual void endTag(const std::string& name) {}
-	virtual void parseError(const std::string& buf, std::size_t len, const std::string& error, std::size_t lineno);
-
-	virtual int readData(std::string& data, std::size_t size) { return 0; }
+	virtual void parseError(const std::string& buf, const std::string& error, const std::string& xml_source_name, std::size_t lineno);
 
 private:
 	XML_Parser p;
+	std::string filename;
 
 	static void character_hndl(void* p, const XML_Char* s, int len);
 	static void start_hndl(void* p, const char* el, const char** attr);
