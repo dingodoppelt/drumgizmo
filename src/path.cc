@@ -35,17 +35,19 @@
 
 std::string getPath(const std::string& file)
 {
-	std::string p;
-#ifndef __MINGW32__
-	char *b = strdup(file.c_str());
-	p = dirname(b);
-	free(b);
-#else
+	std::string path;
+
+#ifdef __MINGW32__
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	_splitpath(file.c_str(), drive, dir, NULL, NULL);
-	p = std::string(drive) + dir;
+	path = std::string(drive) + dir;
+#else
+	// POSIX
+	char* buffer = strdup(file.c_str());
+	path = dirname(buffer);
+	free(buffer);
 #endif
 
-	return p;
+	return path;
 }

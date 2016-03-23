@@ -31,7 +31,8 @@
 #include <expat.h>
 #include <fstream>
 
-class SAXParser {
+class SAXParser
+{
 public:
 	SAXParser();
 	virtual ~SAXParser();
@@ -40,7 +41,8 @@ public:
 	virtual int parseFile(const std::string& filename);
 
 	//! Parses all the data in the buffer.
-	virtual int parseString(const std::string& str, const std::string& xml_source_name = "");
+	virtual int parseString(const std::string& str,
+	                        const std::string& xml_source_name = "");
 
 protected:
 	using attr_t = std::unordered_map<std::string, std::string>;
@@ -48,13 +50,16 @@ protected:
 	virtual void characterData(const std::string& data) {}
 	virtual void startTag(const std::string& name, const attr_t& attr) {}
 	virtual void endTag(const std::string& name) {}
-	virtual void parseError(const std::string& buf, const std::string& error, const std::string& xml_source_name, std::size_t lineno);
+	virtual void parseError(const std::string& buf,
+	                        const std::string& error,
+	                        const std::string& xml_source_name,
+	                        std::size_t lineno);
 
 private:
-	XML_Parser p;
+	XML_Parser parser;
 	std::string filename;
 
-	static void character_hndl(void* p, const XML_Char* s, int len);
-	static void start_hndl(void* p, const char* el, const char** attr);
-	static void end_hndl(void* p, const char* el);
+	static void characterHandler(void* parser, const XML_Char* cData, int len);
+	static void startHandler(void* parser, const char* el, const char** attr);
+	static void endHandler(void* parser, const char* el);
 };

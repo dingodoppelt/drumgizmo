@@ -35,8 +35,8 @@
 
 #include "nolocale.h"
 
-InstrumentParser::InstrumentParser(Instrument& i)
-	: instrument(i)
+InstrumentParser::InstrumentParser(Instrument& instrument)
+	: instrument(instrument)
 {
 
 }
@@ -64,10 +64,11 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 
 		if(attr.find("version") != attr.end())
 		{
-			try {
+			try
+			{
 				instrument.version = VersionStr(attr.at("version"));
 			}
-			catch(const char *err)
+			catch(const char* err)
 			{
 				ERR(instrparser, "Error parsing version number: %s, using 1.0\n", err);
 				instrument.version = VersionStr(1,0,0);
@@ -82,7 +83,6 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 
 	if(name == "samples")
 	{
-
 	}
 
 	if(name == "sample")
@@ -105,12 +105,12 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 		}
 
 		// TODO get rid of new or delete it properly
-		s = new Sample(attr.at("name"), power);
+		sample = new Sample(attr.at("name"), power);
 	}
 
 	if(name == "audiofile")
 	{
-		if(s == nullptr)
+		if(sample == nullptr)
 		{
 			ERR(instrparser,"Missing Sample!\n");
 			return;
@@ -139,18 +139,24 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			}
 		}
 
-		filechannel = filechannel - 1; // 1-based in file, but zero-based internally
-		// TODO do those next two lines correspond with proper deletes? If not fix it.
-		AudioFile *af = new AudioFile(path + "/" + attr.at("file"), filechannel);
-		InstrumentChannel *ch = new InstrumentChannel(attr.at("channel"));
-		channellist.push_back(ch);
-		s->addAudioFile(ch, af);
-		instrument.audiofiles.push_back(af);
+		filechannel = filechannel - 1; // 1-based in file but zero-based internally.
+
+		AudioFile *audio_file =
+			new AudioFile(path + "/" + attr.at("file"), filechannel);
+
+		// TODO: This is not deleted anywhere...
+		InstrumentChannel *instrument_channel =
+			new InstrumentChannel(attr.at("channel"));
+
+		channellist.push_back(instrument_channel);
+		sample->addAudioFile(instrument_channel, audio_file);
+
+		// Transfer audio_file ownership to the instrument.
+		instrument.audiofiles.push_back(audio_file);
 	}
 
 	if(name == "velocities")
 	{
-
 	}
 
 	if(name == "velocity")
@@ -179,19 +185,17 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			return;
 		}
 
-		Sample* sample = nullptr;
-		std::vector<Sample *>::iterator i = instrument.samplelist.begin();
-		while(i != instrument.samplelist.end())
+		Sample* sample_ref = nullptr;
+		for(auto& sample : instrument.samplelist)
 		{
-			if((*i)->name == attr.at("name"))
+			if(sample->name == attr.at("name"))
 			{
-				sample = *i;
+				sample_ref = sample;
 				break;
 			}
-			i++;
 		}
 
-		if(sample == nullptr)
+		if(sample_ref == nullptr)
 		{
 			ERR(instrparser,"Samplref pointed at non-existing sample.\n");
 			return;
@@ -200,7 +204,7 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 		if(instrument.version == VersionStr("1.0"))
 		{
 			// Old "velocity group" algorithm needs this
-			instrument.addSample(lower, upper, sample);
+			instrument.addSample(lower, upper, sample_ref);
 		}
 	}
 }
@@ -209,15 +213,15 @@ void InstrumentParser::endTag(const std::string& name)
 {
 	if(name == "sample")
 	{
-		if(s == nullptr)
+		if(sample == nullptr)
 		{
 			ERR(instrparser,"Missing Sample.\n");
 			return;
 		}
 
-		instrument.samplelist.push_back(s);
+		instrument.samplelist.push_back(sample);
 
-		s = nullptr;
+		sample = nullptr;
 	}
 
 	if(name == "instrument") {
