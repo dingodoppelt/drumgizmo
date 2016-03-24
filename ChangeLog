@@ -3,6 +3,64 @@ Version 0.9.8.1-hotfix
 Released March 16th 2015
  - Fixed bug where resampling resulted in sample skewing over the output channels
 
+Version 0.9.9
+=============
+Release date: March 24th 2016
+Contributors: deva, chaot4, cglocke, viccuad
+
+Highlighted changes / fixes:
+ - Switch to LGPLv3
+ - Linux VST
+ - Embedded UI
+ - Prepped for diskstreaming (but not yet implemented in UI)
+ - Load of bug fixes
+
+All changes / fixes:
+ - Remove unused libraries
+ - Headers are currently a mix and gpl2 and gpl3. Should be fixed
+
+ - UI refactor
+   - Move textedit widget to refactor branch
+   - Move autolayout to refactor branch
+   - Use new notifier and refactor to new code guidelines:
+     - LineEdit fixes:
+       - Follow marker
+       - Scroll with long line and cursor in beginning of line
+   - Update Linux build agents so they support C++11
+
+ - Refactor CLI
+   - Rewrite all modules to be compiled directly into the binary
+   - Modernise all cli files
+
+ - Add diskstreaming feature with infinite buffer size:
+   - Test on windows
+   - Make sure on-the-fly framesize change is working
+   - Set pre-cache size to "infinite"
+   - Make std::mutex work with mingw
+   - Make unit tests:
+     - AudioCacheIDManager
+     - AudioCacheFile
+     - AudioCacheEventHandler
+     - AudioCache
+   - Design and implement AudioCache
+   - Use AudioCache in inner-loop
+   - Get framesize dynamically from output engine
+   - Handle snd files with refcounter
+   - Collapse events from same file and position into single multichannel event
+   - Make sure free-wheel-mode works in jack, lv2 and vst
+
+ - Add referenced drumkit/midi files feature
+ - Remove version number from man page
+
+ - Make benchmark performance comparisons with the "old" engine
+ - Add a valgrind test script
+ - Fix some problems reported by valgrind
+
+ - Add memory check to warn the user if the drumkit about to be loaded cannot fit into memory
+
+ - LV2/VST: Make UI event handling based on idle/run calls from the plugin host instead of in a thread
+ - Port "The Aasimonster" to new velocity format
+
 Version 0.9.8
 =============
 Released February 22nd 2015
