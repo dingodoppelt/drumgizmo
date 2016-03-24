@@ -207,7 +207,7 @@ DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
 	layout.addItem(l3);
 
 	Label *lbl_version = new Label(this);
-	lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  GPLv3 .::.");
+	lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  LGPLv3 .::.");
 	lbl_version->resize(width(), 20);
 	lbl_version->setAlignment(TextAlignment::center);
 	layout.addItem(lbl_version);
