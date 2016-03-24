@@ -1,0 +1,19 @@
+Check list for releasing:
+
+ [ ]  Bump version in version.h
+
+ [ ]  Test dist with testdist.sh script.
+
+ [ ]  Test the VSTs from latest Jenkins build.
+
+ [ ]  Update ChangeLog
+
+ [ ]  Make sure plugin/README_VST.txt is up-to-date.
+
+ [ ]  Tag git
+
+ [ ]  Copy dist files (VSTs, README and tar-ball) to server.
+
+ [ ]  Write release announcement (mail and news entry).
+
+ [ ]  Spread the word...
