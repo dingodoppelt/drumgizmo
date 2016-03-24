@@ -15,6 +15,7 @@ EXTRA_DIST = \
 	configfile.h \
 	configuration.h \
 	configparser.h \
+	cpp11fix.h \
 	drumgizmo.h \
 	drumkit.h \
 	drumkitloader.h \
@@ -22,6 +23,7 @@ EXTRA_DIST = \
 	events.h \
 	instrument.h \
 	instrumentparser.h \
+	memchecker.h \
 	message.h \
 	messagehandler.h \
 	messagereceiver.h \
@@ -61,6 +63,7 @@ EXTRA_DIST = \
 	events.cc \
 	instrument.cc \
 	instrumentparser.cc \
+	memchecker.cc \
 	messagehandler.cc \
 	messagereceiver.cc \
 	midimapparser.cc \

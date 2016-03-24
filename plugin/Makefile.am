@@ -67,4 +67,10 @@ install-exec-hook:
 
 
 EXTRA_DIST = \
-	$(plugin_DATA)
+	$(lv2plugin_DATA) \
+	$(vstplugin_DATA) \
+	drumgizmo_plugin.h \
+	$(top_srcdir)/plugin/plugingizmo/plugin.h \
+	$(top_srcdir)/plugin/plugingizmo/midievent.h \
+	$(top_srcdir)/plugin/plugingizmo/pluginlv2.h \
+	$(top_srcdir)/plugin/plugingizmo/pluginvst.h
