@@ -7,40 +7,37 @@ When opening your VST host software (Cubase or the like), the plugin
 should now show up as a VST Instrument.
 
 == How to use it ==
-1.  Load the plugin as a VST Instrument.
+1.  Load the plugin as a VST Instrument
+    (In Cubase, load it as a "Rack Instrument").
 2.  Now create a midi track to use with the plugin.
-2a. (Optional) Choose “GM map” to use with the midi track.
+2a. (Optional) Choose “GM drum map” to use with the midi track.
 3.  Select DrumGizmo as midi output for the track.
 4.  Now open up the DrumGizmo VST interface.
-5.  Load a drumkit by clicking on the "Load kit..." button and browse for
+5.  Load a drumkit by clicking on the "Browse..." button and browse for
     the drumkit xml file. (Example: “C:\drumkit\drumkit.xml”).
-    When the “led” to the right of the line edit turns green, it means
-    that the drumkit has succesfully begun loading in the background. It
-    might take a while before all drums are loaded, so be patient.
-8.  Now click on the “Load map...” button and browse for the midimap xml
-    file. (Example: “C:\drumkit\midimap.xml”). When the “led” to the
-    right of the line edit turns green, it means that the midimap has
-    been loaded succesfully.
+    You can follow the loading progress on the green bar. It might take a
+    while before all drums are loaded, so be patient.
+8.  Load a midimap by clicking the “Browse...” button and browse for the
+    midimap xml file. (Example: “C:\drumkit\midimap.xml”). You can follow
+    the progress on the green bar (this will load almost instantly).
 
-NOTE: DrumGizmo currently uses 16 channels of output, which should be
+NOTE: DrumGizmo uses several audio output channels, which should be
 mapped manually in your software, just like you would do with any other
 plugin. We can't describe this step since it varies depending on your
-software.
+software. But keep in mind that if you do not map these channels, you
+will most likely only hear the output of one of the ambience microphones
+and it will sound really bad. So please take your time to get these
+mappings set up!
 
 Now plot some midi notes, and play them. You should hear the sound of
 the DrumGizmo drumkit coming from your speakers. Keep in mind that the
 drumkit needs to load fully before everything will play as
-expected. So be patient...!
+expected.
 
 == More info ==
 If you have suggestions, bugs or comments, feel free to visit
 http://www.drumgizmo.org or visit the official DrumGizmo irc channel at
 #drumgizmo on the freenode network.
-
-== Known problems ==
-*   On Win7 64bit with 32bit Cubase you might have to install the dll
-    in "c:\Program Files(x86)\Steinberg\VSTPlugins" instead of
-    "c:\Program Files(x86)\Steinberg\Cubase Studio 5\VSTPlugins".
 
 Have fun!
 // The Drumgizmo Team
