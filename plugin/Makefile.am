@@ -41,7 +41,7 @@ VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
 
 # Hack to compile vst sources without -Wall -Werror
 libvstsdk_la_CXXFLAGS = -w $(VST_CPPFLAGS)
-libvstsdk_la_SOURCES = \
+nodist_libvstsdk_la_SOURCES = \
 	${VST_SRC_BASE}/audioeffectx.cpp \
 	${VST_SRC_BASE}/audioeffect.cpp \
 	${VST_SRC_BASE}/vstplugmain.cpp
