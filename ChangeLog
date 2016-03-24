@@ -1,12 +1,7 @@
-Version 0.9.8.1-hotfix
-======================
-Released March 16th 2015
- - Fixed bug where resampling resulted in sample skewing over the output channels
-
 Version 0.9.9
 =============
 Release date: March 24th 2016
-Contributors: deva, chaot4, cglocke, viccuad
+Contributors: cglocke, chaot4, deva, suhr, viccuad
 
 Highlighted changes / fixes:
  - Switch to LGPLv3
@@ -60,6 +55,11 @@ All changes / fixes:
 
  - LV2/VST: Make UI event handling based on idle/run calls from the plugin host instead of in a thread
  - Port "The Aasimonster" to new velocity format
+
+Version 0.9.8.1-hotfix
+======================
+Released March 16th 2015
+ - Fixed bug where resampling resulted in sample skewing over the output channels
 
 Version 0.9.8
 =============
