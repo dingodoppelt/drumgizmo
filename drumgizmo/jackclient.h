@@ -68,7 +68,7 @@ public:
 	void add(JackProcess& process);
 	void remove(JackProcess& process);
 	void activate();
-	int process(jack_nframes_t num_frames);
+
 	std::size_t getBufferSize() const;
 	std::size_t getSampleRate() const;
 
@@ -76,4 +76,8 @@ private:
 	jack_client_t* client;
 	std::set<JackProcess*> processes;
 	bool is_active;
+
+	int process(jack_nframes_t num_frames);
+
+	static int wrapJackProcess(jack_nframes_t nframes, void* arg);
 };

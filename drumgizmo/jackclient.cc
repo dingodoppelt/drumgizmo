@@ -52,16 +52,19 @@ JackPort::~JackPort()
 
 // --------------------------------------------------------------------
 
-static int _wrap_jack_process(jack_nframes_t nframes, void* arg)
+int JackClient::wrapJackProcess(jack_nframes_t nframes, void* arg)
 {
 	return static_cast<JackClient*>(arg)->process(nframes);
 }
 
-JackClient::JackClient() : client{nullptr}, processes{}, is_active{false}
+JackClient::JackClient()
+	: client{nullptr}
+	, processes{}
+	, is_active{false}
 {
 	jack_status_t status;
 	client = jack_client_open("DrumGizmo", JackNullOption, &status);
-	jack_set_process_callback(client, _wrap_jack_process, this);
+	jack_set_process_callback(client, JackClient::wrapJackProcess, this);
 }
 
 JackClient::~JackClient()
