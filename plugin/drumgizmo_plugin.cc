@@ -265,7 +265,20 @@ void DrumGizmoPlugin::Output::pre(size_t nsamples)
 
 void DrumGizmoPlugin::Output::run(int ch, sample_t *samples, size_t nsamples)
 {
-//	assert(false);
+	assert(plugin.output_samples);
+
+	assert(sizeof(float) == sizeof(sample_t));
+
+	if((std::size_t)ch >= plugin.output_samples->size())
+	{
+		return;
+	}
+
+	// We are not running directly on the internal buffer: do a copy.
+	if((*plugin.output_samples)[ch] != samples)
+	{
+		memcpy((*plugin.output_samples)[ch], samples, nsamples * sizeof(sample_t));
+	}
 }
 
 void DrumGizmoPlugin::Output::post(size_t nsamples)
