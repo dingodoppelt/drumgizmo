@@ -274,6 +274,12 @@ void DrumGizmoPlugin::Output::run(int ch, sample_t *samples, size_t nsamples)
 		return;
 	}
 
+	if((*plugin.output_samples)[ch] == nullptr)
+	{
+		// Port not connected.
+		return;
+	}
+
 	// We are not running directly on the internal buffer: do a copy.
 	if((*plugin.output_samples)[ch] != samples)
 	{
