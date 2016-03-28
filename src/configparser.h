@@ -26,7 +26,7 @@
  */
 #pragma once
 
-#include <map>
+#include <unordered_map>
 
 #include "saxparser.h"
 
@@ -42,6 +42,6 @@ public:
 	std::string value(const std::string& name, const std::string& def = "");
 
 private:
-	std::map<std::string, std::string> values;
+	std::unordered_map<std::string, std::string> values;
 	std::string* str;
 };

@@ -27,7 +27,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <expat.h>
 #include <fstream>
 
@@ -43,7 +43,7 @@ public:
 	virtual int parseString(const std::string& str, const std::string& xml_source_name = "");
 
 protected:
-	using attr_t = std::map<std::string, std::string>;
+	using attr_t = std::unordered_map<std::string, std::string>;
 
 	virtual void characterData(const std::string& data) {}
 	virtual void startTag(const std::string& name, const attr_t& attr) {}
