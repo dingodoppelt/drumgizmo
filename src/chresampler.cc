@@ -30,60 +30,64 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
+#include <cpp11fix.h>
+
 #ifdef WITH_RESAMPLER
 
 #if defined(USE_ZITA)
-  #include <zita-resampler/resampler.h>
+#include <zita-resampler/resampler.h>
 #elif defined(USE_SRC)
-  #include <samplerate.h>
+#include <samplerate.h>
 #else
-  #error "No resampler selected"
+#error "No resampler selected"
 #endif
 
-class CHResampler::Prv {
+class CHResampler::Prv
+{
 public:
 #if defined(USE_ZITA)
-  Resampler zita;
+	Resampler zita;
 #elif defined(USE_SRC)
-  SRC_STATE *state;
-  SRC_DATA data;
+	SRC_STATE* state;
+	SRC_DATA data;
 #endif
 };
 
 CHResampler::CHResampler()
+    : prv{std::make_unique<Prv>()}
+    , input_fs{44100}
+    , output_fs{44100}
 {
-  input_fs = 44100;
-  output_fs = 44100;
-
-  prv = new Prv();
 #if defined(SRC)
-  prv->state = NULL;
+	prv->state = nullptr;
 #endif
 }
 
 void CHResampler::setup(double input_fs, double output_fs)
 {
-  int nchan = 1; // always mono
+	int nchan = 1; // always mono
 
-  this->input_fs = input_fs;
-  this->output_fs = output_fs;
+	this->input_fs = input_fs;
+	this->output_fs = output_fs;
 
 #if defined(USE_ZITA)
-  DEBUG(resampler, "Using zita-resampler (%d -> %d)", (int)input_fs, (int)output_fs);
+	DEBUG(resampler, "Using zita-resampler (%d -> %d)", (int)input_fs,
+	    (int)output_fs);
 
-  int hlen = 72; // 16 ≤ hlen ≤ 96
-  // delay is 2 * hlen, 72 corresponds to delay introduced by SRC.
-  prv->zita.setup(input_fs, output_fs, nchan, hlen);
+	int hlen = 72; // 16 ≤ hlen ≤ 96
+	// delay is 2 * hlen, 72 corresponds to delay introduced by SRC.
+	prv->zita.setup(input_fs, output_fs, nchan, hlen);
 #elif defined(USE_SRC)
-  DEBUG(resampler, "Using libsamplerate (%d -> %d)", (int)input_fs, (int)output_fs);
+	DEBUG(resampler, "Using libsamplerate (%d -> %d)", (int)input_fs,
+	    (int)output_fs);
 
-  int err;
-  prv->state = src_new(SRC_SINC_BEST_QUALITY, nchan, &err);
-  (void)err;
-  //  printf("err: %d\n", err);
-  src_set_ratio(prv->state, output_fs / input_fs);
-  prv->data.src_ratio = output_fs / input_fs;
-  prv->data.end_of_input = 0;
+	int err;
+	prv->state = src_new(SRC_SINC_BEST_QUALITY, nchan, &err);
+	(void)err;
+	//  printf("err: %d\n", err);
+	src_set_ratio(prv->state, output_fs / input_fs);
+	prv->data.src_ratio = output_fs / input_fs;
+	prv->data.end_of_input = 0;
 #endif
 }
 
@@ -91,67 +95,69 @@ CHResampler::~CHResampler()
 {
 #if defined(USE_ZITA)
 #elif defined(USE_SRC)
-  if(prv->state) src_delete(prv->state);
-#endif
-  delete prv;
-}
-
-void CHResampler::setInputSamples(float *samples, size_t count)
-{
-#if defined(USE_ZITA)
-  prv->zita.inp_data = samples;
-  prv->zita.inp_count = count;
-#elif defined(USE_SRC)
-  prv->data.data_in = samples;
-  prv->data.input_frames = count;
+	if(prv->state)
+	{
+		src_delete(prv->state);
+	}
 #endif
 }
 
-void CHResampler::setOutputSamples(float *samples, size_t count)
+void CHResampler::setInputSamples(float* samples, size_t count)
 {
 #if defined(USE_ZITA)
-  prv->zita.out_data = samples;
-  prv->zita.out_count = count;
+	prv->zita.inp_data = samples;
+	prv->zita.inp_count = count;
 #elif defined(USE_SRC)
-  prv->data.data_out = samples;
-  prv->data.output_frames = count;
+	prv->data.data_in = samples;
+	prv->data.input_frames = count;
+#endif
+}
+
+void CHResampler::setOutputSamples(float* samples, size_t count)
+{
+#if defined(USE_ZITA)
+	prv->zita.out_data = samples;
+	prv->zita.out_count = count;
+#elif defined(USE_SRC)
+	prv->data.data_out = samples;
+	prv->data.output_frames = count;
 #endif
 }
 
 void CHResampler::process()
 {
 #if defined(USE_ZITA)
-  prv->zita.process();
+	prv->zita.process();
 #elif defined(USE_SRC)
-  src_process(prv->state, &prv->data);
-  prv->data.output_frames -= prv->data.output_frames_gen;
-  prv->data.data_out +=  prv->data.output_frames_gen;
-  prv->data.input_frames -= prv->data.input_frames_used;
-  prv->data.data_in += prv->data.input_frames_used;
+	src_process(prv->state, &prv->data);
+	prv->data.output_frames -= prv->data.output_frames_gen;
+	prv->data.data_out += prv->data.output_frames_gen;
+	prv->data.input_frames -= prv->data.input_frames_used;
+	prv->data.data_in += prv->data.input_frames_used;
 #endif
 }
 
-size_t CHResampler::getInputSampleCount()
+size_t CHResampler::getInputSampleCount() const
 {
 #if defined(USE_ZITA)
-  return prv->zita.inp_count;
+	return prv->zita.inp_count;
 #elif defined(USE_SRC)
-  return prv->data.input_frames;
+	return prv->data.input_frames;
 #endif
 }
 
-size_t CHResampler::getOutputSampleCount()
+size_t CHResampler::getOutputSampleCount() const
 {
 #if defined(USE_ZITA)
-  return prv->zita.out_count;
+	return prv->zita.out_count;
 #elif defined(USE_SRC)
-  return prv->data.output_frames;
+	return prv->data.output_frames;
 #endif
 }
 
-double CHResampler::ratio()
+double CHResampler::getRatio() const
 {
-  return input_fs / output_fs;
+	return input_fs / output_fs;
 }
 
 #else
@@ -160,11 +166,23 @@ double CHResampler::ratio()
 CHResampler::CHResampler() {}
 CHResampler::~CHResampler() {}
 void CHResampler::setup(double, double) {}
-void CHResampler::setInputSamples(float *, size_t) {}
-void CHResampler::setOutputSamples(float *, size_t) {}
+void CHResampler::setInputSamples(float*, size_t) {}
+void CHResampler::setOutputSamples(float*, size_t) {}
 void CHResampler::process() {}
-size_t CHResampler::getInputSampleCount() { return 0; }
-size_t CHResampler::getOutputSampleCount() { return 0; }
-double CHResampler::ratio() { return 1; }
 
-#endif/*WITH_RESAMPLER*/
+size_t CHResampler::getInputSampleCount()
+{
+	return 0;
+}
+
+size_t CHResampler::getOutputSampleCount()
+{
+	return 0;
+}
+
+double CHResampler::getRatio() const
+{
+	return 1;
+}
+
+#endif /*WITH_RESAMPLER*/

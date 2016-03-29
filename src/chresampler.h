@@ -24,9 +24,9 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CHRESAMPLER_H__
-#define __DRUMGIZMO_CHRESAMPLER_H__
+#pragma once
 
+#include <memory>
 #include <stdlib.h>
 
 /**
@@ -36,30 +36,28 @@
  * If WITH_RESAMPLER=="zita" zita-resampler will be used.
  * If WITH_RESAMPLER=="src" Secret Rabbit Code will be used.
  */
-class CHResampler {
+class CHResampler
+{
 public:
-  CHResampler();
-  ~CHResampler();
+	CHResampler();
+	~CHResampler();
 
-  void setup(double input_fs, double output_fs);
+	void setup(double input_fs, double output_fs);
 
-  void setInputSamples(float *samples, size_t count);
-  void setOutputSamples(float *samples, size_t count);
+	void setInputSamples(float* samples, size_t count);
+	void setOutputSamples(float* samples, size_t count);
 
-  void process();
+	void process();
 
-  size_t getInputSampleCount();
-  size_t getOutputSampleCount();
+	size_t getInputSampleCount() const;
+	size_t getOutputSampleCount() const;
 
-  double ratio();
+	double getRatio() const;
 
 private:
-  class Prv;
-  Prv *prv;
+	class Prv;
+	std::unique_ptr<Prv> prv;
 
-  double input_fs;
-  double output_fs;
+	double input_fs;
+	double output_fs;
 };
-
-
-#endif/*__DRUMGIZMO_CHRESAMPLER_H__*/

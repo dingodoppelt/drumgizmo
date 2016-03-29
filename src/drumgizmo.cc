@@ -201,7 +201,7 @@ void DrumGizmo::handleMessage(Message *msg)
 void DrumGizmo::setFrameSize(size_t framesize)
 {
 	// If we are resampling override the frame size.
-	if(resampler[0].ratio() != 1)
+	if(resampler[0].getRatio() != 1)
 	{
 		framesize = RESAMPLER_INPUT_BUFFER;
 	}
@@ -359,7 +359,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				{
 					//DEBUG(drumgizmo, "Adding event %d.\n", event.offset);
 					Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
-					evt->offset = (event.offset + pos) * resampler[0].ratio();
+					evt->offset = (event.offset + pos) * resampler[0].getRatio();
 					activeevents[ch.num].push_back(evt);
 				}
 				++j;
@@ -399,7 +399,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	//
 #ifdef WITH_RESAMPLER
 	if((Conf::enable_resampling == false) ||
-	   (resampler[0].ratio() == 1.0)) // No resampling needed
+	   (resampler[0].getRatio() == 1.0)) // No resampling needed
 	{
 #endif
 		for(size_t c = 0; c < kit.channels.size(); ++c)
@@ -444,7 +444,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		}
 
 		// Process channel data
-		size_t kitpos = pos * resampler[0].ratio();
+		size_t kitpos = pos * resampler[0].getRatio();
 		size_t insize = sizeof(resampler_input_buffer[0]) / sizeof(sample_t);
 
 		while(resampler[0].getOutputSampleCount() > 0)
@@ -648,7 +648,7 @@ void DrumGizmo::setSamplerate(int samplerate)
 	{
 		resampler[i].setup(kit.samplerate(), Conf::samplerate);
 	}
-	if(resampler[0].ratio() != 1)
+	if(resampler[0].getRatio() != 1)
 	{
 		setFrameSize(RESAMPLER_INPUT_BUFFER);
 	}
