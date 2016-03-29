@@ -89,13 +89,13 @@ public:
 
 	//! Set/get internal framesize used when iterating through cache buffers.
 	void setFrameSize(size_t framesize);
-	size_t frameSize() const;
+	size_t getFrameSize() const;
 
 	//! Control/get reader threaded mode.
 	//! True means reading happening threaded, false means all reading done
 	//! synchronious.
 	void setAsyncMode(bool async);
-	bool asyncMode() const;
+	bool isAsyncMode() const;
 
 	//! Return the number of chunks that were read too late.
 	size_t getNumberOfUnderruns() const;

@@ -24,9 +24,6 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIO_H__
-#define __DRUMGIZMO_AUDIO_H__
+#pragma once
 
 #include <audiotypes.h>
-
-#endif/*__DRUMGIZMO_AUDIO_H__*/

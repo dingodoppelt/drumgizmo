@@ -271,7 +271,7 @@ void AudioCache::setFrameSize(size_t framesize)
 	event_handler.setChunkSize(CHUNKSIZE(framesize));
 }
 
-size_t AudioCache::frameSize() const
+size_t AudioCache::getFrameSize() const
 {
 	return framesize;
 }
@@ -281,7 +281,7 @@ void AudioCache::setAsyncMode(bool async)
 	event_handler.setThreaded(async);
 }
 
-bool AudioCache::asyncMode() const
+bool AudioCache::isAsyncMode() const
 {
 	return event_handler.isThreaded();
 }
