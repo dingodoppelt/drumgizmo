@@ -24,34 +24,32 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CONFIGFILE_H__
-#define __DRUMGIZMO_CONFIGFILE_H__
+#pragma once
 
 #include <string>
 #include <map>
 #include <stdio.h>
 
-class ConfigFile {
+class ConfigFile
+{
 public:
-  ConfigFile(std::string filename);
-  virtual ~ConfigFile();
+	ConfigFile(std::string const& filename);
+	virtual ~ConfigFile();
 
-  virtual bool load();
-  virtual bool save();
+	virtual bool load();
+	virtual bool save();
 
-  virtual std::string getValue(const std::string& key);
-  virtual void setValue(const std::string& key, const std::string& value);
+	virtual std::string getValue(const std::string& key) const;
+	virtual void setValue(const std::string& key, const std::string& value);
 
 protected:
-  std::map<std::string, std::string> values;
-  std::string filename;
+	std::map<std::string, std::string> values;
+	std::string filename;
 
-  virtual bool open(std::string mode);
-  void close();
-  std::string readLine();
-  bool parseLine(const std::string& line);
+	virtual bool open(std::string mode);
+	void close();
+	std::string readLine();
+	bool parseLine(const std::string& line);
 
-  FILE* fp;
+	FILE* fp;
 };
-
-#endif/*__DRUMGIZMO_CONFIGFILE_H__*/
