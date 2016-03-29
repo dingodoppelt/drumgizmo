@@ -24,55 +24,52 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_NOLOCALE_H__
-#define __DRUMGIZMO_NOLOCALE_H__
+#pragma once
 
 #include <locale.h>
 #include <stdarg.h>
 
-static inline double atof_nol(const char *nptr)
+static inline double atof_nol(const char* nptr)
 {
 	double res;
 
-  const char *locale = setlocale(LC_NUMERIC, "C");
+	const char* locale = setlocale(LC_NUMERIC, "C");
 
-  res = atof(nptr);
+	res = atof(nptr);
 
-  setlocale(LC_NUMERIC, locale);
+	setlocale(LC_NUMERIC, locale);
 
 	return res;
 }
 
-static inline int sprintf_nol(char *str, const char *format, ...)
+static inline int sprintf_nol(char* str, const char* format, ...)
 {
-  int ret;
+	int ret;
 
-  const char *locale = setlocale(LC_NUMERIC, "C");
+	const char* locale = setlocale(LC_NUMERIC, "C");
 
-  va_list vl;
-  va_start(vl, format);
-  ret = vsprintf(str, format, vl);
-  va_end(vl);
+	va_list vl;
+	va_start(vl, format);
+	ret = vsprintf(str, format, vl);
+	va_end(vl);
 
-  setlocale(LC_NUMERIC, locale);
+	setlocale(LC_NUMERIC, locale);
 
-  return ret;
+	return ret;
 }
 
-static inline int snprintf_nol(char *str, size_t size, const char *format, ...)
+static inline int snprintf_nol(char* str, size_t size, const char* format, ...)
 {
-  int ret;
+	int ret;
 
-  const char *locale = setlocale(LC_NUMERIC, "C");
+	const char* locale = setlocale(LC_NUMERIC, "C");
 
-  va_list vl;
-  va_start(vl, format);
-  ret = vsnprintf(str, size, format, vl);
-  va_end(vl);
+	va_list vl;
+	va_start(vl, format);
+	ret = vsnprintf(str, size, format, vl);
+	va_end(vl);
 
-  setlocale(LC_NUMERIC, locale);
+	setlocale(LC_NUMERIC, locale);
 
-  return ret;
+	return ret;
 }
-
-#endif/*__DRUMGIZMO_NOLOCALE_H__*/
