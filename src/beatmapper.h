@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_BEATMAPPER_H__
-#define __DRUMGIZMO_BEATMAPPER_H__
+#pragma once
 
 #include <jack/jack.h>
 
@@ -36,19 +35,18 @@
 
 #define HISTORY_SIZE 200
 
-class BeatMapper {
+class BeatMapper
+{
 public:
-  BeatMapper(Instrument *instrument);
+	BeatMapper(const Instrument& instrument);
 
-  Sample *map(jack_nframes_t nframes);
+	Sample* map(jack_nframes_t nframes);
 
 private:
-  Instrument *instrument;
-  float hist[HISTORY_SIZE];
-  float C;
+	const Instrument& instrument;
+	float hist[HISTORY_SIZE];
+	float C;
 
-  size_t mindist;
-  size_t last;
+	size_t mindist;
+	size_t last;
 };
-
-#endif/*__DRUMGIZMO_BEATMAPPER_H__*/

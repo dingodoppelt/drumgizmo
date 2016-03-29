@@ -30,48 +30,58 @@
 
 #define DEF 2.0
 
-BeatMapper::BeatMapper(Instrument *instrument)
+BeatMapper::BeatMapper(const Instrument& instrument)
+	: instrument{instrument}
+	, hist{}
+	, C{1.3}
+	, mindist{4}
+	, last{mindist}
 {
-  this->instrument = instrument;
-  for(size_t i = 0; i < HISTORY_SIZE; i++) hist[i] = DEF;
-  C = 1.3;
-  mindist = 4;
-  last = mindist;
+	for(size_t i = 0; i < HISTORY_SIZE; ++i)
+	{
+		hist[i] = DEF;
+	}
 }
 
-
-Sample *BeatMapper::map(jack_nframes_t nframes)
+Sample* BeatMapper::map(jack_nframes_t nframes)
 {
-  return NULL;
-  Sample *sample = NULL;
-  
-  jack_default_audio_sample_t *buffer;
-  buffer = (jack_default_audio_sample_t *)jack_port_get_buffer(instrument->port, nframes);
-  
-  float e = 0.0;
-  for(size_t i = 0; i < nframes; i++) {
-    e += buffer[i] * buffer[i];
-  }
+	return nullptr;
 
-  float E = 0.0;
-  for(size_t i = 0; i < HISTORY_SIZE; i++) E += hist[i] / (float)HISTORY_SIZE;
-  if(E == 0) E = DEF; // We do not have a connection
+	// moved the following to comment by glocke since return makes this
+	// unreachable
+	/*
+	Sample *sample = nullptr;
 
-  //  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 * E);
+	jack_default_audio_sample_t *buffer;
+	buffer = (jack_default_audio_sample_t
+	*)jack_port_get_buffer(instrument->port, nframes);
 
-  // Shift history and save new value
-  for(size_t i = 0; i < HISTORY_SIZE - 1; i++) hist[i] = hist[i+1];
-  hist[HISTORY_SIZE - 1] = e>DEF?e:DEF;
+	float e = 0.0;
+	for(size_t i = 0; i < nframes; i++) {
+	  e += buffer[i] * buffer[i];
+	}
 
-  if(instrument->name == "hihat" && e > 0) printf("e: %f\n", e);
+	float E = 0.0;
+	for(size_t i = 0; i < HISTORY_SIZE; i++) E += hist[i] / (float)HISTORY_SIZE;
+	if(E == 0) E = DEF; // We do not have a connection
 
-  if(e > C * E && last > mindist) {
-    Velocity *v = instrument->getVelocity(127);
-    if(v) sample = v->getSample();
-  }
+	//  printf("last: %d, E: %f,  e: %f - threshold: %f\n", last, E, e, 1.3 *
+	E);
 
-  last++;
-  if(sample) last = 0;
+	// Shift history and save new value
+	for(size_t i = 0; i < HISTORY_SIZE - 1; i++) hist[i] = hist[i+1];
+	hist[HISTORY_SIZE - 1] = e>DEF?e:DEF;
 
-  return sample;
+	if(instrument->name == "hihat" && e > 0) printf("e: %f\n", e);
+
+	if(e > C * E && last > mindist) {
+	  Velocity *v = instrument->getVelocity(127);
+	  if(v) sample = v->getSample();
+	}
+
+	last++;
+	if(sample) last = 0;
+
+	return sample;
+	*/
 }
