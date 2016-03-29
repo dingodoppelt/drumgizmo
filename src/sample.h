@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_SAMPLE_H__
-#define __DRUMGIZMO_SAMPLE_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -33,24 +32,26 @@
 #include "channel.h"
 #include "audiofile.h"
 
-typedef std::map< Channel*, AudioFile* > AudioFiles;
+typedef std::map<Channel*, AudioFile*> AudioFiles;
 
 class InstrumentParser;
-class Sample {
-  friend class InstrumentParser;
-  friend class PowerList;
-public:
-  Sample(std::string name, float power);
-  ~Sample();
+class Sample
+{
+	friend class InstrumentParser;
+	friend class PowerList;
 
-  AudioFile *getAudioFile(InstrumentChannel *c);
+public:
+	Sample(const std::string& name, float power);
+	~Sample();
+
+	AudioFile* getAudioFile(InstrumentChannel* c);
 
 private:
-  void addAudioFile(InstrumentChannel *c, AudioFile *a);
+	void addAudioFile(InstrumentChannel* c, AudioFile* a);
 
-  std::string name;
-  float power;
-  AudioFiles audiofiles;
+	std::string name;
+	float power;
+	AudioFiles audiofiles;
 };
 
 /*
@@ -62,4 +63,3 @@ private:
  *    <audiofile channel="Kick R-3" file="samples/1-kick-r-Kick R-3.wav"/>
  *   </sample>
  */
-#endif/*__DRUMGIZMO_SAMPLE_H__*/
