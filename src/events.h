@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_EVENTS_H__
-#define __DRUMGIZMO_EVENTS_H__
+#pragma once
 
 #include <map>
 #include <stdio.h>
@@ -39,62 +38,73 @@
 
 typedef unsigned int timepos_t;
 
-class Event {
+class Event
+{
 public:
-  virtual ~Event() {}
+	virtual ~Event()
+	{
+	}
 
-  typedef enum {
-    sample
-  } type_t;
-  
-  virtual type_t type() = 0;
+	typedef enum
+	{
+		sample
+	} type_t;
 
-  channel_t channel;
-  timepos_t offset;
+	virtual type_t getType() const = 0;
+
+	channel_t channel;
+	timepos_t offset;
 };
 
 #define NO_RAMPDOWN -1
-class EventSample : public Event {
+class EventSample : public Event
+{
 public:
-  EventSample(channel_t c, float g, AudioFile *af, std::string grp,
-              void *instr)
-  {
-    cache_id = CACHE_NOID;
-    channel = c;
-    gain = g;
-    t = 0;
-    file = af;
-    group = grp;
-    instrument = instr;
-    rampdown = NO_RAMPDOWN;
-    ramp_start = 0;
-  }
+	EventSample(channel_t c, float g, AudioFile* af,
+	            const std::string& grp, void* instr)
+	{
+		cache_id = CACHE_NOID;
+		channel = c;
+		gain = g;
+		t = 0;
+		file = af;
+		group = grp;
+		instrument = instr;
+		rampdown = NO_RAMPDOWN;
+		ramp_start = 0;
+	}
 
-  Event::type_t type() { return Event::sample; }
+	Event::type_t getType() const
+	{
+		return Event::sample;
+	}
 
-  cacheid_t cache_id;
-  sample_t *buffer;
-  size_t buffer_size;
+	cacheid_t cache_id;
+	sample_t* buffer;
+	size_t buffer_size;
 
-  float gain;
-  unsigned int t;
-  AudioFile *file;
-  std::string group;
-  void *instrument;
-  int rampdown;
-  int ramp_start;
+	float gain;
+	unsigned int t;
+	AudioFile* file;
+	std::string group;
+	void* instrument;
+	int rampdown;
+	int ramp_start;
 };
 
-class EventQueue {
+class EventQueue
+{
 public:
-  void post(Event *event, timepos_t time);
-  Event *take(timepos_t time);
-  bool hasEvent(timepos_t time);
-  size_t size() { return queue.size(); }
+	void post(Event* event, timepos_t time);
+	Event* take(timepos_t time);
+	bool hasEvent(timepos_t time);
+	size_t getSize() const
+	{
+		return queue.size();
+	}
 
 private:
-  std::multimap< timepos_t, Event* > queue;
-  Mutex mutex;
+	std::multimap<timepos_t, Event*> queue;
+	Mutex mutex;
 };
 
-#endif/*__DRUMGIZMO_EVENTS_H__*/

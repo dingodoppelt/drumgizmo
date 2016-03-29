@@ -26,25 +26,26 @@
  */
 #include "events.h"
 
-void EventQueue::post(Event *event, timepos_t time)
+void EventQueue::post(Event* event, timepos_t time)
 {
-  MutexAutolock lock(mutex);
-  event->offset = time;
-  queue.insert(std::pair<timepos_t, Event*>(time, event));
+	MutexAutolock lock(mutex);
+	event->offset = time;
+	queue.insert(std::pair<timepos_t, Event*>(time, event));
 }
 
-Event *EventQueue::take(timepos_t time)
+Event* EventQueue::take(timepos_t time)
 {
-  MutexAutolock lock(mutex);
-  std::multimap<timepos_t, Event*>::iterator i = queue.find(time);
-  if(i == queue.end()) return NULL;
-  Event *event = i->second;
-  queue.erase(i);
-  return event;
+	MutexAutolock lock(mutex);
+	std::multimap<timepos_t, Event*>::iterator i = queue.find(time);
+	if(i == queue.end())
+		return NULL;
+	Event* event = i->second;
+	queue.erase(i);
+	return event;
 }
 
 bool EventQueue::hasEvent(timepos_t time)
 {
-  MutexAutolock lock(mutex);
-  return queue.find(time) != queue.end();
+	MutexAutolock lock(mutex);
+	return queue.find(time) != queue.end();
 }

@@ -315,7 +315,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 					while(evs != activeevents[ch.num].end())
 					{
 						Event *ev = *evs;
-						if(ev->type() == Event::sample)
+						if(ev->getType() == Event::sample)
 						{
 							EventSample *sev = (EventSample*)ev;
 							if(sev->group == i->getGroup() && sev->instrument != i)
@@ -498,7 +498,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 		Event* event = *i;
 
-		Event::type_t type = event->type();
+		Event::type_t type = event->getType();
 		switch(type) {
 		case Event::sample:
 			{
