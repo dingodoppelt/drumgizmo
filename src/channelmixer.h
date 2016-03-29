@@ -24,35 +24,34 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CHANNELMIXER_H__
-#define __DRUMGIZMO_CHANNELMIXER_H__
+#pragma once
 
 #include <map>
 
 #include "channel.h"
 
-class MixerSettings {
+class MixerSettings
+{
 public:
-  float gain;
-  Channel *output;
+	float gain;
+	const Channel* output;
 };
 
-class ChannelMixer {
+class ChannelMixer
+{
 public:
-  ChannelMixer(Channels &channels,
-               Channel *defaultchannel = NULL, float defaultgain = 1.0);
+	ChannelMixer(const Channels& channels,
+	    const Channel* defaultchannel = nullptr, float defaultgain = 1.0);
 
-  MixerSettings &lookup(InstrumentChannel *channel);
+	MixerSettings& lookup(const InstrumentChannel& channel);
 
-  void setDefaults(Channel *defaultchannel, float defaultgain);
+	void setDefaults(const Channel* defaultchannel, float defaultgain);
 
 private:
-  std::map<InstrumentChannel *, MixerSettings> mix;
+	std::map<const InstrumentChannel*, MixerSettings> mix;
 
-  Channel *defaultchannel;
-  float defaultgain;
+	const Channel* defaultchannel;
+	float defaultgain;
 
-  Channels &channels;
+	const Channels& channels;
 };
-
-#endif/*__DRUMGIZMO_CHANNELMIXER_H__*/
