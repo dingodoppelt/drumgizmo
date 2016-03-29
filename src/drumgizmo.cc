@@ -101,7 +101,7 @@ bool DrumGizmo::loadkit(std::string file)
 #ifdef WITH_RESAMPLER
 	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
 	{
-		resampler[i].setup(kit.samplerate(), Conf::samplerate);
+		resampler[i].setup(kit.getSamplerate(), Conf::samplerate);
 	}
 #endif/*WITH_RESAMPLER*/
 
@@ -167,7 +167,7 @@ void DrumGizmo::handleMessage(Message *msg)
 			EngineSettingsMessage *msg = new EngineSettingsMessage();
 			msg->midimapfile = mmapfile;
 			msg->midimap_loaded = mmap_loaded;
-			msg->drumkitfile = kit.file();
+			msg->drumkitfile = kit.getFile();
 			msg->drumkit_loaded = loader.isDone();
 			msg->enable_velocity_modifier = Conf::enable_velocity_modifier;
 			msg->velocity_modifier_falloff = Conf::velocity_modifier_falloff;
@@ -646,7 +646,7 @@ void DrumGizmo::setSamplerate(int samplerate)
 #ifdef WITH_RESAMPLER
 	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
 	{
-		resampler[i].setup(kit.samplerate(), Conf::samplerate);
+		resampler[i].setup(kit.getSamplerate(), Conf::samplerate);
 	}
 	if(resampler[0].getRatio() != 1)
 	{
@@ -688,7 +688,7 @@ std::string DrumGizmo::configString()
 
 	return
 		"<config>\n"
-		"  <value name=\"drumkitfile\">" + kit.file() + "</value>\n"
+		"  <value name=\"drumkitfile\">" + kit.getFile() + "</value>\n"
 		"  <value name=\"midimapfile\">" + mmapfile + "</value>\n"
 		"  <value name=\"enable_velocity_modifier\">" +
 		bool2str(Conf::enable_velocity_modifier) + "</value>\n"
@@ -752,7 +752,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
 	}
 
 	std::string newkit = p.value("drumkitfile");
-	if(newkit != "" && kit.file() != newkit)
+	if(newkit != "" && kit.getFile() != newkit)
 	{
 		/*
 		  if(!loadkit(p.values["drumkitfile"]))

@@ -28,63 +28,64 @@
 
 DrumKit::DrumKit()
 {
-  magic = this;
+	magic = this;
 }
 
 DrumKit::~DrumKit()
 {
-  magic = NULL;
-  clear();
+	magic = NULL;
+	clear();
 }
 
 void DrumKit::clear()
 {
-  Instruments::iterator i = instruments.begin();
-  while(i != instruments.end()) {
-    delete *i;
-    i++;
-  }
-  instruments.clear();
+	Instruments::iterator i = instruments.begin();
+	while(i != instruments.end())
+	{
+		delete *i;
+		i++;
+	}
+	instruments.clear();
 
-  channels.clear();
+	channels.clear();
 
-  _name = "";
-  _description = "";
-  _samplerate = 44100;
+	_name = "";
+	_description = "";
+	_samplerate = 44100;
 }
 
-bool DrumKit::isValid()
+bool DrumKit::isValid() const
 {
-  return this == magic;
+	return this == magic;
 }
 
-std::string DrumKit::file()
+std::string DrumKit::getFile() const
 {
-  return _file;
+	return _file;
 }
 
-std::string DrumKit::name()
+std::string DrumKit::getName() const
 {
-  return _name;
+	return _name;
 }
 
-std::string DrumKit::description()
+std::string DrumKit::getDescription() const
 {
-  return _description;
+	return _description;
 }
 
-size_t DrumKit::samplerate()
+size_t DrumKit::getSamplerate() const
 {
-  return _samplerate;
+	return _samplerate;
 }
 
 #ifdef TEST_DRUMKIT
-//Additional dependency files
-//deps:
-//Required cflags (autoconf vars may be used)
-//cflags:
-//Required link options (autoconf vars may be used)
-//libs:
+// Additional dependency files
+// deps:
+// Required cflags (autoconf vars may be used)
+// cflags:
+// Required link options (autoconf vars may be used)
+// libs:
 #include "test.h"
 
 TEST_BEGIN;
@@ -93,4 +94,4 @@ TEST_BEGIN;
 
 TEST_END;
 
-#endif/*TEST_DRUMKIT*/
+#endif /*TEST_DRUMKIT*/
