@@ -50,7 +50,7 @@ WavfileOutputEngine::~WavfileOutputEngine()
 	}
 }
 
-bool WavfileOutputEngine::init(Channels data)
+bool WavfileOutputEngine::init(const Channels& data)
 {
 	channels.clear();
 	channels.resize(data.size()); // value-initialized with null

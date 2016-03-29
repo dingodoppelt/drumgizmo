@@ -42,7 +42,7 @@ public:
 	~AlsaOutputEngine();
 
 	// based on AudioOutputEngine
-	bool init(Channels chan) override;
+	bool init(const Channels& chan) override;
 	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override;
 	void stop() override;

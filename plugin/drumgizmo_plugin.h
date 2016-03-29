@@ -130,7 +130,7 @@ private:
 	public:
 		Output(DrumGizmoPlugin& plugin);
 
-		bool init(Channels channels) override;
+		bool init(const Channels& channels) override;
 
 		void setParm(const std::string& parm, const std::string& value) override;
 

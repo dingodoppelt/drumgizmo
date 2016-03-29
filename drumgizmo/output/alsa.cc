@@ -71,7 +71,7 @@ AlsaOutputEngine::~AlsaOutputEngine()
 	}
 }
 
-bool AlsaOutputEngine::init(Channels channels)
+bool AlsaOutputEngine::init(const Channels& channels)
 {
 	// try to initialize alsa
 	try

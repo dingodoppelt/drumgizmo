@@ -40,7 +40,7 @@ public:
 	~WavfileOutputEngine();
 
 	// based on AudioOutputEngine
-	bool init(Channels data) override;
+	bool init(const Channels& data) override;
 	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override;
 	void stop() override;

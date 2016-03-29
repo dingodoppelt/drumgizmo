@@ -37,7 +37,7 @@ class AudioOutputEngine {
 public:
   virtual ~AudioOutputEngine() {}
 
-  virtual bool init(Channels channels) = 0;
+  virtual bool init(const Channels& channels) = 0;
 
   virtual void setParm(const std::string& parm, const std::string& value) = 0;
 

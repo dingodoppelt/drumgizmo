@@ -241,7 +241,7 @@ DrumGizmoPlugin::Output::Output(DrumGizmoPlugin& plugin)
 {
 }
 
-bool DrumGizmoPlugin::Output::init(Channels channels)
+bool DrumGizmoPlugin::Output::init(const Channels& channels)
 {
 	return true;
 }

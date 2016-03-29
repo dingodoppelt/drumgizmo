@@ -34,7 +34,7 @@ DummyOutputEngine::~DummyOutputEngine()
 {
 }
 
-bool DummyOutputEngine::init(Channels data)
+bool DummyOutputEngine::init(const Channels& data)
 {
 	return true;
 }

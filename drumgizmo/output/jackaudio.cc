@@ -43,7 +43,7 @@ JackAudioOutputEngine::~JackAudioOutputEngine()
 	client.remove(*this);
 }
 
-bool JackAudioOutputEngine::init(Channels data)
+bool JackAudioOutputEngine::init(const Channels& data)
 {
 	channels.clear();
 	channels.reserve(data.size());
