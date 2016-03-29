@@ -39,7 +39,7 @@ bool DummyOutputEngine::init(Channels data)
 	return true;
 }
 
-void DummyOutputEngine::setParm(std::string parm, std::string value)
+void DummyOutputEngine::setParm(const std::string& parm, const std::string& value)
 {
 }
 

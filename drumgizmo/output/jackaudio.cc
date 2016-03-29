@@ -67,7 +67,7 @@ bool JackAudioOutputEngine::init(Channels data)
 	return true;
 }
 
-void JackAudioOutputEngine::setParm(std::string parm, std::string value)
+void JackAudioOutputEngine::setParm(const std::string& parm, const std::string& value)
 {
 }
 

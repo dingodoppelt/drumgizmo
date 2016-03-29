@@ -69,7 +69,7 @@ bool WavfileOutputEngine::init(Channels data)
 	return true;
 }
 
-void WavfileOutputEngine::setParm(std::string parm, std::string value)
+void WavfileOutputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "file")
 	{

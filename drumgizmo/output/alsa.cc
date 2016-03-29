@@ -120,7 +120,7 @@ bool AlsaOutputEngine::init(Channels channels)
 	return true;
 }
 
-void AlsaOutputEngine::setParm(std::string parm, std::string value)
+void AlsaOutputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "dev")
 	{

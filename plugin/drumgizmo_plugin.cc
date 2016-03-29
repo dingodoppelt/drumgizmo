@@ -246,7 +246,7 @@ bool DrumGizmoPlugin::Output::init(Channels channels)
 	return true;
 }
 
-void DrumGizmoPlugin::Output::setParm(std::string parm, std::string value)
+void DrumGizmoPlugin::Output::setParm(const std::string& parm, const std::string& value)
 {
 }
 
