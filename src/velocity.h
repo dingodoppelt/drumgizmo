@@ -24,29 +24,27 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_VELOCITY_H__
-#define __DRUMGIZMO_VELOCITY_H__
+#pragma once
 
 #include <map>
 
 #include "sample.h"
 #include "random.h"
 
-class Velocity {
+class Velocity
+{
 public:
-  Velocity(unsigned int lower, unsigned int upper);
+	Velocity(unsigned int lower, unsigned int upper);
 
-  void addSample(Sample *sample, float probability);
-  Sample *getSample();
+	void addSample(Sample* sample, float probability);
+	Sample* getSample() const;
 
-  unsigned int lower;
-  unsigned int upper;
+	unsigned int lower;
+	unsigned int upper;
 
 private:
-  typedef std::map< Sample *, float > Samples;
-  Samples samples;
+	typedef std::map<Sample*, float> Samples;
+	Samples samples;
 
-  Random rand;
+	Random rand;
 };
-
-#endif/*__DRUMGIZMO_VELOCITY_H__*/

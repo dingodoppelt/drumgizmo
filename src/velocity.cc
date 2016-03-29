@@ -29,33 +29,40 @@
 #include <stdlib.h>
 
 Velocity::Velocity(unsigned int lower, unsigned int upper)
+	: lower{lower}
+	, upper{upper}
+	, samples{}
 {
-  this->lower = lower;
-  this->upper = upper;
 }
 
-void Velocity::addSample(Sample *sample, float probability)
+void Velocity::addSample(Sample* sample, float probability)
 {
-  if(samples.find(sample) != samples.end()) {
-    samples[sample] += probability;
-  } else {
-    samples[sample] = probability;
-  }
+	if(samples.find(sample) != samples.end())
+	{
+		samples[sample] += probability;
+	}
+	else
+	{
+		samples[sample] = probability;
+	}
 }
 
-Sample *Velocity::getSample()
+Sample* Velocity::getSample() const
 {
-  Sample *sample = NULL;
+	Sample* sample{nullptr};
 
-  float x = rand.floatInRange(0, 1);
-  float sum = 0.0;
-  
-  Samples::iterator i = samples.begin();
-  while(i != samples.end() && x > sum) {
-    sum += i->second;
-    sample = i->first;
-    i++;
-  }
+	float x = rand.floatInRange(0, 1);
+	float sum = 0.0;
 
-  return sample;
+	for (auto const & pair: samples)
+	{
+		if (x > sum)
+		{
+			break;
+		}
+		sum += pair.second;
+		sample = pair.first;
+	}
+
+	return sample;
 }
