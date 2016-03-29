@@ -31,7 +31,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// Workaround - major, minor and patch are defined as macros when using _GNU_SOURCES
+// Workaround - major, minor and patch are defined as macros when using
+// _GNU_SOURCES
 #ifdef major
 #undef major
 #endif
@@ -42,110 +43,138 @@
 #undef patch
 #endif
 
-VersionStr::VersionStr(std::string v) throw(const char *)
+VersionStr::VersionStr(const std::string& v) throw(const char*)
 {
-  memset(version, 0, sizeof(version));
-  set(v);
+	memset(version, 0, sizeof(version));
+	set(v);
 }
 
 VersionStr::VersionStr(size_t major, size_t minor, size_t patch)
 {
-  version[0] = major;
-  version[1] = minor;
-  version[2] = patch;
+	version[0] = major;
+	version[1] = minor;
+	version[2] = patch;
 }
 
-void VersionStr::set(std::string v) throw(const char *)
+void VersionStr::set(const std::string& v) throw(const char*)
 {
-  std::string num;
-  size_t idx = 0;
-  for(size_t i = 0; i < v.length(); i++) {
-    if(v[i] == '.') {
-      if(idx > 2) throw "Version string is too long.";
-      version[idx] = atoi(num.c_str());
-      idx++;
-      num = "";
-    } else if(v[i] >= '0' && v[i] <= '9') {
-      num.append(1, v[i]);
-    } else {
-      throw "Version string contains illegal character.";
-    }
-  }
-  if(idx > 2) throw "Version string is too long.";
-  version[idx] = atoi(num.c_str());
+	std::string num;
+	size_t idx = 0;
+	for(size_t i = 0; i < v.length(); i++)
+	{
+		if(v[i] == '.')
+		{
+			if(idx > 2)
+			{
+				throw "Version string is too long.";
+			}
+			version[idx] = atoi(num.c_str());
+			idx++;
+			num = "";
+		}
+		else if(v[i] >= '0' && v[i] <= '9')
+		{
+			num.append(1, v[i]);
+		}
+		else
+		{
+			throw "Version string contains illegal character.";
+		}
+	}
+	if(idx > 2)
+	{
+		throw "Version string is too long.";
+	}
+	version[idx] = atoi(num.c_str());
 }
 
 VersionStr::operator std::string() const
 {
-  std::string v;
-  char buf[64];
-  if(patch()) {
-    sprintf(buf, "%d.%d.%d", (int)major(), (int)minor(), (int)patch());
-  } else {
-    sprintf(buf, "%d.%d", (int)major(), (int)minor());
-  }
-  v = buf;
-  return v;
+	std::string v;
+	char buf[64];
+	if(patch())
+	{
+		sprintf(buf, "%d.%d.%d", (int)major(), (int)minor(), (int)patch());
+	}
+	else
+	{
+		sprintf(buf, "%d.%d", (int)major(), (int)minor());
+	}
+	v = buf;
+	return v;
 }
-  
-void VersionStr::operator=(std::string v) throw(const char *)
+
+void VersionStr::operator=(const std::string& v) throw(const char*)
 {
-  set(v);
+	set(v);
 }
 
 // return a - b simplified as -1, 0 or 1
-static int vdiff(const VersionStr &a, const VersionStr &b)
+static int vdiff(const VersionStr& a, const VersionStr& b)
 {
-  if(a.major() < b.major()) return -1;
-  if(a.major() > b.major()) return 1;
-  if(a.minor() < b.minor()) return -1;
-  if(a.minor() > b.minor()) return 1;
-  if(a.patch() < b.patch()) return -1;
-  if(a.patch() > b.patch()) return 1;
-  return 0;
+	if(a.major() < b.major())
+	{
+		return -1;
+	}
+	if(a.major() > b.major())
+	{
+		return 1;
+	}
+	if(a.minor() < b.minor())
+	{
+		return -1;
+	}
+	if(a.minor() > b.minor())
+	{
+		return 1;
+	}
+	if(a.patch() < b.patch())
+	{
+		return -1;
+	}
+	if(a.patch() > b.patch())
+	{
+		return 1;
+	}
+	return 0;
 }
 
-bool VersionStr::operator<(const VersionStr &other) const
+bool VersionStr::operator<(const VersionStr& other) const
 {
-  if(vdiff(*this, other) == -1) return true;
-  return false;
+	return vdiff(*this, other) == -1;
 }
 
-bool VersionStr::operator>(const VersionStr &other) const
+bool VersionStr::operator>(const VersionStr& other) const
 {
-  if(vdiff(*this, other) == 1) return true;
-  return false;
+	return vdiff(*this, other) == 1;
 }
 
-bool VersionStr::operator==(const VersionStr &other) const
+bool VersionStr::operator==(const VersionStr& other) const
 {
-  if(vdiff(*this, other) == 0) return true;
-  return false;
+	return vdiff(*this, other) == 0;
 }
 
-bool VersionStr::operator<=(const VersionStr &other) const
+bool VersionStr::operator<=(const VersionStr& other) const
 {
-  if(vdiff(*this, other) != 1) return true;
-  return false;
+	return vdiff(*this, other) != 1;
 }
 
-bool VersionStr::operator>=(const VersionStr &other) const
+bool VersionStr::operator>=(const VersionStr& other) const
 {
-  if(vdiff(*this, other) != -1) return true;
-  return false;
+	return vdiff(*this, other) != -1;
 }
 
 size_t VersionStr::major() const
 {
-  return version[0];
+	return version[0];
 }
 
 size_t VersionStr::minor() const
 {
-  return version[1];
+	return version[1];
 }
 
 size_t VersionStr::patch() const
 {
-  return version[2];
+	return version[2];
 }

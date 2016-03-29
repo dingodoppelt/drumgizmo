@@ -25,12 +25,12 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __PRACRO_VERSIONSTR_H__
-#define __PRACRO_VERSIONSTR_H__
+#pragma once
 
 #include <string>
 
-// Workaround - major, minor and patch are defined as macros when using _GNU_SOURCES
+// Workaround - major, minor and patch are defined as macros when using
+// _GNU_SOURCES
 #ifdef major
 #undef major
 #endif
@@ -43,70 +43,70 @@
 
 /**
  * VersionStr class.
- * It hold a version number and is capable of correct sorting, as well as string 
+ * It hold a version number and is capable of correct sorting, as well as string
  * conversion both ways.
  */
-class VersionStr {
+class VersionStr
+{
 public:
-  /**
-   * Constructor.
-   * Throws an exeption if the string does not parse.
-   * @param v A std::string containing a version string on the form a.b or a.b.c
-   */
-  VersionStr(std::string v) throw(const char *);
+	/**
+	 * Constructor.
+	 * Throws an exeption if the string does not parse.
+	 * @param v A std::string containing a version string on the form a.b or
+	 * a.b.c
+	 */
+	VersionStr(const std::string& v) throw(const char*);
 
-  /**
-   * Constructor.
-   * @param major A size_t containing the major version number.
-   * @param minor A size_t containing the minor version number.
-   * @param patch A size_t containing the patch level.
-   */
-  VersionStr(size_t major = 0, size_t minor = 0, size_t patch = 0);
+	/**
+	 * Constructor.
+	 * @param major A size_t containing the major version number.
+	 * @param minor A size_t containing the minor version number.
+	 * @param patch A size_t containing the patch level.
+	 */
+	VersionStr(size_t major = 0, size_t minor = 0, size_t patch = 0);
 
-  /**
-   * Typecast to std::string operator.
-   * It simply converts the version numbers into a string of the form major.minor
-   * (if patch i 0) or major.minor.patch
-   */
-  operator std::string() const;
+	/**
+	 * Typecast to std::string operator.
+	 * It simply converts the version numbers into a string of the form
+	 * major.minor
+	 * (if patch i 0) or major.minor.patch
+	 */
+	operator std::string() const;
 
-  /**
-   * Assignment from std::string operator.
-   * Same as in the VersionStr(std::string v) constructor.
-   * Throws an exeption if the string does not parse.
-   */
-  void operator=(std::string v) throw(const char *);
+	/**
+	 * Assignment from std::string operator.
+	 * Same as in the VersionStr(std::string v) constructor.
+	 * Throws an exeption if the string does not parse.
+	 */
+	void operator=(const std::string& v) throw(const char*);
 
-  /**
-   * Comparison operator.
-   * The version objects are sorted according to their major, minor and patch
-   * level numbers.
-   */
-  bool operator<(const VersionStr &other) const;
-  bool operator==(const VersionStr &other) const;
-  bool operator>(const VersionStr &other) const;
-  bool operator>=(const VersionStr &other) const;
-  bool operator<=(const VersionStr &other) const;
+	/**
+	 * Comparison operator.
+	 * The version objects are sorted according to their major, minor and patch
+	 * level numbers.
+	 */
+	bool operator<(const VersionStr& other) const;
+	bool operator==(const VersionStr& other) const;
+	bool operator>(const VersionStr& other) const;
+	bool operator>=(const VersionStr& other) const;
+	bool operator<=(const VersionStr& other) const;
 
+	/**
+	 * @return Major version number.
+	 */
+	size_t major() const;
 
-  /**
-   * @return Major version number.
-   */
-  size_t major() const;
+	/**
+	 * @return Minor version number.
+	 */
+	size_t minor() const;
 
-  /**
-   * @return Minor version number.
-   */
-  size_t minor() const;
-
-  /**
-   * @return Patch level.
-   */
-  size_t patch() const;
+	/**
+	 * @return Patch level.
+	 */
+	size_t patch() const;
 
 private:
-  void set(std::string v) throw(const char *);
-  size_t version[3];
+	void set(const std::string& v) throw(const char*);
+	size_t version[3];
 };
-
-#endif/*__PRACRO_VERSIONSTR_H__*/
