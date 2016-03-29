@@ -35,7 +35,7 @@ public:
 	~DummyInputEngine();
 
 	// based on AudioInputEngine
-	bool init(Instruments& instruments) override;
+	bool init(const Instruments& instruments) override;
 	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override;
 	void stop() override;

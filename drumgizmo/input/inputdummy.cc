@@ -34,7 +34,7 @@ DummyInputEngine::~DummyInputEngine()
 {
 }
 
-bool DummyInputEngine::init(Instruments& instruments)
+bool DummyInputEngine::init(const Instruments& instruments)
 {
 	return true;
 }

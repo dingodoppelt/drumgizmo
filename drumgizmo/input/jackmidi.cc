@@ -48,7 +48,7 @@ JackMidiInputEngine::~JackMidiInputEngine()
 	client.remove(*this);
 }
 
-bool JackMidiInputEngine::init(Instruments& instruments)
+bool JackMidiInputEngine::init(const Instruments& instruments)
 {
 	if(!loadMidiMap(midimap, instruments))
 	{

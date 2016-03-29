@@ -40,7 +40,7 @@ public:
 
   virtual bool isMidiEngine() { return false; } 
 
-  virtual bool init(Instruments& instruments) = 0;
+  virtual bool init(const Instruments& instruments) = 0;
 
   virtual void setParm(const std::string& parm, const std::string& value) = 0;
 

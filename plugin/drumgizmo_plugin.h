@@ -108,7 +108,7 @@ private:
 	public:
 		Input(DrumGizmoPlugin& plugin);
 
-		bool init(Instruments& instruments) override;
+		bool init(const Instruments& instruments) override;
 
 		void setParm(const std::string& parm, const std::string& value) override;
 
@@ -121,7 +121,7 @@ private:
 
 	protected:
 		DrumGizmoPlugin& plugin;
-		Instruments* instruments{nullptr};
+		const Instruments* instruments{nullptr};
 	};
 
 	class Output

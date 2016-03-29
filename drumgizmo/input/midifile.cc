@@ -52,7 +52,7 @@ MidifileInputEngine::~MidifileInputEngine()
 	}
 }
 
-bool MidifileInputEngine::init(Instruments& instruments)
+bool MidifileInputEngine::init(const Instruments& instruments)
 {
 	if(file == "")
 	{

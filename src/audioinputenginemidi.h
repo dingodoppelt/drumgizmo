@@ -43,7 +43,7 @@ public:
 
   bool isMidiEngine() { return true; } 
 
-  virtual bool init(Instruments &instruments) = 0;
+  virtual bool init(const Instruments &instruments) = 0;
 
   virtual void setParm(const std::string& parm, const std::string& value) = 0;
 
@@ -54,7 +54,7 @@ public:
   virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
   virtual void post() = 0;
 
-  bool loadMidiMap(std::string file, Instruments &i);
+  bool loadMidiMap(const std::string& file, const Instruments& i);
 
   std::string midimapFile();
 

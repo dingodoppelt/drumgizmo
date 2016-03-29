@@ -182,7 +182,7 @@ DrumGizmoPlugin::Input::Input(DrumGizmoPlugin& plugin)
 {
 }
 
-bool DrumGizmoPlugin::Input::init(Instruments &instruments)
+bool DrumGizmoPlugin::Input::init(const Instruments &instruments)
 {
 	this->instruments = &instruments;
 	return true;

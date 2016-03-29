@@ -38,7 +38,7 @@ AudioInputEngineMidi::AudioInputEngineMidi()
   is_valid = false;
 }
 
-bool AudioInputEngineMidi::loadMidiMap(std::string file, Instruments &instruments)
+bool AudioInputEngineMidi::loadMidiMap(const std::string& file, const Instruments& instruments)
 {
   std::string f = file;
 
