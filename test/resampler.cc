@@ -47,10 +47,10 @@ public:
   void resampling()
   {
     CHResampler r;
-    CPPUNIT_ASSERT_EQUAL(1.0, r.ratio());
+    CPPUNIT_ASSERT_EQUAL(1.0, r.getRatio());
     
     r.setup(44100, 48000);
-    CPPUNIT_ASSERT_EQUAL(44100.0/48000.0, r.ratio());
+    CPPUNIT_ASSERT_EQUAL(44100.0/48000.0, r.getRatio());
 
     float in[BUFSZ];
     for(int i = 0; i < BUFSZ; i++) in[i] = 0;//(float)i/(float)BUFSZ;
@@ -83,15 +83,15 @@ public:
   void resampling_buffer_sizes()
   {
     CHResampler r;
-    CPPUNIT_ASSERT_EQUAL(1.0, r.ratio());
+    CPPUNIT_ASSERT_EQUAL(1.0, r.getRatio());
     
     double infs = 24000;
     double outfs = 48000;
     r.setup(infs, outfs);
-    CPPUNIT_ASSERT_EQUAL(infs / outfs, r.ratio());
+    CPPUNIT_ASSERT_EQUAL(infs / outfs, r.getRatio());
 
     float in[BUFSZ];
-    float out[(int)(BUFSZ / r.ratio())];
+    float out[(int)(BUFSZ / r.getRatio())];
 
     // Preload resampler
     r.setOutputSamples(out, 1);
