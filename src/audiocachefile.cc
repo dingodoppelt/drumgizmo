@@ -36,7 +36,8 @@
 
 AudioCacheFile::AudioCacheFile(const std::string& filename,
                                std::vector<sample_t>& read_buffer)
-	: filename(filename), read_buffer(read_buffer)
+	: filename(filename)
+	, read_buffer(read_buffer)
 {
 	std::memset(&sf_info, 0, sizeof(SF_INFO));
 
@@ -73,7 +74,7 @@ const std::string& AudioCacheFile::getFilename() const
 	return filename;
 }
 
-size_t AudioCacheFile::getChannelCount()
+size_t AudioCacheFile::getChannelCount() const
 {
 	return sf_info.channels;
 }

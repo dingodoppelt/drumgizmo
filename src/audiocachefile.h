@@ -69,7 +69,7 @@ public:
 	const std::string& getFilename() const;
 
 	//! Get number of channels in the file
-	size_t getChannelCount();
+	size_t getChannelCount() const;
 
 	//! Read audio data from the file into the supplied channel caches.
 	void readChunk(const CacheChannels& channels, size_t pos, size_t num_samples);
