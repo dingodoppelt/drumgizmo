@@ -398,7 +398,7 @@ int CliMain::run(int argc, char* argv[])
 	}
 	printf("done.\n");
 
-	gizmo.setSamplerate(oe->samplerate());
+	gizmo.setSamplerate(oe->getSamplerate());
 
 	if(!gizmo.init())
 	{

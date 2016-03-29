@@ -49,7 +49,7 @@ public:
 	void pre(size_t nsamples) override;
 	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
-	size_t samplerate() override;
+	size_t getSamplerate() const override;
 
 private:
 	snd_pcm_t* handle;

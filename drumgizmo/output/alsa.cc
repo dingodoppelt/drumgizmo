@@ -187,7 +187,7 @@ void AlsaOutputEngine::post(size_t nsamples)
 	snd_pcm_writei(handle, data.data(), nsamples);
 }
 
-size_t AlsaOutputEngine::samplerate()
+size_t AlsaOutputEngine::getSamplerate() const
 {
 	return srate;
 }

@@ -125,7 +125,7 @@ void WavfileOutputEngine::post(size_t nsamples)
 {
 }
 
-size_t WavfileOutputEngine::samplerate()
+size_t WavfileOutputEngine::getSamplerate() const
 {
 	return info.samplerate;
 }

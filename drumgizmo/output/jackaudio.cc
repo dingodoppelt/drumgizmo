@@ -113,12 +113,12 @@ void JackAudioOutputEngine::process(jack_nframes_t num_frames)
 	sema.post();
 }
 
-size_t JackAudioOutputEngine::getBufferSize()
+size_t JackAudioOutputEngine::getBufferSize() const
 {
 	return client.getBufferSize();
 }
 
-size_t JackAudioOutputEngine::samplerate()
+size_t JackAudioOutputEngine::getSamplerate() const
 {
 	return client.getSampleRate();
 }

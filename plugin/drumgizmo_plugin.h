@@ -141,8 +141,8 @@ private:
 		void run(int ch, sample_t *samples, size_t nsamples) override;
 		void post(size_t nsamples) override;
 
-		sample_t *getBuffer(int ch) override;
-		size_t getBufferSize() override;
+		sample_t *getBuffer(int ch) const override;
+		size_t getBufferSize() const override;
 
 	protected:
 		DrumGizmoPlugin& plugin;

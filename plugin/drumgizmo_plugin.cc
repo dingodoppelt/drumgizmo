@@ -291,7 +291,7 @@ void DrumGizmoPlugin::Output::post(size_t nsamples)
 {
 }
 
-sample_t* DrumGizmoPlugin::Output::getBuffer(int ch)
+sample_t* DrumGizmoPlugin::Output::getBuffer(int ch) const
 {
 	assert(plugin.output_samples);
 
@@ -303,7 +303,7 @@ sample_t* DrumGizmoPlugin::Output::getBuffer(int ch)
 	return (*plugin.output_samples)[ch];
 }
 
-size_t DrumGizmoPlugin::Output::getBufferSize()
+size_t DrumGizmoPlugin::Output::getBufferSize() const
 {
 	return plugin.getFramesize();
 }

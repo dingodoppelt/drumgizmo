@@ -49,14 +49,14 @@ public:
   virtual void post(size_t nsamples) = 0;
 
   // Reimplement this if you wish to use internal buffer directly.
-  virtual sample_t *getBuffer(int ch) { return NULL; }
+  virtual sample_t *getBuffer(int ch) const { return NULL; }
 
   /*
    * Overload this method to force engine to use different buffer size.
    */
-  virtual size_t getBufferSize() { return 1024; }
+  virtual size_t getBufferSize() const { return 1024; }
   
-  virtual size_t samplerate() { return 44100; }
+  virtual size_t getSamplerate() const { return 44100; }
 };
 
 #endif/*__DRUMGIZMO_AUDIOOUTPUTENGINE_H__*/
