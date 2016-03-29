@@ -62,7 +62,7 @@ bool JackMidiInputEngine::init(Instruments& instruments)
 	return true;
 }
 
-void JackMidiInputEngine::setParm(std::string parm, std::string value)
+void JackMidiInputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "midimap")
 	{

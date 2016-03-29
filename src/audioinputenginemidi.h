@@ -45,7 +45,7 @@ public:
 
   virtual bool init(Instruments &instruments) = 0;
 
-  virtual void setParm(std::string parm, std::string value) = 0;
+  virtual void setParm(const std::string& parm, const std::string& value) = 0;
 
   virtual bool start() = 0;
   virtual void stop() = 0;

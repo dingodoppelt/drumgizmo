@@ -188,7 +188,7 @@ bool DrumGizmoPlugin::Input::init(Instruments &instruments)
 	return true;
 }
 
-void DrumGizmoPlugin::Input::setParm(std::string parm, std::string value)
+void DrumGizmoPlugin::Input::setParm(const std::string& parm, const std::string& value)
 {
 }
 

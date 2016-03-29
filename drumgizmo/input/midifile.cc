@@ -80,7 +80,7 @@ bool MidifileInputEngine::init(Instruments& instruments)
 	return true;
 }
 
-void MidifileInputEngine::setParm(std::string parm, std::string value)
+void MidifileInputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "file")
 	{

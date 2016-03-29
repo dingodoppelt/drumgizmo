@@ -36,7 +36,7 @@ public:
 
 	// based on AudioInputEngine
 	bool init(Instruments& instruments) override;
-	void setParm(std::string parm, std::string value) override;
+	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override;
 	void stop() override;
 	void pre() override;
