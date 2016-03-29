@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_INSTRUMENT_H__
-#define __DRUMGIZMO_INSTRUMENT_H__
+#pragma once
 
 #include <string>
 #include <vector>
@@ -52,7 +51,7 @@ public:
 	std::string getDescription() const;
 	std::string getGroup() const;
 
-	void setGroup(std::string group);
+	void setGroup(const std::string& group);
 
 	//  std::map<std::string, std::string> channelmap;
 
@@ -85,5 +84,3 @@ private:
 
 // typedef std::map< std::string, Instrument > Instruments;
 typedef std::vector<Instrument*> Instruments;
-
-#endif /*__DRUMGIZMO_INSTRUMENT_H__*/

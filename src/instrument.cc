@@ -153,7 +153,7 @@ std::string Instrument::getGroup() const
 	return _group;
 }
 
-void Instrument::setGroup(std::string g)
+void Instrument::setGroup(const std::string& g)
 {
 	_group = g;
 }
