@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_CHANNEL_H__
-#define __DRUMGIZMO_CHANNEL_H__
+#pragma once
 
 #include <vector>
 #include <string>
@@ -35,16 +34,15 @@
 #define ALL_CHANNELS ((channel_t)0xffffffff)
 #define NO_CHANNEL ((channel_t)0xfffffffe)
 
-class Channel {
+class Channel
+{
 public:
-  Channel(std::string name = "");
+	Channel(const std::string& name = "");
 
-  std::string name;
-  channel_t num;
+	std::string name;
+	channel_t num;
 };
 
 typedef Channel InstrumentChannel;
 
-typedef std::vector< Channel > Channels;
-
-#endif/*__DRUMGIZMO_CHANNEL_H__*/
+typedef std::vector<Channel> Channels;

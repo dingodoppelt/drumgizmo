@@ -26,16 +26,16 @@
  */
 #include "channel.h"
 
-Channel::Channel(std::string name)
+Channel::Channel(const std::string& name)
+	: name{name}
+	, num{NO_CHANNEL}
 {
-  this->name = name;
-  num = NO_CHANNEL;
 }
 
 #ifdef TEST_CHANNEL
-//deps:
-//cflags:
-//libs:
+// deps:
+// cflags:
+// libs:
 #include "test.h"
 
 TEST_BEGIN;
@@ -54,4 +54,4 @@ channels.push_back(c2);
 
 TEST_END;
 
-#endif/*TEST_CHANNEL*/
+#endif /*TEST_CHANNEL*/
