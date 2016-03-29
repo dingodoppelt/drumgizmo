@@ -304,7 +304,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				continue;
 			}
 
-			if(i->group() != "")
+			if(i->getGroup() != "")
 			{
 				// Add event to ramp down all existing events with the same groupname.
 				Channels::iterator j = kit.channels.begin();
@@ -318,7 +318,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 						if(ev->type() == Event::sample)
 						{
 							EventSample *sev = (EventSample*)ev;
-							if(sev->group == i->group() && sev->instrument != i)
+							if(sev->group == i->getGroup() && sev->instrument != i)
 							{
 								sev->rampdown = 3000; // Ramp down 3000 samples
 								// TODO: This must be configurable at some point...
@@ -358,7 +358,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				else
 				{
 					//DEBUG(drumgizmo, "Adding event %d.\n", event.offset);
-					Event *evt = new EventSample(ch.num, 1.0, af, i->group(), i);
+					Event *evt = new EventSample(ch.num, 1.0, af, i->getGroup(), i);
 					evt->offset = (event.offset + pos) * resampler[0].getRatio();
 					activeevents[ch.num].push_back(evt);
 				}

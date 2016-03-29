@@ -36,126 +36,145 @@
 
 Instrument::Instrument()
 {
-  DEBUG(instrument, "new %p\n", this);
-  mod = 1.0;
-  lastpos = 0;
+	DEBUG(instrument, "new %p\n", this);
+	mod = 1.0;
+	lastpos = 0;
 
-  magic = this;
+	magic = this;
 }
 
 Instrument::~Instrument()
 {
-  magic = NULL;
+	magic = NULL;
 
-  DEBUG(instrument, "delete %p\n", this);
-  std::vector<AudioFile*>::iterator i = audiofiles.begin();
-  while(i != audiofiles.end()) {
-    delete *i;
-    i++;
-  }
+	DEBUG(instrument, "delete %p\n", this);
+	std::vector<AudioFile*>::iterator i = audiofiles.begin();
+	while(i != audiofiles.end())
+	{
+		delete *i;
+		i++;
+	}
 }
 
-bool Instrument::isValid()
+bool Instrument::isValid() const
 {
-  return this == magic;
+	return this == magic;
 }
 
-Sample *Instrument::sample(level_t level, size_t pos)
+Sample* Instrument::sample(level_t level, size_t pos)
 {
-  Sample *sample = NULL;
+	Sample *sample = NULL;
 
-  if(Conf::enable_velocity_modifier == false) {
-    mod = 1.0;
-    lastpos = 0;
-  }
+	if(Conf::enable_velocity_modifier == false) {
+		mod = 1.0;
+		lastpos = 0;
+	}
 
-  if(Conf::enable_velocity_randomiser) {
-    float r = rand.floatInRange(-1.0*Conf::velocity_randomiser_weight,
-                                Conf::velocity_randomiser_weight);
-    level += r;
-    if(level > 1.0) level = 1.0;
-    if(level < 0.0) level = 0.0;
-  }
+	if(Conf::enable_velocity_randomiser) {
+		float r = rand.floatInRange(-1.0*Conf::velocity_randomiser_weight,
+					    Conf::velocity_randomiser_weight);
+		level += r;
+		if(level > 1.0)
+		{
+			level = 1.0;
+		}
+		if(level < 0.0)
+		{
+			level = 0.0;
+		}
+	}
 
-  if(Conf::enable_velocity_modifier) {
-    mod += (pos - lastpos) /
-      (Conf::samplerate * Conf::velocity_modifier_falloff);
-    if(mod > 1.0) mod = 1.0;
-  }
+	if(Conf::enable_velocity_modifier) {
+		mod += (pos - lastpos) /
+			(Conf::samplerate * Conf::velocity_modifier_falloff);
+		if(mod > 1.0)
+		{
+			mod = 1.0;
+		}
+	}
 
-  if(version >= VersionStr("2.0")) {
-    // Version 2.0
-    sample = powerlist.get(level * mod);
-  } else {
-    // Version 1.0
-    std::vector<Sample*> s = samples.get(level * mod);
-    if(s.size() == 0) return NULL;
-    sample = rand.choose(s);
-  }
+	if(version >= VersionStr("2.0"))
+	{
+		// Version 2.0
+		sample = powerlist.get(level * mod);
+	}
+	else {
+		// Version 1.0
+		std::vector<Sample*> s = samples.get(level * mod);
+		if(s.size() == 0)
+		{
+			return NULL;
+		}
 
-  if(Conf::enable_velocity_modifier) {
-    lastpos = pos;
-    mod *= Conf::velocity_modifier_weight;
-  }
+		sample = rand.choose(s);
+	}
 
-  return sample;
+	if(Conf::enable_velocity_modifier)
+	{
+		lastpos = pos;
+		mod *= Conf::velocity_modifier_weight;
+	}
+
+	return sample;
 }
 
-void Instrument::addSample(level_t a, level_t b, Sample *s)
+void Instrument::addSample(level_t a, level_t b, Sample* s)
 {
-  samples.insert(a, b, s);
+	samples.insert(a, b, s);
 }
 
 void Instrument::finalise()
 {
-  if(version >= VersionStr("2.0")) {
-    std::vector<Sample*>::iterator s = samplelist.begin();
-    while(s != samplelist.end()) {
-      powerlist.add(*s);
-      s++;
-    }
+	if(version >= VersionStr("2.0"))
+	{
+		std::vector<Sample*>::iterator s = samplelist.begin();
+		while(s != samplelist.end())
+		{
+			powerlist.add(*s);
+			s++;
+		}
 
-    powerlist.finalise();
-  }
+		powerlist.finalise();
+	}
 }
 
-std::string Instrument::name()
+std::string Instrument::getName() const
 {
-  return _name;
+	return _name;
 }
 
-std::string Instrument::description()
+std::string Instrument::getDescription() const
 {
-  return _description;
+	return _description;
 }
 
-std::string Instrument::group()
+std::string Instrument::getGroup() const
 {
-  return _group;
+	return _group;
 }
 
 void Instrument::setGroup(std::string g)
 {
-  _group = g;
+	_group = g;
 }
 
 #ifdef TEST_INSTRUMENT
-//deps: channel.cc sample.cc audiofile.cc
-//cflags: $(SNDFILE_CFLAGS)
-//libs: $(SNDFILE_LIBS)
+// deps: channel.cc sample.cc audiofile.cc
+// cflags: $(SNDFILE_CFLAGS)
+// libs: $(SNDFILE_LIBS)
 #include "test.h"
 
 TEST_BEGIN;
 
 Instrument i("test");
 
-Sample *a = new Sample();
+Sample* a = new Sample();
 i.addSample(0.0, 1.0, a);
 
-Sample *b = new Sample();
+Sample* b = new Sample();
 i.addSample(0.0, 1.0, b);
 
-Sample *c = new Sample();
+Sample* c = new Sample();
 i.addSample(1.5, 1.7, c);
 
 TEST_EQUAL(i.sample(0.0), b, "?");
@@ -175,4 +194,4 @@ TEST_EQUAL(i.sample(1.6), c, "?");
 
 TEST_END;
 
-#endif/*TEST_INSTRUMENT*/
+#endif /*TEST_INSTRUMENT*/
