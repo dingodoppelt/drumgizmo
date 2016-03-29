@@ -24,38 +24,37 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_POWERLIST_H__
-#define __DRUMGIZMO_POWERLIST_H__
+#pragma once
 
 #include <vector>
 
 #include "sample.h"
 #include "random.h"
 
-class PowerList {
+class PowerList
+{
 public:
-  PowerList();
+	PowerList();
 
-  void add(Sample *s);
-  void finalise(); ///< Call this when no more samples will be added.
+	void add(Sample* s);
+	void finalise(); ///< Call this when no more samples will be added.
 
-  Sample *get(level_t velocity);
+	Sample* get(level_t velocity);
 
 private:
-  class PowerListItem {
-  public:
-    Sample *sample;
-    float power;
-  };
+	class PowerListItem
+	{
+	public:
+		Sample* sample;
+		float power;
+	};
 
-  Random rand;
+	Random rand;
 
-  std::vector<PowerListItem> samples;
-  float power_max;
-  float power_min;
+	std::vector<PowerListItem> samples;
+	float power_max;
+	float power_min;
 
-  Channel *getMasterChannel();
-  Sample *lastsample;
+	Channel* getMasterChannel();
+	Sample* lastsample;
 };
-
-#endif/*__DRUMGIZMO_POWERLIST_H__*/
