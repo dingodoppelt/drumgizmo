@@ -74,7 +74,7 @@ public:
 	void pushCloseEvent(cacheid_t id);
 
 	void setChunkSize(size_t chunksize);
-	size_t chunkSize();
+	size_t getChunkSize() const;
 
 	AudioCacheFile& openFile(const std::string& filename);
 

@@ -186,7 +186,7 @@ void AudioCacheEventHandler::setChunkSize(size_t chunksize)
 	this->chunksize = chunksize;
 }
 
-size_t AudioCacheEventHandler::chunkSize()
+size_t AudioCacheEventHandler::getChunkSize() const
 {
 	return chunksize;
 }
