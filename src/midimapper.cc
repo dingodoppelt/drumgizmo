@@ -28,14 +28,20 @@
 
 int MidiMapper::lookup(int note)
 {
-  if(midimap.find(note) == midimap.end()) return -1;
-  std::string instr = midimap[note];
-  if(instrmap.find(instr) == instrmap.end()) return -1;
-  return instrmap[instr];
+	if(midimap.find(note) == midimap.end())
+	{
+		return -1;
+	}
+	std::string instr = midimap[note];
+	if(instrmap.find(instr) == instrmap.end())
+	{
+		return -1;
+	}
+	return instrmap[instr];
 }
 
 void MidiMapper::clear()
 {
-  midimap.clear();
-  instrmap.clear();
+	midimap.clear();
+	instrmap.clear();
 }

@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_MIDIMAPPER_H__
-#define __DRUMGIZMO_MIDIMAPPER_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -33,14 +32,13 @@
 typedef std::map<int, std::string> midimap_t;
 typedef std::map<std::string, int> instrmap_t;
 
-class MidiMapper {
+class MidiMapper
+{
 public:
-  void clear();
+	void clear();
 
-  int lookup(int note);
+	int lookup(int note);
 
-  instrmap_t instrmap;
-  midimap_t midimap;
+	instrmap_t instrmap;
+	midimap_t midimap;
 };
-
-#endif/*__DRUMGIZMO_MIDIMAPPER_H__*/
