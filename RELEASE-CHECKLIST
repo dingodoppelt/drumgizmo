@@ -12,7 +12,9 @@ Check list for releasing:
 
  [ ]  Tag git
 
- [ ]  Copy dist files (VSTs, README and tar-ball) to server.
+ [ ]  Sign tar-ball (only deva can do that)
+
+ [ ]  Copy dist files (VSTs, README and tar-ball and signature) to server.
 
  [ ]  Write release announcement (mail and news entry).
 
