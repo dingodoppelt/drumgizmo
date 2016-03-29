@@ -38,7 +38,7 @@ class AudioInputEngine {
 public:
   virtual ~AudioInputEngine() {}
 
-  virtual bool isMidiEngine() { return false; } 
+  virtual bool isMidiEngine() const { return false; } 
 
   virtual bool init(const Instruments& instruments) = 0;
 

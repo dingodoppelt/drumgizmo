@@ -160,7 +160,7 @@ void DrumGizmo::handleMessage(Message *msg)
 			if(ie->isMidiEngine())
 			{
 				AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-				mmapfile = aim->midimapFile();
+				mmapfile = aim->getMidimapFile();
 				mmap_loaded = aim->isValid();
 			}
 
@@ -683,7 +683,7 @@ std::string DrumGizmo::configString()
 	if(ie->isMidiEngine())
 	{
 		AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-		mmapfile = aim->midimapFile();
+		mmapfile = aim->getMidimapFile();
 	}
 
 	return

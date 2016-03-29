@@ -76,12 +76,12 @@ bool AudioInputEngineMidi::loadMidiMap(const std::string& file, const Instrument
   return true;
 }
 
-std::string AudioInputEngineMidi::midimapFile()
+std::string AudioInputEngineMidi::getMidimapFile() const
 {
   return midimap;
 }
 
-bool AudioInputEngineMidi::isValid()
+bool AudioInputEngineMidi::isValid() const
 {
   return is_valid;
 }

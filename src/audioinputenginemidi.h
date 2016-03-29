@@ -41,7 +41,7 @@ public:
   AudioInputEngineMidi();
   virtual ~AudioInputEngineMidi() {}
 
-  bool isMidiEngine() { return true; } 
+  bool isMidiEngine() const { return true; } 
 
   virtual bool init(const Instruments &instruments) = 0;
 
@@ -56,9 +56,9 @@ public:
 
   bool loadMidiMap(const std::string& file, const Instruments& i);
 
-  std::string midimapFile();
+  std::string getMidimapFile() const;
 
-  bool isValid();
+  bool isValid() const;
 
 protected:
   MidiMapper mmap;
