@@ -113,7 +113,7 @@ ConfigFile::~ConfigFile()
 {
 	if (fp != nullptr)
 	{
-		DEBUG(configfile, "File has not been closed by the client...\n";
+		DEBUG(configfile, "File has not been closed by the client...\n");
 	}
 }
 
