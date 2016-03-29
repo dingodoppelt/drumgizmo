@@ -33,19 +33,19 @@
 #include <string.h>
 #include <stdlib.h>
 
-std::string getPath(std::string file)
+std::string getPath(const std::string& file)
 {
-  std::string p;
+	std::string p;
 #ifndef __MINGW32__
-  char *b = strdup(file.c_str());
-  p = dirname(b);
-  free(b);
+	char *b = strdup(file.c_str());
+	p = dirname(b);
+	free(b);
 #else
-  char drive[_MAX_DRIVE];
-  char dir[_MAX_DIR];
-  _splitpath(file.c_str(), drive, dir, NULL, NULL);
-  p = std::string(drive) + dir;
+	char drive[_MAX_DRIVE];
+	char dir[_MAX_DIR];
+	_splitpath(file.c_str(), drive, dir, NULL, NULL);
+	p = std::string(drive) + dir;
 #endif
 
-  return p;
+	return p;
 }
