@@ -1,3 +1,11 @@
+Version 0.9.10
+==============
+Release date: March 30th 2016
+Contributors: deva, suhr
+ - Fix the 'no sound from plugin when resampler active' bug.
+ - Fix the 'freeze on tempo change' bug.
+ - Fix backspace in lineedits.
+
 Version 0.9.9
 =============
 Release date: March 24th 2016
