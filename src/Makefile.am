@@ -13,7 +13,6 @@ EXTRA_DIST = \
 	channelmixer.h \
 	chresampler.h \
 	configfile.h \
-	configuration.h \
 	configparser.h \
 	cpp11fix.h \
 	drumgizmo.h \
@@ -54,7 +53,6 @@ EXTRA_DIST = \
 	channelmixer.cc \
 	chresampler.cc \
 	configfile.cc \
-	configuration.cc \
 	configparser.cc \
 	drumgizmo.cc \
 	drumkit.cc \

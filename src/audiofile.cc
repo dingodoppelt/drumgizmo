@@ -36,8 +36,6 @@
 #include <sndfile.h>
 #include <hugin.hpp>
 
-#include "configuration.h"
-
 AudioFile::AudioFile(const std::string& filename, int filechannel)
 {
 	is_loaded = false;

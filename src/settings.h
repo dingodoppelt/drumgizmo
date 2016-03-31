@@ -31,20 +31,34 @@
 #include <cassert>
 
 #include "atomic.h"
+//bool Conf::enable_velocity_modifier = true;
+//float Conf::velocity_modifier_falloff = 0.5;
+//float Conf::velocity_modifier_weight = 0.25;
+//
+//bool Conf::enable_velocity_randomiser = false;
+//float Conf::velocity_randomiser_weight = 0.1;
+//
+//int Conf::samplerate = 44100;
+//
+//bool Conf::enable_resampling = true;
+
+//operator Atomic<bool>
 
 //! Engine settings
 struct Settings
 {
-	Atomic<bool> enable_velocity_modifier;
-	Atomic<float> velocity_modifier_falloff;
-	Atomic<float> velocity_modifier_weight;
+	Atomic<std::string> foo{"foo"};
 
-	Atomic<bool> enable_velocity_randomiser;
-	Atomic<float> velocity_randomiser_weight;
+	Atomic<bool> enable_velocity_modifier{true};
+	Atomic<float> velocity_modifier_falloff{0.5};
+	Atomic<float> velocity_modifier_weight{0.25};
 
-	Atomic<double> samplerate;
+	Atomic<bool> enable_velocity_randomiser{false};
+	Atomic<float> velocity_randomiser_weight{0.1};
 
-	Atomic<bool> enable_resampling;
+	Atomic<double> samplerate{44100.0};
+
+	Atomic<bool> enable_resampling{true};
 
 	Atomic<int> number_of_files;
 	Atomic<int> number_of_files_loaded;
@@ -66,6 +80,13 @@ public:
 	{
 		T tmp = cache;
 		cache.exchange(value);
+
+		if(firstAccess)
+		{
+			firstAccess = false;
+			return true;
+		}
+
 		return tmp == cache;
 	}
 
@@ -75,6 +96,7 @@ public:
 	}
 
 private:
+	bool firstAccess{true};
 	Atomic<T>& value;
 	Atomic<T> cache;
 };

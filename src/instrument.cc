@@ -29,7 +29,6 @@
 #include <hugin.hpp>
 
 #include "sample.h"
-#include "configuration.h"
 
 Instrument::Instrument(Settings& settings)
 	: settings(settings)
