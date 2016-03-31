@@ -76,6 +76,7 @@ public:
 		: mutex{}
 		, data{}
 	{
+		std::lock_guard<std::mutex> lock{mutex};
 		std::lock_guard<std::mutex> lock{other.mutex};
 		data = other.data;
 	}
@@ -84,6 +85,7 @@ public:
 		: mutex{}
 		, data{}
 	{
+		std::lock_guard<std::mutex> lock{mutex};
 		std::lock_guard<std::mutex> lock{other.mutex};
 		std::swap(data, other.data);
 	}
