@@ -28,85 +28,69 @@
 
 #include <mutex>
 
-// type trait helper
+template <typename T> class Group;
 
-template <typename T, typename... Types>
-struct pack_contains;
+template <typename T> class Accessor
+{
+private:
+	std::lock_guard<std::mutex> lock;
 
-template <typename T, typename... Types>
-struct pack_contains<T, T, Types...>
-	: std::true_type {
+public:
+	Accessor(Group<T>& parent)
+		: lock{parent.mutex}
+		, data{parent.data}
+	{
+	}
+
+	T& data;
 };
 
-template <typename T, typename Head, typename... Types>
-struct pack_contains<T, Head, Types...>
-	: pack_contains<T, Types...> {
-};
+template <typename T> class Group
+{
+private:
+	friend class Accessor<T>;
 
-template <typename T>
-struct pack_contains<T>
-	: std::false_type {
-};
+	mutable std::mutex mutex;
+	T data;
 
-// --------------------------------------------------------------------
+public:
+	Group()
+		: mutex{}
+		, data{}
+	{
+	}
 
-template <typename T>
-class Group;
+	Group(T const& data)
+		: mutex{}
+		, data{data}
+	{
+	}
 
-template <typename T>
-class Accessor {
-	private:
-		std::lock_guard<std::mutex> lock;
-		
-	public:
-		Accessor(Group<T>& parent)
-			: lock{parent.mutex}
-			, data{parent.data} {
-		}
-		
-		T& data;
-};
+	Group(T&& data)
+		: mutex{}
+		, data{std::move(data)}
+	{
+	}
 
-template <typename T>
-class Group {
-	private:
-		friend class Accessor<T>;
-		
-		mutable std::mutex mutex;
-		T data;
-		
-	public:
-		Group()
-			: mutex{}
-			,  data{} {
-		}
-		
-		Group(T const & data)
-			: mutex{}
-			, data{data} {
-		}
-		
-		Group(T&& data)
-			: mutex{}
-			, data{std::move(data)} {
-		}
-		
-		Group(Group<T> const & other)
-			: mutex{}
-			, data{} {
-			std::lock_guard<std::mutex> lock{other.mutex};
-			data = other.data;
-		}
-		
-		Group(Group<T>&& other)
-			: mutex{}
-			, data{} {
-			std::lock_guard<std::mutex> lock{other.mutex};
-			std::swap(data, other.data);
-		}
-		
-		operator T() const {
-			std::lock_guard<std::mutex> lock{mutex};
-			return data;
-		}
+	Group(Group<T> const& other)
+		: mutex{}
+		, data{}
+	{
+		std::lock_guard<std::mutex> lock{other.mutex};
+		data = other.data;
+	}
+
+	Group(Group<T>&& other)
+		: mutex{}
+		, data{}
+	{
+		std::lock_guard<std::mutex> lock{other.mutex};
+		std::swap(data, other.data);
+	}
+
+	operator T() const
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		return data;
+	}
 };
