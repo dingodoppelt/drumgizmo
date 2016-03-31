@@ -93,7 +93,7 @@ public:
 		if (*this != &other)
 		{
 			std::lock_guard<std::mutex> lock{mutex};
-			std::lock_guard<std::mutex> lock{other.mutex};
+			std::lock_guard<std::mutex> lock2{other.mutex};
 			data = other.data;
 		}
 		return *this;
@@ -104,8 +104,8 @@ public:
 		if (*this != &other)
 		{
 			std::lock_guard<std::mutex> lock{mutex};
-			std::lock_guard<std::mutex> lock{other.mutex};
-			std::swap(data, tmp.data);
+			std::lock_guard<std::mutex> lock2{other.mutex};
+			std::swap(data, other.data);
 		}
 		return *this;
 	}
