@@ -34,8 +34,6 @@ class SyncedSettingsTest
 	CPPUNIT_TEST_SUITE(SyncedSettingsTest);
 	CPPUNIT_TEST(groupCanBeDefaultInitialized);
 	CPPUNIT_TEST(groupDataCanBeCopied);
-	CPPUNIT_TEST(groupCanBeCreatedByReference);
-	CPPUNIT_TEST(groupCanBeCreatedByRvalueReference);
 	
 	CPPUNIT_TEST(accessorCanGetFields);
 	CPPUNIT_TEST(accessorCanSetFields);
@@ -44,6 +42,8 @@ class SyncedSettingsTest
 	CPPUNIT_TEST(groupHasMoveCtor);
 	CPPUNIT_TEST(groupHasCopyAssignOp);
 	CPPUNIT_TEST(groupHasMoveAssignOp);
+	
+	CPPUNIT_TEST(mimicRealUse);
 	CPPUNIT_TEST_SUITE_END();
 	
 	private:
@@ -66,18 +66,14 @@ class SyncedSettingsTest
 			(TestData)data; // copies
 		}
 		
-		void groupCanBeCreatedByReference() {
-			TestData tmp{3.f, false, "hello"};
-			Group<TestData> data{tmp};
-			TestData copy = data;
-			CPPUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-			CPPUNIT_ASSERT_EQUAL(copy.bar, false);
-			CPPUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
-		}
-		
-		void groupCanBeCreatedByRvalueReference() {
-			TestData tmp{3.f, false, "hello"};
-			Group<TestData> data{std::move(tmp)};
+		void accessorCanSetFields() {
+			Group<TestData> data;
+			{
+				Accessor<TestData> a{data};
+				a.data.foo = 3.f;
+				a.data.bar = false;
+				a.data.msg = "hello";
+			}
 			TestData copy = data;
 			CPPUNIT_ASSERT_EQUAL(copy.foo, 3.f);
 			CPPUNIT_ASSERT_EQUAL(copy.bar, false);
@@ -85,26 +81,22 @@ class SyncedSettingsTest
 		}
 		
 		void accessorCanGetFields() {
-			TestData tmp{3.f, false, "hello"};
-			Group<TestData> data{tmp};
-			Accessor<TestData> a{data};
-			CPPUNIT_ASSERT_EQUAL(a.data.foo, 3.f);
-			CPPUNIT_ASSERT_EQUAL(a.data.bar, false);
-			CPPUNIT_ASSERT_EQUAL(a.data.msg, std::string{"hello"});
+			Group<TestData> data;
+			{
+				Accessor<TestData> a{data};
+				a.data.foo = 3.f;
+				a.data.bar = false;
+				a.data.msg = "hello";
+			}
+			// now read
+			{
+				Accessor<TestData> a{data};
+				CPPUNIT_ASSERT_EQUAL(a.data.foo, 3.f);
+				CPPUNIT_ASSERT_EQUAL(a.data.bar, false);
+				CPPUNIT_ASSERT_EQUAL(a.data.msg, std::string{"hello"});
+			}
 		}
 		
-		void accessorCanSetFields() {
-			Group<TestData> data;
-			Accessor<TestData> a{data};
-			a.data.foo = 3.f;
-			a.data.bar = false;
-			a.data.msg = "hello";
-			TestData copy = data;
-			CPPUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-			CPPUNIT_ASSERT_EQUAL(copy.bar, false);
-			CPPUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
-		}
-	
 		void groupHasCopyCtor() {
 			Group<TestData> tmp;
 			{
@@ -165,7 +157,58 @@ class SyncedSettingsTest
 			CPPUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 		}
 		
-		// todo: further testing
+		void mimicRealUse() {
+			struct Settings {
+				struct Foo {
+					int a, b;
+					bool enabled;
+				};
+				struct Bar {
+					float a, b;
+					bool enabled;
+				};
+				struct Idk {
+					std::string label;
+					float bla;
+				};
+				
+				Group<Foo> foo;
+				Group<Bar> bar;
+				Group<Idk> idk;
+			};
+			
+			Settings s;
+			
+			// set some settings
+			{
+				Accessor<Settings::Foo> tmp{s.foo};
+				tmp.data.enabled = true;
+				tmp.data.a = 3;
+			}
+			{
+				Accessor<Settings::Bar> tmp{s.bar};
+				tmp.data.enabled = false;
+				tmp.data.a = 0.f;
+				tmp.data.b = 0.f;
+			}
+			{
+				Accessor<Settings::Idk> tmp{s.idk};
+				tmp.data.label = "hello world";
+				tmp.data.bla = 3.14f;
+			}
+			
+			// read some settings
+			{
+				Accessor<Settings::Foo> tmp{s.foo};
+				if (tmp.data.enabled) {
+					// do some while locked
+				}
+			}
+			Settings::Bar copy = s.bar;
+			if (copy.enabled) {
+				// do some stuff without locking
+			}
+		}
 };
 
 // Registers the fixture into the 'registry'
