@@ -160,54 +160,41 @@ class SyncedSettingsTest
 		void mimicRealUse() {
 			struct Settings {
 				struct Foo {
-					int a, b;
-					bool enabled;
+					float a{5};
+					float b{3};
+					bool enabled{true};
 				};
 				struct Bar {
-					float a, b;
-					bool enabled;
-				};
-				struct Idk {
-					std::string label;
-					float bla;
+					std::string label{"empty"};
+					float bla{0.f};
 				};
 				
 				Group<Foo> foo;
 				Group<Bar> bar;
-				Group<Idk> idk;
 			};
 			
 			Settings s;
 			
-			// set some settings
-			{
-				Accessor<Settings::Foo> tmp{s.foo};
-				tmp.data.enabled = true;
-				tmp.data.a = 3;
-			}
+			// set bar settings
 			{
 				Accessor<Settings::Bar> tmp{s.bar};
-				tmp.data.enabled = false;
-				tmp.data.a = 0.f;
-				tmp.data.b = 0.f;
-			}
-			{
-				Accessor<Settings::Idk> tmp{s.idk};
 				tmp.data.label = "hello world";
 				tmp.data.bla = 3.14f;
 			}
 			
-			// read some settings
+			// read foo settings
 			{
 				Accessor<Settings::Foo> tmp{s.foo};
 				if (tmp.data.enabled) {
 					// do some while locked
 				}
 			}
-			Settings::Bar copy = s.bar;
+			// or:
+			Settings::Foo copy = s.foo;
 			if (copy.enabled) {
 				// do some stuff without locking
 			}
+			CPPUNIT_ASSERT(copy.enabled);
 		}
 };
 
