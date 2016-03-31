@@ -38,7 +38,7 @@ private:
 public:
 	Accessor(Group<T>& parent)
 		: lock{parent.mutex}
-		, data{parent.data}
+		, data(parent.data)
 	{
 	}
 
