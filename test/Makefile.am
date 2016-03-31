@@ -29,7 +29,6 @@ audiocache_SOURCES = \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
-	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	test.cc \
 	audiocachetest.cc
@@ -43,7 +42,6 @@ audiocachefile_SOURCES = \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
-	$(top_srcdir)/src/configuration.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	test.cc \
 	audiocachefiletest.cc
