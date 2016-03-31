@@ -79,8 +79,6 @@ private:
 	size_t lastpos;
 	float mod;
 	Settings& settings;
-};
-
 	Random rand;
 };
 
