@@ -3,7 +3,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 TESTS = resource engine gui resampler lv2 configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
-	memchecker random atomictest
+	memchecker random atomictest syncedsettingstest
 
 check_PROGRAMS = $(TESTS)
 
@@ -142,6 +142,11 @@ atomictest_CXXFLAGS = -DOUTPUT=\"atomictest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
 atomictest_LDFLAGS = $(CPPUNIT_LIBS)
 atomictest_SOURCES = atomictest.cc test.cc
+
+syncedsettingstest_CXXFLAGS = -DOUTPUT=\"syncedsettingstest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
+syncedsettingstest_LDFLAGS = $(CPPUNIT_LIBS)
+syncedsettingstest_SOURCES = syncedsettings.cc test.cc
 
 EXTRA_DIST = \
 	lv2_test_host.h
