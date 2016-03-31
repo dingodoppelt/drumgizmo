@@ -209,7 +209,7 @@ void DrumKitParser::endTag(const std::string& name)
 			if(c->num == NO_CHANNEL)
 			{
 				ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
-				      c->name.c_str(), i->name().c_str());
+				      c->name.c_str(), i->getName().c_str());
 			}
 			else {
 				/*

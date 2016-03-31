@@ -37,7 +37,7 @@ public:
 	Velocity(unsigned int lower, unsigned int upper);
 
 	void addSample(Sample* sample, float probability);
-	Sample* getSample() const;
+	Sample* getSample();
 
 	unsigned int lower;
 	unsigned int upper;

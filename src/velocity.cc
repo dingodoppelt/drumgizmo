@@ -47,7 +47,7 @@ void Velocity::addSample(Sample* sample, float probability)
 	}
 }
 
-Sample* Velocity::getSample() const
+Sample* Velocity::getSample()
 {
 	Sample* sample{nullptr};
 
