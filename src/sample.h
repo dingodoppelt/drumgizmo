@@ -32,21 +32,20 @@
 #include "channel.h"
 #include "audiofile.h"
 
-typedef std::map<Channel*, AudioFile*> AudioFiles;
+using AudioFiles = std::map<Channel*, AudioFile*>;
 
-class Sample
-{
+class Sample {
 	friend class InstrumentParser;
 	friend class PowerList;
-
 public:
 	Sample(const std::string& name, float power);
 	~Sample();
 
-	AudioFile* getAudioFile(InstrumentChannel* c);
+	AudioFile* getAudioFile(InstrumentChannel *instrument_channel);
 
 private:
-	void addAudioFile(InstrumentChannel* c, AudioFile* a);
+	void addAudioFile(InstrumentChannel* instrument_channel,
+	                  AudioFile* audio_file);
 
 	std::string name;
 	float power;
