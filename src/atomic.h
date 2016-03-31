@@ -37,6 +37,11 @@ class Atomic;
 template <typename T>
 class Atomic<T, typename std::enable_if<std::is_pod<T>::value>::type>
 	: public std::atomic<T> {
+	
+	public:
+		// inherit methods
+		using std::atomic<T>::atomic;
+		using std::atomic<T>::operator=;
 };
 
 // else work around it using a mutex
