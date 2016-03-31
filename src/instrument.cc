@@ -26,9 +26,6 @@
  */
 #include "instrument.h"
 
-#include <cstdlib>
-//#include <stdio.h>
-
 #include <hugin.hpp>
 
 #include "sample.h"
@@ -82,8 +79,7 @@ Sample* Instrument::sample(level_t level, size_t pos)
 
 	if(enable_velocity_randomiser)
 	{
-		float r = (float)rand() / (float)RAND_MAX; // random number: [0;1]
-		r -= 0.5; // random number [-0.5;0.5]
+		float r = rand.floatInRange(-0.5f, 0.5f);
 		r *= velocity_randomiser_weight * 2; // ex. random number [-0.1;0.1]
 		level += r;
 		if(level > 1.0)
@@ -121,8 +117,8 @@ Sample* Instrument::sample(level_t level, size_t pos)
 			return NULL;
 		}
 
-		size_t idx = rand()%(s.size());
-		sample = s[idx];
+		//size_t idx = ::rand()%(s.size());
+		sample = rand.choose<Sample*>(s);
 	}
 
 	if(enable_velocity_modifier)
