@@ -60,18 +60,6 @@ public:
 	{
 	}
 
-	Group(T const& data)
-		: mutex{}
-		, data{data}
-	{
-	}
-
-	Group(T&& data)
-		: mutex{}
-		, data{std::move(data)}
-	{
-	}
-
 	Group(Group<T> const& other)
 		: mutex{}
 		, data{}
