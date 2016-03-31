@@ -36,6 +36,12 @@ class AtomicTest
 	CPPUNIT_TEST(atomicFloatUsesStandardImpl);
 	CPPUNIT_TEST(atomicBoolUsesStandardImpl);
 	CPPUNIT_TEST(atomicStringCanBeUsed);
+	CPPUNIT_TEST(podAtomicCanBeDefaultInitialized);
+	CPPUNIT_TEST(nonPodAtomicCanBeDefaultInitialized);
+	CPPUNIT_TEST(podAtomicCanBeValueInitialized);
+	CPPUNIT_TEST(nonPodAtomicCanBeValueInitialized);
+	CPPUNIT_TEST(podAtomicCanBeValueAssigned);
+	CPPUNIT_TEST(nonPodAtomicCanBeValueAssigned);
 	CPPUNIT_TEST_SUITE_END();
 	
 	public:
@@ -61,6 +67,38 @@ class AtomicTest
 		void atomicStringCanBeUsed() {
 			// note: if it couldn't be used, the compiler would complain
 			Atomic<std::string> tmp;
+		}
+		
+		void podAtomicCanBeDefaultInitialized() {
+			Atomic<int> i;
+			// note: i is initialized with garbage
+		}
+		
+		void nonPodAtomicCanBeDefaultInitialized() {
+			Atomic<std::string> s;
+			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{});
+		}
+		
+		void podAtomicCanBeValueInitialized() {
+			Atomic<int> i{5};
+			CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+		}
+		
+		void nonPodAtomicCanBeValueInitialized() {
+			Atomic<std::string> s{"hello world"};
+			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+		}
+		
+		void podAtomicCanBeValueAssigned() {
+			Atomic<int> i;
+			i = 5;
+			CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+		}
+		
+		void nonPodAtomicCanBeValueAssigned() {
+			Atomic<std::string> s;
+			s = "hello world";
+			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
 		}
 		
 		// todo: further testing
