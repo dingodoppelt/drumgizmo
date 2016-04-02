@@ -38,75 +38,85 @@ class Atomic;
 // use std::atomic if possible
 template <typename T>
 class Atomic<T, typename std::enable_if<std::is_pod<T>::value>::type>
-	: public std::atomic<T> {
-	
-	public:
-		// inherit methods
-		using std::atomic<T>::atomic;
-		using std::atomic<T>::operator=;
+	: public std::atomic<T>
+{
+public:
+	// inherit methods
+	using std::atomic<T>::atomic;
+	using std::atomic<T>::operator=;
 };
 
 // else work around it using a mutex
 template <typename T>
-class Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type> {
-	public:
-		using self_type = Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type>;
+class Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type>
+{
+public:
+	using self_type =
+		Atomic<T, typename std::enable_if<!std::is_pod<T>::value>::type>;
 
-		Atomic()
-			: data{}
-			, mutex{} {
-		}
+	Atomic()
+		: data{}
+		, mutex{}
+	{
+	}
 
-		Atomic(T data)
-			: data{std::move(data)}
-			, mutex{} {
-		}
+	Atomic(T data)
+		: data{std::move(data)}
+		, mutex{}
+	{
+	}
 
-		Atomic(self_type const & other)
-			: data{}
-			, mutex{} {
-			std::lock_guard<std::mutex> lock{other.mutex};
-			data = other.data;
-		}
+	Atomic(self_type const & other)
+		: data{}
+		, mutex{}
+	{
+		std::lock_guard<std::mutex> lock{other.mutex};
+		data = other.data;
+	}
 
-		Atomic(self_type&& other)
-			: data{}
-			, mutex{} {
-			std::lock_guard<std::mutex> lock{other.mutex};
-			std::swap(data, other.data);
-		}
+	Atomic(self_type&& other)
+		: data{}
+		, mutex{}
+	{
+		std::lock_guard<std::mutex> lock{other.mutex};
+		std::swap(data, other.data);
+	}
 
-		T operator=(T data) {
-			std::lock_guard<std::mutex> lock{mutex};
-			this->data = std::move(data);
-			return this->data;
-		}
+	T operator=(T data)
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		this->data = std::move(data);
+		return this->data;
+	}
 
-		operator T() const {
-			return load();
-		}
+	operator T() const
+	{
+		return load();
+	}
 
-		bool is_lock_free() const {
-			return false;
-		}
+	bool is_lock_free() const
+	{
+		return false;
+	}
 
-		void store(T data) {
-			std::lock_guard<std::mutex> lock{mutex};
-			this->data = std::move(data);
-		}
+	void store(T data)
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		this->data = std::move(data);
+	}
 
-		T load() const {
-			std::lock_guard<std::mutex> lock{mutex};
-			return data;
-		}
+	T load() const {
+		std::lock_guard<std::mutex> lock{mutex};
+		return data;
+	}
 
-		T exchange(T data){
-			std::lock_guard<std::mutex> lock{mutex};
-			std::swap(data, this->data);
-			return data;
-		}
+	T exchange(T data){
+		std::lock_guard<std::mutex> lock{mutex};
+		std::swap(data, this->data);
+		return data;
+	}
 
-	private:
-		T data;
-		mutable std::mutex mutex;
+private:
+	T data;
+	mutable std::mutex mutex;
 };
