@@ -31,30 +31,16 @@
 #include <cassert>
 
 #include "atomic.h"
-//bool Conf::enable_velocity_modifier = true;
-//float Conf::velocity_modifier_falloff = 0.5;
-//float Conf::velocity_modifier_weight = 0.25;
-//
-//bool Conf::enable_velocity_randomiser = false;
-//float Conf::velocity_randomiser_weight = 0.1;
-//
-//int Conf::samplerate = 44100;
-//
-//bool Conf::enable_resampling = true;
-
-//operator Atomic<bool>
 
 //! Engine settings
 struct Settings
 {
-	Atomic<std::string> foo{"foo"};
-
 	Atomic<bool> enable_velocity_modifier{true};
-	Atomic<float> velocity_modifier_falloff{0.5};
-	Atomic<float> velocity_modifier_weight{0.25};
+	Atomic<float> velocity_modifier_falloff{0.5f};
+	Atomic<float> velocity_modifier_weight{0.25f};
 
 	Atomic<bool> enable_velocity_randomiser{false};
-	Atomic<float> velocity_randomiser_weight{0.1};
+	Atomic<float> velocity_randomiser_weight{0.1f};
 
 	Atomic<double> samplerate{44100.0};
 
@@ -87,7 +73,7 @@ public:
 			return true;
 		}
 
-		return tmp == cache;
+		return tmp != cache;
 	}
 
 	T getValue() const
