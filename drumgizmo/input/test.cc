@@ -42,12 +42,12 @@ TestInputEngine::~TestInputEngine()
 {
 }
 
-bool TestInputEngine::init(Instruments& instruments)
+bool TestInputEngine::init(const Instruments& instruments)
 {
   return true;
 }
 
-void TestInputEngine::setParm(std::string parm, std::string value)
+void TestInputEngine::setParm(const std::string& parm, const std::string& value)
 {
 /*
 	if(parm == "probability")
