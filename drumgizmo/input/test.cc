@@ -49,20 +49,18 @@ bool TestInputEngine::init(const Instruments& instruments)
 
 void TestInputEngine::setParm(const std::string& parm, const std::string& value)
 {
-/*
-	if(parm == "probability")
+	if(parm == "p")
 	{
   		probability = atof(value.c_str());
 	}
-	if(parm == "instrument")
+	if(parm == "instr")
 	{
 		instrument = atoi(value.c_str());
 	}
-	if(parm == "length")
+	if(parm == "len")
 	{
 		length = atoi(value.c_str());
 	}
-*/	
 }
 
 bool TestInputEngine::start()
@@ -80,7 +78,6 @@ void TestInputEngine::pre()
 
 void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
-/*
 	if((float)rand() / (float)RAND_MAX > probability) 
 	{
 		return;
@@ -111,7 +108,6 @@ void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 
 	event.velocity = (float)rand()/(float)RAND_MAX;
 	event.offset = len;
-*/
 }
 
 void TestInputEngine::post()

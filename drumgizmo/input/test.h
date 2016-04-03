@@ -31,7 +31,7 @@
 #include "audioinputengine.h"
 
 class TestInputEngine
-	: AudioInputEngine
+	: public AudioInputEngine
 {
 public:
 	TestInputEngine();
