@@ -41,6 +41,10 @@
 #include "input/inputdummy.h"
 #endif
 
+#ifdef HAVE_INPUT_TEST
+#include "input/test.h"
+#endif
+
 #ifdef HAVE_INPUT_MIDIFILE
 #include "input/midifile.h"
 #endif

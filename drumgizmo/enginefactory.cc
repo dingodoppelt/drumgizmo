@@ -40,6 +40,9 @@ EngineFactory::EngineFactory()
 #ifdef HAVE_INPUT_DUMMY
 	input.push_back("inputdummy");
 #endif
+#ifdef HAVE_INPUT_TEST
+	input.push_back("test");
+#endif
 #ifdef HAVE_INPUT_MIDIFILE
 	input.push_back("midifile");
 #endif
@@ -88,6 +91,12 @@ std::unique_ptr<AudioInputEngine> EngineFactory::createInput(const std::string& 
 	if(name == "dummy")
 	{
 		return std::make_unique<DummyInputEngine>();
+	}
+#endif
+#ifdef HAVE_INPUT_TEST
+	if(name == "test")
+	{
+		return std::make_unique<TestInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_MIDIFILE
