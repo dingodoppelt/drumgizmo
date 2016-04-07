@@ -116,7 +116,67 @@ public:
 		return data;
 	}
 
+	bool operator==(const T& other) const
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		return other == data;
+	}
+
+	bool operator!=(const T& other) const
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		return !(other == data);
+	}
+
+	bool operator==(const Atomic<T>& other) const
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		return other.load() == data;
+	}
+
+	bool operator!=(const Atomic<T>& other) const
+	{
+		std::lock_guard<std::mutex> lock{mutex};
+		return !(other.load() == data);
+	}
+
 private:
 	T data;
 	mutable std::mutex mutex;
+};
+
+//! Getter utility class.
+template <typename T> class SettingRef
+{
+public:
+	SettingRef(Atomic<T>& value)
+		: value(value)
+	{
+		// string isn't lock free either
+		assert((std::is_same<T, std::string>::value || value.is_lock_free()));
+	}
+
+	bool hasChanged()
+	{
+		T tmp = cache;
+		cache.exchange(value);
+
+		if(firstAccess)
+		{
+			firstAccess = false;
+			return true;
+		}
+
+		return cache != tmp;
+	}
+
+	T getValue() const
+	{
+		return cache;
+	}
+
+private:
+	bool firstAccess{true};
+	Atomic<T>& value;
+	Atomic<T> cache;
 };

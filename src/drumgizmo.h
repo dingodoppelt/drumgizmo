@@ -31,25 +31,15 @@
 
 #include "audiooutputengine.h"
 #include "audioinputengine.h"
-
 #include "events.h"
 #include "audiofile.h"
 #include "drumkit.h"
 #include "memchecker.h"
-
 #include "drumkitloader.h"
 #include "audiocache.h"
-
 #include "mutex.h"
-
-#include "message.h"
-
-#include "messagereceiver.h"
-
 #include "chresampler.h"
-
 #include "configfile.h"
-
 #include "settings.h"
 
 #define MAX_NUM_CHANNELS 64
@@ -57,7 +47,6 @@
 #define RESAMPLER_INPUT_BUFFER 64
 
 class DrumGizmo
-	: public MessageReceiver
 {
 public:
 	DrumGizmo(Settings& settings,
@@ -76,8 +65,6 @@ public:
 
 	std::string configString();
 	bool setConfigString(std::string cfg);
-
-	void handleMessage(Message *msg);
 
 	int samplerate();
 	void setSamplerate(int samplerate);
@@ -112,4 +99,5 @@ protected:
 
 	std::vector<event_t> events;
 	Settings& settings;
+	SettingsGetter getter{settings};
 };

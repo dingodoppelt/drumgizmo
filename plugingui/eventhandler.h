@@ -26,9 +26,10 @@
  */
 #pragma once
 
+#include <notifier.h>
+
 #include "guievent.h"
 #include "nativewindow.h"
-#include "notifier.h"
 
 namespace GUI {
 

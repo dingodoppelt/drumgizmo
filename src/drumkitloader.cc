@@ -184,18 +184,14 @@ void DrumKitLoader::thread_main()
 			audiofile->load(preload_size);
 		}
 
-		loaded++;
+		++loaded;
 
-		if(loaded % fraction == 0 || loaded == total_num_audiofiles)
+		settings.number_of_files.store(total_num_audiofiles);
+		settings.number_of_files_loaded.store(loaded);
+
+		if(total_num_audiofiles == loaded)
 		{
-			//LoadStatusMessage *ls = new LoadStatusMessage();
-			//ls->number_of_files = total_num_audiofiles;
-			//ls->numer_of_files_loaded = loaded;
-			//ls->current_file = filename;
-			//msghandler.sendMessage(MSGRCV_UI, ls);
-			settings.number_of_files.store(total_num_audiofiles);
-			settings.number_of_files_loaded.store(loaded);
-			//settings.current_file.store(filename);
+			settings.drumkit_load_status.store(LoadStatus::Done);
 		}
 	}
 

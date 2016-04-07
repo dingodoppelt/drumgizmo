@@ -26,24 +26,20 @@
  */
 #pragma once
 
+#include <settings.h>
+#include <notifier.h>
+
 #include "dgwindow.h"
 #include "eventhandler.h"
-
 #include "pluginconfig.h"
-
-#include <settings.h>
-
-#include "messagereceiver.h"
-#include "notifier.h"
 
 namespace GUI {
 
 class PluginGUI
-	: public MessageReceiver
-	, public Listener
+	: public Listener
 {
 public:
-	PluginGUI(void* native_window = nullptr);
+	PluginGUI(Settings& settings, void* native_window = nullptr);
 	virtual ~PluginGUI();
 
 	//! Process all events and messages in queue
@@ -56,30 +52,12 @@ public:
 	void show();
 	void hide();
 
-
-	void handleMessage(Message* msg);
-
 	DGWindow* window{nullptr};
 	EventHandler* eventhandler{nullptr};
 
 	Config* config{nullptr};
 
 	Notifier<> closeNotifier;
-
-	// Setting notifiers:
-	Notifier<bool> enable_velocity_modifier_notifier;
-	Notifier<float> velocity_modifier_falloff_notifier;
-	Notifier<float> velocity_modifier_weight_notifier;
-
-	Notifier<bool> enable_velocity_randomiser_notifier;
-	Notifier<float> velocity_randomiser_weight_notifier;
-
-	Notifier<double> samplerate_notifier;
-
-	Notifier<bool> enable_resampling_notifier;
-
-	Notifier<float> drumkit_file_progress_notifier;
-	//Notifier<std::string> current_file_notifier;
 
 	// Support old interface a little while longer..
 	void setWindowClosedCallback(void (*handler)(void*), void* ptr);
@@ -97,8 +75,8 @@ private:
 	void (*windowClosedHandler)(void *){nullptr};
 	void *windowClosedPtr{nullptr};
 
-	Settings settings;
-	SettingsGetter getter{settings};
+	Settings& settings;
+	SettingsNotifier settings_notifier{settings};
 };
 
 } // GUI::

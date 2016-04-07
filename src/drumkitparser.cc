@@ -34,7 +34,7 @@
 #include "path.h"
 #include "drumgizmo.h"
 
-DrumKitParser::DrumKitParser(Settings& setting, DrumKit& k)
+DrumKitParser::DrumKitParser(Settings& settings, DrumKit& k)
 	: kit(k)
 	, refs(REFSFILE)
 	, settings(settings)

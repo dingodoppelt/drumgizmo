@@ -23,13 +23,11 @@ EXTRA_DIST = \
 	instrument.h \
 	instrumentparser.h \
 	memchecker.h \
-	message.h \
-	messagehandler.h \
-	messagereceiver.h \
 	midimapparser.h \
 	midimapper.h \
 	mutex.h \
 	nolocale.h \
+	notifier.h \
 	path.h \
 	powerlist.h \
 	rangemap.h \
@@ -62,8 +60,6 @@ EXTRA_DIST = \
 	instrument.cc \
 	instrumentparser.cc \
 	memchecker.cc \
-	messagehandler.cc \
-	messagereceiver.cc \
 	midimapparser.cc \
 	midimapper.cc \
 	mutex.cc \

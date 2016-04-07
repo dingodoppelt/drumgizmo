@@ -72,7 +72,7 @@ namespace aux
 };
 
 
-namespace GUI {
+//namespace GUI {
 
 class Listener;
 class NotifierBase {
@@ -158,6 +158,6 @@ private:
 
 };
 
-} // GUI::
+//} // GUI::
 
 #define CONNECT(SRC, SIG, TAR, SLO) (SRC)->SIG.connect(TAR, SLO)

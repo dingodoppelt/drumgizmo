@@ -26,15 +26,15 @@
  */
 #pragma once
 
-#include "widget.h"
+#include <notifier.h>
 
+#include "widget.h"
 #include "button.h"
 #include "listbox.h"
 #include "lineedit.h"
 #include "label.h"
 #include "image.h"
 #include "directory.h"
-#include "notifier.h"
 
 namespace GUI {
 

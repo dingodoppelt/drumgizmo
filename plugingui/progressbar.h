@@ -46,8 +46,8 @@ public:
 	ProgressBar(Widget *parent);
 	~ProgressBar();
 
-	float progress();
-	void setProgress(float progress);
+	void setTotal(int total);
+	void setValue(int value);
 
 	void setState(ProgressBarState state);
 
@@ -56,7 +56,7 @@ protected:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
-	ProgressBarState state;
+	ProgressBarState state{ProgressBarState::Blue};
 
 	Painter::Bar bar_bg;
 
@@ -64,7 +64,8 @@ private:
 	Painter::Bar bar_blue;
 	Painter::Bar bar_red;
 
-	float _progress;
+	int total{0};
+	int value{0};
 };
 
 } // GUI::

@@ -143,7 +143,7 @@ bool DrumGizmoPlugin::hasGUI()
 
 void DrumGizmoPlugin::createWindow(void *parent)
 {
-	plugin_gui = std::make_shared<GUI::PluginGUI>(parent);
+	plugin_gui = std::make_shared<GUI::PluginGUI>(settings, parent);
 	resizeWindow(370, 330);
 	onShowWindow();
 }

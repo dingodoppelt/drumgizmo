@@ -38,6 +38,7 @@
 #include <hugin.hpp>
 
 #include <config.h>
+#include <memory>
 
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
@@ -47,8 +48,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine *o, AudioInputEngine *i)
-	: MessageReceiver(MSGRCV_ENGINE)
-	, loader(settings)
+	: loader(settings)
 	, oe(o)
 	, ie(i)
 	, framesize(0)
@@ -69,9 +69,12 @@ DrumGizmo::~DrumGizmo()
 
 bool DrumGizmo::loadkit(std::string file)
 {
+	settings.drumkit_load_status.store(LoadStatus::Idle);
+
 	if(file == "")
 	{
-		return 1;
+		settings.drumkit_load_status.store(LoadStatus::Error);
+		return false;
 	}
 
 	DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
@@ -82,20 +85,24 @@ bool DrumGizmo::loadkit(std::string file)
 	// Delete all Channels, Instruments, Samples and AudioFiles.
 	kit.clear();
 
+	settings.drumkit_load_status.store(LoadStatus::Loading);
+
 	DrumKitParser parser(settings, kit);
 	if(parser.parseFile(file))
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
+		settings.drumkit_load_status.store(LoadStatus::Error);
 		return false;
 	}
 
-	// Check if there is enough free RAM to load the drumkit.
-	if(!memchecker.enoughFreeMemory(kit))
-	{
-		printf("WARNING: "
-		       "There doesn't seem to be enough RAM available to load the kit.\n"
-		       "Trying to load it anyway...\n");
-	}
+	// TODO: Re-introduce when the code has been moved to the loader thread.
+	//// Check if there is enough free RAM to load the drumkit.
+	//if(!memchecker.enoughFreeMemory(kit))
+	//{
+	//	printf("WARNING: "
+	//	       "There doesn't seem to be enough RAM available to load the kit.\n"
+	//	       "Trying to load it anyway...\n");
+	//}
 
 	loader.loadKit(&kit);
 
@@ -124,79 +131,6 @@ bool DrumGizmo::init()
 	}
 
 	return true;
-}
-
-void DrumGizmo::handleMessage(Message *msg)
-{
-	DEBUG(msg, "got message.");
-	switch(msg->type()) {
-	case Message::LoadDrumKit:
-		{
-			DEBUG(msg, "got LoadDrumKitMessage message.");
-			LoadDrumKitMessage *m = (LoadDrumKitMessage*)msg;
-			loadkit(m->drumkitfile);
-			//init(true);
-		}
-		break;
-	case Message::LoadMidimap:
-		DEBUG(msg, "got LoadMidimapMessage message.");
-		if(!ie->isMidiEngine())
-		{
-			break;
-		}
-		{
-			AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-			LoadMidimapMessage *m = (LoadMidimapMessage*)msg;
-			bool ret = aim->loadMidiMap(m->midimapfile, kit.instruments);
-
-			LoadStatusMessageMidimap *ls = new LoadStatusMessageMidimap();
-			ls->success = ret;
-			msghandler.sendMessage(MSGRCV_UI, ls);
-		}
-		break;
-	case Message::EngineSettingsMessage:
-		{
-			bool mmap_loaded = false;
-			std::string mmapfile;
-			if(ie->isMidiEngine())
-			{
-				AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-				mmapfile = aim->getMidimapFile();
-				mmap_loaded = aim->isValid();
-			}
-
-			EngineSettingsMessage *msg = new EngineSettingsMessage();
-			msg->midimapfile = mmapfile;
-			msg->midimap_loaded = mmap_loaded;
-			msg->drumkitfile = kit.getFile();
-			msg->drumkit_loaded = loader.isDone();
-			msg->enable_velocity_modifier = settings.enable_velocity_modifier.load();
-			msg->velocity_modifier_falloff = settings.velocity_modifier_falloff.load();
-			msg->velocity_modifier_weight = settings.velocity_modifier_weight.load();
-			msg->enable_velocity_randomiser = settings.enable_velocity_randomiser.load();
-			msg->velocity_randomiser_weight = settings.velocity_randomiser_weight.load();
-			msghandler.sendMessage(MSGRCV_UI, msg);
-		}
-		break;
-	case Message::ChangeSettingMessage:
-		{
-			ChangeSettingMessage *ch = (ChangeSettingMessage*)msg;
-			switch(ch->name) {
-			case ChangeSettingMessage::enable_velocity_modifier:
-				settings.enable_velocity_modifier.store(ch->value);
-				break;
-			case ChangeSettingMessage::velocity_modifier_weight:
-				settings.velocity_modifier_weight.store(ch->value);
-				break;
-			case ChangeSettingMessage::velocity_modifier_falloff:
-				settings.velocity_modifier_falloff.store(ch->value);
-				break;
-			}
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 void DrumGizmo::setFrameSize(size_t framesize)
@@ -260,8 +194,31 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
 	setFrameSize(nsamples);
 
-	// Handle engine messages, at most one in each iteration:
-	handleMessages(1);
+	// TODO: Move this to DrumKitLoader thread.
+	if(getter.drumkit_file.hasChanged())
+	{
+		loadkit(getter.drumkit_file.getValue());
+	}
+
+	// TODO: Move this to DrumKitLoader thread.
+	if(getter.midimap_file.hasChanged())
+	{
+		auto ie_midi = dynamic_cast<AudioInputEngineMidi*>(ie);
+		if(ie_midi)
+		{
+			settings.midimap_load_status.store(LoadStatus::Loading);
+			bool ret = ie_midi->loadMidiMap(getter.midimap_file.getValue(),
+			                                kit.instruments);
+			if(ret)
+			{
+				settings.midimap_load_status.store(LoadStatus::Done);
+			}
+			else
+			{
+				settings.midimap_load_status.store(LoadStatus::Error);
+			}
+		}
+	}
 
 	ie->pre();
 	oe->pre(nsamples);
@@ -712,8 +669,8 @@ bool DrumGizmo::setConfigString(std::string cfg)
 	ConfigParser p;
 	if(p.parseString(cfg))
 	{
-	 ERR(drumgizmo, "Config parse error.\n");
-	 return false;
+		ERR(drumgizmo, "Config parse error.\n");
+		return false;
 	}
 
 	if(p.value("enable_velocity_modifier") != "")
@@ -747,27 +704,15 @@ bool DrumGizmo::setConfigString(std::string cfg)
 	}
 
 	std::string newkit = p.value("drumkitfile");
-	if(newkit != "" && kit.getFile() != newkit)
+	if(newkit != "")
 	{
-		/*
-		  if(!loadkit(p.values["drumkitfile"]))
-		  {
-		  return false;
-		  }
-		  init(true);
-		*/
-		LoadDrumKitMessage *msg = new LoadDrumKitMessage();
-		msg->drumkitfile = newkit;
-		msghandler.sendMessage(MSGRCV_ENGINE, msg);
+		settings.drumkit_file.store(newkit);
 	}
 
 	std::string newmidimap = p.value("midimapfile");
 	if(newmidimap != "")
 	{
-		//midimapfile = newmidimap;
-		LoadMidimapMessage *msg = new LoadMidimapMessage();
-		msg->midimapfile = newmidimap;
-		msghandler.sendMessage(MSGRCV_ENGINE, msg);
+		settings.midimap_file.store(newmidimap);
 	}
 
 	return true;

@@ -42,7 +42,7 @@ Instrument::Instrument(Settings& settings)
 
 Instrument::~Instrument()
 {
-	magic = NULL;
+	magic = nullptr;
 
 	DEBUG(instrument, "delete %p\n", this);
 	std::vector<AudioFile*>::iterator i = audiofiles.begin();
@@ -60,8 +60,6 @@ bool Instrument::isValid() const
 
 Sample* Instrument::sample(level_t level, size_t pos)
 {
-	Sample *sample = NULL;
-
 	// Read out all values from settings.
 	auto enable_velocity_randomiser = settings.enable_velocity_randomiser.load();
 	auto velocity_randomiser_weight = settings.velocity_randomiser_weight.load();
@@ -69,6 +67,8 @@ Sample* Instrument::sample(level_t level, size_t pos)
 	auto velocity_modifier_falloff = settings.velocity_modifier_falloff.load();
 	auto enable_velocity_modifier = settings.enable_velocity_modifier.load();
 	auto velocity_modifier_weight = settings.velocity_modifier_weight.load();
+
+	Sample *sample = nullptr;
 
 	if(enable_velocity_modifier == false)
 	{
@@ -78,14 +78,13 @@ Sample* Instrument::sample(level_t level, size_t pos)
 
 	if(enable_velocity_randomiser)
 	{
-		float r = rand.floatInRange(-0.5f, 0.5f);
-		r *= velocity_randomiser_weight * 2; // ex. random number [-0.1;0.1]
+		float r = rand.floatInRange(-1.0 * velocity_randomiser_weight,
+		                            velocity_randomiser_weight);
 		level += r;
 		if(level > 1.0)
 		{
 			level = 1.0;
 		}
-
 		if(level < 0.0)
 		{
 			level = 0.0;
@@ -94,8 +93,7 @@ Sample* Instrument::sample(level_t level, size_t pos)
 
 	if(enable_velocity_modifier)
 	{
-		mod += (pos - lastpos) /
-			(samplerate * velocity_modifier_falloff);
+		mod += (pos - lastpos) / (samplerate * velocity_modifier_falloff);
 		if(mod > 1.0)
 		{
 			mod = 1.0;
@@ -113,11 +111,10 @@ Sample* Instrument::sample(level_t level, size_t pos)
 		std::vector<Sample*> s = samples.get(level * mod);
 		if(s.size() == 0)
 		{
-			return NULL;
+			return nullptr;
 		}
 
-		//size_t idx = ::rand()%(s.size());
-		sample = rand.choose<Sample*>(s);
+		sample = rand.choose(s);
 	}
 
 	if(enable_velocity_modifier)

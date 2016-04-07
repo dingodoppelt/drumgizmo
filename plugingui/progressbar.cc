@@ -26,6 +26,8 @@
  */
 #include "progressbar.h"
 
+#include <iostream>
+
 namespace GUI {
 
 ProgressBar::ProgressBar(Widget *parent)
@@ -46,9 +48,6 @@ ProgressBar::ProgressBar(Widget *parent)
 	bar_green.left    = new Image(":progress_front_green_l.png");
 	bar_green.right   = new Image(":progress_front_green_r.png");
 	bar_green.center  = new Image(":progress_front_green_c.png");
-
-	state = ProgressBarState::Blue;
-	_progress = .5;
 }
 
 ProgressBar::~ProgressBar()
@@ -79,22 +78,31 @@ void ProgressBar::setState(ProgressBarState state)
 	}
 }
 
-float ProgressBar::progress()
+void ProgressBar::setTotal(int total)
 {
-	return _progress;
+	if(this->total != total)
+	{
+		this->total = total;
+		repaintEvent(nullptr);
+	}
 }
 
-void ProgressBar::setProgress(float progress)
+void ProgressBar::setValue(int value)
 {
-	_progress = progress;
-	repaintEvent(nullptr);
+	if(this->value != value)
+	{
+		this->value = value;
+		repaintEvent(nullptr);
+	}
 }
 
 void ProgressBar::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
-	int max = width() * _progress;
+	float progress = (float)value / (float)total;
+
+	int max = width() * progress;
 
 	p.clear();
 

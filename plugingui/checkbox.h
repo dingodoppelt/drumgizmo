@@ -26,9 +26,10 @@
  */
 #pragma once
 
+#include <notifier.h>
+
 #include "widget.h"
 #include "image.h"
-#include "notifier.h"
 
 namespace GUI {
 
