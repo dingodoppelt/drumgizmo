@@ -27,87 +27,101 @@
 #include "semaphore.h"
 
 #include <hugin.hpp>
-
 #include <limits>
+#include <assert.h>
 
 #ifdef WIN32
 #include <windows.h>
 #else
-// Make sure we don't include /this/ file...
+// Make sure we don't include /this/ files header...
 #include <../include/semaphore.h>
+#include <errno.h>
+#include <stdio.h>
 #endif
 
 struct semaphore_private_t {
 #ifdef WIN32
-  HANDLE semaphore; 
+	HANDLE semaphore;
 #else
-  sem_t semaphore;
+	sem_t semaphore;
 #endif
 };
 
-Semaphore::Semaphore(const char *name)
+Semaphore::Semaphore(std::size_t initial_count)
 {
-  this->name = name;
-  //  DEBUG(semaphore, "Create [%s]\n", name);
-
-  prv = new struct semaphore_private_t();
+	prv = new struct semaphore_private_t();
 
 #ifdef WIN32
-  prv->semaphore = CreateSemaphore(NULL,  // default security attributes
-                                   0, // initial count
-                                   std::numeric_limits<LONG>::max(),
-                                   NULL); // unnamed semaphore
+	prv->semaphore = CreateSemaphore(nullptr,  // default security attributes
+	                                 initial_count,
+	                                 std::numeric_limits<LONG>::max(),
+	                                 nullptr); // unnamed semaphore
 #else
-  sem_init(&prv->semaphore, 0, 0);
+	const int pshared = 0;
+	sem_init(&prv->semaphore, pshared, initial_count);
 #endif
 }
 
 Semaphore::~Semaphore()
 {
-  //  DEBUG(semaphore, "Delete [%s]\n", name);
-
 #ifdef WIN32
-  CloseHandle(prv->semaphore);
+	CloseHandle(prv->semaphore);
 #else
-  sem_destroy(&prv->semaphore);
+	sem_destroy(&prv->semaphore);
 #endif
 
-  delete prv;
+	delete prv;
 }
 
 void Semaphore::post()
 {
-  //  DEBUG(semaphore, "Post [%s]\n", name);
-
 #ifdef WIN32
-  ReleaseSemaphore(prv->semaphore, 1, NULL);
+	ReleaseSemaphore(prv->semaphore, 1, NULL);
 #else
-  sem_post(&prv->semaphore);
+	sem_post(&prv->semaphore);
 #endif
+}
+
+bool Semaphore::wait(const std::chrono::milliseconds& timeout)
+{
+#ifdef WIN32
+	DWORD ret = WaitForSingleObject(prv->semaphore, timeout.count());
+	if(ret == WAIT_TIMEOUT)
+	{
+		return false;
+	}
+
+	assert(ret == WAIT_OBJECT_0);
+#else
+	struct timespec t = {
+		// Whole seconds:
+		(time_t)(timeout.count() % 1000),
+
+		// Remainder as nanoseconds:
+		(long)((timeout.count() - (t.tv_sec * timeout.count())) * 1000000)
+	};
+
+	int ret = sem_timedwait(&prv->semaphore, &t);
+	if(ret < 0)
+	{
+		if(errno == ETIMEDOUT)
+		{
+			return false;
+		}
+
+		perror("sem_timedwait()");
+		assert(false);
+	}
+#endif
+
+	return true;
 }
 
 void Semaphore::wait()
 {
-  //  DEBUG(semaphore, "Wait [%s]\n", name);
-
 #ifdef WIN32
-  WaitForSingleObject(prv->semaphore, INFINITE);
+	WaitForSingleObject(prv->semaphore, INFINITE);
 #else
-  sem_wait(&prv->semaphore);
+	sem_wait(&prv->semaphore);
 #endif
 }
-
-#ifdef TEST_SEMAPHORE
-//deps:
-//cflags: -I.. $(PTHREAD_CFLAGS)
-//libs: $(PTHREAD_LIBS)
-#include <test.h>
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-TEST_TRUE(false, "No tests yet!");
-
-TEST_END;
-
-#endif/*TEST_SEMAPHORE*/

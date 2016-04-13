@@ -32,8 +32,7 @@
 #include "drumgizmo.h"
 
 DrumKitLoader::DrumKitLoader(Settings& settings)
-	: semaphore("drumkitloader")
-	, framesize(0)
+	: framesize(0)
 	, settings(settings)
 {
 	run();
