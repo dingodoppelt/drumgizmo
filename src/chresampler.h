@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <stdlib.h>
+#include <config.h>
 
 /**
  * Channel resampler class using either zita-resampler or secret rabbit code
