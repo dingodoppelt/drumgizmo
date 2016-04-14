@@ -162,19 +162,19 @@ double CHResampler::getRatio() const
 #else
 
 // Dummy implementation
-CHResampler::CHResampler() {}
+CHResampler::CHResampler() {} 
 CHResampler::~CHResampler() {}
 void CHResampler::setup(double, double) {}
 void CHResampler::setInputSamples(float*, size_t) {}
 void CHResampler::setOutputSamples(float*, size_t) {}
 void CHResampler::process() {}
 
-size_t CHResampler::getInputSampleCount()
+size_t CHResampler::getInputSampleCount() const
 {
 	return 0;
 }
 
-size_t CHResampler::getOutputSampleCount()
+size_t CHResampler::getOutputSampleCount() const
 {
 	return 0;
 }

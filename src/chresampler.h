@@ -54,10 +54,12 @@ public:
 
 	double getRatio() const;
 
+#ifdef WITH_RESAMPLER
 private:
 	class Prv;
 	std::unique_ptr<Prv> prv;
 
 	double input_fs;
 	double output_fs;
+#endif /*WITH_RESAMPLER*/
 };
