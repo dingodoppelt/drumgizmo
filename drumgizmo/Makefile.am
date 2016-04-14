@@ -30,6 +30,11 @@ drumgizmo_SOURCES += input/inputdummy.cc
 drumgizmo_CXXFLAGS += -DHAVE_INPUT_DUMMY
 endif # HAVE_INPUT_DUMMY
 
+if HAVE_INPUT_TEST
+drumgizmo_SOURCES += input/test.cc
+drumgizmo_CXXFLAGS += -DHAVE_INPUT_TEST
+endif # HAVE_INPUT_TEST
+
 if HAVE_INPUT_MIDIFILE
 drumgizmo_CXXFLAGS += $(SMF_CFLAGS)
 drumgizmo_LDADD += $(SMF_LIBS)
@@ -71,11 +76,13 @@ EXTRA_DIST = \
 	jackclient.h \
 	enginefactory.h \
 	input/inputdummy.h \
+	input/test.h \
 	input/jackmidi.h \
 	input/midifile.h \
 	output/alsa.h \
 	output/jackaudio.h \
 	output/outputdummy.h \
+	output/test.h \
 	output/wavfile.h
 
 endif # ENABLE_CLI
