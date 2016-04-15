@@ -95,10 +95,10 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 #else
 	struct timespec t = {
 		// Whole seconds:
-		(time_t)(timeout.count() % 1000),
+		(time_t)(timeout.count() / 1000),
 
 		// Remainder as nanoseconds:
-		(long)((timeout.count() - (t.tv_sec * timeout.count())) * 1000000)
+		(long)((timeout.count() - ((timeout.count() / 1000) * 1000)) * 1000000)
 	};
 
 	int ret = sem_timedwait(&prv->semaphore, &t);
