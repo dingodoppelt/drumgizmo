@@ -26,15 +26,17 @@
  */
 #include "plugingui.h"
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include <hugin.hpp>
 
-// Dummy Engine class.
-class Engine : public MessageHandler {
-public:
-	void handleMessage(Message *msg) {}
-};
+#include <notifier.h>
+#include <settings.h>
 
-class TestMain : public GUI::Listener {
+class TestMain : public Listener {
 public:
 	TestMain()
 	{
@@ -62,7 +64,8 @@ public:
 
 	bool running = true;
 
-	GUI::PluginGUI gui;
+	Settings settings;
+	GUI::PluginGUI gui{settings};
 };
 
 int main()

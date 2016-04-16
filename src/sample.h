@@ -32,34 +32,22 @@
 #include "channel.h"
 #include "audiofile.h"
 
-typedef std::map<Channel*, AudioFile*> AudioFiles;
+using AudioFiles = std::map<Channel*, AudioFile*>;
 
-class InstrumentParser;
-class Sample
-{
+class Sample {
 	friend class InstrumentParser;
 	friend class PowerList;
-
 public:
 	Sample(const std::string& name, float power);
 	~Sample();
 
-	AudioFile* getAudioFile(InstrumentChannel* c);
+	AudioFile* getAudioFile(InstrumentChannel *instrument_channel);
 
 private:
-	void addAudioFile(InstrumentChannel* c, AudioFile* a);
+	void addAudioFile(InstrumentChannel* instrument_channel,
+	                  AudioFile* audio_file);
 
 	std::string name;
 	float power;
 	AudioFiles audiofiles;
 };
-
-/*
- *   <sample name="kick-r-1">
- *    <audiofile channel="Alesis-3" file="samples/1-kick-r-Alesis-3.wav"/>
- *    <audiofile channel="Amb L-3" file="samples/1-kick-r-Amb L-3.wav"/>
- *    <audiofile channel="Amb R-3" file="samples/1-kick-r-Amb R-3.wav"/>
- *    <audiofile channel="Kick L-3" file="samples/1-kick-r-Kick L-3.wav"/>
- *    <audiofile channel="Kick R-3" file="samples/1-kick-r-Kick R-3.wav"/>
- *   </sample>
- */

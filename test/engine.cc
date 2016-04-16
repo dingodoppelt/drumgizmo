@@ -40,9 +40,10 @@ public:
 	void tearDown() {}
 
   void loading() {
+	  Settings settings;
     AudioOutputEngine *oe = NULL;
     AudioInputEngine *ie = NULL;
-    DrumGizmo dg(oe, ie);
+    DrumGizmo dg(settings, oe, ie);
     dg.setFrameSize(100);
 
     // Switch kits emmidiately with giving the loader time to work:

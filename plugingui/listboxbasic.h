@@ -29,11 +29,12 @@
 #include <string.h>
 #include <vector>
 
+#include <notifier.h>
+
 #include "widget.h"
 #include "font.h"
 #include "painter.h"
 #include "scrollbar.h"
-#include "notifier.h"
 
 namespace GUI {
 

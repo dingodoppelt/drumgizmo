@@ -27,52 +27,54 @@
 #pragma once
 
 #include <atomic>
+#include <string>
 #include <cassert>
 
-template <typename T> class SettingRef
+#include "atomic.h"
+#include "notifier.h"
+
+enum class LoadStatus : unsigned int
 {
-public:
-	SettingRef(std::atomic<T>& value)
-		: value{value}
-		, cache{}
-	{
-		// string isn't lock free either
-		assert((std::is_same<T, std::string>::value || value.is_lock_free()));
-	}
-
-	bool hasChanged()
-	{
-		T tmp = cache;
-		cache.exchange(value);
-		return tmp == cache;
-	}
-
-	T getValue() const
-	{
-		return cache;
-	}
-
-private:
-	std::atomic<T>& value;
-	std::atomic<T> cache;
+	Idle,
+	Loading,
+	Done,
+	Error
 };
 
+//! Engine settings
 struct Settings
 {
-	std::atomic<bool> enable_velocity_modifier;
-	std::atomic<float> velocity_modifier_falloff;
-	std::atomic<float> velocity_modifier_weight;
+	Atomic<std::string> drumkit_file;
+	Atomic<LoadStatus> drumkit_load_status{LoadStatus::Idle};
 
-	std::atomic<bool> enable_velocity_randomiser;
-	std::atomic<float> velocity_randomiser_weight;
+	Atomic<std::string> midimap_file;
+	Atomic<LoadStatus> midimap_load_status{LoadStatus::Idle};
 
-	std::atomic<int> samplerate;
+	Atomic<bool> enable_velocity_modifier{true};
+	Atomic<float> velocity_modifier_falloff{0.5f};
+	Atomic<float> velocity_modifier_weight{0.25f};
 
-	std::atomic<bool> enable_resampling;
+	Atomic<bool> enable_velocity_randomiser{false};
+	Atomic<float> velocity_randomiser_weight{0.1f};
+
+	Atomic<double> samplerate{44100.0};
+
+	Atomic<bool> enable_resampling{true};
+
+	Atomic<std::size_t> number_of_files;
+	Atomic<std::size_t> number_of_files_loaded;
+	Atomic<std::string> current_file;
 };
 
+//! Settings getter class.
 struct SettingsGetter
 {
+	SettingRef<std::string> drumkit_file;
+	SettingRef<LoadStatus> drumkit_load_status;
+
+	SettingRef<std::string> midimap_file;
+	SettingRef<LoadStatus> midimap_load_status;
+
 	SettingRef<bool> enable_velocity_modifier;
 	SettingRef<float> velocity_modifier_falloff;
 	SettingRef<float> velocity_modifier_weight;
@@ -80,48 +82,125 @@ struct SettingsGetter
 	SettingRef<bool> enable_velocity_randomiser;
 	SettingRef<float> velocity_randomiser_weight;
 
-	SettingRef<int> samplerate;
+	SettingRef<double> samplerate;
 
 	SettingRef<bool> enable_resampling;
 
+	SettingRef<std::size_t> number_of_files;
+	SettingRef<std::size_t> number_of_files_loaded;
+	SettingRef<std::string> current_file;
+
 	SettingsGetter(Settings& settings)
-		: enable_velocity_modifier{settings.enable_velocity_modifier}
+		: drumkit_file(settings.drumkit_file)
+		, drumkit_load_status(settings.drumkit_load_status)
+		, midimap_file(settings.midimap_file)
+		, midimap_load_status(settings.midimap_load_status)
+		, enable_velocity_modifier{settings.enable_velocity_modifier}
 		, velocity_modifier_falloff{settings.velocity_modifier_falloff}
 		, velocity_modifier_weight{settings.velocity_modifier_weight}
 		, enable_velocity_randomiser{settings.enable_velocity_randomiser}
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
 		, samplerate{settings.samplerate}
 		, enable_resampling{settings.enable_resampling}
+		, number_of_files{settings.number_of_files}
+		, number_of_files_loaded{settings.number_of_files_loaded}
+		, current_file{settings.current_file}
 	{
 	}
+};
+
+//! Settings change notifier class.
+class SettingsNotifier
+{
+public:
+	Notifier<std::string> drumkit_file;
+	Notifier<LoadStatus> drumkit_load_status;
+
+	Notifier<std::string> midimap_file;
+	Notifier<LoadStatus> midimap_load_status;
+
+	Notifier<bool> enable_velocity_modifier;
+	Notifier<float> velocity_modifier_falloff;
+	Notifier<float> velocity_modifier_weight;
+
+	Notifier<bool> enable_velocity_randomiser;
+	Notifier<float> velocity_randomiser_weight;
+
+	Notifier<double> samplerate;
+
+	Notifier<bool> enable_resampling;
+
+	Notifier<std::size_t> number_of_files;
+	Notifier<std::size_t> number_of_files_loaded;
+	Notifier<std::string> current_file;
+
+	void evaluate()
+	{
+#define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
+
+		EVAL(drumkit_file);
+		EVAL(drumkit_load_status);
+
+		EVAL(midimap_file);
+		EVAL(midimap_load_status);
+
+		EVAL(enable_velocity_modifier);
+		EVAL(velocity_modifier_falloff);
+		EVAL(velocity_modifier_weight);
+
+		EVAL(enable_velocity_randomiser);
+		EVAL(velocity_randomiser_weight);
+
+		EVAL(samplerate);
+
+		EVAL(enable_resampling);
+
+		EVAL(number_of_files);
+		EVAL(number_of_files_loaded);
+		EVAL(current_file);
+	}
+
+	SettingsNotifier(Settings& settings)
+		: settings(settings)
+	{
+	}
+
+private:
+	SettingsGetter settings;
 };
 
 // lovely reminder: NO, GLOCKE. NOOOO!!
 /*
 enum class IntParams {
-    Foo = 0
+	Foo = 0
 };
 
-struct Settings {
-    std::array<std::atomic<int>, 5> ints;
+struct Settings
+{
+	std::array<std::atomic<int>, 5> ints;
 
-    Settings()
-        : ints{} {
-        //get(IntParams::Foo).store(3);
-    }
+	Settings()
+		: ints{}
+	{
+		//get(IntParams::Foo).store(3);
+	}
 
-    std::atomic<int>& get(IntParams param) {
-        return ints[(size_t)param];
-    }
+	std::atomic<int>& get(IntParams param)
+	{
+		return ints[(size_t)param];
+	}
 };
 
-struct SettingsGetter {
-    std::vector<SettingRef<int>> ints;
+struct SettingsGetter
+{
+	std::vector<SettingRef<int>> ints;
 
-    SettingsGetter(Settings& parent) {
-        for (auto& atomic: parent.ints) {
-            ints.emplace_back(atomic);
-        }
-    }
+	SettingsGetter(Settings& parent)
+	{
+		for(auto& atomic: parent.ints)
+		{
+			ints.emplace_back(atomic);
+		}
+	}
 };
 */

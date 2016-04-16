@@ -26,86 +26,23 @@
  */
 #include "plugingui.h"
 
+#include <iostream>
+
 #include <hugin.hpp>
 
 #include "pluginconfig.h"
-#include "messagehandler.h"
 
 namespace GUI {
 
-PluginGUI::PluginGUI(void* native_window)
-	: MessageReceiver(MSGRCV_UI)
-	, native_window(native_window)
+PluginGUI::PluginGUI(Settings& settings, void* native_window)
+	: native_window(native_window)
+	, settings(settings)
 {
 	init();
 }
 
 PluginGUI::~PluginGUI()
 {
-}
-
-void PluginGUI::handleMessage(Message *msg)
-{
-	Painter p(*window);// Make sure we only redraw buffer once (set refcount to 1)
-
-	switch(msg->type()) {
-	case Message::LoadStatus:
-		{
-			LoadStatusMessage *ls = (LoadStatusMessage*)msg;
-			window->drumkitFileProgress->setProgress((float)ls->numer_of_files_loaded /
-			                              (float)ls->number_of_files);
-			if(ls->numer_of_files_loaded == ls->number_of_files)
-			{
-				window->drumkitFileProgress->setState(ProgressBarState::Green);
-			}
-		}
-		break;
-	case Message::LoadStatusMidimap:
-		{
-			LoadStatusMessageMidimap *ls = (LoadStatusMessageMidimap*)msg;
-			window->midimapFileProgress->setProgress(1);
-			if(ls->success)
-			{
-				window->midimapFileProgress->setState(ProgressBarState::Green);
-			}
-			else
-			{
-				window->midimapFileProgress->setState(ProgressBarState::Red);
-			}
-		}
-		break;
-	case Message::EngineSettingsMessage:
-		{
-			EngineSettingsMessage *settings = (EngineSettingsMessage *)msg;
-			window->lineedit->setText(settings->drumkitfile);
-			if(settings->drumkit_loaded)
-			{
-				window->drumkitFileProgress->setProgress(1);
-				window->drumkitFileProgress->setState(ProgressBarState::Green);
-			}
-			else
-			{
-				window->drumkitFileProgress->setProgress(0);
-				window->drumkitFileProgress->setState(ProgressBarState::Blue);
-			}
-			window->lineedit2->setText(settings->midimapfile);
-			if(settings->midimap_loaded)
-			{
-				window->midimapFileProgress->setProgress(1);
-				window->midimapFileProgress->setState(ProgressBarState::Green);
-			}
-			else
-			{
-				window->midimapFileProgress->setProgress(0);
-				window->midimapFileProgress->setState(ProgressBarState::Blue);
-			}
-			window->velocityCheck->setChecked(settings->enable_velocity_modifier);
-			window->attackKnob->setValue(settings->velocity_modifier_weight);
-			window->falloffKnob->setValue(settings->velocity_modifier_falloff);
-		}
-	default:
-		break;
-	}
 }
 
 bool PluginGUI::processEvents()
@@ -116,7 +53,12 @@ bool PluginGUI::processEvents()
 	}
 
 	window->eventHandler()->processEvents();
-	handleMessages();
+
+	{
+		Painter p(*window);
+
+		settings_notifier.evaluate();
+	}
 
 	if(closing)
 	{
@@ -135,17 +77,50 @@ void PluginGUI::init()
 	config = new Config();
 	config->load();
 
-	window = new DGWindow(native_window, msghandler, *config);
+	window = new DGWindow(native_window, *config, settings);
+
+
+	CONNECT(this, settings_notifier.drumkit_file,
+	        window->lineedit, &LineEdit::setText);
+	CONNECT(this, settings_notifier.drumkit_load_status,
+	        window, &DGWindow::setDrumKitLoadStatus);
+
+	CONNECT(this, settings_notifier.midimap_file,
+	        window->lineedit2, &LineEdit::setText);
+	CONNECT(this, settings_notifier.midimap_load_status,
+	        window, &DGWindow::setMidiMapLoadStatus);
+
+	CONNECT(this, settings_notifier.enable_velocity_modifier,
+	        window->velocityCheck, &CheckBox::setChecked);
+
+	CONNECT(this, settings_notifier.velocity_modifier_falloff,
+	        window->falloffKnob, &Knob::setValue);
+	CONNECT(this, settings_notifier.velocity_modifier_weight,
+	        window->attackKnob, &Knob::setValue);
+
+
+	// TODO:
+	//CONNECT(this, settings_notifier.enable_velocity_randomiser,
+	//        window->, &CheckBox::setChecked);
+	//CONNECT(this, settings_notifier.velocity_randomiser_weight,
+	//        window->, &Knob::setValue);
+
+	//CONNECT(this, settings_notifier.samplerate,
+	//        window->, &Knob::setValue);
+
+	//CONNECT(this, settings_notifier.enable_resampling,
+	//        window->, &CheckBox::setChecked);
+
+	CONNECT(this, settings_notifier.number_of_files,
+	        window->drumkitFileProgress, &ProgressBar::setTotal);
+
+	CONNECT(this, settings_notifier.number_of_files_loaded,
+	        window->drumkitFileProgress, &ProgressBar::setValue);
 
 	auto eventHandler = window->eventHandler();
 	CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
 
 	window->show();
-
-	{ // Request all engine settings
-		EngineSettingsMessage *msg = new EngineSettingsMessage();
-		msghandler.sendMessage(MSGRCV_ENGINE, msg);
-	}
 
 	initialised = true;
 }

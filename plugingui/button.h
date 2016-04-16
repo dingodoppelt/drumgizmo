@@ -28,9 +28,10 @@
 
 #include <string>
 
+#include <notifier.h>
+
 #include "widget.h"
 #include "painter.h"
-#include "notifier.h"
 #include "font.h"
 
 namespace GUI {

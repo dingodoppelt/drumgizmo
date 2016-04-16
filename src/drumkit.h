@@ -33,11 +33,9 @@
 #include "instrument.h"
 #include "versionstr.h"
 
-class DrumKitParser;
 class DrumKit
 {
 	friend class DrumKitParser;
-
 public:
 	DrumKit();
 	~DrumKit();

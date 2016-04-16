@@ -39,12 +39,11 @@ DrumKit::~DrumKit()
 
 void DrumKit::clear()
 {
-	Instruments::iterator i = instruments.begin();
-	while(i != instruments.end())
+	for(auto& instrument : instruments)
 	{
-		delete *i;
-		i++;
+		delete instrument;
 	}
+
 	instruments.clear();
 
 	channels.clear();
@@ -78,20 +77,3 @@ size_t DrumKit::getSamplerate() const
 {
 	return _samplerate;
 }
-
-#ifdef TEST_DRUMKIT
-// Additional dependency files
-// deps:
-// Required cflags (autoconf vars may be used)
-// cflags:
-// Required link options (autoconf vars may be used)
-// libs:
-#include "test.h"
-
-TEST_BEGIN;
-
-// TODO: Put some testcode here (see test.h for usable macros).
-
-TEST_END;
-
-#endif /*TEST_DRUMKIT*/

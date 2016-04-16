@@ -26,26 +26,20 @@
  */
 #pragma once
 
+#include <settings.h>
+#include <notifier.h>
+
 #include "dgwindow.h"
 #include "eventhandler.h"
-
 #include "pluginconfig.h"
-
-
-#include "thread.h"
-#include "semaphore.h"
-
-#include "messagereceiver.h"
-#include "notifier.h"
 
 namespace GUI {
 
 class PluginGUI
-	: public MessageReceiver
-	, public Listener
+	: public Listener
 {
 public:
-	PluginGUI(void* native_window = nullptr);
+	PluginGUI(Settings& settings, void* native_window = nullptr);
 	virtual ~PluginGUI();
 
 	//! Process all events and messages in queue
@@ -57,9 +51,6 @@ public:
 
 	void show();
 	void hide();
-
-
-	void handleMessage(Message* msg);
 
 	DGWindow* window{nullptr};
 	EventHandler* eventhandler{nullptr};
@@ -80,11 +71,12 @@ private:
 	volatile bool closing{false};
 	volatile bool initialised{false};
 
-	Semaphore sem{"plugingui"};
-
 	// For the old-style notifier.
 	void (*windowClosedHandler)(void *){nullptr};
 	void *windowClosedPtr{nullptr};
+
+	Settings& settings;
+	SettingsNotifier settings_notifier{settings};
 };
 
 } // GUI::

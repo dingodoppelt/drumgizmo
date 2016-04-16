@@ -16,9 +16,7 @@ plugingui_SOURCES = \
 	$(top_srcdir)/src/configfile.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
-	$(top_srcdir)/src/mutex.cc \
-	$(top_srcdir)/src/messagehandler.cc \
-	$(top_srcdir)/src/messagereceiver.cc
+	$(top_srcdir)/src/mutex.cc
 
 rcgen_SOURCES = rcgen.cc
 
@@ -46,7 +44,6 @@ EXTRA_DIST = \
 	nativewindow.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \
-	notifier.h \
 	painter.h \
 	pixelbuffer.h \
 	pluginconfig.h \

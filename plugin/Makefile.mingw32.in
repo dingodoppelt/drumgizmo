@@ -19,7 +19,6 @@ DG_SRC = \
 	@top_srcdir@/src/channelmixer.cc \
 	@top_srcdir@/src/chresampler.cc \
 	@top_srcdir@/src/configfile.cc \
-	@top_srcdir@/src/configuration.cc \
 	@top_srcdir@/src/configparser.cc \
 	@top_srcdir@/src/drumgizmo.cc \
 	@top_srcdir@/src/drumkit.cc \
@@ -29,8 +28,6 @@ DG_SRC = \
 	@top_srcdir@/src/instrument.cc \
 	@top_srcdir@/src/instrumentparser.cc \
 	@top_srcdir@/src/memchecker.cc \
-	@top_srcdir@/src/messagehandler.cc \
-	@top_srcdir@/src/messagereceiver.cc \
 	@top_srcdir@/src/midimapparser.cc \
 	@top_srcdir@/src/midimapper.cc \
 	@top_srcdir@/src/mutex.cc \

@@ -92,36 +92,7 @@ static const char usage_str[] =
     "  dummy:\n"
     "\n";
 
-CliMain::CliMain()
-	: MessageReceiver(MSGRCV_UI)
-{
-	loading = true; // Block by default
-}
-
-CliMain::~CliMain()
-{
-	hug_close();
-}
-
-void CliMain::handleMessage(Message* msg)
-{
-	switch(msg->type())
-	{
-	case Message::LoadStatus:
-		{
-			auto ls = static_cast<LoadStatusMessage*>(msg);
-			if(ls->numer_of_files_loaded == ls->number_of_files)
-			{
-				loading = false;
-			}
-		}
-		break;
-	default:
-		break;
-	}
-}
-
-int CliMain::run(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	int c;
 
@@ -372,7 +343,8 @@ int CliMain::run(int argc, char* argv[])
 
 	printf("Using kitfile: %s\n", kitfile.c_str());
 
-	DrumGizmo gizmo(oe.get(), ie.get());
+	Settings settings;
+	DrumGizmo gizmo(settings, oe.get(), ie.get());
 
 	gizmo.setFrameSize(oe->getBufferSize());
 
@@ -382,21 +354,37 @@ int CliMain::run(int argc, char* argv[])
 		return 1;
 	}
 
-	printf("Loading drumkit, this may take a while...");
-	fflush(stdout);
-	loading = true;
-	while(async == false && loading)
+	printf("Loading drumkit, this may take a while:\n");
+
+	if(!async)
 	{
+		while(settings.drumkit_load_status.load() != LoadStatus::Done)
+		{
 #ifdef WIN32
-		SleepEx(500, FALSE);
+			SleepEx(10, FALSE);
 #else
-		usleep(500000);
+			usleep(10000);
 #endif /*WIN32*/
-		handleMessages();
-		printf(".");
-		fflush(stdout);
+
+			int total = settings.number_of_files.load();
+			int loaded =  settings.number_of_files_loaded.load();
+
+			printf("\r%d of %d     ", loaded, total);
+			fflush(stdout);
+
+			if(settings.drumkit_load_status.load() == LoadStatus::Error)
+			{
+				printf("\nLoad error\n");
+				return 1;
+			}
+
+			if(loaded == total)
+			{
+				//break;
+			}
+		}
+		printf("\ndone\n");
 	}
-	printf("done.\n");
 
 	gizmo.setSamplerate(oe->getSamplerate());
 
@@ -411,14 +399,7 @@ int CliMain::run(int argc, char* argv[])
 	printf("Quit.\n");
 	fflush(stdout);
 
-	return 0;
-}
-
-int main(int argc, char* argv[])
-{
-	CliMain cli;
-
-	cli.run(argc, argv);
+	hug_close();
 
 	return 0;
 }

@@ -28,4 +28,5 @@
 
 #include <string>
 
+//! \returns path component of full filename with path.
 std::string getPath(const std::string& file);

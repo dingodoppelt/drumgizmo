@@ -29,7 +29,7 @@
 #include <list>
 #include <cstdlib>
 
-#include "notifier.h"
+#include <notifier.h>
 
 namespace GUI {
 

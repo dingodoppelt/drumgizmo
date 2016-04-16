@@ -26,14 +26,17 @@
  */
 #include "drumkitloader.h"
 
+#include <iostream>
+
 #include <hugin.hpp>
 
 #include "drumkitparser.h"
 #include "drumgizmo.h"
 
-DrumKitLoader::DrumKitLoader()
-	: semaphore("drumkitloader")
-	, framesize(0)
+DrumKitLoader::DrumKitLoader(Settings& settings)
+	: framesize(0)
+	, settings(settings)
+	, getter(settings)
 {
 	run();
 	run_semaphore.wait(); // Wait for the thread to actually start.
@@ -55,7 +58,7 @@ DrumKitLoader::~DrumKitLoader()
 void DrumKitLoader::stop()
 {
 	{
-		MutexAutolock l(mutex);
+		std::lock_guard<std::mutex> guard(mutex);
 		load_queue.clear();
 	}
 
@@ -66,68 +69,48 @@ void DrumKitLoader::stop()
 
 void DrumKitLoader::skip()
 {
-	MutexAutolock l(mutex);
+	std::lock_guard<std::mutex> guard(mutex);
 	load_queue.clear();
 }
 
 void DrumKitLoader::setFrameSize(size_t framesize)
 {
-	DEBUG(loader, "%s pre\n", __PRETTY_FUNCTION__);
-
-	{
-		MutexAutolock l(mutex);
-		this->framesize = framesize;
-		framesize_semaphore.post(); // Signal that the framesize has been set.
-	}
-
-	DEBUG(loader, "%s post\n", __PRETTY_FUNCTION__);
+	std::lock_guard<std::mutex> guard(mutex);
+	this->framesize = framesize;
+	framesize_semaphore.post(); // Signal that the framesize has been set.
 }
 
 bool DrumKitLoader::isDone()
 {
-	MutexAutolock l(mutex);
+	std::lock_guard<std::mutex> guard(mutex);
 	return load_queue.size() == 0;
 }
 
 void DrumKitLoader::loadKit(DrumKit *kit)
 {
-	MutexAutolock l(mutex);
+	std::lock_guard<std::mutex> guard(mutex);
 
 	DEBUG(loader, "Create AudioFile queue from DrumKit\n");
 
-	total_num_audiofiles = 0;// For UI Progress Messages
+	std::size_t total_num_audiofiles = 0;// For UI Progress Messages
 
-	{ // Count total number of files that need loading:
-		Instruments::iterator i = kit->instruments.begin();
-		while(i != kit->instruments.end())
-		{
-			Instrument *instr = *i;
-			total_num_audiofiles += instr->audiofiles.size();
-			++i;
-		}
-	}
-
-	fraction = total_num_audiofiles / 200;
-	if(fraction == 0)
+	// Count total number of files that need loading:
+	for(auto instr : kit->instruments)
 	{
-		fraction = 1;
+		total_num_audiofiles += instr->audiofiles.size();
 	}
 
-	{ // Now actually queue them for loading:
-		Instruments::iterator i = kit->instruments.begin();
-		while(i != kit->instruments.end())
+	settings.number_of_files.store(total_num_audiofiles);
+
+	// Now actually queue them for loading:
+	for(auto instr : kit->instruments)
+	{
+		std::vector<AudioFile*>::iterator af = instr->audiofiles.begin();
+		while(af != instr->audiofiles.end())
 		{
-			Instrument *instr = *i;
-
-			std::vector<AudioFile*>::iterator af = instr->audiofiles.begin();
-			while(af != instr->audiofiles.end())
-			{
-				AudioFile *audiofile = *af;
-				load_queue.push_back(audiofile);
-				af++;
-			}
-
-			++i;
+			AudioFile *audiofile = *af;
+			load_queue.push_back(audiofile);
+			af++;
 		}
 	}
 
@@ -151,23 +134,35 @@ void DrumKitLoader::thread_main()
 	{
 		size_t size;
 		{
-			MutexAutolock l(mutex);
+			std::lock_guard<std::mutex> guard(mutex);
 			size = load_queue.size();
 		}
 
 		// Only sleep if queue is empty.
 		if(size == 0)
 		{
-			semaphore.wait();
+			semaphore.wait(std::chrono::milliseconds(1000));
+		}
+
+		if(getter.drumkit_file.hasChanged())
+		{
+			//std::cout << "RELOAD DRUMKIT!" << std::endl;
+		}
+
+		if(getter.midimap_file.hasChanged())
+		{
+			//std::cout << "RELOAD MIDIMAP!" << std::endl;
 		}
 
 		std::string filename;
 		{
-			MutexAutolock l(mutex);
+			std::lock_guard<std::mutex> guard(mutex);
+
 			if(load_queue.size() == 0)
 			{
 				continue;
 			}
+
 			AudioFile *audiofile = load_queue.front();
 			load_queue.pop_front();
 			filename = audiofile->filename;
@@ -183,15 +178,13 @@ void DrumKitLoader::thread_main()
 			audiofile->load(preload_size);
 		}
 
-		loaded++;
+		++loaded;
 
-		if(loaded % fraction == 0 || loaded == total_num_audiofiles)
+		settings.number_of_files_loaded.store(loaded);
+
+		if(settings.number_of_files.load() == loaded)
 		{
-			LoadStatusMessage *ls = new LoadStatusMessage();
-			ls->number_of_files = total_num_audiofiles;
-			ls->numer_of_files_loaded = loaded;
-			ls->current_file = filename;
-			msghandler.sendMessage(MSGRCV_UI, ls);
+			settings.drumkit_load_status.store(LoadStatus::Done);
 		}
 	}
 

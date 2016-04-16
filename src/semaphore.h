@@ -24,22 +24,26 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __PRACRO_SEMAPHORE_H__
-#define __PRACRO_SEMAPHORE_H__
+#pragma once
+
+#include <chrono>
 
 struct semaphore_private_t;
 
-class Semaphore {
+class Semaphore
+{
 public:
-  Semaphore(const char *name = "");
-  ~Semaphore();
+	Semaphore(std::size_t initial_count = 0);
+	~Semaphore();
 
-  void post();
-  void wait();
+	void post();
+
+	//! Lock semaphore with timeout.
+	//! \returns true if the semaphore was locked, false on timeout.
+	bool wait(const std::chrono::milliseconds& timeout);
+
+	void wait();
 
 private:
 	struct semaphore_private_t *prv{nullptr};
-	const char *name{nullptr};
 };
-
-#endif/*__PRACRO_SEMAPHORE_H__*/

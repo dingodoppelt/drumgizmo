@@ -13,7 +13,6 @@ EXTRA_DIST = \
 	channelmixer.h \
 	chresampler.h \
 	configfile.h \
-	configuration.h \
 	configparser.h \
 	cpp11fix.h \
 	drumgizmo.h \
@@ -24,13 +23,11 @@ EXTRA_DIST = \
 	instrument.h \
 	instrumentparser.h \
 	memchecker.h \
-	message.h \
-	messagehandler.h \
-	messagereceiver.h \
 	midimapparser.h \
 	midimapper.h \
 	mutex.h \
 	nolocale.h \
+	notifier.h \
 	path.h \
 	powerlist.h \
 	rangemap.h \
@@ -54,7 +51,6 @@ EXTRA_DIST = \
 	channelmixer.cc \
 	chresampler.cc \
 	configfile.cc \
-	configuration.cc \
 	configparser.cc \
 	drumgizmo.cc \
 	drumkit.cc \
@@ -64,8 +60,6 @@ EXTRA_DIST = \
 	instrument.cc \
 	instrumentparser.cc \
 	memchecker.cc \
-	messagehandler.cc \
-	messagereceiver.cc \
 	midimapparser.cc \
 	midimapper.cc \
 	mutex.cc \

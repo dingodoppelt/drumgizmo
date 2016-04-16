@@ -33,7 +33,6 @@ JackAudioOutputEngine::JackAudioOutputEngine(JackClient& client)
 	: AudioOutputEngine{}
 	, client(client)
 	, channels{}
-	, sema{"jackaudio"}
 {
 	client.add(*this);
 }

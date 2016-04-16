@@ -26,8 +26,9 @@
  */
 #pragma once
 
-#include "window.h"
+#include <settings.h>
 
+#include "window.h"
 #include "label.h"
 #include "lineedit.h"
 #include "checkbox.h"
@@ -37,8 +38,6 @@
 #include "filebrowser.h"
 #include "layout.h"
 
-class MessageHandler;
-
 namespace GUI {
 
 class Config;
@@ -47,7 +46,7 @@ class File;
 
 class DGWindow : public Window {
 public:
-	DGWindow(void* native_window, MessageHandler& messageHandler, Config& config);
+	DGWindow(void* native_window, Config& config, Settings& settings);
 
 	Header* header;
 
@@ -65,6 +64,9 @@ public:
 	Knob* falloffKnob;
 	FileBrowser* fileBrowser;
 
+	void setDrumKitLoadStatus(LoadStatus load_status);
+	void setMidiMapLoadStatus(LoadStatus load_status);
+
 protected:
 	// From Widget:
 	void repaintEvent(RepaintEvent* repaintEvent) override;
@@ -78,13 +80,14 @@ private:
 	void selectKitFile(const std::string& filename);
 	void selectMapFile(const std::string& filename);
 
-	MessageHandler& messageHandler;
 	Config& config;
 
 	VBoxLayout layout{this};
 
 	Image back{":bg.png"};
 	Image logo{":logo.png"};
+
+	Settings& settings;
 };
 
 } // GUI::

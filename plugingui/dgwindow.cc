@@ -30,12 +30,12 @@
 #include "verticalline.h"
 #include "../version.h"
 
-#include "messagehandler.h"
 #include "pluginconfig.h"
 
 namespace GUI {
 
-class LabeledControl : public Widget
+class LabeledControl
+	: public Widget
 {
 public:
 	LabeledControl(Widget* parent, const std::string& name)
@@ -60,7 +60,8 @@ public:
 	Label caption{this};
 };
 
-class File : public Widget
+class File
+	: public Widget
 {
 public:
 	File(Widget* parent)
@@ -83,7 +84,8 @@ public:
 	Button browseButton{this};
 };
 
-class HumanizeControls : public Widget
+class HumanizeControls
+	: public Widget
 {
 public:
 	HumanizeControls(Widget* parent)
@@ -119,11 +121,10 @@ public:
 	Knob falloffKnob{&falloff};
 };
 
-DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
-                   Config& config)
+DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
 	: Window(native_window)
-	, messageHandler(messageHandler)
 	, config(config)
+	, settings(settings)
 {
 
 	int vlineSpacing = 16;
@@ -179,6 +180,7 @@ DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
 
 	midimapFileProgress = new ProgressBar(this);
 	midimapFileProgress->resize(width() - 40, 11);
+	midimapFileProgress->setTotal(2);
 	layout.addItem(midimapFileProgress);
 
 	VerticalLine *l2 = new VerticalLine(this);
@@ -207,7 +209,7 @@ DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
 	layout.addItem(l3);
 
 	Label *lbl_version = new Label(this);
-	lbl_version->setText(".::. v" VERSION "  .::.  http://www.drumgizmo.org  .::.  LGPLv3 .::.");
+	lbl_version->setText(".::.  v" VERSION "  .::.  http://www.drumgizmo.org  .::.  LGPLv3 .::.");
 	lbl_version->resize(width(), 20);
 	lbl_version->setAlignment(TextAlignment::center);
 	layout.addItem(lbl_version);
@@ -217,6 +219,50 @@ DGWindow::DGWindow(void* native_window, MessageHandler& messageHandler,
 	fileBrowser->move(0, 0);
 	fileBrowser->resize(this->width() - 1, this->height() - 1);
 	fileBrowser->hide();
+}
+
+void DGWindow::setDrumKitLoadStatus(LoadStatus load_status)
+{
+	ProgressBarState state = ProgressBarState::Blue;
+	switch(load_status)
+	{
+	case LoadStatus::Idle:
+	case LoadStatus::Loading:
+		state = ProgressBarState::Blue;
+		break;
+	case LoadStatus::Done:
+		state = ProgressBarState::Green;
+		break;
+	case LoadStatus::Error:
+		state = ProgressBarState::Red;
+		break;
+	}
+	drumkitFileProgress->setState(state);
+}
+
+void DGWindow::setMidiMapLoadStatus(LoadStatus load_status)
+{
+	ProgressBarState state = ProgressBarState::Blue;
+	switch(load_status)
+	{
+	case LoadStatus::Idle:
+		midimapFileProgress->setValue(0);
+		break;
+	case LoadStatus::Loading:
+		midimapFileProgress->setValue(1);
+		state = ProgressBarState::Blue;
+		break;
+	case LoadStatus::Done:
+		midimapFileProgress->setValue(2);
+		state = ProgressBarState::Green;
+		break;
+	case LoadStatus::Error:
+		midimapFileProgress->setValue(2);
+		state = ProgressBarState::Red;
+		break;
+	}
+
+	midimapFileProgress->setState(state);
 }
 
 void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
@@ -233,42 +279,42 @@ void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void DGWindow::attackValueChanged(float value)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_weight,
-														 value);
+	settings.velocity_modifier_weight.store(value);
 
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
-
-#ifdef STANDALONE
+#ifdef STANDALONE // For GUI debugging
 	int i = value * 4;
 	switch(i) {
-	case 0: drumkitFileProgress->setState(ProgressBarState::Off); break;
-	case 1: drumkitFileProgress->setState(ProgressBarState::Blue); break;
-	case 2: drumkitFileProgress->setState(ProgressBarState::Green); break;
-	case 3: drumkitFileProgress->setState(ProgressBarState::Red); break;
-	default: break;
+	case 0:
+		drumkitFileProgress->setState(ProgressBarState::Off);
+		break;
+	case 1:
+		drumkitFileProgress->setState(ProgressBarState::Blue);
+		break;
+	case 2:
+		drumkitFileProgress->setState(ProgressBarState::Green);
+		break;
+	case 3:
+		drumkitFileProgress->setState(ProgressBarState::Red);
+		break;
+	default:
+		break;
 	}
 #endif
 }
 
 void DGWindow::falloffValueChanged(float value)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::velocity_modifier_falloff,
-		                         value);
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.velocity_modifier_falloff.store(value);
 
-#ifdef STANDALONE
-	drumkitFileProgress->setProgress(value);
+#ifdef STANDALONE // For GUI debugging
+	drumkitFileProgress->setTotal(100);
+	drumkitFileProgress->setValue(value * 100);
 #endif
 }
 
 void DGWindow::velocityCheckClick(bool checked)
 {
-	ChangeSettingMessage *msg =
-		new ChangeSettingMessage(ChangeSettingMessage::enable_velocity_modifier,
-		                         checked);
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.enable_velocity_modifier.store(checked);
 }
 
 void DGWindow::kitBrowseClick()
@@ -318,13 +364,7 @@ void DGWindow::selectKitFile(const std::string& filename)
 	config.lastkit = drumkit;
 	config.save();
 
-	drumkitFileProgress->setProgress(0);
-	drumkitFileProgress->setState(ProgressBarState::Blue);
-
-	LoadDrumKitMessage *msg = new LoadDrumKitMessage();
-	msg->drumkitfile = drumkit;
-
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.drumkit_file.store(drumkit);
 }
 
 void DGWindow::selectMapFile(const std::string& filename)
@@ -337,9 +377,7 @@ void DGWindow::selectMapFile(const std::string& filename)
 	config.lastmidimap = midimap;
 	config.save();
 
-	LoadMidimapMessage *msg = new LoadMidimapMessage();
-	msg->midimapfile = midimap;
-	messageHandler.sendMessage(MSGRCV_ENGINE, msg);
+	settings.midimap_file.store(midimap);
 }
 
 
