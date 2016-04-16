@@ -61,8 +61,8 @@ struct Settings
 
 	Atomic<bool> enable_resampling{true};
 
-	Atomic<int> number_of_files;
-	Atomic<int> number_of_files_loaded;
+	Atomic<std::size_t> number_of_files;
+	Atomic<std::size_t> number_of_files_loaded;
 	Atomic<std::string> current_file;
 };
 
@@ -86,8 +86,8 @@ struct SettingsGetter
 
 	SettingRef<bool> enable_resampling;
 
-	SettingRef<int> number_of_files;
-	SettingRef<int> number_of_files_loaded;
+	SettingRef<std::size_t> number_of_files;
+	SettingRef<std::size_t> number_of_files_loaded;
 	SettingRef<std::string> current_file;
 
 	SettingsGetter(Settings& settings)
@@ -130,8 +130,8 @@ public:
 
 	Notifier<bool> enable_resampling;
 
-	Notifier<int> number_of_files;
-	Notifier<int> number_of_files_loaded;
+	Notifier<std::size_t> number_of_files;
+	Notifier<std::size_t> number_of_files_loaded;
 	Notifier<std::string> current_file;
 
 	void evaluate()

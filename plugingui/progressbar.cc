@@ -78,7 +78,7 @@ void ProgressBar::setState(ProgressBarState state)
 	}
 }
 
-void ProgressBar::setTotal(int total)
+void ProgressBar::setTotal(std::size_t total)
 {
 	if(this->total != total)
 	{
@@ -87,7 +87,7 @@ void ProgressBar::setTotal(int total)
 	}
 }
 
-void ProgressBar::setValue(int value)
+void ProgressBar::setValue(std::size_t value)
 {
 	if(this->value != value)
 	{

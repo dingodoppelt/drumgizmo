@@ -28,10 +28,11 @@
 
 #include <string>
 #include <list>
+#include <mutex>
+#include "mutex.h"
 
 #include "thread.h"
 #include "semaphore.h"
-#include "mutex.h"
 
 #include "drumkit.h"
 #include "settings.h"
@@ -76,12 +77,11 @@ protected:
 	Semaphore run_semaphore;
 	Semaphore semaphore;
 	Semaphore framesize_semaphore;
-	Mutex mutex;
+	std::mutex mutex;
 	volatile bool running{false};
 	std::list<AudioFile*> load_queue;
-	size_t total_num_audiofiles{0};
-	size_t fraction{1};
-	size_t loaded{0};
-	size_t framesize{0};
+	std::size_t loaded{0};
+	std::size_t framesize{0};
 	Settings& settings;
+	SettingsGetter getter;
 };

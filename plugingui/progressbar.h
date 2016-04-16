@@ -43,11 +43,11 @@ enum class ProgressBarState
 
 class ProgressBar : public Widget {
 public:
-	ProgressBar(Widget *parent);
+	ProgressBar(Widget* parent);
 	~ProgressBar();
 
-	void setTotal(int total);
-	void setValue(int value);
+	void setTotal(std::size_t total);
+	void setValue(std::size_t value);
 
 	void setState(ProgressBarState state);
 
@@ -64,8 +64,8 @@ private:
 	Painter::Bar bar_blue;
 	Painter::Bar bar_red;
 
-	int total{0};
-	int value{0};
+	std::size_t total{0};
+	std::size_t value{0};
 };
 
 } // GUI::
