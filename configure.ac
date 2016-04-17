@@ -174,6 +174,15 @@ AS_IF(
   [test "x$enable_vst" = "xyes"],
   [enable_vst=yes
   VST_CPPFLAGS="-I$with_vst_sources -D__int64='long long int'"
+
+	# Set up platform specific workarounds for the VST SDK
+	AS_CASE([$host_os],
+		[darwin*], [ ],
+		[linux*|*bsd*], [VST_CPPFLAGS="$VST_CPPFLAGS -D__cdecl="],
+		[mingw*|windows*|winnt|cygwin], [ ],
+		AC_MSG_ERROR([Your platform is not currently supported])
+	)
+
   VST_SOURCE_PATH="$with_vst_sources"
   AC_SUBST(VST_SOURCE_PATH)
   AC_SUBST(VST_CPPFLAGS)
