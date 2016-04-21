@@ -42,9 +42,7 @@
 #include "configfile.h"
 #include "settings.h"
 
-#define MAX_NUM_CHANNELS 64
 #define REFSFILE "refs.conf"
-#define RESAMPLER_INPUT_BUFFER 64
 
 class DrumGizmo
 {
@@ -73,6 +71,11 @@ public:
 
 	void setFreeWheel(bool freewheel);
 
+private:
+	static const int MAX_NUM_CHANNELS = 64;
+	static const int RESAMPLER_OUTPUT_BUFFER = 4096;
+	static const int RESAMPLER_INPUT_BUFFER = 64;
+
 protected:
 	DrumKitLoader loader;
 
@@ -85,7 +88,7 @@ protected:
 	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
 	CHResampler resampler[MAX_NUM_CHANNELS];
-	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][4096];
+	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][RESAMPLER_OUTPUT_BUFFER];
 	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 
 	std::map<std::string, AudioFile *> audiofiles;
