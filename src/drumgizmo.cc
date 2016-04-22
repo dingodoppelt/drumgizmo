@@ -107,9 +107,9 @@ bool DrumGizmo::loadkit(std::string file)
 	loader.loadKit(&kit);
 
 #ifdef WITH_RESAMPLER
-	for(auto& chresampler: resampler)
+	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
 	{
-		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
+		resampler[i].setup(kit.getSamplerate(), settings.samplerate.load());
 	}
 #endif/*WITH_RESAMPLER*/
 
@@ -602,15 +602,37 @@ void DrumGizmo::setSamplerate(int samplerate)
 	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
 #ifdef WITH_RESAMPLER
-	for(auto& chresampler: resampler)
+	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
 	{
-		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
+		resampler[i].setup(kit.getSamplerate(), settings.samplerate.load());
 	}
 	if(resampler[0].getRatio() != 1)
 	{
 		setFrameSize(RESAMPLER_INPUT_BUFFER);
 	}
 #endif/*WITH_RESAMPLER*/
+}
+
+std::string float2str(float a)
+{
+	char buf[256];
+	snprintf_nol(buf, sizeof(buf) - 1, "%f", a);
+	return buf;
+}
+
+std::string bool2str(bool a)
+{
+	return a?"true":"false";
+}
+
+float str2float(std::string a)
+{
+	if(a == "")
+	{
+		return 0.0;
+	}
+
+	return atof_nol(a.c_str());
 }
 
 std::string DrumGizmo::configString()
@@ -627,15 +649,15 @@ std::string DrumGizmo::configString()
 		"  <value name=\"drumkitfile\">" + kit.getFile() + "</value>\n"
 		"  <value name=\"midimapfile\">" + mmapfile + "</value>\n"
 		"  <value name=\"enable_velocity_modifier\">" +
-		std::to_string(settings.enable_velocity_modifier.load()) + "</value>\n"
+		bool2str(settings.enable_velocity_modifier.load()) + "</value>\n"
 		"  <value name=\"velocity_modifier_falloff\">" +
-		std::to_string(settings.velocity_modifier_falloff.load()) + "</value>\n"
+		float2str(settings.velocity_modifier_falloff.load()) + "</value>\n"
 		"  <value name=\"velocity_modifier_weight\">" +
-		std::to_string(settings.velocity_modifier_weight.load()) + "</value>\n"
+		float2str(settings.velocity_modifier_weight.load()) + "</value>\n"
 		"  <value name=\"enable_velocity_randomiser\">" +
-		std::to_string(settings.enable_velocity_randomiser.load()) + "</value>\n"
+		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
 		"  <value name=\"velocity_randomiser_weight\">" +
-		std::to_string(settings.velocity_randomiser_weight.load()) + "</value>\n"
+		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -658,12 +680,12 @@ bool DrumGizmo::setConfigString(std::string cfg)
 
 	if(p.value("velocity_modifier_falloff") != "")
 	{
-		settings.velocity_modifier_falloff.store(std::stof(p.value("velocity_modifier_falloff")));
+		settings.velocity_modifier_falloff.store(str2float(p.value("velocity_modifier_falloff")));
 	}
 
 	if(p.value("velocity_modifier_weight") != "")
 	{
-		settings.velocity_modifier_weight.store(std::stof(p.value("velocity_modifier_weight")));
+		settings.velocity_modifier_weight.store(str2float(p.value("velocity_modifier_weight")));
 	}
 
 	if(p.value("enable_velocity_randomiser") != "")
@@ -673,7 +695,7 @@ bool DrumGizmo::setConfigString(std::string cfg)
 
 	if(p.value("velocity_randomiser_weight") != "")
 	{
-		settings.velocity_randomiser_weight.store(std::stof(p.value("velocity_randomiser_weight")));
+		settings.velocity_randomiser_weight.store(str2float(p.value("velocity_randomiser_weight")));
 	}
 
 	if(p.value("enable_resampling") != "")
