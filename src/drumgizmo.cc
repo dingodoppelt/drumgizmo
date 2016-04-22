@@ -107,9 +107,9 @@ bool DrumGizmo::loadkit(std::string file)
 	loader.loadKit(&kit);
 
 #ifdef WITH_RESAMPLER
-	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
+	for(auto& chresampler: resampler)
 	{
-		resampler[i].setup(kit.getSamplerate(), settings.samplerate.load());
+		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
 	}
 #endif/*WITH_RESAMPLER*/
 
@@ -602,9 +602,9 @@ void DrumGizmo::setSamplerate(int samplerate)
 	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
 #ifdef WITH_RESAMPLER
-	for(int i = 0; i < MAX_NUM_CHANNELS; ++i)
+	for(auto& chresampler: resampler)
 	{
-		resampler[i].setup(kit.getSamplerate(), settings.samplerate.load());
+		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
 	}
 	if(resampler[0].getRatio() != 1)
 	{
