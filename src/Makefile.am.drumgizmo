@@ -17,6 +17,7 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/drumkitloader.cc \
 	$(top_srcdir)/src/drumkitparser.cc \
 	$(top_srcdir)/src/events.cc \
+	$(top_srcdir)/src/inputprocessor.cc \
 	$(top_srcdir)/src/instrument.cc \
 	$(top_srcdir)/src/instrumentparser.cc \
 	$(top_srcdir)/src/memchecker.cc \

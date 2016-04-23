@@ -51,14 +51,14 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	: loader(settings)
 	, oe(o)
 	, ie(i)
+	, kit()
+	, input_processor(kit)
 	, framesize(0)
 	, freewheel(false)
 	, events{}
 	, settings(settings)
 {
-	is_stopping = false;
 	audioCache.init(10000); // start thread
-
 	events.reserve(1000);
 }
 
@@ -227,129 +227,15 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	// Read new events
 	//
 
-	//DEBUG(engine, "Number of active events: %d\n", activeevents[0].size());
-
 	ie->run(pos, nsamples, events);
 
-	for(const auto& event: events)
+	double resample_ratio = resampler[0].getRatio();
+	bool active_events_left = input_processor.process(events, activeevents, pos, resample_ratio);
+
+	if(!active_events_left)
 	{
-		if(event.type == TYPE_ONSET)
-		{
-			Instrument *i = nullptr;
-			int d = event.instrument;
-			/*
-			  Instruments::iterator it = kit.instruments.begin();
-			  while(d-- && it != kit.instruments.end())
-			  {
-			  i = &(it->second);
-			  ++it;
-			  }
-			*/
-
-			if(!kit.isValid())
-			{
-				continue;
-			}
-
-			if(d < (int)kit.instruments.size())
-			{
-				i = kit.instruments[d];
-			}
-
-			if(i == nullptr || !i->isValid())
-			{
-				ERR(drumgizmo, "Missing Instrument %d.\n", (int)event.instrument);
-				continue;
-			}
-
-			if(i->getGroup() != "")
-			{
-				// Add event to ramp down all existing events with the same groupname.
-				Channels::iterator j = kit.channels.begin();
-				while(j != kit.channels.end())
-				{
-					Channel &ch = *j;
-					std::list< Event* >::iterator evs = activeevents[ch.num].begin();
-					while(evs != activeevents[ch.num].end())
-					{
-						Event *ev = *evs;
-						if(ev->getType() == Event::sample)
-						{
-							EventSample *sev = (EventSample*)ev;
-							if(sev->group == i->getGroup() && sev->instrument != i)
-							{
-								sev->rampdown = 3000; // Ramp down 3000 samples
-								// TODO: This must be configurable at some point...
-								// ... perhaps even by instrument (ie. in the xml file)
-								sev->ramp_start = sev->rampdown;
-							}
-						}
-						++evs;
-					}
-					++j;
-				}
-			}
-
-			Sample *s = i->sample(event.velocity, event.offset + pos);
-
-			if(s == nullptr)
-			{
-				ERR(drumgizmo, "Missing Sample.\n");
-				continue;
-			}
-
-			Channels::iterator j = kit.channels.begin();
-			while(j != kit.channels.end())
-			{
-				Channel &ch = *j;
-				AudioFile *af = s->getAudioFile(&ch);
-				if(af)
-				{
-					// LAZYLOAD:
-					// DEBUG(drumgizmo,"Requesting preparing of audio file\n");
-					// loader.prepare(af);
-				}
-				if(af == nullptr || !af->isValid())
-				{
-					//DEBUG(drumgizmo,"Missing AudioFile.\n");
-				}
-				else
-				{
-					//DEBUG(drumgizmo, "Adding event %d.\n", event.offset);
-					Event *evt = new EventSample(ch.num, 1.0, af, i->getGroup(), i);
-					evt->offset = (event.offset + pos) * resampler[0].getRatio();
-					activeevents[ch.num].push_back(evt);
-				}
-				++j;
-			}
-		}
-
-		if(event.type == TYPE_STOP)
-		{
-			is_stopping = true;
-		}
-
-		if(is_stopping)
-		{
-			// Count the number of active events.
-			int num_active_events = 0;
-			Channels::iterator j = kit.channels.begin();
-			while(j != kit.channels.end())
-			{
-				Channel &ch = *j;
-				num_active_events += activeevents[ch.num].size();
-				++j;
-			}
-
-			if(num_active_events == 0)
-			{
-				// No more active events - now we can stop the engine.
-				return false;
-			}
-		}
-
+		return false;
 	}
-
 	events.clear();
 
 	//

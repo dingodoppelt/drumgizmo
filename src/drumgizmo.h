@@ -41,6 +41,7 @@
 #include "chresampler.h"
 #include "configfile.h"
 #include "settings.h"
+#include "inputprocessor.h"
 
 #define REFSFILE "refs.conf"
 
@@ -80,7 +81,6 @@ protected:
 	DrumKitLoader loader;
 
 	Mutex mutex;
-	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
 
 	AudioOutputEngine *oe;
 	AudioInputEngine *ie;
@@ -96,6 +96,7 @@ protected:
 	AudioCache audioCache;
 	DrumKit kit;
 	MemChecker memchecker;
+	InputProcessor input_processor;
 
 	size_t framesize;
 	bool freewheel;
