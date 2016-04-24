@@ -46,120 +46,131 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 	{
 		if(event.type == TYPE_ONSET)
 		{
-			Instrument *i = nullptr;
-			int d = event.instrument;
-			/*
-			  Instruments::iterator it = kit.instruments.begin();
-			  while(d-- && it != kit.instruments.end())
-			  {
-			  i = &(it->second);
-			  ++it;
-			  }
-			*/
-
-			// TODO can this be removed?
-			if(!kit.isValid())
+			if(!process_onset(event, pos, resample_ratio))
 			{
 				continue;
 			}
+		}
 
-			if(d < (int)kit.instruments.size())
-			{
-				i = kit.instruments[d];
-			}
+		if(!process_stop(event))
+		{
+			return false;
+		}
+	}
 
-			if(i == nullptr || !i->isValid())
-			{
-				ERR(inputprocessor, "Missing Instrument %d.\n", (int)event.instrument);
-				continue;
-			}
+	return true;
+}
 
-			if(i->getGroup() != "")
+bool InputProcessor::process_onset(const event_t& event, size_t pos, double resample_ratio)
+{
+	Instrument* i = nullptr;
+	int d = event.instrument;
+
+	// TODO can this be removed?
+	if(!kit.isValid())
+	{
+		return false;
+	}
+
+	if(d < (int)kit.instruments.size())
+	{
+		i = kit.instruments[d];
+	}
+
+	if(i == nullptr || !i->isValid())
+	{
+		ERR(inputprocessor, "Missing Instrument %d.\n", (int)event.instrument);
+		return false;
+	}
+
+	if(i->getGroup() != "")
+	{
+		// Add event to ramp down all existing events with the same groupname.
+		Channels::iterator j = kit.channels.begin();
+		while(j != kit.channels.end())
+		{
+			Channel &ch = *j;
+			std::list< Event* >::iterator evs = activeevents[ch.num].begin();
+			while(evs != activeevents[ch.num].end())
 			{
-				// Add event to ramp down all existing events with the same groupname.
-				Channels::iterator j = kit.channels.begin();
-				while(j != kit.channels.end())
+				Event *ev = *evs;
+				if(ev->getType() == Event::sample)
 				{
-					Channel &ch = *j;
-					std::list< Event* >::iterator evs = activeevents[ch.num].begin();
-					while(evs != activeevents[ch.num].end())
+					EventSample *sev = (EventSample*)ev;
+					if(sev->group == i->getGroup() && sev->instrument != i)
 					{
-						Event *ev = *evs;
-						if(ev->getType() == Event::sample)
-						{
-							EventSample *sev = (EventSample*)ev;
-							if(sev->group == i->getGroup() && sev->instrument != i)
-							{
-								sev->rampdown = 3000; // Ramp down 3000 samples
-								// TODO: This must be configurable at some point...
-								// ... perhaps even by instrument (ie. in the xml file)
-								sev->ramp_start = sev->rampdown;
-							}
-						}
-						++evs;
+						sev->rampdown = 3000; // Ramp down 3000 samples
+						// TODO: This must be configurable at some point...
+						// ... perhaps even by instrument (ie. in the xml file)
+						sev->ramp_start = sev->rampdown;
 					}
-					++j;
 				}
+				++evs;
 			}
-
-			Sample *s = i->sample(event.velocity, event.offset + pos);
-
-			if(s == nullptr)
-			{
-				ERR(drumgizmo, "Missing Sample.\n");
-				continue;
-			}
-
-			Channels::iterator j = kit.channels.begin();
-			while(j != kit.channels.end())
-			{
-				Channel &ch = *j;
-				AudioFile *af = s->getAudioFile(&ch);
-				if(af)
-				{
-					// LAZYLOAD:
-					// DEBUG(drumgizmo,"Requesting preparing of audio file\n");
-					// loader.prepare(af);
-				}
-				if(af == nullptr || !af->isValid())
-				{
-					//DEBUG(drumgizmo,"Missing AudioFile.\n");
-				}
-				else
-				{
-					//DEBUG(drumgizmo, "Adding event %d.\n", event.offset);
-					Event *evt = new EventSample(ch.num, 1.0, af, i->getGroup(), i);
-					evt->offset = (event.offset + pos) * resample_ratio;
-					activeevents[ch.num].push_back(evt);
-				}
-				++j;
-			}
+			++j;
 		}
+	}
 
-		if(event.type == TYPE_STOP)
+	Sample *s = i->sample(event.velocity, event.offset + pos);
+
+	if(s == nullptr)
+	{
+		ERR(inputprocessor, "Missing Sample.\n");
+		return false;
+	}
+
+	Channels::iterator j = kit.channels.begin();
+	while(j != kit.channels.end())
+	{
+		Channel &ch = *j;
+		AudioFile *af = s->getAudioFile(&ch);
+		if(af)
 		{
-			is_stopping = true;
+			// LAZYLOAD:
+			// DEBUG(inputprocessor, "Requesting preparing of audio file\n");
+			// loader.prepare(af);
 		}
-
-		if(is_stopping)
+		if(af == nullptr || !af->isValid())
 		{
-			// Count the number of active events.
-			int num_active_events = 0;
-			Channels::iterator j = kit.channels.begin();
-			while(j != kit.channels.end())
-			{
-				Channel &ch = *j;
-				num_active_events += activeevents[ch.num].size();
-				++j;
-			}
+			//DEBUG(inputprocessor, "Missing AudioFile.\n");
+		}
+		else
+		{
+			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
+			Event *evt = new EventSample(ch.num, 1.0, af, i->getGroup(), i);
+			evt->offset = (event.offset + pos) * resample_ratio;
+			activeevents[ch.num].push_back(evt);
+		}
+		++j;
+	}
 
-			if(num_active_events == 0)
-			{
-				// No more active events - now we can stop the engine.
-				return false;
-			}
+	return true;
+}
+
+bool InputProcessor::process_stop(const event_t& event)
+{
+	if(event.type == TYPE_STOP)
+	{
+		is_stopping = true;
+	}
+
+	if(is_stopping)
+	{
+		// Count the number of active events.
+		int num_active_events = 0;
+		Channels::iterator j = kit.channels.begin();
+		while(j != kit.channels.end())
+		{
+			Channel &ch = *j;
+			num_active_events += activeevents[ch.num].size();
+			++j;
 		}
 
+		if(num_active_events == 0)
+		{
+			// No more active events - now we can stop the engine.
+			return false;
+		}
 	}
 
 	return true;

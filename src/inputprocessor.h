@@ -42,4 +42,7 @@ private:
 	DrumKit& kit;
 	std::list<Event*>* activeevents;
 	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
+
+	bool process_onset(const event_t& event, size_t pos, double resample_ratio);
+	bool process_stop(const event_t& event);
 };
