@@ -32,14 +32,15 @@
 
 #include "instrument.h"
 
-InputProcessor::InputProcessor(DrumKit& kit)
+InputProcessor::InputProcessor(DrumKit& kit, std::list<Event*>* activeevents)
 	: kit(kit)
+	, activeevents(activeevents)
 	, is_stopping(false)
 {
 
 }
 
-bool InputProcessor::process(const std::vector<event_t>& events, std::list<Event*>* activeevents, size_t pos, double resample_ratio)
+bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, double resample_ratio)
 {
 	for(const auto& event: events)
 	{

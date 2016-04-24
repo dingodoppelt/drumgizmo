@@ -36,9 +36,10 @@
 class InputProcessor
 {
 public:
-	InputProcessor(DrumKit& kit);
-	bool process(const std::vector<event_t>& events, std::list<Event*>* activeevents, size_t pos, double resample_ratio);
+	InputProcessor(DrumKit& kit, std::list<Event*>* activeevents);
+	bool process(const std::vector<event_t>& events, size_t pos, double resample_ratio);
 private:
 	DrumKit& kit;
+	std::list<Event*>* activeevents;
 	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
 };
