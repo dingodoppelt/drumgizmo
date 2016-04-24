@@ -29,6 +29,7 @@
 #include <hugin.hpp>
 #include <limits>
 #include <assert.h>
+#include <string.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -58,6 +59,7 @@ Semaphore::Semaphore(std::size_t initial_count)
 	                                 nullptr); // unnamed semaphore
 #else
 	const int pshared = 0;
+	memset(&prv->semaphore, 0, sizeof(sem_t));
 	sem_init(&prv->semaphore, pshared, initial_count);
 #endif
 }
@@ -93,15 +95,25 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 
 	assert(ret == WAIT_OBJECT_0);
 #else
-	struct timespec t = {
-		// Whole seconds:
-		(time_t)(timeout.count() / 1000),
+	struct timespec ts;
 
-		// Remainder as nanoseconds:
-		(long)((timeout.count() - ((timeout.count() / 1000) * 1000)) * 1000000)
-	};
+	// Get current time
+	clock_gettime(CLOCK_REALTIME, &ts);
 
-	int ret = sem_timedwait(&prv->semaphore, &t);
+	// Add timeout
+	time_t seconds = (time_t)(timeout.count() / 1000);
+	ts.tv_sec += seconds;
+	ts.tv_nsec += (long)((timeout.count() - (seconds * 1000)) * 1000000);
+
+	// Make sure we don't overflow the nanoseconds.
+	constexpr long nsec = 1000000000LL;
+	if(ts.tv_nsec >= nsec)
+	{
+		ts.tv_nsec -= nsec;
+		ts.tv_sec += 1;
+	}
+
+	int ret = sem_timedwait(&prv->semaphore, &ts);
 	if(ret < 0)
 	{
 		if(errno == ETIMEDOUT)
