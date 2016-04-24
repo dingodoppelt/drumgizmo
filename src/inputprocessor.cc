@@ -63,67 +63,54 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 
 bool InputProcessor::process_onset(const event_t& event, size_t pos, double resample_ratio)
 {
-	Instrument* i = nullptr;
-	int d = event.instrument;
-
-	// TODO can this be removed?
-	if(!kit.isValid())
-	{
+	if(!kit.isValid()) {
 		return false;
 	}
 
-	if(d < (int)kit.instruments.size())
-	{
-		i = kit.instruments[d];
-	}
-
-	if(i == nullptr || !i->isValid())
+	if(event.instrument >= kit.instruments.size() ||
+	   !kit.instruments[event.instrument] ||
+	   !kit.instruments[event.instrument]->isValid())
 	{
 		ERR(inputprocessor, "Missing Instrument %d.\n", (int)event.instrument);
 		return false;
 	}
 
-	if(i->getGroup() != "")
+	Instrument& instr(*kit.instruments[event.instrument]);
+
+	if(instr.getGroup() != "")
 	{
 		// Add event to ramp down all existing events with the same groupname.
-		Channels::iterator j = kit.channels.begin();
-		while(j != kit.channels.end())
+		for(auto& ch: kit.channels)
 		{
-			Channel &ch = *j;
-			std::list< Event* >::iterator evs = activeevents[ch.num].begin();
-			while(evs != activeevents[ch.num].end())
+			for(Event* event: activeevents[ch.num])
 			{
-				Event *ev = *evs;
-				if(ev->getType() == Event::sample)
+				if(event->getType() == Event::sample)
 				{
-					EventSample *sev = (EventSample*)ev;
-					if(sev->group == i->getGroup() && sev->instrument != i)
+					EventSample& event_sample = *(EventSample*)event;
+					if(event_sample.group == instr.getGroup() &&
+					   event_sample.instrument != &instr)
 					{
-						sev->rampdown = 3000; // Ramp down 3000 samples
+						event_sample.rampdown = 3000; // Ramp down 3000 samples
 						// TODO: This must be configurable at some point...
 						// ... perhaps even by instrument (ie. in the xml file)
-						sev->ramp_start = sev->rampdown;
+						event_sample.ramp_start = event_sample.rampdown;
 					}
 				}
-				++evs;
 			}
-			++j;
 		}
 	}
 
-	Sample *s = i->sample(event.velocity, event.offset + pos);
-
-	if(s == nullptr)
+	if(!instr.sample(event.velocity, event.offset + pos))
 	{
 		ERR(inputprocessor, "Missing Sample.\n");
 		return false;
 	}
 
-	Channels::iterator j = kit.channels.begin();
-	while(j != kit.channels.end())
+	Sample& s(*instr.sample(event.velocity, event.offset + pos));
+
+	for(auto& ch: kit.channels)
 	{
-		Channel &ch = *j;
-		AudioFile *af = s->getAudioFile(&ch);
+		AudioFile* af = s.getAudioFile(&ch);
 		if(af)
 		{
 			// LAZYLOAD:
@@ -137,11 +124,10 @@ bool InputProcessor::process_onset(const event_t& event, size_t pos, double resa
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			Event *evt = new EventSample(ch.num, 1.0, af, i->getGroup(), i);
+			Event* evt = new EventSample(ch.num, 1.0, af, instr.getGroup(), &instr);
 			evt->offset = (event.offset + pos) * resample_ratio;
 			activeevents[ch.num].push_back(evt);
 		}
-		++j;
 	}
 
 	return true;
@@ -158,12 +144,9 @@ bool InputProcessor::process_stop(const event_t& event)
 	{
 		// Count the number of active events.
 		int num_active_events = 0;
-		Channels::iterator j = kit.channels.begin();
-		while(j != kit.channels.end())
+		for(auto& ch: kit.channels)
 		{
-			Channel &ch = *j;
 			num_active_events += activeevents[ch.num].size();
-			++j;
 		}
 
 		if(num_active_events == 0)
