@@ -20,6 +20,7 @@ dnl ===========================
 AC_LANG_PUSH([C++])
 TMP_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS=-std=c++11
+LDFLAGS=-lrt
 AC_MSG_CHECKING([whether CXX supports -std=c++11])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 	[AC_MSG_RESULT([yes])],
