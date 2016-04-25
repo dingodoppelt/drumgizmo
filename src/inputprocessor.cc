@@ -61,7 +61,7 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 	return true;
 }
 
-bool InputProcessor::process_onset(const event_t& event, size_t pos, double resample_ratio)
+bool InputProcessor::processOnset(const event_t& event, size_t pos, double resample_ratio)
 {
 	if(!kit.isValid()) {
 		return false;
@@ -133,7 +133,7 @@ bool InputProcessor::process_onset(const event_t& event, size_t pos, double resa
 	return true;
 }
 
-bool InputProcessor::process_stop(const event_t& event)
+bool InputProcessor::processStop(const event_t& event)
 {
 	if(event.type == TYPE_STOP)
 	{
