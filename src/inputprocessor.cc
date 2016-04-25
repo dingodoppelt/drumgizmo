@@ -46,13 +46,13 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 	{
 		if(event.type == TYPE_ONSET)
 		{
-			if(!process_onset(event, pos, resample_ratio))
+			if(!processOnset(event, pos, resample_ratio))
 			{
 				continue;
 			}
 		}
 
-		if(!process_stop(event))
+		if(!processStop(event))
 		{
 			return false;
 		}
