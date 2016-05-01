@@ -348,11 +348,7 @@ int main(int argc, char* argv[])
 
 	gizmo.setFrameSize(oe->getBufferSize());
 
-	if(kitfile == "" || !gizmo.loadkit(kitfile))
-	{
-		printf("Failed to load \"%s\".\n", kitfile.c_str());
-		return 1;
-	}
+	settings.drumkit_file.store(kitfile);
 
 	printf("Loading drumkit, this may take a while:\n");
 
@@ -374,7 +370,7 @@ int main(int argc, char* argv[])
 
 			if(settings.drumkit_load_status.load() == LoadStatus::Error)
 			{
-				printf("\nLoad error\n");
+				printf("\nFailed to load \"%s\".\n", kitfile.c_str());
 				return 1;
 			}
 

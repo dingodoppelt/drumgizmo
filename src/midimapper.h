@@ -28,6 +28,8 @@
 
 #include <map>
 #include <string>
+#include <mutex>
+#include "mutex.h"
 
 typedef std::map<int, std::string> midimap_t;
 typedef std::map<std::string, int> instrmap_t;
@@ -35,10 +37,16 @@ typedef std::map<std::string, int> instrmap_t;
 class MidiMapper
 {
 public:
-	void clear();
-
+	//! Lookup note in map and return its index.
+	//! \returns -1 if not found or the note index.
 	int lookup(int note);
 
+	//! Set new map sets.
+	void swap(instrmap_t& instrmap, midimap_t& midimap);
+
+private:
 	instrmap_t instrmap;
 	midimap_t midimap;
+
+	std::mutex mutex;
 };

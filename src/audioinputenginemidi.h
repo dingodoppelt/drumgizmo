@@ -24,48 +24,43 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__
-#define __DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__
-
-#include "audioinputengine.h"
+#pragma once
 
 #include <string>
 
+#include "audioinputengine.h"
 #include "midimapper.h"
 #include "instrument.h"
-
 #include "configfile.h"
 
-class AudioInputEngineMidi : public AudioInputEngine {
+class AudioInputEngineMidi
+	: public AudioInputEngine
+{
 public:
-  AudioInputEngineMidi();
-  virtual ~AudioInputEngineMidi() {}
+	AudioInputEngineMidi();
+	virtual ~AudioInputEngineMidi() = default;
 
-  bool isMidiEngine() const { return true; } 
+	virtual bool init(const Instruments &instruments) = 0;
 
-  virtual bool init(const Instruments &instruments) = 0;
+	virtual void setParm(const std::string& parm, const std::string& value) = 0;
 
-  virtual void setParm(const std::string& parm, const std::string& value) = 0;
+	virtual bool start() = 0;
+	virtual void stop() = 0;
 
-  virtual bool start() = 0;
-  virtual void stop() = 0;
+	virtual void pre() = 0;
+	virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
+	virtual void post() = 0;
 
-  virtual void pre() = 0;
-  virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
-  virtual void post() = 0;
+	bool loadMidiMap(const std::string& file, const Instruments& i);
 
-  bool loadMidiMap(const std::string& file, const Instruments& i);
+	std::string getMidimapFile() const;
 
-  std::string getMidimapFile() const;
-
-  bool isValid() const;
+	bool isValid() const;
 
 protected:
-  MidiMapper mmap;
-  std::string midimap;
-  bool is_valid;
+	MidiMapper mmap;
+	std::string midimap;
+	bool is_valid;
 
-  ConfigFile refs;
+	ConfigFile refs;
 };
-
-#endif/*__DRUMGIZMO_AUDIOINPUTENGINEMIDI_H__*/

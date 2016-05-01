@@ -28,20 +28,26 @@
 
 int MidiMapper::lookup(int note)
 {
+	std::lock_guard<std::mutex> guard(mutex);
+
 	if(midimap.find(note) == midimap.end())
 	{
 		return -1;
 	}
-	std::string instr = midimap[note];
+
+	const std::string& instr = midimap[note];
 	if(instrmap.find(instr) == instrmap.end())
 	{
 		return -1;
 	}
+
 	return instrmap[instr];
 }
 
-void MidiMapper::clear()
+void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap)
 {
-	midimap.clear();
-	instrmap.clear();
+	std::lock_guard<std::mutex> guard(mutex);
+
+	std::swap(this->instrmap, instrmap);
+	std::swap(this->midimap, midimap);
 }

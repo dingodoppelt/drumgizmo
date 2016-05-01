@@ -60,7 +60,7 @@ private:
 	class Prv;
 	std::unique_ptr<Prv> prv;
 
-	double input_fs;
-	double output_fs;
+	double input_fs{44100};
+	double output_fs{44100};
 #endif /*WITH_RESAMPLER*/
 };

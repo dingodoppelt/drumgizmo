@@ -33,55 +33,65 @@
 #include <hugin.hpp>
 
 AudioInputEngineMidi::AudioInputEngineMidi()
-  : refs(REFSFILE)
+	: refs(REFSFILE)
 {
-  is_valid = false;
+	is_valid = false;
 }
 
-bool AudioInputEngineMidi::loadMidiMap(const std::string& file, const Instruments& instruments)
+bool AudioInputEngineMidi::loadMidiMap(const std::string& file,
+                                       const Instruments& instruments)
 {
-  std::string f = file;
+	std::string f = file;
 
-  if(refs.load()) {
-    if(file.size() > 1 && file[0] == '@') {
-      f = refs.getValue(file.substr(1));
-    }
-  } else {
-    ERR(drumkitparser, "Error reading refs.conf");
-  }
+	if(refs.load())
+	{
+		if(file.size() > 1 && file[0] == '@')
+		{
+			f = refs.getValue(file.substr(1));
+		}
+	}
+	else
+	{
+		ERR(drumkitparser, "Error reading refs.conf");
+	}
 
-  midimap = "";
-  is_valid = false;
+	midimap = "";
+	is_valid = false;
 
-  DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
-        (int)instruments.size());
+	DEBUG(mmap, "loadMidiMap(%s, i.size() == %d)\n", f.c_str(),
+	      (int)instruments.size());
 
-  if(f == "") return false;
+	if(f == "")
+	{
+		return false;
+	}
 
-  MidiMapParser p;
-  if(p.parseFile(f)) {
-    return false;
-  }
+	MidiMapParser midimap_parser;
+	if(midimap_parser.parseFile(f))
+	{
+		return false;
+	}
 
-  mmap.clear();
-  mmap.midimap = p.midimap;
+	instrmap_t instrmap;
+	for(size_t i = 0; i < instruments.size(); i++)
+	{
+		instrmap[instruments[i]->getName()] = i;
+	}
 
-  for(size_t i = 0; i < instruments.size(); i++) {
-    mmap.instrmap[instruments[i]->getName()] = i;
-  }
+	mmap.swap(instrmap, midimap_parser.midimap);
 
-  midimap = file;
-  is_valid = true;
+	midimap = file;
+	is_valid = true;
 
-  return true;
+	return true;
 }
 
 std::string AudioInputEngineMidi::getMidimapFile() const
 {
-  return midimap;
+	return midimap;
 }
 
 bool AudioInputEngineMidi::isValid() const
 {
-  return is_valid;
+	return is_valid;
 }

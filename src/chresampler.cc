@@ -53,9 +53,7 @@ public:
 };
 
 CHResampler::CHResampler()
-    : prv{std::make_unique<Prv>()}
-    , input_fs{44100}
-    , output_fs{44100}
+	: prv{std::make_unique<Prv>()}
 {
 #if defined(SRC)
 	prv->state = nullptr;
@@ -64,6 +62,11 @@ CHResampler::CHResampler()
 
 void CHResampler::setup(double input_fs, double output_fs)
 {
+	if((input_fs == 0.0) || (output_fs == 0.0))
+	{
+		return;
+	}
+
 	int nchan = 1; // always mono
 
 	this->input_fs = input_fs;

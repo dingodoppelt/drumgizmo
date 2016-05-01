@@ -32,11 +32,16 @@
 
 #include "drumkitparser.h"
 #include "drumgizmo.h"
+#include "audioinputenginemidi.h"
 
-DrumKitLoader::DrumKitLoader(Settings& settings)
-	: framesize(0)
-	, settings(settings)
+DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
+                             AudioInputEngine& ie,
+                             std::array<CHResampler, 64>& resampler)
+	: settings(settings)
 	, getter(settings)
+	, kit(kit)
+	, ie(ie)
+	, resampler(resampler)
 {
 	run();
 	run_semaphore.wait(); // Wait for the thread to actually start.
@@ -53,6 +58,87 @@ DrumKitLoader::~DrumKitLoader()
 	}
 
 	DEBUG(loader, "~DrumKitLoader() post\n");
+}
+
+bool DrumKitLoader::loadkit(const std::string& file)
+{
+	settings.drumkit_load_status.store(LoadStatus::Idle);
+
+	if(file == "")
+	{
+		settings.drumkit_load_status.store(LoadStatus::Error);
+		return false;
+	}
+
+	DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
+
+	// Remove all queue AudioFiles from loader before we actually delete them.
+	skip();
+
+	// Delete all Channels, Instruments, Samples and AudioFiles.
+	kit.clear();
+
+	settings.drumkit_load_status.store(LoadStatus::Loading);
+
+	DrumKitParser parser(settings, kit);
+	if(parser.parseFile(file))
+	{
+		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
+		settings.drumkit_load_status.store(LoadStatus::Error);
+		return false;
+	}
+
+	// Check if there is enough free RAM to load the drumkit.
+	if(!memchecker.enoughFreeMemory(kit))
+	{
+		printf("WARNING: "
+		       "There doesn't seem to be enough RAM available to load the kit.\n"
+		       "Trying to load it anyway...\n");
+	}
+
+	loadKit(&kit);
+
+#ifdef WITH_RESAMPLER
+	for(auto& chresampler: resampler)
+	{
+		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
+	}
+#endif/*WITH_RESAMPLER*/
+
+
+	DEBUG(loadkit, "loadkit: Success\n");
+
+	return true;
+}
+
+void DrumKitLoader::loadKit(DrumKit *kit)
+{
+//	std::lock_guard<std::mutex> guard(mutex);
+
+	DEBUG(loader, "Create AudioFile queue from DrumKit\n");
+
+	settings.number_of_files_loaded.store(0);
+
+	// Count total number of files that need loading:
+	settings.number_of_files.store(0);
+	for(auto instr : kit->instruments)
+	{
+		settings.number_of_files.fetch_add(instr->audiofiles.size());
+	}
+
+	// Now actually queue them for loading:
+	for(auto instr : kit->instruments)
+	{
+		for(auto audiofile : instr->audiofiles)
+		{
+			load_queue.push_back(audiofile);
+		}
+	}
+
+	DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
+	      (int)settings.number_of_files.load(), (int)load_queue.size());
+
+	semaphore.post(); // Start loader loop.
 }
 
 void DrumKitLoader::stop()
@@ -80,48 +166,6 @@ void DrumKitLoader::setFrameSize(size_t framesize)
 	framesize_semaphore.post(); // Signal that the framesize has been set.
 }
 
-bool DrumKitLoader::isDone()
-{
-	std::lock_guard<std::mutex> guard(mutex);
-	return load_queue.size() == 0;
-}
-
-void DrumKitLoader::loadKit(DrumKit *kit)
-{
-	std::lock_guard<std::mutex> guard(mutex);
-
-	DEBUG(loader, "Create AudioFile queue from DrumKit\n");
-
-	std::size_t total_num_audiofiles = 0;// For UI Progress Messages
-
-	// Count total number of files that need loading:
-	for(auto instr : kit->instruments)
-	{
-		total_num_audiofiles += instr->audiofiles.size();
-	}
-
-	settings.number_of_files.store(total_num_audiofiles);
-
-	// Now actually queue them for loading:
-	for(auto instr : kit->instruments)
-	{
-		std::vector<AudioFile*>::iterator af = instr->audiofiles.begin();
-		while(af != instr->audiofiles.end())
-		{
-			AudioFile *audiofile = *af;
-			load_queue.push_back(audiofile);
-			af++;
-		}
-	}
-
-	loaded = 0; // For UI Progress Messages
-
-	DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
-	      (int)total_num_audiofiles, (int)load_queue.size());
-
-	semaphore.post(); // Start loader loop.
-}
-
 void DrumKitLoader::thread_main()
 {
 	running = true;
@@ -144,14 +188,31 @@ void DrumKitLoader::thread_main()
 			semaphore.wait(std::chrono::milliseconds(1000));
 		}
 
+		bool newKit = false;
 		if(getter.drumkit_file.hasChanged())
 		{
-			//std::cout << "RELOAD DRUMKIT!" << std::endl;
+			loadkit(getter.drumkit_file.getValue());
+			newKit = true;
 		}
 
-		if(getter.midimap_file.hasChanged())
+		if(getter.midimap_file.hasChanged() || newKit)
 		{
-			//std::cout << "RELOAD MIDIMAP!" << std::endl;
+			auto ie_midi = dynamic_cast<AudioInputEngineMidi*>(&ie);
+			std::cout << "ie_midi: " << (void*)ie_midi << std::endl;
+			if(ie_midi)
+			{
+				settings.midimap_load_status.store(LoadStatus::Loading);
+				bool ret = ie_midi->loadMidiMap(getter.midimap_file.getValue(),
+				                                kit.instruments);
+				if(ret)
+				{
+					settings.midimap_load_status.store(LoadStatus::Done);
+				}
+				else
+				{
+					settings.midimap_load_status.store(LoadStatus::Error);
+				}
+			}
 		}
 
 		std::string filename;
@@ -178,11 +239,9 @@ void DrumKitLoader::thread_main()
 			audiofile->load(preload_size);
 		}
 
-		++loaded;
+		settings.number_of_files_loaded.fetch_add(1);
 
-		settings.number_of_files_loaded.store(loaded);
-
-		if(settings.number_of_files.load() == loaded)
+		if(settings.number_of_files.load() == settings.number_of_files_loaded.load())
 		{
 			settings.drumkit_load_status.store(LoadStatus::Done);
 		}

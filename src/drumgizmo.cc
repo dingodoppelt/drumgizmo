@@ -40,6 +40,8 @@
 #include <config.h>
 #include <memory>
 
+#include <iostream>
+
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
 #include "configparser.h"
@@ -48,7 +50,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine *o, AudioInputEngine *i)
-	: loader(settings)
+	: loader(settings, kit, *i, resampler)
 	, oe(o)
 	, ie(i)
 	, kit()
@@ -65,57 +67,6 @@ DrumGizmo::DrumGizmo(Settings& settings,
 DrumGizmo::~DrumGizmo()
 {
 	audioCache.deinit(); // stop thread
-}
-
-bool DrumGizmo::loadkit(std::string file)
-{
-	settings.drumkit_load_status.store(LoadStatus::Idle);
-
-	if(file == "")
-	{
-		settings.drumkit_load_status.store(LoadStatus::Error);
-		return false;
-	}
-
-	DEBUG(drumgizmo, "loadkit(%s)\n", file.c_str());
-
-	// Remove all queue AudioFiles from loader before we actually delete them.
-	loader.skip();
-
-	// Delete all Channels, Instruments, Samples and AudioFiles.
-	kit.clear();
-
-	settings.drumkit_load_status.store(LoadStatus::Loading);
-
-	DrumKitParser parser(settings, kit);
-	if(parser.parseFile(file))
-	{
-		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
-		settings.drumkit_load_status.store(LoadStatus::Error);
-		return false;
-	}
-
-	// TODO: Re-introduce when the code has been moved to the loader thread.
-	//// Check if there is enough free RAM to load the drumkit.
-	//if(!memchecker.enoughFreeMemory(kit))
-	//{
-	//	printf("WARNING: "
-	//	       "There doesn't seem to be enough RAM available to load the kit.\n"
-	//	       "Trying to load it anyway...\n");
-	//}
-
-	loader.loadKit(&kit);
-
-#ifdef WITH_RESAMPLER
-	for(auto& chresampler: resampler)
-	{
-		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
-	}
-#endif/*WITH_RESAMPLER*/
-
-	DEBUG(loadkit, "loadkit: Success\n");
-
-	return true;
 }
 
 bool DrumGizmo::init()
@@ -193,32 +144,6 @@ void DrumGizmo::run(int endpos)
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
 	setFrameSize(nsamples);
-
-	// TODO: Move this to DrumKitLoader thread.
-	if(getter.drumkit_file.hasChanged())
-	{
-		loadkit(getter.drumkit_file.getValue());
-	}
-
-	// TODO: Move this to DrumKitLoader thread.
-	if(getter.midimap_file.hasChanged())
-	{
-		auto ie_midi = dynamic_cast<AudioInputEngineMidi*>(ie);
-		if(ie_midi)
-		{
-			settings.midimap_load_status.store(LoadStatus::Loading);
-			bool ret = ie_midi->loadMidiMap(getter.midimap_file.getValue(),
-			                                kit.instruments);
-			if(ret)
-			{
-				settings.midimap_load_status.store(LoadStatus::Done);
-			}
-			else
-			{
-				settings.midimap_load_status.store(LoadStatus::Error);
-			}
-		}
-	}
 
 	ie->pre();
 	oe->pre(nsamples);
@@ -524,10 +449,10 @@ float str2float(std::string a)
 std::string DrumGizmo::configString()
 {
 	std::string mmapfile;
-	if(ie->isMidiEngine())
+	auto midiEngine = dynamic_cast<AudioInputEngineMidi*>(ie);
+	if(midiEngine)
 	{
-		AudioInputEngineMidi *aim = (AudioInputEngineMidi*)ie;
-		mmapfile = aim->getMidimapFile();
+		mmapfile = midiEngine->getMidimapFile();
 	}
 
 	return

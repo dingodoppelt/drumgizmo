@@ -24,8 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_AUDIOINPUTENGINE_H__
-#define __DRUMGIZMO_AUDIOINPUTENGINE_H__
+#pragma once
 
 #include <string>
 #include <vector>
@@ -34,22 +33,19 @@
 
 #include "instrument.h"
 
-class AudioInputEngine {
+class AudioInputEngine
+{
 public:
-  virtual ~AudioInputEngine() {}
+	virtual ~AudioInputEngine() = default;
 
-  virtual bool isMidiEngine() const { return false; } 
+	virtual bool init(const Instruments& instruments) = 0;
 
-  virtual bool init(const Instruments& instruments) = 0;
+	virtual void setParm(const std::string& parm, const std::string& value) = 0;
 
-  virtual void setParm(const std::string& parm, const std::string& value) = 0;
+	virtual bool start() = 0;
+	virtual void stop() = 0;
 
-  virtual bool start() = 0;
-  virtual void stop() = 0;
-
-  virtual void pre() = 0;
-  virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
-  virtual void post() = 0;
+	virtual void pre() = 0;
+	virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
+	virtual void post() = 0;
 };
-
-#endif/*__DRUMGIZMO_AUDIOINPUTENGINE_H__*/

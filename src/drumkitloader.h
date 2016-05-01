@@ -36,6 +36,9 @@
 
 #include "drumkit.h"
 #include "settings.h"
+#include "audioinputengine.h"
+#include "chresampler.h"
+#include "memchecker.h"
 
 //! This class is responsible for loading the drumkits in its own thread.
 //! All interaction calls are simply modifying queues and not doing any
@@ -47,23 +50,20 @@ class DrumKitLoader
 {
 public:
 	//! The constrcutor starts the loader thread.
-	DrumKitLoader(Settings& settings);
+	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
+	              std::array<CHResampler, 64>& resampler);
 
 	//! The destructor signals the thread to stop and waits to merge before
 	//! returning (ie. deleting the object will garantuee that the thread has
 	//! been stopped).
 	~DrumKitLoader();
 
-	//! Signal the loader to start loading all audio files contained in kit.
+	bool loadkit(const std::string& file);
+
+	//! Signal the loader to start loading all audio files contained in the kit.
 	//! All other AudioFiles in queue will be removed before the new ones are
 	//! scheduled.
 	void loadKit(DrumKit *kit);
-
-	void thread_main();
-
-	//! Simply reports if the load queue is empty (i.e. all AudioFiles has been
-	//! loaded).
-	bool isDone();
 
 	//! Signal the loader to stop and wait until it has.
 	void stop();
@@ -71,17 +71,24 @@ public:
 	//! Skip all queued AudioFiles.
 	void skip();
 
+	//! Set the framesize which will be used to preloading samples in next
+	//! loadKit call.
 	void setFrameSize(size_t framesize);
 
 protected:
+	void thread_main();
+
 	Semaphore run_semaphore;
 	Semaphore semaphore;
 	Semaphore framesize_semaphore;
 	std::mutex mutex;
 	volatile bool running{false};
 	std::list<AudioFile*> load_queue;
-	std::size_t loaded{0};
 	std::size_t framesize{0};
 	Settings& settings;
 	SettingsGetter getter;
+	DrumKit& kit;
+	AudioInputEngine& ie;
+	std::array<CHResampler, 64>& resampler;
+	MemChecker memchecker;
 };

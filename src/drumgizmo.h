@@ -28,13 +28,13 @@
 
 #include <string>
 #include <list>
+#include <array>
 
 #include "audiooutputengine.h"
 #include "audioinputengine.h"
 #include "events.h"
 #include "audiofile.h"
 #include "drumkit.h"
-#include "memchecker.h"
 #include "drumkitloader.h"
 #include "audiocache.h"
 #include "mutex.h"
@@ -51,8 +51,6 @@ public:
 	DrumGizmo(Settings& settings,
 	          AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
 	virtual ~DrumGizmo();
-
-	bool loadkit(std::string kitfile);
 
 	bool init();
 
@@ -73,9 +71,9 @@ public:
 	void setFreeWheel(bool freewheel);
 
 private:
-	static const int MAX_NUM_CHANNELS = 64;
-	static const int RESAMPLER_OUTPUT_BUFFER = 4096;
-	static const int RESAMPLER_INPUT_BUFFER = 64;
+	static constexpr int MAX_NUM_CHANNELS = 64;
+	static constexpr int RESAMPLER_OUTPUT_BUFFER = 4096;
+	static constexpr int RESAMPLER_INPUT_BUFFER = 64;
 
 protected:
 	DrumKitLoader loader;
@@ -87,7 +85,7 @@ protected:
 
 	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
-	CHResampler resampler[MAX_NUM_CHANNELS];
+	std::array<CHResampler, MAX_NUM_CHANNELS> resampler;
 	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][RESAMPLER_OUTPUT_BUFFER];
 	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 
@@ -95,7 +93,6 @@ protected:
 
 	AudioCache audioCache;
 	DrumKit kit;
-	MemChecker memchecker;
 	InputProcessor input_processor;
 
 	size_t framesize;
