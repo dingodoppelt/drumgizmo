@@ -2,13 +2,13 @@ DISTDIRS = input output
 
 if ENABLE_CLI
 
-include $(top_srcdir)/src/Makefile.am.drumgizmo 
+include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS)
+drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS) -lrt
 
-drumgizmo_LDFLAGS = 
+drumgizmo_LDFLAGS =
 
 drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
