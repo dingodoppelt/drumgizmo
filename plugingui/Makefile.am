@@ -2,7 +2,7 @@ noinst_PROGRAMS = plugingui rcgen
 
 include Makefile.am.plugingui
 
-plugingui_LDADD = $(PLUGIN_GUI_LIBS)
+plugingui_LDADD = $(PLUGIN_GUI_LIBS) -lrt
 
 plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include $(PLUGIN_GUI_CPPFLAGS) -I$(top_srcdir)/src \
