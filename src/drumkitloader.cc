@@ -231,7 +231,7 @@ void DrumKitLoader::thread_main()
 			}
 
 			// Note: Remove this line to enable diskstreaming
-			//preload_size = ALL_SAMPLES;
+			preload_size = ALL_SAMPLES;
 
 			audiofile->load(preload_size);
 		}
