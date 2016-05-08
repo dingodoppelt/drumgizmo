@@ -36,12 +36,12 @@
 
 DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
                              AudioInputEngine& ie,
-                             std::array<CHResampler, 64>& resampler)
+                             Resamplers& resamplers)
 	: settings(settings)
 	, getter(settings)
 	, kit(kit)
 	, ie(ie)
-	, resampler(resampler)
+	, resamplers(resamplers)
 {
 	run();
 	run_semaphore.wait(); // Wait for the thread to actually start.
@@ -99,10 +99,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	loadKit(&kit);
 
 #ifdef WITH_RESAMPLER
-	for(auto& chresampler: resampler)
-	{
-		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
-	}
+	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
 #endif/*WITH_RESAMPLER*/
 
 
@@ -234,7 +231,7 @@ void DrumKitLoader::thread_main()
 			}
 
 			// Note: Remove this line to enable diskstreaming
-			preload_size = ALL_SAMPLES;
+			//preload_size = ALL_SAMPLES;
 
 			audiofile->load(preload_size);
 		}

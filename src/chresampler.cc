@@ -104,7 +104,7 @@ CHResampler::~CHResampler()
 #endif
 }
 
-void CHResampler::setInputSamples(float* samples, size_t count)
+void CHResampler::setInputSamples(float* samples, std::size_t count)
 {
 #if defined(USE_ZITA)
 	prv->zita.inp_data = samples;
@@ -115,7 +115,7 @@ void CHResampler::setInputSamples(float* samples, size_t count)
 #endif
 }
 
-void CHResampler::setOutputSamples(float* samples, size_t count)
+void CHResampler::setOutputSamples(float* samples, std::size_t count)
 {
 #if defined(USE_ZITA)
 	prv->zita.out_data = samples;
@@ -139,7 +139,7 @@ void CHResampler::process()
 #endif
 }
 
-size_t CHResampler::getInputSampleCount() const
+std::size_t CHResampler::getInputSampleCount() const
 {
 #if defined(USE_ZITA)
 	return prv->zita.inp_count;
@@ -148,7 +148,7 @@ size_t CHResampler::getInputSampleCount() const
 #endif
 }
 
-size_t CHResampler::getOutputSampleCount() const
+std::size_t CHResampler::getOutputSampleCount() const
 {
 #if defined(USE_ZITA)
 	return prv->zita.out_count;
@@ -165,19 +165,19 @@ double CHResampler::getRatio() const
 #else
 
 // Dummy implementation
-CHResampler::CHResampler() {} 
+CHResampler::CHResampler() {}
 CHResampler::~CHResampler() {}
 void CHResampler::setup(double, double) {}
-void CHResampler::setInputSamples(float*, size_t) {}
-void CHResampler::setOutputSamples(float*, size_t) {}
+void CHResampler::setInputSamples(float*, std::size_t) {}
+void CHResampler::setOutputSamples(float*, std::size_t) {}
 void CHResampler::process() {}
 
-size_t CHResampler::getInputSampleCount() const
+std::size_t CHResampler::getInputSampleCount() const
 {
 	return 0;
 }
 
-size_t CHResampler::getOutputSampleCount() const
+std::size_t CHResampler::getOutputSampleCount() const
 {
 	return 0;
 }

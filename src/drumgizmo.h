@@ -85,7 +85,7 @@ protected:
 
 	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
-	std::array<CHResampler, MAX_NUM_CHANNELS> resampler;
+	Resamplers resamplers;
 	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][RESAMPLER_OUTPUT_BUFFER];
 	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 

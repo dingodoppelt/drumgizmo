@@ -50,7 +50,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine *o, AudioInputEngine *i)
-	: loader(settings, kit, *i, resampler)
+	: loader(settings, kit, *i, resamplers)
 	, oe(o)
 	, ie(i)
 	, kit()
@@ -87,7 +87,7 @@ bool DrumGizmo::init()
 void DrumGizmo::setFrameSize(size_t framesize)
 {
 	// If we are resampling override the frame size.
-	if(resampler[0].getRatio() != 1)
+	if(resamplers.isActive())
 	{
 		framesize = RESAMPLER_INPUT_BUFFER;
 	}
@@ -154,7 +154,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 	ie->run(pos, nsamples, events);
 
-	double resample_ratio = resampler[0].getRatio();
+	double resample_ratio = resamplers.getRatio();
 	bool active_events_left = input_processor.process(events, pos, resample_ratio);
 
 	if(!active_events_left)
@@ -168,7 +168,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	//
 #ifdef WITH_RESAMPLER
 	if((settings.enable_resampling.load() == false) ||
-	   (resampler[0].getRatio() == 1.0)) // No resampling needed
+	   (!resamplers.isActive())) // No resampling needed
 	{
 #endif
 		for(size_t c = 0; c < kit.channels.size(); ++c)
@@ -209,27 +209,27 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		// Prepare output buffer
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
-			resampler[c].setOutputSamples(resampler_output_buffer[c], nsamples);
+			resamplers[c].setOutputSamples(resampler_output_buffer[c], nsamples);
 		}
 
 		// Process channel data
-		size_t kitpos = pos * resampler[0].getRatio();
+		size_t kitpos = pos * resamplers.getRatio();
 		size_t insize = sizeof(resampler_input_buffer[0]) / sizeof(sample_t);
 
-		while(resampler[0].getOutputSampleCount() > 0)
+		while(resamplers.getOutputSampleCount() > 0)
 		{
 			for(size_t c = 0; c < kit.channels.size(); ++c)
 			{
-				if(resampler[c].getInputSampleCount() == 0)
+				if(resamplers[c].getInputSampleCount() == 0)
 				{
 					sample_t *sin = resampler_input_buffer[c];
 					memset(resampler_input_buffer[c], 0,
 					       sizeof(resampler_input_buffer[c]));
 					getSamples(c, kitpos, sin, insize);
 
-					resampler[c].setInputSamples(sin, insize);
+					resamplers[c].setInputSamples(sin, insize);
 				}
-				resampler[c].process();
+				resamplers[c].process();
 			}
 			kitpos += insize;
 		}
@@ -413,11 +413,9 @@ void DrumGizmo::setSamplerate(int samplerate)
 	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
 #ifdef WITH_RESAMPLER
-	for(auto& chresampler: resampler)
-	{
-		chresampler.setup(kit.getSamplerate(), settings.samplerate.load());
-	}
-	if(resampler[0].getRatio() != 1)
+	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
+
+	if(resamplers.isActive())
 	{
 		setFrameSize(RESAMPLER_INPUT_BUFFER);
 	}

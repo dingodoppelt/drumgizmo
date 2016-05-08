@@ -51,7 +51,7 @@ class DrumKitLoader
 public:
 	//! The constrcutor starts the loader thread.
 	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
-	              std::array<CHResampler, 64>& resampler);
+	              Resamplers& resamplers);
 
 	//! The destructor signals the thread to stop and waits to merge before
 	//! returning (ie. deleting the object will garantuee that the thread has
@@ -89,6 +89,6 @@ protected:
 	SettingsGetter getter;
 	DrumKit& kit;
 	AudioInputEngine& ie;
-	std::array<CHResampler, 64>& resampler;
+	Resamplers& resamplers;
 	MemChecker memchecker;
 };
