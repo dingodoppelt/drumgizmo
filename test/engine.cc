@@ -31,7 +31,7 @@
 
 class test_engine : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(test_engine);
+	CPPUNIT_TEST_SUITE(test_engine);
 	CPPUNIT_TEST(loading);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -39,37 +39,40 @@ public:
 	void setUp() {}
 	void tearDown() {}
 
-  void loading() {
-	  Settings settings;
-    AudioOutputEngine *oe = NULL;
-    AudioInputEngine *ie = NULL;
-    DrumGizmo dg(settings, oe, ie);
-    dg.setFrameSize(100);
+	void loading()
+	{
+		Settings settings;
+		AudioOutputEngine *oe = NULL;
+		AudioInputEngine *ie = NULL;
+		DrumGizmo dg(settings, oe, ie);
+		dg.setFrameSize(100);
 
-    // Switch kits emmidiately with giving the loader time to work:
-    for(int i = 0; i < 100; i++) {
-      dg.loadkit("kit/kit1.xml");
-      dg.loadkit("kit/kit2.xml");
-    }
+		// Switch kits emmidiately without giving the loader time to work:
+		for(int i = 0; i < 100; ++i)
+		{
+			settings.drumkit_file.store("kit/kit1.xml");
+			settings.drumkit_file.store("kit/kit2.xml");
+		}
 
-    // Switch kits with delay with giving the loader time to work a little:
-    for(int i = 0; i < 100; i++) {
-      dg.loadkit("kit/kit1.xml");
-      usleep(100);
-      dg.loadkit("kit/kit2.xml");
-      usleep(100);
-    }
+		// Switch kits with small delay giving the loader time to work a little:
+		for(int i = 0; i < 100; ++i)
+		{
+			settings.drumkit_file.store("kit/kit1.xml");
+			usleep(100);
+			settings.drumkit_file.store("kit/kit2.xml");
+			usleep(100);
+		}
 
-    // Switch kits with more delay with giving the loader time to finish
-    for(int i = 0; i < 100; i++) {
-      dg.loadkit("kit/kit1.xml");
-      usleep(10000);
-      dg.loadkit("kit/kit2.xml");
-      usleep(10000);
-    }
+		// Switch kits with bigger delay giving the loader time to finish
+		for(int i = 0; i < 100; ++i)
+		{
+			settings.drumkit_file.store("kit/kit1.xml");
+			usleep(10000);
+			settings.drumkit_file.store("kit/kit2.xml");
+			usleep(10000);
+		}
 	}
 };
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(test_engine);
-
