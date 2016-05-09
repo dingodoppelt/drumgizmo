@@ -133,15 +133,15 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	// Count total number of files that need loading:
 	settings.number_of_files.store(0);
-	for(auto instr : kit->instruments)
+	for(auto& instr_ptr: kit->instruments)
 	{
-		settings.number_of_files.fetch_add(instr->audiofiles.size());
+		settings.number_of_files.fetch_add(instr_ptr->audiofiles.size());
 	}
 
 	// Now actually queue them for loading:
-	for(auto instr : kit->instruments)
+	for(auto& instr_ptr: kit->instruments)
 	{
-		for(auto audiofile : instr->audiofiles)
+		for(auto& audiofile: instr_ptr->audiofiles)
 		{
 			load_queue.push_back(audiofile);
 		}

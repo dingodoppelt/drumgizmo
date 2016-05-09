@@ -39,11 +39,6 @@ DrumKit::~DrumKit()
 
 void DrumKit::clear()
 {
-	for(auto& instrument : instruments)
-	{
-		delete instrument;
-	}
-
 	instruments.clear();
 
 	channels.clear();

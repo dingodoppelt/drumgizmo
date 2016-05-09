@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "rangemap.h"
 #include "powerlist.h"
@@ -83,4 +84,4 @@ private:
 };
 
 // typedef std::map< std::string, Instrument > Instruments;
-typedef std::vector<Instrument*> Instruments;
+using Instruments = std::vector<std::unique_ptr<Instrument>>;

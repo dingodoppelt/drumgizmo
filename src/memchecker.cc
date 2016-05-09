@@ -73,12 +73,12 @@ uint64_t MemChecker::calcNeededMemory(const DrumKit& drumkit) const
 	uint64_t needed_memory = 0;
 
 	// Calculate memory usage of all instruments of drumkit.
-	for(auto instrument : drumkit.instruments)
+	for(auto& instr_ptr: drumkit.instruments)
 	{
-		const auto& audiofiles = instrument->audiofiles;
+		const auto& audiofiles = instr_ptr->audiofiles;
 
 		// Calculate memory usage of all audiofiles.
-		for(auto audiofile : audiofiles)
+		for(auto& audiofile: audiofiles)
 		{
 			needed_memory += calcBytesPerChannel(audiofile->filename);
 		}

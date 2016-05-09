@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <hugin.hpp>
 
+#include "cpp11fix.h"
 #include "instrumentparser.h"
 #include "path.h"
 #include "drumgizmo.h"
@@ -184,14 +185,14 @@ void DrumKitParser::endTag(const std::string& name)
 {
 	if(name == "instrument")
 	{
-		Instrument* instrument = new Instrument(settings, rand);
-		instrument->setGroup(instr_group);
-
-		InstrumentParser parser(*instrument);
+		auto ptr = std::make_unique<Instrument>(settings, rand);
+		ptr->setGroup(instr_group);
+		
+		InstrumentParser parser(*ptr);
 		parser.parseFile(path + "/" + instr_file);
 
 		// Transfer ownership to the DrumKit object.
-		kit.instruments.push_back(instrument);
+		kit.instruments.push_back(std::move(ptr));
 
 		// Assign kit channel numbers to instruments channels.
 		std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
@@ -216,7 +217,7 @@ void DrumKitParser::endTag(const std::string& name)
 			if(c->num == NO_CHANNEL)
 			{
 				ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
-				      c->name.c_str(), instrument->getName().c_str());
+				      c->name.c_str(), ptr->getName().c_str());
 			}
 			else
 			{
