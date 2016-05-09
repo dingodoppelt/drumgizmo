@@ -38,13 +38,12 @@ public:
 
 	void add(Sample* s);
 	void finalise(); ///< Call this when no more samples will be added.
-
+	
 	Sample* get(level_t velocity);
 
 private:
-	class PowerListItem
+	struct PowerListItem
 	{
-	public:
 		Sample* sample;
 		float power;
 	};
@@ -54,7 +53,7 @@ private:
 	std::vector<PowerListItem> samples;
 	float power_max;
 	float power_min;
-
+	
 	Channel* getMasterChannel();
 	Sample* lastsample;
 };
