@@ -47,7 +47,7 @@ test/audiocachefile
 test/audiocacheidmanager
 test/configfile
 test/memchecker
-test/random
+test/randomtest
 test/atomictest
 test/syncedsettingstest
 drumgizmo-*.tar.gz
