@@ -67,28 +67,32 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 		return false;
 	}
 
-	if(event.instrument >= kit.instruments.size() ||
-	   !kit.instruments[event.instrument] ||
-	   !kit.instruments[event.instrument]->isValid())
+	size_t ev_instr = event.instrument; 
+	Instrument* instr = nullptr;
+
+	if(ev_instr < kit.instruments.size())
 	{
-		ERR(inputprocessor, "Missing Instrument %d.\n", (int)event.instrument);
+		instr = kit.instruments[ev_instr];
+	}
+
+	if(instr == nullptr || !instr->isValid())
+	{
+		ERR(inputprocessor, "Missing Instrument %d.\n", (int)ev_instr);
 		return false;
 	}
 
-	Instrument& instr(*kit.instruments[event.instrument]);
-
-	if(instr.getGroup() != "")
+	if(instr->getGroup() != "")
 	{
 		// Add event to ramp down all existing events with the same groupname.
-		for(auto& ch: kit.channels)
+		for(Channel& ch: kit.channels)
 		{
 			for(Event* event: activeevents[ch.num])
 			{
 				if(event->getType() == Event::sample)
 				{
-					EventSample& event_sample = *(EventSample*)event;
-					if(event_sample.group == instr.getGroup() &&
-					   event_sample.instrument != &instr)
+					auto& event_sample = *static_cast<EventSample*>(event);
+					if(event_sample.group == instr->getGroup() &&
+					   event_sample.instrument != instr)
 					{
 						event_sample.rampdown = 3000; // Ramp down 3000 samples
 						// TODO: This must be configurable at some point...
@@ -100,18 +104,18 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 		}
 	}
 
-	if(!instr.sample(event.velocity, event.offset + pos))
+	Sample* sample = instr->sample(event.velocity, event.offset + pos);
+
+	if(sample == nullptr)
 	{
 		ERR(inputprocessor, "Missing Sample.\n");
 		return false;
 	}
 
-	Sample& s(*instr.sample(event.velocity, event.offset + pos));
-
-	for(auto& ch: kit.channels)
+	for(Channel& ch: kit.channels)
 	{
-		AudioFile* af = s.getAudioFile(&ch);
-		if(af)
+		AudioFile* af = sample->getAudioFile(&ch);
+		if(af != nullptr)
 		{
 			// LAZYLOAD:
 			// DEBUG(inputprocessor, "Requesting preparing of audio file\n");
@@ -124,7 +128,7 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			Event* evt = new EventSample(ch.num, 1.0, af, instr.getGroup(), &instr);
+			Event* evt = new EventSample(ch.num, 1.0, af, instr->getGroup(), instr);
 			evt->offset = (event.offset + pos) * resample_ratio;
 			activeevents[ch.num].push_back(evt);
 		}
