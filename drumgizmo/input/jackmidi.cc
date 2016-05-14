@@ -50,10 +50,10 @@ JackMidiInputEngine::~JackMidiInputEngine()
 
 bool JackMidiInputEngine::init(const Instruments& instruments)
 {
-	if(!loadMidiMap(midimap, instruments))
+	if(!loadMidiMap(midimap_file, instruments))
 	{
 		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
-		          << midimap << "'\n";
+		          << midimap_file << "'\n";
 		return false;
 	}
 	port = std::make_unique<JackPort>(client, "drumgizmo_midiin",
@@ -67,7 +67,7 @@ void JackMidiInputEngine::setParm(const std::string& parm, const std::string& va
 	if(parm == "midimap")
 	{
 		// apply midimap filename
-		midimap = value;
+		midimap_file = value;
 	}
 	else
 	{

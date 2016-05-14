@@ -58,6 +58,7 @@ private:
 	JackClient& client;
 	std::unique_ptr<JackPort> port;
 
+	std::string midimap_file;
 	std::size_t pos;
 	std::vector<event_t> events;
 };
