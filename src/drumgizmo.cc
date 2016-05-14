@@ -148,8 +148,6 @@ void DrumGizmo::run(int endpos)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
-	std::lock_guard<std::mutex> guard(resamplers.mutex);
-
 	setFrameSize(nsamples);
 
 	ie->pre();
