@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            velocity.cc
+ *            midiinputengine.h
  *
- *  Tue Jul 22 18:04:58 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat May 14 13:26:22 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,46 +24,41 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "velocity.h"
+#pragma once
 
-#include <stdlib.h>
+#include <audioinputenginemidi.h>
+#include <midimapper.h>
+#include <midimapparser.h>
+#include <string>
+#include <vector>
 
-Velocity::Velocity(unsigned int lower, unsigned int upper, Random& rand)
-	: lower{lower}
-	, upper{upper}
-	, samples{}
-	, rand(rand)
+#include <event.h>
+#include <smf.h>
+
+class MidifileInputEngine
+	: public AudioInputEngineMidi
 {
-}
+public:
+	MidifileInputEngine();
+	~MidifileInputEngine();
 
-void Velocity::addSample(Sample* sample, float probability)
-{
-	if(samples.find(sample) != samples.end())
-	{
-		samples[sample] += probability;
-	}
-	else
-	{
-		samples[sample] = probability;
-	}
-}
+	// based on AudioInputEngineMidi
+	bool init(const Instruments& instruments) override;
+	void setParm(const std::string& parm, const std::string& value) override;
+	bool start() override;
+	void stop() override;
+	void pre() override;
+	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
+	void post() override;
 
-Sample* Velocity::getSample()
-{
-	Sample* sample{nullptr};
+private:
+	smf_t* smf;
+	smf_event_t* current_event;
 
-	float x = rand.floatInRange(0, 1);
-	float sum = 0.0;
-
-	for (auto const & pair: samples)
-	{
-		if (x > sum)
-		{
-			break;
-		}
-		sum += pair.second;
-		sample = pair.first;
-	}
-
-	return sample;
-}
+	std::string midimap_filename;
+	std::string file;
+	float speed;
+	int track;
+	bool loop;
+	double offset, samplerate;
+};

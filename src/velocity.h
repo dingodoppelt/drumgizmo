@@ -34,7 +34,7 @@
 class Velocity
 {
 public:
-	Velocity(unsigned int lower, unsigned int upper);
+	Velocity(unsigned int lower, unsigned int upper, Random& rand);
 
 	void addSample(Sample* sample, float probability);
 	Sample* getSample();
@@ -46,5 +46,5 @@ private:
 	typedef std::map<Sample*, float> Samples;
 	Samples samples;
 
-	Random rand;
+	Random& rand;
 };

@@ -51,7 +51,7 @@ class DrumKitLoader
 public:
 	//! The constrcutor starts the loader thread.
 	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
-	              Resamplers& resamplers);
+	              Resamplers& resamplers, Random& rand);
 
 	//! The destructor signals the thread to stop and waits to merge before
 	//! returning (ie. deleting the object will garantuee that the thread has
@@ -91,4 +91,5 @@ protected:
 	AudioInputEngine& ie;
 	Resamplers& resamplers;
 	MemChecker memchecker;
+	Random& rand;
 };

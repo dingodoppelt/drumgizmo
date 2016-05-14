@@ -35,6 +35,8 @@ public:
 	Random();
 	Random(unsigned int seed);
 
+	void setSeed(unsigned int seed);
+
 	//! \return random int in range [<lower_bound>, <upper_bound>].
 	int intInRange(int lower_bound, int upper_bound);
 

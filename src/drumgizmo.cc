@@ -50,7 +50,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine *o, AudioInputEngine *i)
-	: loader(settings, kit, *i, resamplers)
+	: loader(settings, kit, *i, resamplers, rand)
 	, oe(o)
 	, ie(i)
 	, kit()
@@ -115,6 +115,11 @@ void DrumGizmo::setFreeWheel(bool freewheel)
 	}
 }
 
+void DrumGizmo::setRandomSeed(unsigned int seed)
+{
+	rand.setSeed(seed);
+}
+
 void DrumGizmo::run(int endpos)
 {
 	size_t pos = 0;
@@ -143,6 +148,8 @@ void DrumGizmo::run(int endpos)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+	std::lock_guard<std::mutex> guard(resamplers.mutex);
+
 	setFrameSize(nsamples);
 
 	ie->pre();

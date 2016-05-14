@@ -1,4 +1,6 @@
 # Rules for the test code (use `make check` to execute)
+SUBDIRS = dgreftest
+
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 TESTS = resource engine gui resampler lv2 configfile audiocache \

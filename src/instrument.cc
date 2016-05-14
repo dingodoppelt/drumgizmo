@@ -30,8 +30,10 @@
 
 #include "sample.h"
 
-Instrument::Instrument(Settings& settings)
+Instrument::Instrument(Settings& settings, Random& rand)
 	: settings(settings)
+	, rand(rand)
+	, powerlist(rand)
 {
 	DEBUG(instrument, "new %p\n", this);
 	mod = 1.0;

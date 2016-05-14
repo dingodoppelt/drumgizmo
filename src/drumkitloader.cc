@@ -36,12 +36,14 @@
 
 DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
                              AudioInputEngine& ie,
-                             Resamplers& resamplers)
+                             Resamplers& resamplers,
+                             Random& rand)
 	: settings(settings)
 	, getter(settings)
 	, kit(kit)
 	, ie(ie)
 	, resamplers(resamplers)
+	, rand(rand)
 {
 	run();
 	run_semaphore.wait(); // Wait for the thread to actually start.
@@ -80,7 +82,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 
 	settings.drumkit_load_status.store(LoadStatus::Loading);
 
-	DrumKitParser parser(settings, kit);
+	DrumKitParser parser(settings, kit, rand);
 	if(parser.parseFile(file))
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());

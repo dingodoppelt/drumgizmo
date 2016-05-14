@@ -31,10 +31,14 @@
 Random::Random()
 	: Random(std::chrono::system_clock::now().time_since_epoch().count())
 {
-
 }
 
 Random::Random(unsigned int seed)
+{
+	setSeed(seed);
+}
+
+void Random::setSeed(unsigned int seed)
 {
 	generator.seed(seed);
 }

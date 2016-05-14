@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            velocity.cc
+ *            compareoutputengine.h
  *
- *  Tue Jul 22 18:04:58 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Sat May 14 13:27:04 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,46 +24,32 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "velocity.h"
+#pragma once
 
-#include <stdlib.h>
+#include <sndfile.h>
+#include <audiooutputengine.h>
 
-Velocity::Velocity(unsigned int lower, unsigned int upper, Random& rand)
-	: lower{lower}
-	, upper{upper}
-	, samples{}
-	, rand(rand)
+class CompareOutputEngine
+	: public AudioOutputEngine
 {
-}
+public:
+	CompareOutputEngine();
+	~CompareOutputEngine();
 
-void Velocity::addSample(Sample* sample, float probability)
-{
-	if(samples.find(sample) != samples.end())
-	{
-		samples[sample] += probability;
-	}
-	else
-	{
-		samples[sample] = probability;
-	}
-}
+	// based on AudioOutputEngine
+	bool init(const Channels& data) override;
+	void setParm(const std::string& parm, const std::string& value) override;
+	bool start() override;
+	void stop() override;
+	void pre(size_t nsamples) override;
+	void run(int ch, sample_t* samples, size_t nsamples) override;
+	void post(size_t nsamples) override;
+	size_t getSamplerate() const override;
 
-Sample* Velocity::getSample()
-{
-	Sample* sample{nullptr};
-
-	float x = rand.floatInRange(0, 1);
-	float sum = 0.0;
-
-	for (auto const & pair: samples)
-	{
-		if (x > sum)
-		{
-			break;
-		}
-		sum += pair.second;
-		sample = pair.first;
-	}
-
-	return sample;
-}
+private:
+	SF_INFO info;
+	SNDFILE* handle;
+	std::string file;
+	sample_t buffer[4096 * 16];
+	std::size_t diff_samples{0};
+};

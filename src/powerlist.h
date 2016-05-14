@@ -34,7 +34,7 @@
 class PowerList
 {
 public:
-	PowerList();
+	PowerList(Random& rand);
 
 	void add(Sample* s);
 	void finalise(); ///< Call this when no more samples will be added.
@@ -49,7 +49,7 @@ private:
 		float power;
 	};
 
-	Random rand;
+	Random& rand;
 
 	std::vector<PowerListItem> samples;
 	float power_max;

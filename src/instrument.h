@@ -42,7 +42,7 @@ class Instrument
 {
 	friend class InstrumentParser;
 public:
-	Instrument(Settings& settings);
+	Instrument(Settings& settings, Random& rand);
 	~Instrument();
 
 	Sample* sample(level_t level, size_t pos);
@@ -69,7 +69,6 @@ private:
 	VersionStr version;
 
 	RangeMap<level_t, Sample*> samples;
-	PowerList powerlist;
 
 	void addSample(level_t a, level_t b, Sample* s);
 	void finalise(); ///< Signal instrument that no more samples will be added.
@@ -79,7 +78,8 @@ private:
 	size_t lastpos;
 	float mod;
 	Settings& settings;
-	Random rand;
+	Random& rand;
+	PowerList powerlist;
 };
 
 // typedef std::map< std::string, Instrument > Instruments;

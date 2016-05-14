@@ -70,6 +70,8 @@ public:
 
 	void setFreeWheel(bool freewheel);
 
+	void setRandomSeed(unsigned int seed);
+
 private:
 	static constexpr int MAX_NUM_CHANNELS = 64;
 	static constexpr int RESAMPLER_OUTPUT_BUFFER = 4096;
@@ -101,4 +103,5 @@ protected:
 	std::vector<event_t> events;
 	Settings& settings;
 	SettingsGetter getter{settings};
+	Random rand;
 };

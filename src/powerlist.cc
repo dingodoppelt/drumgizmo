@@ -51,7 +51,8 @@
 
 #define SIZE 500
 
-PowerList::PowerList()
+PowerList::PowerList(Random& rand)
+	: rand(rand)
 {
 	power_max = 0;
 	power_min = 100000000;

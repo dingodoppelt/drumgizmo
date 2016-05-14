@@ -34,7 +34,7 @@ class DrumKitParser
 	: public SAXParser
 {
 public:
-	DrumKitParser(Settings& setting, DrumKit& kit);
+	DrumKitParser(Settings& setting, DrumKit& kit, Random& rand);
 
 	virtual int parseFile(const std::string& filename) override;
 
@@ -53,4 +53,5 @@ private:
 
 	ConfigFile refs;
 	Settings& settings;
+	Random& rand;
 };
