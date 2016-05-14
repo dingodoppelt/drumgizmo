@@ -59,6 +59,8 @@ public:
 
 protected:
 	MidiMapper mmap;
+
+private:
 	std::string midimap;
 	bool is_valid;
 

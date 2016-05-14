@@ -54,6 +54,7 @@ private:
 	smf_t* smf;
 	smf_event_t* current_event;
 
+	std::string midimap_file;
 	std::string file;
 	float speed;
 	int track;

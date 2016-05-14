@@ -59,7 +59,7 @@ bool MidifileInputEngine::init(const Instruments& instruments)
 		std::cerr << "[MidifileInputEngine] Missing midi filename\n";
 		return false;
 	}
-	if(midimap == "")
+	if(midimap_file == "")
 	{
 		std::cerr << "[MidifileInputEngine] Missing midimap filename\n";
 		return false;
@@ -71,10 +71,10 @@ bool MidifileInputEngine::init(const Instruments& instruments)
 		          << "'\n";
 		return false;
 	}
-	if(!loadMidiMap(midimap, instruments))
+	if(!loadMidiMap(midimap_file, instruments))
 	{
 		std::cerr << "[MidifileInputEngine] Failed to parse midimap '"
-		          << midimap << "'\n";
+		          << midimap_file << "'\n";
 		return false;
 	}
 	return true;
@@ -103,7 +103,7 @@ void MidifileInputEngine::setParm(const std::string& parm, const std::string& va
 	else if(parm == "midimap")
 	{
 		// apply midimap filename
-		midimap = value;
+		midimap_file = value;
 	}
 	else if(parm == "loop")
 	{
