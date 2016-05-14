@@ -39,7 +39,6 @@ DG_SRC = \
 	@top_srcdir@/src/semaphore.cc \
 	@top_srcdir@/src/saxparser.cc \
 	@top_srcdir@/src/thread.cc \
-	@top_srcdir@/src/velocity.cc \
 	@top_srcdir@/src/versionstr.cc
 DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/include -I@top_srcdir@/src \
 	-I@top_srcdir@/plugin/plugingizmo -DVST -DSSE -msse -msse2
