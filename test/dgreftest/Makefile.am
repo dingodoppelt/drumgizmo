@@ -13,7 +13,7 @@ dgreftest_LDFLAGS =
 dgreftest_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
-	$(JACK_CFLAGS) $(SSEFLAGS) $(SMF_CFLAGS)
+	$(JACK_CFLAGS) $(SSEFLAGS) $(SMF_CFLAGS) -ffloat-store
 
 dgreftest_CFLAGS = -DWITH_HUG_MUTEX -DWITH_HUG_FILTER
 
