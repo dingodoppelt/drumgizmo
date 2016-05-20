@@ -91,7 +91,7 @@ AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
 AS_IF([test "x$enable_gui" = "xauto"],
       [AC_MSG_RESULT([Auto setting gui based on host: $host_os])
 	     AS_CASE([$host_os],
-		      [darwin*], [enable_gui=""],
+		      [darwin*], [enable_gui="carbon"],
 		      [linux*|*bsd*], [enable_gui="x11"],
 		      [mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
 
@@ -119,6 +119,11 @@ AS_IF(
   [AC_MSG_RESULT([Setting gui backend to Pugl])
   GUI_CPPFLAGS="-DPUGL -I../../pugl"
   GUI_LIBS="-lGLU -lGL -lglut"],
+
+  [test "x$enable_gui" = "xcarbon"],
+  [AC_MSG_RESULT([Setting gui backend to Carbon])
+  GUI_CPPFLAGS=""
+  GUI_LIBS=""],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
 )
