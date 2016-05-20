@@ -6,11 +6,11 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS) -lrt
+drumgizmo_LDADD = $(DRUMGIZMO_LIBS) -ldl $(JACK_LIBS) -lrt
 
 drumgizmo_LDFLAGS =
 
-drumgizmo_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
+drumgizmo_CXXFLAGS = $(DRUMGIZMO_CPPFLAGS) \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(JACK_CFLAGS) $(SSEFLAGS)
