@@ -19,7 +19,6 @@ drumgizmo_CFLAGS = -DWITH_HUG_MUTEX -DWITH_HUG_FILTER
 
 drumgizmo_SOURCES = \
 	drumgizmoc.cc \
-	jackclient.cc \
 	enginefactory.cc \
 	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
@@ -69,6 +68,15 @@ drumgizmo_CXXFLAGS += $(JACK_CFLAGS)
 drumgizmo_LDFLAGS += $(JACK_LIBS)
 drumgizmo_SOURCES += output/jackaudio.cc
 drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_JACKAUDIO
+endif # HAVE_OUTPUT_JACKAUDIO
+
+# Only compile jackclient.cc if at least one of the jack modules are included.
+if HAVE_OUTPUT_JACKAUDIO
+drumgizmo_SOURCES += jackclient.cc
+else
+if HAVE_INPUT_JACKMIDI
+drumgizmo_SOURCES += jackclient.cc
+endif #  HAVE_INPUT_JACKMIDI
 endif # HAVE_OUTPUT_JACKAUDIO
 
 EXTRA_DIST = \
