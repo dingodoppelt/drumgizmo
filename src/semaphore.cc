@@ -38,11 +38,7 @@
 #include <../include/semaphore.h>
 #include <errno.h>
 #include <stdio.h>
-
-#if DG_PLATFORM == DG_PLATFORM_LINUX
 #include <time.h>
-#else
-#include <sys/time.h>
 #endif
 
 #endif
@@ -104,21 +100,12 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 #else
 	struct timespec ts;
 
-#if DG_PLATFORM == DG_PLATFORM_LINUX
-	// Get current time
-	clock_gettime(CLOCK_REALTIME, &ts);
-#elif defined(DG_POSIX)
 	struct timeval now;
 	int rv = gettimeofday(&now, NULL);
+	assert(rv == 0);
 
-	if (rv == 0)
-	{
-		ts->tv_sec  = now.tv_sec;
-		ts->tv_nsec = now.tv_usec * 1000;
-	}
-#else
-	#error "Neither linux nor POSIX!"
-#endif
+	ts->tv_sec  = now.tv_sec;
+	ts->tv_nsec = now.tv_usec * 1000;
 
 	// Add timeout
 	time_t seconds = (time_t)(timeout.count() / 1000);
