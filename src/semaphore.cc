@@ -107,7 +107,7 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 #if DG_PLATFORM == DG_PLATFORM_LINUX
 	// Get current time
 	clock_gettime(CLOCK_REALTIME, &ts);
-#elif DG_POSIX
+#elif defined(DG_POSIX)
 	struct timeval now;
 	int rv = gettimeofday(&now, NULL);
 
