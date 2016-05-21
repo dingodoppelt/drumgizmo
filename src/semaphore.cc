@@ -31,17 +31,24 @@
 #include <assert.h>
 #include <string.h>
 
-#ifdef WIN32
-#include <windows.h>
-#else
-// Make sure we don't include /this/ files header...
+#include "platform.h"
+
+#if DG_PLATFORM != DG_PLATFORM_WINDOWS
+// Make sure we don't include /this/ file's header...
 #include <../include/semaphore.h>
 #include <errno.h>
 #include <stdio.h>
+
+#if DG_PLATFORM == DG_PLATFORM_LINUX
+#include <time.h>
+#else
+#include <sys/time.h>
+#endif
+
 #endif
 
 struct semaphore_private_t {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE semaphore;
 #else
 	sem_t semaphore;
@@ -52,7 +59,7 @@ Semaphore::Semaphore(std::size_t initial_count)
 {
 	prv = new struct semaphore_private_t();
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	prv->semaphore = CreateSemaphore(nullptr,  // default security attributes
 	                                 initial_count,
 	                                 std::numeric_limits<LONG>::max(),
@@ -66,7 +73,7 @@ Semaphore::Semaphore(std::size_t initial_count)
 
 Semaphore::~Semaphore()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	CloseHandle(prv->semaphore);
 #else
 	sem_destroy(&prv->semaphore);
@@ -77,7 +84,7 @@ Semaphore::~Semaphore()
 
 void Semaphore::post()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	ReleaseSemaphore(prv->semaphore, 1, NULL);
 #else
 	sem_post(&prv->semaphore);
@@ -86,7 +93,7 @@ void Semaphore::post()
 
 bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	DWORD ret = WaitForSingleObject(prv->semaphore, timeout.count());
 	if(ret == WAIT_TIMEOUT)
 	{
@@ -97,8 +104,21 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 #else
 	struct timespec ts;
 
+#if DG_PLATFORM == DG_PLATFORM_LINUX
 	// Get current time
 	clock_gettime(CLOCK_REALTIME, &ts);
+#elif DG_POSIX
+	struct timeval now;
+	int rv = gettimeofday(&now, NULL);
+
+	if (rv == 0)
+	{
+		ts->tv_sec  = now.tv_sec;
+		ts->tv_nsec = now.tv_usec * 1000;
+	}
+#else
+	#error "Neither linux nor POSIX!"
+#endif
 
 	// Add timeout
 	time_t seconds = (time_t)(timeout.count() / 1000);
@@ -131,7 +151,7 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 
 void Semaphore::wait()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	WaitForSingleObject(prv->semaphore, INFINITE);
 #else
 	sem_wait(&prv->semaphore);
