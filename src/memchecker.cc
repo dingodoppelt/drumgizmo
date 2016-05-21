@@ -26,12 +26,12 @@
  */
 #include "memchecker.h"
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
+#include "platform.h"
+
+#if DG_PLATFORM == DG_PLATFORM_LINUX
 #include <sys/sysinfo.h>
 #endif
+
 #include <sndfile.h>
 #include <hugin.hpp>
 
@@ -48,15 +48,19 @@ uint64_t MemChecker::calcFreeMemory() const
 	uint64_t free_memory = 0;
 
 	// Platform specific calculation of the amount of free memory.
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_LINUX
+	struct sysinfo sys_info;
+	sysinfo(&sys_info);
+	free_memory = sys_info.freeram * sys_info.mem_unit;
+#elif DG_PLATFORM == DG_PLATFORM_WINDOWS
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof(status);
 	GlobalMemoryStatusEx(&status);
 	free_memory = status.ullAvailPhys;
-#else
-	struct sysinfo sys_info;
-	sysinfo(&sys_info);
-	free_memory = sys_info.freeram * sys_info.mem_unit;
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	// TODO
+#elif DG_PLATFORM == DG_PLATFORM_UNIX
+	// TODO
 #endif
 
 	DEBUG(memchecker, "Calculated %" PRIu64 " free memory.\n", free_memory);
@@ -92,7 +96,8 @@ uint64_t MemChecker::calcBytesPerChannel(const std::string& filename) const
 	SNDFILE* f = sf_open(filename.c_str(), SFM_READ, &sf_info);
 	if(!f)
 	{
-		ERR(memchecker, "SNDFILE Error (%s): %s\n", filename.c_str(), sf_strerror(f));
+		ERR(memchecker, "SNDFILE Error (%s): %s\n",
+		    filename.c_str(), sf_strerror(f));
 		return 0;
 	}
 
