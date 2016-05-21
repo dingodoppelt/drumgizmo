@@ -6,7 +6,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(DRUMGIZMO_LIBS) -ldl $(JACK_LIBS) -lrt
+drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(JACK_LIBS)
 
 drumgizmo_LDFLAGS =
 

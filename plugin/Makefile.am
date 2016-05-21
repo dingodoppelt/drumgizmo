@@ -23,7 +23,7 @@ drumgizmo_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_la_LDFLAGS = -shared -module -avoid-version
-drumgizmo_la_LIBADD = $(LV2_LIBS) $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS) -lrt
+drumgizmo_la_LIBADD = $(LV2_LIBS) $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
 
 #######
@@ -58,7 +58,7 @@ drumgizmo_vst_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version
-drumgizmo_vst_la_LIBADD = libvstsdk.la $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS) -lrt
+drumgizmo_vst_la_LIBADD = libvstsdk.la $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
 
 install-exec-hook:
