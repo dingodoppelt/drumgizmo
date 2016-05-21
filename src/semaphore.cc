@@ -41,8 +41,6 @@
 #include <sys/time.h>
 #endif
 
-#endif
-
 struct semaphore_private_t {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE semaphore;
@@ -104,8 +102,8 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 	int rv = gettimeofday(&now, nullptr);
 	assert(rv == 0);
 
-	ts->tv_sec  = now.tv_sec;
-	ts->tv_nsec = now.tv_usec * 1000;
+	ts.tv_sec  = now.tv_sec;
+	ts.tv_nsec = now.tv_usec * 1000;
 
 	// Add timeout
 	time_t seconds = (time_t)(timeout.count() / 1000);
