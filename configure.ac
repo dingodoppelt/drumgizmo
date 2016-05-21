@@ -20,7 +20,6 @@ dnl ===========================
 AC_LANG_PUSH([C++])
 TMP_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS=-std=c++11
-LDFLAGS=-lrt
 AC_MSG_CHECKING([whether CXX supports -std=c++11])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 	[AC_MSG_RESULT([yes])],
@@ -462,6 +461,31 @@ AS_IF([test x$enable_resampler == xsrc],
              [AC_MSG_ERROR([*** Missing libsamplerate.])]
        )]
 )
+
+dnl ======================
+dnl Check for the rt library
+dnl ======================
+AC_HAVE_LIBRARY([rt],[],[])
+
+dnl ======================
+dnl Check for the atomic library
+dnl ======================
+AC_LINK_IFELSE(
+    [AC_LANG_SOURCE[
+      #include <atomic>
+      int main() {
+        struct Test { int val; };
+        std::atomic<Test> s;
+        s.is_lock_free();
+      }
+    ]],
+    [libatomic=yes],
+    [libatomic=no])
+
+if test "$libatomic" = no; then
+  AC_HAVE_LIBRARY([atomic],[],[AC_MSG_ERROR(
+                  [Please install the GNU Atomic library])])
+fi
 
 dnl ======================
 dnl Check for the pthread library
