@@ -95,6 +95,10 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 	}
 
 	assert(ret == WAIT_OBJECT_0);
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+
+	// TODO: sem_timedwait not implemented on OSX
+
 #else
 	struct timespec ts;
 
