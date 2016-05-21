@@ -38,7 +38,7 @@
 #include <../include/semaphore.h>
 #include <errno.h>
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
 #endif
 
 #endif
@@ -81,7 +81,7 @@ Semaphore::~Semaphore()
 void Semaphore::post()
 {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
-	ReleaseSemaphore(prv->semaphore, 1, NULL);
+	ReleaseSemaphore(prv->semaphore, 1, nullptr);
 #else
 	sem_post(&prv->semaphore);
 #endif
@@ -101,7 +101,7 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 	struct timespec ts;
 
 	struct timeval now;
-	int rv = gettimeofday(&now, NULL);
+	int rv = gettimeofday(&now, nullptr);
 	assert(rv == 0);
 
 	ts->tv_sec  = now.tv_sec;
