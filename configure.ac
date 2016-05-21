@@ -467,25 +467,25 @@ dnl Check for the rt library
 dnl ======================
 AC_HAVE_LIBRARY([rt],[],[])
 
-dnl ======================
-dnl Check for the atomic library
-dnl ======================
-AC_LINK_IFELSE(
-    [AC_LANG_SOURCE[
-      #include <atomic>
-      int main() {
-        struct Test { int val; };
-        std::atomic<Test> s;
-        s.is_lock_free();
-      }
-    ]],
-    [libatomic=yes],
-    [libatomic=no])
-
-if test "$libatomic" = no; then
-  AC_HAVE_LIBRARY([atomic],[],[AC_MSG_ERROR(
-                  [Please install the GNU Atomic library])])
-fi
+#dnl ======================
+#dnl Check for the atomic library
+#dnl ======================
+#AC_LINK_IFELSE(
+#    [AC_LANG_SOURCE[
+#      #include <atomic>
+#      int main() {
+#        struct Test { int val; };
+#        std::atomic<Test> s;
+#        s.is_lock_free();
+#      }
+#    ]],
+#    [needs_libatomic=yes],
+#    [needs_libatomic=no])
+#
+#if test x$needs_libatomic = xno; then
+#  AC_HAVE_LIBRARY([atomic],[],[AC_MSG_ERROR(
+#                  [Please install the GNU Atomic library])])
+#fi
 
 dnl ======================
 dnl Check for the pthread library
