@@ -54,6 +54,7 @@ class MemCheckerTest
 private:
 	Settings settings;
 	DrumKit kit;
+	Random random;
 
 	const std::string small_kit_path = "kit/small_kit.xml";
 	const std::string huge_kit_path = "kit/huge_kit.xml";
@@ -71,7 +72,7 @@ public:
 	void small_drumkit()
 	{
 		// load the small kit
-		DrumKitParser parser(settings, kit);
+		DrumKitParser parser(settings, kit, random);
 		CPPUNIT_ASSERT(!parser.parseFile(small_kit_path));
 
 		// check if the memchecker thinks it fits into memory
@@ -81,7 +82,7 @@ public:
 	void huge_drumkit()
 	{
 		// load the huge kit
-		DrumKitParser parser(settings, kit);
+		DrumKitParser parser(settings, kit, random);
 		CPPUNIT_ASSERT(!parser.parseFile(huge_kit_path));
 
 		// check if the memchecker thinks it doesn't fit into memory
@@ -95,7 +96,7 @@ public:
 		CPPUNIT_ASSERT_EQUAL(bytes_per_channel, calcBytesPerChannel(audiofile));
 
 		// load the huge kit
-		DrumKitParser parser(settings, kit);
+		DrumKitParser parser(settings, kit, random);
 		CPPUNIT_ASSERT(!parser.parseFile(huge_kit_path));
 
 		// check if the protected method of the memchecker reports the correct size
