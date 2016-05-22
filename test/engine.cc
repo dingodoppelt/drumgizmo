@@ -29,6 +29,38 @@
 #include <drumgizmo.h>
 #include <unistd.h>
 
+class AudioOutputEngineDummy
+	: public AudioOutputEngine
+{
+public:
+	bool init(const Channels& channels) { return true; }
+
+	void setParm(const std::string& parm, const std::string& value) {}
+
+	bool start() { return true; }
+	void stop() {}
+
+	void pre(size_t nsamples) {}
+	void run(int ch, sample_t *samples, size_t nsamples) {}
+	void post(size_t nsamples) {}
+};
+
+class AudioInputEngineDummy
+	: public AudioInputEngine
+{
+public:
+	bool init(const Instruments& instruments) { return true; }
+
+	void setParm(const std::string& parm, const std::string& value) {}
+
+	bool start() { return true; }
+	void stop() {}
+
+	void pre() {}
+	void run(size_t pos, size_t len, std::vector<event_t>& events) {}
+	void post() {}
+};
+
 class test_engine : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(test_engine);
@@ -42,9 +74,9 @@ public:
 	void loading()
 	{
 		Settings settings;
-		AudioOutputEngine *oe = NULL;
-		AudioInputEngine *ie = NULL;
-		DrumGizmo dg(settings, oe, ie);
+		AudioOutputEngineDummy oe;
+		AudioInputEngineDummy ie;
+		DrumGizmo dg(settings, &oe, &ie);
 		dg.setFrameSize(100);
 
 		// Switch kits emmidiately without giving the loader time to work:
