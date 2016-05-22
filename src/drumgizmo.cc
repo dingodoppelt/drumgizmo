@@ -62,10 +62,12 @@ DrumGizmo::DrumGizmo(Settings& settings,
 {
 	audioCache.init(10000); // start thread
 	events.reserve(1000);
+	loader.init();
 }
 
 DrumGizmo::~DrumGizmo()
 {
+	loader.deinit();
 	audioCache.deinit(); // stop thread
 }
 

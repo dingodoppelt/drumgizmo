@@ -49,14 +49,17 @@ class DrumKitLoader
 	: public Thread
 {
 public:
-	//! The constrcutor starts the loader thread.
 	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
 	              Resamplers& resamplers, Random& rand);
 
-	//! The destructor signals the thread to stop and waits to merge before
-	//! returning (ie. deleting the object will garantuee that the thread has
-	//! been stopped).
 	~DrumKitLoader();
+
+	//! Starts the loader thread.
+	void init();
+
+	//! Signal the loader thread to stop and waits for the threads to merge
+	//! before returning.
+	void deinit();
 
 	bool loadkit(const std::string& file);
 
@@ -64,9 +67,6 @@ public:
 	//! All other AudioFiles in queue will be removed before the new ones are
 	//! scheduled.
 	void loadKit(DrumKit *kit);
-
-	//! Signal the loader to stop and wait until it has.
-	void stop();
 
 	//! Skip all queued AudioFiles.
 	void skip();

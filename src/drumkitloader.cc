@@ -45,21 +45,34 @@ DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
 	, resamplers(resamplers)
 	, rand(rand)
 {
-	run();
-	run_semaphore.wait(); // Wait for the thread to actually start.
 }
 
 DrumKitLoader::~DrumKitLoader()
 {
-	DEBUG(loader, "~DrumKitLoader() pre\n");
+	assert(!running);
+}
 
+void DrumKitLoader::init()
+{
+	run();
+	run_semaphore.wait(); // Wait for the thread to actually start.
+}
+
+void DrumKitLoader::deinit()
+{
 	if(running)
 	{
 		framesize_semaphore.post();
-		stop();
-	}
 
-	DEBUG(loader, "~DrumKitLoader() post\n");
+		{
+			std::lock_guard<std::mutex> guard(mutex);
+			load_queue.clear();
+		}
+
+		running = false;
+		semaphore.post();
+		wait_stop();
+	}
 }
 
 bool DrumKitLoader::loadkit(const std::string& file)
@@ -138,18 +151,6 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 	      (int)settings.number_of_files.load(), (int)load_queue.size());
 
 	semaphore.post(); // Start loader loop.
-}
-
-void DrumKitLoader::stop()
-{
-	{
-		std::lock_guard<std::mutex> guard(mutex);
-		load_queue.clear();
-	}
-
-	running = false;
-	semaphore.post();
-	wait_stop();
 }
 
 void DrumKitLoader::skip()
