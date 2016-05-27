@@ -195,11 +195,7 @@ void DrumKitParser::endTag(const std::string& name)
 		kit.instruments.push_back(std::move(ptr));
 
 		// Assign kit channel numbers to instruments channels.
-		std::vector<InstrumentChannel*>::iterator ic = parser.channellist.begin();
-		while(ic != parser.channellist.end())
-		{
-			InstrumentChannel* c = *ic;
-
+		for (auto& c: parser.channellist) {
 			std::string cname = c->name;
 			if(channelmap.find(cname) != channelmap.end())
 			{
@@ -226,7 +222,6 @@ void DrumKitParser::endTag(const std::string& name)
 				  c->name.c_str(), c->num, i.name().c_str());
 				*/
 			}
-			ic++;
 		}
 
 		channelmap.clear();

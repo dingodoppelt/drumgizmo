@@ -72,7 +72,7 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 
 	if(ev_instr < kit.instruments.size())
 	{
-		instr = kit.instruments[ev_instr];
+		instr = kit.instruments[ev_instr].get();
 	}
 
 	if(instr == nullptr || !instr->isValid())
