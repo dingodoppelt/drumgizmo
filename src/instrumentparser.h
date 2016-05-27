@@ -29,6 +29,7 @@
 #include "saxparser.h"
 #include "instrument.h"
 
+#include <memory>
 #include <vector>
 
 class InstrumentParser

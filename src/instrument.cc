@@ -47,12 +47,6 @@ Instrument::~Instrument()
 	magic = nullptr;
 
 	DEBUG(instrument, "delete %p\n", this);
-	std::vector<AudioFile*>::iterator i = audiofiles.begin();
-	while(i != audiofiles.end())
-	{
-		delete *i;
-		i++;
-	}
 }
 
 bool Instrument::isValid() const

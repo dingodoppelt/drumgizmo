@@ -56,7 +56,7 @@ public:
 
 	//  std::map<std::string, std::string> channelmap;
 
-	std::vector<AudioFile*> audiofiles;
+	std::vector<std::unique_ptr<AudioFile>> audiofiles;
 
 	bool isValid() const;
 

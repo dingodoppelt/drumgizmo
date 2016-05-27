@@ -143,7 +143,7 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 	{
 		for(auto& audiofile: instr_ptr->audiofiles)
 		{
-			load_queue.push_back(audiofile);
+			load_queue.push_back(audiofile.get());
 		}
 	}
 

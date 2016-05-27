@@ -31,6 +31,7 @@
 
 #include <hugin.hpp>
 
+#include "cpp11fix.h"
 #include "path.h"
 
 #include "nolocale.h"
@@ -141,18 +142,17 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 
 		filechannel = filechannel - 1; // 1-based in file but zero-based internally.
 
-		AudioFile *audio_file =
-			new AudioFile(path + "/" + attr.at("file"), filechannel);
+		auto audio_file = std::make_unique<AudioFile>(path + "/" + attr.at("file"), filechannel);
 
 		// TODO: This is not deleted anywhere...
 		InstrumentChannel *instrument_channel =
 			new InstrumentChannel(attr.at("channel"));
 
 		channellist.push_back(instrument_channel);
-		sample->addAudioFile(instrument_channel, audio_file);
+		sample->addAudioFile(instrument_channel, audio_file.get());
 
 		// Transfer audio_file ownership to the instrument.
-		instrument.audiofiles.push_back(audio_file);
+		instrument.audiofiles.push_back(std::move(audio_file));
 	}
 
 	if(name == "velocities")
