@@ -144,7 +144,13 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 
 		auto audio_file = std::make_unique<AudioFile>(path + "/" + attr.at("file"), filechannel);
 
-		// TODO: This is not deleted anywhere...
+		// note: memory leak! the channels are never released
+		// once I replaced this using unique_ptr, the channels were
+		// destroyed when the InstrumentParser went out of scope
+		// (see drumkitparser.cc, where the InstrumentParser lives in
+		// local scope).
+		// so.. we cannot replace this using smart ptr until we decided
+		// the ownership semantics for instances InstrumentChannel
 		InstrumentChannel *instrument_channel =
 			new InstrumentChannel(attr.at("channel"));
 
