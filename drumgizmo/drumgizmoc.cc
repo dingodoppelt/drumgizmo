@@ -344,7 +344,7 @@ int main(int argc, char* argv[])
 	printf("Using kitfile: %s\n", kitfile.c_str());
 
 	Settings settings;
-	DrumGizmo gizmo(settings, oe.get(), ie.get());
+	DrumGizmo gizmo(settings, *oe.get(), *ie.get());
 
 	gizmo.setFrameSize(oe->getBufferSize());
 

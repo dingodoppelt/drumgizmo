@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 	oe->setParm("file", reffile.c_str());
 	oe->setParm("srate", "44100");
 
-	DrumGizmo drumgizmo(settings, oe.get(), &ie);
+	DrumGizmo drumgizmo(settings, *oe.get(), ie);
 	drumgizmo.setRandomSeed(seed);
 	drumgizmo.setFreeWheel(true); // Run in-sync with disk-cache
 	drumgizmo.setFrameSize(oe->getBufferSize());

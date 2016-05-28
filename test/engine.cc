@@ -76,7 +76,7 @@ public:
 		Settings settings;
 		AudioOutputEngineDummy oe;
 		AudioInputEngineDummy ie;
-		DrumGizmo dg(settings, &oe, &ie);
+		DrumGizmo dg(settings, oe, ie);
 		dg.setFrameSize(100);
 
 		// Switch kits emmidiately without giving the loader time to work:

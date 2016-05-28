@@ -49,7 +49,8 @@ class DrumGizmo
 {
 public:
 	DrumGizmo(Settings& settings,
-	          AudioOutputEngine *outputengine, AudioInputEngine *inputengine);
+	          AudioOutputEngine& outputengine,
+	          AudioInputEngine& inputengine);
 	virtual ~DrumGizmo();
 
 	bool init();
@@ -82,8 +83,8 @@ protected:
 
 	Mutex mutex;
 
-	AudioOutputEngine *oe;
-	AudioInputEngine *ie;
+	AudioOutputEngine& oe;
+	AudioInputEngine& ie;
 
 	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 

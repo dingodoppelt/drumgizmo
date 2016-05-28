@@ -49,8 +49,8 @@
 #include "nolocale.h"
 
 DrumGizmo::DrumGizmo(Settings& settings,
-                     AudioOutputEngine *o, AudioInputEngine *i)
-	: loader(settings, kit, *i, resamplers, rand)
+                     AudioOutputEngine& o, AudioInputEngine& i)
+	: loader(settings, kit, i, resamplers, rand)
 	, oe(o)
 	, ie(i)
 	, kit()
@@ -73,12 +73,12 @@ DrumGizmo::~DrumGizmo()
 
 bool DrumGizmo::init()
 {
-	if(!ie->init(kit.instruments))
+	if(!ie.init(kit.instruments))
 	{
 		return false;
 	}
 
-	if(!oe->init(kit.channels))
+	if(!oe.init(kit.channels))
 	{
 		return false;
 	}
@@ -125,13 +125,13 @@ void DrumGizmo::setRandomSeed(unsigned int seed)
 void DrumGizmo::run(int endpos)
 {
 	size_t pos = 0;
-	size_t nsamples = oe->getBufferSize();
+	size_t nsamples = oe.getBufferSize();
 	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
 
-	setFrameSize(oe->getBufferSize());
+	setFrameSize(oe.getBufferSize());
 
-	ie->start();
-	oe->start();
+	ie.start();
+	oe.start();
 
 	while(run(pos, samples, nsamples) == true)
 	{
@@ -142,8 +142,8 @@ void DrumGizmo::run(int endpos)
 		}
 	}
 
-	ie->stop();
-	oe->stop();
+	ie.stop();
+	oe.stop();
 
 	free(samples);
 }
@@ -152,14 +152,14 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
 	setFrameSize(nsamples);
 
-	ie->pre();
-	oe->pre(nsamples);
+	ie.pre();
+	oe.pre(nsamples);
 
 	//
 	// Read new events
 	//
 
-	ie->run(pos, nsamples, events);
+	ie.run(pos, nsamples, events);
 
 	double resample_ratio = resamplers.getRatio();
 	bool active_events_left = input_processor.process(events, pos, resample_ratio);
@@ -182,9 +182,9 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		{
 			sample_t *buf = samples;
 			bool internal = false;
-			if(oe->getBuffer(c))
+			if(oe.getBuffer(c))
 			{
-				buf = oe->getBuffer(c);
+				buf = oe.getBuffer(c);
 				internal = true;
 			}
 
@@ -196,7 +196,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 				if(!internal)
 				{
-					oe->run(c, samples, nsamples);
+					oe.run(c, samples, nsamples);
 				}
 			}
 		}
@@ -244,14 +244,14 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		// Write output data to output engine.
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
-			oe->run(c, resampler_output_buffer[c], nsamples);
+			oe.run(c, resampler_output_buffer[c], nsamples);
 		}
 
 	}
 #endif/*WITH_RESAMPLER*/
 
-	ie->post();
-	oe->post(nsamples);
+	ie.post();
+	oe.post(nsamples);
 
 	pos += nsamples;
 
@@ -454,7 +454,7 @@ float str2float(std::string a)
 std::string DrumGizmo::configString()
 {
 	std::string mmapfile;
-	auto midiEngine = dynamic_cast<AudioInputEngineMidi*>(ie);
+	auto midiEngine = dynamic_cast<AudioInputEngineMidi*>(&ie);
 	if(midiEngine)
 	{
 		mmapfile = midiEngine->getMidimapFile();
