@@ -62,35 +62,35 @@ public:
 	void refCountTest()
 	{
 		TestableImageCache imageCache;
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 0u);
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 0u);
+		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 		{
 			auto image1{imageCache.getImage("foo")};
 			(void)image1;
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 1u);
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 0u);
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 			auto image2 = imageCache.getImage("bar");
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 1u);
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 1u);
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			auto image3 = imageCache.getImage("foo");
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 2u);
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 1u);
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			{
 				auto image4 = imageCache.getImage("foo");
-				CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 3u);
-				CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 1u);
+				CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(3u));
+				CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 			}
 
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 2u);
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 1u);
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 		}
 
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), 0u);
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), 0u);
+		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 	}
 };
 
