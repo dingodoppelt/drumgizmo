@@ -72,6 +72,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/filebrowser.cc \
 	@top_srcdir@/plugingui/directory.cc \
 	@top_srcdir@/plugingui/image.cc \
+	@top_srcdir@/plugingui/imagecache.cc \
 	@top_srcdir@/plugingui/combobox.cc \
 	@top_srcdir@/plugingui/progressbar.cc \
 	@top_srcdir@/plugingui/verticalline.cc \

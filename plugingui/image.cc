@@ -48,9 +48,39 @@ Image::Image(const std::string& filename)
 	load(rc.data(), rc.size());
 }
 
+Image::Image(Image&& other)
+	: _width(other._width)
+	, _height(other._height)
+	, image_data(other.image_data)
+{
+	other.image_data = nullptr;
+	other._width = 0;
+	other._height = 0;
+}
+
 Image::~Image()
 {
-	std::free(image_data);
+	if(image_data)
+	{
+		std::free(image_data);
+	}
+}
+
+Image& Image::operator=(Image&& other)
+{
+	if(image_data)
+	{
+		std::free(image_data);
+	}
+	image_data = other.image_data;
+	_width = other._width;
+	_height = other._height;
+
+	other.image_data = nullptr;
+	other._width = 0;
+	other._height = 0;
+
+	return *this;
 }
 
 void Image::setError()

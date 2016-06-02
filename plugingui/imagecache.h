@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            image.h
+ *            imagecache.h
  *
- *  Sat Mar 16 15:05:08 CET 2013
- *  Copyright 2013 Bent Bisballe Nyeng
+ *  Thu Jun  2 17:12:05 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -27,35 +27,46 @@
 #pragma once
 
 #include <string>
+#include <map>
+#include <utility>
 
-#include "colour.h"
-#include "resource.h"
+namespace GUI
+{
 
-namespace GUI {
+class Image;
+class ImageCache;
 
-class Image
+class ScopedImageBorrower
 {
 public:
-	Image(const char* data, size_t size);
-	Image(const std::string& filename);
-	Image(Image&& other);
-	~Image();
+	ScopedImageBorrower(ImageCache& imageCache, const std::string& filename);
+	ScopedImageBorrower(ScopedImageBorrower&& other);
+	~ScopedImageBorrower();
 
-	Image& operator=(Image&& other);
+	ScopedImageBorrower& operator=(ScopedImageBorrower&& other);
 
-	size_t width() const;
-	size_t height() const;
-
-	Colour getPixel(size_t x, size_t y) const;
+	Image& operator*();
+	Image& operator()();
 
 private:
-	void setError();
+	ImageCache& imageCache;
+	std::string filename;
+	Image& image;
+};
 
-	void load(const char* data, size_t size);
+class ImageCache
+{
+public:
+	ScopedImageBorrower getImage(const std::string& filename);
 
-	std::size_t _width{0};
-	std::size_t _height{0};
-	unsigned char* image_data{nullptr};
+private:
+	friend class ScopedImageBorrower;
+
+	Image& borrow(const std::string& filename);
+	void giveBack(const std::string& filename);
+
+protected:
+	std::map<std::string, std::pair<std::size_t, Image>> imageCache;
 };
 
 } // GUI::

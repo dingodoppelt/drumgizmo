@@ -5,7 +5,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 TESTS = resource engine gui resampler lv2 configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
-	memchecker randomtest atomictest syncedsettingstest
+	memchecker randomtest atomictest syncedsettingstest imagecachetest
 
 check_PROGRAMS = $(TESTS)
 
@@ -150,3 +150,17 @@ syncedsettingstest_SOURCES = syncedsettings.cc test.cc
 
 EXTRA_DIST = \
 	lv2_test_host.h
+
+imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
+imagecachetest_LDFLAGS = $(CPPUNIT_LIBS)
+imagecachetest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/plugingui/lodepng/lodepng.cpp \
+	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/plugingui/resource.cc \
+	$(top_srcdir)/plugingui/image.cc \
+	$(top_srcdir)/plugingui/imagecache.cc \
+	$(top_srcdir)/plugingui/colour.cc \
+	imagecachetest.cc \
+	test.cc

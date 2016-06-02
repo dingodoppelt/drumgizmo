@@ -35,6 +35,7 @@ GUI_SRC = \
 	filebrowser.cc \
 	directory.cc \
 	image.cc \
+	imagecache.cc \
 	combobox.cc \
 	progressbar.cc \
 	verticalline.cc \
