@@ -378,7 +378,7 @@ Event* NativeWindowX11::peekNextEvent()
 	return translateXMessage(peekXEvent, true);
 }
 
-	Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
+Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 {
 	Event* event = nullptr;
 
