@@ -43,6 +43,7 @@ PluginGUI::PluginGUI(Settings& settings, void* native_window)
 
 PluginGUI::~PluginGUI()
 {
+	deinit();
 }
 
 bool PluginGUI::processEvents()
