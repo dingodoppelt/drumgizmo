@@ -44,10 +44,10 @@ enum class LoadStatus : unsigned int
 //! Engine settings
 struct Settings
 {
-	Atomic<std::string> drumkit_file;
+	Atomic<std::string> drumkit_file{""};
 	Atomic<LoadStatus> drumkit_load_status{LoadStatus::Idle};
 
-	Atomic<std::string> midimap_file;
+	Atomic<std::string> midimap_file{""};
 	Atomic<LoadStatus> midimap_load_status{LoadStatus::Idle};
 
 	Atomic<bool> enable_velocity_modifier{true};
@@ -61,9 +61,9 @@ struct Settings
 
 	Atomic<bool> enable_resampling{true};
 
-	Atomic<std::size_t> number_of_files;
-	Atomic<std::size_t> number_of_files_loaded;
-	Atomic<std::string> current_file;
+	Atomic<std::size_t> number_of_files{0};
+	Atomic<std::size_t> number_of_files_loaded{0};
+	Atomic<std::string> current_file{""};
 };
 
 //! Settings getter class.
