@@ -81,11 +81,18 @@ void EventHandler::processEvents()
 					}
 
 					auto peekEvent = peekNextEvent();
-					if(!peekEvent || (peekEvent->type() != EventType::resize))
+					if(!peekEvent)
 					{
 						break;
 					}
+					if(peekEvent->type() != EventType::resize)
+					{
+						delete peekEvent;
+						break;
+					}
+					delete peekEvent;
 
+					delete event;
 					event = getNextEvent();
 				}
 
@@ -108,11 +115,18 @@ void EventHandler::processEvents()
 					}
 
 					auto peekEvent = peekNextEvent();
-					if(!peekEvent || (peekEvent->type() != EventType::mouseMove))
+					if(!peekEvent)
 					{
 						break;
 					}
+					if(peekEvent->type() != EventType::mouseMove)
+					{
+						delete peekEvent;
+						break;
+					}
+					delete peekEvent;
 
+					delete event;
 					event = getNextEvent();
 				}
 
@@ -216,13 +230,21 @@ void EventHandler::processEvents()
 					}
 
 					auto peekEvent = peekNextEvent();
-					if(!peekEvent || (peekEvent->type() != EventType::scroll))
+					if(!peekEvent)
 					{
 						break;
 					}
+					if(peekEvent->type() != EventType::scroll)
+					{
+						delete peekEvent;
+						break;
+					}
+					delete peekEvent;
 
 					auto scrollEvent = static_cast<ScrollEvent*>(event);
 					delta += scrollEvent->delta;
+
+					delete event;
 					event = getNextEvent();
 				}
 
