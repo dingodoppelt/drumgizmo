@@ -34,7 +34,7 @@ Font::Font(const std::string& fontfile)
 	size_t px = 0;
 	size_t c;
 
-	for(c = 0; c < characters.size() && px < img_font.width(); ++c)
+	for(c = 0; c < (characters.size() - 1) && px < img_font.width(); ++c)
 	{
 		auto& character = characters[c];
 		character.offset = px + 1;
@@ -47,14 +47,13 @@ Font::Font(const std::string& fontfile)
 
 		++px;
 
-		Colour pixel;
 		while(px < img_font.width())
 		{
-			pixel = img_font.getPixel(px, 0);
+			auto& pixel = img_font.getPixel(px, 0);
 
 			// Find next purple pixel in top row:
-			if((pixel.red == 1) && (pixel.green == 0) &&
-			   (pixel.blue == 1) && (pixel.alpha == 1))
+			if((pixel.red() == 1.0f) && (pixel.green() == 0.0f) &&
+			   (pixel.blue() == 1.0f) && (pixel.alpha() == 1.0f))
 			{
 				break;
 			}
@@ -111,9 +110,10 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 		{
 			for(size_t y = 0; y < img_font.height(); ++y)
 			{
-				Colour c = img_font.getPixel(x + character.offset, y);
+				auto& c = img_font.getPixel(x + character.offset, y);
 				pb->setPixel(x + x_offset + character.pre_bias, y,
-				             c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
+				             c.red() * 255, c.green() * 255,
+				             c.blue() * 255, c.alpha() * 255);
 			}
 		}
 		x_offset += character.width + spacing + character.post_bias;

@@ -31,18 +31,22 @@ namespace GUI {
 class Colour {
 public:
 	Colour();
+	Colour(float grey, float alpha = 1.0f);
+	Colour(float red, float green, float blue, float alpha = 1.0f);
+	Colour(Colour&& other);
+	Colour(const Colour& other);
+	~Colour();
 
-	Colour(float grey, float alpha = 1.0);
+	Colour& operator=(const Colour& other);
+	Colour& operator=(Colour&& other);
 
-	Colour(float red,
-	       float green,
-	       float blue,
-	       float alpha = 1.0);
+	inline float red() const { return data[0]; }
+	inline float green() const { return data[1]; }
+	inline float blue() const { return data[2]; }
+	inline float alpha() const { return data[3]; }
 
-	float red;
-	float green;
-	float blue;
-	float alpha;
+private:
+	float *data{nullptr};
 };
 
 } // GUI::

@@ -41,7 +41,7 @@ Painter::Painter(Widget& widget)
 	}
 
 	pixbuf = &widget.pixbuf;
-	colour = Colour(0, 0, 0, 0.5);
+	colour = Colour(0.0f, 0.0f, 0.0f, 0.5f);
 }
 
 Painter::~Painter()
@@ -69,10 +69,10 @@ static void plot(PixelBufferAlpha* pixbuf, const Colour& colour,
 
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
 	pixbuf->addPixel(x, y,
-	                 (unsigned char)(colour.red * 255.0),
-	                 (unsigned char)(colour.green * 255.0),
-	                 (unsigned char)(colour.blue * 255.0),
-	                 (unsigned char)(colour.alpha * 255 * c));
+	                 (unsigned char)(colour.red() * 255.0),
+	                 (unsigned char)(colour.green() * 255.0),
+	                 (unsigned char)(colour.blue() * 255.0),
+	                 (unsigned char)(colour.alpha() * 255 * c));
 
 }
 
@@ -231,10 +231,10 @@ void Painter::drawText(int x0, int y0, const Font& font,
 				unsigned char r,g,b,a;
 				textbuf->pixel(x, y, &r, &g, &b, &a);
 				pixbuf->addPixel(x + x0, y + y0,
-				                 colour.red * 255,
-				                 colour.green * 255,
-				                 colour.blue * 255,
-				                 colour.alpha * a);
+				                 colour.red() * 255,
+				                 colour.green() * 255,
+				                 colour.blue() * 255,
+				                 colour.alpha() * a);
 			}
 		}
 	}
@@ -245,10 +245,10 @@ void Painter::drawText(int x0, int y0, const Font& font,
 void Painter::drawPoint(int x, int y)
 {
 	pixbuf->setPixel(x, y,
-	                 (unsigned char)(colour.red * 255.0),
-	                 (unsigned char)(colour.green * 255.0),
-	                 (unsigned char)(colour.blue * 255.0),
-	                 (unsigned char)(colour.alpha * 255.0));
+	                 (unsigned char)(colour.red() * 255.0),
+	                 (unsigned char)(colour.green() * 255.0),
+	                 (unsigned char)(colour.blue() * 255.0),
+	                 (unsigned char)(colour.alpha() * 255.0));
 }
 
 static void plot4points(Painter *p, int cx, int cy, int x, int y)
@@ -365,7 +365,7 @@ void Painter::drawImage(int x0, int y0, const Image& image)
 	{
 		for(size_t x = 0; x < fw; ++x)
 		{
-			Colour c = image.getPixel(x, y);
+			auto& c = image.getPixel(x, y);
 			pixbuf->addPixel(x0 + x, y0 + y, c);
 		}
 	}
@@ -399,7 +399,7 @@ void Painter::drawImageStretched(int x0, int y0, const Image& image,
 		{
 			int lx = ((float)x / (float)width) * fw;
 			int ly = ((float)y / (float)height) * fh;
-			Colour c = image.getPixel(lx, ly);
+			auto& c = image.getPixel(lx, ly);
 			pixbuf->addPixel(x0 + x, y0 + y, c);
 		}
 	}

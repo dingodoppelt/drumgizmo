@@ -57,7 +57,7 @@ private:
 		int post_bias{0};
 	};
 
-	std::array<Character, 255> characters;
+	std::array<Character, 256> characters;
 	int spacing{1};
 };
 

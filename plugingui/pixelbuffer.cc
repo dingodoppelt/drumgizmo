@@ -142,9 +142,10 @@ void PixelBufferAlpha::addPixel(size_t x, size_t y,
 	buf[PX(3)] = (a + b) * 255;
 }
 
-void PixelBufferAlpha::addPixel(size_t x, size_t y, Colour c)
+void PixelBufferAlpha::addPixel(size_t x, size_t y, const Colour& c)
 {
-	addPixel(x, y, c.red * 255, c.green * 255, c.blue * 255, c.alpha * 255);
+	addPixel(x, y,
+	         c.red() * 255, c.green() * 255, c.blue() * 255, c.alpha() * 255);
 }
 
 void PixelBufferAlpha::pixel(size_t x, size_t y,

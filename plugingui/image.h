@@ -27,6 +27,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "colour.h"
 #include "resource.h"
@@ -46,7 +47,7 @@ public:
 	size_t width() const;
 	size_t height() const;
 
-	Colour getPixel(size_t x, size_t y) const;
+	const Colour& getPixel(size_t x, size_t y) const;
 
 private:
 	void setError();
@@ -55,7 +56,8 @@ private:
 
 	std::size_t _width{0};
 	std::size_t _height{0};
-	unsigned char* image_data{nullptr};
+	std::vector<Colour> image_data;
+	Colour out_of_range{0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 } // GUI::

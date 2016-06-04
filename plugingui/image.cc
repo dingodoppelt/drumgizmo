@@ -29,13 +29,15 @@
 #include <cstring>
 #include <cstdint>
 #include <cstdlib>
+#include <cassert>
 
 #include <hugin.hpp>
 
 #include "resource.h"
 #include "lodepng/lodepng.h"
 
-namespace GUI {
+namespace GUI
+{
 
 Image::Image(const char* data, size_t size)
 {
@@ -51,32 +53,23 @@ Image::Image(const std::string& filename)
 Image::Image(Image&& other)
 	: _width(other._width)
 	, _height(other._height)
-	, image_data(other.image_data)
+	, image_data(std::move(other.image_data))
 {
-	other.image_data = nullptr;
 	other._width = 0;
 	other._height = 0;
 }
 
 Image::~Image()
 {
-	if(image_data)
-	{
-		std::free(image_data);
-	}
 }
 
 Image& Image::operator=(Image&& other)
 {
-	if(image_data)
-	{
-		std::free(image_data);
-	}
-	image_data = other.image_data;
+	image_data.clear();
+	image_data = std::move(other.image_data);
 	_width = other._width;
 	_height = other._height;
 
-	other.image_data = nullptr;
 	other._width = 0;
 	other._height = 0;
 
@@ -87,33 +80,59 @@ void Image::setError()
 {
 	Resource rc(":png_error");
 
-	const unsigned char* p = (const unsigned char*)rc.data();
+	const unsigned char* ptr = (const unsigned char*)rc.data();
 
 	std::uint32_t iw, ih;
 
-	std::memcpy(&iw, p, sizeof(uint32_t));
-	p += sizeof(uint32_t);
+	std::memcpy(&iw, ptr, sizeof(uint32_t));
+	ptr += sizeof(uint32_t);
 
-	std::memcpy(&ih, p, sizeof(uint32_t));
-	p += sizeof(uint32_t);
+	std::memcpy(&ih, ptr, sizeof(uint32_t));
+	ptr += sizeof(uint32_t);
 
 	_width = iw;
 	_height = ih;
 
-	size_t image_size = rc.size() - (sizeof(iw) + sizeof(ih));
-	image_data = (unsigned char*)std::malloc(image_size);
-	memcpy(image_data, p, image_size);
+	image_data.clear();
+	image_data.reserve(_width * _height);
+	for(std::size_t y = 0; y < _height; ++y)
+	{
+		for(std::size_t x = 0; x < _width; ++x)
+		{
+			image_data.emplace_back(Colour{ptr[0] / 255.0f, ptr[1] / 255.0f,
+						ptr[2] / 255.0f, ptr[3] / 255.0f});
+		}
+	}
+
+	assert(image_data.size() == (_width * _height));
 }
 
 void Image::load(const char* data, size_t size)
 {
 	unsigned int iw, ih;
-	unsigned int res = lodepng_decode32((unsigned char**)&image_data,
+	unsigned char* char_image_data{nullptr};
+	unsigned int res = lodepng_decode32((unsigned char**)&char_image_data,
 	                                    &iw, &ih,
 	                                    (const unsigned char*)data, size);
 
 	_width = iw;
 	_height = ih;
+
+	image_data.clear();
+	image_data.reserve(_width * _height);
+	for(std::size_t y = 0; y < _height; ++y)
+	{
+		for(std::size_t x = 0; x < _width; ++x)
+		{
+			unsigned char* ptr = &char_image_data[(x + y * _width) * 4];
+			image_data.emplace_back(Colour{ptr[0] / 255.0f, ptr[1] / 255.0f,
+						ptr[2] / 255.0f, ptr[3] / 255.0f});
+		}
+	}
+
+	assert(image_data.size() == (_width * _height));
+
+	std::free(char_image_data);
 
 	if(res != 0)
 	{
@@ -133,23 +152,14 @@ size_t Image::height() const
 	return _height;
 }
 
-Colour Image::getPixel(size_t x, size_t y) const
+const Colour& Image::getPixel(size_t x, size_t y) const
 {
 	if(x > _width || y > _height)
 	{
-		return Colour(0,0,0,0);
+		return out_of_range;
 	}
 
-	unsigned char* ptr = &image_data[(x + y * width()) * 4];
-
-	float r = ptr[0];
-	float g = ptr[1];
-	float b = ptr[2];
-	float a = ptr[3];
-
-	Colour c(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
-
-	return c;
+	return image_data[x + y * _width];
 }
 
 } // GUI::

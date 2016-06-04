@@ -69,7 +69,7 @@ public:
 	              unsigned char blue,
 	              unsigned char alpha);
 
-	void addPixel(size_t x, size_t y, Colour c);
+	void addPixel(size_t x, size_t y, const Colour& c);
 
 	void pixel(size_t x, size_t y,
 	           unsigned char* red,

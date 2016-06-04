@@ -26,25 +26,81 @@
  */
 #include "colour.h"
 
+#include <cstring>
+
 namespace GUI {
 
 Colour::Colour()
 {
-	red = blue = green = alpha = 1.0;
+	data = new float[4];
+	data[0] = data[1] = data[2] = data[3] = 1.0f;
 }
 
 Colour::Colour(float grey, float a)
 {
-	red = green = blue = grey;
-	alpha = a;
+	data = new float[4];
+
+	data[0] = data[1] = data[2] = grey;
+	data[3] = a;
 }
 
 Colour::Colour(float r, float g, float b, float a)
 {
-	red = r;
-	green = g;
-	blue = b;
-	alpha = a;
+	data = new float[4];
+
+	data[0] = r;
+	data[1] = g;
+	data[2] = b;
+	data[3] = a;
+}
+
+Colour::Colour(Colour&& other)
+{
+	if(data)
+	{
+		delete[] data;
+	}
+
+	data = other.data;
+	other.data = nullptr;
+}
+
+Colour::Colour(const Colour& other)
+{
+	if(data)
+	{
+		delete[] data;
+	}
+
+	data = new float[4];
+
+	std::memcpy(data, other.data, 4 * sizeof(float));
+}
+
+Colour::~Colour()
+{
+	if(data)
+	{
+		delete[] data;
+	}
+}
+
+Colour& Colour::operator=(const Colour& other)
+{
+	std::memcpy(data, other.data, 4 * sizeof(float));
+	return *this;
+}
+
+Colour& Colour::operator=(Colour&& other)
+{
+	if(data)
+	{
+		delete[] data;
+	}
+
+	data = other.data;
+	other.data = nullptr;
+	return *this;
 }
 
 } // GUI::
