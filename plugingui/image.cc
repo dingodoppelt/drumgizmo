@@ -95,6 +95,7 @@ void Image::setError()
 
 	image_data.clear();
 	image_data.reserve(_width * _height);
+
 	for(std::size_t y = 0; y < _height; ++y)
 	{
 		for(std::size_t x = 0; x < _width; ++x)
@@ -109,17 +110,25 @@ void Image::setError()
 
 void Image::load(const char* data, size_t size)
 {
-	unsigned int iw, ih;
+	unsigned int iw{0}, ih{0};
 	unsigned char* char_image_data{nullptr};
 	unsigned int res = lodepng_decode32((unsigned char**)&char_image_data,
 	                                    &iw, &ih,
 	                                    (const unsigned char*)data, size);
+
+	if(res != 0)
+	{
+		ERR(image, "Error in lodepng_decode32: %d", res);
+		setError();
+		return;
+	}
 
 	_width = iw;
 	_height = ih;
 
 	image_data.clear();
 	image_data.reserve(_width * _height);
+
 	for(std::size_t y = 0; y < _height; ++y)
 	{
 		for(std::size_t x = 0; x < _width; ++x)
@@ -133,13 +142,6 @@ void Image::load(const char* data, size_t size)
 	assert(image_data.size() == (_width * _height));
 
 	std::free(char_image_data);
-
-	if(res != 0)
-	{
-		ERR(image, "Error in lodepng_decode32: %d", res);
-		setError();
-		return;
-	}
 }
 
 size_t Image::width() const
