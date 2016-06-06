@@ -64,6 +64,9 @@ public:
 	std::string configString();
 	bool setConfigString(std::string cfg);
 
+	//! Get the current engine latency in samples.
+	std::size_t getLatency() const;
+
 	int samplerate();
 	void setSamplerate(int samplerate);
 

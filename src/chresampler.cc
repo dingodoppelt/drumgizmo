@@ -139,6 +139,15 @@ void CHResampler::process()
 #endif
 }
 
+std::size_t CHResampler::getLatency() const
+{
+#if defined(USE_ZITA)
+	return prv->zita.inpdist();
+#elif defined(USE_SRC)
+	return 0; // TODO?
+#endif
+}
+
 std::size_t CHResampler::getInputSampleCount() const
 {
 #if defined(USE_ZITA)
@@ -171,6 +180,11 @@ void CHResampler::setup(double, double) {}
 void CHResampler::setInputSamples(float*, std::size_t) {}
 void CHResampler::setOutputSamples(float*, std::size_t) {}
 void CHResampler::process() {}
+
+std::size_t CHResampler::getLatency() const
+{
+	return 0;
+}
 
 std::size_t CHResampler::getInputSampleCount() const
 {

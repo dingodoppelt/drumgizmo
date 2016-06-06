@@ -61,13 +61,18 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 	return true;
 }
 
+std::size_t InputProcessor::getLatency() const
+{
+	return 0;
+}
+
 bool InputProcessor::processOnset(const event_t& event, size_t pos, double resample_ratio)
 {
 	if(!kit.isValid()) {
 		return false;
 	}
 
-	size_t ev_instr = event.instrument; 
+	size_t ev_instr = event.instrument;
 	Instrument* instr = nullptr;
 
 	if(ev_instr < kit.instruments.size())
@@ -115,12 +120,6 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 	for(Channel& ch: kit.channels)
 	{
 		AudioFile* af = sample->getAudioFile(&ch);
-		if(af != nullptr)
-		{
-			// LAZYLOAD:
-			// DEBUG(inputprocessor, "Requesting preparing of audio file\n");
-			// loader.prepare(af);
-		}
 		if(af == nullptr || !af->isValid())
 		{
 			//DEBUG(inputprocessor, "Missing AudioFile.\n");

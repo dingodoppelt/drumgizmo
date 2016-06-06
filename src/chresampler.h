@@ -48,6 +48,8 @@ public:
 
 	void process();
 
+	std::size_t getLatency() const;
+
 	std::size_t getInputSampleCount() const;
 	std::size_t getOutputSampleCount() const;
 
@@ -94,6 +96,11 @@ public:
 	std::size_t getOutputSampleCount() const
 	{
 		return resamplers[0].getOutputSampleCount();
+	}
+
+	std::size_t getLatency() const
+	{
+		return resamplers[0].getLatency();
 	}
 
 	std::array<CHResampler, 64> resamplers;

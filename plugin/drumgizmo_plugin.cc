@@ -127,6 +127,8 @@ void DrumGizmoPlugin::process(size_t pos,
                               const std::vector<float*>& output_samples,
                               size_t count)
 {
+	setLatency(drumgizmo->getLatency());
+
 	this->input_events = &input_events;
 	this->output_samples = &output_samples;
 

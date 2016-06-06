@@ -410,6 +410,11 @@ void DrumGizmo::stop()
 	// engine.stop();
 }
 
+std::size_t DrumGizmo::getLatency() const
+{
+	return input_processor.getLatency() + resamplers.getLatency();
+}
+
 int DrumGizmo::samplerate()
 {
 	return settings.samplerate.load();

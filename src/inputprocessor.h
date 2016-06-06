@@ -37,7 +37,12 @@ class InputProcessor
 {
 public:
 	InputProcessor(DrumKit& kit, std::list<Event*>* activeevents);
-	bool process(const std::vector<event_t>& events, size_t pos, double resample_ratio);
+
+	bool process(const std::vector<event_t>& events, size_t pos,
+	             double resample_ratio);
+
+	std::size_t getLatency() const;
+
 private:
 	DrumKit& kit;
 	std::list<Event*>* activeevents;
