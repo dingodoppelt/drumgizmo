@@ -28,6 +28,8 @@ GUI_SRC = \
 	slider.cc \
 	scrollbar.cc \
 	textedit.cc \
+	texture.cc \
+	texturedbox.cc \
 	listbox.cc \
 	listboxthin.cc \
 	listboxbasic.cc \

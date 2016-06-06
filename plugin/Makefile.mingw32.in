@@ -65,6 +65,8 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/slider.cc \
 	@top_srcdir@/plugingui/scrollbar.cc \
 	@top_srcdir@/plugingui/textedit.cc \
+	@top_srcdir@/plugingui/texture.cc \
+	@top_srcdir@/plugingui/texturedbox.cc \
 	@top_srcdir@/plugingui/listbox.cc \
 	@top_srcdir@/plugingui/listboxthin.cc \
 	@top_srcdir@/plugingui/listboxbasic.cc \

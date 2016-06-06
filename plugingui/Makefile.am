@@ -26,12 +26,14 @@ EXTRA_DIST = \
 	colour.h \
 	combobox.h \
 	dgwindow.h \
+	drawable.h \
 	directory.h \
 	eventhandler.h \
 	filebrowser.h \
 	font.h \
 	guievent.h \
 	image.h \
+	imagecache.h \
 	knob.h \
 	label.h \
 	layout.h \
@@ -54,6 +56,8 @@ EXTRA_DIST = \
 	scrollbar.h \
 	slider.h \
 	textedit.h \
+	texture.h \
+	texturedbox.h \
 	verticalline.h \
 	widget.h \
 	window.h \
