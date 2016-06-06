@@ -41,14 +41,14 @@ class ScopedImageBorrower
 public:
 	ScopedImageBorrower(ImageCache& imageCache, const std::string& filename);
 	ScopedImageBorrower(ScopedImageBorrower&& other);
-	~ScopedImageBorrower();
+	virtual ~ScopedImageBorrower();
 
 	ScopedImageBorrower& operator=(ScopedImageBorrower&& other);
 
 	Image& operator*();
 	Image& operator()();
 
-private:
+protected:
 	ImageCache& imageCache;
 	std::string filename;
 	Image& image;

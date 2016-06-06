@@ -29,7 +29,7 @@
 #include <notifier.h>
 
 #include "widget.h"
-#include "image.h"
+#include "texture.h"
 
 namespace GUI {
 
@@ -59,14 +59,14 @@ protected:
 private:
 	void internalSetChecked(bool checked);
 
-	Image bg_on;
-	Image bg_off;
-	Image knob;
+	Texture bg_on;
+	Texture bg_off;
+	Texture knob;
 
-	bool state;
-	bool middle;
-	bool buttonDown = false;
-	bool inCheckbox = false;
+	bool state{false};
+	bool middle{false};
+	bool buttonDown{false};
+	bool inCheckbox{false};
 
 	std::string _text;
 };

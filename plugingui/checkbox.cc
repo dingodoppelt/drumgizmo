@@ -28,17 +28,14 @@
 
 #include "painter.h"
 
-#include <stdio.h>
-
-namespace GUI {
+namespace GUI
+{
 
 CheckBox::CheckBox(Widget* parent)
 	: Widget(parent)
-	, bg_on(":switch_back_on.png")
-	, bg_off(":switch_back_off.png")
-	, knob(":switch_front.png")
-	, state(false)
-	, middle(false)
+	, bg_on(getImageCache(), ":switch_back_on.png")
+	, bg_off(getImageCache(), ":switch_back_off.png")
+	, knob(getImageCache(), ":switch_front.png")
 {
 }
 

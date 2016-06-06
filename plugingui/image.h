@@ -29,25 +29,27 @@
 #include <string>
 #include <vector>
 
+#include "drawable.h"
 #include "colour.h"
 #include "resource.h"
 
 namespace GUI {
 
 class Image
+	: public Drawable
 {
 public:
 	Image(const char* data, size_t size);
 	Image(const std::string& filename);
 	Image(Image&& other);
-	~Image();
+	virtual ~Image();
 
 	Image& operator=(Image&& other);
 
-	size_t width() const;
-	size_t height() const;
+	size_t width() const override;
+	size_t height() const override;
 
-	const Colour& getPixel(size_t x, size_t y) const;
+	const Colour& getPixel(size_t x, size_t y) const override;
 
 private:
 	void setError();

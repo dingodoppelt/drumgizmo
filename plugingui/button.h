@@ -33,6 +33,7 @@
 #include "widget.h"
 #include "painter.h"
 #include "font.h"
+#include "texturedbox.h"
 
 namespace GUI {
 
@@ -61,8 +62,15 @@ protected:
 private:
 	bool in_button{false};
 
-	Painter::Box box_up;
-	Painter::Box box_down;
+	TexturedBox box_up{getImageCache(), ":pushbutton.png",
+			0, 0, // atlas offset (x, y)
+			11, 1, 11, // dx1, dx2, dx3
+			10, 72, 12}; // dy1, dy2, dy3
+
+	TexturedBox box_down{getImageCache(), ":pushbutton.png",
+			23, 0, // atlas offset (x, y)
+			11, 1, 11, // dx1, dx2, dx3
+			10, 72, 12}; // dy1, dy2, dy3
 
 	typedef enum {
 		up,

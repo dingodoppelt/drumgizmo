@@ -26,10 +26,10 @@
  */
 #include "widget.h"
 
+#include <cassert>
+
 #include "painter.h"
 #include "window.h"
-
-#include <stdio.h>
 
 namespace GUI {
 
@@ -153,6 +153,12 @@ size_t Widget::windowY()
 	}
 
 	return window_y;
+}
+
+ImageCache& Widget::getImageCache()
+{
+	assert(parent);
+	return parent->getImageCache();
 }
 
 Widget* Widget::find(int x, int y)

@@ -35,6 +35,7 @@
 
 namespace GUI {
 
+class ImageCache;
 class Window;
 
 class Widget : public Listener, public LayoutItem {
@@ -70,6 +71,8 @@ public:
 	virtual void keyEvent(KeyEvent* keyEvent) {}
 	virtual void mouseLeaveEvent() {}
 	virtual void mouseEnterEvent() {}
+
+	virtual ImageCache& getImageCache();
 
 	Widget* find(int x, int y);
 

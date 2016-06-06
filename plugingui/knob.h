@@ -29,7 +29,7 @@
 #include <notifier.h>
 
 #include "widget.h"
-#include "image.h"
+#include "texture.h"
 #include "font.h"
 
 namespace GUI {
@@ -72,7 +72,7 @@ private:
 	float maximum;
 	float minimum;
 
-	Image img_knob;
+	Texture img_knob;
 
 	int mouse_offset_x;
 	Font font;

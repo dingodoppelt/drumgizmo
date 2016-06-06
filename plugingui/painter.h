@@ -32,11 +32,15 @@
 #include "colour.h"
 #include "pixelbuffer.h"
 #include "font.h"
+#include "drawable.h"
+#include "texture.h"
 #include "image.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class Painter {
+class Painter
+{
 public:
 	Painter(Widget& widget);
 	~Painter();
@@ -53,8 +57,8 @@ public:
 	void drawPoint(int x, int y);
 	void drawCircle(int x, int y, double r);
 	void drawFilledCircle(int x, int y, int r);
-	void drawImage(int x, int y, const Image& image);
-	void drawImageStretched(int x, int y, const Image& image,
+	void drawImage(int x, int y, const Drawable& image);
+	void drawImageStretched(int x, int y, const Drawable& image,
 	                        int width, int height);
 
 	typedef struct {

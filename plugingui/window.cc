@@ -127,6 +127,11 @@ Window* Window::window()
 	return this;
 }
 
+ImageCache& Window::getImageCache()
+{
+	return image_cache;
+}
+
 EventHandler* Window::eventHandler()
 {
 	return eventhandler;

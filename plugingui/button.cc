@@ -38,47 +38,10 @@ Button::Button(Widget *parent)
 	, draw_state(up)
 	, button_state(up)
 {
-	box_up.topLeft     = new Image(":pushbutton_tl.png");
-	box_up.top         = new Image(":pushbutton_t.png");
-	box_up.topRight    = new Image(":pushbutton_tr.png");
-	box_up.left        = new Image(":pushbutton_l.png");
-	box_up.right       = new Image(":pushbutton_r.png");
-	box_up.bottomLeft  = new Image(":pushbutton_bl.png");
-	box_up.bottom      = new Image(":pushbutton_b.png");
-	box_up.bottomRight = new Image(":pushbutton_br.png");
-	box_up.center      = new Image(":pushbutton_c.png");
-
-	box_down.topLeft     = new Image(":pushbuttondown_tl.png");
-	box_down.top         = new Image(":pushbuttondown_t.png");
-	box_down.topRight    = new Image(":pushbuttondown_tr.png");
-	box_down.left        = new Image(":pushbuttondown_l.png");
-	box_down.right       = new Image(":pushbuttondown_r.png");
-	box_down.bottomLeft  = new Image(":pushbuttondown_bl.png");
-	box_down.bottom      = new Image(":pushbuttondown_b.png");
-	box_down.bottomRight = new Image(":pushbuttondown_br.png");
-	box_down.center      = new Image(":pushbuttondown_c.png");
 }
 
 Button::~Button()
 {
-	delete(box_up.topLeft);
-	delete(box_up.top);
-	delete(box_up.topRight);
-	delete(box_up.left);
-	delete(box_up.right);
-	delete(box_up.bottomLeft);
-	delete(box_up.bottom);
-	delete(box_up.bottomRight);
-	delete(box_up.center);
-	delete(box_down.topLeft);
-	delete(box_down.top);
-	delete(box_down.topRight);
-	delete(box_down.left);
-	delete(box_down.right);
-	delete(box_down.bottomLeft);
-	delete(box_down.bottom);
-	delete(box_down.bottomRight);
-	delete(box_down.center);
 }
 
 void Button::buttonEvent(ButtonEvent* buttonEvent)
@@ -122,10 +85,13 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 
 	switch(draw_state) {
 	case up:
-		p.drawBox(padLeft, padTop, box_up, w - padLeft, h - padTop);
+		box_up.setSize(w - padLeft, h - padTop);
+		p.drawImage(padLeft, padTop, box_up);
+
 		break;
 	case down:
-		p.drawBox(padLeft, padTop, box_down, w - padLeft, h - padTop);
+		box_down.setSize(w - padLeft, h - padTop);
+		p.drawImage(padLeft, padTop, box_down);
 		break;
 	}
 

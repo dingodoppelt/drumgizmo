@@ -32,6 +32,7 @@
 #include "nativewindow.h"
 #include "image.h"
 #include "eventhandler.h"
+#include "imagecache.h"
 
 namespace GUI {
 
@@ -51,6 +52,8 @@ public:
 	void show() override;
 	void hide() override;
 	Window* window() override;
+
+	ImageCache& getImageCache() override;
 
 	EventHandler* eventHandler();
 
@@ -91,6 +94,8 @@ protected:
 	EventHandler* eventhandler{nullptr};
 
 	size_t maxRefcount{0};
+
+	ImageCache image_cache;
 };
 
 } // GUI::

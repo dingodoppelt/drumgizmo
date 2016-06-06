@@ -30,7 +30,8 @@
 
 #include <cmath>
 
-namespace GUI {
+namespace GUI
+{
 
 Painter::Painter(Widget& widget)
 	: widget(widget)
@@ -345,7 +346,7 @@ void Painter::drawFilledCircle(int cx, int cy, int radius)
 	}
 }
 
-void Painter::drawImage(int x0, int y0, const Image& image)
+void Painter::drawImage(int x0, int y0, const Drawable& image)
 {
 	size_t fw = image.width();
 	size_t fh = image.height();
@@ -371,7 +372,7 @@ void Painter::drawImage(int x0, int y0, const Image& image)
 	}
 }
 
-void Painter::drawImageStretched(int x0, int y0, const Image& image,
+void Painter::drawImageStretched(int x0, int y0, const Drawable& image,
                                  int width, int height)
 {
 	if((width < 1) || (height < 1))
