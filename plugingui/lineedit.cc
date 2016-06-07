@@ -37,29 +37,10 @@ LineEdit::LineEdit(Widget *parent)
 	: Widget(parent)
 {
 	setReadOnly(false);
-
-	box.topLeft     = new Image(":widget_tl.png");
-	box.top         = new Image(":widget_t.png");
-	box.topRight    = new Image(":widget_tr.png");
-	box.left        = new Image(":widget_l.png");
-	box.right       = new Image(":widget_r.png");
-	box.bottomLeft  = new Image(":widget_bl.png");
-	box.bottom      = new Image(":widget_b.png");
-	box.bottomRight = new Image(":widget_br.png");
-	box.center      = new Image(":widget_c.png");
 }
 
 LineEdit::~LineEdit()
 {
-	delete box.topLeft;
-	delete box.top;
-	delete box.topRight;
-	delete box.left;
-	delete box.right;
-	delete box.bottomLeft;
-	delete box.bottom;
-	delete box.bottomRight;
-	delete box.center;
 }
 
 void LineEdit::setReadOnly(bool ro)
@@ -223,7 +204,8 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 		return;
 	}
 
-	p.drawBox(0, 0, box, w, h);
+	box.setSize(w, h);
+	p.drawImage(0, 0, box);
 
 	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
 

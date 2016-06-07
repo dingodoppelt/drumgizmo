@@ -29,7 +29,7 @@
 #include <limits>
 
 #include "widget.h"
-#include "image.h"
+#include "texture.h"
 #include "notifier.h"
 
 namespace GUI {
@@ -68,7 +68,7 @@ private:
 	int valueOffset{0};
 	bool dragging{false};
 
-	Image bg_img;
+	Texture bg_img{getImageCache(), ":widget.png", 7, 7, 1, 63};
 };
 
 } // GUI::

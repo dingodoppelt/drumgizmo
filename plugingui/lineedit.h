@@ -31,10 +31,14 @@
 #include "widget.h"
 #include "font.h"
 #include "painter.h"
+#include "texturedbox.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class LineEdit : public Widget {
+class LineEdit
+	: public Widget
+{
 public:
 	LineEdit(Widget *parent);
 	~LineEdit();
@@ -58,7 +62,10 @@ protected:
 	virtual void textChanged() {}
 
 private:
-	Painter::Box box;
+	TexturedBox box{getImageCache(), ":widget.png",
+			0, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			7, 63, 7}; // dy1, dy2, dy3
 
 	Font font;
 

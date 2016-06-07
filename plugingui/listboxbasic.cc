@@ -34,7 +34,6 @@ namespace GUI {
 ListBoxBasic::ListBoxBasic(Widget *parent)
 	: Widget(parent)
 	, scroll(this)
-	, bg_img(":widget_c.png")
 {
 	scroll.move(0,0);
 	scroll.resize(18, 100);

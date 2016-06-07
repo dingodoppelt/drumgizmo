@@ -33,7 +33,7 @@
 #include "font.h"
 #include "painter.h"
 #include "scrollbar.h"
-
+#include "texturedbox.h"
 #include "notifier.h"
 
 namespace GUI {
@@ -64,7 +64,11 @@ protected:
 private:
 	void scrolled(int value);
 
-	Painter::Box box;
+	TexturedBox box{getImageCache(), ":widget.png",
+			0, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			7, 63, 7}; // dy1, dy2, dy3
+
 	ScrollBar scroll;
 	Font font;
 

@@ -34,7 +34,6 @@ namespace GUI {
 
 ScrollBar::ScrollBar(Widget *parent)
 	: Widget(parent)
-	, bg_img(":widget_c.png")
 {
 }
 
