@@ -34,10 +34,14 @@
 #include "widget.h"
 #include "painter.h"
 #include "listboxbasic.h"
+#include "texturedbox.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class ListBoxThin : public Widget {
+class ListBoxThin
+	: public Widget
+{
 public:
 	ListBoxThin(Widget *parent);
 	~ListBoxThin();
@@ -62,7 +66,10 @@ public:
 private:
 	ListBoxBasic basic;
 
-	Painter::Box box;
+	TexturedBox box{getImageCache(), ":thinlistbox.png",
+			0, 0, // atlas offset (x, y)
+			1, 1, 1, // dx1, dx2, dx3
+			1, 1, 1}; // dy1, dy2, dy3
 };
 
 } // GUI::
