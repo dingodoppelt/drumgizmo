@@ -26,8 +26,6 @@
  */
 #include "progressbar.h"
 
-#include <iostream>
-
 namespace GUI
 {
 
@@ -51,7 +49,6 @@ void ProgressBar::setState(ProgressBarState state)
 
 void ProgressBar::setTotal(std::size_t total)
 {
-	std::cout << "total: " << total << std::endl;
 	if(this->total != total)
 	{
 		this->total = total;
@@ -61,7 +58,6 @@ void ProgressBar::setTotal(std::size_t total)
 
 void ProgressBar::setValue(std::size_t value)
 {
-	std::cout << "value: " << value << std::endl;
 	if(this->value != value)
 	{
 		this->value = value;
