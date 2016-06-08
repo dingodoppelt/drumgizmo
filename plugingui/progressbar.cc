@@ -28,45 +28,16 @@
 
 #include <iostream>
 
-namespace GUI {
+namespace GUI
+{
 
 ProgressBar::ProgressBar(Widget *parent)
 	: Widget(parent)
 {
-	bar_bg.left    = new Image(":progress_back_l.png");
-	bar_bg.right   = new Image(":progress_back_r.png");
-	bar_bg.center  = new Image(":progress_back_c.png");
-
-	bar_blue.left    = new Image(":progress_front_blue_l.png");
-	bar_blue.right   = new Image(":progress_front_blue_r.png");
-	bar_blue.center  = new Image(":progress_front_blue_c.png");
-
-	bar_red.left    = new Image(":progress_front_red_l.png");
-	bar_red.right   = new Image(":progress_front_red_r.png");
-	bar_red.center  = new Image(":progress_front_red_c.png");
-
-	bar_green.left    = new Image(":progress_front_green_l.png");
-	bar_green.right   = new Image(":progress_front_green_r.png");
-	bar_green.center  = new Image(":progress_front_green_c.png");
 }
 
 ProgressBar::~ProgressBar()
 {
-	delete bar_bg.left;
-	delete bar_bg.right;
-	delete bar_bg.center;
-
-	delete bar_blue.left;
-	delete bar_blue.right;
-	delete bar_blue.center;
-
-	delete bar_red.left;
-	delete bar_red.right;
-	delete bar_red.center;
-
-	delete bar_green.left;
-	delete bar_green.right;
-	delete bar_green.center;
 }
 
 void ProgressBar::setState(ProgressBarState state)
@@ -80,6 +51,7 @@ void ProgressBar::setState(ProgressBarState state)
 
 void ProgressBar::setTotal(std::size_t total)
 {
+	std::cout << "total: " << total << std::endl;
 	if(this->total != total)
 	{
 		this->total = total;
@@ -89,6 +61,7 @@ void ProgressBar::setTotal(std::size_t total)
 
 void ProgressBar::setValue(std::size_t value)
 {
+	std::cout << "value: " << value << std::endl;
 	if(this->value != value)
 	{
 		this->value = value;
@@ -100,35 +73,38 @@ void ProgressBar::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
-	float progress = (float)value / (float)total;
+	float progress = 0.0f;
+	if(total != 0)
+	{
+		progress = (float)value / (float)total;
+	}
 
-	int max = width() * progress;
+	int brd = 4;
+	int val = (width() - (2 * brd)) * progress;
 
 	p.clear();
 
-	int brd = 4;
-	p.drawBar(0, 0, bar_bg, width(), height());
+	bar_bg.setSize(width(), height());
+	p.drawImage(0, 0, bar_bg);
 
-	Painter::Bar* bar = nullptr;
-	switch(state) {
+	switch(state)
+	{
 	case ProgressBarState::Red:
-		bar = &bar_red;
+		bar_red.setSize(val, height());
+		p.drawImage(brd, 0, bar_red);
 		break;
 	case ProgressBarState::Green:
-		bar = &bar_green;
+		bar_green.setSize(val, height());
+		p.drawImage(brd, 0, bar_green);
 		break;
 	case ProgressBarState::Blue:
-		bar = &bar_blue;
+		bar_blue.setSize(val, height());
+		p.drawImage(brd, 0, bar_blue);
 		break;
 	case ProgressBarState::Off:
-		bar = nullptr;
-		break;
+		return;
 	}
 
-	if(bar)
-	{
-		p.drawBar(brd, 0, *bar, max - 2 * brd, height());
-	}
 }
 
 } // GUI::

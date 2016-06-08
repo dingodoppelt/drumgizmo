@@ -30,8 +30,10 @@
 
 #include "guievent.h"
 #include "painter.h"
+#include "texturedbox.h"
 
-namespace GUI {
+namespace GUI
+{
 
 enum class ProgressBarState
 {
@@ -41,7 +43,9 @@ enum class ProgressBarState
 	Off
 };
 
-class ProgressBar : public Widget {
+class ProgressBar
+	: public Widget
+{
 public:
 	ProgressBar(Widget* parent);
 	~ProgressBar();
@@ -58,11 +62,25 @@ protected:
 private:
 	ProgressBarState state{ProgressBarState::Blue};
 
-	Painter::Bar bar_bg;
+	TexturedBox bar_bg{getImageCache(), ":progress.png",
+			0, 0, // atlas offset (x, y)
+			6, 1, 6, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
 
-	Painter::Bar bar_green;
-	Painter::Bar bar_blue;
-	Painter::Bar bar_red;
+	TexturedBox bar_red{getImageCache(), ":progress.png",
+			13, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
+
+	TexturedBox bar_green{getImageCache(), ":progress.png",
+			18, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
+
+	TexturedBox bar_blue{getImageCache(), ":progress.png",
+			23, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
 
 	std::size_t total{0};
 	std::size_t value{0};
