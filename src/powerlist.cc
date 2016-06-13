@@ -72,20 +72,20 @@ void PowerList::add(Sample* sample)
 Channel* PowerList::getMasterChannel()
 {
 	std::map<Channel*, int> count;
-	
+
 	for (auto& item: samples)
 	{
 		Sample* sample{item.sample};
 		Channel* max_channel{nullptr};
 		sample_t max_val{0};
-		
+
 		for (auto& pair: sample->audiofiles)
 		{
 			Channel* c = pair.first;
 			AudioFile* af = pair.second;
-			
+
 			af->load(SIZE);
-			
+
 			float silence{0.f};
 			std::size_t silence_length{4u};
 			for (auto s = af->size; s > 0 && s > af->size - silence_length; --s)
@@ -93,7 +93,7 @@ Channel* PowerList::getMasterChannel()
 				silence += af->data[s];
 			}
 			silence /= silence_length;
-			
+
 			for(auto s = 0u; s < af->size; ++s)
 			{
 				float val = af->data[s] * af->data[s] * (1.0 / (float)(s + 1));
@@ -104,7 +104,7 @@ Channel* PowerList::getMasterChannel()
 					break;
 				}
 			}
-			
+
 			af->unload();
 		}
 
@@ -117,10 +117,10 @@ Channel* PowerList::getMasterChannel()
 			++count[max_channel];
 		}
 	}
-	
+
 	Channel* master{nullptr};
 	int max_count{-1};
-	
+
 	for (auto& pair: count)
 	{
 		if (pair.second > max_count && pair.first->name.find("Alesis") == 0u)
@@ -129,7 +129,7 @@ Channel* PowerList::getMasterChannel()
 			max_count = pair.second;
 		}
 	}
-	
+
 	return master;
 }
 
@@ -137,24 +137,24 @@ void PowerList::finalise()
 {
 #ifdef AUTO_CALCULATE_POWER
 	Channel* master_channel = getMasterChannel();
-	
+
 	if(master_channel == nullptr)
 	{
 		ERR(rand, "No master channel found!\n");
 		return; // This should not happen...
 	}
-	
+
 	DEBUG(rand, "Master channel: %s\n", master_channel->name.c_str());
 #endif /*AUTO_CALCULATE_POWER*/
-	
+
 	for (auto& item: samples)
 	{
 		Sample* sample = item.sample;
 #ifdef AUTO_CALCULATE_POWER
 		DEBUG(rand, "Sample: %s\n", sample->name.c_str());
-		
+
 		AudioFile* master{nullptr};
-		
+
 		for (auto& af: sample->audiofiles)
 		{
 			if (af.first->name == master_channel->name)
@@ -163,15 +163,15 @@ void PowerList::finalise()
 				break;
 			}
 		}
-		
+
 		if(master == nullptr)
 		{
 			continue;
 		}
-		
+
 		master->load();
 #endif /*AUTO_CALCULATE_POWER*/
-		
+
 #ifdef AUTO_CALCULATE_POWER
 		if(sample->power == -1)
 		{ // Power not defined. Calculate it!
@@ -182,15 +182,15 @@ void PowerList::finalise()
 			{
 				power += master->data[s] * master->data[s];
 			}
-			
+
 			power = sqrt(power);
-			
+
 			sample->power = power;
 		}
 #endif /*AUTO_CALCULATE_POWER*/
-		
+
 		item.power = sample->power;
-		
+
 		if(item.power > power_max)
 		{
 			power_max = item.power;
@@ -199,7 +199,7 @@ void PowerList::finalise()
 		{
 			power_min = item.power;
 		}
-		
+
 		DEBUG(rand, " - power: %f\n", item.power);
 	}
 }
@@ -210,43 +210,43 @@ Sample* PowerList::get(level_t level)
 	{
 		return nullptr; // No samples to choose from.
 	}
-	
+
 	int retry = 3; // TODO: This must be user controllable via the UI.
-	
+
 	Sample* sample{nullptr};
-	
+
 	float power_span = power_max - power_min;
-	
+
 	// Width is limited to at least 10. Fioxes problem with instrument with a
 	//  sample set smaller than MIN_SAMPLE_SET_SIZE.
 	float width = fmax(samples.size(), MIN_SAMPLE_SET_SIZE);
-	
+
 	// Spread out at most ~2 samples away from center if all samples have a
 	// uniform distribution over the power spectrum (which they probably don't).
 	float stddev = power_span / width;
-	
+
 	// Cut off mean value with stddev/2 in both ends in order to make room for
 	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
 	float mean = level * (power_span - stddev) + (stddev / 2.0);
-	
+
 	float power{0.f};
-	
+
 	// note: loop is executed once + #retry
 	do
 	{
 		--retry;
-		
+
 		// Select normal distributed value between
 		//  (stddev/2) and (power_span-stddev/2)
 		float lvl = rand.normalDistribution(mean, stddev);
-		
+
 		// Adjust this value to be in range
 		//  (power_min+stddev/2) and (power_max-stddev/2)
 		lvl += power_min;
-		
+
 		DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f)\n", level, lvl,
 			mean, stddev);
-		
+
 		for (auto& item: samples)
 		{
 			if (sample == nullptr || std::fabs(item.power - lvl) < std::fabs(power - lvl))
@@ -256,10 +256,10 @@ Sample* PowerList::get(level_t level)
 			}
 		}
 	} while (lastsample == sample && retry >= 0);
-	
+
 	DEBUG(rand, "Found sample with power %f\n", power);
-	
+
 	lastsample = sample;
-	
+
 	return sample;
 }
