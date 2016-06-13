@@ -76,9 +76,20 @@ void CHResampler::setup(double input_fs, double output_fs)
 	DEBUG(resampler, "Using zita-resampler (%d -> %d)", (int)input_fs,
 	    (int)output_fs);
 
-	int hlen = 72; // 16 ≤ hlen ≤ 96
 	// delay is 2 * hlen, 72 corresponds to delay introduced by SRC.
+	int hlen = 72; // 16 ≤ hlen ≤ 96
+
+	prv->zita.reset();
 	prv->zita.setup(input_fs, output_fs, nchan, hlen);
+
+	std::size_t null_size = prv->zita.inpsize() / 2 - 1;
+	prv->zita.inp_data = nullptr;
+	prv->zita.inp_count = null_size;
+
+	prv->zita.out_data = nullptr;
+	prv->zita.out_count = 1024 * 1024;
+
+	prv->zita.process();
 #elif defined(USE_SRC)
 	DEBUG(resampler, "Using libsamplerate (%d -> %d)", (int)input_fs,
 	    (int)output_fs);
@@ -141,8 +152,13 @@ void CHResampler::process()
 
 std::size_t CHResampler::getLatency() const
 {
+	if (input_fs == output_fs)
+	{
+		return 0;
+	}
+
 #if defined(USE_ZITA)
-	return prv->zita.inpdist();
+	return 0;
 #elif defined(USE_SRC)
 	return 0; // TODO?
 #endif
