@@ -132,7 +132,10 @@ bool InputProcessor::processOnset(event_t& event,
 
 	for(auto& filter : filters)
 	{
-		if(!filter->filter(event, event.offset + pos))
+		// This line might change the 'event' variable
+		bool keep = filter->filter(event, event.offset + pos);
+
+		if(!keep)
 		{
 			return false; // Skip event completely
 		}
