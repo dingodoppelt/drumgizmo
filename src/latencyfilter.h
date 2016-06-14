@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            latencyfilter.h
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
- *  andre.nusser@googlemail.com
+ *  Fri Jun 10 22:42:52 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -26,38 +26,20 @@
  */
 #pragma once
 
-#include <vector>
-#include <list>
-#include <memory>
-
-#include <event.h>
-
-#include "drumkit.h"
-#include "events.h"
 #include "inputfilter.h"
 
 class Settings;
 
-class InputProcessor
+class LatencyFilter
+	: public InputFilter
 {
 public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               std::list<Event*>* activeevents);
+	LatencyFilter(Settings& settings);
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
+	bool filter(event_t& events, size_t pos) override;
 
-	std::size_t getLatency() const;
+	std::size_t getLatency() const override;
 
 private:
-	DrumKit& kit;
-	std::list<Event*>* activeevents;
-	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
-
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
+	Settings& settings;
 };

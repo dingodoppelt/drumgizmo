@@ -22,6 +22,9 @@ EXTRA_DIST = \
 	events.h \
 	instrument.h \
 	instrumentparser.h \
+	inputfiler.h \
+	inputprocessor.h \
+	latencyfilter.h \
 	memchecker.h \
 	midimapparser.h \
 	midimapper.h \
@@ -34,6 +37,7 @@ EXTRA_DIST = \
 	sample.h \
 	saxparser.h \
 	semaphore.h \
+	staminafilter.h \
 	thread.h \
 	velocity.h \
 	versionstr.h \
@@ -59,6 +63,8 @@ EXTRA_DIST = \
 	events.cc \
 	instrument.cc \
 	instrumentparser.cc \
+	inputprocessor.cc \
+	latencyfilter.cc \
 	memchecker.cc \
 	midimapparser.cc \
 	midimapper.cc \
@@ -68,6 +74,7 @@ EXTRA_DIST = \
 	sample.cc \
 	saxparser.cc \
 	semaphore.cc \
+	staminafilter.cc \
 	thread.cc \
 	velocity.cc \
 	versionstr.cc

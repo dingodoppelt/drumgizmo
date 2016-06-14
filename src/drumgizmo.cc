@@ -54,7 +54,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	, oe(o)
 	, ie(i)
 	, kit()
-	, input_processor(kit, activeevents)
+	, input_processor(settings, kit, activeevents)
 	, framesize(0)
 	, freewheel(false)
 	, events{}
@@ -162,12 +162,14 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	ie.run(pos, nsamples, events);
 
 	double resample_ratio = resamplers.getRatio();
-	bool active_events_left = input_processor.process(events, pos, resample_ratio);
+	bool active_events_left =
+		input_processor.process(events, pos, resample_ratio);
 
 	if(!active_events_left)
 	{
 		return false;
 	}
+
 	events.clear();
 
 	//

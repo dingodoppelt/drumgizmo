@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            latencyfilter.cc
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
- *  andre.nusser@googlemail.com
+ *  Fri Jun 10 22:42:53 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -24,40 +24,21 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
+#include "latencyfilter.h"
 
-#include <vector>
-#include <list>
-#include <memory>
-
-#include <event.h>
-
-#include "drumkit.h"
-#include "events.h"
-#include "inputfilter.h"
-
-class Settings;
-
-class InputProcessor
+LatencyFilter::LatencyFilter(Settings& settings)
+	: settings(settings)
 {
-public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               std::list<Event*>* activeevents);
+}
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
+bool LatencyFilter::filter(event_t& events, size_t pos)
+{
+	return true;
+}
 
-	std::size_t getLatency() const;
-
-private:
-	DrumKit& kit;
-	std::list<Event*>* activeevents;
-	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
-
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
-};
+std::size_t LatencyFilter::getLatency() const
+{
+	// TODO: If enabled in settings, return the maximum number of samples
+	// with which the latency filter can move notes forward.
+	return 0;
+}

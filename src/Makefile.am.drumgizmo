@@ -20,6 +20,7 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/inputprocessor.cc \
 	$(top_srcdir)/src/instrument.cc \
 	$(top_srcdir)/src/instrumentparser.cc \
+	$(top_srcdir)/src/latencyfilter.cc \
 	$(top_srcdir)/src/memchecker.cc \
 	$(top_srcdir)/src/midimapparser.cc \
 	$(top_srcdir)/src/midimapper.cc \
@@ -30,6 +31,7 @@ DRUMGIZMO_SOURCES = \
 	$(top_srcdir)/src/sample.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/saxparser.cc \
+	$(top_srcdir)/src/staminafilter.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/versionstr.cc
 

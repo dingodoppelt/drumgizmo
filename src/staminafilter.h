@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            staminafilter.h
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
- *  andre.nusser@googlemail.com
+ *  Sat Jun 11 08:49:36 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -26,38 +26,26 @@
  */
 #pragma once
 
-#include <vector>
-#include <list>
-#include <memory>
+#include <cstddef>
+#include <map>
+#include <utility>
 
-#include <event.h>
-
-#include "drumkit.h"
-#include "events.h"
 #include "inputfilter.h"
 
 class Settings;
 
-class InputProcessor
+class StaminaFilter
+	: public InputFilter
 {
 public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               std::list<Event*>* activeevents);
+	StaminaFilter(Settings& settings);
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
+	bool filter(event_t& event, std::size_t pos) override;
 
-	std::size_t getLatency() const;
+	// Note getLatency not overloaded because this filter doesn't add latency.
 
 private:
-	DrumKit& kit;
-	std::list<Event*>* activeevents;
-	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
+	Settings& settings;
 
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
+	std::map<std::size_t, std::pair<float, std::size_t>> modifiers;
 };

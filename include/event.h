@@ -24,17 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifndef __DRUMGIZMO_EVENT_H__
-#define __DRUMGIZMO_EVENT_H__
+#pragma once
 
+#include <cstddef>
+
+// TODO: Make enum class
+//! Event types
 #define TYPE_ONSET 0
 #define TYPE_STOP  1
 
-typedef struct {
-  size_t type;
-  size_t instrument;
-  size_t offset;
-  float velocity;
-} event_t;
-
-#endif/*__DRUMGIZMO_EVENT_H__*/
+//! POD datatype for input event transport.
+struct event_t
+{
+	std::size_t type; //!< The type of the event.
+	std::size_t instrument; //!< The instrument number.
+	std::size_t offset; //!< The offset position in the input buffer
+	float velocity; //!< The velocity if the type is a note on [0; 1]
+};

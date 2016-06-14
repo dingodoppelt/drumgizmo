@@ -56,45 +56,7 @@ bool Instrument::isValid() const
 
 Sample* Instrument::sample(level_t level, size_t pos)
 {
-	// Read out all values from settings.
-	auto enable_velocity_randomiser = settings.enable_velocity_randomiser.load();
-	auto velocity_randomiser_weight = settings.velocity_randomiser_weight.load();
-	auto samplerate = settings.samplerate.load();
-	auto velocity_modifier_falloff = settings.velocity_modifier_falloff.load();
-	auto enable_velocity_modifier = settings.enable_velocity_modifier.load();
-	auto velocity_modifier_weight = settings.velocity_modifier_weight.load();
-
 	Sample *sample = nullptr;
-
-	if(enable_velocity_modifier == false)
-	{
-		mod = 1.0;
-		lastpos = 0;
-	}
-
-	if(enable_velocity_randomiser)
-	{
-		float r = rand.floatInRange(-1.0 * velocity_randomiser_weight,
-		                            velocity_randomiser_weight);
-		level += r;
-		if(level > 1.0)
-		{
-			level = 1.0;
-		}
-		if(level < 0.0)
-		{
-			level = 0.0;
-		}
-	}
-
-	if(enable_velocity_modifier)
-	{
-		mod += (pos - lastpos) / (samplerate * velocity_modifier_falloff);
-		if(mod > 1.0)
-		{
-			mod = 1.0;
-		}
-	}
 
 	if(version >= VersionStr("2.0"))
 	{
@@ -111,12 +73,6 @@ Sample* Instrument::sample(level_t level, size_t pos)
 		}
 
 		sample = rand.choose(s);
-	}
-
-	if(enable_velocity_modifier)
-	{
-		lastpos = pos;
-		mod *= velocity_modifier_weight;
 	}
 
 	return sample;

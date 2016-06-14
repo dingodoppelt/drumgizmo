@@ -1,10 +1,10 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            inputfilter.h
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
- *  andre.nusser@googlemail.com
+ *  Tue Jun 14 20:42:52 CEST 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -26,38 +26,25 @@
  */
 #pragma once
 
-#include <vector>
-#include <list>
-#include <memory>
-
 #include <event.h>
 
-#include "drumkit.h"
-#include "events.h"
-#include "inputfilter.h"
-
-class Settings;
-
-class InputProcessor
+//! An abstract filter component for the InputProcessor class filter chain.
+class InputFilter
 {
 public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               std::list<Event*>* activeevents);
+	//! Implement to filter a single event.
+	//! \param[in,out] event The event being processed. The filter method
+	//!  might alter any of the event parameters.
+	//! \param pos The absolute position of the buffer in which the event in
+	//!  event was received. Add event.pos to it to get the absolute position of
+	//!  the event in the stream.
+	//! \return true to keep the event, false to discard it.
+	virtual bool filter(event_t& event, std::size_t pos) = 0;
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
-
-	std::size_t getLatency() const;
-
-private:
-	DrumKit& kit;
-	std::list<Event*>* activeevents;
-	bool is_stopping; ///< Is set to true when a TYPE_STOP event has been seen.
-
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
+	//! Returns the filter delay in samples.
+	//! Overload if needed.
+	virtual std::size_t getLatency() const
+	{
+		return 0;
+	}
 };

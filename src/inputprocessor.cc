@@ -32,17 +32,28 @@
 
 #include "instrument.h"
 
-InputProcessor::InputProcessor(DrumKit& kit, std::list<Event*>* activeevents)
+#include "staminafilter.h"
+#include "latencyfilter.h"
+
+#include "cpp11fix.h"
+
+InputProcessor::InputProcessor(Settings& settings,
+                               DrumKit& kit,
+                               std::list<Event*>* activeevents)
 	: kit(kit)
 	, activeevents(activeevents)
 	, is_stopping(false)
 {
-
+	// Build filter list
+	filters.emplace_back(std::make_unique<StaminaFilter>(settings));
+	filters.emplace_back(std::make_unique<LatencyFilter>(settings));
 }
 
-bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, double resample_ratio)
+bool InputProcessor::process(std::vector<event_t>& events,
+                             std::size_t pos,
+                             double resample_ratio)
 {
-	for(const auto& event: events)
+	for(auto& event: events)
 	{
 		if(event.type == TYPE_ONSET)
 		{
@@ -63,16 +74,26 @@ bool InputProcessor::process(const std::vector<event_t>& events, size_t pos, dou
 
 std::size_t InputProcessor::getLatency() const
 {
-	return 0;
+	std::size_t latency = 0;
+
+	for(const auto& filter : filters)
+	{
+		latency += filter->getLatency();
+	}
+
+	return latency;
 }
 
-bool InputProcessor::processOnset(const event_t& event, size_t pos, double resample_ratio)
+bool InputProcessor::processOnset(event_t& event,
+                                  std::size_t pos,
+                                  double resample_ratio)
 {
-	if(!kit.isValid()) {
+	if(!kit.isValid())
+	{
 		return false;
 	}
 
-	size_t ev_instr = event.instrument;
+	std::size_t ev_instr = event.instrument;
 	Instrument* instr = nullptr;
 
 	if(ev_instr < kit.instruments.size())
@@ -109,6 +130,14 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 		}
 	}
 
+	for(auto& filter : filters)
+	{
+		if(!filter->filter(event, event.offset + pos))
+		{
+			return false; // Skip event completely
+		}
+	}
+
 	Sample* sample = instr->sample(event.velocity, event.offset + pos);
 
 	if(sample == nullptr)
@@ -136,7 +165,7 @@ bool InputProcessor::processOnset(const event_t& event, size_t pos, double resam
 	return true;
 }
 
-bool InputProcessor::processStop(const event_t& event)
+bool InputProcessor::processStop(event_t& event)
 {
 	if(event.type == TYPE_STOP)
 	{
