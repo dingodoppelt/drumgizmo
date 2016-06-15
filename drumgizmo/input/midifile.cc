@@ -40,7 +40,7 @@ MidifileInputEngine::MidifileInputEngine()
 	, track{-1} // all tracks
 	, loop{false}
 	, offset{0.0}
-	, samplerate{44100.0} // todo: via ctor arg
+	, samplerate{44100.0}
 {
 }
 
@@ -189,4 +189,9 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 
 void MidifileInputEngine::post()
 {
+}
+
+void MidifileInputEngine::setSampleRate(double sample_rate)
+{
+	this->samplerate = sample_rate;
 }

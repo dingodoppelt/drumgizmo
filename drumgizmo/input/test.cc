@@ -35,6 +35,7 @@ TestInputEngine::TestInputEngine()
 	, probability{0.1}
 	, instrument{-1}
 	, length{-1}
+	, sample_rate{44100.0}
 {
 }
 
@@ -44,14 +45,14 @@ TestInputEngine::~TestInputEngine()
 
 bool TestInputEngine::init(const Instruments& instruments)
 {
-  return true;
+	return true;
 }
 
 void TestInputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "p")
 	{
-  		probability = atof(value.c_str());
+		probability = atof(value.c_str());
 	}
 	if(parm == "instr")
 	{
@@ -65,7 +66,7 @@ void TestInputEngine::setParm(const std::string& parm, const std::string& value)
 
 bool TestInputEngine::start()
 {
-  return true;
+	return true;
 }
 
 void TestInputEngine::stop()
@@ -78,7 +79,7 @@ void TestInputEngine::pre()
 
 void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
-	if((float)rand() / (float)RAND_MAX > probability) 
+	if((float)rand() / (float)RAND_MAX > probability)
 	{
 		return;
 	}
@@ -87,17 +88,16 @@ void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 	auto& event = events.back();
 	event.type = TYPE_ONSET;
 
-	if(length != -1 && (int)pos > length * 44100) 
+	if((length != -1) && (pos > std::llround(length * sample_rate)))
 	{
 		event.type = TYPE_STOP;
 	}
-	else 
+	else
 	{
 		event.type = TYPE_ONSET;
 	}
 
-
-	if(instrument != -1) 
+	if(instrument != -1)
 	{
 		event.instrument = instrument;
 	}
@@ -112,4 +112,9 @@ void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 
 void TestInputEngine::post()
 {
+}
+
+void TestInputEngine::setSampleRate(double sample_rate)
+{
+	this->sample_rate = sample_rate;
 }

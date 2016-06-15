@@ -45,9 +45,11 @@ public:
 	void pre() override;
 	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
 	void post() override;
+	void setSampleRate(double sample_rate) override;
 
 private:
 	float probability;
 	int instrument;
 	int length;
+	double sample_rate;
 };

@@ -426,6 +426,10 @@ void DrumGizmo::setSamplerate(int samplerate)
 {
 	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
+
+	// Notify input engine of the samplerate change.
+	ie.setSampleRate(samplerate);
+
 #ifdef WITH_RESAMPLER
 	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
 

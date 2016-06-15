@@ -48,4 +48,7 @@ public:
 	virtual void pre() = 0;
 	virtual void run(size_t pos, size_t len, std::vector<event_t>& events) = 0;
 	virtual void post() = 0;
+
+	//! Reimplement to receive sample rate changes.
+	virtual void setSampleRate(double sample_rate) {}
 };
