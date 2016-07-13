@@ -66,5 +66,5 @@ void DummyOutputEngine::post(size_t nsamples)
 
 bool DummyOutputEngine::isFreewheeling() const
 {
-	return false;
+	return true;
 }

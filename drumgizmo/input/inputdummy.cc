@@ -66,5 +66,5 @@ void DummyInputEngine::post()
 
 bool DummyInputEngine::isFreewheeling() const
 {
-	return false;
+	return true;
 }
