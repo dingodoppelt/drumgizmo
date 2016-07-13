@@ -49,6 +49,7 @@ public:
 	void post(size_t nsamples) override;
 	size_t getBufferSize() const override;
 	size_t getSamplerate() const override;
+	bool isFreewheeling() const override;
 	void onLatencyChange(std::size_t latency) override;
 
 	// based on JackProcess

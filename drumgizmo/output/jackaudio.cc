@@ -123,6 +123,11 @@ size_t JackAudioOutputEngine::getSamplerate() const
 	return client.getSampleRate();
 }
 
+bool JackAudioOutputEngine::isFreewheeling() const
+{
+	return client.isFreewheeling();
+}
+
 void JackAudioOutputEngine::onLatencyChange(std::size_t latency)
 {
 	this->latency = latency;

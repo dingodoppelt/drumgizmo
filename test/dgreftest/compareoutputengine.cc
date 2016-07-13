@@ -136,3 +136,8 @@ size_t CompareOutputEngine::getSamplerate() const
 {
 	return info.samplerate;
 }
+
+bool CompareOutputEngine::isFreewheeling() const
+{
+	return true;
+}

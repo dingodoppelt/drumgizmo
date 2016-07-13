@@ -54,8 +54,8 @@ public:
 
 	//! Overload this method to force engine to use different buffer size.
 	virtual std::size_t getBufferSize() const { return 1024; }
-
 	virtual std::size_t getSamplerate() const { return 44100; }
+	virtual bool isFreewheeling() const = 0;
 
 	//! Overload this method to get notification of latency changes.
 	//! \param latency The new latency in samples.

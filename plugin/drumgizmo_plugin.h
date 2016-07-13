@@ -143,6 +143,7 @@ private:
 
 		sample_t *getBuffer(int ch) const override;
 		size_t getBufferSize() const override;
+		bool isFreewheeling() const override;
 
 	protected:
 		DrumGizmoPlugin& plugin;

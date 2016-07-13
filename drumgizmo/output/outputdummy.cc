@@ -63,3 +63,8 @@ void DummyOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
 void DummyOutputEngine::post(size_t nsamples)
 {
 }
+
+bool DummyOutputEngine::isFreewheeling() const
+{
+	return false;
+}

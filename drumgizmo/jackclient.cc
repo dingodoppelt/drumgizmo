@@ -63,6 +63,11 @@ void JackClient::latencyCallback(jack_latency_callback_mode_t mode,
 	static_cast<JackClient*>(arg)->jackLatencyCallback(mode);
 }
 
+void JackClient::freewheelCallback(int is_freewheeling, void* arg)
+{
+	static_cast<JackClient*>(arg)->jackFreewheelCallback(is_freewheeling);
+}
+
 JackClient::JackClient()
 	: client{nullptr}
 	, processes{}
@@ -70,13 +75,11 @@ JackClient::JackClient()
 {
 	jack_status_t status;
 	client = jack_client_open("DrumGizmo", JackNullOption, &status);
-	jack_set_process_callback(client, JackClient::wrapJackProcess, this);
 
-	// Register callback which is called by jack when it wants to know about the
-	// current port latency.
-	jack_set_latency_callback(client,
-	                          JackClient::latencyCallback,
-	                          this);
+	// Register callbacks
+	jack_set_process_callback(client, JackClient::wrapJackProcess, this);
+	jack_set_latency_callback(client, JackClient::latencyCallback, this);
+	jack_set_freewheel_callback(client, JackClient::freewheelCallback, this);
 }
 
 JackClient::~JackClient()
@@ -123,6 +126,11 @@ void JackClient::jackLatencyCallback(jack_latency_callback_mode_t mode)
 	}
 }
 
+void JackClient::jackFreewheelCallback(bool is_freewheeling)
+{
+	this->is_freewheeling = is_freewheeling;
+}
+
 std::size_t JackClient::getBufferSize() const
 {
 	return jack_get_buffer_size(client);
@@ -131,4 +139,9 @@ std::size_t JackClient::getBufferSize() const
 std::size_t JackClient::getSampleRate() const
 {
 	return jack_get_sample_rate(client);
+}
+
+bool JackClient::isFreewheeling() const
+{
+	return is_freewheeling;
 }

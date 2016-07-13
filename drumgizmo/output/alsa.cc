@@ -191,3 +191,8 @@ size_t AlsaOutputEngine::getSamplerate() const
 {
 	return srate;
 }
+
+bool AlsaOutputEngine::isFreewheeling() const
+{
+	return false;
+}

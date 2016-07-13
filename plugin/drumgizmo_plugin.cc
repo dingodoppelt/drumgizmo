@@ -309,3 +309,8 @@ size_t DrumGizmoPlugin::Output::getBufferSize() const
 {
 	return plugin.getFramesize();
 }
+
+bool DrumGizmoPlugin::Output::isFreewheeling() const
+{
+	return plugin.getFreeWheel();
+}

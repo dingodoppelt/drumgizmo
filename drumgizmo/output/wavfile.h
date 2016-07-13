@@ -51,6 +51,7 @@ public:
 	void post(std::size_t nsamples) override;
 	std::size_t getSamplerate() const override;
 	void onLatencyChange(std::size_t latency) override;
+	bool isFreewheeling() const override;
 
 private:
 	SF_INFO info;

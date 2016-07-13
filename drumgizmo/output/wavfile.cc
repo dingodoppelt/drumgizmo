@@ -152,3 +152,8 @@ void WavfileOutputEngine::onLatencyChange(std::size_t latency)
 {
 	this->latency = latency;
 }
+
+bool WavfileOutputEngine::isFreewheeling() const
+{
+	return true;
+}

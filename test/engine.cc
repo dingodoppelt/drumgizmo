@@ -43,6 +43,7 @@ public:
 	void pre(size_t nsamples) {}
 	void run(int ch, sample_t *samples, size_t nsamples) {}
 	void post(size_t nsamples) {}
+	bool isFreewheeling() const { return true; }
 };
 
 class AudioInputEngineDummy

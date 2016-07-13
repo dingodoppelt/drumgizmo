@@ -123,3 +123,8 @@ size_t WavfileOutputEngine::getSamplerate() const
 {
 	return info.samplerate;
 }
+
+bool WavfileOutputEngine::isFreewheeling() const
+{
+	return true;
+}

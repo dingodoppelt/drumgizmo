@@ -72,15 +72,19 @@ public:
 
 	std::size_t getBufferSize() const;
 	std::size_t getSampleRate() const;
+	bool isFreewheeling() const;
 
 private:
 	jack_client_t* client;
 	std::set<JackProcess*> processes;
 	bool is_active;
+	bool is_freewheeling;
 
 	int process(jack_nframes_t num_frames);
 	void jackLatencyCallback(jack_latency_callback_mode_t mode);
+	void jackFreewheelCallback(bool is_freewheeling);
 
 	static int wrapJackProcess(jack_nframes_t nframes, void* arg);
 	static void latencyCallback(jack_latency_callback_mode_t mode, void* arg);
+	static void freewheelCallback(int is_freewheeling, void* arg);
 };
