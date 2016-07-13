@@ -57,6 +57,12 @@ int JackClient::wrapJackProcess(jack_nframes_t nframes, void* arg)
 	return static_cast<JackClient*>(arg)->process(nframes);
 }
 
+void JackClient::latencyCallback(jack_latency_callback_mode_t mode,
+                                 void* arg)
+{
+	static_cast<JackClient*>(arg)->jackLatencyCallback(mode);
+}
+
 JackClient::JackClient()
 	: client{nullptr}
 	, processes{}
@@ -65,6 +71,12 @@ JackClient::JackClient()
 	jack_status_t status;
 	client = jack_client_open("DrumGizmo", JackNullOption, &status);
 	jack_set_process_callback(client, JackClient::wrapJackProcess, this);
+
+	// Register callback which is called by jack when it wants to know about the
+	// current port latency.
+	jack_set_latency_callback(client,
+	                          JackClient::latencyCallback,
+	                          this);
 }
 
 JackClient::~JackClient()
@@ -101,6 +113,14 @@ int JackClient::process(jack_nframes_t num_frames)
 		ptr->process(num_frames);
 	}
 	return 0;
+}
+
+void JackClient::jackLatencyCallback(jack_latency_callback_mode_t mode)
+{
+	for(auto& ptr : processes)
+	{
+		ptr->jackLatencyCallback(mode);
+	}
 }
 
 std::size_t JackClient::getBufferSize() const

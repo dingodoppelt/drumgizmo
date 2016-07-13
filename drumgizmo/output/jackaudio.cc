@@ -33,6 +33,7 @@ JackAudioOutputEngine::JackAudioOutputEngine(JackClient& client)
 	: AudioOutputEngine{}
 	, client(client)
 	, channels{}
+	, latency{0}
 {
 	client.add(*this);
 }
@@ -122,6 +123,11 @@ size_t JackAudioOutputEngine::getSamplerate() const
 	return client.getSampleRate();
 }
 
+void JackAudioOutputEngine::onLatencyChange(std::size_t latency)
+{
+	this->latency = latency;
+}
+
 JackAudioOutputEngine::Channel::Channel(JackClient& client,
                                         const std::string& name,
                                         std::size_t buffer_size)
@@ -129,4 +135,34 @@ JackAudioOutputEngine::Channel::Channel(JackClient& client,
 	, samples{}
 {
 	samples.resize(buffer_size);
+}
+
+void JackAudioOutputEngine::jackLatencyCallback(jack_latency_callback_mode_t mode)
+{
+	jack_latency_range_t range;
+	switch(mode)
+	{
+	case JackCaptureLatency:
+		// We do not have any audio input ports. Use this for when we do...
+//		jack_port_get_latency_range(port_feeding_input_port,
+//		                            JackPlaybackLatency,
+//		                            &range);
+//		range.min += 0;
+//		range.max += 0;
+//		jack_port_set_latency_range(input_port, JackPlaybackLatency, &range);
+		break;
+	case JackPlaybackLatency:
+		for(auto& channel : channels)
+		{
+			jack_port_get_latency_range(channel.port.port,
+			                            JackPlaybackLatency,
+			                            &range);
+			range.min += latency;
+			range.max += latency;
+			jack_port_set_latency_range(channel.port.port,
+			                            JackPlaybackLatency,
+			                            &range);
+		}
+		break;
+	}
 }

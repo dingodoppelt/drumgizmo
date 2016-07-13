@@ -383,6 +383,7 @@ int main(int argc, char* argv[])
 	}
 
 	gizmo.setSamplerate(oe->getSamplerate());
+	oe->onLatencyChange(gizmo.getLatency());
 
 	if(!gizmo.init())
 	{

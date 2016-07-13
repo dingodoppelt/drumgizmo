@@ -25,6 +25,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
+
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -44,15 +46,17 @@ public:
 	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override;
 	void stop() override;
-	void pre(size_t nsamples) override;
-	void run(int ch, sample_t* samples, size_t nsamples) override;
-	void post(size_t nsamples) override;
-	size_t getSamplerate() const override;
+	void pre(std::size_t nsamples) override;
+	void run(int ch, sample_t* samples, std::size_t nsamples) override;
+	void post(std::size_t nsamples) override;
+	std::size_t getSamplerate() const override;
+	void onLatencyChange(std::size_t latency) override;
 
 private:
 	SF_INFO info;
 	std::vector<SNDFILE*> channels;
-	size_t num_channels;
+	std::size_t num_channels;
 
 	std::string file;
+	std::size_t latency;
 };

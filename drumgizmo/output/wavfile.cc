@@ -33,6 +33,7 @@ WavfileOutputEngine::WavfileOutputEngine()
 	, info{}
 	, channels{}
 	, file{"output"}
+	, latency{0}
 {
 	info.samplerate = 44100;
 	info.channels = 1;
@@ -69,7 +70,8 @@ bool WavfileOutputEngine::init(const Channels& data)
 	return true;
 }
 
-void WavfileOutputEngine::setParm(const std::string& parm, const std::string& value)
+void WavfileOutputEngine::setParm(const std::string& parm,
+                                  const std::string& value)
 {
 	if(parm == "file")
 	{
@@ -105,11 +107,11 @@ void WavfileOutputEngine::stop()
 {
 }
 
-void WavfileOutputEngine::pre(size_t nsamples)
+void WavfileOutputEngine::pre(std::size_t nsamples)
 {
 }
 
-void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
+void WavfileOutputEngine::run(int ch, sample_t* samples, std::size_t nsamples)
 {
 	if(static_cast<unsigned int>(ch) >= channels.size())
 	{
@@ -118,14 +120,35 @@ void WavfileOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
 		return;
 	}
 
-	sf_writef_float(channels[ch], samples, nsamples);
+	// Skip the initial 'latency' samples.
+	if(nsamples <= latency)
+	{
+		return;
+	}
+
+	nsamples -= latency;
+
+	sf_writef_float(channels[ch], samples + latency, nsamples);
 }
 
-void WavfileOutputEngine::post(size_t nsamples)
+void WavfileOutputEngine::post(std::size_t nsamples)
 {
+	if(latency > nsamples)
+	{
+		latency -= nsamples;
+	}
+	else
+	{
+		latency = 0;
+	}
 }
 
-size_t WavfileOutputEngine::getSamplerate() const
+std::size_t WavfileOutputEngine::getSamplerate() const
 {
 	return info.samplerate;
+}
+
+void WavfileOutputEngine::onLatencyChange(std::size_t latency)
+{
+	this->latency = latency;
 }

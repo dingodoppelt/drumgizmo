@@ -40,6 +40,7 @@ class JackProcess
 public:
 	virtual ~JackProcess();
 	virtual void process(jack_nframes_t num_frames) = 0;
+	virtual void jackLatencyCallback(jack_latency_callback_mode_t mode) {}
 };
 
 // --------------------------------------------------------------------
@@ -78,6 +79,8 @@ private:
 	bool is_active;
 
 	int process(jack_nframes_t num_frames);
+	void jackLatencyCallback(jack_latency_callback_mode_t mode);
 
 	static int wrapJackProcess(jack_nframes_t nframes, void* arg);
+	static void latencyCallback(jack_latency_callback_mode_t mode, void* arg);
 };

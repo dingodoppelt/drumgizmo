@@ -49,11 +49,14 @@ public:
 	void post(size_t nsamples) override;
 	size_t getBufferSize() const override;
 	size_t getSamplerate() const override;
+	void onLatencyChange(std::size_t latency) override;
 
 	// based on JackProcess
 	void process(jack_nframes_t num_frames) override;
+	void jackLatencyCallback(jack_latency_callback_mode_t mode) override;
 
 private:
+
 	struct Channel
 	{
 		JackPort port;
@@ -66,4 +69,5 @@ private:
 	JackClient& client;
 	std::vector<Channel> channels;
 	Semaphore sema;
+	std::size_t latency{0};
 };
