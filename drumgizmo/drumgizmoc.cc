@@ -391,7 +391,30 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	gizmo.run(endpos);
+	// former drumgizmo run call
+	size_t pos = 0;
+	size_t nsamples = oe->getBufferSize();
+	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
+	gizmo.setFrameSize(oe->getBufferSize());
+
+	ie->start();
+	oe->start();
+
+	while(gizmo.run(pos, samples, nsamples) == true)
+	{
+		pos += nsamples;
+		if((endpos != -1) && (pos >= (size_t)endpos))
+		{
+			break;
+		}
+	}
+
+	ie->stop();
+	oe->stop();
+
+	free(samples);
+	// end former drumgizmo run call
 
 	printf("Quit.\n");
 	fflush(stdout);

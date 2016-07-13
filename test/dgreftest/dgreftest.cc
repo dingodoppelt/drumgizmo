@@ -130,7 +130,26 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	drumgizmo.run(-1);
+	// former drumgizmo run call
+	size_t pos = 0;
+	size_t nsamples = oe->getBufferSize();
+	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
+
+	drumgizmo.setFrameSize(oe->getBufferSize());
+
+	ie.start();
+	oe->start();
+
+	while(drumgizmo.run(pos, samples, nsamples) == true)
+	{
+		pos += nsamples;
+	}
+
+	ie.stop();
+	oe->stop();
+
+	free(samples);
+	// end former drumgizmo run call
 
 	return 0;
 }
