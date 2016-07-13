@@ -66,11 +66,6 @@ DrumGizmoPlugin::DrumGizmoPlugin()
 	drumgizmo->setFrameSize(2048);
 }
 
-void DrumGizmoPlugin::onFreeWheelChange(bool freewheel)
-{
-	drumgizmo->setFreeWheel(freewheel);
-}
-
 void DrumGizmoPlugin::onSamplerateChange(float samplerate)
 {
 	drumgizmo->setSamplerate(samplerate);

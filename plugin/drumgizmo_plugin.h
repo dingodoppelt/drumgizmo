@@ -65,8 +65,6 @@ public:
 	DrumGizmoPlugin();
 #endif
 
-	void onFreeWheelChange(bool freewheel) override;
-
 	void onFramesizeChange(size_t framesize) override;
 
 	void onSamplerateChange(float samplerate) override;
