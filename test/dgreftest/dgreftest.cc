@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
 	{
 		pos += nsamples;
 
-		drumgizmo.setFreeWheel(ie.isFreewheeling() && oe.isFreewheeling());
+		drumgizmo.setFreeWheel(ie.isFreewheeling() && oe->isFreewheeling());
 	}
 
 	ie.stop();
