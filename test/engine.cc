@@ -60,6 +60,7 @@ public:
 	void pre() {}
 	void run(size_t pos, size_t len, std::vector<event_t>& events) {}
 	void post() {}
+	bool isFreewheeling() const { return true; }
 };
 
 class test_engine : public CppUnit::TestFixture

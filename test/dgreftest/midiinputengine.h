@@ -50,6 +50,7 @@ public:
 	void pre() override;
 	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
 	void post() override;
+	bool isFreewheeling() const override;
 
 private:
 	smf_t* smf;

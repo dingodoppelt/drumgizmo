@@ -101,6 +101,11 @@ void JackMidiInputEngine::post()
 {
 }
 
+bool JackMidiInputEngine::isFreewheeling() const
+{
+	return client.isFreewheeling();
+}
+
 void JackMidiInputEngine::process(jack_nframes_t num_frames)
 {
 	assert(port != nullptr);

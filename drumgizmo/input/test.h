@@ -46,6 +46,7 @@ public:
 	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
 	void post() override;
 	void setSampleRate(double sample_rate) override;
+	bool isFreewheeling() const override;
 
 private:
 	float probability;

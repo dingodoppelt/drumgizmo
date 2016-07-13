@@ -190,3 +190,8 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 void MidifileInputEngine::post()
 {
 }
+
+bool MidifileInputEngine::isFreewheeling() const
+{
+	return true;
+}

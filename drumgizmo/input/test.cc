@@ -118,3 +118,8 @@ void TestInputEngine::setSampleRate(double sample_rate)
 {
 	this->sample_rate = sample_rate;
 }
+
+bool TestInputEngine::isFreewheeling() const
+{
+	return false;
+}

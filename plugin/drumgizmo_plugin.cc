@@ -233,6 +233,11 @@ void DrumGizmoPlugin::Input::post()
 {
 }
 
+bool DrumGizmoPlugin::Input::isFreewheeling() const
+{
+	return plugin.getFreeWheel();
+}
+
 
 //
 // Output Engine

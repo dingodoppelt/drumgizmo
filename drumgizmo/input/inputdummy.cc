@@ -63,3 +63,8 @@ void DummyInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 void DummyInputEngine::post()
 {
 }
+
+bool DummyInputEngine::isFreewheeling() const
+{
+	return false;
+}
