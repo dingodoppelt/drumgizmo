@@ -409,14 +409,7 @@ int main(int argc, char* argv[])
 			break;
 		}
 
-		if(ie->isFreewheeling() && oe->isFreewheeling())
-		{
-			gizmo.setFreeWheel(true);
-		}
-		else
-		{
-			gizmo.setFreeWheel(false);
-		}
+		gizmo.setFreeWheel(ie->isFreewheeling() && oe->isFreewheeling());
 	}
 
 	ie->stop();
