@@ -50,7 +50,10 @@ test/memchecker
 test/randomtest
 test/atomictest
 test/syncedsettingstest
+test/imagecachetest
 test/dgreftest/dgreftest
+test/dgreftest/*.mid
+test/dgreftest/*.wav
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
