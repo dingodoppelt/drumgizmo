@@ -408,8 +408,6 @@ int main(int argc, char* argv[])
 		{
 			break;
 		}
-
-		gizmo.setFreeWheel(ie->isFreewheeling() && oe->isFreewheeling());
 	}
 
 	ie->stop();

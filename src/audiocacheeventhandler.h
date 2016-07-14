@@ -28,6 +28,7 @@
 
 #include <list>
 #include <mutex>
+#include <atomic>
 
 #include "thread.h"
 #include "semaphore.h"
@@ -102,7 +103,7 @@ protected:
 
 	std::list<CacheEvent> eventqueue;
 
-	bool threaded{false};
+	std::atomic<bool> threaded{false};
 	Semaphore sem;
 	Semaphore sem_run;
 	bool running{false};

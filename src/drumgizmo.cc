@@ -56,7 +56,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	, kit()
 	, input_processor(settings, kit, activeevents)
 	, framesize(0)
-	, freewheel(false)
+	, freewheel(true)
 	, events{}
 	, settings(settings)
 {
@@ -110,11 +110,8 @@ void DrumGizmo::setFreeWheel(bool freewheel)
 {
 	// Freewheel = true means that we are bouncing and therefore running faster
 	// than realtime.
-	if(freewheel != this->freewheel)
-	{
-		this->freewheel = freewheel;
-		audioCache.setAsyncMode(!freewheel);
-	}
+	this->freewheel = freewheel;
+	audioCache.setAsyncMode(!freewheel);
 }
 
 void DrumGizmo::setRandomSeed(unsigned int seed)
@@ -125,6 +122,7 @@ void DrumGizmo::setRandomSeed(unsigned int seed)
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
 	setFrameSize(nsamples);
+	setFreeWheel(ie.isFreewheeling() && oe.isFreewheeling());
 
 	ie.pre();
 	oe.pre(nsamples);

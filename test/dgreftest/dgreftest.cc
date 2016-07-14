@@ -88,7 +88,6 @@ int main(int argc, char* argv[])
 
 	DrumGizmo drumgizmo(settings, *oe.get(), ie);
 	drumgizmo.setRandomSeed(seed);
-	drumgizmo.setFreeWheel(true); // Run in-sync with disk-cache
 	drumgizmo.setFrameSize(oe->getBufferSize());
 
 //	settings.enable_resampling.store(false); // Bypass resampler - BROKEN
@@ -143,8 +142,6 @@ int main(int argc, char* argv[])
 	while(drumgizmo.run(pos, samples, nsamples) == true)
 	{
 		pos += nsamples;
-
-		drumgizmo.setFreeWheel(ie.isFreewheeling() && oe->isFreewheeling());
 	}
 
 	ie.stop();

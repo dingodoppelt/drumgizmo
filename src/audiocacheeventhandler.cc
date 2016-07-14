@@ -96,26 +96,12 @@ void AudioCacheEventHandler::stop()
 
 void AudioCacheEventHandler::setThreaded(bool threaded)
 {
-	if(this->threaded == threaded)
-	{
-		return;
-	}
-
-	if(threaded && !running)
-	{
-		start();
-	}
-	else if(!threaded && running)
-	{
-		stop();
-	}
-
-	this->threaded = threaded;
+	this->threaded.store(threaded);
 }
 
 bool AudioCacheEventHandler::isThreaded() const
 {
-	return threaded;
+	return threaded.load();
 }
 
 void AudioCacheEventHandler::lock()
@@ -279,7 +265,7 @@ void AudioCacheEventHandler::thread_main()
 
 void AudioCacheEventHandler::pushEvent(CacheEvent& cache_event)
 {
-	if(!threaded)
+	if(!threaded.load())
 	{
 		handleEvent(cache_event);
 		return;
