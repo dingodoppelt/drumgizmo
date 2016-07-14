@@ -114,7 +114,9 @@ std::string DrumGizmoPlugin::getId()
 {
 	return "DrumGizmo";
 }
+
 static float g_samples[16*  4096];
+
 void DrumGizmoPlugin::process(size_t pos,
                               const std::vector<MidiEvent>& input_events,
                               std::vector<MidiEvent>& output_events,

@@ -35,7 +35,7 @@
 	a lv2:InstrumentPlugin ;
 	doap:name "DrumGizmo" ;
 	doap:maintainer [
-		foaf:name "DrumGizmo.org" ;
+		foaf:name "DrumGizmo Team" ;
 		foaf:homepage <http://www.drumgizmo.org> ;
 	] ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
