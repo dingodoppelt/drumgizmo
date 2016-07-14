@@ -115,22 +115,22 @@ std::string DrumGizmoPlugin::getId()
 	return "DrumGizmo";
 }
 
-std::string DrumGizmoPlugin::effectName()
+std::string DrumGizmoPlugin::getEffectName()
 {
 	return "DrumGizmo";
 }
 
-std::string DrumGizmoPlugin::vendorString()
+std::string DrumGizmoPlugin::getVendorString()
 {
 	return "DrumGizmo Team";
 }
 
-std::string DrumGizmoPlugin::productString()
+std::string DrumGizmoPlugin::getProductString()
 {
 	return "DrumGizmo";
 }
 
-PluginCategory DrumGizmoPlugin::pluginCategory()
+PluginCategory DrumGizmoPlugin::getPluginCategory()
 {
 	return PluginCategory::Synth;
 }

@@ -82,10 +82,10 @@ public:
 	// Functions used to set VST plugin information
 
 	std::string getId() override;
-	std::string effectName() override;
-	std::string vendorString() override;
-	std::string productString() override;
-	PluginCategory pluginCategory() override;
+	std::string getEffectName() override;
+	std::string getVendorString() override;
+	std::string getProductString() override;
+	PluginCategory getPluginCategory() override;
 
 	void process(size_t pos,
 	             const std::vector<MidiEvent>& input_events,
