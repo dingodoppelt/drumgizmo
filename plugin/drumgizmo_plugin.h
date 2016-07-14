@@ -79,7 +79,13 @@ public:
 	size_t getNumberOfAudioInputs() override;
 	size_t getNumberOfAudioOutputs() override;
 
+	// Functions used to set VST plugin information
+
 	std::string getId() override;
+	std::string effectName() override;
+	std::string vendorString() override;
+	std::string productString() override;
+	PluginCategory pluginCategory() override;
 
 	void process(size_t pos,
 	             const std::vector<MidiEvent>& input_events,

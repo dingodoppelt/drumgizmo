@@ -115,6 +115,26 @@ std::string DrumGizmoPlugin::getId()
 	return "DrumGizmo";
 }
 
+std::string DrumGizmoPlugin::effectName()
+{
+	return "DrumGizmo";
+}
+
+std::string DrumGizmoPlugin::vendorString()
+{
+	return "DrumGizmo Team";
+}
+
+std::string DrumGizmoPlugin::productString()
+{
+	return "DrumGizmo";
+}
+
+PluginCategory DrumGizmoPlugin::pluginCategory()
+{
+	return PluginCategory::Synth;
+}
+
 static float g_samples[16*  4096];
 
 void DrumGizmoPlugin::process(size_t pos,
