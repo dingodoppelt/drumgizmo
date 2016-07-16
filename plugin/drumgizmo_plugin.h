@@ -155,6 +155,17 @@ private:
 		DrumGizmoPlugin& plugin;
 	};
 
+	class ConfigStringIO
+	{
+	public:
+		ConfigStringIO(Settings& settings);
+
+		std::string get();
+		bool set(std::string config_string);
+	private:
+		Settings& settings;
+	};
+
 	Input input{*this};
 	const std::vector<MidiEvent>* input_events{nullptr};
 
@@ -162,6 +173,7 @@ private:
 	const std::vector<float*>* output_samples{nullptr};
 
 	Settings settings;
+	ConfigStringIO config_string_io;
 
 	std::shared_ptr<GUI::PluginGUI> plugin_gui;
 	std::shared_ptr<DrumGizmo> drumgizmo;

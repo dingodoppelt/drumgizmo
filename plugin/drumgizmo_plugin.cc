@@ -36,6 +36,11 @@
 
 #include <midievent.h>
 
+#include <hugin.hpp>
+
+#include "configparser.h"
+#include "nolocale.h"
+
 #ifdef LV2
 // Entry point for lv2 plugin instantiation.
 PluginLV2* createEffectInstance()
@@ -52,10 +57,12 @@ AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 }
 
 DrumGizmoPlugin::DrumGizmoPlugin(audioMasterCallback audioMaster)
-	: PluginVST(audioMaster)
+	: PluginVST(audioMaster),
 #else
 DrumGizmoPlugin::DrumGizmoPlugin()
+	:
 #endif
+	config_string_io(settings)
 {
 	init();
 
@@ -82,12 +89,12 @@ void DrumGizmoPlugin::onActiveChange(bool active)
 
 std::string DrumGizmoPlugin::onStateSave()
 {
-	return drumgizmo->configString();
+	return config_string_io.get();
 }
 
 void DrumGizmoPlugin::onStateRestore(const std::string& config)
 {
-	drumgizmo->setConfigString(config);
+	config_string_io.set(config);
 }
 
 size_t DrumGizmoPlugin::getNumberOfMidiInputs()
@@ -335,4 +342,117 @@ size_t DrumGizmoPlugin::Output::getBufferSize() const
 bool DrumGizmoPlugin::Output::isFreewheeling() const
 {
 	return plugin.getFreeWheel();
+}
+
+//
+// ConfigStringIO
+//
+
+// anonymous namespace for helper furnctions of ConfigStringIO
+namespace
+{
+
+std::string float2str(float a)
+{
+	char buf[256];
+	snprintf_nol(buf, sizeof(buf) - 1, "%f", a);
+	return buf;
+}
+
+std::string bool2str(bool a)
+{
+	return a?"true":"false";
+}
+
+float str2float(std::string a)
+{
+	if(a == "")
+	{
+		return 0.0;
+	}
+
+	return atof_nol(a.c_str());
+}
+
+} // end anonymous namespace
+
+DrumGizmoPlugin::ConfigStringIO::ConfigStringIO(Settings& settings)
+	: settings(settings)
+{
+
+}
+
+std::string DrumGizmoPlugin::ConfigStringIO::get()
+{
+	return
+		"<config>\n"
+		"  <value name=\"drumkitfile\">" + settings.drumkit_file.load() + "</value>\n"
+		"  <value name=\"midimapfile\">" + settings.midimap_file.load() + "</value>\n"
+		"  <value name=\"enable_velocity_modifier\">" +
+		bool2str(settings.enable_velocity_modifier.load()) + "</value>\n"
+		"  <value name=\"velocity_modifier_falloff\">" +
+		float2str(settings.velocity_modifier_falloff.load()) + "</value>\n"
+		"  <value name=\"velocity_modifier_weight\">" +
+		float2str(settings.velocity_modifier_weight.load()) + "</value>\n"
+		"  <value name=\"enable_velocity_randomiser\">" +
+		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
+		"  <value name=\"velocity_randomiser_weight\">" +
+		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
+		"</config>";
+}
+
+bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
+{
+	DEBUG(config, "Load config: %s\n", config_string.c_str());
+
+	ConfigParser p;
+	if(p.parseString(config_string))
+	{
+		ERR(config, "Config parse error.\n");
+		return false;
+	}
+
+	if(p.value("enable_velocity_modifier") != "")
+	{
+		settings.enable_velocity_modifier.store(p.value("enable_velocity_modifier") == "true");
+	}
+
+	if(p.value("velocity_modifier_falloff") != "")
+	{
+		settings.velocity_modifier_falloff.store(str2float(p.value("velocity_modifier_falloff")));
+	}
+
+	if(p.value("velocity_modifier_weight") != "")
+	{
+		settings.velocity_modifier_weight.store(str2float(p.value("velocity_modifier_weight")));
+	}
+
+	if(p.value("enable_velocity_randomiser") != "")
+	{
+		settings.enable_velocity_randomiser.store(p.value("enable_velocity_randomiser") == "true");
+	}
+
+	if(p.value("velocity_randomiser_weight") != "")
+	{
+		settings.velocity_randomiser_weight.store(str2float(p.value("velocity_randomiser_weight")));
+	}
+
+	if(p.value("enable_resampling") != "")
+	{
+		settings.enable_resampling.store(p.value("enable_resampling") == "true");
+	}
+
+	std::string newkit = p.value("drumkitfile");
+	if(newkit != "")
+	{
+		settings.drumkit_file.store(newkit);
+	}
+
+	std::string newmidimap = p.value("midimapfile");
+	if(newmidimap != "")
+	{
+		settings.midimap_file.store(newmidimap);
+	}
+
+	return true;
 }

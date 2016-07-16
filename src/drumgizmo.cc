@@ -37,16 +37,13 @@
 
 #include <hugin.hpp>
 
-#include <config.h>
 #include <memory>
+#include <config.h>
 
 #include <iostream>
 
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
-#include "configparser.h"
-
-#include "nolocale.h"
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine& o, AudioInputEngine& i)
@@ -410,109 +407,4 @@ void DrumGizmo::setSamplerate(int samplerate)
 		setFrameSize(RESAMPLER_INPUT_BUFFER);
 	}
 #endif/*WITH_RESAMPLER*/
-}
-
-std::string float2str(float a)
-{
-	char buf[256];
-	snprintf_nol(buf, sizeof(buf) - 1, "%f", a);
-	return buf;
-}
-
-std::string bool2str(bool a)
-{
-	return a?"true":"false";
-}
-
-float str2float(std::string a)
-{
-	if(a == "")
-	{
-		return 0.0;
-	}
-
-	return atof_nol(a.c_str());
-}
-
-std::string DrumGizmo::configString()
-{
-	std::string mmapfile;
-	auto midiEngine = dynamic_cast<AudioInputEngineMidi*>(&ie);
-	if(midiEngine)
-	{
-		mmapfile = midiEngine->getMidimapFile();
-	}
-
-	return
-		"<config>\n"
-		"  <value name=\"drumkitfile\">" + kit.getFile() + "</value>\n"
-		"  <value name=\"midimapfile\">" + mmapfile + "</value>\n"
-		"  <value name=\"enable_velocity_modifier\">" +
-		bool2str(settings.enable_velocity_modifier.load()) + "</value>\n"
-		"  <value name=\"velocity_modifier_falloff\">" +
-		float2str(settings.velocity_modifier_falloff.load()) + "</value>\n"
-		"  <value name=\"velocity_modifier_weight\">" +
-		float2str(settings.velocity_modifier_weight.load()) + "</value>\n"
-		"  <value name=\"enable_velocity_randomiser\">" +
-		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
-		"  <value name=\"velocity_randomiser_weight\">" +
-		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
-		"</config>";
-}
-
-bool DrumGizmo::setConfigString(std::string cfg)
-{
-	DEBUG(config, "Load config: %s\n", cfg.c_str());
-
-	std::string dkf;
-	ConfigParser p;
-	if(p.parseString(cfg))
-	{
-		ERR(drumgizmo, "Config parse error.\n");
-		return false;
-	}
-
-	if(p.value("enable_velocity_modifier") != "")
-	{
-		settings.enable_velocity_modifier.store(p.value("enable_velocity_modifier") == "true");
-	}
-
-	if(p.value("velocity_modifier_falloff") != "")
-	{
-		settings.velocity_modifier_falloff.store(str2float(p.value("velocity_modifier_falloff")));
-	}
-
-	if(p.value("velocity_modifier_weight") != "")
-	{
-		settings.velocity_modifier_weight.store(str2float(p.value("velocity_modifier_weight")));
-	}
-
-	if(p.value("enable_velocity_randomiser") != "")
-	{
-		settings.enable_velocity_randomiser.store(p.value("enable_velocity_randomiser") == "true");
-	}
-
-	if(p.value("velocity_randomiser_weight") != "")
-	{
-		settings.velocity_randomiser_weight.store(str2float(p.value("velocity_randomiser_weight")));
-	}
-
-	if(p.value("enable_resampling") != "")
-	{
-		settings.enable_resampling.store(p.value("enable_resampling") == "true");
-	}
-
-	std::string newkit = p.value("drumkitfile");
-	if(newkit != "")
-	{
-		settings.drumkit_file.store(newkit);
-	}
-
-	std::string newmidimap = p.value("midimapfile");
-	if(newmidimap != "")
-	{
-		settings.midimap_file.store(newmidimap);
-	}
-
-	return true;
 }

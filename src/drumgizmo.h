@@ -39,7 +39,6 @@
 #include "audiocache.h"
 #include "mutex.h"
 #include "chresampler.h"
-#include "configfile.h"
 #include "settings.h"
 #include "inputprocessor.h"
 
@@ -59,9 +58,6 @@ public:
 	void stop();
 
 	void getSamples(int ch, int pos, sample_t *s, size_t sz);
-
-	std::string configString();
-	bool setConfigString(std::string cfg);
 
 	//! Get the current engine latency in samples.
 	std::size_t getLatency() const;
@@ -105,6 +101,5 @@ protected:
 
 	std::vector<event_t> events;
 	Settings& settings;
-	SettingsGetter getter{settings};
 	Random rand;
 };
