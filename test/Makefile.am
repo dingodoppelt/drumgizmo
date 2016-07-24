@@ -167,8 +167,8 @@ imagecachetest_SOURCES = \
 	test.cc
 
 semaphoretest_CXXFLAGS = -DOUTPUT=\"semaphoretest\" $(CPPUNIT_CFLAGS) \
-	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
-semaphoretest_LDFLAGS = $(CPPUNIT_LIBS)
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
+semaphoretest_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS)
 semaphoretest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/semaphore.cc \
