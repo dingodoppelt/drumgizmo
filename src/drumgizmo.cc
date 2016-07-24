@@ -26,21 +26,16 @@
  */
 #include "drumgizmo.h"
 
-#include <math.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cmath>
+#include <cstdio>
+#include <cassert>
+#include <cstring>
 
 #include <event.h>
 #include <audiotypes.h>
-
-#include <string.h>
-
-#include <hugin.hpp>
-
-#include <memory>
 #include <config.h>
 
-#include <iostream>
+#include <hugin.hpp>
 
 #include "drumkitparser.h"
 #include "audioinputenginemidi.h"
@@ -122,7 +117,8 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	setFreeWheel(ie.isFreewheeling() && oe.isFreewheeling());
 
 	ie.pre();
-	oe.pre(nsamples);
+	oe.pre(nsamples); // Clears all output buffers
+	std::memset(samples, 0, nsamples * sizeof(sample_t));
 
 	//
 	// Read new events
@@ -161,7 +157,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 			if(buf)
 			{
-				memset(buf, 0, nsamples * sizeof(sample_t));
+				std::memset(buf, 0, nsamples * sizeof(sample_t));
 
 				getSamples(c, pos, buf, nsamples);
 

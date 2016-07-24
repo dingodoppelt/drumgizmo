@@ -26,6 +26,7 @@
  */
 #include <cassert>
 #include <iostream>
+#include <cstring>
 
 #include "jackaudio.h"
 
@@ -83,6 +84,12 @@ void JackAudioOutputEngine::stop()
 
 void JackAudioOutputEngine::pre(size_t nsamples)
 {
+	// Clear all channels
+	for(auto& channel : channels)
+	{
+		assert(channel.samples.size() == nsamples);
+		std::memset(channel.samples.data(), 0, nsamples * sizeof(sample_t));
+	}
 }
 
 void JackAudioOutputEngine::run(int ch, sample_t* samples, size_t nsamples)

@@ -26,13 +26,7 @@
  */
 #include "drumgizmo_plugin.h"
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
-#include <iostream>
+#include <cstring>
 
 #include <midievent.h>
 
@@ -292,6 +286,14 @@ void DrumGizmoPlugin::Output::stop()
 
 void DrumGizmoPlugin::Output::pre(size_t nsamples)
 {
+	// Clear all channels
+	for(auto& channel : *plugin.output_samples)
+	{
+		if(channel)
+		{
+			std::memset(channel, 0, nsamples * sizeof(sample_t));
+		}
+	}
 }
 
 void DrumGizmoPlugin::Output::run(int ch, sample_t *samples, size_t nsamples)
