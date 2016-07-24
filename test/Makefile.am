@@ -5,7 +5,8 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 TESTS = resource engine gui resampler lv2 configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
-	memchecker randomtest atomictest syncedsettingstest imagecachetest
+	memchecker randomtest atomictest syncedsettingstest imagecachetest \
+	semaphoretest
 
 check_PROGRAMS = $(TESTS)
 
@@ -163,4 +164,13 @@ imagecachetest_SOURCES = \
 	$(top_srcdir)/plugingui/imagecache.cc \
 	$(top_srcdir)/plugingui/colour.cc \
 	imagecachetest.cc \
+	test.cc
+
+semaphoretest_CXXFLAGS = -DOUTPUT=\"semaphoretest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
+semaphoretest_LDFLAGS = $(CPPUNIT_LIBS)
+semaphoretest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/src/semaphore.cc \
+	semaphoretest.cc \
 	test.cc
