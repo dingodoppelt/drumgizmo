@@ -482,7 +482,7 @@ AC_LINK_IFELSE(
     [needs_libatomic=yes],
     [needs_libatomic=no])
 
-if test x$needs_libatomic = xno; then
+if test x$needs_libatomic = xyes; then
   AC_HAVE_LIBRARY([atomic],[],[AC_MSG_ERROR(
                   [Please install the GNU Atomic library])])
 fi
