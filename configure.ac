@@ -479,13 +479,14 @@ AC_LINK_IFELSE(
         s.is_lock_free();
       }
     ]],
-    [needs_libatomic=yes],
-    [needs_libatomic=no])
+    [needs_libatomic=no],
+    [needs_libatomic=yes])
 
+ATOMIC_LIBS=""
 if test x$needs_libatomic = xyes; then
-  AC_HAVE_LIBRARY([atomic],[],[AC_MSG_ERROR(
-                  [Please install the GNU Atomic library])])
+	 ATOMIC_LIBS="-latomic"
 fi
+AC_SUBST(ATOMIC_LIBS)
 
 dnl ======================
 dnl Check for the pthread library
@@ -602,6 +603,7 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
+AC_SUBST(LIBS)
 
 AC_CONFIG_FILES(
 	Makefile
