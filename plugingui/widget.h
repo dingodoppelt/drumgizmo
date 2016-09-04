@@ -30,15 +30,21 @@
 #include "pixelbuffer.h"
 #include "notifier.h"
 #include "layout.h"
+#include "canvas.h"
 
 #include <vector>
 
-namespace GUI {
+namespace GUI
+{
 
 class ImageCache;
 class Window;
 
-class Widget : public Listener, public LayoutItem {
+class Widget
+	: public Listener
+	, public LayoutItem
+	, public Canvas
+{
 	friend class Painter;
 public:
 	Widget(Widget* parent);
@@ -54,6 +60,11 @@ public:
 	virtual int y() override;
 	virtual size_t width() override;
 	virtual size_t height() override;
+
+	// From Canvas
+	PixelBufferAlpha& GetPixelBuffer() override;
+	void beginPaint() override;
+	void endPaint() override;
 
 	virtual size_t windowX();
 	virtual size_t windowY();

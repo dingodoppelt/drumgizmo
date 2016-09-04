@@ -42,7 +42,7 @@ namespace GUI
 class Painter
 {
 public:
-	Painter(Widget& widget);
+	Painter(Canvas& canvas);
 	~Painter();
 
 	void flush();
@@ -84,8 +84,8 @@ public:
 	void clear();
 
 private:
-	Widget& widget;
-	PixelBufferAlpha* pixbuf;
+	Canvas& canvas;
+	PixelBufferAlpha& pixbuf;
 	Colour colour;
 };
 

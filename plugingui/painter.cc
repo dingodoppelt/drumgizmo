@@ -26,32 +26,22 @@
  */
 #include "painter.h"
 
-#include "window.h"
-
 #include <cmath>
 
 namespace GUI
 {
 
-Painter::Painter(Widget& widget)
-	: widget(widget)
+Painter::Painter(Canvas& canvas)
+	: canvas(canvas)
+	, pixbuf(canvas.GetPixelBuffer())
 {
-	if(widget.window())
-	{
-		widget.window()->beginPaint();
-	}
-
-	pixbuf = &widget.pixbuf;
+	canvas.beginPaint();
 	colour = Colour(0.0f, 0.0f, 0.0f, 0.5f);
 }
 
 Painter::~Painter()
 {
-	if(widget.window())
-	{
-		widget.window()->endPaint();
-	}
-
+	canvas.endPaint();
 	flush();
 }
 
@@ -60,20 +50,20 @@ void Painter::setColour(const Colour& colour)
 	this->colour = colour;
 }
 
-static void plot(PixelBufferAlpha* pixbuf, const Colour& colour,
+static void plot(PixelBufferAlpha& pixbuf, const Colour& colour,
                  int x, int y, double c)
 {
-	if((x >= (int)pixbuf->width) || (y >= (int)pixbuf->height))
+	if((x >= (int)pixbuf.width) || (y >= (int)pixbuf.height))
 	{
 		return;
 	}
 
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
-	pixbuf->addPixel(x, y,
-	                 (unsigned char)(colour.red() * 255.0),
-	                 (unsigned char)(colour.green() * 255.0),
-	                 (unsigned char)(colour.blue() * 255.0),
-	                 (unsigned char)(colour.alpha() * 255 * c));
+	pixbuf.addPixel(x, y,
+	                (unsigned char)(colour.red() * 255.0),
+	                (unsigned char)(colour.green() * 255.0),
+	                (unsigned char)(colour.blue() * 255.0),
+	                (unsigned char)(colour.alpha() * 255 * c));
 
 }
 
@@ -175,11 +165,11 @@ void Painter::drawFilledRectangle(int x1, int y1, int x2, int y2)
 
 void Painter::clear()
 {
-	for(int x = 0; x < (int)pixbuf->width; ++x)
+	for(int x = 0; x < (int)pixbuf.width; ++x)
 	{
-		for(int y = 0; y < (int)pixbuf->height; ++y)
+		for(int y = 0; y < (int)pixbuf.height; ++y)
 		{
-			pixbuf->setPixel(x, y, 0, 0, 0, 0);
+			pixbuf.setPixel(x, y, 0, 0, 0, 0);
 		}
 	}
 }
@@ -192,7 +182,7 @@ void Painter::drawText(int x0, int y0, const Font& font,
 	y0 -= textbuf->height; // The y0 offset (baseline) is the bottom of the text.
 
 	// If the text offset is outside the buffer; skip it.
-	if((x0 > (int)pixbuf->width) || (y0 > (int)pixbuf->height))
+	if((x0 > (int)pixbuf.width) || (y0 > (int)pixbuf.height))
 	{
 		delete textbuf;
 		return;
@@ -200,15 +190,15 @@ void Painter::drawText(int x0, int y0, const Font& font,
 
 	// Make sure we don't try to draw outside the pixbuf.
 	int renderWidth = textbuf->width;
-	if(renderWidth > (int)(pixbuf->width - x0))
+	if(renderWidth > (int)(pixbuf.width - x0))
 	{
-		renderWidth = pixbuf->width - x0;
+		renderWidth = pixbuf.width - x0;
 	}
 
 	int renderHeight = textbuf->height;
-	if(renderHeight > ((int)pixbuf->height - y0))
+	if(renderHeight > ((int)pixbuf.height - y0))
 	{
-		renderHeight = ((int)pixbuf->height - y0);
+		renderHeight = ((int)pixbuf.height - y0);
 	}
 
 	if(nocolour)
@@ -219,7 +209,7 @@ void Painter::drawText(int x0, int y0, const Font& font,
 			{
 				unsigned char r, g, b, a;
 				textbuf->pixel(x, y, &r, &g, &b, &a);
-				pixbuf->addPixel(x + x0, y + y0, r, g, b, a);
+				pixbuf.addPixel(x + x0, y + y0, r, g, b, a);
 			}
 		}
 	}
@@ -231,11 +221,11 @@ void Painter::drawText(int x0, int y0, const Font& font,
 			{
 				unsigned char r,g,b,a;
 				textbuf->pixel(x, y, &r, &g, &b, &a);
-				pixbuf->addPixel(x + x0, y + y0,
-				                 colour.red() * 255,
-				                 colour.green() * 255,
-				                 colour.blue() * 255,
-				                 colour.alpha() * a);
+				pixbuf.addPixel(x + x0, y + y0,
+				                colour.red() * 255,
+				                colour.green() * 255,
+				                colour.blue() * 255,
+				                colour.alpha() * a);
 			}
 		}
 	}
@@ -245,11 +235,11 @@ void Painter::drawText(int x0, int y0, const Font& font,
 
 void Painter::drawPoint(int x, int y)
 {
-	pixbuf->setPixel(x, y,
-	                 (unsigned char)(colour.red() * 255.0),
-	                 (unsigned char)(colour.green() * 255.0),
-	                 (unsigned char)(colour.blue() * 255.0),
-	                 (unsigned char)(colour.alpha() * 255.0));
+	pixbuf.setPixel(x, y,
+	                (unsigned char)(colour.red() * 255.0),
+	                (unsigned char)(colour.green() * 255.0),
+	                (unsigned char)(colour.blue() * 255.0),
+	                (unsigned char)(colour.alpha() * 255.0));
 }
 
 static void plot4points(Painter *p, int cx, int cy, int x, int y)
@@ -348,26 +338,31 @@ void Painter::drawFilledCircle(int cx, int cy, int radius)
 
 void Painter::drawImage(int x0, int y0, const Drawable& image)
 {
-	size_t fw = image.width();
-	size_t fh = image.height();
+	int fw = image.width();
+	int fh = image.height();
 
 	// Make sure we don't try to draw outside the pixbuf.
-	if(fw > (pixbuf->width - x0))
+	if(fw > (int)(pixbuf.width - x0))
 	{
-		fw = (pixbuf->width - x0);
+		fw = (int)(pixbuf.width - x0);
 	}
 
-	if(fh > (pixbuf->height - y0))
+	if(fh > (int)(pixbuf.height - y0))
 	{
-		fh = (pixbuf->height - y0);
+		fh = (int)(pixbuf.height - y0);
 	}
 
-	for(size_t y = 0; y < fh; ++y)
+	if((fw < 1) || (fh < 1))
 	{
-		for(size_t x = 0; x < fw; ++x)
+		return;
+	}
+
+	for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+	{
+		for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
 		{
 			auto& c = image.getPixel(x, y);
-			pixbuf->addPixel(x0 + x, y0 + y, c);
+			pixbuf.addPixel(x0 + x, y0 + y, c);
 		}
 	}
 }
@@ -375,33 +370,33 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 void Painter::drawImageStretched(int x0, int y0, const Drawable& image,
                                  int width, int height)
 {
+	float fw = image.width();
+	float fh = image.height();
+
+	// Make sure we don't try to draw outside the pixbuf.
+	if(width > (int)(pixbuf.width - x0))
+	{
+		width = pixbuf.width - x0;
+	}
+
+	if(height > (int)(pixbuf.height - y0))
+	{
+		height = pixbuf.height - y0;
+	}
+
 	if((width < 1) || (height < 1))
 	{
 		return;
 	}
 
-	float fw = image.width();
-	float fh = image.height();
-
-	// Make sure we don't try to draw outside the pixbuf.
-	if(width > (int)(pixbuf->width - x0))
+	for(int y = -1 * std::min(0, y0); y < height; ++y)
 	{
-		width = pixbuf->width - x0;
-	}
-
-	if(height > (int)(pixbuf->height - y0))
-	{
-		height = pixbuf->height - y0;
-	}
-
-	for(int y = 0; y < height; ++y)
-	{
-		for(int x = 0; x < width; ++x)
+		for(int x = -1 * std::min(0, x0); x < width; ++x)
 		{
 			int lx = ((float)x / (float)width) * fw;
 			int ly = ((float)y / (float)height) * fh;
 			auto& c = image.getPixel(lx, ly);
-			pixbuf->addPixel(x0 + x, y0 + y, c);
+			pixbuf.addPixel(x0 + x, y0 + y, c);
 		}
 	}
 }

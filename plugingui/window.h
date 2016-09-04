@@ -34,11 +34,14 @@
 #include "eventhandler.h"
 #include "imagecache.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class Window : public Widget {
+class Window
+	: public Widget
+{
 public:
-	Window(void* native_window);
+	Window(void* native_window = nullptr);
 	~Window();
 
 	void setFixedSize(int width, int height);
@@ -74,7 +77,7 @@ protected:
 	void updateBuffer();
 
 	// For the Painter
-	friend class Painter;
+	friend class Widget;
 	void beginPaint();
 	void endPaint();
 

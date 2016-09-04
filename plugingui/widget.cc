@@ -133,6 +133,27 @@ size_t Widget::height()
 	return _height;
 }
 
+PixelBufferAlpha& Widget::GetPixelBuffer()
+{
+	return pixbuf;
+}
+
+void Widget::beginPaint()
+{
+	if(_window)
+	{
+		_window->beginPaint();
+	}
+}
+
+void Widget::endPaint()
+{
+	if(_window)
+	{
+		_window->endPaint();
+	}
+}
+
 size_t Widget::windowX()
 {
 	size_t window_x = x();
