@@ -27,6 +27,7 @@
 #include "painter.h"
 
 #include <cmath>
+#include <cassert>
 
 namespace GUI
 {
@@ -203,24 +204,48 @@ void Painter::drawText(int x0, int y0, const Font& font,
 
 	if(nocolour)
 	{
-		for(int y = 0; y < renderHeight; ++y)
+		for(int y = -1 * std::min(0, y0); y < renderHeight; ++y)
 		{
-			for(int x = 0; x < renderWidth; ++x)
+			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
 			{
 				unsigned char r, g, b, a;
+
+				assert(x >= 0);
+				assert(y >= 0);
+				assert(x < (int)textbuf->width);
+				assert(y < (int)textbuf->height);
+
 				textbuf->pixel(x, y, &r, &g, &b, &a);
+
+				assert(x + x0 >= 0);
+				assert(y + y0 >= 0);
+				assert(x + x0 < (int)pixbuf.width);
+				assert(y + y0 < (int)pixbuf.height);
+
 				pixbuf.addPixel(x + x0, y + y0, r, g, b, a);
 			}
 		}
 	}
 	else
 	{
-		for(int y = 0; y < renderHeight; ++y)
+		for(int y = -1 * std::min(0, y0); y < renderHeight; ++y)
 		{
-			for(int x = 0; x < renderWidth; ++x)
+			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
 			{
 				unsigned char r,g,b,a;
+
+				assert(x >= 0);
+				assert(y >= 0);
+				assert(x < (int)textbuf->width);
+				assert(y < (int)textbuf->height);
+
 				textbuf->pixel(x, y, &r, &g, &b, &a);
+
+				assert(x + x0 >= 0);
+				assert(y + y0 >= 0);
+				assert(x + x0 < (int)pixbuf.width);
+				assert(y + y0 < (int)pixbuf.height);
+
 				pixbuf.addPixel(x + x0, y + y0,
 				                colour.red() * 255,
 				                colour.green() * 255,
@@ -361,7 +386,16 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 	{
 		for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
 		{
+			assert(x >= 0);
+			assert(y >= 0);
+			assert(x < image.width());
+			assert(y < image.height());
 			auto& c = image.getPixel(x, y);
+
+			assert(x0 + x >= 0);
+			assert(y0 + y >= 0);
+			assert(x0 + x < pixbuf.width);
+			assert(y0 + y < pixbuf.height);
 			pixbuf.addPixel(x0 + x, y0 + y, c);
 		}
 	}
