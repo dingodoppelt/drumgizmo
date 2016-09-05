@@ -42,7 +42,8 @@
 #endif
 
 #if DG_PLATFORM == DG_PLATFORM_OSX
-#include <Multiprocessing.h>
+//#include <Multiprocessing.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 struct semaphore_private_t {
