@@ -41,6 +41,10 @@
 #include <sys/time.h>
 #endif
 
+#if DG_PLATFORM == DG_PLATFORM_OSX
+#include <Multiprocessing.h>
+#endif
+
 struct semaphore_private_t {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE semaphore;
