@@ -44,6 +44,8 @@
 struct semaphore_private_t {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE semaphore;
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	MPSemaphoreID semaphore;
 #else
 	sem_t semaphore;
 #endif
@@ -58,6 +60,10 @@ Semaphore::Semaphore(std::size_t initial_count)
 	                                 initial_count,
 	                                 std::numeric_limits<LONG>::max(),
 	                                 nullptr); // unnamed semaphore
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	MPCreateSemaphore(std::numeric_limits<std::uint32_t>::max(),
+	                  initial_count,
+	                  &prv->semaphore);
 #else
 	const int pshared = 0;
 	memset(&prv->semaphore, 0, sizeof(sem_t));
@@ -69,6 +75,8 @@ Semaphore::~Semaphore()
 {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	CloseHandle(prv->semaphore);
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	MPDeleteSemaphore(prv->semaphore);
 #else
 	sem_destroy(&prv->semaphore);
 #endif
@@ -80,6 +88,8 @@ void Semaphore::post()
 {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	ReleaseSemaphore(prv->semaphore, 1, nullptr);
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	MPSignalSemaphore(prv->semaphore);
 #else
 	sem_post(&prv->semaphore);
 #endif
@@ -96,9 +106,12 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 
 	assert(ret == WAIT_OBJECT_0);
 #elif DG_PLATFORM == DG_PLATFORM_OSX
-
-	// TODO: sem_timedwait not implemented on OSX
-
+	auto ret = MPWaitOnSemaphore(prv->semaphore,
+	                             kDurationMillisecond * timeout.count());
+	if(ret == kMPTimeoutErr)
+	{
+		return false;
+	}
 #else
 	struct timespec ts;
 
@@ -142,6 +155,8 @@ void Semaphore::wait()
 {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	WaitForSingleObject(prv->semaphore, INFINITE);
+#elif DG_PLATFORM == DG_PLATFORM_OSX
+	MPWaitOnSemaphore(prv->semaphore, kDurationForever);
 #else
 	sem_wait(&prv->semaphore);
 #endif
