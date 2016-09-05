@@ -2,8 +2,9 @@
 SUBDIRS = dgreftest
 
 include $(top_srcdir)/src/Makefile.am.drumgizmo
+include $(top_srcdir)/plugingui/Makefile.am.plugingui
 
-TESTS = resource enginetest gui resampler configfile audiocache \
+TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	memchecker randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest
@@ -89,11 +90,22 @@ enginetest_SOURCES = \
 	test.cc \
 	enginetest.cc
 
-gui_CXXFLAGS = -DOUTPUT=\"gui\" $(CPPUNIT_CFLAGS)
-gui_LDFLAGS = $(CPPUNIT_LIBS)
-gui_SOURCES = \
+paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) \
+	$(PLUGIN_GUI_CPPFLAGS)
+paintertest_LDFLAGS = $(CPPUNIT_LIBS)
+paintertest_SOURCES = \
 	test.cc \
-	gui.cc
+	$(top_srcdir)/plugingui/painter.cc \
+	$(top_srcdir)/plugingui/pixelbuffer.cc \
+	$(top_srcdir)/plugingui/colour.cc \
+	$(top_srcdir)/plugingui/font.cc \
+	$(top_srcdir)/plugingui/image.cc \
+	$(top_srcdir)/plugingui/resource.cc \
+	$(top_srcdir)/plugingui/resource_data.cc \
+	$(top_srcdir)/plugingui/lodepng/lodepng.cpp \
+	paintertest.cc
 
 resampler_CXXFLAGS = -DOUTPUT=\"resampler\" $(CPPUNIT_CFLAGS) \
 	$(ZITA_CXXFLAGS) $(SAMPLERATE_CFLAGS) \
