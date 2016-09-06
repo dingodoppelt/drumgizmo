@@ -382,7 +382,6 @@ AM_CONDITIONAL([HAVE_OUTPUT_ALSA], [test "x$have_output_alsa" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_JACKAUDIO], [test "x$have_output_jackaudio" = "xyes"])
 
-
 dnl ======================
 dnl Check for sndfile
 dnl ======================
@@ -470,6 +469,7 @@ AC_HAVE_LIBRARY([rt],[],[])
 dnl ======================
 dnl Check for the atomic library
 dnl ======================
+AC_LANG_PUSH([C++])
 AC_LINK_IFELSE(
     [AC_LANG_SOURCE[
       #include <atomic>
@@ -479,14 +479,16 @@ AC_LINK_IFELSE(
         s.is_lock_free();
       }
     ]],
-    [needs_libatomic=no],
-    [needs_libatomic=yes])
+    [needs_libatomic=yes],
+    [needs_libatomic=no])
 
 ATOMIC_LIBS=""
 if test x$needs_libatomic = xyes; then
+	 AC_MSG_RESULT([Needs to link with libatomic])
 	 ATOMIC_LIBS="-latomic"
 fi
 AC_SUBST(ATOMIC_LIBS)
+AC_LANG_POP([C++])
 
 dnl ======================
 dnl Check for the pthread library
