@@ -470,17 +470,17 @@ dnl ======================
 dnl Check for the atomic library
 dnl ======================
 AC_LANG_PUSH([C++])
-AC_LINK_IFELSE(
-    [AC_LANG_SOURCE[
+AC_COMPILE_IFELSE(
+    AC_LANG_SOURCE(
       #include <atomic>
       int main() {
         struct Test { int val; };
         std::atomic<Test> s;
         s.is_lock_free();
       }
-    ]],
-    [needs_libatomic=yes],
-    [needs_libatomic=no])
+    ),
+    [needs_libatomic=no],
+    [needs_libatomic=yes])
 
 ATOMIC_LIBS=""
 if test x$needs_libatomic = xyes; then
