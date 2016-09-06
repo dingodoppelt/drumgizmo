@@ -37,7 +37,7 @@ DRUMGIZMO_SOURCES = \
 
 DRUMGIZMO_LIBS = \
 	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS) \
-	$(PTHREAD_LIBS) $(ATOMIC_LIBS)
+	$(PTHREAD_LIBS)
 
 DRUMGIZMO_CPPFLAGS = \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \

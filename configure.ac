@@ -469,25 +469,21 @@ AC_HAVE_LIBRARY([rt],[],[])
 dnl ======================
 dnl Check for the atomic library
 dnl ======================
+AC_MSG_CHECKING([for the need for linkage with libatomic])
 AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE(
-    AC_LANG_SOURCE(
+AC_LINK_IFELSE([AC_LANG_SOURCE[
       #include <atomic>
       int main() {
         struct Test { int val; };
         std::atomic<Test> s;
-        s.is_lock_free();
+        return s.is_lock_free()?1:0;
       }
-    ),
-    [needs_libatomic=no],
-    [needs_libatomic=yes])
-
-ATOMIC_LIBS=""
-if test x$needs_libatomic = xyes; then
-	 AC_MSG_RESULT([Needs to link with libatomic])
-	 ATOMIC_LIBS="-latomic"
-fi
-AC_SUBST(ATOMIC_LIBS)
+    ]],
+    [AC_MSG_RESULT([no])],
+    [AC_MSG_RESULT([yes])
+	   AC_HAVE_LIBRARY([atomic],[],[])
+    ]
+)
 AC_LANG_POP([C++])
 
 dnl ======================
