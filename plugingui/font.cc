@@ -26,13 +26,16 @@
  */
 #include "font.h"
 
-namespace GUI {
+#include <cassert>
+
+namespace GUI
+{
 
 Font::Font(const std::string& fontfile)
 	: img_font(fontfile)
 {
-	size_t px = 0;
-	size_t c;
+	std::size_t px = 0;
+	std::size_t c;
 
 	for(c = 0; c < (characters.size() - 1) && px < img_font.width(); ++c)
 	{
@@ -73,7 +76,7 @@ size_t Font::textWidth(const std::string& text) const
 {
 	size_t len = 0;
 
-	for(auto cha : text)
+	for(unsigned char cha : text)
 	{
 		auto& character = characters[cha];
 		len += character.width + spacing + character.post_bias;
@@ -103,9 +106,9 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 		new PixelBufferAlpha(textWidth(text), textHeight(text));
 
 	int x_offset = 0;
-	for(auto cha : text)
+	for(unsigned char cha : text)
 	{
-		auto& character = characters[cha];
+		auto& character = characters.at(cha);
 		for(size_t x = 0; x < character.width; ++x)
 		{
 			for(size_t y = 0; y < img_font.height(); ++y)
