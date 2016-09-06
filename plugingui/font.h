@@ -51,8 +51,8 @@ private:
 
 	class Character {
 	public:
-		int offset{0};
-		size_t width{0};
+		std::size_t offset{0};
+		std::size_t width{0};
 		int pre_bias{0};
 		int post_bias{0};
 	};

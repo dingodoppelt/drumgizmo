@@ -44,8 +44,12 @@ Font::Font(const std::string& fontfile)
 
 		if(c > 0)
 		{
-			characters[c - 1].width =
-				character.offset - characters[c - 1].offset - 1;
+			assert(character.offset >= characters[c - 1].offset);
+			characters[c - 1].width = character.offset - characters[c - 1].offset;
+			if(characters[c].offset != characters[c - 1].offset)
+			{
+				--characters[c - 1].width;
+			}
 		}
 
 		++px;
@@ -69,7 +73,12 @@ Font::Font(const std::string& fontfile)
 
 	++c;
 
-	characters[c - 1].width = characters[c].offset - characters[c - 1].offset - 1;
+	assert(characters[c].offset >= characters[c - 1].offset);
+	characters[c - 1].width = characters[c].offset - characters[c - 1].offset;
+	if(characters[c].offset != characters[c - 1].offset)
+	{
+		--characters[c - 1].width;
+	}
 }
 
 size_t Font::textWidth(const std::string& text) const
@@ -106,8 +115,9 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 		new PixelBufferAlpha(textWidth(text), textHeight(text));
 
 	int x_offset = 0;
-	for(unsigned char cha : text)
+	for(std::size_t i = 0; i < text.length(); ++i)
 	{
+		unsigned char cha = text[i];
 		auto& character = characters.at(cha);
 		for(size_t x = 0; x < character.width; ++x)
 		{

@@ -117,7 +117,7 @@ public:
 		// Success criterion is simply to not assert in the drawing routines...
 		GUI::Font font;
 		// a string with unicode characters
-		std::string someText = "Hello World - лæ";
+		std::string someText = "Hello World - лæ Библиотека";
 		std::size_t width = font.textWidth(someText);
 		std::size_t height = font.textHeight(someText);
 
