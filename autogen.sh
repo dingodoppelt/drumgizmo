@@ -22,4 +22,4 @@ autoreconf -W error actest 2>/dev/null || echo "AC_DEFUN([AM_PATH_CPPUNIT],[echo
 rm -Rf actest
 
 # Now run autoreconf
-${AUTORECONF:-autoreconf} -fiv
+${AUTORECONF:-autoreconf} -fiv --warnings=no-unsupported
