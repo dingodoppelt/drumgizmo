@@ -1,3 +1,5 @@
+SUBDIRS = vst
+
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 
@@ -33,22 +35,11 @@ if ENABLE_VST
 vstplugindir = $(libdir)/vst
 vstplugin_LTLIBRARIES = drumgizmo_vst.la
 vstplugin_DATA =
-noinst_LTLIBRARIES = libvstsdk.la
 endif
-
-VST_BASE = ${VST_SOURCE_PATH}
-VST_SRC_BASE = ${VST_BASE}/public.sdk/source/vst2.x/
-
-# Hack to compile vst sources without -Wall -Werror
-libvstsdk_la_CXXFLAGS = -w $(VST_CPPFLAGS)
-nodist_libvstsdk_la_SOURCES = \
-	${VST_SRC_BASE}/audioeffectx.cpp \
-	${VST_SRC_BASE}/audioeffect.cpp \
-	${VST_SRC_BASE}/vstplugmain.cpp
 
 drumgizmo_vst_la_CXXFLAGS = -DVST \
 	-I$(top_srcdir)/plugin/plugingizmo $(DRUMGIZMO_CPPFLAGS) \
-	$(PLUGIN_GUI_CPPFLAGS) $(VST_CPPFLAGS)
+	$(PLUGIN_GUI_CPPFLAGS) $(VST_CPPFLAGS) -Ivst
 
 drumgizmo_vst_la_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
@@ -58,7 +49,7 @@ drumgizmo_vst_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version
-drumgizmo_vst_la_LIBADD = libvstsdk.la $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
+drumgizmo_vst_la_LIBADD = vst/libvstsdk.la $(PLUGIN_GUI_LIBS) $(DRUMGIZMO_LIBS)
 
 
 install-exec-hook:

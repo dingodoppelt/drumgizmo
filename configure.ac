@@ -5,6 +5,7 @@ AM_INIT_AUTOMAKE
 
 AC_PROG_CXX
 AM_PROG_CC_C_O
+AC_PROG_MKDIR_P
 
 LT_INIT
 
@@ -178,7 +179,7 @@ AC_ARG_ENABLE([vst],
 AS_IF(
   [test "x$enable_vst" = "xyes"],
   [enable_vst=yes
-  VST_CPPFLAGS="-I$with_vst_sources -D__int64='long long int'"
+  VST_CPPFLAGS="-D__int64='long long int'"
 
 	# Set up platform specific workarounds for the VST SDK
 	AS_CASE([$host_os],
@@ -608,6 +609,7 @@ AC_CONFIG_FILES(
 	tools/Makefile
 	src/Makefile
 	plugin/Makefile
+	plugin/vst/Makefile
 	plugingui/Makefile
 	include/Makefile
 	man/Makefile
