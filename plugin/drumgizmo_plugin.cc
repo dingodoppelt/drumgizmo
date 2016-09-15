@@ -27,6 +27,7 @@
 #include "drumgizmo_plugin.h"
 
 #include <cstring>
+#include <algorithm>
 
 #include <midievent.h>
 
