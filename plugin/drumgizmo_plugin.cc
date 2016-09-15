@@ -156,6 +156,103 @@ void DrumGizmoPlugin::process(size_t pos,
 	this->output_samples = nullptr;
 }
 
+bool DrumGizmoPlugin::hasInlineGUI()
+{
+	return true;
+}
+
+class InlinePixelBufferAlpha
+	: public GUI::PixelBufferAlpha
+{
+public:
+	InlinePixelBufferAlpha(Plugin::InlineDrawContext& context)
+	{
+		buf = context.data;
+		width = context.width;
+		height = context.height;
+		x = 0;
+		y = 0;
+	}
+};
+
+class InlineCanvas
+	: public GUI::Canvas
+{
+public:
+	InlineCanvas(Plugin::InlineDrawContext& context)
+		: pixbuf(context)
+	{
+	}
+
+	GUI::PixelBufferAlpha& GetPixelBuffer()
+	{
+		return pixbuf;
+	}
+	void beginPaint() {}
+	void endPaint() {}
+
+private:
+	InlinePixelBufferAlpha pixbuf;
+};
+
+void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
+                                     std::size_t max_height,
+                                     InlineDrawContext& context)
+{
+	std::size_t height = std::min(11u, max_height);
+	if(!context.data ||
+	   (context.width != width) ||
+	   (context.height != height) ||
+	   settingsGetter.number_of_files.hasChanged() ||
+	   settingsGetter.number_of_files_loaded.hasChanged() ||
+	   settingsGetter.drumkit_load_status.hasChanged())
+	{
+		context.width = width;
+		context.height = height;
+		assert(context.width * context.height <= sizeof(inlineDisplayBuffer));
+)
+		context.data = (unsigned char*)inlineDisplayBuffer;
+		box.setSize(context.width, context.height);
+
+		InlineCanvas canvas(context);
+		GUI::Painter painter(canvas);
+		painter.clear();
+		painter.drawImage(0, 1, box);
+
+		double progress =
+			(double)settingsGetter.number_of_files_loaded.getValue() /
+			(double)settingsGetter.number_of_files.getValue();
+
+		int brd = 4;
+		int val = (width - (2 * brd)) * progress;
+
+		switch(settingsGetter.drumkit_load_status.getValue())
+		{
+		case LoadStatus::Error:
+			bar_red.setSize(val, height);
+			painter.drawImage(brd, 0, bar_red);
+			break;
+		case LoadStatus::Done:
+			bar_green.setSize(val, height);
+			painter.drawImage(brd, 0, bar_green);
+			break;
+		case LoadStatus::Loading:
+		case LoadStatus::Idle:
+			bar_blue.setSize(val, height);
+			painter.drawImage(brd, 0, bar_blue);
+			break;
+		}
+
+		// Convert to correct pixel format
+		for(std::size_t i = 0; i < context.height * context.width; ++i)
+		{
+			std::uint32_t pixel = inlineDisplayBuffer[i];
+			unsigned char* p = (unsigned char*)&pixel;
+			inlineDisplayBuffer[i] = pgzRGBA(p[0], p[1], p[2], p[3]);
+		}
+	}
+}
+
 bool DrumGizmoPlugin::hasGUI()
 {
 	return true;

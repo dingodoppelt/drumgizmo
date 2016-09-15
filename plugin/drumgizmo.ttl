@@ -22,6 +22,7 @@
 @prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
 @prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix idpy:   <http://harrisonconsoles.com/lv2/inlinedisplay#> .
 
 <http://drumgizmo.org/lv2#ui>
     a ui:X11UI ;
@@ -43,6 +44,7 @@
 	doap:license <http://opensource.org/licenses/gpl-3.0> ;
 	lv2:optionalFeature <http://lv2plug.in/ns/ext/uri-map> ;
 	lv2:optionalFeature <http://lv2plug.in/ns/ext/event> ;
+	lv2:optionalFeature idpy:queue_draw ;
   lv2:extensionData state:interface ;
 	lv2:port [
     a lv2:InputPort, lv2:ControlPort ;

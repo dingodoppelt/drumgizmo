@@ -45,13 +45,14 @@ public:
 	              unsigned char blue,
 	              unsigned char alpha);
 
-	unsigned char* buf;
-	size_t width;
-	size_t height;
+	unsigned char* buf{nullptr};
+	size_t width{0};
+	size_t height{0};
 };
 
 class PixelBufferAlpha {
 public:
+	PixelBufferAlpha() = default;
 	PixelBufferAlpha(size_t width, size_t height);
 	~PixelBufferAlpha();
 
@@ -77,11 +78,12 @@ public:
 	           unsigned char* blue,
 	           unsigned char* alpha);
 
-	unsigned char* buf;
-	size_t width;
-	size_t height;
-	size_t x;
-	size_t y;
+	bool managed{false};
+	unsigned char* buf{nullptr};
+	size_t width{0};
+	size_t height{0};
+	size_t x{0};
+	size_t y{0};
 };
 
 } // GUI::

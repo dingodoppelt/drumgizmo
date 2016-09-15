@@ -69,7 +69,8 @@ void PixelBuffer::setPixel(size_t x, size_t y,
 }
 
 PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
-	: buf(nullptr)
+	: managed(true)
+	, buf(nullptr)
 	, x(0)
 	, y(0)
 {
@@ -78,7 +79,10 @@ PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
 
 PixelBufferAlpha::~PixelBufferAlpha()
 {
-	free(buf);
+	if(managed)
+	{
+		free(buf);
+	}
 }
 
 void PixelBufferAlpha::realloc(size_t width, size_t height)

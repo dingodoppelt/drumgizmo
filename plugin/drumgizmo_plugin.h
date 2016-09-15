@@ -50,6 +50,9 @@
 #include <audiooutputengine.h>
 #include <plugingui.h>
 
+#include <texturedbox.h>
+#include <imagecache.h>
+
 class DrumGizmoPlugin
 #ifdef LV2
 	: public PluginLV2
@@ -93,6 +96,14 @@ public:
 	             const std::vector<const float*>& input_samples,
 	             const std::vector<float*>& output_samples,
 	             size_t count) override;
+
+	//
+	// Inline GUI
+	//
+	bool hasInlineGUI() override;
+	void onInlineRedraw(std::size_t width,
+	                    std::size_t max_height,
+	                    InlineDrawContext& context) override;
 
 	//
 	// GUI
@@ -174,7 +185,30 @@ private:
 
 	Settings settings;
 	ConfigStringIO config_string_io;
+	SettingsGetter settingsGetter{settings};
+
+	GUI::ImageCache imageCache;
+	GUI::TexturedBox box{imageCache, ":progress.png",
+			0, 0, // atlas offset (x, y)
+			6, 1, 6, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
+
+	GUI::TexturedBox bar_red{imageCache, ":progress.png",
+			13, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
+
+	GUI::TexturedBox bar_green{imageCache, ":progress.png",
+			18, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
+
+	GUI::TexturedBox bar_blue{imageCache, ":progress.png",
+			23, 0, // atlas offset (x, y)
+			2, 1, 2, // dx1, dx2, dx3
+			11, 0, 0}; // dy1, dy2, dy3
 
 	std::shared_ptr<GUI::PluginGUI> plugin_gui;
 	std::shared_ptr<DrumGizmo> drumgizmo;
+	std::uint32_t inlineDisplayBuffer[1024*1024];
 };
