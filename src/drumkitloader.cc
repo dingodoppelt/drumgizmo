@@ -79,9 +79,16 @@ bool DrumKitLoader::loadkit(const std::string& file)
 {
 	settings.drumkit_load_status.store(LoadStatus::Idle);
 
+	settings.number_of_files_loaded.store(0);
+
 	if(file == "")
 	{
 		settings.drumkit_load_status.store(LoadStatus::Error);
+
+		// Show a full bar
+		settings.number_of_files.store(1);
+		settings.number_of_files_loaded.store(1);
+
 		return false;
 	}
 
@@ -100,6 +107,11 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
 		settings.drumkit_load_status.store(LoadStatus::Error);
+
+		// Show a full bar
+		settings.number_of_files.store(1);
+		settings.number_of_files_loaded.store(1);
+
 		return false;
 	}
 
