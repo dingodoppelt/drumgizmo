@@ -211,7 +211,7 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 		context.width = width;
 		context.height = height;
 		assert(context.width * context.height <= sizeof(inlineDisplayBuffer));
-)
+
 		context.data = (unsigned char*)inlineDisplayBuffer;
 		box.setSize(context.width, context.height);
 
