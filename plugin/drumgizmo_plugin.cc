@@ -200,7 +200,7 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
                                      std::size_t max_height,
                                      InlineDrawContext& context)
 {
-	std::size_t height = std::min(11u, max_height);
+	std::size_t height = std::min(std::size_t(11), max_height);
 	if(!context.data ||
 	   (context.width != width) ||
 	   (context.height != height) ||
