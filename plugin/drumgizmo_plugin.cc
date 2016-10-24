@@ -218,7 +218,7 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 		InlineCanvas canvas(context);
 		GUI::Painter painter(canvas);
 		painter.clear();
-		painter.drawImage(0, 1, box);
+		painter.drawImage(0, 0, box);
 
 		double progress =
 			(double)settingsGetter.number_of_files_loaded.getValue() /
