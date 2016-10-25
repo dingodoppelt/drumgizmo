@@ -52,6 +52,8 @@ test/atomictest
 test/syncedsettingstest
 test/imagecachetest
 test/semaphoretest
+test/enginetest
+test/paintertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav
