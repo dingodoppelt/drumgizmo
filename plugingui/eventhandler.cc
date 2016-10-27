@@ -87,12 +87,12 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::resize)
 					{
-						delete peekEvent;
+						//delete peekEvent;
 						break;
 					}
-					delete peekEvent;
+					//delete peekEvent;
 
-					delete event;
+					//delete event;
 					event = getNextEvent();
 				}
 
@@ -121,12 +121,12 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::mouseMove)
 					{
-						delete peekEvent;
+						//delete peekEvent;
 						break;
 					}
-					delete peekEvent;
+					//delete peekEvent;
 
-					delete event;
+					//delete event;
 					event = getNextEvent();
 				}
 
@@ -236,15 +236,15 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::scroll)
 					{
-						delete peekEvent;
+						//delete peekEvent;
 						break;
 					}
-					delete peekEvent;
+					//delete peekEvent;
 
 					auto scrollEvent = static_cast<ScrollEvent*>(event);
 					delta += scrollEvent->delta;
 
-					delete event;
+					//delete event;
 					event = getNextEvent();
 				}
 
