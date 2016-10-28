@@ -27,6 +27,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "guievent.h"
 
@@ -74,11 +75,11 @@ public:
 
 	//! \brief Read a single event from the event queue.
 	//! \return A pointer to the event or nullptr is none exists.
-	virtual Event *getNextEvent() = 0;
+	virtual std::shared_ptr<Event> getNextEvent() = 0;
 
 	//! \brief Read next event without popping it from the event queue.
 	//! \return A pointer to the event or nullptr is none exists.
-	virtual Event* peekNextEvent() = 0;
+	virtual std::shared_ptr<Event> peekNextEvent() = 0;
 };
 
 } // GUI::

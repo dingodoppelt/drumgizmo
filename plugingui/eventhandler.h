@@ -27,6 +27,7 @@
 #pragma once
 
 #include <notifier.h>
+#include <memory>
 
 #include "guievent.h"
 #include "nativewindow.h"
@@ -47,11 +48,11 @@ public:
 
 	//! \brief Get a single event from the event queue.
 	//! \return A pointer to the event or nullptr if there are none.
-	Event *getNextEvent();
+	std::shared_ptr<Event> getNextEvent();
 
 	//! \brief Get a single event from the event queue without popping it.
 	//! \return A pointer to the event or nullptr if there are none.
-	Event *peekNextEvent();
+	std::shared_ptr<Event> peekNextEvent();
 
 	Notifier<> closeNotifier;
 

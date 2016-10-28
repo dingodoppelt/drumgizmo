@@ -49,11 +49,11 @@ public:
 	void redraw() override;
 	void grabMouse(bool grab) override;
 	bool hasEvent() override;
-	Event* getNextEvent() override;
-	Event* peekNextEvent() override;
+	std::shared_ptr<Event> getNextEvent() override;
+	std::shared_ptr<Event> peekNextEvent() override;
 
 private:
-	Event* translateXMessage(XEvent& xevent, bool peek = false);
+	std::shared_ptr<Event> translateXMessage(XEvent& xevent, bool peek = false);
 	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
 
 	::Window xwindow{0};

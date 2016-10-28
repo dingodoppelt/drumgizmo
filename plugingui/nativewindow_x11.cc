@@ -354,7 +354,7 @@ bool NativeWindowX11::hasEvent()
 	return XPending(display);
 }
 
-Event* NativeWindowX11::getNextEvent()
+std::shared_ptr<Event> NativeWindowX11::getNextEvent()
 {
 	if(display == nullptr)
 	{
@@ -366,7 +366,7 @@ Event* NativeWindowX11::getNextEvent()
 	return translateXMessage(xEvent);
 }
 
-Event* NativeWindowX11::peekNextEvent()
+std::shared_ptr<Event> NativeWindowX11::peekNextEvent()
 {
 	if(display == nullptr)
 	{
@@ -378,14 +378,15 @@ Event* NativeWindowX11::peekNextEvent()
 	return translateXMessage(peekXEvent, true);
 }
 
-Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
+std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
+                                                          bool peek)
 {
-	Event* event = nullptr;
+	std::shared_ptr<Event> event = nullptr;
 
 	switch(xevent.type) {
 	case MotionNotify:
 		{
-			auto mouseMoveEvent = new MouseMoveEvent();
+			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
 			mouseMoveEvent->window_id = xevent.xmotion.window;
 			mouseMoveEvent->x = xevent.xmotion.x;
 			mouseMoveEvent->y = xevent.xmotion.y;
@@ -396,7 +397,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 	case Expose:
 		if(xevent.xexpose.count == 0)
 		{
-			auto repaintEvent = new RepaintEvent();
+			auto repaintEvent = std::make_shared<RepaintEvent>();
 			repaintEvent->window_id = xevent.xexpose.window;
 			repaintEvent->x = xevent.xexpose.x;
 			repaintEvent->y = xevent.xexpose.y;
@@ -408,7 +409,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 
 	case ConfigureNotify:
 		{
-			auto resizeEvent = new ResizeEvent();
+			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->window_id = xevent.xconfigure.window;
 			//resizeEvent->x = xevent.xconfigure.x;
 			//resizeEvent->y = xevent.xconfigure.y;
@@ -424,7 +425,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 			if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
 			{
 				int scroll = 1;
-				auto scrollEvent = new ScrollEvent();
+				auto scrollEvent = std::make_shared<ScrollEvent>();
 				scrollEvent->window_id = xevent.xbutton.window;
 				scrollEvent->x = xevent.xbutton.x;
 				scrollEvent->y = xevent.xbutton.y;
@@ -433,7 +434,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 			}
 			else
 			{
-				auto buttonEvent = new ButtonEvent();
+				auto buttonEvent = std::make_shared<ButtonEvent>();
 				buttonEvent->window_id = xevent.xbutton.window;
 				buttonEvent->x = xevent.xbutton.x;
 				buttonEvent->y = xevent.xbutton.y;
@@ -474,7 +475,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 	case KeyPress:
 	case KeyRelease:
 		{
-			auto keyEvent = new KeyEvent();
+			auto keyEvent = std::make_shared<KeyEvent>();
 			keyEvent->window_id = xevent.xkey.window;
 
 			switch(xevent.xkey.keycode) {
@@ -512,7 +513,7 @@ Event* NativeWindowX11::translateXMessage(XEvent& xevent, bool peek)
 	case ClientMessage:
 		if(((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
 		{
-			auto closeEvent = new CloseEvent();
+			auto closeEvent = std::make_shared<CloseEvent>();
 			event = closeEvent;
 		}
 		break;

@@ -43,12 +43,12 @@ bool EventHandler::hasEvent()
 	return nativeWindow.hasEvent();
 }
 
-Event *EventHandler::getNextEvent()
+std::shared_ptr<Event> EventHandler::getNextEvent()
 {
 	return nativeWindow.getNextEvent();
 }
 
-Event *EventHandler::peekNextEvent()
+std::shared_ptr<Event> EventHandler::peekNextEvent()
 {
 	return nativeWindow.peekNextEvent();
 }
@@ -87,16 +87,13 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::resize)
 					{
-						//delete peekEvent;
 						break;
 					}
-					//delete peekEvent;
 
-					//delete event;
 					event = getNextEvent();
 				}
 
-				auto resizeEvent = static_cast<ResizeEvent*>(event);
+				auto resizeEvent = static_cast<ResizeEvent*>(event.get());
 				if((resizeEvent->width != window.width()) ||
 				   (resizeEvent->height != window.height()))
 				{
@@ -121,16 +118,13 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::mouseMove)
 					{
-						//delete peekEvent;
 						break;
 					}
-					//delete peekEvent;
 
-					//delete event;
 					event = getNextEvent();
 				}
 
-				auto moveEvent = static_cast<MouseMoveEvent*>(event);
+				auto moveEvent = static_cast<MouseMoveEvent*>(event.get());
 
 				auto widget = window.find(moveEvent->x, moveEvent->y);
 				auto oldwidget = window.mouseFocus();
@@ -178,7 +172,7 @@ void EventHandler::processEvents()
 					continue;
 				}
 
-				auto buttonEvent = static_cast<ButtonEvent*>(event);
+				auto buttonEvent = static_cast<ButtonEvent*>(event.get());
 
 				lastWasDoubleClick = buttonEvent->doubleClick;
 
@@ -236,19 +230,16 @@ void EventHandler::processEvents()
 					}
 					if(peekEvent->type() != EventType::scroll)
 					{
-						//delete peekEvent;
 						break;
 					}
-					//delete peekEvent;
 
-					auto scrollEvent = static_cast<ScrollEvent*>(event);
+					auto scrollEvent = static_cast<ScrollEvent*>(event.get());
 					delta += scrollEvent->delta;
 
-					//delete event;
 					event = getNextEvent();
 				}
 
-				auto scrollEvent = static_cast<ScrollEvent*>(event);
+				auto scrollEvent = static_cast<ScrollEvent*>(event.get());
 				scrollEvent->delta += delta;
 
 				auto widget = window.find(scrollEvent->x, scrollEvent->y);
@@ -267,7 +258,7 @@ void EventHandler::processEvents()
 
 				// TODO: Filter out multiple arrow events.
 
-				auto keyEvent = static_cast<KeyEvent*>(event);
+				auto keyEvent = static_cast<KeyEvent*>(event.get());
 				if(window.keyboardFocus())
 				{
 					window.keyboardFocus()->keyEvent(keyEvent);
@@ -279,8 +270,6 @@ void EventHandler::processEvents()
 			closeNotifier();
 			break;
 		}
-
-		delete event;
 	}
 }
 

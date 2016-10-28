@@ -55,8 +55,8 @@ public:
 	void grabMouse(bool grab) override;
 
 	bool hasEvent() override;
-	Event* getNextEvent() override;
-	Event* peekNextEvent() override;
+	std::shared_ptr<Event> getNextEvent() override;
+	std::shared_ptr<Event> peekNextEvent() override;
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
@@ -65,7 +65,7 @@ private:
 	Window& window;
 	WNDID m_hwnd = 0;
 	char* m_className = nullptr;
-	std::queue<Event*> event_queue;
+	std::queue<std::shared_ptr<Event>> event_queue;
 };
 
 } // GUI::

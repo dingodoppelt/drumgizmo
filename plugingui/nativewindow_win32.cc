@@ -52,7 +52,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			static bool first = true;
 			if(!first)
 			{
-				ResizeEvent* resizeEvent = new ResizeEvent();
+				auto resizeEvent = std::make_shared<ResizeEvent>();
 				resizeEvent->width = LOWORD(lp);
 				resizeEvent->height = HIWORD(lp);
 				native->event_queue.push(resizeEvent);
@@ -63,7 +63,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_MOVE:
 		{
-//      MoveEvent* moveEvent = new MoveEvent();
+//      auto moveEvent = std::make_shared<MoveEvent>();
 //      moveEvent->x = (short)LOWORD(lp);
 //      moveEvent->y = (short)HIWORD(lp);
 //      native->event_queue.push(moveEvent);
@@ -72,7 +72,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_CLOSE:
 		{
-			CloseEvent* closeEvent = new CloseEvent();
+			auto closeEvent = std::make_shared<CloseEvent>();
 			native->event_queue.push(closeEvent);
 		}
 		break;
@@ -91,7 +91,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 //		return 0;
 	case WM_MOUSEMOVE:
 		{
-			MouseMoveEvent* mouseMoveEvent = new MouseMoveEvent();
+			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
 			mouseMoveEvent->x = (short)LOWORD(lp);
 			mouseMoveEvent->y = (short)HIWORD(lp);
 			native->event_queue.push(mouseMoveEvent);
@@ -100,7 +100,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_MOUSEWHEEL:
 		{
-			ScrollEvent* scrollEvent = new ScrollEvent();
+			auto scrollEvent = std::make_shared<ScrollEvent>();
 
 			// NOTE: lp is coordinates in screen space, not client space.
 			POINT p;
@@ -125,7 +125,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	case WM_MBUTTONDBLCLK:
 	case WM_MBUTTONDOWN:
 		{
-			ButtonEvent* buttonEvent = new ButtonEvent();
+			auto buttonEvent = std::make_shared<ButtonEvent>();
 
 			buttonEvent->x = (short)LOWORD(lp);
 			buttonEvent->y = (short)HIWORD(lp);
@@ -178,7 +178,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	case WM_KEYDOWN:
 	case WM_KEYUP:
 		{
-			KeyEvent* keyEvent = new KeyEvent();
+			auto keyEvent = std::make_shared<KeyEvent>();
 
 			switch(wp) {
 			case VK_LEFT:   keyEvent->keycode = Key::left;      break;
@@ -207,7 +207,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 		{
 			if(wp >= ' ') // Filter control chars.
 			{
-				KeyEvent* keyEvent = new KeyEvent();
+				auto keyEvent = std::make_shared<KeyEvent>();
 				keyEvent->keycode = Key::character;
 				keyEvent->text += (char)wp;
 				keyEvent->direction = Direction::up;
@@ -218,7 +218,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_PAINT:
 		{
-			RepaintEvent* repaintEvent = new RepaintEvent();
+			auto repaintEvent = std::make_shared<RepaintEvent>();
 			repaintEvent->x = 0;
 			repaintEvent->y = 0;
 			repaintEvent->width = 100;
@@ -417,7 +417,7 @@ bool NativeWindowWin32::hasEvent()
 	return false;
 }
 
-Event* NativeWindowWin32::getNextEvent()
+std::shared_ptr<Event> NativeWindowWin32::getNextEvent()
 {
 	if(!event_queue.empty())
 	{
@@ -447,7 +447,7 @@ Event* NativeWindowWin32::getNextEvent()
 	return event;
 }
 
-Event* NativeWindowWin32::peekNextEvent()
+std::shared_ptr<Event> NativeWindowWin32::peekNextEvent()
 {
 	if(!event_queue.empty())
 	{
