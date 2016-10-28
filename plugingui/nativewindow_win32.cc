@@ -150,7 +150,6 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			}
 			else
 			{
-				delete buttonEvent;
 				break; // unknown button
 			}
 
