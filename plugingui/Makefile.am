@@ -22,6 +22,7 @@ rcgen_SOURCES = rcgen.cc
 
 EXTRA_DIST = \
 	button.h \
+	canvas.h \
 	checkbox.h \
 	colour.h \
 	combobox.h \

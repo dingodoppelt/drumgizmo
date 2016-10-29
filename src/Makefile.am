@@ -1,9 +1,10 @@
 EXTRA_DIST = \
-	audiocachefile.h \
+	atomic.h \
+	audio.h \
 	audiocache.h \
 	audiocacheeventhandler.h \
+	audiocachefile.h \
 	audiocacheidmanager.h \
-	audio.h \
 	audiofile.h \
 	audioinputengine.h \
 	audioinputenginemidi.h \
@@ -20,10 +21,10 @@ EXTRA_DIST = \
 	drumkitloader.h \
 	drumkitparser.h \
 	events.h \
+	inputfilter.h \
+	inputprocessor.h \
 	instrument.h \
 	instrumentparser.h \
-	inputfiler.h \
-	inputprocessor.h \
 	latencyfilter.h \
 	memchecker.h \
 	midimapparser.h \
@@ -32,19 +33,22 @@ EXTRA_DIST = \
 	nolocale.h \
 	notifier.h \
 	path.h \
+	platform.h \
 	powerlist.h \
+	random.h \
 	rangemap.h \
 	sample.h \
 	saxparser.h \
 	semaphore.h \
+	settings.h \
 	staminafilter.h \
+	syncedsettings.h \
 	thread.h \
-	velocity.h \
 	versionstr.h \
  \
-	audiocachefile.cc \
 	audiocache.cc \
 	audiocacheeventhandler.cc \
+	audiocachefile.cc \
 	audiocacheidmanager.cc \
 	audiofile.cc \
 	audioinputengine.cc \
@@ -61,20 +65,21 @@ EXTRA_DIST = \
 	drumkitloader.cc \
 	drumkitparser.cc \
 	events.cc \
+	inputprocessor.cc \
 	instrument.cc \
 	instrumentparser.cc \
-	inputprocessor.cc \
 	latencyfilter.cc \
+	localetest.cc \
 	memchecker.cc \
 	midimapparser.cc \
 	midimapper.cc \
 	mutex.cc \
 	path.cc \
 	powerlist.cc \
+	random.cc \
 	sample.cc \
 	saxparser.cc \
 	semaphore.cc \
 	staminafilter.cc \
 	thread.cc \
-	velocity.cc \
 	versionstr.cc
