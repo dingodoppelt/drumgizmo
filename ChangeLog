@@ -1,3 +1,16 @@
+Version 0.9.11
+==============
+Release date: October 29th 2016
+Contributors: deva, cglocke, chaot4, Jin^Eld
+
+ - Unicode crash bug fixed
+ - lv2 inline display
+ - Fixed problems when running more than one instance of DrumGizmo plugin in
+   the same host
+
+Special thanks to 'Maxim Alexandrovich (Ljutingr)' for helping debugging the
+unicode problem.
+
 Version 0.9.10
 ==============
 Release date: March 30th 2016
