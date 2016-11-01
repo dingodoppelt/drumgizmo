@@ -69,7 +69,6 @@ EXTRA_DIST = \
 	instrument.cc \
 	instrumentparser.cc \
 	latencyfilter.cc \
-	localetest.cc \
 	memchecker.cc \
 	midimapparser.cc \
 	midimapper.cc \
