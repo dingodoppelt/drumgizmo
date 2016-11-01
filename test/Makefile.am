@@ -1,6 +1,8 @@
 # Rules for the test code (use `make check` to execute)
 SUBDIRS = dgreftest
 
+if ENABLE_TESTS
+
 include $(top_srcdir)/src/Makefile.am.drumgizmo
 include $(top_srcdir)/plugingui/Makefile.am.plugingui
 
@@ -190,3 +192,5 @@ semaphoretest_SOURCES = \
 	$(top_srcdir)/src/semaphore.cc \
 	semaphoretest.cc \
 	test.cc
+
+endif

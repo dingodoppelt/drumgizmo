@@ -142,9 +142,16 @@ AC_ARG_WITH([test],
 	AS_HELP_STRING([--with-test], [Build unit tests]))
 
 AS_IF([test x$with_test == xyes],
-      [AC_MSG_WARN([*** Building unittests!])
-       AM_PATH_CPPUNIT(1.9.6)]
+  [
+    AC_MSG_WARN([*** Building unittests!])
+    PKG_CHECK_MODULES([CPPUNIT], [ cppunit >= 1.9.6 ], [],
+                      [
+                          AC_MSG_ERROR([$CPPUNIT_PKG_ERRORS])
+                      ])
+  ]
 )
+
+AM_CONDITIONAL([ENABLE_TESTS], [test "x$with_test" = "xyes"])
 
 dnl ======================
 dnl Compile LV2 plugin
