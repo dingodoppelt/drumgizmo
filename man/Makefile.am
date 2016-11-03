@@ -1,4 +1,6 @@
-man_MANS = drumgizmo.1
+man_MANS = \
+	drumgizmo.1 \
+	drumgizmo.fr.1
 
 EXTRA_DIST = $(man_MANS)
 
