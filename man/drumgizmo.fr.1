@@ -1,0 +1,116 @@
+.TH "DRUMGIZMO" "1" "4 Février 2015" "drumgizmo" ""
+
+.SH NOM
+drumgizmo \- application de batterie
+
+.SH SYNOPSIS
+\fBdrumgizmo\fR [OPTIONS] fichier_de_kit_de_batterie
+
+.SH "DESCRIPTION"
+.PP
+\fBDrumGizmo\fR est un greffon ainsi qu'une application autonome de batterie multi-plateforme et à source ouverte. Il est comparable à plusieurs produits commerciaux de greffon de batterie.
+.PP
+DrumGizmo utilise un format de fichier de kit de batterie ouvert, permettant à la communauté de créer ses propres kits de batterie. Il possède une sortie multi-canaux, rendant possible de mixer exactement de même la manière que vous le feriez avec un kit de batterie réel. L'humaniseur optionnel inclu analyse les notes MIDI, en ajustant leurs vélocités à-la-volée. Ce client peut être utilisé comme un logiciel autonome effectuant un rendu MIDI, générant des fichiers .wav, 1 pour chaque canal. Ou bien, vous pouvez utilisez DrumGizmo comme un échantillonneur logiciel pour un kit de batterie électronique. Une version en greffon est également disponible.
+
+.SH "OPTIONS"
+.PD 0
+.RE
+.RS 7
+\fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
+.RS 7
+Utilise le moteur d'entrée d'évènements indiqué.
+
+.RE
+\fB-I, --inputparms liste_de_paramètres\fR
+.RS 7
+Attribue des paramètres au moteur d'entrée.
+
+\fBjackmidi:\fR
+.P
+midimap=<fichier_midimap>
+
+\fBmidifile:\fR
+.P
+file=<fichier_midi>
+.P
+speed=<tempo> (1.0 par défaut)
+.P
+track=<piste_midi> (-1 par défaut, toutes les pites)
+.P
+midimap=<fichier_midimap>
+.P
+loop=<true|false>
+
+\fBtest:\fR
+.P
+p=<probabilité_de_coup> (0.1 par défaut)
+.P
+instr=<instrument> (-1 par défaut -1, instrument aléatoire)
+.P
+len=<secondes> (-1 par défaut, toujours)
+
+\fBdummy:\fR
+
+.RE
+\fB-o, --outputengine \fR{dummy|alsa|jackaudio|wavfile}
+.RS 7
+Utilise le moteur de sortie audio indiqué.
+
+.RE
+\fB-O, --outputparms liste_de_paramètres\fR
+.RS 7
+Attribue des paramètres au moteur de sortie.
+
+\fBalsa:\fR
+.P
+dev=<périphérique> ('default' par défaut)
+.P
+frames=<trames> (32 par défaut)
+.P
+srate=<fréquence_d_échantillonnage> (44100 par défaut)
+
+\fBwavfile:\fR
+.P
+file=<nom_de_fichier> ('output' par défaut)
+.P
+srate=<fréquence_d_échantillonnage> (44100 par défaut)
+
+\fBjackaudio:\fR
+
+\fBdummy:\fR
+
+.RE
+\fB-e, --endpos\fR
+.RS 7
+Nombre d'échantillons à traiter, (-1 par défaut : infini)
+
+.RE
+\fB-v, --version\fR
+.RS 7
+Affiche la version de drumgizmo puis quitte.
+
+.RE
+\fB-h, --help\fR
+.RS 7
+Affiche l'aide de commande terminal puis quitte.
+
+.RE
+\fBfichier_de_kit_de_batterie\fR
+.RS 7
+Charge le fichier_de_kit_de_batterie.
+
+.RE
+.SH "EXEMPLES"
+\fBEffectuer un rendu d'un fichier_midi vers des fichiers wav :\fR
+.RS 7
+drumgizmo -i fichier_midi -I file=fichier.mid,midimap=midimap.xml -o wavfile -O file=prefix drumkit.xml
+.RE
+\fBRecevoir le MIDI depuis Jack et envoyer la sortie audio vers les haut-parleurs :\fR
+.RS 7
+drumgizmo -i jackmidi -I midimap=midimap.xml -o jackaudio drumkit.xml
+.RE
+.SH "BOGUES"
+Rapporter les bogues à http://www.drumgizmo.org/wiki/doku.php?id=bugs (en anglais).
+
+.SH "INFORMATION ADDITIONELLE"
+Pour d'avantage d'information, visitez le site internet http://www.drumgizmo.org.
