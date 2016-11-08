@@ -477,22 +477,7 @@ AC_HAVE_LIBRARY([rt],[],[])
 dnl ======================
 dnl Check for the atomic library
 dnl ======================
-AC_MSG_CHECKING([for the need for linkage with libatomic])
-AC_LANG_PUSH([C++])
-AC_LINK_IFELSE([AC_LANG_SOURCE[
-      #include <atomic>
-      int main() {
-        struct Test { int val; };
-        std::atomic<Test> s;
-        return s.is_lock_free()?1:0;
-      }
-    ]],
-    [AC_MSG_RESULT([no])],
-    [AC_MSG_RESULT([yes])
-	   AC_HAVE_LIBRARY([atomic],[],[])
-    ]
-)
-AC_LANG_POP([C++])
+AC_HAVE_LIBRARY([atomic],[],[])
 
 dnl ======================
 dnl Check for the pthread library
