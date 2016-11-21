@@ -275,6 +275,9 @@ void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
 	Painter p(*this);
 	p.drawImageStretched(0,0, back, width(), height());
 	p.drawImage(width() - logo.width(), height() - logo.height(), logo);
+  sidebar.setSize(16, height());
+  p.drawImage(0, 0, sidebar);
+  p.drawImage(width() - 16, 0, sidebar);
 }
 
 void DGWindow::attackValueChanged(float value)

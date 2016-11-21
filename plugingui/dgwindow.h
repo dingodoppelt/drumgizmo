@@ -37,6 +37,8 @@
 #include "progressbar.h"
 #include "filebrowser.h"
 #include "layout.h"
+#include "texturedbox.h"
+#include "imagecache.h"
 
 namespace GUI {
 
@@ -87,6 +89,11 @@ private:
 	Image back{":bg.png"};
 	Image logo{":logo.png"};
 
+  ImageCache image_cache;
+  TexturedBox sidebar{image_cache, ":sidebar.png", 0, 0,
+      16, 0, 0,
+      14, 1, 14};
+  
 	Settings& settings;
 };
 
