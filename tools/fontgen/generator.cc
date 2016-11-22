@@ -35,10 +35,10 @@
 #include <QPen>
 #include <QFont>
 
-#define ALPHATHRES 150
+#define ALPHATHRES 100
 
-#define FONTALPHA 80
-#define EMBOSSALPHA 230
+#define FONTALPHA 200
+#define EMBOSSALPHA 175
 
 Generator::Generator()
 {
@@ -86,8 +86,8 @@ void Generator::initGenerate()
   
   font.setFamily(fontLineEdit->text());
   font.setPixelSize(sizeLineEdit->text().toInt());
-  font.setStretch(97);
-  font.setHintingPreference(QFont::PreferVerticalHinting);
+  //font.setStretch(96);
+  font.setHintingPreference(QFont::PreferFullHinting);
   
   setVertLimits(vertOffset, fontHeight);
   
