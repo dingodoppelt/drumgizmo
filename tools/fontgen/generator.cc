@@ -153,13 +153,13 @@ void Generator::setHorizLimits(int &horizOffset, int &charWidth,
   if(curChar < 32 || (curChar > 126 && curChar < 160)) {
     if(embossEnabled->isChecked()) {
       p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
-      p.drawText(maxSize / 2, maxSize / 2 + 1, "+");
+      p.drawText(maxSize / 2, maxSize / 2 + 1, "▯");
       p.setPen(QPen(QColor(0, 0, 0, 255)));
     }
     // Draw twice to make it clearer
-    p.drawText(maxSize / 2, maxSize / 2, "+");
+    p.drawText(maxSize / 2, maxSize / 2, "▯");
     p.setPen(QPen(QColor(0, 0, 0, FONTALPHA)));
-    p.drawText(maxSize / 2, maxSize / 2, "+");
+    p.drawText(maxSize / 2, maxSize / 2, "▯");
   } else {
     if(embossEnabled->isChecked()) {
       p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
