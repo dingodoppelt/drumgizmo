@@ -35,6 +35,8 @@
 #include <QPen>
 #include <QFont>
 
+#define ALPHATHRES 100
+
 Generator::Generator()
 {
   QLabel *fontLabel = new QLabel("Font family:");
@@ -42,7 +44,7 @@ Generator::Generator()
   QLabel *sizeLabel = new QLabel("Font px size:");
   sizeLineEdit = new QLineEdit("12");
   QLabel *outputLabel = new QLabel("Output file:");
-  outputLineEdit = new QLineEdit("output");
+  outputLineEdit = new QLineEdit("../../plugingui/resources/font");
 
   QVBoxLayout *layout = new QVBoxLayout();
   QPushButton *renderButton = new QPushButton("Generate");
@@ -169,7 +171,7 @@ int Generator::getHorizOffset(const QImage &image)
   for(int x = 0; x < maxSize; ++x) {
     for(int y = 0; y < maxSize; ++y) {
       // Check for alpha threshold to make sure we don't get too much space between chars
-      if(image.pixelColor(x, y).alpha() > 30) {
+      if(image.pixelColor(x, y).alpha() > ALPHATHRES) {
         return x;
       }
     }
@@ -182,7 +184,7 @@ int Generator::getFontWidth(const QImage &image, const int &horizOffset)
   for(int x = maxSize - 1; x > horizOffset; --x) {
     for(int y = 0; y < maxSize; ++y) {
       // Check for alpha threshold to make sure we don't get too much space between chars
-      if(image.pixelColor(x, y).alpha() > 30) {
+      if(image.pixelColor(x, y).alpha() > ALPHATHRES) {
         return x + 1 - horizOffset;
       }
     }
