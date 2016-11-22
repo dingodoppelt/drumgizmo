@@ -58,6 +58,8 @@ private:
                       const int &curChar, QImage &image);
   int getHorizOffset(const QImage &image);
   int getFontWidth(const QImage &image, const int &horizOffset);
+
+  void assembleFinalFont(const QList<QImage> &chars, const int &fontHeight);
 };
 
 #endif // _GENERATOR_H
