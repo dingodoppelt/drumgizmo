@@ -132,6 +132,8 @@ void Generator::setHorizLimits(int &horizOffset, int &charWidth,
   p.setPen(QPen(QColor(0, 0, 0, 255)));
   p.setFont(font);
     
+  // Draw twice to make it clearer
+  p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
   p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
 
   horizOffset = getHorizOffset(image);
