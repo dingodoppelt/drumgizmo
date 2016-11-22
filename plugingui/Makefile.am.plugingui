@@ -39,6 +39,9 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/plugingui/lodepng/lodepng.cpp
 
+$(top_srcdir)/plugingui/resource_data.cc : $(top_srcdir)/plugingui/rcgen
+	(cd $(top_srcdir)/plugingui/resources; ../rcgen * > ../resource_data.cc)
+
 PLUGIN_GUI_LIBS = $(GUI_LIBS) $(PTHREAD_LIBS)
 
 PLUGIN_GUI_CPPFLAGS = \
