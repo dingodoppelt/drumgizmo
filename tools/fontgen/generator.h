@@ -46,7 +46,18 @@ private:
   QLineEdit *fontLineEdit;
   QLineEdit *sizeLineEdit;
   QLineEdit *outputLineEdit;
-  
+
+  int maxSize;
+  QFont font;
+
+  void setVertLimits(int &vertOffset, int &fontHeight);
+  int getVertOffset(const QImage &image);
+  int getFontHeight(const QImage &image, const int &vertOffset);
+
+  void setHorizLimits(int &horizOffset, int &fontHeight,
+                      const int &curChar, QImage &image);
+  int getHorizOffset(const QImage &image);
+  int getFontWidth(const QImage &image, const int &horizOffset);
 };
 
 #endif // _GENERATOR_H

@@ -70,18 +70,123 @@ void Generator::initGenerate()
          fontLineEdit->text().toStdString().c_str(),
          sizeLineEdit->text().toStdString().c_str());
 
-  QImage image(500, 16, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
+  QList<QImage> chars;
 
-  QFont font;
+  maxSize = 50;
+
+  int vertOffset = 0;
+  int fontHeight = maxSize;
+  
   font.setFamily(fontLineEdit->text());
   font.setPixelSize(sizeLineEdit->text().toInt());
+  
+  setVertLimits(vertOffset, fontHeight);
+  
+  for(int a = 0; a < 255; ++a) {
+    int horizOffset = 0;
+    int charWidth = 0;
+    QImage image(maxSize, maxSize, QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    setHorizLimits(horizOffset, charWidth, a, image);
+    QImage finalChar(image.copy(horizOffset, vertOffset, charWidth + 2, fontHeight));
+    QPainter p(&finalChar);
+    p.setPen(QPen(QColor(255, 0, 255)));
+    p.drawLine(finalChar.width() - 1, 0, finalChar.width() - 1, finalChar.height());
+    chars.append(finalChar);
+  }
+  
+  int imageWidth = 0;
+  for(int a = 0; a < chars.length(); ++a) {
+    imageWidth += chars.at(a).width();
+  }
 
+  QImage finalFont(imageWidth, fontHeight, QImage::Format_ARGB32);
+  finalFont.fill(Qt::transparent);
+  QPainter p(&finalFont);
+  int curOffset = 0;
+  for(int a = 0; a < chars.length(); ++a) {
+    p.drawImage(curOffset, 0, chars.at(a));
+    curOffset += chars.at(a).width();
+  }
+  finalFont.save(outputLineEdit->text() + ".png");
+}
+
+void Generator::setVertLimits(int &vertOffset, int &fontHeight)
+{
+  QImage image(maxSize, maxSize, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+    
   QPainter p(&image);
   p.setPen(QPen(QColor(0, 0, 0, 255)));
   p.setFont(font);
+    
+  // Render the two chars that will give us a maximum overall font height
+  p.drawText(maxSize / 2, maxSize / 2, "Õ");
+  p.drawText(maxSize / 2, maxSize / 2, "j");
 
-  p.drawText(0, 10, "AjEg");
-  
-  image.save(outputLineEdit->text() + ".png");
+  vertOffset = getVertOffset(image);
+  fontHeight = getFontHeight(image, vertOffset);
+  qDebug("Vertical offset: %d\nHeight: %d\n", vertOffset, fontHeight);
+}
+
+void Generator::setHorizLimits(int &horizOffset, int &charWidth,
+                               const int &curChar, QImage &image)
+{
+  QPainter p(&image);
+  p.setPen(QPen(QColor(0, 0, 0, 255)));
+  p.setFont(font);
+    
+  p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
+
+  horizOffset = getHorizOffset(image);
+  charWidth = getFontWidth(image, horizOffset);
+  qDebug("Horizontal offset: %d\nWidth: %d\n", horizOffset, charWidth);
+}
+
+int Generator::getVertOffset(const QImage &image)
+{
+  for(int y = 0; y < maxSize; ++y) {
+    for(int x = 0; x < maxSize; ++x) {
+      if(image.pixelColor(x, y) != Qt::transparent) {
+        return y;
+      }
+    }
+  }
+  return 0;
+}
+
+int Generator::getFontHeight(const QImage &image, const int &vertOffset)
+{
+  for(int y = maxSize - 1; y > vertOffset; --y) {
+    for(int x = 0; x < maxSize; ++x) {
+      if(image.pixelColor(x, y) != Qt::transparent) {
+        return y + 1 - vertOffset;
+      }
+    }
+  }
+  return 0;
+}
+
+int Generator::getHorizOffset(const QImage &image)
+{
+  for(int x = 0; x < maxSize; ++x) {
+    for(int y = 0; y < maxSize; ++y) {
+      if(image.pixelColor(x, y) != Qt::transparent) {
+        return x;
+      }
+    }
+  }
+  return 0;
+}
+
+int Generator::getFontWidth(const QImage &image, const int &horizOffset)
+{
+  for(int x = maxSize - 1; x > horizOffset; --x) {
+    for(int y = 0; y < maxSize; ++y) {
+      if(image.pixelColor(x, y) != Qt::transparent) {
+        return x + 1 - horizOffset;
+      }
+    }
+  }
+  return 0;
 }
