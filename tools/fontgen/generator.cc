@@ -116,10 +116,10 @@ void Generator::setVertLimits(int &vertOffset, int &fontHeight)
   p.setPen(QPen(QColor(0, 0, 0, 255)));
   p.setFont(font);
     
-  // Render the hars that will give us a maximum overall font height
-  p.drawText(maxSize / 2, maxSize / 2, "Û");
-  p.drawText(maxSize / 2, maxSize / 2, "¿");
-  p.drawText(maxSize / 2, maxSize / 2, "j");
+  // Render all chars to give us a maximum overall font height
+  for(int a = 0; a <= 255; ++a) {
+    p.drawText(maxSize / 2, maxSize / 2, QChar(a));
+  }
 
   vertOffset = getVertOffset(image);
   fontHeight = getFontHeight(image, vertOffset);
@@ -168,7 +168,8 @@ int Generator::getHorizOffset(const QImage &image)
 {
   for(int x = 0; x < maxSize; ++x) {
     for(int y = 0; y < maxSize; ++y) {
-      if(image.pixelColor(x, y) != Qt::transparent) {
+      // Check for alpha threshold to make sure we don't get too much space between chars
+      if(image.pixelColor(x, y).alpha() > 30) {
         return x;
       }
     }
@@ -180,7 +181,8 @@ int Generator::getFontWidth(const QImage &image, const int &horizOffset)
 {
   for(int x = maxSize - 1; x > horizOffset; --x) {
     for(int y = 0; y < maxSize; ++y) {
-      if(image.pixelColor(x, y) != Qt::transparent) {
+      // Check for alpha threshold to make sure we don't get too much space between chars
+      if(image.pixelColor(x, y).alpha() > 30) {
         return x + 1 - horizOffset;
       }
     }
