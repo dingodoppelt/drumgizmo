@@ -35,16 +35,20 @@
 #include <QPen>
 #include <QFont>
 
-#define ALPHATHRES 100
+#define ALPHATHRES 150
+
+#define FONTALPHA 80
+#define EMBOSSALPHA 230
 
 Generator::Generator()
 {
   QLabel *fontLabel = new QLabel("Font family:");
-  fontLineEdit = new QLineEdit("DejaVu");
+  fontLineEdit = new QLineEdit("Arial");
   QLabel *sizeLabel = new QLabel("Font px size:");
-  sizeLineEdit = new QLineEdit("12");
+  sizeLineEdit = new QLineEdit("13");
   QLabel *outputLabel = new QLabel("Output file:");
   outputLineEdit = new QLineEdit("../../plugingui/resources/font");
+  embossEnabled = new QCheckBox("Apply embossing");
 
   QVBoxLayout *layout = new QVBoxLayout();
   QPushButton *renderButton = new QPushButton("Generate");
@@ -54,6 +58,7 @@ Generator::Generator()
   layout->addWidget(fontLineEdit);
   layout->addWidget(sizeLabel);
   layout->addWidget(sizeLineEdit);
+  layout->addWidget(embossEnabled);
   layout->addWidget(outputLabel);
   layout->addWidget(outputLineEdit);
   layout->addWidget(renderButton);
@@ -81,6 +86,8 @@ void Generator::initGenerate()
   
   font.setFamily(fontLineEdit->text());
   font.setPixelSize(sizeLineEdit->text().toInt());
+  font.setStretch(97);
+  font.setHintingPreference(QFont::PreferVerticalHinting);
   
   setVertLimits(vertOffset, fontHeight);
   
@@ -120,6 +127,11 @@ void Generator::setVertLimits(int &vertOffset, int &fontHeight)
     
   // Render all chars to give us a maximum overall font height
   for(int a = 0; a <= 255; ++a) {
+    if(embossEnabled->isChecked()) {
+      p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
+      p.drawText(maxSize / 2, maxSize / 2 + 1, QChar(a));
+      p.setPen(QPen(QColor(0, 0, 0, 255)));
+    }
     p.drawText(maxSize / 2, maxSize / 2, QChar(a));
   }
 
@@ -134,8 +146,14 @@ void Generator::setHorizLimits(int &horizOffset, int &charWidth,
   p.setPen(QPen(QColor(0, 0, 0, 255)));
   p.setFont(font);
     
+  if(embossEnabled->isChecked()) {
+    p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
+    p.drawText(maxSize / 2, maxSize / 2 + 1, QChar(curChar));
+    p.setPen(QPen(QColor(0, 0, 0, 255)));
+  }
   // Draw twice to make it clearer
   p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
+  p.setPen(QPen(QColor(0, 0, 0, FONTALPHA)));
   p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
 
   horizOffset = getHorizOffset(image);

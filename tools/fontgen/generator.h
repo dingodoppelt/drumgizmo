@@ -30,6 +30,7 @@
 
 #include <QWidget>
 #include <QLineEdit>
+#include <QCheckBox>
 
 class Generator : public QWidget
 {
@@ -46,7 +47,8 @@ private:
   QLineEdit *fontLineEdit;
   QLineEdit *sizeLineEdit;
   QLineEdit *outputLineEdit;
-
+  QCheckBox *embossEnabled;
+  
   int maxSize;
   QFont font;
 
