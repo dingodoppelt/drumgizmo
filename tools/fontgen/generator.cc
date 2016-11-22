@@ -146,7 +146,7 @@ int Generator::getVertOffset(const QImage &image)
 {
   for(int y = 0; y < maxSize; ++y) {
     for(int x = 0; x < maxSize; ++x) {
-      if(image.pixelColor(x, y) != Qt::transparent) {
+      if(qAlpha(image.pixel(x, y)) != 0) {
         return y;
       }
     }
@@ -158,7 +158,7 @@ int Generator::getFontHeight(const QImage &image, const int &vertOffset)
 {
   for(int y = maxSize - 1; y > vertOffset; --y) {
     for(int x = 0; x < maxSize; ++x) {
-      if(image.pixelColor(x, y) != Qt::transparent) {
+      if(qAlpha(image.pixel(x, y)) != 0) {
         return y + 1 - vertOffset;
       }
     }
@@ -171,7 +171,7 @@ int Generator::getHorizOffset(const QImage &image)
   for(int x = 0; x < maxSize; ++x) {
     for(int y = 0; y < maxSize; ++y) {
       // Check for alpha threshold to make sure we don't get too much space between chars
-      if(image.pixelColor(x, y).alpha() > ALPHATHRES) {
+      if(qAlpha(image.pixel(x, y)) > ALPHATHRES) {
         return x;
       }
     }
@@ -184,7 +184,7 @@ int Generator::getFontWidth(const QImage &image, const int &horizOffset)
   for(int x = maxSize - 1; x > horizOffset; --x) {
     for(int y = 0; y < maxSize; ++y) {
       // Check for alpha threshold to make sure we don't get too much space between chars
-      if(image.pixelColor(x, y).alpha() > ALPHATHRES) {
+      if(qAlpha(image.pixel(x, y)) > ALPHATHRES) {
         return x + 1 - horizOffset;
       }
     }
