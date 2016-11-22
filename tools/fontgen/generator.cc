@@ -96,12 +96,16 @@ void Generator::initGenerate()
     int charWidth = 0;
     QImage image(maxSize, maxSize, QImage::Format_ARGB32);
     image.fill(Qt::transparent);
+    /*
     if(a < 32 || (a > 126 && a < 160)) {
       horizOffset = 0;
       charWidth = 0;
     } else {
-      setHorizLimits(horizOffset, charWidth, a, image);
+    */
+    setHorizLimits(horizOffset, charWidth, a, image);
+      /*
     }
+      */
     if(a == 32) {
       horizOffset = 0;
       charWidth = sizeLineEdit->text().toInt() / 8;
@@ -146,16 +150,27 @@ void Generator::setHorizLimits(int &horizOffset, int &charWidth,
   p.setPen(QPen(QColor(0, 0, 0, 255)));
   p.setFont(font);
     
-  if(embossEnabled->isChecked()) {
-    p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
-    p.drawText(maxSize / 2, maxSize / 2 + 1, QChar(curChar));
-    p.setPen(QPen(QColor(0, 0, 0, 255)));
+  if(curChar < 32 || (curChar > 126 && curChar < 160)) {
+    if(embossEnabled->isChecked()) {
+      p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
+      p.drawText(maxSize / 2, maxSize / 2 + 1, "+");
+      p.setPen(QPen(QColor(0, 0, 0, 255)));
+    }
+    // Draw twice to make it clearer
+    p.drawText(maxSize / 2, maxSize / 2, "+");
+    p.setPen(QPen(QColor(0, 0, 0, FONTALPHA)));
+    p.drawText(maxSize / 2, maxSize / 2, "+");
+  } else {
+    if(embossEnabled->isChecked()) {
+      p.setPen(QPen(QColor(255, 255, 255, EMBOSSALPHA)));
+      p.drawText(maxSize / 2, maxSize / 2 + 1, QChar(curChar));
+      p.setPen(QPen(QColor(0, 0, 0, 255)));
+    }
+    // Draw twice to make it clearer
+    p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
+    p.setPen(QPen(QColor(0, 0, 0, FONTALPHA)));
+    p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
   }
-  // Draw twice to make it clearer
-  p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
-  p.setPen(QPen(QColor(0, 0, 0, FONTALPHA)));
-  p.drawText(maxSize / 2, maxSize / 2, QChar(curChar));
-
   horizOffset = getHorizOffset(image);
   charWidth = getFontWidth(image, horizOffset);
 }
