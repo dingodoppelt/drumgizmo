@@ -32,6 +32,7 @@ namespace GUI
 StackedWidget::StackedWidget(Widget *parent)
 	: Widget(parent)
 {
+	CONNECT(this, sizeChangeNotifier, this, &StackedWidget::sizeChanged);
 }
 
 StackedWidget::~StackedWidget()
@@ -41,6 +42,7 @@ StackedWidget::~StackedWidget()
 void StackedWidget::addWidget(Widget *widget)
 {
 	widgets.push_back(widget);
+	widget->reparent(this);
 
 	if(currentWidget == nullptr)
 	{
@@ -89,6 +91,16 @@ void StackedWidget::setCurrentWidget(Widget *widget)
 	}
 
 	currentChanged(currentWidget);
+}
+
+void StackedWidget::sizeChanged(int width, int height)
+{
+	// Propagate size change to child:
+	if(currentWidget)
+	{
+		currentWidget->move(0, 0);
+		currentWidget->resize(width, height);
+	}
 }
 
 } // GUI::

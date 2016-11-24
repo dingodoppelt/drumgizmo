@@ -19,6 +19,8 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/slider.cc \
 	$(top_srcdir)/plugingui/scrollbar.cc \
 	$(top_srcdir)/plugingui/stackedwidget.cc \
+	$(top_srcdir)/plugingui/tabbutton.cc \
+	$(top_srcdir)/plugingui/tabwidget.cc \
 	$(top_srcdir)/plugingui/textedit.cc \
 	$(top_srcdir)/plugingui/texture.cc \
 	$(top_srcdir)/plugingui/texturedbox.cc \

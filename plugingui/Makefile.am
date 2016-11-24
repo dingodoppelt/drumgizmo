@@ -56,6 +56,9 @@ EXTRA_DIST = \
 	resource_data.h \
 	scrollbar.h \
 	slider.h \
+	stackedwidget.h \
+	tabbutton.h \
+	tabwidget.h \
 	textedit.h \
 	texture.h \
 	texturedbox.h \

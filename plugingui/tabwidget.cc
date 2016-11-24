@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            stackedwidget.h
+ *            tabwidget.cc
  *
- *  Mon Nov 21 19:36:49 CET 2016
+ *  Thu Nov 24 17:46:22 CET 2016
  *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -24,50 +24,46 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
-
-#include <list>
-
-#include "widget.h"
-#include "notifier.h"
+#include "tabwidget.h"
 
 namespace GUI
 {
 
-//! A StackedWidget is a widget containing a list of widgets but only showing
-//! one of them at a time.
-//! It is be used to implement a TabWidget but can also be used for other
-//! purposes.
-class StackedWidget
-	: public Widget
+TabWidget::TabWidget(Widget *parent)
+	: Widget(parent)
+	, stack(this)
 {
-public:
-	StackedWidget(Widget *parent);
-	~StackedWidget();
+	CONNECT(this, sizeChangeNotifier, this, &TabWidget::sizeChanged);
+}
 
-	//! Add a widget to the stack.
-	void addWidget(Widget *widget);
+void TabWidget::addTab(const std::string& title, Widget* widget)
+{
+	buttons.emplace_back(this, widget);
+	auto& button = buttons.back();
+	button.setText(title);
+	stack.addWidget(widget);
+	CONNECT(&button, switchTabNotifier, this, &TabWidget::switchTab);
+	sizeChanged(width(), height());
+}
 
-	//! Remove a widget from the stack.
-	void removeWidget(Widget *widget);
+void TabWidget::switchTab(Widget* tabWidget)
+{
+	stack.setCurrentWidget(tabWidget);
+}
 
-	//! Get currently visible widget.
-	Widget *getCurrentWidget() const;
+void TabWidget::sizeChanged(int width, int height)
+{
+	std::size_t pos = 0;
+	std::size_t buttonWidth = width / buttons.size();
+	for(auto& button : buttons)
+	{
+		button.resize(buttonWidth, 40);
+		button.move(pos, 0);
+		pos += buttonWidth;
+	}
 
-	//! Show widget. Hide all the others.
-	//! If widget is not in the stack nothing happens.
-	void setCurrentWidget(Widget *widget);
-
-	//! Reports whn a new widget is shown.
-	Notifier<Widget*> currentChanged;
-
-private:
-	//! Callback for Widget::sizeChangeNotifier
-	void sizeChanged(int width, int height);
-
-private:
-	Widget* currentWidget{nullptr};
-	std::list<Widget*> widgets;
-};
+	stack.move(0, 40);
+	stack.resize(width, height - 40);
+}
 
 } // GUI::

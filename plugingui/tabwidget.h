@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            stackedwidget.h
+ *            tabwidget.h
  *
- *  Mon Nov 21 19:36:49 CET 2016
+ *  Thu Nov 24 17:46:22 CET 2016
  *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -26,48 +26,30 @@
  */
 #pragma once
 
-#include <list>
-
 #include "widget.h"
-#include "notifier.h"
+#include "tabbutton.h"
+#include "stackedwidget.h"
 
 namespace GUI
 {
 
-//! A StackedWidget is a widget containing a list of widgets but only showing
-//! one of them at a time.
-//! It is be used to implement a TabWidget but can also be used for other
-//! purposes.
-class StackedWidget
+class TabWidget
 	: public Widget
 {
 public:
-	StackedWidget(Widget *parent);
-	~StackedWidget();
+	TabWidget(Widget *parent);
 
-	//! Add a widget to the stack.
-	void addWidget(Widget *widget);
-
-	//! Remove a widget from the stack.
-	void removeWidget(Widget *widget);
-
-	//! Get currently visible widget.
-	Widget *getCurrentWidget() const;
-
-	//! Show widget. Hide all the others.
-	//! If widget is not in the stack nothing happens.
-	void setCurrentWidget(Widget *widget);
-
-	//! Reports whn a new widget is shown.
-	Notifier<Widget*> currentChanged;
+	void addTab(const std::string& title, Widget* widget);
 
 private:
 	//! Callback for Widget::sizeChangeNotifier
 	void sizeChanged(int width, int height);
 
 private:
-	Widget* currentWidget{nullptr};
-	std::list<Widget*> widgets;
+	void switchTab(Widget* tabWidget);
+
+	std::list<TabButton> buttons;
+	StackedWidget stack;
 };
 
 } // GUI::

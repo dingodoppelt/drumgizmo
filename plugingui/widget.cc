@@ -92,6 +92,26 @@ void Widget::removeChild(Widget* widget)
 	}
 }
 
+void Widget::reparent(Widget* parent)
+{
+	if(parent == this->parent)
+	{
+		return; // Already at the right parent.
+	}
+
+	if(this->parent)
+	{
+		this->parent->removeChild(this);
+	}
+
+	if(parent)
+	{
+		parent->addChild(this);
+	}
+
+	this->parent = parent;
+}
+
 void Widget::resize(int width, int height)
 {
 	if((width < 1) || (height < 1) ||

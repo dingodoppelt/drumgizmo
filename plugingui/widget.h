@@ -74,6 +74,7 @@ public:
 
 	void addChild(Widget* widget);
 	void removeChild(Widget* widget);
+	void reparent(Widget* parent);
 
 	virtual void repaintEvent(RepaintEvent* repaintEvent) {}
 	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) {}
