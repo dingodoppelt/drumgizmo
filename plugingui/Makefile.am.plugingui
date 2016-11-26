@@ -16,6 +16,7 @@ PLUGIN_GUI_SOURCES = \
 	$(top_srcdir)/plugingui/lineedit.cc \
 	$(top_srcdir)/plugingui/led.cc \
 	$(top_srcdir)/plugingui/checkbox.cc \
+	$(top_srcdir)/plugingui/mainwindow.cc \
 	$(top_srcdir)/plugingui/slider.cc \
 	$(top_srcdir)/plugingui/scrollbar.cc \
 	$(top_srcdir)/plugingui/stackedwidget.cc \

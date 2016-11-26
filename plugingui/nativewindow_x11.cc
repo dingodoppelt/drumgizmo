@@ -89,9 +89,6 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	int count = sizeof(protocols)/sizeof(Atom);
 	XSetWMProtocols(display, xwindow, protocols, count);
 
-	// "Map" the window (that is, make it appear on the screen)
-	XMapWindow(display, xwindow);
-
 	// Create a "Graphics Context"
 	gc = XCreateGC(display, xwindow, 0, nullptr);
 }

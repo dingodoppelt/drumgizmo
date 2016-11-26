@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            testmain.cc
+ *            mainwindow.h
  *
- *  Sun Nov 22 20:06:42 CET 2015
- *  Copyright 2015 Bent Bisballe Nyeng
+ *  Sat Nov 26 14:27:28 CET 2016
+ *  Copyright 2016 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,32 +24,52 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+#pragma once
 
-#include <hugin.hpp>
 #include <settings.h>
 
-#include "mainwindow.h"
+#include "window.h"
+#include "tabwidget.h"
+#include "texturedbox.h"
+#include "image.h"
 
-int main()
+namespace GUI
 {
-	INFO(example, "We are up and running");
 
-	Settings settings;
-	GUI::MainWindow main_window(settings, nullptr);
-	main_window.show();
+class MainWindow
+	: public Window
+{
+public:
+	MainWindow(Settings& settings, void* native_window);
 
-	while(main_window.processEvents())
-	{
-#ifdef WIN32
-		SleepEx(50, FALSE);
-#else
-		usleep(50000);
-#endif
-	}
+	//! Process all events and messages in queue
+	//! \return true if not closing, returns false if closing.
+	bool processEvents();
 
-	return 0;
-}
+	//! Notify when window is closing.
+	Notifier<> closeNotifier;
+
+private:
+	void sizeChanged(int width, int height);
+	void closeEventHandler();
+
+	// From Widget
+	void repaintEvent(RepaintEvent* repaintEvent) override final;
+
+	TabWidget tabs{this};
+
+	Image back{":bg.png"};
+	Image logo{":logo.png"};
+
+	TexturedBox sidebar{getImageCache(), ":sidebar.png",
+			0, 0, // offset
+			16, 0, 0, // delta-x
+			14, 1, 14}; // delta-y
+
+	bool closing{false};
+
+	Settings& settings;
+	SettingsNotifier settings_notifier{settings};
+};
+
+} // GUI::

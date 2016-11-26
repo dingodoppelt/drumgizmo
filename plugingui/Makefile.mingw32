@@ -24,12 +24,16 @@ GUI_SRC = \
 	lineedit.cc \
 	led.cc \
 	layout.cc \
+	mainwindow.cc \
 	checkbox.cc \
 	slider.cc \
 	scrollbar.cc \
+	stackedwidget.cc \
 	textedit.cc \
 	texture.cc \
 	texturedbox.cc \
+	tabbutton.cc \
+	tabwidget.cc \
 	listbox.cc \
 	listboxthin.cc \
 	listboxbasic.cc \
