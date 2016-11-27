@@ -54,7 +54,12 @@ void TabWidget::switchTab(Widget* tabWidget)
 void TabWidget::sizeChanged(int width, int height)
 {
 	std::size_t pos = 0;
-	std::size_t buttonWidth = width / buttons.size();
+	std::size_t buttonWidth = 1;
+	if(buttons.size() > 0)
+	{
+		buttonWidth = width / buttons.size();
+	}
+
 	for(auto& button : buttons)
 	{
 		button.resize(buttonWidth, 40);
