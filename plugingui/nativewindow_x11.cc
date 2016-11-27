@@ -100,6 +100,13 @@ NativeWindowX11::~NativeWindowX11()
 		return;
 	}
 
+	if(buffer)
+	{
+		XDestroyImage(buffer);
+	}
+
+	XFreeGC(display, gc);
+
 	XDestroyWindow(display, xwindow);
 	XCloseDisplay(display);
 }
