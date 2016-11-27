@@ -39,6 +39,9 @@ class TabWidget
 public:
 	TabWidget(Widget *parent);
 
+	//! Add new tab to the tab widget.
+	//! \param title The title to display on the tab button.
+	//! \param widget The widget to show in the tab.
 	void addTab(const std::string& title, Widget* widget);
 
 private:
