@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     printf("  { \":%s\", ", argv[i]);
     
     std::string data;
-    FILE *fp = fopen(argv[i], "r");
+    FILE *fp = fopen(argv[i], "rb");
     if(!fp) {
       fprintf(stderr, "Could not read file '%s' - quitting\n", argv[i]);
       return 1;
