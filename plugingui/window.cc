@@ -26,7 +26,6 @@
  */
 #include "window.h"
 
-#include <hugin.hpp>
 #include "painter.h"
 
 #ifndef PUGL
@@ -73,7 +72,6 @@ Window::~Window()
 void Window::setFixedSize(int w, int h)
 {
 	native->setFixedSize(w, h);
-	resize(w,h);
 }
 
 void Window::setCaption(const std::string& caption)
@@ -81,6 +79,9 @@ void Window::setCaption(const std::string& caption)
 	native->setCaption(caption);
 }
 
+//! This overload the resize method on Widget and simply requests a window resize
+//! on the windowmanager/OS. The resized() method is called by the event handler
+//! once the window has been resized.
 void Window::resize(int width, int height)
 {
 	if((width < 1) || (height < 1))
@@ -88,17 +89,15 @@ void Window::resize(int width, int height)
 		return;
 	}
 
-	resized(width, height);
-	Widget::resize(width, height);
 	native->resize(width, height);
 }
 
+//! This overload the move method on Widget and simply requests a window move
+//! on the windowmanager/OS. The moved() method is called by the event handler
+//! once the window has been moved.
 void Window::move(size_t x, size_t y)
 {
 	native->move(x, y);
-
-	// Make sure widget corrdinates are updated.
-	Widget::move(x, y);
 }
 
 size_t Window::windowX()
@@ -113,6 +112,7 @@ size_t Window::windowY()
 
 void Window::show()
 {
+	Widget::show();
 	repaintChildren(nullptr);
 	native->show();
 }
@@ -120,6 +120,7 @@ void Window::show()
 void Window::hide()
 {
 	native->hide();
+	Widget::hide();
 }
 
 Window* Window::window()
@@ -185,6 +186,8 @@ void Window::redraw()
 	native->redraw();
 }
 
+//! Called by event handler when an windowmanager/OS window resize event has
+//! been received. Do not call this directly.
 void Window::resized(size_t width, size_t height)
 {
 	if((_width == width) && (_height == height))
@@ -192,22 +195,21 @@ void Window::resized(size_t width, size_t height)
 		return;
 	}
 
-	_width = width;
-	_height = height;
-
 	wpixbuf.realloc(width, height);
+	Widget::resize(width, height);
 	updateBuffer();
+}
 
-	pixbuf.realloc(width, height);
-	repaintEvent(nullptr);
-
-	// Notify Widget
-	sizeChangeNotifier(width, height);
+//! Called by event handler when an windowmanager/OS window move event has
+//! been received. Do not call this directly.
+void Window::moved(int x, int y)
+{
+	// Make sure widget corrdinates are updated.
+	Widget::move(x, y);
 }
 
 void Window::updateBuffer()
 {
-	//DEBUG(window, "Updating buffer\n");
 	for(auto pixelBuffer : getPixelBuffers())
 	{
 		size_t updateWidth = pixelBuffer->width;

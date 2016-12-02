@@ -123,7 +123,7 @@ void Widget::resize(int width, int height)
 	_width = width;
 	_height = height;
 	pixbuf.realloc(width, height);
-
+	repaintEvent(nullptr);
 	sizeChangeNotifier(width, height);
 }
 

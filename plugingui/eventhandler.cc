@@ -55,10 +55,10 @@ std::shared_ptr<Event> EventHandler::peekNextEvent()
 
 void EventHandler::processEvents()
 {
+	Painter p(window); // Make sure we only redraw buffer one time.
+
 	while(hasEvent())
 	{
-		Painter p(window); // Make sure we only redraw buffer one time.
-
 		auto event = getNextEvent();
 
 		if(event == nullptr)
@@ -69,6 +69,13 @@ void EventHandler::processEvents()
 		switch(event->type()) {
 		case EventType::repaint:
 			window.redraw();
+			break;
+
+		case EventType::move:
+			{
+				auto moveEvent = static_cast<MoveEvent*>(event.get());
+				window.moved(moveEvent->x, moveEvent->y);
+			}
 			break;
 
 		case EventType::resize:

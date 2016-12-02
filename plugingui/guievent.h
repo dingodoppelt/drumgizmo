@@ -44,7 +44,8 @@ enum class EventType {
 	scroll,
 	key,
 	close,
-	resize
+	resize,
+	move
 };
 
 class Event {
@@ -148,6 +149,14 @@ public:
 
 	size_t width;
 	size_t height;
+};
+
+class MoveEvent : public Event {
+public:
+	EventType type() { return EventType::move; }
+
+	int x;
+	int y;
 };
 
 } // GUI::

@@ -414,13 +414,25 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 	case ConfigureNotify:
 		{
-			auto resizeEvent = std::make_shared<ResizeEvent>();
-			resizeEvent->window_id = xevent.xconfigure.window;
-			//resizeEvent->x = xevent.xconfigure.x;
-			//resizeEvent->y = xevent.xconfigure.y;
-			resizeEvent->width = xevent.xconfigure.width;
-			resizeEvent->height = xevent.xconfigure.height;
-			event = resizeEvent;
+			if((window.width() != (std::size_t)xevent.xconfigure.width) ||
+			   (window.height() != (std::size_t)xevent.xconfigure.height))
+			{
+				auto resizeEvent = std::make_shared<ResizeEvent>();
+				resizeEvent->window_id = xevent.xconfigure.window;
+				resizeEvent->width = xevent.xconfigure.width;
+				resizeEvent->height = xevent.xconfigure.height;
+				event = resizeEvent;
+			}
+
+			if((window.windowX() != (std::size_t)xevent.xconfigure.x) ||
+			   (window.windowY() != (std::size_t)xevent.xconfigure.y))
+			{
+				auto moveEvent = std::make_shared<MoveEvent>();
+				moveEvent->window_id = xevent.xconfigure.window;
+				moveEvent->x = xevent.xconfigure.x;
+				moveEvent->y = xevent.xconfigure.y;
+				event = moveEvent;
+			}
 		}
 		break;
 

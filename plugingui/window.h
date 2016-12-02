@@ -74,6 +74,7 @@ protected:
 	friend class EventHandler;
 	void redraw();
 	void resized(size_t w, size_t h);
+	void moved(int x, int y);
 	void updateBuffer();
 
 	// For the Painter

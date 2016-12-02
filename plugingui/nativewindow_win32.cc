@@ -26,9 +26,9 @@
  */
 #include "nativewindow_win32.h"
 
-#include "window.h"
-
 #include <cstring>
+
+#include "window.h"
 
 namespace GUI {
 
@@ -49,24 +49,20 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	switch(msg) {
 	case WM_SIZE:
 		{
-			static bool first = true;
-			if(!first)
-			{
-				auto resizeEvent = std::make_shared<ResizeEvent>();
-				resizeEvent->width = LOWORD(lp);
-				resizeEvent->height = HIWORD(lp);
-				native->event_queue.push(resizeEvent);
-				first = false;
-			}
+			auto resizeEvent = std::make_shared<ResizeEvent>();
+			resizeEvent->width = LOWORD(lp);
+			resizeEvent->height = HIWORD(lp);
+			//native->event_queue.push(resizeEvent);
+			native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
 
 	case WM_MOVE:
 		{
-//      auto moveEvent = std::make_shared<MoveEvent>();
-//      moveEvent->x = (short)LOWORD(lp);
-//      moveEvent->y = (short)HIWORD(lp);
-//      native->event_queue.push(moveEvent);
+			auto moveEvent = std::make_shared<MoveEvent>();
+			moveEvent->x = (short)LOWORD(lp);
+			moveEvent->y = (short)HIWORD(lp);
+			native->event_queue.push(moveEvent);
 		}
 		break;
 
