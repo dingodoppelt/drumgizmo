@@ -4,7 +4,7 @@ DG_SRC = \
 	../src/semaphore.cc \
 	../src/mutex.cc
 
-DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2 -DDISABLE_HUGIN
+DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	testmain.cc \
@@ -53,15 +53,18 @@ GUI_CFLAGS=-DUSE_THREAD -DWIN32 -DSTANDALONE
 GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
 
 DBG_SRC = \
-	../hugin/hugin.c \
-	../hugin/hugin_syslog.c
+	../hugin/hugin.c
 
-DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX -DDISABLE_HUGIN
-
+DBG_CFLAGS=-I../hugin -DWITH_HUG_MUTEX
+LODEPNG_CFLAGS = \
+	-DLODEPNG_NO_COMPILE_ENCODER \
+	-DLODEPNG_NO_COMPILE_DISK \
+	-DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS \
+	-DLODEPNG_NO_COMPILE_ERROR_TEXT \
+	-DLODEPNG_NO_COMPILE_CPP
 all:
 	gcc $(DBG_CFLAGS) ../hugin/hugin.c -c
-	gcc $(DBG_CFLAGS) ../hugin/hugin_syslog.c -c
-	g++ -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) hugin.o hugin_syslog.o $(DG_SRC) ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) -o plugingui.exe
+	g++ -std=c++11 -static -static-libgcc -O0 -g -Wall $(LODEPNG_CFLAGS) $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) hugin.o $(DG_SRC) ${GUI_SRC} ${GUI_CFLAGS} $(GUI_LIBS) -o plugingui.exe
 
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
