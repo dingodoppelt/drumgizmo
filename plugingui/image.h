@@ -60,6 +60,7 @@ private:
 	std::size_t _height{0};
 	std::vector<Colour> image_data;
 	Colour out_of_range{0.0f, 0.0f, 0.0f, 0.0f};
+	std::string filename;
 };
 
 } // GUI::

@@ -45,6 +45,7 @@ Image::Image(const char* data, size_t size)
 }
 
 Image::Image(const std::string& filename)
+	: filename(filename)
 {
 	Resource rc(filename);
 	load(rc.data(), rc.size());
@@ -54,6 +55,7 @@ Image::Image(Image&& other)
 	: _width(other._width)
 	, _height(other._height)
 	, image_data(std::move(other.image_data))
+	, filename(other.filename)
 {
 	other._width = 0;
 	other._height = 0;
@@ -118,7 +120,8 @@ void Image::load(const char* data, size_t size)
 
 	if(res != 0)
 	{
-		ERR(image, "Error in lodepng_decode32: %d", res);
+		ERR(image, "Error in lodepng_decode32: %d while loading '%s'",
+		    res, filename.c_str());
 		setError();
 		return;
 	}
