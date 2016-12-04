@@ -140,7 +140,7 @@ AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
 AS_IF([test "x$enable_gui" = "xauto"],
       [AC_MSG_RESULT([Auto setting gui based on host: $host_os])
 	     AS_CASE([$host_os],
-		      [darwin*], [enable_gui="carbon"],
+		      [darwin*], [enable_gui="cocoa"],
 		      [linux*|*bsd*], [enable_gui="x11"],
 		      [mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
 
@@ -169,10 +169,10 @@ AS_IF(
   GUI_CPPFLAGS="-DPUGL -I../../pugl"
   GUI_LIBS="-lGLU -lGL -lglut"],
 
-  [test "x$enable_gui" = "xcarbon"],
-  [AC_MSG_RESULT([Setting gui backend to Carbon])
-  GUI_CPPFLAGS=""
-  GUI_LIBS=""],
+  [test "x$enable_gui" = "xcocoa"],
+  [AC_MSG_RESULT([Setting gui backend to Cocoa])
+  GUI_CPPFLAGS="-framework Cocoa"
+  GUI_LIBS="-framework Cocoa"],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
 )
@@ -183,6 +183,7 @@ AC_SUBST(GUI_LIBS)
 AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
 AM_CONDITIONAL([ENABLE_WIN32], [test "x$enable_gui" = "xwin32"])
 AM_CONDITIONAL([ENABLE_X11], [test "x$enable_gui" = "xx11"])
+AM_CONDITIONAL([ENABLE_COCOA], [test "x$enable_gui" = "xcocoa"])
 
 dnl ======================
 dnl Compile unit tests

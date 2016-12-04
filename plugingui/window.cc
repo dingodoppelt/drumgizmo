@@ -35,6 +35,9 @@
 #ifdef WIN32
 #include "nativewindow_win32.h"
 #endif/*WIN32*/
+#ifdef COCOA
+#include "nativewindow_cocoa.h"
+#endif/*COCOA*/
 #else
 #include "nativewindow_pugl.h"
 #endif
@@ -56,6 +59,9 @@ Window::Window(void* native_window)
 #ifdef WIN32
 	native = new NativeWindowWin32(native_window, *this);
 #endif/*WIN32*/
+#ifdef COCOA
+	native = new NativeWindowCocoa(native_window, *this);
+#endif/*COCOA*/
 #else/*Use pugl*/
 	native = new NativeWindowPugl(native_window, *this);
 #endif

@@ -58,17 +58,24 @@ PLUGIN_GUI_CPPFLAGS = \
 	-DLODEPNG_NO_COMPILE_CPP
 
 if ENABLE_X11
-PLUGIN_GUI_SOURCES += $(top_srcdir)/plugingui/nativewindow_x11.cc
+PLUGIN_GUI_SOURCES += \
+	$(top_srcdir)/plugingui/nativewindow_x11.cc
 endif
 
 if ENABLE_WIN32
-PLUGIN_GUI_SOURCES += $(top_srcdir)/plugingui/nativewindow_win32.cc
+PLUGIN_GUI_SOURCES += \
+	$(top_srcdir)/plugingui/nativewindow_win32.cc
 endif
 
 if ENABLE_PUGL
 PLUGIN_GUI_SOURCES += \
 	$(top_srcdir)/plugingui/nativewindow_pugl.cc \
 	$(top_srcdir)/pugl/pugl/pugl_x11.c
-
 PLUGIN_GUI_CPPFLAGS += -I$(top_srcdir)/pugl/pugl
+endif
+
+if ENABLE_COCOA
+PLUGIN_GUI_SOURCES += \
+	$(top_srcdir)/plugingui/nativewindow_cocoa.m \
+	$(top_srcdir)/plugingui/nativewindow_cocoa.cc
 endif
