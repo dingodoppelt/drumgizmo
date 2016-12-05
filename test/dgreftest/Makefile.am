@@ -5,7 +5,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 
 bin_PROGRAMS = dgreftest
 
-dgreftest_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) -ldl $(JACK_LIBS) \
+dgreftest_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) $(JACK_LIBS) \
 	$(SMF_LIBS)
 
 dgreftest_LDFLAGS =
