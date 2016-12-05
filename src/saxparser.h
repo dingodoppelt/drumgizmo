@@ -26,9 +26,15 @@
  */
 #pragma once
 
+#include <config.h>
+
 #include <string>
 #include <unordered_map>
+#ifdef HAVE_LIBEXPAT
 #include <expat.h>
+#elif HAVE_LIBBSDXML
+#include <bsdxml.h>
+#endif
 #include <fstream>
 
 class SAXParser
