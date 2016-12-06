@@ -37,6 +37,7 @@ class InstrumentParser
 {
 public:
 	InstrumentParser(Instrument &instrument);
+	virtual ~InstrumentParser() = default;
 
 	virtual int parseFile(const std::string& filename) override;
 

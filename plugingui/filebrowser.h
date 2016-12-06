@@ -41,7 +41,7 @@ namespace GUI {
 class FileBrowser : public Widget {
 public:
 	FileBrowser(Widget *parent);
-	~FileBrowser();
+	virtual ~FileBrowser();
 
 	void setPath(const std::string& path);
 

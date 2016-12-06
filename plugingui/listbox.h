@@ -42,7 +42,7 @@ class ListBox
 {
 public:
 	ListBox(Widget *parent);
-	~ListBox();
+	virtual ~ListBox();
 
 	void addItem(std::string name, std::string value);
 	void addItems(std::vector<ListBoxBasic::Item> &items);

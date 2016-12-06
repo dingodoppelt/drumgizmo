@@ -36,6 +36,7 @@ namespace GUI {
 class CheckBox : public Widget {
 public:
 	CheckBox(Widget *parent);
+	virtual ~CheckBox() = default;
 
 	void setText(std::string text);
 

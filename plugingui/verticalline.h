@@ -34,6 +34,7 @@ namespace GUI {
 class VerticalLine : public Widget {
 public:
 	VerticalLine(Widget* parent);
+	virtual ~VerticalLine() = default;
 
 protected:
 	// From Widget:

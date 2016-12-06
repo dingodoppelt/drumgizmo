@@ -37,6 +37,7 @@ namespace GUI {
 class Knob : public Widget {
 public:
 	Knob(Widget *parent);
+	virtual ~Knob() = default;
 
 	// From Widget:
 	bool catchMouse() override { return true; }

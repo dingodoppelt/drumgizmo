@@ -36,6 +36,8 @@ class Colour;
 class Drawable
 {
 public:
+	virtual ~Drawable() = default;
+
 	virtual std::size_t width() const = 0;
 	virtual std::size_t height() const = 0;
 

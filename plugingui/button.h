@@ -40,7 +40,7 @@ namespace GUI {
 class Button : public Widget {
 public:
 	Button(Widget *parent);
-	~Button();
+	virtual ~Button();
 
 	// From Widget:
 	bool isFocusable() override { return true; }

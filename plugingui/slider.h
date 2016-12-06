@@ -33,6 +33,7 @@ namespace GUI {
 class Slider : public Widget {
 public:
 	Slider(Widget* parent);
+	virtual ~Slider() = default;
 
 	// From Widget:
 	bool catchMouse() override { return true; }

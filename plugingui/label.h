@@ -43,6 +43,7 @@ enum class TextAlignment {
 class Label : public Widget {
 public:
 	Label(Widget *parent);
+	virtual ~Label() = default;
 
 	void setText(const std::string& text);
 

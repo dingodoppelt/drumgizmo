@@ -35,6 +35,8 @@ namespace GUI
 class Canvas
 {
 public:
+	virtual ~Canvas() = default;
+
 	//! @returns a reference to the pixel buffer.
 	virtual PixelBufferAlpha& GetPixelBuffer() = 0;
 

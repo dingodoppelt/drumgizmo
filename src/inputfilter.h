@@ -32,6 +32,8 @@
 class InputFilter
 {
 public:
+	virtual ~InputFilter() = default;
+
 	//! Implement to filter a single event.
 	//! \param[in,out] event The event being processed. The filter method
 	//!  might alter any of the event parameters.

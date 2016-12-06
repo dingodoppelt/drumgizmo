@@ -41,7 +41,7 @@ namespace GUI {
 class TextEdit : public Widget {
 public:
 	TextEdit(Widget *parent);
-	~TextEdit();
+	virtual ~TextEdit();
 
 	// From Widget
 	bool isFocusable() override { return true; }

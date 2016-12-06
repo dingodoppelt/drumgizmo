@@ -41,7 +41,7 @@ class LineEdit
 {
 public:
 	LineEdit(Widget *parent);
-	~LineEdit();
+	virtual ~LineEdit();
 
 	bool isFocusable() override { return true; }
 

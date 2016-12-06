@@ -44,7 +44,7 @@ class ListBoxThin
 {
 public:
 	ListBoxThin(Widget *parent);
-	~ListBoxThin();
+	virtual ~ListBoxThin();
 
 	void addItem(std::string name, std::string value);
 	void addItems(std::vector<ListBoxBasic::Item> &items);

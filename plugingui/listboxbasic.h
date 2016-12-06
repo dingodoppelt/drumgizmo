@@ -47,7 +47,7 @@ public:
 	};
 
 	ListBoxBasic(Widget *parent);
-	~ListBoxBasic();
+	virtual ~ListBoxBasic();
 
 	void addItem(const std::string& name, const std::string& value);
 	void addItems(const std::vector<Item>& items);

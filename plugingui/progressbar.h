@@ -48,7 +48,7 @@ class ProgressBar
 {
 public:
 	ProgressBar(Widget* parent);
-	~ProgressBar();
+	virtual ~ProgressBar();
 
 	void setTotal(std::size_t total);
 	void setValue(std::size_t value);

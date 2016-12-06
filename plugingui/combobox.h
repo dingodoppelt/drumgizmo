@@ -43,7 +43,7 @@ class ComboBox
 {
 public:
 	ComboBox(Widget* parent);
-	~ComboBox();
+	virtual ~ComboBox();
 
 	void addItem(std::string name, std::string value);
 
