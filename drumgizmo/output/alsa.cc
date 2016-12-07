@@ -36,7 +36,7 @@ struct AlsaInitError
 	const std::string msg;
 
 	AlsaInitError(int op_code, const std::string& msg)
-		: code{code}
+		: code{op_code}
 		, msg{msg}
 	{
 	}
