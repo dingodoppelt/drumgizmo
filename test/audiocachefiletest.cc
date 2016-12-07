@@ -150,7 +150,7 @@ public:
 			{
 				for(size_t i = 0; i < read_size; ++i)
 				{
-					diff[c] += abs(ref_file[c]->data[i + offset] - samples[c][i]);
+					diff[c] += abs((long)(ref_file[c]->data[i + offset] - samples[c][i]));
 				}
 			}
 
