@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <string>
+
 #include "saxparser.h"
 #include "drumkit.h"
 #include "configfile.h"
