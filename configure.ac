@@ -517,8 +517,8 @@ CPPFLAGS=""
 CFLAGS="$EXPAT_CFLAGS"
 LDFLAGS="$EXPAT_LDFLAGS"
 LIBS=""
-AC_CHECK_HEADER(expat.h,, AC_CHECK_HEADER(bsdxml.h, , AC_MSG_ERROR([*** eXpat header file not found!])))
-AC_CHECK_LIB(expat, XML_ParserCreate,, AC_CHECK_LIB(bsdxml, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!])))
+AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
+AC_CHECK_LIB(expat, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!]))
 EXPAT_CFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
 EXPAT_LIBS="$LDFLAGS $LIBS"
 CXXFLAGS="$tmp_CXXFLAGS"
