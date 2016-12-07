@@ -78,8 +78,8 @@ protected:
 
 	// For the Painter
 	friend class Widget;
-	void beginPaint();
-	void endPaint();
+	void beginPaint() override;
+	void endPaint() override;
 
 	// For the NativeWindow
 	friend class NativeWindowX11;
