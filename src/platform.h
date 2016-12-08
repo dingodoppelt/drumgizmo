@@ -30,7 +30,8 @@
 #define DG_PLATFORM_LINUX 1   //!< Platform is Linux based.
 #define DG_PLATFORM_WINDOWS 2 //!< Platform is Windows based
 #define DG_PLATFORM_OSX 3     //!< Platform is MacOSX based.
-#define DG_PLATFORM_UNIX 4    //!< Platform is Unix based.
+#define DG_PLATFORM_FREEBSD 4 //!< Platform is FreeBSD based.
+#define DG_PLATFORM_UNIX 5    //!< Platform is Unix based.
 
 #ifdef __linux__
 	#define DG_PLATFORM DG_PLATFORM_LINUX
@@ -43,6 +44,9 @@
 
 #elif __APPLE__
 	#define DG_PLATFORM DG_PLATFORM_OSX
+
+#elif __FreeBSD__
+	#define DG_PLATFORM DG_PLATFORM_FREEBSD
 
 #elif __unix__
 	// All other unices (*BSD etc)
