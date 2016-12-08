@@ -33,23 +33,21 @@
 
 #include "platform.h"
 
-#if DG_PLATFORM != DG_PLATFORM_WINDOWS
+#if DG_PLATFORM == DG_PLATFORM_OSX
+//#include <Multiprocessing.h>
+#include <CoreServices/CoreServices.h>
+
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+#include <sys/types.h>
+#include <sys/lock.h>
+#include <sys/sema.h>
+
+#elif DG_PLATFORM != DG_PLATFORM_WINDOWS
 // Make sure we don't include /this/ file's header...
 #include <../include/semaphore.h>
 #include <errno.h>
 #include <stdio.h>
 #include <sys/time.h>
-#endif
-
-#if DG_PLATFORM == DG_PLATFORM_OSX
-//#include <Multiprocessing.h>
-#include <CoreServices/CoreServices.h>
-#endif
-
-#if DG_PLATFORM == DG_PLATFORM_FREEBSD
-#include <sys/types.h>
-#include <sys/lock.h>
-#include <sys/sema.h>
 #endif
 
 struct semaphore_private_t {
@@ -131,7 +129,11 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 		return false;
 	}
 #elif DG_PLATFORM == DG_PLATFORM_FREEBSD
-	sema_timedwait(prv->semaphore, timeout.count());
+	auto ret = sema_timedwait(prv->semaphore, timeout.count());
+	if(ret != 0)
+	{
+		return false;
+	}
 #else
 	struct timespec ts;
 
