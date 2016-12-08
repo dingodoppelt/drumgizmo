@@ -46,11 +46,19 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+#if DG_PLATFORM == DG_PLATFORM_FREEBSD
+#include <sys/types.h>
+#include <sys/lock.h>
+#include <sys/sema.h>
+#endif
+
 struct semaphore_private_t {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE semaphore;
 #elif DG_PLATFORM == DG_PLATFORM_OSX
 	MPSemaphoreID semaphore;
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	struct sema *semaphore;
 #else
 	sem_t semaphore;
 #endif
@@ -69,6 +77,8 @@ Semaphore::Semaphore(std::size_t initial_count)
 	MPCreateSemaphore(std::numeric_limits<std::uint32_t>::max(),
 	                  initial_count,
 	                  &prv->semaphore);
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	sema_init(prv->semaphore, initial_count, "");
 #else
 	const int pshared = 0;
 	memset(&prv->semaphore, 0, sizeof(sem_t));
@@ -82,6 +92,7 @@ Semaphore::~Semaphore()
 	CloseHandle(prv->semaphore);
 #elif DG_PLATFORM == DG_PLATFORM_OSX
 	MPDeleteSemaphore(prv->semaphore);
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
 #else
 	sem_destroy(&prv->semaphore);
 #endif
@@ -95,6 +106,8 @@ void Semaphore::post()
 	ReleaseSemaphore(prv->semaphore, 1, nullptr);
 #elif DG_PLATFORM == DG_PLATFORM_OSX
 	MPSignalSemaphore(prv->semaphore);
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	sema_destroy(prv->semaphore)
 #else
 	sem_post(&prv->semaphore);
 #endif
@@ -117,6 +130,8 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 	{
 		return false;
 	}
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	sema_timedwait(prv->semaphore, timeout.count());
 #else
 	struct timespec ts;
 
@@ -162,6 +177,8 @@ void Semaphore::wait()
 	WaitForSingleObject(prv->semaphore, INFINITE);
 #elif DG_PLATFORM == DG_PLATFORM_OSX
 	MPWaitOnSemaphore(prv->semaphore, kDurationForever);
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	sema_wait(prv->semaphore);
 #else
 	sem_wait(&prv->semaphore);
 #endif
