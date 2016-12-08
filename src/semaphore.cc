@@ -119,18 +119,12 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 	}
 #else
 	struct timespec ts;
-
-	struct timeval now;
-	int rv = gettimeofday(&now, nullptr);
-	assert(rv == 0);
-
-	ts.tv_sec  = now.tv_sec;
-	ts.tv_nsec = now.tv_usec * 1000;
+	clock_gettime(CLOCK_REALTIME, &ts);
 
 	// Add timeout
 	time_t seconds = (time_t)(timeout.count() / 1000);
 	ts.tv_sec += seconds;
-	ts.tv_nsec += (long)((timeout.count() - (seconds * 1000)) * 1000000);
+	ts.tv_nsec += (long)((timeout.count() % 1000) * 1000000);
 
 	// Make sure we don't overflow the nanoseconds.
 	constexpr long nsec = 1000000000LL;
