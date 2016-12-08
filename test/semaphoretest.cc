@@ -64,8 +64,6 @@ public:
 			bool res = sem.wait(std::chrono::milliseconds(1000));
 			CPPUNIT_ASSERT(!res); // false means timeout
 			auto stop = std::chrono::steady_clock::now();
-			auto d = dist((stop - start), std::chrono::milliseconds(1000));
-			printf("%lld\n", d.count());
 
 			// Allow +/-1ms skew
 			CPPUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
