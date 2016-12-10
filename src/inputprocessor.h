@@ -36,7 +36,7 @@
 #include "events.h"
 #include "inputfilter.h"
 
-class Settings;
+struct Settings;
 
 class InputProcessor
 {

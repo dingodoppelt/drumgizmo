@@ -28,7 +28,7 @@
 
 #include "inputfilter.h"
 
-class Settings;
+struct Settings;
 
 class LatencyFilter
 	: public InputFilter
