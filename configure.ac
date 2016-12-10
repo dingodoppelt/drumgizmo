@@ -61,6 +61,25 @@ AC_COMPILE_IFELSE(
 )
 AC_LANG_POP([C++])
 
+dnl ===========================
+dnl Check for -ffloat-store support
+dnl ===========================
+AC_LANG_PUSH([C++])
+TMP_CXXFLAGS="$CXXFLAGS"
+CXXFLAGS="-Wall -Werror -ffloat-store"
+AC_MSG_CHECKING([whether CXX supports -ffloat-store])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	[AC_MSG_RESULT([yes])
+	 FLOAT_STORE="-ffloat-store"
+	],
+	[AC_MSG_RESULT([no])
+	 FLOAT_STORE=""
+	]
+)
+AC_SUBST(FLOAT_STORE)
+CXXFLAGS="$TMP_CXXFLAGS"
+AC_LANG_POP([C++])
+
 dnl ======================
 dnl Init pkg-config
 dnl ======================
