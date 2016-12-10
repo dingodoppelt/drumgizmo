@@ -70,9 +70,37 @@ HUGIN_PARM="-DDISABLE_HUGIN"
 AC_ARG_WITH([debug],
 	AS_HELP_STRING([--with-debug], [Build with debug support]))
 
+dnl ===========================
+dnl Check for -Wl,--no-undefined or -Wl,-undefined,error support
+dnl ===========================
+TMP_CXXFLAGS="$CXXFLAGS"
+AC_MSG_CHECKING([whether CXX supports '-Wl,--no-undefined'])
+CXXFLAGS=-Wl,--no-undefined
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	[ AC_MSG_RESULT([yes])
+		NO_UNDEFINED_PARAM=-Wl,--no-undefined
+	],
+	[ AC_MSG_RESULT([no])
+		AC_MSG_CHECKING([whether CXX supports '-Wl,-undefined,error'])
+		CXXFLAGS=-Wl,-undefined,error
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+			[AC_MSG_RESULT([yes])
+				NO_UNDEFINED_PARAM=-Wl,-undefined,error
+			],
+			[AC_MSG_RESULT([no])
+				NO_UNDEFINED_PARAM=""
+			]
+		)
+	]
+)
+CXXFLAGS="$TMP_CXXFLAGS"
+
+dnl ===========================
+dnl Set up debug compile args if the user requested it
+dnl ===========================
 AS_IF([test "x$with_debug" == "xyes"],
       [AC_MSG_WARN([*** Building with debug support!])
-	     CXXFLAGS="$CXXFLAGS -Wall -Werror -g -Wl,--no-undefined"
+	     CXXFLAGS="$CXXFLAGS -Wall -Werror -g $NO_UNDEFINED_PARAM"
 	     HUGIN_PARM=""]
 )
 
