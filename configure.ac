@@ -77,14 +77,14 @@ AC_LANG_PUSH([C++])
 TMP_CXXFLAGS="$CXXFLAGS"
 AC_MSG_CHECKING([whether CXX supports '-Wl,--no-undefined'])
 CXXFLAGS="-Wall -Werror -Wl,--no-undefined"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 	[ AC_MSG_RESULT([yes])
 		NO_UNDEFINED_PARAM=-Wl,--no-undefined
 	],
 	[ AC_MSG_RESULT([no])
 		AC_MSG_CHECKING([whether CXX supports '-Wl,-undefined,error'])
 		CXXFLAGS="-Wall -Werror -Wl,-undefined,error"
-		AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 			[AC_MSG_RESULT([yes])
 				NO_UNDEFINED_PARAM=-Wl,-undefined,error
 			],
