@@ -73,7 +73,6 @@ private:
 	Font font;
 
 	std::string _text;
-	size_t pos{0};
 
 	bool readonly{true};
 
