@@ -79,8 +79,7 @@ Image& ImageCache::borrow(const std::string& filename)
 	{
 		Image image(filename);
 		auto insertValue =
-			imageCache.emplace(filename,
-			                   std::move(std::make_pair(0, std::move(image))));
+			imageCache.emplace(filename, std::make_pair(0, std::move(image)));
 		cacheIterator = insertValue.first;
 	}
 
