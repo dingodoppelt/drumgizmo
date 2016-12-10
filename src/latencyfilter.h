@@ -41,5 +41,5 @@ public:
 	std::size_t getLatency() const override;
 
 private:
-	Settings& settings;
+	//Settings& settings;
 };

@@ -56,7 +56,6 @@ public:
 private:
 	SF_INFO info;
 	std::vector<SNDFILE*> channels;
-	std::size_t num_channels;
 
 	std::string file;
 	std::size_t latency;

@@ -69,6 +69,7 @@ class AtomicTest
 		void podAtomicCanBeDefaultInitialized() {
 			Atomic<int> i;
 			// note: i is initialized with garbage
+			(void)i; // prevent compiler 'unused' warning
 		}
 		
 		void nonPodAtomicCanBeDefaultInitialized() {

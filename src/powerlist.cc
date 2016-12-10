@@ -50,8 +50,6 @@ unsigned int const MIN_SAMPLE_SET_SIZE = 26u;
 //#define AUTO_CALCULATE_POWER
 unsigned int const SIZE = 500u;
 
-float const THRES = 1.f;
-
 PowerList::PowerList(Random& rand)
 	: rand(rand)
 {

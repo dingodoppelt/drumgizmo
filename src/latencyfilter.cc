@@ -27,7 +27,7 @@
 #include "latencyfilter.h"
 
 LatencyFilter::LatencyFilter(Settings& settings)
-	: settings(settings)
+	//: settings(settings)
 {
 }
 
