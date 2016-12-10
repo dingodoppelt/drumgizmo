@@ -2,6 +2,9 @@ if ENABLE_VST
 noinst_LTLIBRARIES = libvstsdk.la
 endif
 
+# We know there are warnings in the VSTSDK code, so don't consider them errors.
+CXXFLAGS:=$(filter-out -Werror -Wall ,$(CXXFLAGS))
+
 # Targets to copy vst source files
 pluginterfaces/vst2.x:
 	$(MKDIR_P) pluginterfaces/vst2.x
