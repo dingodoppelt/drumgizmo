@@ -67,7 +67,7 @@ public:
 
 			// Allow +/-1ms skew
 			CPPUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
-			               < std::chrono::milliseconds(1));
+			               < std::chrono::milliseconds(60));
 		}
 
 		{ // 100ms timeout
@@ -78,7 +78,7 @@ public:
 
 			// Allow +/-1ms skew
 			CPPUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(100))
-			               < std::chrono::milliseconds(1));
+			               < std::chrono::milliseconds(60));
 		}
 	}
 };
