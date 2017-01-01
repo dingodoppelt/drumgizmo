@@ -528,6 +528,12 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 		}
 		break;
 
+	case EnterNotify:
+	case LeaveNotify:
+	case MapNotify:
+		// There's nothing to do here atm.
+		break;
+
 	default:
 		WARN(X11, "Unhandled xevent.type: %d\n", xevent.type);
 		break;
