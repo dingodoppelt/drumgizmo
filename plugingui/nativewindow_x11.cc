@@ -28,6 +28,7 @@
 
 #include <X11/Xutil.h>
 #include <stdlib.h>
+#include <chrono>
 
 #include <hugin.hpp>
 
@@ -458,6 +459,15 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 				buttonEvent->direction =
 					(xevent.type == ButtonPress) ?
 					Direction::down : Direction::up;
+
+				// This is a fix for hosts (e.g. those using JUCE) that set the
+				// event time to '0'.
+				if(xevent.xbutton.time == 0)
+				{
+					auto now = std::chrono::system_clock::now().time_since_epoch();
+					xevent.xbutton.time =
+						std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
+				}
 
 				buttonEvent->doubleClick =
 					(xevent.type == ButtonPress) &&

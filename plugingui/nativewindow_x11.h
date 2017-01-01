@@ -62,7 +62,7 @@ private:
 
 	Window& window;
 
-	int last_click{0};
+	Time last_click{0};
 
 	Display* display{nullptr};
 	int screen{0};
