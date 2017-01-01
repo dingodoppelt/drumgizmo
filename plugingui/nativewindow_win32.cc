@@ -136,15 +136,15 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			{
 				buttonEvent->button = MouseButton::left;
 			}
-			else if(msg == WM_RBUTTONUP ||
-			        msg == WM_RBUTTONDBLCLK ||
-			        msg == WM_RBUTTONDOWN)
-			{
-				buttonEvent->button = MouseButton::middle;
-			}
 			else if(msg == WM_MBUTTONUP ||
 			        msg == WM_MBUTTONDBLCLK ||
 			        msg == WM_MBUTTONDOWN)
+			{
+				buttonEvent->button = MouseButton::middle;
+			}
+			else if(msg == WM_RBUTTONUP ||
+			        msg == WM_RBUTTONDBLCLK ||
+			        msg == WM_RBUTTONDOWN)
 			{
 				buttonEvent->button = MouseButton::right;
 			}
