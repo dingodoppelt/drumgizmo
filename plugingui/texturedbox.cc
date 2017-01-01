@@ -44,8 +44,6 @@ TexturedBox::TexturedBox(ImageCache& image_cache, const std::string& filename,
 	, seg_g(image_cache, filename, x0            , y0 + dy1 + dy2, dx1, dy3)
 	, seg_h(image_cache, filename, x0 + dx1      , y0 + dy1 + dy2, dx2, dy3)
 	, seg_i(image_cache, filename, x0 + dx1 + dx2, y0 + dy1 + dy2, dx3, dy3)
-	, x0(x0)
-	, y0(y0)
 	, dx1(dx1)
 	, dx2(dx2)
 	, dx3(dx3)
@@ -86,11 +84,11 @@ const Colour& TexturedBox::getPixel(std::size_t x, std::size_t y) const
 		{
 			float scale = (float)(x - dx1) / (float)(_width - dx1 - dx3);
 			assert(seg_b.width() == dx2);
-			return seg_b.getPixel(scale * dx2 + x0, y + y0);
+			return seg_b.getPixel(scale * dx2, y);
 		}
 		else // col 3
 		{
-			return seg_c.getPixel(x - (_width - dx3) + x0, y + y0);
+			return seg_c.getPixel(x - (_width - dx3), y);
 		}
 	}
 	else if(y < (_height - dy3)) // row 2
@@ -99,34 +97,34 @@ const Colour& TexturedBox::getPixel(std::size_t x, std::size_t y) const
 		{
 			// TODO: Apply vertical scale
 			float scale = (float)(y - dy1) / (float)(_height - dy1 - dy3);
-			return seg_d.getPixel(x + x0, scale * dy2 + y0);
+			return seg_d.getPixel(x, scale * dy2);
 		}
 		else if(x < (_width - dx3)) // col 2
 		{
-			float scalex0 = (float)(x - dx1) / (float)(_width - dx1 - dx3);
-			float scaley0 = (float)(y - dy1) / (float)(_height - dy1 - dy3);
-			return seg_e.getPixel(scalex0 * dx2 + x0, scaley0 * dy2 + y0);
+			float scale_x = (float)(x - dx1) / (float)(_width - dx1 - dx3);
+			float scale_y = (float)(y - dy1) / (float)(_height - dy1 - dy3);
+			return seg_e.getPixel(scale_x * dx2, scale_y * dy2);
 		}
 		else // col 3
 		{
 			float scale = (float)(y - dy1) / (float)(_height - dy1 - dy3);
-			return seg_f.getPixel(x - (_width - dx3) + x0, scale * dy2 + y0);
+			return seg_f.getPixel(x - (_width - dx3), scale * dy2);
 		}
 	}
 	else // row 3
 	{
 		if(x < dx1) // col 1
 		{
-			return seg_g.getPixel(x + x0, y - (_height - dy3) + y0);
+			return seg_g.getPixel(x, y - (_height - dy3));
 		}
 		else if(x < (_width - dx3)) // col 2
 		{
 			float scale = (float)(x - dx1) / (float)(_width - dx1 - dx3);
-			return seg_h.getPixel(scale * dx2 + x0, y - (_height - dy3) + y0);
+			return seg_h.getPixel(scale * dx2, y - (_height - dy3));
 		}
 		else // col 3
 		{
-			return seg_i.getPixel(x - (_width - dx3) + x0, y - (_height - dy3) + y0);
+			return seg_i.getPixel(x - (_width - dx3), y - (_height - dy3));
 		}
 	}
 

@@ -101,8 +101,6 @@ private:
 	Texture seg_h;
 	Texture seg_i;
 
-	std::size_t x0;
-	std::size_t y0;
 	std::size_t _width{100};
 	std::size_t _height{100};
 	std::size_t dx1;
