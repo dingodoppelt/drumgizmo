@@ -153,6 +153,11 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				break; // unknown button
 			}
 
+			// Double-clicking the a mouse button actually generates a sequence
+			// of four messages: WM_xBUTTONDOWN, WM_xBUTTONUP, WM_xBUTTONDBLCLK, and
+			// WM_xBUTTONUP. In other words the second WM_xBUTTONDOWN is replaced by a
+			// WM_xBUTTONDBLCLK. We simply 'return it' as a WM_xBUTTONDOWN but set the
+			// doubleClick boolean hint accordingly.
 			if(msg == WM_LBUTTONUP ||
 			   msg == WM_RBUTTONUP ||
 			   msg == WM_MBUTTONUP)
@@ -161,7 +166,10 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			}
 			else if(msg == WM_LBUTTONDOWN ||
 			        msg == WM_RBUTTONDOWN ||
-			        msg == WM_MBUTTONDOWN)
+			        msg == WM_MBUTTONDOWN ||
+			        msg == WM_LBUTTONDBLCLK ||
+			        msg == WM_RBUTTONDBLCLK ||
+			        msg == WM_MBUTTONDBLCLK)
 			{
 				buttonEvent->direction = Direction::down;
 			}
