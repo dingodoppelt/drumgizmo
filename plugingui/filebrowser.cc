@@ -109,7 +109,7 @@ void FileBrowser::resize(int w, int h)
 
 	offset += brd;
 
-	lbl_path.move(0, offset);
+	lbl_path.move(brd, offset);
 	lineedit.move(60, offset);
 
 	offset += btn_h;
