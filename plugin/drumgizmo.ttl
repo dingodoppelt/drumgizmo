@@ -30,6 +30,7 @@
     lv2:extensionData ui:resize ;
     lv2:requiredFeature ui:idleInterface ;
     lv2:extensionData ui:idleInterface ;
+    lv2:requiredFeature <http://lv2plug.in/ns/ext/instance-access> ;
     ui:binary <drumgizmo.so> .
 
 <http://drumgizmo.org/lv2>
