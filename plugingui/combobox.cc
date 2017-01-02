@@ -209,6 +209,11 @@ void ComboBox::keyEvent(KeyEvent* keyEvent)
 
 void ComboBox::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if(buttonEvent->direction != Direction::down)
 	{
 		return;

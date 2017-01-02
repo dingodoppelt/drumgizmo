@@ -282,6 +282,11 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 
 void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if((buttonEvent->x > ((int)width() - btn_size)) &&
 	   (buttonEvent->y < ((int)width() - 1)))
 	{

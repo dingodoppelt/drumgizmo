@@ -175,6 +175,11 @@ void ScrollBar::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if((buttonEvent->y < (int)width()) && buttonEvent->y > 0)
 	{
 		if(buttonEvent->direction == Direction::down)

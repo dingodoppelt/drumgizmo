@@ -41,6 +41,11 @@ CheckBox::CheckBox(Widget* parent)
 
 void CheckBox::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if((buttonEvent->direction == Direction::up) || buttonEvent->doubleClick)
 	{
 		buttonDown = false;

@@ -124,6 +124,11 @@ void Knob::keyEvent(KeyEvent* keyEvent)
 
 void Knob::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if(buttonEvent->direction == Direction::down)
 	{
 		state = down;

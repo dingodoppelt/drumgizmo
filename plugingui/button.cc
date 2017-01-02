@@ -46,6 +46,11 @@ Button::~Button()
 
 void Button::buttonEvent(ButtonEvent* buttonEvent)
 {
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if(buttonEvent->direction == Direction::down)
 	{
 		draw_state = down;

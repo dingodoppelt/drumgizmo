@@ -77,6 +77,11 @@ void LineEdit::buttonEvent(ButtonEvent *buttonEvent)
 		return;
 	}
 
+	// Ignore everything except left clicks.
+	if (buttonEvent->button != MouseButton::left) {
+		return;
+	}
+
 	if(buttonEvent->direction == Direction::down)
 	{
 		for(int i = 0; i < (int)visibleText.length(); ++i)
