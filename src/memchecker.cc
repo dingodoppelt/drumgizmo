@@ -35,6 +35,10 @@
 #include <mach/mach_types.h>
 #include <mach/mach_init.h>
 #include <mach/mach_host.h>
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/vmmeter.h>
 #endif
 
 #include <sndfile.h>
@@ -73,6 +77,18 @@ uint64_t MemChecker::calcFreeMemory() const
 	{
 		free_memory = (uint64_t)vm_stats.free_count * (uint64_t)page_size;
 	}
+#elif DG_PLATFORM == DG_PLATFORM_FREEBSD
+	u_int page_size;
+	struct vmtotal vmt;
+	size_t vmt_size, uint_size;
+
+	vmt_size = sizeof(vmt);
+	uint_size = sizeof(page_size);
+
+	sysctlbyname("vm.vmtotal", &vmt, &vmt_size, NULL, 0);
+	sysctlbyname("vm.stats.vm.v_page_size", &page_size, &uint_size, NULL, 0);
+
+	free_memory = vmt.t_free * (u_int64_t)page_size;
 #elif DG_PLATFORM == DG_PLATFORM_UNIX
 	// TODO
 #endif
