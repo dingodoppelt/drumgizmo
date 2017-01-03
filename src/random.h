@@ -52,7 +52,10 @@ public:
 	T& choose(std::vector<T>& vec);
 
 private:
-	std::default_random_engine generator;
+	// The std::default_random_engine of the gcc libstdc++ library is
+	// minstd_rand0, so make sure we use that all platforms regardless of which
+	// stdlib we link with.
+	std::minstd_rand0 generator;
 };
 
 template <typename T>
