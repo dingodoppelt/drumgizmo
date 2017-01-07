@@ -30,6 +30,8 @@
 #include <limits>
 #include <assert.h>
 #include <string.h>
+#include <chrono>
+#include <thread>
 
 #include "platform.h"
 
@@ -134,9 +136,18 @@ bool Semaphore::wait(const std::chrono::milliseconds& timeout)
 		ts.tv_sec += 1;
 	}
 
+again:
 	int ret = sem_timedwait(&prv->semaphore, &ts);
 	if(ret < 0)
 	{
+		if(errno == EINTR)
+		{
+			// The timed wait were interrupted prematurely so we need to wait some
+			// more. To prevent an infinite loop-like behaviour we make a short sleep.
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			goto again;
+		}
+
 		if(errno == ETIMEDOUT)
 		{
 			return false;
