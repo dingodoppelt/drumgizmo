@@ -56,12 +56,16 @@ private:
 	// minstd_rand0, so make sure we use that all platforms regardless of which
 	// stdlib we link with.
 	std::minstd_rand0 generator;
+
+	float generateFloat();
+
+	// variables for normalDistribution
+	bool has_saved_value = false;
+	float saved_value;
 };
 
 template <typename T>
 T& Random::choose(std::vector<T>& vec)
 {
-	std::uniform_int_distribution<size_t> distribution(0, vec.size()-1);
-	size_t rand_index = distribution(generator);
-	return vec[rand_index];
+	return vec[intInRange(0, vec.size() - 1)];
 }

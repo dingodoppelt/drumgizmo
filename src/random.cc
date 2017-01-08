@@ -27,6 +27,8 @@
 #include "random.h"
 
 #include <chrono>
+#include <type_traits>
+#include <cmath>
 
 Random::Random()
 	: Random(std::chrono::system_clock::now().time_since_epoch().count())
@@ -45,18 +47,89 @@ void Random::setSeed(unsigned int seed)
 
 int Random::intInRange(int lower_bound, int upper_bound)
 {
-	std::uniform_int_distribution<int> distribution(lower_bound, upper_bound);
-	return distribution(generator);
+	auto generate = [this]()
+	{
+		return (int)generator() - generator.min();
+	};
+
+	const int in_range = generator.max() - generator.min();
+	const int out_range = upper_bound - lower_bound;
+
+	int rand;
+
+	// scale in_range DOWN to out_range.
+	// (see: http://www.azillionmonkeys.com/qed/random.html)
+	if (in_range > out_range)
+	{
+		const int rand_inv_range = in_range / (out_range + 1);
+
+		do
+		{
+			rand = generate();
+		}
+		while (rand >= (out_range + 1) * rand_inv_range);
+
+		rand = lower_bound + rand/rand_inv_range;
+	}
+	// scale in_range UP to out_range.
+	// (see: http://stackoverflow.com/a/30738381)
+	else if (in_range < out_range)
+	{
+		int scale = out_range / (in_range + 1);
+
+		do
+		{
+			rand = generate() + intInRange(0, scale) * (in_range + 1);
+		}
+		while (rand < lower_bound && rand > upper_bound);
+
+		rand = lower_bound + rand;
+	}
+	// naive case
+	else
+	{
+		rand = lower_bound + generate();
+	}
+
+	return rand;
 }
 
 float Random::floatInRange(float lower_bound, float upper_bound)
 {
-	std::uniform_real_distribution<float> distribution(lower_bound, upper_bound);
-	return distribution(generator);
+	return generateFloat() * (upper_bound - lower_bound) + lower_bound;
 }
 
+// For details regarding the algorithm see:
+// https://en.wikipedia.org/wiki/Marsaglia_polar_method
 float Random::normalDistribution(float mean, float stddev)
 {
-	std::normal_distribution<float> distribution(mean, stddev);
-	return distribution(generator);
+	if (has_saved_value)
+	{
+		has_saved_value = false;
+		return saved_value * stddev + mean;
+	}
+	else
+	{
+		float u, v, s;
+		do
+		{
+			u = 2.0f*generateFloat() - 1;
+			v = 2.0f*generateFloat() - 1;
+			s = (u * u) + (v * v);
+		}
+		while (s > 1.0f || s == 0.0f);
+
+		s = std::sqrt(-2*std::log(s) / s);
+		saved_value = u * s;
+		has_saved_value = true;
+
+		return mean + stddev * (v * s);
+	}
+}
+
+float Random::generateFloat()
+{
+	return std::generate_canonical<float,
+	                               std::numeric_limits<float>::digits,
+	                               decltype(generator)>(generator);
 }
