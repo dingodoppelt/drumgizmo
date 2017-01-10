@@ -168,6 +168,20 @@ void Semaphore::wait()
 #elif DG_PLATFORM == DG_PLATFORM_OSX
 	MPWaitOnSemaphore(prv->semaphore, kDurationForever);
 #else
-	sem_wait(&prv->semaphore);
+again:
+	int ret = sem_wait(&prv->semaphore);
+	if(ret < 0)
+	{
+		if(errno == EINTR)
+		{
+			// The wait were interrupted prematurely so we need to wait again
+			// To prevent an infinite loop-like behaviour we make a short sleep.
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			goto again;
+		}
+
+		perror("sem_wait()");
+		assert(false);
+	}
 #endif
 }
