@@ -197,7 +197,7 @@ void DrumKitLoader::thread_main()
 		// Only sleep if queue is empty.
 		if(size == 0)
 		{
-			semaphore.wait(std::chrono::milliseconds(1000));
+			semaphore.wait(std::chrono::milliseconds(10));
 		}
 
 		bool newKit = false;
