@@ -28,6 +28,8 @@
 
 #include "../plugingui/resource.h"
 
+#include "drumkit_creator.h"
+
 class ResourceTester : public GUI::Resource {
 public:
 	ResourceTester(const std::string& name)
@@ -53,7 +55,9 @@ public:
 
 	void externalReadTest()
 	{
-		ResourceTester rc("kit/0000.wav");
+		auto filename = drumkit_creator::create0000Wav("0000.wav");
+
+		ResourceTester rc(filename);
 		CPPUNIT_ASSERT(!rc.probeIsInternal());
 		CPPUNIT_ASSERT(rc.valid());
 		CPPUNIT_ASSERT_EQUAL((size_t)46, rc.size());

@@ -29,6 +29,8 @@
 #include <drumgizmo.h>
 #include <unistd.h>
 
+#include "drumkit_creator.h"
+
 class AudioOutputEngineDummy
 	: public AudioOutputEngine
 {
@@ -81,28 +83,32 @@ public:
 		DrumGizmo dg(settings, oe, ie);
 		dg.setFrameSize(100);
 
+		// Create drumkits
+		auto kit1_file = drumkit_creator::createStdKit("kit1");
+		auto kit2_file = drumkit_creator::createStdKit("kit2");
+
 		// Switch kits emmidiately without giving the loader time to work:
 		for(int i = 0; i < 100; ++i)
 		{
-			settings.drumkit_file.store("kit/kit1.xml");
-			settings.drumkit_file.store("kit/kit2.xml");
+			settings.drumkit_file.store(kit1_file);
+			settings.drumkit_file.store(kit2_file);
 		}
 
 		// Switch kits with small delay giving the loader time to work a little:
 		for(int i = 0; i < 100; ++i)
 		{
-			settings.drumkit_file.store("kit/kit1.xml");
+			settings.drumkit_file.store(kit1_file);
 			usleep(100);
-			settings.drumkit_file.store("kit/kit2.xml");
+			settings.drumkit_file.store(kit2_file);
 			usleep(100);
 		}
 
 		// Switch kits with bigger delay giving the loader time to finish
 		for(int i = 0; i < 100; ++i)
 		{
-			settings.drumkit_file.store("kit/kit1.xml");
+			settings.drumkit_file.store(kit1_file);
 			usleep(10000);
-			settings.drumkit_file.store("kit/kit2.xml");
+			settings.drumkit_file.store(kit2_file);
 			usleep(10000);
 		}
 	}

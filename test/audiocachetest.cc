@@ -30,6 +30,8 @@
 #include <audiocache.h>
 #include <unistd.h>
 
+#include "drumkit_creator.h"
+
 #define FRAMESIZE 64
 
 class AudioCacheTest
@@ -137,41 +139,53 @@ public:
 	void singleChannelNonThreaded()
 	{
 		printf("\nsinglechannel_nonthreaded()\n");
-		const char filename[] = "kit/ride-single-channel.wav";
+
+		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+
+		// Conduct test
 		int channel = 0;
 		bool threaded = false;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 	}
 
 	void singleChannelThreaded()
 	{
 		printf("\nsinglechannel_threaded()\n");
-		const char filename[] = "kit/ride-single-channel.wav";
+
+		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+
+		// Conduct test
 		int channel = 0;
 		bool threaded = true;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 	}
 
 	void multiChannelNonThreaded()
 	{
 		printf("\nmultichannel_nonthreaded()\n");
-		const char filename[] = "kit/ride-multi-channel.wav";
+
+		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+
+		// Conduct test
 		int channel = 0;
 		bool threaded = false;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 		++channel;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 	}
 
 	void multiChannelThreaded()
 	{
 		printf("\nmultichannel_threaded()\n");
-		const char filename[] = "kit/ride-multi-channel.wav";
+
+		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+
+		// Conduct test
 		int channel = 0;
 		bool threaded = true;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 		++channel;
-		testHelper(filename, channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
 	}
 
 };

@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 
+#include "drumkit_creator.h"
 #include "lv2_test_host.h"
 
 #define DG_URI "http://drumgizmo.org/lv2"
@@ -108,8 +109,10 @@ public:
 			"  <value name=\"enable_resampling\">%s</value>\n"
 			"</config>";
 
-		const char drumkitfile[] = "kit/kit1.xml";
-		const char midimapfile[] = "kit/midimap.xml";
+		// Create drumkit
+		auto kit1_file = drumkit_creator::createStdKit("kit1");
+
+		auto midimapfile = drumkit_creator::createStdMidimap("midimap");
 		bool enable_velocity_modifier = true;
 		float velocity_modifier_falloff = 0.5;
 		float velocity_modifier_weight = 0.25;
@@ -119,8 +122,8 @@ public:
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
-		        drumkitfile,
-		        midimapfile,
+		        kit1_file.c_str(),
+		        midimapfile.c_str(),
 		        enable_velocity_modifier?"true":"false",
 		        velocity_modifier_falloff,
 		        velocity_modifier_weight,
@@ -173,8 +176,10 @@ public:
 			"  <value name=\"enable_resampling\">%s</value>\n"
 			"</config>";
 
-		const char drumkitfile[] = "kit/kit1.xml";
-		const char midimapfile[] = "kit/midimap.xml";
+		// Create drumkit
+		auto kit1_file = drumkit_creator::createStdKit("kit1");
+
+		auto midimapfile = drumkit_creator::createStdMidimap("midimap");
 		bool enable_velocity_modifier = true;
 		float velocity_modifier_falloff = 0.5;
 		float velocity_modifier_weight = 0.25;
@@ -184,8 +189,8 @@ public:
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
-		        drumkitfile,
-		        midimapfile,
+		        kit1_file.c_str(),
+		        midimapfile.c_str(),
 		        enable_velocity_modifier?"true":"false",
 		        velocity_modifier_falloff,
 		        velocity_modifier_weight,
@@ -250,8 +255,10 @@ public:
 			"  <value name=\"enable_resampling\">%s</value>\n"
 			"</config>";
 
-		const char drumkitfile[] = "kit/kit1.xml";
-		const char midimapfile[] = "kit/midimap.xml";
+		// Create drumkit
+		auto kit1_file = drumkit_creator::createStdKit("kit1");
+
+		auto midimapfile = drumkit_creator::createStdMidimap("midimap");
 		bool enable_velocity_modifier = true;
 		float velocity_modifier_falloff = 0.5;
 		float velocity_modifier_weight = 0.25;
@@ -261,8 +268,8 @@ public:
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
-		        drumkitfile,
-		        midimapfile,
+		        kit1_file.c_str(),
+		        midimapfile.c_str(),
 		        enable_velocity_modifier?"true":"false",
 		        velocity_modifier_falloff,
 		        velocity_modifier_weight,

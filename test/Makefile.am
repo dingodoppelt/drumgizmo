@@ -9,7 +9,7 @@ include $(top_srcdir)/plugingui/Makefile.am.plugingui
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	memchecker randomtest atomictest syncedsettingstest imagecachetest \
-	semaphoretest
+	semaphoretest drumkitcreatortest
 
 if ENABLE_LV2
 TESTS += lv2
@@ -18,13 +18,16 @@ endif
 check_PROGRAMS = $(TESTS)
 
 resource_CXXFLAGS = -DOUTPUT=\"resource\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
-resource_LDFLAGS = $(CPPUNIT_LIBS)
+resource_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
 resource_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/src/random.cc \
 	test.cc \
+	drumkit_creator.cc \
 	resource_test.cc
 
 audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" $(CPPUNIT_CFLAGS) \
@@ -40,7 +43,9 @@ audiocache_SOURCES = \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
+	$(top_srcdir)/src/random.cc \
 	test.cc \
+	drumkit_creator.cc \
 	audiocachetest.cc
 
 audiocachefile_CXXFLAGS = -DOUTPUT=\"audiocachefile\" $(CPPUNIT_CFLAGS) \
@@ -53,7 +58,9 @@ audiocachefile_SOURCES = \
 	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
+	$(top_srcdir)/src/random.cc \
 	test.cc \
+	drumkit_creator.cc \
 	audiocachefiletest.cc
 
 audiocacheidmanager_CXXFLAGS = -DOUTPUT=\"audiocacheidmanager\" \
@@ -85,11 +92,12 @@ enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
 enginetest_CFLAGS = -DDISABLE_HUGIN
-enginetest_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
+enginetest_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 enginetest_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
+	drumkit_creator.cc \
 	enginetest.cc
 
 paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" $(CPPUNIT_CFLAGS) \
@@ -119,12 +127,16 @@ resampler_SOURCES = \
 	resampler.cc
 
 lv2_CXXFLAGS = -DOUTPUT=\"lv2\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src \
 	 `pkg-config --cflags serd-0` `pkg-config --cflags lilv-0` \
 	-DLV2_PATH=\"$(libdir)/lv2\"
 lv2_LDFLAGS = $(CPPUNIT_LIBS) `pkg-config --libs serd-0` \
-	`pkg-config --libs lilv-0` -lcrypto
+	`pkg-config --libs lilv-0` -lcrypto \
+	$(SNDFILE_LIBS)
 lv2_SOURCES = \
+	$(top_srcdir)/src/random.cc \
 	test.cc \
+	drumkit_creator.cc \
 	lv2_test_host.cc \
 	lv2.cc
 
@@ -145,6 +157,7 @@ memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
 memchecker_SOURCES = \
 	$(DRUMGIZMO_SOURCES) \
 	test.cc \
+	drumkit_creator.cc \
 	memcheckertest.cc
 
 randomtest_CXXFLAGS = -DOUTPUT=\"randomtest\" $(CPPUNIT_CFLAGS) \
@@ -168,7 +181,8 @@ syncedsettingstest_LDFLAGS = $(CPPUNIT_LIBS)
 syncedsettingstest_SOURCES = syncedsettings.cc test.cc
 
 EXTRA_DIST = \
-	lv2_test_host.h
+	lv2_test_host.h \
+	drumkit_creator.h
 
 imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
@@ -192,5 +206,16 @@ semaphoretest_SOURCES = \
 	$(top_srcdir)/src/semaphore.cc \
 	semaphoretest.cc \
 	test.cc
+
+drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" $(CPPUNIT_CFLAGS)
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+drumkitcreatortest_CFLAGS = -DDISABLE_HUGIN
+drumkitcreatortest_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+drumkitcreatortest_SOURCES = \
+	$(top_srcdir)/src/random.cc \
+	test.cc \
+	drumkit_creator.cc \
+	drumkitcreatortest.cc
 
 endif

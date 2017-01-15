@@ -41,6 +41,8 @@
 #include "../src/drumkit.h"
 #include "../src/drumkitparser.h"
 
+#include "drumkit_creator.h"
+
 class MemCheckerTest
 	: public CppUnit::TestFixture
 	, public MemChecker
@@ -56,9 +58,9 @@ private:
 	DrumKit kit;
 	Random random;
 
-	const std::string small_kit_path = "kit/small_kit.xml";
-	const std::string huge_kit_path = "kit/huge_kit.xml";
-	const std::string audiofile = "kit/ride-multi-channel.wav";
+	const std::string small_kit_path = drumkit_creator::createSmallKit("small_kit");
+	const std::string huge_kit_path = drumkit_creator::createHugeKit("huge_kit");
+	const std::string audiofile = drumkit_creator::createMultiChannelWav("multi_channel.wav");
 public:
 	void setUp()
 	{

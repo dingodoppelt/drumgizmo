@@ -31,6 +31,8 @@
 #include <audiocachefile.h>
 #include <audiofile.h>
 
+#include "drumkit_creator.h"
+
 class TestableAudioCacheFiles
 	: public AudioCacheFiles
 {
@@ -65,8 +67,11 @@ public:
 
 	void refTest()
 	{
+		// Create the audio file
+		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+
+		// Conduct tests
 		TestableAudioCacheFiles audiofiles;
-		std::string filename = "kit/ride-single-channel.wav";
 		CPPUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 
 		audiofiles.getFile(filename);
@@ -86,7 +91,10 @@ public:
 	{
 		printf("Test buffer size: %d samples\n", (int)buffer_size);
 
-		std::string filename = "kit/ride-multi-channel.wav";
+		// Create the audio file
+		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+
+		// Conduct tests
 		AudioFile* ref_file[13];
 		for(size_t c = 0; c < 13; ++c)
 		{
