@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<instrument name="instr2">
+ <samples>
+  <sample name="stroke1">
+   <audiofile channel="ch1" file="2222.wav"/>
+   <audiofile channel="ch2" file="2222.wav"/>
+   <audiofile channel="ch3" file="2222.wav"/>
+   <audiofile channel="ch4" file="2222.wav"/>
+  </sample>
+ </samples>
+ <velocities>
+  <velocity lower="0" upper="1">
+   <sampleref probability="1" name="stroke1"/>
+  </velocity>
+ </velocities>
+</instrument>

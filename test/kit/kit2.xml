@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<drumkit name="Test drumkit" description="A test drumkit">
+  <channels>
+    <channel name="ch1"/>
+    <channel name="ch2"/>
+    <channel name="ch3"/>
+    <channel name="ch4"/>
+  </channels>
+  <instruments>
+    <instrument name="instr1" file="instr1.xml">
+			<channelmap in="ch1" out="ch1"/>
+			<channelmap in="ch2" out="ch2"/>
+			<channelmap in="ch3" out="ch3"/>
+			<channelmap in="ch4" out="ch4"/>
+		</instrument>
+    <instrument name="instr2" file="instr2.xml">
+			<channelmap in="ch1" out="ch1"/>
+			<channelmap in="ch2" out="ch2"/>
+			<channelmap in="ch3" out="ch3"/>
+			<channelmap in="ch4" out="ch4"/>
+		</instrument>
+	</instruments>
+</drumkit>
