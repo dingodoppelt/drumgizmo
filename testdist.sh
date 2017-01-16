@@ -22,7 +22,9 @@ make dist && (
 		tar xvzf ../drumgizmo-$VER.tar.gz
 		cd drumgizmo-$VER
 		./configure --enable-lv2 --enable-cli --enable-vst \
-				--with-vst-sources="$VST_BASE" --prefix=/usr
+		            --with-vst-sources="$VST_BASE" --prefix=/usr \
+		            --with-test
 		make
 		DESTDIR=$PWD/tst/install make install
+		make check
 )
