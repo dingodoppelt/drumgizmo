@@ -28,14 +28,14 @@
 
 #include "drumkit_creator.h"
 
-using namespace drumkit_creator;
-
 class DrumkitcreatorTest
 	: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(DrumkitcreatorTest);
 	CPPUNIT_TEST(testTest);
 	CPPUNIT_TEST_SUITE_END();
+
+	DrumkitCreator drumkit_creator;
 
 public:
 	void setUp()
@@ -50,7 +50,7 @@ public:
 	//! This just creates some drumkit.
 	void testTest()
 	{
-		drumkit_creator::createStdKit("stdkit");
+		drumkit_creator.createStdKit("stdkit");
 	}
 };
 

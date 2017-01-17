@@ -26,6 +26,8 @@
  */
 #include "drumkit_creator.h"
 
+#include <unistd.h>
+
 #include "../src/random.h"
 
 #include <sndfile.h>
@@ -35,25 +37,30 @@
 #include <cstdlib>
 #include <algorithm>
 
-// FIXME: unix-centric paths, automatically clean up the drumkit directory
-
-namespace drumkit_creator
+DrumkitCreator::~DrumkitCreator()
 {
+	for (const auto& file: created_files)
+	{
+		auto error = unlink(file.c_str());
 
-std::vector<Sample> createData(const WavInfo& wav_info,
-                               std::size_t number_of_channels);
-std::string createTemporaryDirectory(const std::string& name);
-void createInstrument(const InstrumentData& data, std::size_t number_of_channels,
-                      const std::string& dir);
-std::string createDrumkitFile(const DrumkitData& data, const std::string& dir);
+		if (error) {
+			std::cerr << "File could not be deleted in DrumkitCreator destructor"
+			          << std::endl;
+		}
+	}
 
-bool is_valid(const DrumkitData& data)
-{
-	// TODO Check the consistency of the data.
-	return true;
+	for (const auto& dir: created_directories)
+	{
+		auto error = rmdir(dir.c_str());
+
+		if (error) {
+			std::cerr << "Directory could not be deleted in DrumkitCreator destructor"
+			          << std::endl;
+		}
+	}
 }
 
-std::string create(const DrumkitData& data)
+std::string DrumkitCreator::create(const DrumkitData& data)
 {
 	std::string drumkit_filename;
 
@@ -73,14 +80,13 @@ std::string create(const DrumkitData& data)
 	}
 	else
 	{
-		// TODO report error
-		std::cout << "ERROR: create" << std::endl;
+		throw "DrumkitData not valid";
 	}
 	
 	return drumkit_filename;
 }
 
-void createWav(const WavInfo& wav_info, std::size_t number_of_channels, const std::string& dir)
+void DrumkitCreator::createWav(const WavInfo& wav_info, std::size_t number_of_channels, const std::string& dir)
 {
 	SF_INFO sfinfo;
 	sfinfo.samplerate = 44100;
@@ -90,21 +96,19 @@ void createWav(const WavInfo& wav_info, std::size_t number_of_channels, const st
 	std::string filename = dir + "/" + wav_info.filename;
 	auto sndfile = sf_open(filename.c_str(), SFM_WRITE, &sfinfo);
 	if (!sndfile) {
-		std::cout << "ERROR: Wav file couldn't be created: "
-		          << sf_strerror(sndfile) << std::endl;
-		return;
+		throw "The wav file could not be created";
 	}
 
+	created_files.push_back(filename);
+
 	auto data_vec = createData(wav_info, number_of_channels);
-	
-	auto written_count = sf_write_raw(sndfile, data_vec.data(), 2*data_vec.size());
-	std::cout << "Written: " << written_count << std::endl;
+	sf_write_raw(sndfile, data_vec.data(), 2*data_vec.size());
 
 	sf_write_sync(sndfile);
 	sf_close(sndfile);
 }
 
-std::string createStdKit(const std::string& name)
+std::string DrumkitCreator::createStdKit(const std::string& name)
 {
 	std::vector<WavInfo> wav_infos = {
 		WavInfo("1011.wav", 1, 0x1110),
@@ -127,7 +131,7 @@ std::string createStdKit(const std::string& name)
 	return create(kit_data);
 }
 
-std::string createSmallKit(const std::string& name)
+std::string DrumkitCreator::createSmallKit(const std::string& name)
 {
 	std::vector<WavInfo> wav_infos = {
 		WavInfo("small_instr.wav", 549833)
@@ -149,7 +153,7 @@ std::string createSmallKit(const std::string& name)
 	return create(kit_data);
 }
 
-std::string createHugeKit(const std::string& name)
+std::string DrumkitCreator::createHugeKit(const std::string& name)
 {
 	std::vector<WavInfo> wav_infos = {
 		WavInfo("huge_instr.wav", 549833)
@@ -177,7 +181,7 @@ std::string createHugeKit(const std::string& name)
 	return create(kit_data);
 }
 
-std::string createSingleChannelWav(const std::string& name)
+std::string DrumkitCreator::createSingleChannelWav(const std::string& name)
 {
 	auto dir = createTemporaryDirectory("wavfiles");
 
@@ -189,7 +193,7 @@ std::string createSingleChannelWav(const std::string& name)
 	return dir + "/" + name;
 }
 
-std::string createMultiChannelWav(const std::string& name)
+std::string DrumkitCreator::createMultiChannelWav(const std::string& name)
 {
 	auto dir = createTemporaryDirectory("wavfiles");
 
@@ -201,7 +205,7 @@ std::string createMultiChannelWav(const std::string& name)
 	return dir + "/" + name;
 }
 
-std::string create0000Wav(const std::string& name)
+std::string DrumkitCreator::create0000Wav(const std::string& name)
 {
 	auto dir = createTemporaryDirectory("wavfiles");
 
@@ -213,7 +217,7 @@ std::string create0000Wav(const std::string& name)
 	return dir + "/" + name;
 }
 
-std::string createStdMidimap(const std::string& name)
+std::string DrumkitCreator::createStdMidimap(const std::string& name)
 {
 	auto dir = createTemporaryDirectory("midimap");
 
@@ -228,12 +232,12 @@ std::string createStdMidimap(const std::string& name)
 	file.open(filename);
 	if (file.is_open())
 	{
+		created_files.push_back(filename);
 		file << content;
 	}
 	else
 	{
-		// TODO print error
-		std::cout << "ERROR: instrument" << std::endl;
+		throw "File could not be opened";
 	}
 	file.close();
 
@@ -241,23 +245,29 @@ std::string createStdMidimap(const std::string& name)
 }
 
 //
-// Helper functions
+// private member functions
 //
 
-std::string createTemporaryDirectory(const std::string& name)
+bool DrumkitCreator::is_valid(const DrumkitData& data)
 {
-	// FIXME Use cross-platform temporary directory
+	// TODO Check the consistency of the data.
+	return true;
+}
+
+std::string DrumkitCreator::createTemporaryDirectory(const std::string& name)
+{
 	std::string dir_template = "/tmp/drumgizmo_" + name + "XXXXXX";
 	const auto dir_name = mkdtemp(&dir_template[0]);
 
 	if (dir_name) {
+		created_directories.push_back(dir_name);
 		return std::string(dir_name);
 	}
 
 	return "";
 }
 
-std::vector<Sample> createData(const WavInfo& wav_info, std::size_t number_of_channels)
+auto DrumkitCreator::createData(const WavInfo& wav_info, std::size_t number_of_channels) -> std::vector<Sample>
 {
 	std::vector<Sample> data_vec(number_of_channels * wav_info.length, wav_info.sample);
 	if (wav_info.is_random)
@@ -274,7 +284,7 @@ std::vector<Sample> createData(const WavInfo& wav_info, std::size_t number_of_ch
 	return data_vec;
 }
 
-void createInstrument(const InstrumentData& data, std::size_t number_of_channels,
+void DrumkitCreator::createInstrument(const InstrumentData& data, std::size_t number_of_channels,
                       const std::string& dir)
 {
 	std::string prefix = "<?xml version='1.0' encoding='UTF-8'?>\n"
@@ -307,17 +317,17 @@ void createInstrument(const InstrumentData& data, std::size_t number_of_channels
 	file.open(filename);
 	if (file.is_open())
 	{
+		created_files.push_back(filename);
 		file << prefix + samples + postfix;
 	}
 	else
 	{
-		// TODO print error
-		std::cout << "ERROR: instrument" << std::endl;
+		throw "File could not be opened";
 	}
 	file.close();
 }
 
-std::string createDrumkitFile(const DrumkitData& data, const std::string& dir)
+std::string DrumkitCreator::createDrumkitFile(const DrumkitData& data, const std::string& dir)
 {
 	// Pre- and postfix string
 	std::string prefix = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -355,16 +365,14 @@ std::string createDrumkitFile(const DrumkitData& data, const std::string& dir)
 	file.open(filename);
 	if (file.is_open())
 	{
+		created_files.push_back(filename);
 		file << prefix + channels + instruments + postfix;
 	}
 	else
 	{
-		// TODO print error
-		std::cout << "ERROR: drumkit" << std::endl;
+		throw "File could not be opened";
 	}
 	file.close();
 
 	return filename;
 }
-
-} // end drumkit_creator

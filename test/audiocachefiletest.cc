@@ -61,6 +61,8 @@ class AudioCacheFileTest
 	CPPUNIT_TEST(noFileTest);
 	CPPUNIT_TEST_SUITE_END();
 
+	DrumkitCreator drumkit_creator;
+
 public:
 	void setUp() {}
 	void tearDown() {}
@@ -68,7 +70,7 @@ public:
 	void refTest()
 	{
 		// Create the audio file
-		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+		auto filename = drumkit_creator.createSingleChannelWav("single_channel.wav");
 
 		// Conduct tests
 		TestableAudioCacheFiles audiofiles;
@@ -92,7 +94,7 @@ public:
 		printf("Test buffer size: %d samples\n", (int)buffer_size);
 
 		// Create the audio file
-		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+		auto filename = drumkit_creator.createMultiChannelWav("multi_channel.wav");
 
 		// Conduct tests
 		AudioFile* ref_file[13];

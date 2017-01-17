@@ -44,6 +44,8 @@ class AudioCacheTest
 	CPPUNIT_TEST(multiChannelThreaded);
 	CPPUNIT_TEST_SUITE_END();
 
+	DrumkitCreator drumkit_creator;
+
 public:
 	void setUp() {}
 	void tearDown() {}
@@ -140,7 +142,7 @@ public:
 	{
 		printf("\nsinglechannel_nonthreaded()\n");
 
-		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+		auto filename = drumkit_creator.createSingleChannelWav("single_channel.wav");
 
 		// Conduct test
 		int channel = 0;
@@ -152,7 +154,7 @@ public:
 	{
 		printf("\nsinglechannel_threaded()\n");
 
-		auto filename = drumkit_creator::createSingleChannelWav("single_channel.wav");
+		auto filename = drumkit_creator.createSingleChannelWav("single_channel.wav");
 
 		// Conduct test
 		int channel = 0;
@@ -164,7 +166,7 @@ public:
 	{
 		printf("\nmultichannel_nonthreaded()\n");
 
-		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+		auto filename = drumkit_creator.createMultiChannelWav("multi_channel.wav");
 
 		// Conduct test
 		int channel = 0;
@@ -178,7 +180,7 @@ public:
 	{
 		printf("\nmultichannel_threaded()\n");
 
-		auto filename = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+		auto filename = drumkit_creator.createMultiChannelWav("multi_channel.wav");
 
 		// Conduct test
 		int channel = 0;

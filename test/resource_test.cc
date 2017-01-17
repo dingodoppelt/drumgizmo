@@ -49,13 +49,15 @@ class ResourceTest : public CppUnit::TestFixture
 	CPPUNIT_TEST(internalReadTest);
 	CPPUNIT_TEST_SUITE_END();
 
+	DrumkitCreator drumkit_creator;
+
 public:
 	void setUp() {}
 	void tearDown() {}
 
 	void externalReadTest()
 	{
-		auto filename = drumkit_creator::create0000Wav("0000.wav");
+		auto filename = drumkit_creator.create0000Wav("0000.wav");
 
 		ResourceTester rc(filename);
 		CPPUNIT_ASSERT(!rc.probeIsInternal());

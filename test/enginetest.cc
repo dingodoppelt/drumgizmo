@@ -71,6 +71,8 @@ class test_engine : public CppUnit::TestFixture
 	CPPUNIT_TEST(loading);
 	CPPUNIT_TEST_SUITE_END();
 
+	DrumkitCreator drumkit_creator;
+
 public:
 	void setUp() {}
 	void tearDown() {}
@@ -84,8 +86,8 @@ public:
 		dg.setFrameSize(100);
 
 		// Create drumkits
-		auto kit1_file = drumkit_creator::createStdKit("kit1");
-		auto kit2_file = drumkit_creator::createStdKit("kit2");
+		auto kit1_file = drumkit_creator.createStdKit("kit1");
+		auto kit2_file = drumkit_creator.createStdKit("kit2");
 
 		// Switch kits emmidiately without giving the loader time to work:
 		for(int i = 0; i < 100; ++i)

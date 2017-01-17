@@ -57,10 +57,11 @@ private:
 	Settings settings;
 	DrumKit kit;
 	Random random;
+	DrumkitCreator drumkit_creator;
 
-	const std::string small_kit_path = drumkit_creator::createSmallKit("small_kit");
-	const std::string huge_kit_path = drumkit_creator::createHugeKit("huge_kit");
-	const std::string audiofile = drumkit_creator::createMultiChannelWav("multi_channel.wav");
+	const std::string small_kit_path = drumkit_creator.createSmallKit("small_kit");
+	const std::string huge_kit_path = drumkit_creator.createHugeKit("huge_kit");
+	const std::string audiofile = drumkit_creator.createMultiChannelWav("multi_channel.wav");
 public:
 	void setUp()
 	{
