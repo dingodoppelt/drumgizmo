@@ -129,7 +129,7 @@ resampler_SOURCES = \
 lv2_CXXFLAGS = -DOUTPUT=\"lv2\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src \
 	 `pkg-config --cflags serd-0` `pkg-config --cflags lilv-0` \
-	-DLV2_PATH=\"$(libdir)/lv2\"
+	-DLV2_PATH=\"@LV2DIR@\"
 lv2_LDFLAGS = $(CPPUNIT_LIBS) `pkg-config --libs serd-0` \
 	`pkg-config --libs lilv-0` -lcrypto \
 	$(SNDFILE_LIBS)

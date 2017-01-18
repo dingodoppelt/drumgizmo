@@ -8,7 +8,7 @@ include $(top_srcdir)/src/Makefile.am.drumgizmo
 # LV2
 ###
 if ENABLE_LV2
-lv2plugindir = $(libdir)/lv2/drumgizmo.lv2
+lv2plugindir = @LV2DIR@/drumgizmo.lv2
 lv2plugin_LTLIBRARIES = drumgizmo.la
 lv2plugin_DATA = manifest.ttl drumgizmo.ttl
 endif

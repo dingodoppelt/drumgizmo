@@ -212,10 +212,17 @@ AC_ARG_ENABLE([lv2],
 AS_IF(
   [test "x$enable_lv2" = "xyes"],
   [enable_lv2=yes
-  dnl ======================
-  dnl Check for lv2core
-  dnl ======================
-  PKG_CHECK_MODULES(LV2, lv2 >= 1.0)],
+   dnl ======================
+   dnl Check for lv2core
+   dnl ======================
+   PKG_CHECK_MODULES(LV2, lv2 >= 1.0)
+	 AC_ARG_WITH([lv2dir],
+		AS_HELP_STRING([--with-lv2dir=DIR],
+		               [Use DIR as the lv2 plugin directory [default=LIBDIR/lv2]]),
+	  [LV2DIR=$with_lv2dir],
+	  [LV2DIR='$(libdir)/lv2'])
+	 AC_SUBST(LV2DIR)
+	],
 
   [AC_MSG_RESULT([*** LV2 plugin will not be compiled ***])
    enable_lv2=no]
