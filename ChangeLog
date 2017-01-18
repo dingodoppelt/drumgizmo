@@ -4,13 +4,16 @@ Release date: January 18th 2017
 Contributors: deva, chaot4, Muldjord, meka
  - Fix semaphore EINT assertion in MusE
  - Fix atomic link check - always link with atomic
- - Draw boxes instead of nothing when trying to render characters not
-   in the font map
+ - Draw boxes instead of nothing when trying to render characters not in the
+   font map
  - Extend character map to include full latin1 character set
- - Fixed FreeBSD issues
- - Fix missing "mouse-up" events when runnnig lv2 plugin on linux in a
-   JUCE based host (Helio or Tracktion)
+ - Added full support for FreeBSD
+ - Fix missing "mouse-up" events when runnnig lv2 plugin on linux in a JUCE
+   based host (Helio or Tracktion)
  - Added missing ttl as per: https://github.com/falkTX/Carla/issues/412
+ - Algorithmically generate the test .wav files to be able to run the tests
+   also with the tarball
+ - Add --lv2dir parameter to configure
 
 Version 0.9.11
 ==============
