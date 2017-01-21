@@ -18,7 +18,7 @@ plugingui_SOURCES = \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/mutex.cc
 
-rcgen_SOURCES = rcgen.cc
+rcgen_SOURCES = rcgen_.cc
 
 EXTRA_DIST = \
 	button.h \

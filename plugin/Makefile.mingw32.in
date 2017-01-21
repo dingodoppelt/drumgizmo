@@ -118,7 +118,7 @@ SRC = \
 	drumgizmo_plugin.cc
 
 all:
-	g++ @top_srcdir@/plugingui/rcgen.cc -o @top_srcdir@/plugingui/rcgen
+	g++ @top_srcdir@/plugingui/rcgen_.cc -o @top_srcdir@/plugingui/rcgen
 	(cd @top_srcdir@/plugingui/resources; ../rcgen * > ../resource_data.cc)
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
