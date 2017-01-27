@@ -54,7 +54,10 @@ void Painter::setColour(const Colour& colour)
 static void plot(PixelBufferAlpha& pixbuf, const Colour& colour,
                  int x, int y, double c)
 {
-	if((x >= (int)pixbuf.width) || (y >= (int)pixbuf.height))
+	if((x >= (int)pixbuf.width) ||
+	   (y >= (int)pixbuf.height) ||
+	   (x < 0) ||
+	   (y < 0))
 	{
 		return;
 	}
