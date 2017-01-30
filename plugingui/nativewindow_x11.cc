@@ -49,8 +49,7 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 
 	screen = DefaultScreen(display);
 
-	// Get some colors
-	int blackColor = BlackPixel(display, screen);
+	int clearColor = 0xbbbbbb;
 
 	::Window parentWindow;
 	if(native_window)
@@ -69,7 +68,7 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	                              window.x(), window.y(),
 	                              window.width(), window.height(),
 	                              border,
-	                              blackColor, blackColor);
+	                              clearColor, clearColor);
 
 	long mask = (StructureNotifyMask |
 	             PointerMotionMask |
