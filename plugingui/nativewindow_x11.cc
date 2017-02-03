@@ -49,8 +49,6 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 
 	screen = DefaultScreen(display);
 
-	int clearColor = 0xbbbbbb;
-
 	::Window parentWindow;
 	if(native_window)
 	{
@@ -63,12 +61,18 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 
 	// Create the window
 	unsigned long border = 0;
-	xwindow = XCreateSimpleWindow(display,
-	                              parentWindow,
-	                              window.x(), window.y(),
-	                              window.width(), window.height(),
-	                              border,
-	                              clearColor, clearColor);
+	XSetWindowAttributes swa;
+	swa.backing_store = Always;
+	xwindow = XCreateWindow(display,
+	                        parentWindow,
+	                        window.x(), window.y(),
+	                        window.width(), window.height(),
+	                        border,
+	                        CopyFromParent, // depth
+	                        CopyFromParent, // class
+	                        CopyFromParent, // visual
+	                        CWBackingStore,
+	                        &swa);
 
 	long mask = (StructureNotifyMask |
 	             PointerMotionMask |
