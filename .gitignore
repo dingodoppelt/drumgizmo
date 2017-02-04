@@ -34,6 +34,7 @@ Makefile.am.test
 *.dll
 plugingui/plugingui
 plugingui/rcgen
+plugingui/resource_data.cc
 *.lo
 test/result_*.xml
 test/resampler
