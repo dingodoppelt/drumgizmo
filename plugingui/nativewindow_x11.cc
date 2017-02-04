@@ -426,8 +426,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 				resizeEvent->height = xevent.xconfigure.height;
 				event = resizeEvent;
 			}
-
-			if((window.windowX() != (std::size_t)xevent.xconfigure.x) ||
+			else if((window.windowX() != (std::size_t)xevent.xconfigure.x) ||
 			   (window.windowY() != (std::size_t)xevent.xconfigure.y))
 			{
 				auto moveEvent = std::make_shared<MoveEvent>();
