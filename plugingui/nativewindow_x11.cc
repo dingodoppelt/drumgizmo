@@ -512,7 +512,7 @@ void NativeWindowX11::allocateShmImage(std::size_t width, std::size_t height)
 
 	// Attach share memory bufer
 	void* shm_addr = shmat(shm_id, nullptr, 0);
-	if(reinterpret_cast<int>(shm_addr) == -1)
+	if(reinterpret_cast<long int>(shm_addr) == -1)
 	{
 		ERR(x11, "shmat failed: %s", strerror(errno));
 		return;
