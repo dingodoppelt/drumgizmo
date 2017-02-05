@@ -476,7 +476,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 void NativeWindowX11::allocateShmImage(std::size_t width, std::size_t height)
 {
-	DEBUG(x11, "(Re)alloc XShmImage (%d, %d)", width, height);
+	DEBUG(x11, "(Re)alloc XShmImage (%d, %d)", (int)width, (int)height);
 
 	if(image)
 	{
