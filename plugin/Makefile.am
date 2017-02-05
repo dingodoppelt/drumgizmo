@@ -1,8 +1,5 @@
 SUBDIRS = vst
 
-#include $(top_srcdir)/plugingui/Makefile.am.plugingui
-include $(top_srcdir)/src/Makefile.am.drumgizmo
-
 
 #######
 # LV2
@@ -14,18 +11,23 @@ lv2plugin_DATA = manifest.ttl drumgizmo.ttl
 endif
 
 drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
-	-I$(top_srcdir)/plugin/plugingizmo $(DRUMGIZMO_CPPFLAGS) \
-	-I$(top_srcdir)/plugingui
+	$(LV2_CFLAGS) \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/plugin/plugingizmo \
+	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin
 
 drumgizmo_la_SOURCES = \
-	$(DRUMGIZMO_SOURCES) \
+	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/plugin/plugingizmo/midievent.cc \
 	$(top_srcdir)/plugin/plugingizmo/pluginlv2.cc \
 	drumgizmo_plugin.cc
 
 drumgizmo_la_LDFLAGS = -shared -module -avoid-version
-drumgizmo_la_LIBADD = $(LV2_LIBS) $(DRUMGIZMO_LIBS) \
-	$(top_srcdir)/plugingui/libdggui.la
+drumgizmo_la_LIBADD = $(LV2_LIBS) \
+	$(top_srcdir)/plugingui/libdggui.la \
+	$(top_srcdir)/src/libdg.la
 
 
 #######
@@ -38,18 +40,23 @@ vstplugin_DATA =
 endif
 
 drumgizmo_vst_la_CXXFLAGS = -DVST \
-	-I$(top_srcdir)/plugin/plugingizmo $(DRUMGIZMO_CPPFLAGS) \
-	$(VST_CPPFLAGS) -Ivst -I$(top_srcdir)/plugingui
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/plugin/plugingizmo \
+	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin \
+	$(VST_CPPFLAGS) -Ivst
 
 drumgizmo_vst_la_SOURCES = \
-	$(DRUMGIZMO_SOURCES) \
+	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/plugin/plugingizmo/midievent.cc \
 	$(top_srcdir)/plugin/plugingizmo/pluginvst.cc \
 	drumgizmo_plugin.cc
 
 drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version
-drumgizmo_vst_la_LIBADD = vst/libvstsdk.la $(DRUMGIZMO_LIBS) \
-	$(top_srcdir)/plugingui/libdggui.la
+drumgizmo_vst_la_LIBADD = vst/libvstsdk.la \
+	$(top_srcdir)/plugingui/libdggui.la \
+	$(top_srcdir)/src/libdg.la
 
 
 install-exec-hook:

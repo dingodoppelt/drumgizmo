@@ -1,3 +1,50 @@
+noinst_LTLIBRARIES = libdg.la
+
+libdg_la_CPPFLAGS = \
+	-I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	$(SSEFLAGS) \
+	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) $(SAMPLERATE_CFLAGS) \
+	$(PTHREAD_CFLAGS)
+
+libdg_la_LIBADD = \
+	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS) \
+	$(PTHREAD_LIBS)
+
+nodist_libdg_la_SOURCES = \
+	audiocachefile.cc \
+	audiocache.cc \
+	audiocacheeventhandler.cc \
+	audiocacheidmanager.cc \
+	audioinputenginemidi.cc \
+	audiofile.cc \
+	channel.cc \
+	channelmixer.cc \
+	chresampler.cc \
+	configfile.cc \
+	configparser.cc \
+	drumgizmo.cc \
+	drumkit.cc \
+	drumkitloader.cc \
+	drumkitparser.cc \
+	events.cc \
+	inputprocessor.cc \
+	instrument.cc \
+	instrumentparser.cc \
+	latencyfilter.cc \
+	memchecker.cc \
+	midimapparser.cc \
+	midimapper.cc \
+	mutex.cc \
+	path.cc \
+	powerlist.cc \
+	random.cc \
+	sample.cc \
+	semaphore.cc \
+	saxparser.cc \
+	staminafilter.cc \
+	thread.cc \
+	versionstr.cc
+
 EXTRA_DIST = \
 	atomic.h \
 	audio.h \

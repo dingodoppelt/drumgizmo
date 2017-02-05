@@ -2,15 +2,13 @@ DISTDIRS = input output
 
 if ENABLE_CLI
 
-include $(top_srcdir)/src/Makefile.am.drumgizmo
-
 bin_PROGRAMS = drumgizmo
 
-drumgizmo_LDADD = $(DRUMGIZMO_LIBS) $(JACK_LIBS)
+drumgizmo_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
 
 drumgizmo_LDFLAGS =
 
-drumgizmo_CXXFLAGS = $(DRUMGIZMO_CPPFLAGS) \
+drumgizmo_CXXFLAGS = \
 	-I$(top_srcdir)/include -I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(JACK_CFLAGS) $(SSEFLAGS)
@@ -20,7 +18,6 @@ drumgizmo_CFLAGS = -DWITH_HUG_MUTEX -DWITH_HUG_FILTER
 drumgizmo_SOURCES = \
 	drumgizmoc.cc \
 	enginefactory.cc \
-	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c
 

@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = plugingui tools include src plugin drumgizmo man test
-DISTDIRS = plugingui tools include src plugin drumgizmo man test
+SUBDIRS = tools include src plugingui plugin drumgizmo man test
+DISTDIRS = tools include src plugingui plugin drumgizmo man test
 
 EXTRA_DIST = \
 	version.h \

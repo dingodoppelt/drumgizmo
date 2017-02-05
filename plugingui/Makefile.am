@@ -1,16 +1,13 @@
 noinst_PROGRAMS = plugingui rcgen
 noinst_LTLIBRARIES = libdggui.la
 
-#include Makefile.am.plugingui
-
 resource_data.cc : rcgen
 	(cd resources; ../rcgen * > ../resource_data.cc)
 
-PLUGIN_GUI_LIBS = $(GUI_LIBS) $(PTHREAD_LIBS)
-
-PLUGIN_GUI_CPPFLAGS = \
-	$(GUI_CPPFLAGS) -I$(top_srcdir)/hugin \
-	-I$(top_srcdir)/plugingui \
+libdggui_la_CPPFLAGS = \
+	$(GUI_CPPFLAGS) \
+	-I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/src \
 	-DWITH_HUG_MUTEX $(PTHREAD_CFLAGS) \
 	-DLODEPNG_NO_COMPILE_ENCODER \
 	-DLODEPNG_NO_COMPILE_DISK \
@@ -18,10 +15,10 @@ PLUGIN_GUI_CPPFLAGS = \
 	-DLODEPNG_NO_COMPILE_ERROR_TEXT \
 	-DLODEPNG_NO_COMPILE_CPP
 
-libdggui_la_CPPFLAGS = $(PLUGIN_GUI_CPPFLAGS) -I../src
-libdggui_la_LIBADD = $(PLUGIN_GUI_LIBS)
+libdggui_la_LIBADD = \
+	$(GUI_LIBS) $(PTHREAD_LIBS)
+
 nodist_libdggui_la_SOURCES = \
-	$(top_srcdir)/hugin/hugin.c \
 	dgwindow.cc \
 	plugingui.cc \
 	label.cc \
@@ -76,7 +73,6 @@ if ENABLE_PUGL
 nodist_libdggui_la_SOURCES += \
 	nativewindow_pugl.cc \
 	$(top_srcdir)/pugl/pugl/pugl_x11.c
-PLUGIN_GUI_CPPFLAGS += -I$(top_srcdir)/pugl/pugl
 endif
 
 #if ENABLE_COCOA
@@ -85,20 +81,16 @@ endif
 #	nativewindow_cocoa.cc
 #endif
 
-plugingui_LDADD = $(PLUGIN_GUI_LIBS) libdggui.la
+plugingui_LDADD = libdggui.la $(top_srcdir)/src/libdg.la
 
 plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
-	-I$(top_srcdir)/include $(PLUGIN_GUI_CPPFLAGS) -I$(top_srcdir)/src \
-	-DSTANDALONE
+	-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/hugin
 
 plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
 plugingui_SOURCES = \
 	testmain.cc \
-	$(top_srcdir)/src/configfile.cc \
-	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc \
-	$(top_srcdir)/src/mutex.cc
+	$(top_srcdir)/hugin/hugin.c
 
 rcgen_SOURCES = rcgen.cc
 

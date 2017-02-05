@@ -3,9 +3,6 @@ SUBDIRS = dgreftest
 
 if ENABLE_TESTS
 
-include $(top_srcdir)/src/Makefile.am.drumgizmo
-#include $(top_srcdir)/plugingui/Makefile.am.plugingui
-
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	memchecker randomtest atomictest syncedsettingstest imagecachetest \
@@ -90,11 +87,10 @@ audiocacheeventhandler_SOURCES = \
 
 enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
-enginetest_CFLAGS = -DDISABLE_HUGIN
-enginetest_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) $(SNDFILE_LIBS)
+	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
+enginetest_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
+	 $(top_srcdir)/src/libdg.la
 enginetest_SOURCES = \
-	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	drumkit_creator.cc \
@@ -102,9 +98,10 @@ enginetest_SOURCES = \
 
 paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
+	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
 paintertest_LDFLAGS = $(CPPUNIT_LIBS) $(top_srcdir)/plugingui/libdggui.la
 paintertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	paintertest.cc
 
@@ -142,11 +139,11 @@ configfile_SOURCES = \
 
 memchecker_CXXFLAGS = -DOUTPUT=\"memchecker\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS)
-memchecker_CFLAGS = -DDISABLE_HUGIN
-memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS)
+	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
+memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS) \
+	$(top_srcdir)/src/libdg.la
 memchecker_SOURCES = \
-	$(DRUMGIZMO_SOURCES) \
+	$(top_srcdir)/hugin/hugin.c \
 	test.cc \
 	drumkit_creator.cc \
 	memcheckertest.cc
@@ -166,8 +163,8 @@ atomictest_CXXFLAGS = -DOUTPUT=\"atomictest\" $(CPPUNIT_CFLAGS) \
 atomictest_LDFLAGS = $(CPPUNIT_LIBS)
 atomictest_SOURCES = atomictest.cc test.cc
 
-syncedsettingstest_CXXFLAGS = -DOUTPUT=\"syncedsettingstest\" $(CPPUNIT_CFLAGS) \
-	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
+syncedsettingstest_CXXFLAGS = -DOUTPUT=\"syncedsettingstest\" \
+	$(CPPUNIT_CFLAGS) -I$(top_srcdir)/src -I$(top_srcdir)/hugin
 syncedsettingstest_LDFLAGS = $(CPPUNIT_LIBS)
 syncedsettingstest_SOURCES = syncedsettings.cc test.cc
 
@@ -179,6 +176,7 @@ imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
 imagecachetest_LDFLAGS = $(CPPUNIT_LIBS) $(top_srcdir)/plugingui/libdggui.la
 imagecachetest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
 	imagecachetest.cc \
 	test.cc
 

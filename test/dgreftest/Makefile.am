@@ -1,12 +1,10 @@
 if ENABLE_CLI
 if HAVE_INPUT_MIDIFILE
 
-include $(top_srcdir)/src/Makefile.am.drumgizmo
-
 bin_PROGRAMS = dgreftest
 
-dgreftest_LDADD = $(DRUMGIZMO_LIBS) $(PTHREAD_LIBS) $(JACK_LIBS) \
-	$(SMF_LIBS)
+dgreftest_LDADD = $(PTHREAD_LIBS) $(JACK_LIBS) \
+	$(SMF_LIBS) $(top_srcdir)/src/libdg.la
 
 dgreftest_LDFLAGS =
 
@@ -22,7 +20,6 @@ dgreftest_SOURCES = \
 	midiinputengine.cc \
 	wavfileoutputengine.cc \
 	compareoutputengine.cc \
-	$(DRUMGIZMO_SOURCES) \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c
 
