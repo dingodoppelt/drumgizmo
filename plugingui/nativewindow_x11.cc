@@ -546,7 +546,7 @@ void NativeWindowX11::deallocateShmImage()
 
 void NativeWindowX11::updateImageFromBuffer()
 {
-	DEBUG(x11, "depth: %d", depth);
+	//DEBUG(x11, "depth: %d", depth);
 
 	auto width = window.wpixbuf.width;
 	auto height = window.wpixbuf.height;
