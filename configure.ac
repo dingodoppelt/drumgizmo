@@ -156,9 +156,10 @@ AS_IF(
   dnl Check for Xlib
   dnl ======================
   PKG_CHECK_MODULES(X11, x11 >= 1.0)
+  PKG_CHECK_MODULES(XEXT, xext >= 1.0)
 
-  GUI_CPPFLAGS="-DX11 $X11_CFLAGS"
-  GUI_LIBS="$X11_LIBS"],
+  GUI_CPPFLAGS="-DX11 $X11_CFLAGS $XEXT_CFLAGS"
+  GUI_LIBS="$X11_LIBS $XEXT_LIBS"],
 
   [test "x$enable_gui" = "xwin32"],
   [AC_MSG_RESULT([Setting gui backend to Win32])

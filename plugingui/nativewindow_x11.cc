@@ -26,7 +26,14 @@
  */
 #include "nativewindow_x11.h"
 
+//http://www.mesa3d.org/brianp/xshm.c
+
 #include <X11/Xutil.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <cerrno>
+#include <cstring>
+
 #include <stdlib.h>
 #include <chrono>
 
@@ -34,11 +41,11 @@
 
 #include "window.h"
 
-namespace GUI {
+namespace GUI
+{
 
 NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
-	: buffer(nullptr)
-	, window(window)
+	: window(window)
 {
 	display = XOpenDisplay(nullptr);
 	if(display  == nullptr)
@@ -48,6 +55,8 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	}
 
 	screen = DefaultScreen(display);
+	visual = DefaultVisual(display, screen);
+	depth = DefaultDepth(display, screen);
 
 	::Window parentWindow;
 	if(native_window)
@@ -60,18 +69,17 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	}
 
 	// Create the window
-	unsigned long border = 0;
 	XSetWindowAttributes swa;
 	swa.backing_store = Always;
 	xwindow = XCreateWindow(display,
 	                        parentWindow,
 	                        window.x(), window.y(),
 	                        window.width(), window.height(),
-	                        border,
+	                        0, // border
 	                        CopyFromParent, // depth
 	                        CopyFromParent, // class
 	                        CopyFromParent, // visual
-	                        CWBackingStore,
+	                        0,//CWBackingStore,
 	                        &swa);
 
 	long mask = (StructureNotifyMask |
@@ -103,10 +111,7 @@ NativeWindowX11::~NativeWindowX11()
 		return;
 	}
 
-	if(buffer)
-	{
-		XDestroyImage(buffer);
-	}
+	deallocateShmImage();
 
 	XFreeGC(display, gc);
 
@@ -184,139 +189,9 @@ void NativeWindowX11::hide()
 	XUnmapWindow(display, xwindow);
 }
 
-static int get_byte_order (void)
-{
-	union {
-		char c[sizeof(short)];
-		short s;
-	} order;
-
-	order.s = 1;
-	if((1 == order.c[0]))
-	{
-		return LSBFirst;
-	}
-	else
-	{
-		return MSBFirst;
-	}
-}
-
-XImage* NativeWindowX11::createImageFromBuffer(unsigned char* buf,
-                                               int width, int height)
-{
-	int depth;
-	XImage* img = nullptr;
-	Visual* vis;
-	double rRatio;
-	double gRatio;
-	double bRatio;
-	int outIndex = 0;
-	int i;
-	int numBufBytes = (3 * (width * height));
-
-	depth = DefaultDepth(display, screen);
-	vis = DefaultVisual(display, screen);
-
-	rRatio = vis->red_mask / 255.0;
-	gRatio = vis->green_mask / 255.0;
-	bRatio = vis->blue_mask / 255.0;
-
-	if(depth >= 24)
-	{
-		size_t numNewBufBytes = (4 * (width * height));
-		u_int32_t *newBuf = (u_int32_t *)malloc (numNewBufBytes);
-
-		for(i = 0; i < numBufBytes; ++i)
-		{
-			unsigned int r, g, b;
-			r = (buf[i] * rRatio);
-			++i;
-			g = (buf[i] * gRatio);
-			++i;
-			b = (buf[i] * bRatio);
-
-			r &= vis->red_mask;
-			g &= vis->green_mask;
-			b &= vis->blue_mask;
-
-			newBuf[outIndex] = r | g | b;
-			++outIndex;
-		}
-
-		img = XCreateImage (display,
-		                    CopyFromParent, depth,
-		                    ZPixmap, 0,
-		                    (char*) newBuf,
-		                    width, height,
-		                    32, 0);
-	}
-	else
-	{
-		if(depth >= 15)
-		{
-			size_t numNewBufBytes = (2 * (width * height));
-			u_int16_t* newBuf = (u_int16_t*)malloc (numNewBufBytes);
-
-			for(i = 0; i < numBufBytes; ++i)
-			{
-				unsigned int r, g, b;
-
-				r = (buf[i] * rRatio);
-				++i;
-				g = (buf[i] * gRatio);
-				++i;
-				b = (buf[i] * bRatio);
-
-				r &= vis->red_mask;
-				g &= vis->green_mask;
-				b &= vis->blue_mask;
-
-				newBuf[outIndex] = r | g | b;
-				++outIndex;
-			}
-
-			img = XCreateImage(display, CopyFromParent, depth, ZPixmap, 0,
-			                   (char*)newBuf, width, height, 16, 0);
-		}
-		else
-		{
-			//fprintf (stderr, "This program does not support displays with a depth less than 15.");
-			return nullptr;
-		}
-	}
-
-	XInitImage (img);
-
-	// Set the client's byte order, so that XPutImage knows what
-	// to do with the data.
-	// The default in a new X image is the server's format, which
-	// may not be what we want.
-	if((LSBFirst == get_byte_order ()))
-	{
-		img->byte_order = LSBFirst;
-	}
-	else
-	{
-		img->byte_order = MSBFirst;
-	}
-
-	// The bitmap_bit_order doesn't matter with ZPixmap images.
-	img->bitmap_bit_order = MSBFirst;
-
-	return img;
-}
-
 void NativeWindowX11::handleBuffer()
 {
-	if(buffer)
-	{
-		XDestroyImage(buffer);
-	}
-
-	buffer = createImageFromBuffer(window.wpixbuf.buf,
-	                               window.wpixbuf.width,
-	                               window.wpixbuf.height);
+	updateImageFromBuffer();
 }
 
 void NativeWindowX11::redraw()
@@ -326,13 +201,16 @@ void NativeWindowX11::redraw()
 		return;
 	}
 
-	if(buffer == nullptr)
+	if(!image)
 	{
 		window.updateBuffer();
+		handleBuffer();
 	}
 
-	XPutImage(display, xwindow, gc, buffer, 0, 0, 0, 0,
-	          window.width(), window.height());
+	XShmPutImage(display, xwindow, gc, image, 0, 0, 0, 0,
+	             std::min(image->width, (int)window.width()),
+	             std::min(image->height, (int)window.height()), false);
+
 	XFlush(display);
 }
 
@@ -369,6 +247,11 @@ std::shared_ptr<Event> NativeWindowX11::getNextEvent()
 		return nullptr;
 	}
 
+	if(!XPending(display))
+	{
+		return nullptr;
+	}
+
 	XEvent xEvent;
 	XNextEvent(display, &xEvent);
 	return translateXMessage(xEvent);
@@ -377,6 +260,11 @@ std::shared_ptr<Event> NativeWindowX11::getNextEvent()
 std::shared_ptr<Event> NativeWindowX11::peekNextEvent()
 {
 	if(display == nullptr)
+	{
+		return nullptr;
+	}
+
+	if(!XPending(display))
 	{
 		return nullptr;
 	}
@@ -393,6 +281,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 	switch(xevent.type) {
 	case MotionNotify:
+		//DEBUG(x11, "MotionNotify");
 		{
 			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
 			mouseMoveEvent->window_id = xevent.xmotion.window;
@@ -403,6 +292,16 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 		break;
 
 	case Expose:
+		//DEBUG(x11, "Expose");
+		//if(!peek)
+		//{
+		//	XEvent peekXEvent;
+		//	while(XCheckWindowEvent(display, xwindow, Expose, &peekXEvent))
+		//	{
+		//		xevent.xexpose = peekXEvent.xexpose;
+		//	}
+		//}
+
 		if(xevent.xexpose.count == 0)
 		{
 			auto repaintEvent = std::make_shared<RepaintEvent>();
@@ -416,7 +315,17 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 		break;
 
 	case ConfigureNotify:
+		//DEBUG(x11, "ConfigureNotify");
 		{
+			//if(!peek)
+			//{
+			//	XEvent peekXEvent;
+			//	while(XCheckWindowEvent(display, xwindow, ConfigureNotify, &peekXEvent))
+			//	{
+			//		xevent.xconfigure = peekXEvent.xconfigure;
+			//	}
+			//}
+
 			if((window.width() != (std::size_t)xevent.xconfigure.width) ||
 			   (window.height() != (std::size_t)xevent.xconfigure.height))
 			{
@@ -427,7 +336,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 				event = resizeEvent;
 			}
 			else if((window.windowX() != (std::size_t)xevent.xconfigure.x) ||
-			   (window.windowY() != (std::size_t)xevent.xconfigure.y))
+			        (window.windowY() != (std::size_t)xevent.xconfigure.y))
 			{
 				auto moveEvent = std::make_shared<MoveEvent>();
 				moveEvent->window_id = xevent.xconfigure.window;
@@ -440,6 +349,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 	case ButtonPress:
 	case ButtonRelease:
+		//DEBUG(x11, "ButtonPress");
 		{
 			if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
 			{
@@ -502,6 +412,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 	case KeyPress:
 	case KeyRelease:
+		//DEBUG(x11, "KeyPress");
 		{
 			auto keyEvent = std::make_shared<KeyEvent>();
 			keyEvent->window_id = xevent.xkey.window;
@@ -539,6 +450,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 		break;
 
 	case ClientMessage:
+		//DEBUG(x11, "ClientMessage");
 		if(((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
 		{
 			auto closeEvent = std::make_shared<CloseEvent>();
@@ -549,6 +461,8 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 	case EnterNotify:
 	case LeaveNotify:
 	case MapNotify:
+	case MappingNotify:
+		//DEBUG(x11, "EnterNotify");
 		// There's nothing to do here atm.
 		break;
 
@@ -558,6 +472,141 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 	}
 
 	return event;
+}
+
+void NativeWindowX11::allocateShmImage(std::size_t width, std::size_t height)
+{
+	DEBUG(x11, "(Re)alloc XShmImage (%d, %d)", width, height);
+
+	if(image)
+	{
+		deallocateShmImage();
+	}
+
+	if(!XShmQueryExtension(display))
+	{
+		ERR(x11, "XShmExtension not available");
+		return;
+	}
+
+	image = XShmCreateImage(display, visual, depth,
+	                        ZPixmap, nullptr, &shm_info,
+	                        width, height);
+	if(image == nullptr)
+	{
+		ERR(x11, "XShmCreateImage failed!\n");
+		return;
+	}
+
+	std::size_t byte_size = image->bytes_per_line * image->height;
+
+	// Allocate shm buffer
+	int shm_id = shmget(IPC_PRIVATE, byte_size, IPC_CREAT|0777);
+	if(shm_id == -1)
+	{
+		ERR(x11, "shmget failed: %s", strerror(errno));
+		return;
+	}
+
+	shm_info.shmid = shm_id;
+
+	// Attach share memory bufer
+	void* shm_addr = shmat(shm_id, nullptr, 0);
+	if(reinterpret_cast<int>(shm_addr) == -1)
+	{
+		ERR(x11, "shmat failed: %s", strerror(errno));
+		return;
+	}
+
+	shm_info.shmaddr = reinterpret_cast<char*>(shm_addr);
+	image->data = shm_info.shmaddr;
+	shm_info.readOnly = false;
+
+	// This may trigger the X protocol error we're ready to catch:
+	XShmAttach(display, &shm_info);
+	XSync(display, false);
+
+	// Make the shm id unavailable to others
+	shmctl(shm_id, IPC_RMID, 0);
+}
+
+void NativeWindowX11::deallocateShmImage()
+{
+	if(image == nullptr)
+	{
+		return;
+	}
+
+	XFlush(display);
+	XShmDetach(display, &shm_info);
+	XDestroyImage(image);
+	image = nullptr;
+	shmdt(shm_info.shmaddr);
+}
+
+void NativeWindowX11::updateImageFromBuffer()
+{
+	DEBUG(x11, "depth: %d", depth);
+
+	auto width = window.wpixbuf.width;
+	auto height = window.wpixbuf.height;
+
+	// If image hasn't been allocated yet or if the image backbuffer is
+	// too small, (re)allocate with a suitable size.
+	if((image == nullptr) ||
+	   ((int)width > image->width) ||
+	   ((int)height > image->height))
+	{
+		constexpr std::size_t step_size = 128; // size increments
+		std::size_t new_width = ((width / step_size) + 1) * step_size;
+		std::size_t new_height = ((height / step_size) + 1) * step_size;
+		allocateShmImage(new_width, new_height);
+	}
+
+	auto stride = image->width;
+
+	std::uint8_t* pixel_buffer = (std::uint8_t*)window.wpixbuf.buf;
+
+	if(depth >= 24) // RGB 888 format
+	{
+		std::uint32_t* shm_addr = (std::uint32_t*)shm_info.shmaddr;
+
+		std::size_t x_stride = 0;
+		std::size_t x_pos = 0;
+		for(std::size_t y = 0; y < height; ++y)
+		{
+			for(std::size_t x = 0; x < width; ++x)
+			{
+				const std::uint8_t red = pixel_buffer[x_pos * 3];
+				const std::uint8_t green = pixel_buffer[x_pos * 3 + 1];
+				const std::uint8_t blue = pixel_buffer[x_pos * 3 + 2];
+				shm_addr[x_stride] = (red << 16) | (green << 8) | blue;
+				++x_pos;
+				++x_stride;
+			}
+			x_stride += (stride - width);
+		}
+	}
+	else if(depth >= 15) // RGB 565 format
+	{
+		std::uint16_t* shm_addr = (std::uint16_t*)shm_info.shmaddr;
+
+		std::size_t x_stride = 0;
+		std::size_t x_pos = 0;
+		for(std::size_t y = 0; y < height; ++y)
+		{
+			for(std::size_t x = 0; x < width; ++x)
+			{
+				const std::uint8_t red = pixel_buffer[x_pos * 3];
+				const std::uint8_t green = pixel_buffer[x_pos * 3 + 1];
+				const std::uint8_t blue = pixel_buffer[x_pos * 3 + 2];
+				shm_addr[x_stride] = (red << 11) | (green << 5) | blue;
+				++x_pos;
+				++x_stride;
+			}
+			x_stride += (stride - width);
+		}
+	}
 }
 
 } // GUI::

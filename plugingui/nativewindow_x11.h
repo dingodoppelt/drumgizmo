@@ -27,13 +27,18 @@
 #pragma once
 
 #include <X11/Xlib.h>
+#include <X11/extensions/XShm.h>
 
 #include "nativewindow.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class Window;
-class NativeWindowX11 : public NativeWindow {
+
+class NativeWindowX11
+	: public NativeWindow
+{
 public:
 	NativeWindowX11(void* native_window, Window& window);
 	~NativeWindowX11();
@@ -54,11 +59,22 @@ public:
 
 private:
 	std::shared_ptr<Event> translateXMessage(XEvent& xevent, bool peek = false);
-	XImage* createImageFromBuffer(unsigned char* buf, int width, int height);
+
+	//! Allocate new shared memory buffer for the pixel buffer.
+	//! Frees the existing buffer if there is one.
+	void allocateShmImage(std::size_t width, std::size_t height);
+
+	//! Deallocate image and shm resources.
+	void deallocateShmImage();
+
+	//! Copy data from the pixel buffer into the shared memory
+	void updateImageFromBuffer();
+
+	XShmSegmentInfo shm_info;
+	XImage* image{nullptr};
 
 	::Window xwindow{0};
 	GC gc{0};
-	XImage* buffer{nullptr};
 
 	Window& window;
 
@@ -66,6 +82,8 @@ private:
 
 	Display* display{nullptr};
 	int screen{0};
+	int depth{0};
+	Visual* visual{nullptr};
 	Atom wmDeleteMessage{0};
 };
 
