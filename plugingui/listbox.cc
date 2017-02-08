@@ -97,7 +97,7 @@ void ListBox::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawImage(0, 0, box);
 }
 
-void ListBox::resize(int width, int height)
+void ListBox::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 	basic.resize(width - (7 + 7),

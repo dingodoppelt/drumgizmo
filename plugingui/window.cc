@@ -46,7 +46,7 @@ namespace GUI {
 
 Window::Window(void* native_window)
 	: Widget(nullptr)
-	, wpixbuf(100, 100)
+	, wpixbuf(1, 1)
 {
 	// Make sure we have a valid size when initialising the NativeWindow
 	_width = wpixbuf.width;
@@ -88,22 +88,37 @@ void Window::setCaption(const std::string& caption)
 //! This overload the resize method on Widget and simply requests a window resize
 //! on the windowmanager/OS. The resized() method is called by the event handler
 //! once the window has been resized.
-void Window::resize(int width, int height)
+void Window::resize(std::size_t width, std::size_t height)
 {
-	if((width < 1) || (height < 1))
-	{
-		return;
-	}
-
 	native->resize(width, height);
 }
 
 //! This overload the move method on Widget and simply requests a window move
 //! on the windowmanager/OS. The moved() method is called by the event handler
 //! once the window has been moved.
-void Window::move(size_t x, size_t y)
+void Window::move(int x, int y)
 {
 	native->move(x, y);
+}
+
+int Window::x()
+{
+	return native->getPosition().first;
+}
+
+int Window::y()
+{
+	return native->getPosition().second;
+}
+
+size_t Window::width()
+{
+	return native->getSize().first;
+}
+
+size_t Window::height()
+{
+	return native->getSize().second;
 }
 
 size_t Window::windowX()
@@ -194,15 +209,10 @@ void Window::redraw()
 
 //! Called by event handler when an windowmanager/OS window resize event has
 //! been received. Do not call this directly.
-void Window::resized(size_t width, size_t height)
+void Window::resized(std::size_t width, std::size_t height)
 {
-	if((_width == width) && (_height == height))
-	{
-		return;
-	}
-
-	wpixbuf.realloc(width, height);
-	Widget::resize(width, height);
+	wpixbuf.realloc(this->width(), this->height());
+	Widget::resize(this->width(), this->height());
 	updateBuffer();
 }
 
@@ -210,7 +220,7 @@ void Window::resized(size_t width, size_t height)
 //! been received. Do not call this directly.
 void Window::moved(int x, int y)
 {
-	// Make sure widget corrdinates are updated.
+	// Make sure widget coordinates are updated.
 	Widget::move(x, y);
 }
 

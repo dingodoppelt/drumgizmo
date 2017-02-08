@@ -44,9 +44,11 @@ public:
 	~NativeWindowX11();
 
 	// From NativeWindow:
-	void setFixedSize(int width, int height) override;
-	void resize(int width, int height) override;
+	void setFixedSize(std::size_t width, std::size_t height) override;
+	void resize(std::size_t width, std::size_t height) override;
+	std::pair<std::size_t, std::size_t> getSize() override;
 	void move(int x, int y) override;
+	std::pair<int, int> getPosition() override;
 	void show() override;
 	void hide() override;
 	void setCaption(const std::string &caption) override;

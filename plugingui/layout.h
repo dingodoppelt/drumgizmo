@@ -31,30 +31,33 @@
 
 #include <notifier.h>
 
-namespace GUI {
+namespace GUI
+{
 
 class Layout;
 
-class LayoutItem {
+class LayoutItem
+{
 public:
 	LayoutItem();
 	virtual ~LayoutItem();
 
 	void setLayoutParent(Layout* parent);
 
-	virtual void resize(int width, int height) = 0;
-	virtual void move(size_t x, size_t y) = 0;
+	virtual void resize(std::size_t width, std::size_t height) = 0;
+	virtual void move(int x, int y) = 0;
 	virtual int x() = 0;
 	virtual int y() = 0;
-	virtual size_t width() = 0;
-	virtual size_t height() = 0;
+	virtual std::size_t width() = 0;
+	virtual std::size_t height() = 0;
 
 private:
 	Layout* parent;
 };
 
 //! \brief Abtract Layout class.
-class Layout : public Listener
+class Layout
+	: public Listener
 {
 public:
 	Layout(LayoutItem *parent);
@@ -75,7 +78,9 @@ protected:
 };
 
 //! \brief Abstract box layout
-class BoxLayout : public Layout {
+class BoxLayout
+	: public Layout
+{
 public:
 	BoxLayout(LayoutItem *parent);
 
@@ -99,7 +104,9 @@ enum class HAlignment {
 };
 
 //! \brief A Layout that lays out its elements vertically.
-class VBoxLayout : public BoxLayout {
+class VBoxLayout
+	: public BoxLayout
+{
 public:
 	VBoxLayout(LayoutItem *parent);
 
@@ -119,7 +126,9 @@ enum class VAlignment {
 };
 
 //! \brief A Layout that lays out its elements vertically.
-class HBoxLayout : public BoxLayout {
+class HBoxLayout
+	: public BoxLayout
+{
 public:
 	HBoxLayout(LayoutItem *parent);
 

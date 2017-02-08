@@ -64,7 +64,7 @@ public:
 	Notifier<> valueChangedNotifier;
 
 	// From Widget:
-	virtual void resize(int w, int h) override;
+	virtual void resize(std::size_t width, std::size_t height) override;
 
 protected:
 	void onScrollBarValueChange(int value);

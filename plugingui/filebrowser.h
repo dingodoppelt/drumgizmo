@@ -50,7 +50,7 @@ public:
 	// From Widget:
 	bool isFocusable() override { return true; }
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
-	virtual void resize(int w, int h) override;
+	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
 	void listSelectionChanged();

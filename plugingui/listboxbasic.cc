@@ -355,11 +355,11 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 	}
 }
 
-void ListBoxBasic::resize(int w, int h)
+void ListBoxBasic::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(w,h);
-	scroll.move(w - scroll.width(), 0);
-	scroll.resize(scroll.width(), h);
+	Widget::resize(width, height);
+	scroll.move(width - scroll.width(), 0);
+	scroll.resize(scroll.width(), height);
 }
 
 } // GUI::

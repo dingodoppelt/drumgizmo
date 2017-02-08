@@ -56,7 +56,7 @@ public:
 
 	// From Widget:
 	virtual void repaintEvent(GUI::RepaintEvent* repaintEvent) override;
-	virtual void resize(int w, int h) override;
+	virtual void resize(std::size_t height, std::size_t width) override;
 
 	// Forwarded notifier from ListBoxBasic::basic
 	Notifier<>& selectionNotifier;

@@ -39,7 +39,6 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 {
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
-	resize(370, 330);
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 	setCaption("DrumGizmo v" VERSION);
 }
@@ -90,7 +89,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	painter.drawImage(width() - 16, 0, sidebar);
 }
 
-void MainWindow::sizeChanged(int width, int height)
+void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
 	tabs.resize(width - 2 * 16, height);
 }

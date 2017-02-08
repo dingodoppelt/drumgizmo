@@ -41,9 +41,6 @@ Widget::Widget(Widget* parent)
 		parent->addChild(this);
 		_window = parent->window();
 	}
-
-	_width = _height = 0;
-	_visible = true;
 }
 
 Widget::~Widget()
@@ -67,7 +64,11 @@ void Widget::hide()
 void Widget::setVisible(bool visible)
 {
 	_visible = visible;
-	repaintEvent(nullptr);
+
+	if(visible)
+	{
+		repaintEvent(nullptr);
+	}
 }
 
 bool Widget::visible()
@@ -112,10 +113,10 @@ void Widget::reparent(Widget* parent)
 	this->parent = parent;
 }
 
-void Widget::resize(int width, int height)
+void Widget::resize(std::size_t width, std::size_t height)
 {
 	if((width < 1) || (height < 1) ||
-	   (((size_t)width == _width) && ((size_t)height == _height)))
+	   ((width == _width) && (height == _height)))
 	{
 		return;
 	}
@@ -127,10 +128,11 @@ void Widget::resize(int width, int height)
 	sizeChangeNotifier(width, height);
 }
 
-void Widget::move(size_t x, size_t y)
+void Widget::move(int x, int y)
 {
 	_x = x;
 	_y = y;
+	positionChangeNotifier(x, y);
 }
 
 int Widget::x()
@@ -143,12 +145,12 @@ int Widget::y()
 	return _y;
 }
 
-size_t Widget::width()
+std::size_t Widget::width()
 {
 	return _width;
 }
 
-size_t Widget::height()
+std::size_t Widget::height()
 {
 	return _height;
 }

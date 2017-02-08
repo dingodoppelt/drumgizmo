@@ -99,9 +99,9 @@ void FileBrowser::setPath(const std::string& path)
 	changeDir();
 }
 
-void FileBrowser::resize(int w, int h)
+void FileBrowser::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(w,h);
+	Widget::resize(width, height);
 
 	int offset = 0;
 	int brd = 5; // border
@@ -115,18 +115,18 @@ void FileBrowser::resize(int w, int h)
 	offset += btn_h;
 
 	lbl_path.resize(60, btn_h);
-	lineedit.resize(w - 60 - brd, btn_h);
+	lineedit.resize(width - 60 - brd, btn_h);
 
 	offset += brd;
 
 	listbox.move(brd, offset);
-	listbox.resize(w - 1 - 2*brd, h - btn_h - 2*brd - offset);
+	listbox.resize(width - 1 - 2*brd, height - btn_h - 2*brd - offset);
 
-	btn_esc.move(brd, h - btn_h - brd);
-	btn_esc.resize((w - 1 - 2*brd) / 2 - brd / 2, btn_h);
+	btn_esc.move(brd, height - btn_h - brd);
+	btn_esc.resize((width - 1 - 2*brd) / 2 - brd / 2, btn_h);
 
-	btn_sel.move(brd + w / 2 - brd / 2, h - btn_h - brd);
-	btn_sel.resize((w - 1 - 2*brd) / 2, btn_h);
+	btn_sel.move(brd + width / 2 - brd / 2, height - btn_h - brd);
+	btn_sel.resize((width - 1 - 2*brd) / 2, btn_h);
 }
 
 void FileBrowser::repaintEvent(RepaintEvent* repaintEvent)

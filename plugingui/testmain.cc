@@ -41,6 +41,7 @@ int main()
 	Settings settings;
 	GUI::MainWindow main_window(settings, nullptr);
 	main_window.show();
+	main_window.resize(370, 330);
 
 	while(main_window.processEvents())
 	{

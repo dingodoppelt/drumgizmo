@@ -73,8 +73,8 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	swa.backing_store = Always;
 	xwindow = XCreateWindow(display,
 	                        parentWindow,
-	                        window.x(), window.y(),
-	                        window.width(), window.height(),
+	                        0, 0, //window.x(), window.y(),
+	                        1, 1, //window.width(), window.height(),
 	                        0, // border
 	                        CopyFromParent, // depth
 	                        CopyFromParent, // class
@@ -119,7 +119,7 @@ NativeWindowX11::~NativeWindowX11()
 	XCloseDisplay(display);
 }
 
-void NativeWindowX11::setFixedSize(int width, int height)
+void NativeWindowX11::setFixedSize(std::size_t width, std::size_t height)
 {
 	if(display == nullptr)
 	{
@@ -149,7 +149,7 @@ void NativeWindowX11::setFixedSize(int width, int height)
 	XSetWMNormalHints(display, xwindow, size_hints);
 }
 
-void NativeWindowX11::resize(int width, int height)
+void NativeWindowX11::resize(std::size_t width, std::size_t height)
 {
 	if(display == nullptr)
 	{
@@ -157,6 +157,23 @@ void NativeWindowX11::resize(int width, int height)
 	}
 
 	XResizeWindow(display, xwindow, width, height);
+}
+
+std::pair<std::size_t, std::size_t> NativeWindowX11::getSize()
+{
+//	XWindowAttributes attributes;
+//	XGetWindowAttributes(display, xwindow, &attributes);
+//	return std::make_pair(attributes.width, attributes.height);
+
+	::Window root_window;
+	int x, y;
+	unsigned int width, height, border, depth;
+
+	XGetGeometry(display, xwindow, &root_window,
+	             &x, &y,
+	             &width, &height, &border, &depth);
+
+	return std::make_pair(width, height);
 }
 
 void NativeWindowX11::move(int x, int y)
@@ -167,6 +184,23 @@ void NativeWindowX11::move(int x, int y)
 	}
 
 	XMoveWindow(display, xwindow, x, y);
+}
+
+std::pair<int, int> NativeWindowX11::getPosition()
+{
+	::Window root_window;
+	::Window child_window;
+	int x, y;
+	unsigned int width, height, border, depth;
+
+	XGetGeometry(display, xwindow, &root_window,
+	             &x, &y,
+	             &width, &height, &border, &depth);
+
+	XTranslateCoordinates(display, xwindow, root_window,
+	                      0, 0, &x, &y, &child_window);
+
+	return std::make_pair(x, y);
 }
 
 void NativeWindowX11::show()

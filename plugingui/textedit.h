@@ -45,7 +45,7 @@ public:
 
 	// From Widget
 	bool isFocusable() override { return true; }
-	void resize(int width, int height) override;
+	void resize(std::size_t width, std::size_t height) override;
 
 	std::string text();
 	void setText(const std::string& text);

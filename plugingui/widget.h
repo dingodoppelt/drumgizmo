@@ -54,19 +54,22 @@ public:
 	virtual void hide();
 
 	// From LayoutItem
-	virtual void resize(int width, int height) override;
-	virtual void move(size_t x, size_t y) override;
+	virtual void resize(std::size_t width, std::size_t height) override;
+	virtual void move(int x, int y) override;
 	virtual int x() override;
 	virtual int y() override;
-	virtual size_t width() override;
-	virtual size_t height() override;
+	virtual std::size_t width() override;
+	virtual std::size_t height() override;
 
 	// From Canvas
 	PixelBufferAlpha& GetPixelBuffer() override;
 	void beginPaint() override;
 	void endPaint() override;
 
+	//! Translate x-coordinate from parent-space to window-space.
 	virtual size_t windowX();
+
+	//! Translate y-coordinate from parent-space to window-space.
 	virtual size_t windowY();
 
 	virtual bool isFocusable() { return false; }
@@ -97,7 +100,8 @@ public:
 	bool visible();
 	void setVisible(bool visible);
 
-	Notifier<int, int> sizeChangeNotifier; // (int, width, int height)
+	Notifier<std::size_t, std::size_t> sizeChangeNotifier; // (width, height)
+	Notifier<int, int> positionChangeNotifier; // (x, y)
 
 protected:
 	void repaintChildren(RepaintEvent* repaintEvent);
@@ -111,10 +115,10 @@ protected:
 
 	int _x{0};
 	int _y{0};
-	size_t _width{0};
-	size_t _height{0};
+	std::size_t _width{0};
+	std::size_t _height{0};
 
-	bool _visible = true;
+	bool _visible{true};
 };
 
 } // GUI::

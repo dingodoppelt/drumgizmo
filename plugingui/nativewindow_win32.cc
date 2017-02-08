@@ -335,7 +335,7 @@ NativeWindowWin32::~NativeWindowWin32()
 	free(m_className);
 }
 
-void NativeWindowWin32::setFixedSize(int width, int height)
+void NativeWindowWin32::setFixedSize(std::size_t width, std::size_t height)
 {
 	resize(width, height);
 	LONG style =  GetWindowLong(m_hwnd, GWL_STYLE);
@@ -343,20 +343,34 @@ void NativeWindowWin32::setFixedSize(int width, int height)
 	SetWindowLong(m_hwnd, GWL_STYLE, style);
 }
 
-void NativeWindowWin32::resize(int width, int height)
+void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 {
 	SetWindowPos(m_hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
-	RECT r;
-	GetClientRect(m_hwnd, &r);
-	int w = width - r.right;
-	int h = height - r.bottom;
+	RECT rect;
+	GetClientRect(m_hwnd, &rect);
+	int w = width - rect.right;
+	int h = height - rect.bottom;
 
 	SetWindowPos(m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
+}
+
+std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize()
+{
+	RECT rect;
+	GetClientRect(m_hwnd, &rect);
+	return std::make_pair(rect.right - rect.left, rect.bottom - rect.top);
 }
 
 void NativeWindowWin32::move(int x, int y)
 {
 	SetWindowPos(m_hwnd, nullptr, (int)x, (int)y, -1, -1, SWP_NOSIZE);
+}
+
+std::pair<int, int> NativeWindowWin32::getPosition()
+{
+	RECT rect;
+	GetClientRect(m_hwnd, &rect);
+	return std::make_pair(rect.left, rect.top);
 }
 
 void NativeWindowWin32::show()

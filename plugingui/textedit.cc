@@ -52,7 +52,7 @@ TextEdit::~TextEdit()
 {
 }
 
-void TextEdit::resize(int height, int width)
+void TextEdit::resize(std::size_t height, std::size_t width)
 {
 	Widget::resize(height, width);
 	scroll.resize(scroll.width(), height-10);

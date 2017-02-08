@@ -31,53 +31,60 @@
 
 #include "guievent.h"
 
-namespace GUI {
+namespace GUI
+{
 
-//! \brief Interface class for native window implementations.
+//! Interface class for native window implementations.
 class NativeWindow {
 public:
 	NativeWindow() {}
 	virtual ~NativeWindow() {}
 
-	//! \brief Set a fixed size to the window.
+	//! Set a fixed size to the window.
 	//! It resizes the window and disallows user resizing.
-	virtual void setFixedSize(int width, int height) = 0;
+	virtual void setFixedSize(std::size_t width, std::size_t height) = 0;
 
-	// TODO: setScalable(bool) ??
+	//! Set a new size of the window.
+	virtual void resize(std::size_t width, std::size_t height) = 0;
 
-	//! \brief Set a new size of the window.
-	virtual void resize(int width, int height) = 0;
+	//! Query size of the native window.
+	virtual std::pair<std::size_t, std::size_t> getSize() = 0;
 
-	//! \brief Move the window to a new position.
+	//! Move the window to a new position.
+	//! Note: negative value are allowed.
 	virtual void move(int x, int y) = 0;
 
-	//! \brief Show the window if it is hidden.
+	//! Query the screen position of the native window.
+	//! Note: returned values can be negative.
+	virtual std::pair<int, int> getPosition() = 0;
+
+	//! Show the window if it is hidden.
 	virtual void show() = 0;
 
-	//! \brief Hides the window.
+	//! Hides the window.
 	virtual void hide() = 0;
 
-	//! \brief Sets the window caption in the title bar (if it has one).
+	//! Sets the window caption in the title bar (if it has one).
 	virtual void setCaption(const std::string &caption) = 0;
 
-	//! \brief Recreate a window render buffer based on the internal buffer.
+	//! Recreate a window render buffer based on the internal buffer.
 	//! This need to be called whenever the internal buffer size has changed.
 	virtual void handleBuffer() = 0;
 
-	//! \brief Draw the internal rendering buffer to the window buffer.
+	//! Draw the internal rendering buffer to the window buffer.
 	virtual void redraw() = 0;
 
-	//! \brief Toggle capture mouse mode.
+	//! Toggle capture mouse mode.
 	virtual void grabMouse(bool grab) = 0;
 
-	//! \brief Query if the event queue contains any events.
+	//! Query if the event queue contains any events.
 	virtual bool hasEvent() = 0;
 
-	//! \brief Read a single event from the event queue.
+	//! Read a single event from the event queue.
 	//! \return A pointer to the event or nullptr is none exists.
 	virtual std::shared_ptr<Event> getNextEvent() = 0;
 
-	//! \brief Read next event without popping it from the event queue.
+	//! Read next event without popping it from the event queue.
 	//! \return A pointer to the event or nullptr is none exists.
 	virtual std::shared_ptr<Event> peekNextEvent() = 0;
 };

@@ -48,8 +48,12 @@ public:
 	void setCaption(const std::string& caption);
 
 	// From Widget:
-	void resize(int width, int height) override;
-	void move(size_t x, size_t y) override;
+	void resize(std::size_t width, std::size_t height) override;
+	void move(int x, int y) override;
+	int x() override;
+	int y() override;
+	size_t width() override;
+	size_t height() override;
 	size_t windowX() override;
 	size_t windowY() override;
 	void show() override;
@@ -73,7 +77,7 @@ protected:
 	// For the EventHandler
 	friend class EventHandler;
 	void redraw();
-	void resized(size_t w, size_t h);
+	void resized(std::size_t width, std::size_t height);
 	void moved(int x, int y);
 	void updateBuffer();
 

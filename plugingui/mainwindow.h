@@ -50,7 +50,7 @@ public:
 	Notifier<> closeNotifier;
 
 private:
-	void sizeChanged(int width, int height);
+	void sizeChanged(std::size_t width, std::size_t height);
 	void closeEventHandler();
 
 	// From Widget
