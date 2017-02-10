@@ -32,7 +32,9 @@
 #endif
 
 #include <hugin.hpp>
-#include <mainwindow.h>
+#include <window.h>
+#include <font.h>
+#include <painter.h>
 
 class TestWindow
 	: public GUI::Window
@@ -86,10 +88,10 @@ public:
 			painter.setColour(GUI::Colour(1,0,0));
 			char str[64];
 			sprintf(str, "reported: (%d, %d); (%d, %d)",
-			        reportedPosition.first,
-			        reportedPosition.second,
-			        reportedSize.first,
-			        reportedSize.second);
+			        (int)reportedPosition.first,
+			        (int)reportedPosition.second,
+			        (int)reportedSize.first,
+			        (int)reportedSize.second);
 			auto stringWidth = font.textWidth(str);
 			auto stringHeight = font.textHeight(str);
 			painter.drawText(reportedSize.first / 2 - stringWidth / 2,
@@ -101,10 +103,10 @@ public:
 			painter.setColour(GUI::Colour(1,0,0));
 			char str[64];
 			sprintf(str, "current: (%d, %d); (%d, %d)",
-			        currentPosition.first,
-			        currentPosition.second,
-			        currentSize.first,
-			        currentSize.second);
+			        (int)currentPosition.first,
+			        (int)currentPosition.second,
+			        (int)currentSize.first,
+			        (int)currentSize.second);
 			auto stringWidth = font.textWidth(str);
 			auto stringHeight = font.textHeight(str);
 			painter.drawText(currentSize.first / 2 - stringWidth / 2,
