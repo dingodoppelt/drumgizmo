@@ -28,10 +28,13 @@
 
 #include <settings.h>
 
-#include "window.h"
+#include "frame.h"
+#include "image.h"
+#include "textedit.h"
 #include "tabwidget.h"
 #include "texturedbox.h"
-#include "image.h"
+#include "window.h"
+#include "maintab.h"
 
 namespace GUI
 {
@@ -57,6 +60,10 @@ private:
 	void repaintEvent(RepaintEvent* repaintEvent) override final;
 
 	TabWidget tabs{this};
+	
+	MainTab main_tab{this};
+	// TODO use some nice textfield widget here
+	TextEdit gpl_text_field{&tabs};
 
 	Image back{":bg.png"};
 	Image logo{":logo.png"};

@@ -30,6 +30,31 @@
 
 #include "painter.h"
 
+#include <string>
+
+namespace
+{
+
+std::string getGPLText()
+{
+	return
+		"DrumGizmo is free software; you can redistribute it and/or modify\n"
+		"it under the terms of the GNU Lesser General Public License as published by\n"
+		"the Free Software Foundation; either version 3 of the License, or\n"
+		"(at your option) any later version.\n"
+		"\n"
+		"DrumGizmo is distributed in the hope that it will be useful,\n"
+		"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+		"GNU Lesser General Public License for more details.\n"
+		"\n"
+		"You should have received a copy of the GNU Lesser General Public License\n"
+		"along with DrumGizmo; if not, write to the Free Software\n"
+		"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.\n";
+}
+
+} // anonymous namespace
+
 namespace GUI
 {
 
@@ -39,8 +64,19 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 {
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
-	tabs.move(16, 0); // x-offset to make room for the left side bar.
+
+	// TODO: use fixed size?
+	// setFixedSize(450, 600);
 	setCaption("DrumGizmo v" VERSION);
+
+	tabs.move(16, 0); // x-offset to make room for the left side bar.
+
+	tabs.addTab("Main", &main_tab);
+	tabs.addTab("GPL", &gpl_text_field);
+
+	gpl_text_field.setText(getGPLText());
+	gpl_text_field.preprocessText();
+	gpl_text_field.setReadOnly(true);
 }
 
 bool MainWindow::processEvents()

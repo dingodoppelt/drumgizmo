@@ -37,6 +37,10 @@ nodist_libdggui_la_SOURCES = \
 	toggle.cc \
 	powerbutton.cc \
 	mainwindow.cc \
+	drumkitframecontent.cc \
+	statusframecontent.cc \
+	humanizerframecontent.cc \
+	diskstreamingframecontent.cc \
 	slider.cc \
 	scrollbar.cc \
 	stackedwidget.cc \
@@ -49,6 +53,7 @@ nodist_libdggui_la_SOURCES = \
 	listbox.cc \
 	listboxthin.cc \
 	listboxbasic.cc \
+	maintab.cc \
 	knob.cc \
 	filebrowser.cc \
 	directory.cc \
@@ -60,6 +65,7 @@ nodist_libdggui_la_SOURCES = \
 	verticalline.cc \
 	resource.cc \
 	resource_data.cc \
+	frame.cc \
 	lodepng/lodepng.cpp
 
 if ENABLE_X11

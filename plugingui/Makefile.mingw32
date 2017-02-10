@@ -34,9 +34,17 @@ GUI_SRC = \
 	texturedbox.cc \
 	tabbutton.cc \
 	tabwidget.cc \
+	toggle.cc \
 	listbox.cc \
 	listboxthin.cc \
 	listboxbasic.cc \
+	powerbutton.cc \
+	drumkitframecontent.cc \
+	statusframecontent.cc \
+	humanizerframecontent.cc \
+	diskstreamingframecontent.cc \
+	maintab.cc \
+	frame.cc \
 	knob.cc \
 	filebrowser.cc \
 	directory.cc \
