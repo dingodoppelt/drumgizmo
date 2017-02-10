@@ -33,11 +33,13 @@
 #include "guievent.h"
 #include "nativewindow.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class Window;
 
-class EventHandler {
+class EventHandler
+{
 public:
 	EventHandler(NativeWindow& nativeWindow, Window& window);
 
@@ -64,7 +66,7 @@ private:
 	// Used to ignore mouse button release after a double click.
 	bool lastWasDoubleClick;
 
-	std::queue<std::shared_ptr<Event>> events;
+	EventQueue events;
 };
 
 } // GUI::

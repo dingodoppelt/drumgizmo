@@ -53,7 +53,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->width = LOWORD(lp);
 			resizeEvent->height = HIWORD(lp);
-			//native->event_queue.push(resizeEvent);
+			//native->event_queue.push_back(resizeEvent);
 			native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
@@ -63,14 +63,14 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto moveEvent = std::make_shared<MoveEvent>();
 			moveEvent->x = (short)LOWORD(lp);
 			moveEvent->y = (short)HIWORD(lp);
-			native->event_queue.push(moveEvent);
+			native->event_queue.push_back(moveEvent);
 		}
 		break;
 
 	case WM_CLOSE:
 		{
 			auto closeEvent = std::make_shared<CloseEvent>();
-			native->event_queue.push(closeEvent);
+			native->event_queue.push_back(closeEvent);
 		}
 		break;
 //		HWND child, old;
@@ -91,7 +91,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
 			mouseMoveEvent->x = (short)LOWORD(lp);
 			mouseMoveEvent->y = (short)HIWORD(lp);
-			native->event_queue.push(mouseMoveEvent);
+			native->event_queue.push_back(mouseMoveEvent);
 		}
 		break;
 
@@ -108,7 +108,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			scrollEvent->x = p.x;
 			scrollEvent->y = p.y;
 			scrollEvent->delta = -1 * (short)HIWORD(wp) / 60;
-			native->event_queue.push(scrollEvent);
+			native->event_queue.push_back(scrollEvent);
 		}
 		break;
 
@@ -175,7 +175,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			                            msg == WM_RBUTTONDBLCLK ||
 			                            msg == WM_MBUTTONDBLCLK);
 
-			native->event_queue.push(buttonEvent);
+			native->event_queue.push_back(buttonEvent);
 		}
 		break;
 
@@ -203,7 +203,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			keyEvent->direction =
 				(msg == WM_KEYDOWN) ? Direction::down : Direction::up;
 
-			native->event_queue.push(keyEvent);
+			native->event_queue.push_back(keyEvent);
 		}
 		break;
 
@@ -215,7 +215,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				keyEvent->keycode = Key::character;
 				keyEvent->text += (char)wp;
 				keyEvent->direction = Direction::up;
-				native->event_queue.push(keyEvent);
+				native->event_queue.push_back(keyEvent);
 			}
 		}
 		break;
@@ -227,7 +227,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			repaintEvent->y = 0;
 			repaintEvent->width = 100;
 			repaintEvent->height = 100;
-			native->event_queue.push(repaintEvent);
+			native->event_queue.push_back(repaintEvent);
 
 			// Move to window.h (in class)
 			HDC pDC;
@@ -418,7 +418,7 @@ void NativeWindowWin32::grabMouse(bool grab)
 	}
 }
 
-std::queue<std::shared_ptr<Event>> NativeWindowWin32::getEvents()
+EventQueue NativeWindowWin32::getEvents()
 {
 	MSG msg;
 	while(PeekMessage(&msg, m_hwnd, 0, 0, PM_REMOVE) != 0)
@@ -427,7 +427,7 @@ std::queue<std::shared_ptr<Event>> NativeWindowWin32::getEvents()
 		DispatchMessage(&msg);
 	}
 
-	std::queue<std::shared_ptr<Event>> events;
+	EventQueue events;
 	std::swap(events, event_queue);
 	return events;
 }

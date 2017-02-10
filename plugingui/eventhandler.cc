@@ -29,7 +29,8 @@
 #include "window.h"
 #include "painter.h"
 
-namespace GUI {
+namespace GUI
+{
 
 EventHandler::EventHandler(NativeWindow& nativeWindow, Window& window)
 	: window(window)
@@ -51,7 +52,7 @@ std::shared_ptr<Event> EventHandler::getNextEvent()
 	}
 
 	auto event = events.front();
-	events.pop();
+	events.pop_front();
 	return event;
 }
 

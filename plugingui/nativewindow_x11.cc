@@ -264,7 +264,7 @@ void NativeWindowX11::grabMouse(bool grab)
 	// Don't need to do anything on this platform...
 }
 
-std::queue<std::shared_ptr<Event>> NativeWindowX11::getEvents()
+EventQueue NativeWindowX11::getEvents()
 {
 	while(XPending(display))
 	{
@@ -273,7 +273,7 @@ std::queue<std::shared_ptr<Event>> NativeWindowX11::getEvents()
 		translateXMessage(xEvent);
 	}
 
-	std::queue<std::shared_ptr<Event>> events;
+	EventQueue events;
 	std::swap(events, event_queue);
 	return events;
 }
@@ -286,10 +286,10 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		//DEBUG(x11, "MotionNotify");
 		{
 			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
-			mouseMoveEvent->window_id = xevent.xmotion.window;
+			//mouseMoveEvent->window_id = xevent.xmotion.window;
 			mouseMoveEvent->x = xevent.xmotion.x;
 			mouseMoveEvent->y = xevent.xmotion.y;
-			event_queue.push(mouseMoveEvent);
+			event_queue.push_back(mouseMoveEvent);
 		}
 		break;
 
@@ -298,12 +298,12 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		if(xevent.xexpose.count == 0)
 		{
 			auto repaintEvent = std::make_shared<RepaintEvent>();
-			repaintEvent->window_id = xevent.xexpose.window;
+			//repaintEvent->window_id = xevent.xexpose.window;
 			repaintEvent->x = xevent.xexpose.x;
 			repaintEvent->y = xevent.xexpose.y;
 			repaintEvent->width = xevent.xexpose.width;
 			repaintEvent->height = xevent.xexpose.height;
-			event_queue.push(repaintEvent);
+			event_queue.push_back(repaintEvent);
 		}
 		break;
 
@@ -314,20 +314,20 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 			   (window.height() != (std::size_t)xevent.xconfigure.height))
 			{
 				auto resizeEvent = std::make_shared<ResizeEvent>();
-				resizeEvent->window_id = xevent.xconfigure.window;
+				//resizeEvent->window_id = xevent.xconfigure.window;
 				resizeEvent->width = xevent.xconfigure.width;
 				resizeEvent->height = xevent.xconfigure.height;
-				event_queue.push(resizeEvent);
+				event_queue.push_back(resizeEvent);
 			}
 
 			if((window.windowX() != (std::size_t)xevent.xconfigure.x) ||
 			   (window.windowY() != (std::size_t)xevent.xconfigure.y))
 			{
 				auto moveEvent = std::make_shared<MoveEvent>();
-				moveEvent->window_id = xevent.xconfigure.window;
+				//moveEvent->window_id = xevent.xconfigure.window;
 				moveEvent->x = xevent.xconfigure.x;
 				moveEvent->y = xevent.xconfigure.y;
-				event_queue.push(moveEvent);
+				event_queue.push_back(moveEvent);
 			}
 		}
 		break;
@@ -340,16 +340,16 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 			{
 				int scroll = 1;
 				auto scrollEvent = std::make_shared<ScrollEvent>();
-				scrollEvent->window_id = xevent.xbutton.window;
+				//scrollEvent->window_id = xevent.xbutton.window;
 				scrollEvent->x = xevent.xbutton.x;
 				scrollEvent->y = xevent.xbutton.y;
 				scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
-				event_queue.push(scrollEvent);
+				event_queue.push_back(scrollEvent);
 			}
 			else
 			{
 				auto buttonEvent = std::make_shared<ButtonEvent>();
-				buttonEvent->window_id = xevent.xbutton.window;
+				//buttonEvent->window_id = xevent.xbutton.window;
 				buttonEvent->x = xevent.xbutton.x;
 				buttonEvent->y = xevent.xbutton.y;
 				switch(xevent.xbutton.button) {
@@ -390,7 +390,7 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 				{
 					last_click = xevent.xbutton.time;
 				}
-				event_queue.push(buttonEvent);
+				event_queue.push_back(buttonEvent);
 			}
 		}
 		break;
@@ -400,7 +400,7 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		//DEBUG(x11, "KeyPress");
 		{
 			auto keyEvent = std::make_shared<KeyEvent>();
-			keyEvent->window_id = xevent.xkey.window;
+			//keyEvent->window_id = xevent.xkey.window;
 
 			switch(xevent.xkey.keycode) {
 			case 113: keyEvent->keycode = Key::left; break;
@@ -430,7 +430,7 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 			keyEvent->direction =
 				(xevent.type == KeyPress) ? Direction::down : Direction::up;
 
-			event_queue.push(keyEvent);
+			event_queue.push_back(keyEvent);
 		}
 		break;
 
@@ -439,7 +439,7 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		if(((unsigned int)xevent.xclient.data.l[0] == wmDeleteMessage))
 		{
 			auto closeEvent = std::make_shared<CloseEvent>();
-			event_queue.push(closeEvent);
+			event_queue.push_back(closeEvent);
 		}
 		break;
 

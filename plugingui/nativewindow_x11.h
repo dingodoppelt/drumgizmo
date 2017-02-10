@@ -57,7 +57,7 @@ public:
 	void handleBuffer() override;
 	void redraw() override;
 	void grabMouse(bool grab) override;
-	std::queue<std::shared_ptr<Event>> getEvents() override;
+	EventQueue getEvents() override;
 
 private:
 	void translateXMessage(XEvent& xevent);
@@ -88,7 +88,7 @@ private:
 	Visual* visual{nullptr};
 	Atom wmDeleteMessage{0};
 
-	std::queue<std::shared_ptr<Event>> event_queue;
+	EventQueue event_queue;
 };
 
 } // GUI::

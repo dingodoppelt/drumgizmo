@@ -26,18 +26,15 @@
  */
 #pragma once
 
-#include <unistd.h>
-
 #include <string>
+#include <list>
+#include <memory>
 
-#ifdef X11
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#endif/*X11*/
+namespace GUI
+{
 
-namespace GUI {
-
-enum class EventType {
+enum class EventType
+{
 	mouseMove,
 	repaint,
 	button,
@@ -48,18 +45,17 @@ enum class EventType {
 	move
 };
 
-class Event {
+class Event
+{
 public:
 	virtual ~Event() {}
 
 	virtual EventType type() = 0;
-
-#ifdef X11
-	::Window window_id;
-#endif/*X11*/
 };
 
-class MouseMoveEvent : public Event {
+class MouseMoveEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::mouseMove; }
 
@@ -68,18 +64,22 @@ public:
 };
 
 
-enum class Direction {
+enum class Direction
+{
 	up,
 	down,
 };
 
-enum class MouseButton {
+enum class MouseButton
+{
 	right,
 	middle,
 	left,
 };
 
-class ButtonEvent : public Event {
+class ButtonEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::button; }
 
@@ -92,7 +92,9 @@ public:
 	bool doubleClick;
 };
 
-class ScrollEvent : public Event {
+class ScrollEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::scroll; }
 
@@ -102,7 +104,9 @@ public:
 	int delta;
 };
 
-class RepaintEvent : public Event {
+class RepaintEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::repaint; }
 
@@ -112,7 +116,8 @@ public:
 	size_t height;
 };
 
-enum class Key {
+enum class Key
+{
 	unknown,
 	left,
 	right,
@@ -128,7 +133,9 @@ enum class Key {
 	character, //!< The actual character is stored in KeyEvent::text
 };
 
-class KeyEvent : public Event {
+class KeyEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::key; }
 
@@ -138,12 +145,16 @@ public:
 	std::string text;
 };
 
-class CloseEvent : public Event {
+class CloseEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::close; }
 };
 
-class ResizeEvent : public Event {
+class ResizeEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::resize; }
 
@@ -151,12 +162,17 @@ public:
 	size_t height;
 };
 
-class MoveEvent : public Event {
+class MoveEvent
+	: public Event
+{
 public:
 	EventType type() { return EventType::move; }
 
 	int x;
 	int y;
 };
+
+using EventQueue = std::list<std::shared_ptr<Event>>;
+
 
 } // GUI::

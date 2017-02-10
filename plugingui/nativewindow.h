@@ -36,7 +36,8 @@ namespace GUI
 {
 
 //! Interface class for native window implementations.
-class NativeWindow {
+class NativeWindow
+{
 public:
 	NativeWindow() {}
 	virtual ~NativeWindow() {}
@@ -80,20 +81,7 @@ public:
 
 	//! Reads all currently enqueued events from the native window system.
 	//! \return A queue of shared pointers to events.
-	virtual std::queue<std::shared_ptr<Event>> getEvents() = 0;
-
-/*
-	//! Query if the event queue contains any events.
-	virtual bool hasEvent() = 0;
-
-	//! Read a single event from the event queue.
-	//! \return A pointer to the event or nullptr is none exists.
-	virtual std::shared_ptr<Event> getNextEvent() = 0;
-
-	//! Read next event without popping it from the event queue.
-	//! \return A pointer to the event or nullptr is none exists.
-	virtual std::shared_ptr<Event> peekNextEvent() = 0;
-*/
+	virtual EventQueue getEvents() = 0;
 };
 
 } // GUI::
