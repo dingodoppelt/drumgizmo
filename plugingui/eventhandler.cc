@@ -40,22 +40,37 @@ EventHandler::EventHandler(NativeWindow& nativeWindow, Window& window)
 
 bool EventHandler::hasEvent()
 {
-	return nativeWindow.hasEvent();
+	return !events.empty();
 }
 
 std::shared_ptr<Event> EventHandler::getNextEvent()
 {
-	return nativeWindow.getNextEvent();
+	if(events.empty())
+	{
+		return nullptr;
+	}
+
+	auto event = events.front();
+	events.pop();
+	return event;
 }
 
 std::shared_ptr<Event> EventHandler::peekNextEvent()
 {
-	return nativeWindow.peekNextEvent();
+	if(events.empty())
+	{
+		return nullptr;
+	}
+
+	auto event = events.front();
+	return event;
 }
 
 void EventHandler::processEvents()
 {
 	Painter p(window); // Make sure we only redraw buffer one time.
+
+	events = nativeWindow.getEvents();
 
 	while(hasEvent())
 	{

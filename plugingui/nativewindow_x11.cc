@@ -264,52 +264,21 @@ void NativeWindowX11::grabMouse(bool grab)
 	// Don't need to do anything on this platform...
 }
 
-bool NativeWindowX11::hasEvent()
+std::queue<std::shared_ptr<Event>> NativeWindowX11::getEvents()
 {
-	if(display == nullptr)
+	std::queue<std::shared_ptr<Event>> events;
+
+	while(XPending(display))
 	{
-		return false;
+		XEvent xEvent;
+		XNextEvent(display, &xEvent);
+		events.push(translateXMessage(xEvent));
 	}
 
-	return XPending(display);
+	return events;
 }
 
-std::shared_ptr<Event> NativeWindowX11::getNextEvent()
-{
-	if(display == nullptr)
-	{
-		return nullptr;
-	}
-
-	if(!XPending(display))
-	{
-		return nullptr;
-	}
-
-	XEvent xEvent;
-	XNextEvent(display, &xEvent);
-	return translateXMessage(xEvent);
-}
-
-std::shared_ptr<Event> NativeWindowX11::peekNextEvent()
-{
-	if(display == nullptr)
-	{
-		return nullptr;
-	}
-
-	if(!XPending(display))
-	{
-		return nullptr;
-	}
-
-	XEvent peekXEvent;
-	XPeekEvent(display, &peekXEvent);
-	return translateXMessage(peekXEvent, true);
-}
-
-std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
-                                                          bool peek)
+std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent)
 {
 	std::shared_ptr<Event> event = nullptr;
 
@@ -327,15 +296,6 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 
 	case Expose:
 		//DEBUG(x11, "Expose");
-		//if(!peek)
-		//{
-		//	XEvent peekXEvent;
-		//	while(XCheckWindowEvent(display, xwindow, Expose, &peekXEvent))
-		//	{
-		//		xevent.xexpose = peekXEvent.xexpose;
-		//	}
-		//}
-
 		if(xevent.xexpose.count == 0)
 		{
 			auto repaintEvent = std::make_shared<RepaintEvent>();
@@ -351,15 +311,6 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 	case ConfigureNotify:
 		//DEBUG(x11, "ConfigureNotify");
 		{
-			//if(!peek)
-			//{
-			//	XEvent peekXEvent;
-			//	while(XCheckWindowEvent(display, xwindow, ConfigureNotify, &peekXEvent))
-			//	{
-			//		xevent.xconfigure = peekXEvent.xconfigure;
-			//	}
-			//}
-
 			if((window.width() != (std::size_t)xevent.xconfigure.width) ||
 			   (window.height() != (std::size_t)xevent.xconfigure.height))
 			{
@@ -435,7 +386,7 @@ std::shared_ptr<Event> NativeWindowX11::translateXMessage(XEvent& xevent,
 					(xevent.type == ButtonPress) &&
 					((xevent.xbutton.time - last_click) < 200);
 
-				if(!peek && (xevent.type == ButtonPress))
+				if(xevent.type == ButtonPress)
 				{
 					last_click = xevent.xbutton.time;
 				}

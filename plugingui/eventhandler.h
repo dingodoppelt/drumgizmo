@@ -28,6 +28,7 @@
 
 #include <notifier.h>
 #include <memory>
+#include <queue>
 
 #include "guievent.h"
 #include "nativewindow.h"
@@ -62,6 +63,8 @@ private:
 
 	// Used to ignore mouse button release after a double click.
 	bool lastWasDoubleClick;
+
+	std::queue<std::shared_ptr<Event>> events;
 };
 
 } // GUI::

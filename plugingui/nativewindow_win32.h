@@ -55,10 +55,7 @@ public:
 	void handleBuffer() override;
 	void redraw() override;
 	void grabMouse(bool grab) override;
-
-	bool hasEvent() override;
-	std::shared_ptr<Event> getNextEvent() override;
-	std::shared_ptr<Event> peekNextEvent() override;
+	std::queue<std::shared_ptr<Event>> getEvents() override;
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);

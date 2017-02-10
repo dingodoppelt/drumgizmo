@@ -55,12 +55,10 @@ public:
 	void handleBuffer() override;
 	void redraw() override;
 	void grabMouse(bool grab) override;
-	bool hasEvent() override;
-	std::shared_ptr<Event> getNextEvent() override;
-	std::shared_ptr<Event> peekNextEvent() override;
+	std::queue<std::shared_ptr<Event>> getEvents() override;
 
 private:
-	std::shared_ptr<Event> translateXMessage(XEvent& xevent, bool peek = false);
+	std::shared_ptr<Event> translateXMessage(XEvent& xevent);
 
 	//! Allocate new shared memory buffer for the pixel buffer.
 	//! Frees the existing buffer if there is one.

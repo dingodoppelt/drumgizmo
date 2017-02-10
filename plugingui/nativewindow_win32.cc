@@ -30,7 +30,8 @@
 
 #include "window.h"
 
-namespace GUI {
+namespace GUI
+{
 
 LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
                                                WPARAM wp, LPARAM lp)
@@ -417,79 +418,18 @@ void NativeWindowWin32::grabMouse(bool grab)
 	}
 }
 
-bool NativeWindowWin32::hasEvent()
+std::queue<std::shared_ptr<Event>> NativeWindowWin32::getEvents()
 {
-	if(!event_queue.empty())
+	MSG msg;
+	while(PeekMessage(&msg, m_hwnd, 0, 0, PM_REMOVE) != 0)
 	{
-		return true;
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 
-	// Parented windows have their event loop somewhere else.
-	if(parent_window == nullptr)
-	{
-		MSG msg;
-		return PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE) != 0;
-	}
-
-	return false;
-}
-
-std::shared_ptr<Event> NativeWindowWin32::getNextEvent()
-{
-	if(!event_queue.empty())
-	{
-		auto event = event_queue.front();
-		event_queue.pop();
-		return event;
-	}
-
-	// Parented windows have their event loop somewhere else.
-	if(parent_window == nullptr)
-	{
-		MSG msg;
-		if(GetMessage(&msg, m_hwnd, 0, 0))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
-	if(event_queue.empty())
-	{
-		return nullptr;
-	}
-
-	auto event = event_queue.front();
-	event_queue.pop();
-	return event;
-}
-
-std::shared_ptr<Event> NativeWindowWin32::peekNextEvent()
-{
-	if(!event_queue.empty())
-	{
-		auto event = event_queue.front();
-		return event;
-	}
-
-	// Parented windows have their event loop somewhere else.
-	if(parent_window == nullptr)
-	{
-		MSG msg;
-		if(PeekMessage(&msg, m_hwnd, 0, 0, PM_NOREMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
-	if(event_queue.empty())
-	{
-		return nullptr;
-	}
-
-	auto event = event_queue.front();
-	return event;
+	std::queue<std::shared_ptr<Event>> events;
+	std::swap(events, event_queue);
+	return events;
 }
 
 } // GUI::
