@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <queue>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/XShm.h>
 
@@ -58,7 +60,7 @@ public:
 	std::queue<std::shared_ptr<Event>> getEvents() override;
 
 private:
-	std::shared_ptr<Event> translateXMessage(XEvent& xevent);
+	void translateXMessage(XEvent& xevent);
 
 	//! Allocate new shared memory buffer for the pixel buffer.
 	//! Frees the existing buffer if there is one.
@@ -85,6 +87,8 @@ private:
 	int depth{0};
 	Visual* visual{nullptr};
 	Atom wmDeleteMessage{0};
+
+	std::queue<std::shared_ptr<Event>> event_queue;
 };
 
 } // GUI::
