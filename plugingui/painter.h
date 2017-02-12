@@ -82,7 +82,6 @@ public:
 	void clear();
 
 private:
-	Canvas& canvas;
 	PixelBufferAlpha& pixbuf;
 	Colour colour;
 };

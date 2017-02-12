@@ -39,8 +39,7 @@ namespace GUI
 {
 
 Painter::Painter(Canvas& canvas)
-	: canvas(canvas)
-	, pixbuf(canvas.GetPixelBuffer())
+	: pixbuf(canvas.GetPixelBuffer())
 {
 	colour = Colour(0.0f, 0.0f, 0.0f, 0.5f);
 }
