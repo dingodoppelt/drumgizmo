@@ -28,6 +28,8 @@
 
 #include "../plugingui/canvas.h"
 #include "../plugingui/painter.h"
+#include "../plugingui/image.h"
+#include "../plugingui/font.h"
 
 class TestableCanvas
 	: public GUI::Canvas
@@ -40,14 +42,6 @@ public:
 	GUI::PixelBufferAlpha& GetPixelBuffer() override
 	{
 		return pixbuf;
-	}
-
-	void beginPaint() override
-	{
-	}
-
-	void endPaint() override
-	{
 	}
 
 private:
