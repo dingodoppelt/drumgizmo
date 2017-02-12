@@ -50,12 +50,6 @@ public:
 	// From Widget:
 	void resize(std::size_t width, std::size_t height) override;
 	void move(int x, int y) override;
-	int x() override;
-	int y() override;
-	size_t width() override;
-	size_t height() override;
-	size_t windowX() override;
-	size_t windowY() override;
 	void show() override;
 	void hide() override;
 	Window* window() override;
@@ -73,18 +67,25 @@ public:
 	Widget* mouseFocus();
 	void setMouseFocus(Widget* widget);
 
+	//! Tag the window buffer dirty to be rendered.
+	void needsRedraw();
+
 protected:
 	// For the EventHandler
 	friend class EventHandler;
-	void redraw();
+
+	// From Widget:
+	std::size_t translateToWindowX() override;
+	std::size_t translateToWindowY() override;
 	void resized(std::size_t width, std::size_t height);
 	void moved(int x, int y);
-	void updateBuffer();
+
+	//! Returns true if window pixel buffer changed and needs to be copied to
+	//! native window.
+	bool updateBuffer();
 
 	// For the Painter
 	friend class Widget;
-	void beginPaint() override;
-	void endPaint() override;
 
 	// For the NativeWindow
 	friend class NativeWindowX11;
@@ -103,6 +104,7 @@ protected:
 
 	size_t maxRefcount{0};
 
+	bool needs_redraw{false};
 	ImageCache image_cache;
 };
 

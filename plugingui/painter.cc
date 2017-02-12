@@ -29,6 +29,12 @@
 #include <cmath>
 #include <cassert>
 
+#include "pixelbuffer.h"
+#include "font.h"
+#include "drawable.h"
+#include "image.h"
+#include "canvas.h"
+
 namespace GUI
 {
 
@@ -36,14 +42,11 @@ Painter::Painter(Canvas& canvas)
 	: canvas(canvas)
 	, pixbuf(canvas.GetPixelBuffer())
 {
-	canvas.beginPaint();
 	colour = Colour(0.0f, 0.0f, 0.0f, 0.5f);
 }
 
 Painter::~Painter()
 {
-	canvas.endPaint();
-	flush();
 }
 
 void Painter::setColour(const Colour& colour)
@@ -161,7 +164,7 @@ void Painter::drawRectangle(int x1, int y1, int x2, int y2)
 
 void Painter::drawFilledRectangle(int x1, int y1, int x2, int y2)
 {
-	for(int y = y1; y < y2; ++y)
+	for(int y = y1; y <= y2; ++y)
 	{
 		drawLine(x1, y, x2, y);
 	}
@@ -541,14 +544,6 @@ void Painter::drawBar(int x, int y, const Bar& bar, int width, int height)
 
 	drawImageStretched(x + width - bar.left->width(), y, *bar.right,
 	                   bar.right->width(), height);
-}
-
-void Painter::flush()
-{
-#ifdef X11
-	// Send the "DrawLine" request to the server
-	//XFlush(gctx->display);
-#endif/*X11*/
 }
 
 } // GUI::

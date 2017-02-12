@@ -28,24 +28,22 @@
 
 #include <string>
 
-#include "widget.h"
 #include "colour.h"
-#include "pixelbuffer.h"
-#include "font.h"
-#include "drawable.h"
-#include "texture.h"
-#include "image.h"
 
 namespace GUI
 {
+
+class PixelBufferAlpha;
+class Font;
+class Drawable;
+class Image;
+class Canvas;
 
 class Painter
 {
 public:
 	Painter(Canvas& canvas);
 	~Painter();
-
-	void flush();
 
 	void setColour(const Colour& colour);
 

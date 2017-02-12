@@ -88,7 +88,7 @@ void ListBoxBasic::addItems(const std::vector<ListBoxBasic::Item>& newItems)
 	int numitems = height() / (font.textHeight() + padding);
 	scroll.setRange(numitems);
 	scroll.setMaximum(items.size());
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void ListBoxBasic::clear()
@@ -97,7 +97,7 @@ void ListBoxBasic::clear()
 	setSelection(-1);
 	marked = -1;
 	scroll.setValue(0);
-	repaintEvent(nullptr);
+	redraw();
 }
 
 bool ListBoxBasic::selectItem(int index)
@@ -108,7 +108,7 @@ bool ListBoxBasic::selectItem(int index)
 	}
 
 	setSelection(index);
-	repaintEvent(nullptr);
+	redraw();
 
 	return true;
 }
@@ -140,7 +140,7 @@ void ListBoxBasic::clearSelectedValue()
 
 void ListBoxBasic::onScrollBarValueChange(int value)
 {
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
@@ -277,7 +277,7 @@ void ListBoxBasic::keyEvent(KeyEvent* keyEvent)
 		break;
 	}
 
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
@@ -329,7 +329,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 			}
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 	}
 
 	if(buttonEvent->direction != Direction::up)
@@ -346,7 +346,7 @@ void ListBoxBasic::buttonEvent(ButtonEvent* buttonEvent)
 			}
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 	}
 
 	if(buttonEvent->doubleClick)

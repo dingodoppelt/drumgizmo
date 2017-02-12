@@ -61,7 +61,7 @@ void LineEdit::setText(const std::string& text)
 	visibleText = _text;
 	offsetPos = 0;
 
-	repaintEvent(nullptr);
+	redraw();
 	textChanged();
 }
 
@@ -94,7 +94,7 @@ void LineEdit::buttonEvent(ButtonEvent *buttonEvent)
 				break;
 			}
 		}
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -189,7 +189,7 @@ void LineEdit::keyEvent(KeyEvent *keyEvent)
 			break;
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 	}
 
 	if(change)

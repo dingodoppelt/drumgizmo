@@ -65,13 +65,13 @@ void ComboBox::addItem(std::string name, std::string value)
 void ComboBox::clear()
 {
 	listbox.clear();
-	repaintEvent(nullptr);
+	redraw();
 }
 
 bool ComboBox::selectItem(int index)
 {
 	listbox.selectItem(index);
-	repaintEvent(nullptr);
+	redraw();
 	return true;
 }
 
@@ -143,7 +143,7 @@ void ComboBox::scrollEvent(ScrollEvent* scrollEvent)
 	{
 		scroll_offset = (items.size() - 1);
 	}
-	repaintEvent(nullptr);
+	redraw();
 	*/
 }
 
@@ -203,7 +203,7 @@ void ComboBox::keyEvent(KeyEvent* keyEvent)
 		break;
 	}
 
-	repaintEvent(nullptr);
+	redraw();
 	*/
 }
 

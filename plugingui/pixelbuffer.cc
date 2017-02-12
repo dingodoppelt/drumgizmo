@@ -156,7 +156,7 @@ void PixelBufferAlpha::pixel(size_t x, size_t y,
                              unsigned char* red,
                              unsigned char* green,
                              unsigned char* blue,
-                             unsigned char* alpha)
+                             unsigned char* alpha) const
 {
 	assert(x < width);
 	assert(y < height);

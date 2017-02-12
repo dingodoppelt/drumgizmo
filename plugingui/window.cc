@@ -42,7 +42,8 @@
 #include "nativewindow_pugl.h"
 #endif
 
-namespace GUI {
+namespace GUI
+{
 
 Window::Window(void* native_window)
 	: Widget(nullptr)
@@ -101,40 +102,10 @@ void Window::move(int x, int y)
 	native->move(x, y);
 }
 
-int Window::x()
-{
-	return native->getPosition().first;
-}
-
-int Window::y()
-{
-	return native->getPosition().second;
-}
-
-size_t Window::width()
-{
-	return native->getSize().first;
-}
-
-size_t Window::height()
-{
-	return native->getSize().second;
-}
-
-size_t Window::windowX()
-{
-	return 0;
-}
-
-size_t Window::windowY()
-{
-	return 0;
-}
-
 void Window::show()
 {
 	Widget::show();
-	repaintChildren(nullptr);
+	redraw();
 	native->show();
 }
 
@@ -171,12 +142,12 @@ void Window::setKeyboardFocus(Widget* widget)
 
 	if(oldFocusWidget)
 	{
-		oldFocusWidget->repaintEvent(nullptr);
+		oldFocusWidget->redraw();
 	}
 
 	if(_keyboardFocus)
 	{
-		_keyboardFocus->repaintEvent(nullptr);
+		_keyboardFocus->redraw();
 	}
 }
 
@@ -202,18 +173,34 @@ void Window::setMouseFocus(Widget* widget)
 
 }
 
-void Window::redraw()
+void Window::needsRedraw()
 {
-	native->redraw();
+	needs_redraw = true;
+}
+
+std::size_t Window::translateToWindowX()
+{
+	return 0;
+}
+
+std::size_t Window::translateToWindowY()
+{
+	return 0;
 }
 
 //! Called by event handler when an windowmanager/OS window resize event has
 //! been received. Do not call this directly.
 void Window::resized(std::size_t width, std::size_t height)
 {
-	wpixbuf.realloc(this->width(), this->height());
-	Widget::resize(this->width(), this->height());
-	updateBuffer();
+	auto size = native->getSize();
+	if((wpixbuf.width == size.first) &&
+	   (wpixbuf.height == size.second))
+	{
+		return;
+	}
+	wpixbuf.realloc(size.first, size.second);
+	Widget::resize(size.first, size.second);
+	//updateBuffer();
 }
 
 //! Called by event handler when an windowmanager/OS window move event has
@@ -224,9 +211,20 @@ void Window::moved(int x, int y)
 	Widget::move(x, y);
 }
 
-void Window::updateBuffer()
+bool Window::updateBuffer()
 {
-	for(auto pixelBuffer : getPixelBuffers())
+	if(!native)
+	{
+		return false;
+	}
+
+	if(!needs_redraw)
+	{
+		// Nothing changed, don't update anything.
+		return false;
+	}
+
+	for(const auto& pixelBuffer : getPixelBuffers())
 	{
 		size_t updateWidth = pixelBuffer->width;
 		size_t updateHeight = pixelBuffer->height;
@@ -258,35 +256,10 @@ void Window::updateBuffer()
 		}
 	}
 
-	native->handleBuffer();
-}
+	native->redraw();
+	needs_redraw = false;
 
-void Window::beginPaint()
-{
-	++refcount;
-	if(refcount > maxRefcount)
-	{
-		maxRefcount = refcount;
-	}
-}
-
-void Window::endPaint()
-{
-	if(refcount)
-	{
-		--refcount;
-	}
-
-	if(!refcount)
-	{
-		// Did we go deep enough for a buffer update?
-		if(maxRefcount > 1)
-		{
-			updateBuffer();
-			redraw();
-		}
-		maxRefcount = 0;
-	}
+	return true;
 }
 
 } // GUI::

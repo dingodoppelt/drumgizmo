@@ -43,7 +43,7 @@ void ProgressBar::setState(ProgressBarState state)
 	if(this->state != state)
 	{
 		this->state = state;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -52,7 +52,7 @@ void ProgressBar::setTotal(std::size_t total)
 	if(this->total != total)
 	{
 		this->total = total;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -61,7 +61,7 @@ void ProgressBar::setValue(std::size_t value)
 	if(this->value != value)
 	{
 		this->value = value;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 

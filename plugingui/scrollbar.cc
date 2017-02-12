@@ -41,7 +41,7 @@ void ScrollBar::setRange(int r)
 {
 	rangeValue = r;
 	setValue(value());
-	repaintEvent(nullptr);
+	redraw();
 }
 
 int ScrollBar::range()
@@ -57,7 +57,7 @@ void ScrollBar::setMaximum(int m)
 		rangeValue = maxValue;
 	}
 	setValue(value());
-	repaintEvent(nullptr);
+	redraw();
 }
 
 int ScrollBar::maximum()
@@ -91,7 +91,7 @@ void ScrollBar::setValue(int value)
 
 	valueChangeNotifier(value);
 
-	repaintEvent(nullptr);
+	redraw();
 }
 
 int ScrollBar::value()

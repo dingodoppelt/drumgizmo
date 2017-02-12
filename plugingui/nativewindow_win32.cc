@@ -379,10 +379,6 @@ void NativeWindowWin32::show()
 	ShowWindow(m_hwnd, SW_SHOW);
 }
 
-void NativeWindowWin32::handleBuffer()
-{
-}
-
 void NativeWindowWin32::hide()
 {
 	ShowWindow(m_hwnd, SW_HIDE);
@@ -390,6 +386,7 @@ void NativeWindowWin32::hide()
 
 void NativeWindowWin32::redraw()
 {
+	// Send WM_PAINT message. Buffer transfering is handled in MessageHandler.
 	if(parent_window == nullptr)
 	{
 		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);

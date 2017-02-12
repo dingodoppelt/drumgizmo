@@ -52,25 +52,22 @@ public:
 
 	virtual void show();
 	virtual void hide();
+	void setVisible(bool visible);
+	bool visible() const;
+
+	//! Mark widget dirty and shedule redraw on next window redraw.
+	void redraw();
 
 	// From LayoutItem
 	virtual void resize(std::size_t width, std::size_t height) override;
 	virtual void move(int x, int y) override;
-	virtual int x() override;
-	virtual int y() override;
-	virtual std::size_t width() override;
-	virtual std::size_t height() override;
+	virtual int x() const override;
+	virtual int y() const override;
+	virtual std::size_t width() const override;
+	virtual std::size_t height() const override;
 
 	// From Canvas
 	PixelBufferAlpha& GetPixelBuffer() override;
-	void beginPaint() override;
-	void endPaint() override;
-
-	//! Translate x-coordinate from parent-space to window-space.
-	virtual size_t windowX();
-
-	//! Translate y-coordinate from parent-space to window-space.
-	virtual size_t windowY();
 
 	virtual bool isFocusable() { return false; }
 	virtual bool catchMouse() { return false; }
@@ -97,14 +94,17 @@ public:
 
 	bool hasKeyboardFocus();
 
-	bool visible();
-	void setVisible(bool visible);
-
 	Notifier<std::size_t, std::size_t> sizeChangeNotifier; // (width, height)
 	Notifier<int, int> positionChangeNotifier; // (x, y)
 
 protected:
-	void repaintChildren(RepaintEvent* repaintEvent);
+	friend class EventHandler;
+
+	//! Translate x-coordinate from parent-space to window-space.
+	virtual std::size_t translateToWindowX();
+
+	//! Translate y-coordinate from parent-space to window-space.
+	virtual std::size_t translateToWindowY();
 
 	PixelBufferAlpha pixbuf{0,0};
 
@@ -119,6 +119,8 @@ protected:
 	std::size_t _height{0};
 
 	bool _visible{true};
+
+	bool dirty{true};
 };
 
 } // GUI::

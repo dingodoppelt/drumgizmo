@@ -83,7 +83,7 @@ void TextEdit::setText(const std::string& text)
 	scroll.setRange(ran);
 	scroll.setMaximum(preprocessedtext.size());
 
-	repaintEvent(nullptr);
+	redraw();
 
 	textChangedNotifier();
 }
@@ -190,7 +190,7 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 void TextEdit::scrolled(int value)
 {
 	(void)value;
-	repaintEvent(nullptr);
+	redraw();
 }
 
 } // GUI::

@@ -54,7 +54,6 @@ public:
 	void show() override;
 	void hide() override;
 	void setCaption(const std::string &caption) override;
-	void handleBuffer() override;
 	void redraw() override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;

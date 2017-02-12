@@ -57,14 +57,14 @@ void Button::buttonEvent(ButtonEvent* buttonEvent)
 		draw_state = down;
 		button_state = down;
 		in_button = true;
-		repaintEvent(nullptr);
+		redraw();
 	}
 
 	if(buttonEvent->direction == Direction::up)
 	{
 		draw_state = up;
 		button_state = up;
-		repaintEvent(nullptr);
+		redraw();
 		if(in_button)
 		{
 			clicked();
@@ -110,7 +110,7 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 void Button::setText(const std::string& text)
 {
 	this->text = text;
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void Button::mouseLeaveEvent()
@@ -119,7 +119,7 @@ void Button::mouseLeaveEvent()
 	if(button_state == down)
 	{
 		draw_state = up;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -129,7 +129,7 @@ void Button::mouseEnterEvent()
 	if(button_state == down)
 	{
 		draw_state = down;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 

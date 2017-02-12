@@ -203,7 +203,7 @@ void Knob::internalSetValue(float value)
 
 	currentValue = value;
 	valueChangedNotifier(currentValue);
-	repaintEvent(nullptr);
+	redraw();
 }
 
 } // GUI::

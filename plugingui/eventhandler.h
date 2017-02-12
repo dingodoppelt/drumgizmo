@@ -53,10 +53,6 @@ public:
 	//! \return A pointer to the event or nullptr if there are none.
 	std::shared_ptr<Event> getNextEvent();
 
-	//! \brief Get a single event from the event queue without popping it.
-	//! \return A pointer to the event or nullptr if there are none.
-	std::shared_ptr<Event> peekNextEvent();
-
 	Notifier<> closeNotifier;
 
 private:

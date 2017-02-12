@@ -56,21 +56,8 @@ std::shared_ptr<Event> EventHandler::getNextEvent()
 	return event;
 }
 
-std::shared_ptr<Event> EventHandler::peekNextEvent()
-{
-	if(events.empty())
-	{
-		return nullptr;
-	}
-
-	auto event = events.front();
-	return event;
-}
-
 void EventHandler::processEvents()
 {
-	Painter p(window); // Make sure we only redraw buffer one time.
-
 	events = nativeWindow.getEvents();
 
 	while(hasEvent())
@@ -96,26 +83,6 @@ void EventHandler::processEvents()
 
 		case EventType::resize:
 			{
-				while(true)
-				{
-					if(!hasEvent())
-					{
-						break;
-					}
-
-					auto peekEvent = peekNextEvent();
-					if(!peekEvent)
-					{
-						break;
-					}
-					if(peekEvent->type() != EventType::resize)
-					{
-						break;
-					}
-
-					event = getNextEvent();
-				}
-
 				auto resizeEvent = static_cast<ResizeEvent*>(event.get());
 				if((resizeEvent->width != window.width()) ||
 				   (resizeEvent->height != window.height()))
@@ -130,16 +97,6 @@ void EventHandler::processEvents()
 				while(true)
 				{
 					if(!hasEvent())
-					{
-						break;
-					}
-
-					auto peekEvent = peekNextEvent();
-					if(!peekEvent)
-					{
-						break;
-					}
-					if(peekEvent->type() != EventType::mouseMove)
 					{
 						break;
 					}
@@ -171,8 +128,8 @@ void EventHandler::processEvents()
 				if(window.buttonDownFocus())
 				{
 					auto widget = window.buttonDownFocus();
-					moveEvent->x -= widget->windowX();
-					moveEvent->y -= widget->windowY();
+					moveEvent->x -= widget->translateToWindowX();
+					moveEvent->y -= widget->translateToWindowY();
 
 					window.buttonDownFocus()->mouseMoveEvent(moveEvent);
 					break;
@@ -180,8 +137,8 @@ void EventHandler::processEvents()
 
 				if(widget)
 				{
-					moveEvent->x -= widget->windowX();
-					moveEvent->y -= widget->windowY();
+					moveEvent->x -= widget->translateToWindowX();
+					moveEvent->y -= widget->translateToWindowY();
 					widget->mouseMoveEvent(moveEvent);
 				}
 			}
@@ -206,8 +163,8 @@ void EventHandler::processEvents()
 					if(buttonEvent->direction == Direction::up)
 					{
 						auto widget = window.buttonDownFocus();
-						buttonEvent->x -= widget->windowX();
-						buttonEvent->y -= widget->windowY();
+						buttonEvent->x -= widget->translateToWindowX();
+						buttonEvent->y -= widget->translateToWindowY();
 
 						widget->buttonEvent(buttonEvent);
 						window.setButtonDownFocus(nullptr);
@@ -217,8 +174,8 @@ void EventHandler::processEvents()
 
 				if(widget)
 				{
-					buttonEvent->x -= widget->windowX();
-					buttonEvent->y -= widget->windowY();
+					buttonEvent->x -= widget->translateToWindowX();
+					buttonEvent->y -= widget->translateToWindowY();
 
 					widget->buttonEvent(buttonEvent);
 
@@ -238,38 +195,13 @@ void EventHandler::processEvents()
 
 		case EventType::scroll:
 			{
-				int delta = 0;
-				while(true)
-				{
-					if(!hasEvent())
-					{
-						break;
-					}
-
-					auto peekEvent = peekNextEvent();
-					if(!peekEvent)
-					{
-						break;
-					}
-					if(peekEvent->type() != EventType::scroll)
-					{
-						break;
-					}
-
-					auto scrollEvent = static_cast<ScrollEvent*>(event.get());
-					delta += scrollEvent->delta;
-
-					event = getNextEvent();
-				}
-
 				auto scrollEvent = static_cast<ScrollEvent*>(event.get());
-				scrollEvent->delta += delta;
 
 				auto widget = window.find(scrollEvent->x, scrollEvent->y);
 				if(widget)
 				{
-					scrollEvent->x -= widget->windowX();
-					scrollEvent->y -= widget->windowY();
+					scrollEvent->x -= widget->translateToWindowX();
+					scrollEvent->y -= widget->translateToWindowY();
 
 					widget->scrollEvent(scrollEvent);
 				}
@@ -294,6 +226,10 @@ void EventHandler::processEvents()
 			break;
 		}
 	}
+
+	// Probe window and children to readrw as needed.
+	// NOTE: This method will invoke native->redraw() if a redraw is needed.
+	window.updateBuffer();
 }
 
 } // GUI::

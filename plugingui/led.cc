@@ -41,7 +41,7 @@ void LED::setState(state_t state)
 	if(this->state != state)
 	{
 		this->state = state;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 

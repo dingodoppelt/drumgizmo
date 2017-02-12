@@ -39,14 +39,6 @@ public:
 
 	//! @returns a reference to the pixel buffer.
 	virtual PixelBufferAlpha& GetPixelBuffer() = 0;
-
-	//! Signal the beginning of a paint operation.
-	virtual void beginPaint() = 0;
-
-	//! Signal the ending of a paint operation
-	//! This might trigger a redraw operation.
-	virtual void endPaint() = 0;
-
 };
 
 } // GUI::

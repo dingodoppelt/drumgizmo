@@ -50,12 +50,8 @@ bool MainWindow::processEvents()
 //		return running;
 //	}
 
+	settings_notifier.evaluate();
 	eventHandler()->processEvents();
-
-	{
-		Painter p(*this);
-		settings_notifier.evaluate();
-	}
 
 	if(closing)
 	{

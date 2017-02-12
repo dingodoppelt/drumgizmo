@@ -185,12 +185,11 @@ public:
 	{
 	}
 
-	GUI::PixelBufferAlpha& GetPixelBuffer()
+	// From Canvas:
+	GUI::PixelBufferAlpha& GetPixelBuffer() override
 	{
 		return pixbuf;
 	}
-	void beginPaint() {}
-	void endPaint() {}
 
 private:
 	InlinePixelBufferAlpha pixbuf;

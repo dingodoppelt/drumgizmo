@@ -62,13 +62,13 @@ void CheckBox::buttonEvent(ButtonEvent* buttonEvent)
 		middle = true;
 	}
 
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void CheckBox::setText(std::string text)
 {
 	_text = text;
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void CheckBox::keyEvent(KeyEvent* keyEvent)
@@ -85,7 +85,7 @@ void CheckBox::keyEvent(KeyEvent* keyEvent)
 			middle = true;
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -129,7 +129,7 @@ void CheckBox::mouseLeaveEvent()
 	if(buttonDown)
 	{
 		middle = false;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -139,7 +139,7 @@ void CheckBox::mouseEnterEvent()
 	if(buttonDown)
 	{
 		middle = true;
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
@@ -152,7 +152,7 @@ void CheckBox::internalSetChecked(bool checked)
 
 	state = checked;
 	stateChangedNotifier(state);
-	repaintEvent(nullptr);
+	redraw();
 }
 
 } // GUI::

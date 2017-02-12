@@ -31,7 +31,8 @@
 #include "painter.h"
 #include "window.h"
 
-namespace GUI {
+namespace GUI
+{
 
 Widget::Widget(Widget* parent)
 	: parent(parent)
@@ -67,13 +68,19 @@ void Widget::setVisible(bool visible)
 
 	if(visible)
 	{
-		repaintEvent(nullptr);
+		redraw();
 	}
 }
 
-bool Widget::visible()
+bool Widget::visible() const
 {
 	return _visible;
+}
+
+void Widget::redraw()
+{
+	dirty = true;
+	window()->needsRedraw();
 }
 
 void Widget::addChild(Widget* widget)
@@ -124,33 +131,39 @@ void Widget::resize(std::size_t width, std::size_t height)
 	_width = width;
 	_height = height;
 	pixbuf.realloc(width, height);
-	repaintEvent(nullptr);
+	redraw();
 	sizeChangeNotifier(width, height);
 }
 
 void Widget::move(int x, int y)
 {
+	if((_x == x) &&
+	   (_y == y))
+	{
+		return;
+	}
+
 	_x = x;
 	_y = y;
 	positionChangeNotifier(x, y);
 }
 
-int Widget::x()
+int Widget::x() const
 {
 	return _x;
 }
 
-int Widget::y()
+int Widget::y() const
 {
 	return _y;
 }
 
-std::size_t Widget::width()
+std::size_t Widget::width() const
 {
 	return _width;
 }
 
-std::size_t Widget::height()
+std::size_t Widget::height() const
 {
 	return _height;
 }
@@ -158,44 +171,6 @@ std::size_t Widget::height()
 PixelBufferAlpha& Widget::GetPixelBuffer()
 {
 	return pixbuf;
-}
-
-void Widget::beginPaint()
-{
-	if(_window)
-	{
-		_window->beginPaint();
-	}
-}
-
-void Widget::endPaint()
-{
-	if(_window)
-	{
-		_window->endPaint();
-	}
-}
-
-size_t Widget::windowX()
-{
-	size_t window_x = x();
-	if(parent)
-	{
-		window_x += parent->windowX();
-	}
-
-	return window_x;
-}
-
-size_t Widget::windowY()
-{
-	size_t window_y = y();
-	if(parent)
-	{
-		window_y += parent->windowY();
-	}
-
-	return window_y;
 }
 
 ImageCache& Widget::getImageCache()
@@ -231,8 +206,14 @@ std::vector<PixelBufferAlpha*> Widget::getPixelBuffers()
 {
 	std::vector<PixelBufferAlpha*> pixelBuffers;
 
-	pixbuf.x = windowX();
-	pixbuf.y = windowY();
+	pixbuf.x = translateToWindowX();
+	pixbuf.y = translateToWindowY();
+
+	if(dirty)
+	{
+		repaintEvent(nullptr);
+		dirty = false;
+	}
 
 	pixelBuffers.push_back(&pixbuf);
 
@@ -254,16 +235,26 @@ bool Widget::hasKeyboardFocus()
 	return window()->keyboardFocus() == this;
 }
 
-void Widget::repaintChildren(RepaintEvent* repaintEvent)
+std::size_t Widget::translateToWindowX()
 {
-	Painter p(*this); // make sure pixbuf refcount is incremented.
-
-	this->repaintEvent(repaintEvent);
-
-	for(auto child : children)
+	size_t window_x = x();
+	if(parent)
 	{
-		child->repaintChildren(repaintEvent);
+		window_x += parent->translateToWindowX();
 	}
+
+	return window_x;
+}
+
+std::size_t Widget::translateToWindowY()
+{
+	size_t window_y = y();
+	if(parent)
+	{
+		window_y += parent->translateToWindowY();
+	}
+
+	return window_y;
 }
 
 } // GUI::

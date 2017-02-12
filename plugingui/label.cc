@@ -39,7 +39,7 @@ Label::Label(Widget *parent)
 void Label::setText(const std::string& text)
 {
 	_text = text;
-	repaintEvent(nullptr);
+	redraw();
 }
 
 void Label::setAlignment(TextAlignment alignment)

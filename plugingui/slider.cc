@@ -46,7 +46,7 @@ Slider::Slider(Widget *parent)
 void Slider::setValue(float newValue)
 {
 	currentValue = newValue;
-	repaintEvent(nullptr);
+	redraw();
 	clickNotifier();
 }
 
@@ -120,7 +120,7 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 			currentValue = 1;
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 		clickNotifier();
 	}
 
@@ -139,7 +139,7 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 			currentValue = 1;
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 		clickNotifier();
 	}
 }
@@ -160,7 +160,7 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 			currentValue = 1;
 		}
 
-		repaintEvent(nullptr);
+		redraw();
 		clickNotifier();
 	}
 }

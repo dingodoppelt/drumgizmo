@@ -46,10 +46,10 @@ public:
 
 	virtual void resize(std::size_t width, std::size_t height) = 0;
 	virtual void move(int x, int y) = 0;
-	virtual int x() = 0;
-	virtual int y() = 0;
-	virtual std::size_t width() = 0;
-	virtual std::size_t height() = 0;
+	virtual int x() const = 0;
+	virtual int y() const = 0;
+	virtual std::size_t width() const = 0;
+	virtual std::size_t height() const = 0;
 
 private:
 	Layout* parent;

@@ -69,10 +69,6 @@ public:
 	//! Sets the window caption in the title bar (if it has one).
 	virtual void setCaption(const std::string &caption) = 0;
 
-	//! Recreate a window render buffer based on the internal buffer.
-	//! This need to be called whenever the internal buffer size has changed.
-	virtual void handleBuffer() = 0;
-
 	//! Draw the internal rendering buffer to the window buffer.
 	virtual void redraw() = 0;
 
