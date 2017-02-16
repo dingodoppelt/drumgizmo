@@ -146,13 +146,13 @@ void EventHandler::processEvents()
 
 		case EventType::button:
 			{
-				if(lastWasDoubleClick)
+				auto buttonEvent = static_cast<ButtonEvent*>(event.get());
+
+				if(lastWasDoubleClick && (buttonEvent->direction == Direction::down))
 				{
 					lastWasDoubleClick = false;
 					continue;
 				}
-
-				auto buttonEvent = static_cast<ButtonEvent*>(event.get());
 
 				lastWasDoubleClick = buttonEvent->doubleClick;
 
