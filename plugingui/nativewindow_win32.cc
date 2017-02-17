@@ -27,6 +27,7 @@
 #include "nativewindow_win32.h"
 
 #include <cstring>
+#include <algorithm>
 
 #include "window.h"
 
@@ -222,11 +223,14 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	case WM_PAINT:
 		{
+			RECT rect;
+			GetUpdateRect(hwnd, &rect, FALSE);
+
 			auto repaintEvent = std::make_shared<RepaintEvent>();
-			repaintEvent->x = 0;
-			repaintEvent->y = 0;
-			repaintEvent->width = 100;
-			repaintEvent->height = 100;
+			repaintEvent->x = rect.left;
+			repaintEvent->y = rect.top;
+			repaintEvent->width = rect.right - rect.left;
+			repaintEvent->height = rect.bottom - rect.top;
 			native->event_queue.push_back(repaintEvent);
 
 			// Move to window.h (in class)
@@ -256,22 +260,27 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				DeleteDC(hDC);
 			}
 
+			int from_x = rect.left;
+			int to_x = std::min(rect.right, (long)px.width);
+			int from_y = rect.top;
+			int to_y = std::min(rect.bottom, (long)px.height);
 			{ // Copy PixelBuffer to framebuffer
-				int i, j, k;
-				for(k = 0, i = 0; i < (int)px.height; ++i)
+				int idx = 0;
+				for(int y = from_y; y < to_y; ++y)
 				{
-					for(j = 0; j < (int)px.width; ++j, ++k)
+					for(int x = from_x; x < to_x; ++x)
 					{
-						*(framebuf + k) = RGB(px.buf[(j + i * px.width) * 3 + 2],
-						                      px.buf[(j + i * px.width) * 3 + 1],
-						                      px.buf[(j + i * px.width) * 3 + 0]);
+						*(framebuf + idx) = RGB(px.buf[(x + y * px.width) * 3 + 2],
+						                        px.buf[(x + y * px.width) * 3 + 1],
+						                        px.buf[(x + y * px.width) * 3 + 0]);
+						++idx;
 					}
 				}
 			}
 
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(native->m_hwnd, &ps);
-			BitBlt(hdc, 0, 0, px.width, px.height, pDC, 0, 0, SRCCOPY);
+			BitBlt(hdc, from_x, from_y, to_x, to_y, pDC, from_x, from_y, SRCCOPY);
 			EndPaint(native->m_hwnd, &ps);
 
 			{ // Destroy bitmap (move to window.cc)
@@ -389,7 +398,13 @@ void NativeWindowWin32::redraw(const Rect& dirty_rect)
 	// Send WM_PAINT message. Buffer transfering is handled in MessageHandler.
 	if(parent_window == nullptr)
 	{
-		RECT rect = {dirty_rect.x1, dirty_rect.y1, dirty_rect.x2, dirty_rect.y2 };
+		RECT rect =
+			{
+				(long)dirty_rect.x1,
+				(long)dirty_rect.y1,
+				(long)dirty_rect.x2,
+				(long)dirty_rect.y2
+			};
 		RedrawWindow(m_hwnd, &rect, nullptr, RDW_INVALIDATE);
 		UpdateWindow(m_hwnd);
 	}
