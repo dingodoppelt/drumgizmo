@@ -174,5 +174,12 @@ public:
 
 using EventQueue = std::list<std::shared_ptr<Event>>;
 
+struct Rect
+{
+	std::size_t x1;
+	std::size_t y1;
+	std::size_t x2;
+	std::size_t y2;
+};
 
 } // GUI::

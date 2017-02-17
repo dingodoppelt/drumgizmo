@@ -223,18 +223,23 @@ void NativeWindowX11::hide()
 	XUnmapWindow(display, xwindow);
 }
 
-void NativeWindowX11::redraw()
+void NativeWindowX11::redraw(const Rect& dirty_rect)
 {
 	if(display == nullptr)
 	{
 		return;
 	}
 
-	updateImageFromBuffer();
-	XShmPutImage(display, xwindow, gc, image, 0, 0, 0, 0,
-	             std::min(image->width, (int)window.width()),
-	             std::min(image->height, (int)window.height()), false);
+	auto x1 = dirty_rect.x1;
+	auto y1 = dirty_rect.y1;
+	auto x2 = dirty_rect.x2;
+	auto y2 = dirty_rect.y2;
 
+	updateImageFromBuffer(x1, y1, x2, y2);
+
+	XShmPutImage(display, xwindow, gc, image, x1, y1, x1, y1,
+	             std::min((std::size_t)image->width, (x2 - x1)),
+	             std::min((std::size_t)image->height, (y2 - y1)), false);
 	XFlush(display);
 }
 
@@ -510,7 +515,8 @@ void NativeWindowX11::deallocateShmImage()
 	shmdt(shm_info.shmaddr);
 }
 
-void NativeWindowX11::updateImageFromBuffer()
+void NativeWindowX11::updateImageFromBuffer(std::size_t x1, std::size_t y1,
+                                            std::size_t x2, std::size_t y2)
 {
 	//DEBUG(x11, "depth: %d", depth);
 
@@ -527,50 +533,47 @@ void NativeWindowX11::updateImageFromBuffer()
 		std::size_t new_width = ((width / step_size) + 1) * step_size;
 		std::size_t new_height = ((height / step_size) + 1) * step_size;
 		allocateShmImage(new_width, new_height);
+		x1 = 0;
+		y1 = 0;
+		x2 = width;
+		y2 = height;
 	}
 
 	auto stride = image->width;
 
 	std::uint8_t* pixel_buffer = (std::uint8_t*)window.wpixbuf.buf;
-
 	if(depth >= 24) // RGB 888 format
 	{
 		std::uint32_t* shm_addr = (std::uint32_t*)shm_info.shmaddr;
 
-		std::size_t x_stride = 0;
-		std::size_t x_pos = 0;
-		for(std::size_t y = 0; y < height; ++y)
+		for(std::size_t y = y1; y < y2; ++y)
 		{
-			for(std::size_t x = 0; x < width; ++x)
+			for(std::size_t x = x1; x < x2; ++x)
 			{
-				const std::uint8_t red = pixel_buffer[x_pos * 3];
-				const std::uint8_t green = pixel_buffer[x_pos * 3 + 1];
-				const std::uint8_t blue = pixel_buffer[x_pos * 3 + 2];
-				shm_addr[x_stride] = (red << 16) | (green << 8) | blue;
-				++x_pos;
-				++x_stride;
+				const std::size_t pin = y * width + x;
+				const std::size_t pout = y * stride + x;
+				const std::uint8_t red = pixel_buffer[pin * 3];
+				const std::uint8_t green = pixel_buffer[pin * 3 + 1];
+				const std::uint8_t blue = pixel_buffer[pin * 3 + 2];
+				shm_addr[pout] = (red << 16) | (green << 8) | blue;
 			}
-			x_stride += (stride - width);
 		}
 	}
 	else if(depth >= 15) // RGB 565 format
 	{
 		std::uint16_t* shm_addr = (std::uint16_t*)shm_info.shmaddr;
 
-		std::size_t x_stride = 0;
-		std::size_t x_pos = 0;
-		for(std::size_t y = 0; y < height; ++y)
+		for(std::size_t y = y1; y < y2; ++y)
 		{
-			for(std::size_t x = 0; x < width; ++x)
+			for(std::size_t x = x1; x < x2; ++x)
 			{
-				const std::uint8_t red = pixel_buffer[x_pos * 3];
-				const std::uint8_t green = pixel_buffer[x_pos * 3 + 1];
-				const std::uint8_t blue = pixel_buffer[x_pos * 3 + 2];
-				shm_addr[x_stride] = (red << 11) | (green << 5) | blue;
-				++x_pos;
-				++x_stride;
+				const std::size_t pin = y * width + x;
+				const std::size_t pout = y * stride + x;
+				const std::uint8_t red = pixel_buffer[pin * 3];
+				const std::uint8_t green = pixel_buffer[pin * 3 + 1];
+				const std::uint8_t blue = pixel_buffer[pin * 3 + 2];
+				shm_addr[pout] = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
 			}
-			x_stride += (stride - width);
 		}
 	}
 }

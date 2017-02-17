@@ -384,12 +384,13 @@ void NativeWindowWin32::hide()
 	ShowWindow(m_hwnd, SW_HIDE);
 }
 
-void NativeWindowWin32::redraw()
+void NativeWindowWin32::redraw(const Rect& dirty_rect)
 {
 	// Send WM_PAINT message. Buffer transfering is handled in MessageHandler.
 	if(parent_window == nullptr)
 	{
-		RedrawWindow(m_hwnd, nullptr, nullptr, RDW_ERASE|RDW_INVALIDATE);
+		RECT rect = {dirty_rect.x1, dirty_rect.y1, dirty_rect.x2, dirty_rect.y2 };
+		RedrawWindow(m_hwnd, &rect, nullptr, RDW_INVALIDATE);
 		UpdateWindow(m_hwnd);
 	}
 	else

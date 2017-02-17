@@ -29,6 +29,8 @@
 #include <string>
 #include <memory>
 #include <queue>
+#include <tuple>
+#include <vector>
 
 #include "guievent.h"
 
@@ -70,7 +72,7 @@ public:
 	virtual void setCaption(const std::string &caption) = 0;
 
 	//! Draw the internal rendering buffer to the window buffer.
-	virtual void redraw() = 0;
+	virtual void redraw(const Rect& dirty_rect) = 0;
 
 	//! Toggle capture mouse mode.
 	virtual void grabMouse(bool grab) = 0;

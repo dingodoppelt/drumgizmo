@@ -212,6 +212,7 @@ std::vector<PixelBufferAlpha*> Widget::getPixelBuffers()
 	if(dirty)
 	{
 		repaintEvent(nullptr);
+		pixbuf.dirty = true;
 		dirty = false;
 	}
 

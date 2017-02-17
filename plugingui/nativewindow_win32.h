@@ -52,7 +52,7 @@ public:
 	void show() override;
 	void setCaption(const std::string &caption) override;
 	void hide() override;
-	void redraw() override;
+	void redraw(const Rect& dirty_rect) override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
 

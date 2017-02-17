@@ -26,6 +26,8 @@
  */
 #include "window.h"
 
+#include <cstring>
+
 #include "painter.h"
 
 #ifndef PUGL
@@ -224,39 +226,88 @@ bool Window::updateBuffer()
 		return false;
 	}
 
-	for(const auto& pixelBuffer : getPixelBuffers())
+	bool has_dirty_rect{false};
+	Rect dirty_rect;
+
+	auto pixel_buffers = getPixelBuffers();
+	for(auto& pixel_buffer : pixel_buffers)
 	{
-		size_t updateWidth = pixelBuffer->width;
-		size_t updateHeight = pixelBuffer->height;
-
-		// Skip buffer if not inside window.
-		if((wpixbuf.width < pixelBuffer->x) || (wpixbuf.height < pixelBuffer->y))
+		if(pixel_buffer->dirty)
 		{
-			continue;
-		}
+			auto x1 = (std::size_t)pixel_buffer->x;
+			auto x2 = (std::size_t)(pixel_buffer->x + pixel_buffer->width);
+			auto y1 = (std::size_t)pixel_buffer->y;
+			auto y2 = (std::size_t)(pixel_buffer->y + pixel_buffer->height);
 
-		if(updateWidth > (wpixbuf.width - pixelBuffer->x))
-		{
-			updateWidth = (wpixbuf.width - pixelBuffer->x);
-		}
-
-		if(updateHeight > (wpixbuf.height - pixelBuffer->y))
-		{
-			updateHeight = (wpixbuf.height - pixelBuffer->y);
-		}
-
-		unsigned char r,g,b,a;
-		for(size_t y = 0; y < updateHeight; y++)
-		{
-			for(size_t x = 0; x < updateWidth; x++)
+			pixel_buffer->dirty = false;
+			if(!has_dirty_rect)
 			{
-				pixelBuffer->pixel(x, y, &r, &g, &b, &a);
-				wpixbuf.setPixel(x + pixelBuffer->x, y + pixelBuffer->y, r, g, b, a);
+				// Insert this area:
+				dirty_rect = {x1, y1, x2, y2};
+				has_dirty_rect = true;
+			}
+			else
+			{
+				// Expand existing area:
+				auto x1_0 = dirty_rect.x1;
+				auto y1_0 = dirty_rect.y1;
+				auto x2_0 = dirty_rect.x2;
+				auto y2_0 = dirty_rect.y2;
+				dirty_rect = {
+					(x1_0 < x1) ? x1_0 : x1,
+					(y1_0 < y1) ? y1_0 : y1,
+					(x2_0 > x2) ? x2_0 : x2,
+					(y2_0 > y2) ? y2_0 : y2
+				};
 			}
 		}
 	}
 
-	native->redraw();
+	for(auto& pixel_buffer : pixel_buffers)
+	{
+		int update_width = pixel_buffer->width;
+		int update_height = pixel_buffer->height;
+
+		// Skip buffer if not inside window.
+		if(((int)wpixbuf.width < pixel_buffer->x) ||
+		   ((int)wpixbuf.height < pixel_buffer->y))
+		{
+			continue;
+		}
+
+		if(update_width > ((int)wpixbuf.width - pixel_buffer->x))
+		{
+			update_width = ((int)wpixbuf.width - pixel_buffer->x);
+		}
+
+		if(update_height > ((int)wpixbuf.height - pixel_buffer->y))
+		{
+			update_height = ((int)wpixbuf.height - pixel_buffer->y);
+		}
+
+		std::uint8_t r, g, b, a;
+
+		auto from_x  = (int)dirty_rect.x1 - pixel_buffer->x;
+		from_x = std::max(0, from_x);
+		auto from_y  = (int)dirty_rect.y1 - pixel_buffer->y;
+		from_y = std::max(0, from_y);
+
+		auto to_x = (int)dirty_rect.x2 - pixel_buffer->x;
+		to_x = std::min(to_x, (int)update_width);
+		auto to_y = (int)dirty_rect.y2 - pixel_buffer->y;
+		to_y = std::min(to_y, (int)update_height);
+
+		for(int y = from_y; y < to_y; y++)
+		{
+			for(int x = from_x; x < to_x; x++)
+			{
+				pixel_buffer->pixel(x, y, &r, &g, &b, &a);
+				wpixbuf.setPixel(x + pixel_buffer->x, y + pixel_buffer->y, r, g, b, a);
+			}
+		}
+	}
+
+	native->redraw(dirty_rect);
 	needs_redraw = false;
 
 	return true;

@@ -54,7 +54,7 @@ public:
 	void show() override;
 	void hide() override;
 	void setCaption(const std::string &caption) override;
-	void redraw() override;
+	void redraw(const Rect& dirty_rect) override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
 
@@ -69,7 +69,8 @@ private:
 	void deallocateShmImage();
 
 	//! Copy data from the pixel buffer into the shared memory
-	void updateImageFromBuffer();
+	void updateImageFromBuffer(std::size_t x1, std::size_t y1,
+	                           std::size_t x2, std::size_t y2);
 
 	XShmSegmentInfo shm_info;
 	XImage* image{nullptr};
