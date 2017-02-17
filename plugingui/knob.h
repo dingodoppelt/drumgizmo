@@ -44,6 +44,7 @@ public:
 	bool isFocusable() override { return true; }
 
 	void setValue(float value);
+	void setRange(float minimum, float maximum);
 	float value();
 
 	Notifier<float> valueChangedNotifier; // (float newValue)
@@ -69,7 +70,7 @@ private:
 
 	state_t state;
 
-	float currentValue;
+	float current_value;
 	float maximum;
 	float minimum;
 

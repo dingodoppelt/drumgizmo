@@ -37,7 +37,8 @@
 #endif
 #include <math.h>
 
-namespace GUI {
+namespace GUI
+{
 
 Knob::Knob(Widget *parent)
 	: Widget(parent)
@@ -48,24 +49,33 @@ Knob::Knob(Widget *parent)
 	maximum = 1.0;
 	minimum = 0.0;
 
-	currentValue = minimum;
+	current_value = 0.0;
 
 	mouse_offset_x = 0;
 }
 
 void Knob::setValue(float value)
 {
+	value -= minimum;
+	value /= (maximum - minimum);
 	internalSetValue(value);
+}
+
+void Knob::setRange(float minimum, float maximum)
+{
+	this->minimum = minimum;
+	this->maximum = maximum;
+	internalSetValue(current_value);
 }
 
 float Knob::value()
 {
-	return currentValue;
+	return current_value * (maximum - minimum) + minimum;
 }
 
 void Knob::scrollEvent(ScrollEvent* scrollEvent)
 {
-	float value = currentValue - (scrollEvent->delta / 200.0);
+	float value = (current_value - (scrollEvent->delta / 200.0));
 	internalSetValue(value);
 }
 
@@ -80,7 +90,7 @@ void Knob::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 		float dval =
 			mouse_offset_x - (mouseMoveEvent->x + (-1 * mouseMoveEvent->y));
-		float value = currentValue - (dval / 300.0);
+		float value = current_value - (dval / 300.0);
 
 		internalSetValue(value);
 
@@ -95,7 +105,7 @@ void Knob::keyEvent(KeyEvent* keyEvent)
 		return;
 	}
 
-	float value = currentValue;
+	float value = current_value;
 	switch(keyEvent->keycode) {
 	case Key::up:
 		value += 0.01;
@@ -156,13 +166,27 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 	p.clear();
 	p.drawImageStretched(0, 0, img_knob, diameter, diameter);
 
+	float range = maximum - minimum;
+
+	// Show 0, 1 or 2 decimal point depending on the size of the range
 	char buf[64];
-	sprintf(buf, "%.2f", currentValue * maximum);
+	if(range> 100.0f)
+	{
+		sprintf(buf, "%.0f", current_value * range + minimum);
+	}
+	else if(range > 10.0f)
+	{
+		sprintf(buf, "%.1f", current_value * range + minimum);
+	}
+	else
+	{
+		sprintf(buf, "%.2f", current_value * range + minimum);
+	}
 	p.drawText(center_x - font.textWidth(buf) / 2 + 1,
 	           center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
 	// Make it start from 20% and stop at 80%
-	double padval = currentValue * 0.8 + 0.1;
+	double padval = current_value * 0.8 + 0.1;
 
 	double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
 	double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
@@ -184,25 +208,25 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 	}
 }
 
-void Knob::internalSetValue(float value)
+void Knob::internalSetValue(float new_value)
 {
-	if(value < minimum)
+	if(new_value < 0.0)
 	{
-	  value = minimum;
+	  new_value = 0.0;
 	}
 
-	if(value > maximum)
+	if(new_value > 1.0)
 	{
-		value = maximum;
+		new_value = 1.0;
 	}
 
-	if(value == currentValue)
+	if(new_value == current_value)
 	{
 		return;
 	}
 
-	currentValue = value;
-	valueChangedNotifier(currentValue);
+	current_value = new_value;
+	valueChangedNotifier(value());
 	redraw();
 }
 
