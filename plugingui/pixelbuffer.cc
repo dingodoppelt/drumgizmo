@@ -28,7 +28,10 @@
 
 #include <cassert>
 
-namespace GUI {
+#include <cstdlib>
+
+namespace GUI
+{
 
 PixelBuffer::PixelBuffer(size_t width, size_t height)
 	: buf(nullptr)
@@ -59,13 +62,26 @@ void PixelBuffer::setPixel(size_t x, size_t y,
 	assert(x < width);
 	assert(y < height);
 
-	unsigned int a = alpha;
-	unsigned int b = 255 - alpha;
+	if(alpha == 0)
+	{
+		return;
+	}
 
-	buf[PX(0)] = (unsigned char)(((int)red   * a + (int)buf[PX(0)] * b) / 255);
-	buf[PX(1)] = (unsigned char)(((int)green * a + (int)buf[PX(1)] * b) / 255);
-	buf[PX(2)] = (unsigned char)(((int)blue  * a + (int)buf[PX(2)] * b) / 255);
+	if(alpha < 255)
+	{
+		unsigned int a = alpha;
+		unsigned int b = 255 - alpha;
 
+		buf[PX(0)] = (unsigned char)(((int)red   * a + (int)buf[PX(0)] * b) / 255);
+		buf[PX(1)] = (unsigned char)(((int)green * a + (int)buf[PX(1)] * b) / 255);
+		buf[PX(2)] = (unsigned char)(((int)blue  * a + (int)buf[PX(2)] * b) / 255);
+	}
+	else
+	{
+		buf[PX(0)] = red;
+		buf[PX(1)] = green;
+		buf[PX(2)] = blue;
+	}
 }
 
 PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
@@ -133,17 +149,27 @@ void PixelBufferAlpha::addPixel(size_t x, size_t y,
 		return;
 	}
 
-	float a, b;
-	getAlpha(alpha, buf[PX(3)], a, b);
+	if(alpha < 255)
+	{
+		float a, b;
+		getAlpha(alpha, buf[PX(3)], a, b);
 
-	buf[PX(0)] = (unsigned char)((float)red   * a + (float)buf[PX(0)] * b);
-	buf[PX(0)] /= (a + b);
-	buf[PX(1)] = (unsigned char)((float)green * a + (float)buf[PX(1)] * b);
-	buf[PX(1)] /= (a + b);
-	buf[PX(2)] = (unsigned char)((float)blue  * a + (float)buf[PX(2)] * b);
-	buf[PX(2)] /= (a + b);
+		buf[PX(0)] = (unsigned char)((float)red   * a + (float)buf[PX(0)] * b);
+		buf[PX(0)] /= (a + b);
+		buf[PX(1)] = (unsigned char)((float)green * a + (float)buf[PX(1)] * b);
+		buf[PX(1)] /= (a + b);
+		buf[PX(2)] = (unsigned char)((float)blue  * a + (float)buf[PX(2)] * b);
+		buf[PX(2)] /= (a + b);
 
-	buf[PX(3)] = (a + b) * 255;
+		buf[PX(3)] = (a + b) * 255;
+	}
+	else
+	{
+		buf[PX(0)] = red;
+		buf[PX(1)] = green;
+		buf[PX(2)] = blue;
+		buf[PX(3)] = alpha;
+	}
 }
 
 void PixelBufferAlpha::addPixel(size_t x, size_t y, const Colour& c)

@@ -28,9 +28,10 @@
 
 #include "colour.h"
 
-#include <stdlib.h>
+#include <cstddef>
 
-namespace GUI {
+namespace GUI
+{
 
 class PixelBuffer {
 public:
@@ -80,10 +81,11 @@ public:
 
 	bool managed{false};
 	unsigned char* buf{nullptr};
-	size_t width{0};
-	size_t height{0};
-	size_t x{0};
-	size_t y{0};
+	std::size_t width{0};
+	std::size_t height{0};
+	int x{0};
+	int y{0};
+	bool dirty{true};
 };
 
 } // GUI::
