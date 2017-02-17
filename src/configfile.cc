@@ -35,7 +35,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#ifdef WIN32
+#include "platform.h"
+
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #include <direct.h>
 #include <windows.h>
 #include <Shlobj.h>
@@ -45,7 +47,7 @@
 
 #include <hugin.hpp>
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #define SEP "\\"
 #else
 #define SEP "/"
@@ -58,7 +60,7 @@
  */
 static std::string getConfigPath()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	std::string configpath;
 	TCHAR szPath[256];
 	if(SUCCEEDED(SHGetFolderPath(
@@ -87,7 +89,7 @@ static bool createConfigPath()
 	{
 		DEBUG(configfile, "No configuration exists, creating directory '%s'\n",
 		    configpath.c_str());
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		if(mkdir(configpath.c_str()) < 0)
 		{
 #else

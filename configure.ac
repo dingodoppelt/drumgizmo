@@ -158,22 +158,22 @@ AS_IF(
   PKG_CHECK_MODULES(X11, x11 >= 1.0)
   PKG_CHECK_MODULES(XEXT, xext >= 1.0)
 
-  GUI_CPPFLAGS="-DX11 $X11_CFLAGS $XEXT_CFLAGS"
+  GUI_CPPFLAGS="-DUI_X11 $X11_CFLAGS $XEXT_CFLAGS"
   GUI_LIBS="$X11_LIBS $XEXT_LIBS"],
 
   [test "x$enable_gui" = "xwin32"],
   [AC_MSG_RESULT([Setting gui backend to Win32])
-  GUI_CPPFLAGS="-DWIN32"
+  GUI_CPPFLAGS="-DUI_WIN32"
   GUI_LIBS="-lgdi32 -lsetupapi -lws2_32"],
 
   [test "x$enable_gui" = "xpugl"],
   [AC_MSG_RESULT([Setting gui backend to Pugl])
-  GUI_CPPFLAGS="-DPUGL -I../../pugl"
+  GUI_CPPFLAGS="-DUI_PUGL -I../../pugl"
   GUI_LIBS="-lGLU -lGL -lglut"],
 
   [test "x$enable_gui" = "xcocoa"],
   [AC_MSG_RESULT([Setting gui backend to Cocoa])
-  GUI_CPPFLAGS="-framework Cocoa"
+  GUI_CPPFLAGS="-DUI_COCOA -framework Cocoa"
   GUI_LIBS="-framework Cocoa"],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])

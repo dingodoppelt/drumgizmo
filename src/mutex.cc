@@ -28,8 +28,9 @@
 #include "mutex.h"
 
 #include <hugin.hpp>
+#include "platform.h"
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #include <windows.h>
 #else
 #include <pthread.h>
@@ -37,7 +38,7 @@
 #endif
 
 struct mutex_private_t {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE mutex;
 #else
 	pthread_mutex_t mutex;
@@ -47,7 +48,7 @@ struct mutex_private_t {
 Mutex::Mutex()
 {
 	prv = new struct mutex_private_t();
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	prv->mutex = CreateMutex(nullptr,  // default security attributes
 	                         FALSE, // initially not owned
 	                         nullptr); // unnamed mutex
@@ -58,7 +59,7 @@ Mutex::Mutex()
 
 Mutex::~Mutex()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	CloseHandle(prv->mutex);
 #else
 	pthread_mutex_destroy(&prv->mutex);
@@ -74,7 +75,7 @@ Mutex::~Mutex()
 //! false otherwise.
 bool Mutex::try_lock()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	DEBUG(mutex, "%s\n", __PRETTY_FUNCTION__);
 
 	DWORD result = WaitForSingleObject(prv->mutex, 0);
@@ -90,7 +91,7 @@ bool Mutex::try_lock()
 
 void Mutex::lock()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	WaitForSingleObject(prv->mutex, // handle to mutex
 	                    INFINITE);  // no time-out interval
 #else
@@ -100,7 +101,7 @@ void Mutex::lock()
 
 void Mutex::unlock()
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	ReleaseMutex(prv->mutex);
 #else
 	pthread_mutex_unlock(&prv->mutex);

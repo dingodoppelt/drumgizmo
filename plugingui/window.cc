@@ -30,19 +30,19 @@
 
 #include "painter.h"
 
-#ifndef PUGL
-#ifdef X11
+#ifndef UI_PUGL
+#ifdef UI_X11
 #include "nativewindow_x11.h"
-#endif/*X11*/
-#ifdef WIN32
+#endif // UI_X11
+#ifdef UI_WIN32
 #include "nativewindow_win32.h"
-#endif/*WIN32*/
-#ifdef COCOA
+#endif // UI_WIN32
+#ifdef UI_COCOA
 #include "nativewindow_cocoa.h"
-#endif/*COCOA*/
+#endif // UI_COCOA
 #else
 #include "nativewindow_pugl.h"
-#endif
+#endif // !UI_PUGL
 
 namespace GUI
 {
@@ -55,19 +55,20 @@ Window::Window(void* native_window)
 	_width = wpixbuf.width;
 	_height = wpixbuf.height;
 
-#ifndef PUGL
-#ifdef X11
+#ifndef UI_PUGL
+#ifdef UI_X11
 	native = new NativeWindowX11(native_window, *this);
-#endif/*X11*/
-#ifdef WIN32
+#endif // UI_X11
+#ifdef UI_WIN32
 	native = new NativeWindowWin32(native_window, *this);
-#endif/*WIN32*/
-#ifdef COCOA
+#endif // UI_WIN32
+#ifdef UI_COCOA
 	native = new NativeWindowCocoa(native_window, *this);
-#endif/*COCOA*/
-#else/*Use pugl*/
+#endif // UI_COCOA
+#else
+	// Use pugl
 	native = new NativeWindowPugl(native_window, *this);
-#endif
+#endif // !UI_PUGL
 
 	eventhandler = new EventHandler(*native, *this);
 }

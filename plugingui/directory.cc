@@ -33,7 +33,9 @@
 #include <vector>
 #include <string.h>
 
-#ifdef WIN32
+#include <platform.h>
+
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -43,7 +45,7 @@
 #define DRUMKIT_SUFFIX ".xml"
 
 // http://en.wikipedia.org/wiki/Path_(computing)
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #define SEP "\\"
 #else
 #define SEP "/"
@@ -216,7 +218,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 		}
 	}
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	//DEBUG(directory, "Root is %s\n", Directory::root(path).c_str());
 	//DEBUG(directory, "Current path %s is root? %d", path.c_str(),
 	//      Directory::isRoot(path));
@@ -270,7 +272,7 @@ Directory::EntryList Directory::listFiles(std::string path, unsigned char filter
 
 bool Directory::isRoot(std::string path)
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	std::transform(path.begin(), path.end(), path.begin(), ::tolower);
 	std::string root_str = Directory::root(path);
 	std::transform(root_str.begin(), root_str.end(), root_str.begin(), ::tolower);
@@ -321,7 +323,7 @@ std::string Directory::root()
 
 std::string Directory::root(std::string path)
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(path.size() < 2)
 	{
 		return "c:"; // just something default when input is bad
@@ -338,7 +340,7 @@ std::string Directory::root(std::string path)
 Directory::DriveList Directory::drives()
 {
 	Directory::DriveList drives;
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	unsigned int d = GetLogicalDrives();
 	for(int i = 0; i < 32; ++i)
 	{
@@ -399,7 +401,7 @@ bool Directory::exists(std::string path)
 bool Directory::isHidden(std::string path)
 {
 	//DEBUG(directory, "Is '%s' hidden?\n", path.c_str());
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	// We dont want to filter out '..' pointing to root of a partition
 	unsigned pos = path.find_last_of("/\\");
 	std::string entry = path.substr(pos+1);
@@ -518,7 +520,7 @@ std::string Directory::pathToStr(Directory::Path& path)
 	{
 		std::string dir = *it;
 		//DEBUG(directory, "\tDir '%s'\n", dir.c_str());
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		if(it != path.begin())
 		{
 			cleaned_path += SEP;
@@ -534,12 +536,12 @@ std::string Directory::pathToStr(Directory::Path& path)
 	if(cleaned_path.empty())
 	{
 		cleaned_path = Directory::root();
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		cleaned_path += SEP;
 #endif
 	}
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(cleaned_path.size() == 2)
 	{
 		cleaned_path += SEP;

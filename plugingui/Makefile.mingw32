@@ -49,7 +49,7 @@ GUI_SRC = \
 	resource_data.cc \
 	lodepng/lodepng.cpp
 
-GUI_CFLAGS=-DUSE_THREAD -DWIN32 -DSTANDALONE
+GUI_CFLAGS=-DUSE_THREAD -DUI_WIN32 -DSTANDALONE
 GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
 
 DBG_SRC = \

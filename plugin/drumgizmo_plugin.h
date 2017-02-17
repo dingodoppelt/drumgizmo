@@ -28,15 +28,6 @@
 
 #include <memory>
 
-#if defined(X11)
-#include <X11/Xlib.h>
-#endif // defined(X11)
-
-#if defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif // defined(WIN32)
-
 #ifdef LV2
 #include <pluginlv2.h>
 #endif

@@ -135,7 +135,7 @@ int main()
 
 	while(test_window.processEvents())
 	{
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		SleepEx(50, FALSE);
 #else
 		usleep(50000);

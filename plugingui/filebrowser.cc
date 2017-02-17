@@ -39,6 +39,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <platform.h>
 #include <hugin.hpp>
 
 #ifdef __MINGW32__
@@ -57,7 +58,7 @@ FileBrowser::FileBrowser(Widget *parent)
 	, btn_esc(this)
 	, back(":bg.png")
 {
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	above_root = false;
 #endif
 
@@ -185,7 +186,7 @@ void FileBrowser::changeDir()
 	INFO(filebrowser, "Changing path to '%s'\n",
 	     (dir.path() + dir.seperator() + value).c_str());
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(above_root && !value.empty())
 	{
 		dir.setPath(value + dir.seperator());
@@ -211,7 +212,7 @@ void FileBrowser::changeDir()
 
 	std::vector<ListBoxBasic::Item> items;
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(Directory::isRoot(dir.path()) && (value == ".."))
 	{
 		DEBUG(filebrowser, "Showing partitions...\n");

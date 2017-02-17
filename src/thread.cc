@@ -26,7 +26,6 @@
  */
 #include "thread.h"
 
-#include <stdio.h>
 #include <hugin.hpp>
 
 Thread::Thread()
@@ -37,32 +36,32 @@ Thread::~Thread()
 
 void Thread::run()
 {
-  DEBUG(thread, "Thread::run()\n");
-#ifdef WIN32
-  tid = CreateThread(NULL, 0, thread_run, this, 0, NULL);
+	DEBUG(thread, "Thread::run()\n");
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+	tid = CreateThread(NULL, 0, thread_run, this, 0, NULL);
 #else
-  pthread_create(&tid, NULL, thread_run, this);
-#endif/*WIN32*/
+	pthread_create(&tid, NULL, thread_run, this);
+#endif
 }
 
 void Thread::wait_stop()
 {
-#ifdef WIN32
-  WaitForSingleObject(tid, INFINITE);
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+	WaitForSingleObject(tid, INFINITE);
 #else
-  pthread_join(tid, NULL);
-#endif/*WIN32*/
+	pthread_join(tid, NULL);
+#endif
 }
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 DWORD WINAPI
 #else
 void*
-#endif/*WIN32*/
+#endif
 Thread::thread_run(void *data)
 {
-  DEBUG(thread, "Thread run\n");
-  Thread *t = (Thread*)data;
-  t->thread_main();
-  return 0;
+	DEBUG(thread, "Thread run\n");
+	Thread *t = (Thread*)data;
+	t->thread_main();
+	return 0;
 }

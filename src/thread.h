@@ -26,31 +26,34 @@
  */
 #pragma once
 
-#ifdef WIN32
+#include "platform.h"
+
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
 #include <pthread.h>
-#endif/*WIN32*/
+#endif
 
-class Thread {
+class Thread
+{
 public:
-  Thread();
-  virtual ~Thread();
+	Thread();
+	virtual ~Thread();
 
-  void run();
-  void wait_stop();
+	void run();
+	void wait_stop();
 
 protected:
-  virtual void thread_main() = 0;
-  
+	virtual void thread_main() = 0;
+
 private:
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	HANDLE tid{nullptr};
-  static DWORD WINAPI
+	static DWORD WINAPI
 #else
-  pthread_t tid{0};
-  static void*
-#endif/*WIN32*/
-    thread_run(void *data);
+	pthread_t tid{0};
+	static void*
+#endif
+	thread_run(void *data);
 };

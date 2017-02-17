@@ -27,6 +27,7 @@
 #pragma once
 
 #include <notifier.h>
+#include <platform.h>
 
 #include "widget.h"
 #include "button.h"
@@ -36,7 +37,8 @@
 #include "image.h"
 #include "directory.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class FileBrowser : public Widget {
 public:
@@ -59,7 +61,7 @@ private:
 	void handleKeyEvent();
 
 	Directory dir;
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	bool above_root;
 	bool in_root;
 #endif
