@@ -27,6 +27,8 @@
  */
 #pragma once
 
+#include "platform.h"
+
 struct mutex_private_t;
 
 class Mutex {
@@ -42,7 +44,7 @@ private:
 	struct mutex_private_t* prv;
 };
 
-#ifdef WIN32
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 // Hack: mingw doesn't have std::mutex
 namespace std {
 	class mutex : public Mutex {};

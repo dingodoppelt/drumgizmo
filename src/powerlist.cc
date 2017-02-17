@@ -48,7 +48,7 @@ unsigned int const MIN_SAMPLE_SET_SIZE = 26u;
 
 // Enable to calculate power on old samples without power attribute
 //#define AUTO_CALCULATE_POWER
-unsigned int const SIZE = 500u;
+unsigned int const LOAD_SIZE = 500u;
 
 PowerList::PowerList(Random& rand)
 	: rand(rand)
@@ -82,7 +82,7 @@ Channel* PowerList::getMasterChannel()
 			Channel* c = pair.first;
 			AudioFile* af = pair.second;
 
-			af->load(SIZE);
+			af->load(LOAD_SIZE);
 
 			float silence{0.f};
 			std::size_t silence_length{4u};
@@ -176,7 +176,7 @@ void PowerList::finalise()
 			DEBUG(powerlist, "Calculating power\n");
 
 			float power{0.f};
-			for(auto s = 0u; s < SIZE && s < master->size; ++s)
+			for(auto s = 0u; s < LOAD_SIZE && s < master->size; ++s)
 			{
 				power += master->data[s] * master->data[s];
 			}
