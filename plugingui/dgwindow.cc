@@ -139,52 +139,52 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
 	auto headerCaption = new Label(this);
 	headerCaption->setText("DrumGizmo");
 	headerCaption->setAlignment(TextAlignment::center);
-	headerCaption->resize(width() - 40, 32);
+	headerCaption->resize(370 - 40, 32);
 	layout.addItem(headerCaption);
 
 	auto headerLine = new VerticalLine(this);
-	headerLine->resize(width() - 40, vlineSpacing);
+	headerLine->resize(370 - 40, vlineSpacing);
 	layout.addItem(headerLine);
 
 	auto drumkitCaption = new Label(this);
 	drumkitCaption->setText("Drumkit file:");
-	drumkitCaption->resize(width() - 40, 15);
+	drumkitCaption->resize(370 - 40, 15);
 	layout.addItem(drumkitCaption);
 
 	auto drumkitFile = new File(this);
-	drumkitFile->resize(width() - 40, 37);
+	drumkitFile->resize(370 - 40, 37);
 	lineedit = &drumkitFile->lineedit;
 	CONNECT(&drumkitFile->browseButton, clickNotifier,
 	        this, &DGWindow::kitBrowseClick);
 	layout.addItem(drumkitFile);
 
 	drumkitFileProgress = new ProgressBar(this);
-	drumkitFileProgress->resize(width() - 40, 11);
+	drumkitFileProgress->resize(370 - 40, 11);
 	layout.addItem(drumkitFileProgress);
 
 	VerticalLine *l = new VerticalLine(this);
-	l->resize(width() - 40, vlineSpacing);
+	l->resize(370 - 40, vlineSpacing);
 	layout.addItem(l);
 
 	auto midimapCaption = new Label(this);
 	midimapCaption->setText("Midimap file:");
-	midimapCaption->resize(width() - 40, 15);
+	midimapCaption->resize(370 - 40, 15);
 	layout.addItem(midimapCaption);
 
 	auto midimapFile = new File(this);
-	midimapFile->resize(width() - 40, 37);
+	midimapFile->resize(370 - 40, 37);
 	lineedit2 = &midimapFile->lineedit;
 	CONNECT(&midimapFile->browseButton, clickNotifier,
 	        this, &DGWindow::midimapBrowseClick);
 	layout.addItem(midimapFile);
 
 	midimapFileProgress = new ProgressBar(this);
-	midimapFileProgress->resize(width() - 40, 11);
+	midimapFileProgress->resize(370 - 40, 11);
 	midimapFileProgress->setTotal(2);
 	layout.addItem(midimapFileProgress);
 
 	VerticalLine *l2 = new VerticalLine(this);
-	l2->resize(width() - 40, vlineSpacing);
+	l2->resize(370 - 40, vlineSpacing);
 	layout.addItem(l2);
 
 	HumanizeControls* humanizeControls = new HumanizeControls(this);
@@ -205,19 +205,19 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
 	falloffKnob = &humanizeControls->falloffKnob;
 
 	VerticalLine *l3 = new VerticalLine(this);
-	l3->resize(width() - 40, vlineSpacing);
+	l3->resize(370 - 40, vlineSpacing);
 	layout.addItem(l3);
 
 	Label *lbl_version = new Label(this);
 	lbl_version->setText(".::.  v" VERSION "  .::.  http://www.drumgizmo.org  .::.  LGPLv3 .::.");
-	lbl_version->resize(width(), 20);
+	lbl_version->resize(370, 20);
 	lbl_version->setAlignment(TextAlignment::center);
 	layout.addItem(lbl_version);
 
 	// Create file browser
 	fileBrowser = new FileBrowser(this);
 	fileBrowser->move(0, 0);
-	fileBrowser->resize(this->width() - 1, this->height() - 1);
+	fileBrowser->resize(370, 330);
 	fileBrowser->hide();
 }
 
@@ -275,9 +275,9 @@ void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
 	Painter p(*this);
 	p.drawImageStretched(0,0, back, width(), height());
 	p.drawImage(width() - logo.width(), height() - logo.height(), logo);
-  sidebar.setSize(16, height());
-  p.drawImage(0, 0, sidebar);
-  p.drawImage(width() - 16, 0, sidebar);
+	sidebar.setSize(16, height());
+	p.drawImage(0, 0, sidebar);
+	p.drawImage(width() - 16, 0, sidebar);
 }
 
 void DGWindow::attackValueChanged(float value)
