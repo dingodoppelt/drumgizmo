@@ -39,6 +39,7 @@
 #include "drumgizmo.h"
 #include "drumgizmoc.h"
 #include "enginefactory.h"
+#include "bytesizeparser.h"
 
 #include "event.h"
 
@@ -65,6 +66,7 @@ static const char usage_str[] =
     "output engine.\n"
     "  -O, --outputparms      parmlist  Set output engine parameters.\n"
     "  -e, --endpos           Number of samples to process, -1: infinite.\n"
+    "  -m, --diskstreamsize   Size of buffer for disk streaming, eg. 5{k,M,G}.\n"
 #ifndef DISABLE_HUGIN
     "  -D, --debug ddd        Enable debug messages on 'ddd'; see hugin "
     "documentation for details\n"
@@ -92,10 +94,12 @@ static const char usage_str[] =
     "  dummy:\n"
     "\n";
 
+
 int main(int argc, char* argv[])
 {
 	int c;
-
+	Settings settings;
+	settings.disk_cache_enable = false;
 	std::string hugin_filter;
 	unsigned int hugin_flags = 0;
 #ifndef DISABLE_HUGIN
@@ -121,6 +125,7 @@ int main(int argc, char* argv[])
 		    {"outputengine", required_argument, 0, 'o'},
 		    {"outputparms", required_argument, 0, 'O'},
 		    {"endpos", required_argument, 0, 'e'},
+		    {"diskstreamsize", required_argument, 0, 'm'},
 #ifndef DISABLE_HUGIN
 		    {"debug", required_argument, 0, 'D'},
 #endif /*DISABLE_HUGIN*/
@@ -128,7 +133,7 @@ int main(int argc, char* argv[])
 		    {"help", no_argument, 0, 'h'},
 		    {0, 0, 0, 0}};
 
-		c = getopt_long(argc, argv, "hvpo:O:i:I:e:a"
+		c = getopt_long(argc, argv, "hvpo:O:i:I:e:am:"
 #ifndef DISABLE_HUGIN
 		                "D:"
 #endif /*DISABLE_HUGIN*/
@@ -202,6 +207,16 @@ int main(int argc, char* argv[])
 			printf("%s", version_str);
 			printf("%s", copyright_str);
 			return 0;
+
+		case 'm':
+			settings.disk_cache_upper_limit = byteSizeParser(optarg);
+			if(!settings.disk_cache_upper_limit)
+			{
+				printf("%s", version_str);
+				printf(usage_str, argv[0]);
+				return 1;
+			}
+			settings.disk_cache_enable = true;
 
 		default:
 			break;
@@ -343,7 +358,6 @@ int main(int argc, char* argv[])
 
 	printf("Using kitfile: %s\n", kitfile.c_str());
 
-	Settings settings;
 	DrumGizmo gizmo(settings, *oe.get(), *ie.get());
 
 	gizmo.setFrameSize(oe->getBufferSize());

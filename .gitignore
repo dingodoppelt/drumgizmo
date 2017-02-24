@@ -26,6 +26,7 @@ INSTALL
 *.o
 *.a
 *.la
+*.core
 test_*
 *.exe
 Makefile.am.test
