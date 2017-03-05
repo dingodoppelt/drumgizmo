@@ -6,7 +6,7 @@ if ENABLE_TESTS
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	memchecker randomtest atomictest syncedsettingstest imagecachetest \
-	semaphoretest drumkitcreatortest
+	semaphoretest drumkitcreatortest bytesizeparsertest
 
 if ENABLE_LV2
 TESTS += lv2
@@ -189,7 +189,7 @@ semaphoretest_SOURCES = \
 	semaphoretest.cc \
 	test.cc
 
-drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" $(CPPUNIT_CFLAGS)
+drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" $(CPPUNIT_CFLAGS) \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
 drumkitcreatortest_CFLAGS = -DDISABLE_HUGIN
@@ -199,5 +199,13 @@ drumkitcreatortest_SOURCES = \
 	test.cc \
 	drumkit_creator.cc \
 	drumkitcreatortest.cc
+
+bytesizeparsertest_CXXFLAGS = -DOUTPUT=\"bytesizeparsertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src
+bytesizeparsertest_LDFLAGS = $(CPPUNIT_LIBS)
+bytesizeparsertest_SOURCES = \
+	$(top_srcdir)/src/bytesizeparser.cc \
+	bytesizeparsertest.cc \
+	test.cc
 
 endif

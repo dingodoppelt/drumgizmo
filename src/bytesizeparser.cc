@@ -58,13 +58,18 @@ std::size_t byteSizeParser(const std::string& argument)
 	std::string suffix;
 	bool error = false;
 
+	if(argument.find('-') != std::string::npos)
+	{
+		error = true;
+	}
+
 	try
 	{
 		stream_size = std::stoi(argument, &suffix_index);
 	}
 	catch(std::invalid_argument)
 	{
-		std::cerr << "Invalid option for diskstreamsize" << std::endl;
+		std::cerr << "Invalid argument for diskstreamsize" << std::endl;
 		error = true;
 	}
 	catch(std::out_of_range)
@@ -82,17 +87,16 @@ std::size_t byteSizeParser(const std::string& argument)
 	}
 	if(!error)
 	{
-		std::size_t suffix_size = suffixToSize(suffix[0]);
-		if (suffix_size)
+		std::size_t suffix_size = 1;
+		if(suffix_index <= suffix.length())
 		{
-			stream_size *= suffix_size;
+			suffix_size = suffixToSize(suffix[0]);
+
 		}
+		stream_size *= suffix_size;
 	}
 	if(error)
 	{
-		std::cerr << "Stream size should be in <number>[suffix] format ";
-		std::cerr << "where [suffix] is k, M, or G." << std::endl;
-		std::cerr << "Example: 10M which is 10 * 1024 * 1024 bytes" << std::endl;
 		return 0;
 	}
 	return stream_size;

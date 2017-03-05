@@ -57,6 +57,7 @@ test/semaphoretest
 test/enginetest
 test/paintertest
 test/drumkitcreatortest
+test/bytesizeparsertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav

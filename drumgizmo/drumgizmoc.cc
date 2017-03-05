@@ -214,6 +214,9 @@ int main(int argc, char* argv[])
 			{
 				printf("%s", version_str);
 				printf(usage_str, argv[0]);
+				std::cerr << "Stream size should be in <number>[suffix] format ";
+				std::cerr << "where [suffix] is k, M, or G." << std::endl;
+				std::cerr << "Example: 10M which is 10 * 1024 * 1024 bytes" << std::endl;
 				return 1;
 			}
 			settings.disk_cache_enable = true;
