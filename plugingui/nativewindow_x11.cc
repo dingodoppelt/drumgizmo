@@ -58,21 +58,23 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	visual = DefaultVisual(display, screen);
 	depth = DefaultDepth(display, screen);
 
-	::Window parentWindow;
 	if(native_window)
 	{
-		parentWindow = (::Window)native_window;
+		parent_window = (::Window)native_window;
+
+		// Track size changes on the parent window
+		XSelectInput(display, parent_window, StructureNotifyMask);
 	}
 	else
 	{
-		parentWindow = DefaultRootWindow(display);
+		parent_window = DefaultRootWindow(display);
 	}
 
 	// Create the window
 	XSetWindowAttributes swa;
 	swa.backing_store = Always;
 	xwindow = XCreateWindow(display,
-	                        parentWindow,
+	                        parent_window,
 	                        0, 0, //window.x(), window.y(),
 	                        1, 1, //window.width(), window.height(),
 	                        0, // border
@@ -302,6 +304,14 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 
 	case ConfigureNotify:
 		//DEBUG(x11, "ConfigureNotify");
+
+		// The parent window size changed, reflect the new size in our own window.
+		if(xevent.xconfigure.window == parent_window)
+		{
+			resize(xevent.xconfigure.width, xevent.xconfigure.height);
+			return;
+		}
+
 		{
 			if((window.width() != (std::size_t)xevent.xconfigure.width) ||
 			   (window.height() != (std::size_t)xevent.xconfigure.height))

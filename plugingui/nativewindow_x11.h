@@ -87,6 +87,7 @@ private:
 	int depth{0};
 	Visual* visual{nullptr};
 	Atom wmDeleteMessage{0};
+	::Window parent_window;
 
 	EventQueue event_queue;
 };
