@@ -40,31 +40,21 @@
 #include "texturedbox.h"
 #include "imagecache.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class Config;
 class Header;
 class File;
+class DiskStreamingControls;
 
-class DGWindow : public Window {
+class DGWindow
+	: public Window
+{
 public:
-	DGWindow(void* native_window, Config& config, Settings& settings);
-
-	Header* header;
-
-	File* drumkitFile;
-	LineEdit* lineedit;
-	ProgressBar* drumkitFileProgress;
-
-	File* midimapFile;
-	LineEdit* lineedit2;
-	ProgressBar* midimapFileProgress;
-
-	// Humanized velocity controls:
-	CheckBox* velocityCheck;
-	Knob* attackKnob;
-	Knob* falloffKnob;
-	FileBrowser* fileBrowser;
+	DGWindow(void* native_window, Config& config, Settings& settings,
+	         SettingsNotifier& settings_notifier);
+	~DGWindow();
 
 	void setDrumKitLoadStatus(LoadStatus load_status);
 	void setMidiMapLoadStatus(LoadStatus load_status);
@@ -74,6 +64,11 @@ protected:
 	void repaintEvent(RepaintEvent* repaintEvent) override;
 
 private:
+	void streamerCheckClick(bool value);
+	void limitValueChanged(float value);
+	void limitSettingsValueChanged(float value);
+	void reloadClicked();
+
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);
 	void velocityCheckClick(bool checked);
@@ -82,6 +77,20 @@ private:
 	void selectKitFile(const std::string& filename);
 	void selectMapFile(const std::string& filename);
 
+	LineEdit* lineedit;
+	ProgressBar* drumkitFileProgress;
+
+	LineEdit* lineedit2;
+	ProgressBar* midimapFileProgress;
+
+	// Humanized velocity controls:
+	CheckBox* velocityCheck;
+	Knob* attackKnob;
+	Knob* falloffKnob;
+	FileBrowser* fileBrowser;
+
+	DiskStreamingControls* disk_streaming_controls{nullptr};
+
 	Config& config;
 
 	VBoxLayout layout{this};
@@ -89,12 +98,13 @@ private:
 	Image back{":bg.png"};
 	Image logo{":logo.png"};
 
-  ImageCache image_cache;
-  TexturedBox sidebar{image_cache, ":sidebar.png", 0, 0,
-      16, 0, 0,
-      14, 1, 14};
-  
+	ImageCache image_cache;
+	TexturedBox sidebar{image_cache, ":sidebar.png", 0, 0,
+			16, 0, 0,
+			14, 1, 14};
+
 	Settings& settings;
+	SettingsNotifier& settings_notifier;
 };
 
 } // GUI::

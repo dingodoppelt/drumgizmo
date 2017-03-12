@@ -31,6 +31,8 @@
 #include "../version.h"
 
 #include "pluginconfig.h"
+#include <memchecker.h>
+#include <cpp11fix.h>
 
 namespace GUI {
 
@@ -121,15 +123,58 @@ public:
 	Knob falloffKnob{&falloff};
 };
 
-DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
+class DiskStreamingControls
+	: public Widget
+	, private MemChecker
+{
+public:
+	DiskStreamingControls(Widget* parent)
+		: Widget(parent)
+	{
+		layout.setResizeChildren(false);
+		layout.setVAlignment(VAlignment::center);
+
+		streamer.resize(80, 80);
+		streamerCheck.resize(59, 38);
+		streamer.setControl(&streamerCheck);
+		layout.addItem(&streamer);
+
+		limit.resize(80, 80);
+		float free_mem = calcFreeMemory() / (1024.0 * 1024.0);
+		limitKnob.setRange(std::min(500.0, free_mem / 2.0), free_mem);
+		limitKnob.resize(60, 60);
+		limit.setControl(&limitKnob);
+		layout.addItem(&limit);
+
+		reload_button.setText("Reload");
+		reload_button.resize(100, 50);
+		layout.addItem(&reload_button);
+	}
+
+	HBoxLayout layout{this};
+
+	LabeledControl streamer{this, "Streaming"};
+	LabeledControl limit{this, "MB Limit"};
+
+	CheckBox streamerCheck{&streamer};
+	Knob limitKnob{&limit};
+	Button reload_button{this};
+};
+
+DGWindow::DGWindow(void* native_window, Config& config, Settings& settings,
+                   SettingsNotifier& settings_notifier)
 	: Window(native_window)
 	, config(config)
 	, settings(settings)
+	, settings_notifier(settings_notifier)
 {
-
 	int vlineSpacing = 16;
 
-	resize(370, 330);
+	constexpr std::size_t width = 370 + 40;
+	constexpr std::size_t height = 440;
+	constexpr std::size_t border = 60;
+
+	resize(width, height);
 	setCaption("DrumGizmo v" VERSION);
 
 	layout.setResizeChildren(false);
@@ -139,52 +184,52 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
 	auto headerCaption = new Label(this);
 	headerCaption->setText("DrumGizmo");
 	headerCaption->setAlignment(TextAlignment::center);
-	headerCaption->resize(370 - 40, 32);
+	headerCaption->resize(width - border, 32);
 	layout.addItem(headerCaption);
 
 	auto headerLine = new VerticalLine(this);
-	headerLine->resize(370 - 40, vlineSpacing);
+	headerLine->resize(width - border, vlineSpacing);
 	layout.addItem(headerLine);
 
 	auto drumkitCaption = new Label(this);
 	drumkitCaption->setText("Drumkit file:");
-	drumkitCaption->resize(370 - 40, 15);
+	drumkitCaption->resize(width - border, 15);
 	layout.addItem(drumkitCaption);
 
 	auto drumkitFile = new File(this);
-	drumkitFile->resize(370 - 40, 37);
+	drumkitFile->resize(width - border, 37);
 	lineedit = &drumkitFile->lineedit;
 	CONNECT(&drumkitFile->browseButton, clickNotifier,
 	        this, &DGWindow::kitBrowseClick);
 	layout.addItem(drumkitFile);
 
 	drumkitFileProgress = new ProgressBar(this);
-	drumkitFileProgress->resize(370 - 40, 11);
+	drumkitFileProgress->resize(width - border, 11);
 	layout.addItem(drumkitFileProgress);
 
 	VerticalLine *l = new VerticalLine(this);
-	l->resize(370 - 40, vlineSpacing);
+	l->resize(width - border, vlineSpacing);
 	layout.addItem(l);
 
 	auto midimapCaption = new Label(this);
 	midimapCaption->setText("Midimap file:");
-	midimapCaption->resize(370 - 40, 15);
+	midimapCaption->resize(width - border, 15);
 	layout.addItem(midimapCaption);
 
 	auto midimapFile = new File(this);
-	midimapFile->resize(370 - 40, 37);
+	midimapFile->resize(width - border, 37);
 	lineedit2 = &midimapFile->lineedit;
 	CONNECT(&midimapFile->browseButton, clickNotifier,
 	        this, &DGWindow::midimapBrowseClick);
 	layout.addItem(midimapFile);
 
 	midimapFileProgress = new ProgressBar(this);
-	midimapFileProgress->resize(370 - 40, 11);
+	midimapFileProgress->resize(width - border, 11);
 	midimapFileProgress->setTotal(2);
 	layout.addItem(midimapFileProgress);
 
 	VerticalLine *l2 = new VerticalLine(this);
-	l2->resize(370 - 40, vlineSpacing);
+	l2->resize(width - border, vlineSpacing);
 	layout.addItem(l2);
 
 	HumanizeControls* humanizeControls = new HumanizeControls(this);
@@ -205,20 +250,70 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings)
 	falloffKnob = &humanizeControls->falloffKnob;
 
 	VerticalLine *l3 = new VerticalLine(this);
-	l3->resize(370 - 40, vlineSpacing);
+	l3->resize(width - border, vlineSpacing);
 	layout.addItem(l3);
+
+	disk_streaming_controls = new DiskStreamingControls(this);
+	disk_streaming_controls->resize(80 * 3, 80);
+	layout.addItem(disk_streaming_controls);
+	CONNECT(&disk_streaming_controls->streamerCheck, stateChangedNotifier,
+	        this, &DGWindow::streamerCheckClick);
+
+	CONNECT(&disk_streaming_controls->limitKnob, valueChangedNotifier,
+	        this, &DGWindow::limitValueChanged);
+
+	CONNECT(&disk_streaming_controls->reload_button, clickNotifier,
+	        this, &DGWindow::reloadClicked);
+
+	VerticalLine *l4 = new VerticalLine(this);
+	l4->resize(width - border, vlineSpacing);
+	layout.addItem(l4);
 
 	Label *lbl_version = new Label(this);
 	lbl_version->setText(".::.  v" VERSION "  .::.  http://www.drumgizmo.org  .::.  LGPLv3 .::.");
-	lbl_version->resize(370, 20);
+	lbl_version->resize(width, 20);
 	lbl_version->setAlignment(TextAlignment::center);
 	layout.addItem(lbl_version);
 
 	// Create file browser
 	fileBrowser = new FileBrowser(this);
 	fileBrowser->move(0, 0);
-	fileBrowser->resize(370, 330);
+	fileBrowser->resize(width, height);
 	fileBrowser->hide();
+
+	CONNECT(this, settings_notifier.drumkit_file,
+	        lineedit, &LineEdit::setText);
+	CONNECT(this, settings_notifier.drumkit_load_status,
+	        this, &DGWindow::setDrumKitLoadStatus);
+
+	CONNECT(this, settings_notifier.midimap_file,
+	        lineedit2, &LineEdit::setText);
+	CONNECT(this, settings_notifier.midimap_load_status,
+	        this, &DGWindow::setMidiMapLoadStatus);
+
+	CONNECT(this, settings_notifier.enable_velocity_modifier,
+	        velocityCheck, &CheckBox::setChecked);
+
+	CONNECT(this, settings_notifier.velocity_modifier_falloff,
+	        falloffKnob, &Knob::setValue);
+	CONNECT(this, settings_notifier.velocity_modifier_weight,
+	        attackKnob, &Knob::setValue);
+
+	CONNECT(this, settings_notifier.number_of_files,
+	        drumkitFileProgress, &ProgressBar::setTotal);
+
+	CONNECT(this, settings_notifier.number_of_files_loaded,
+	        drumkitFileProgress, &ProgressBar::setValue);
+
+	CONNECT(this, settings_notifier.disk_cache_enable,
+	        &disk_streaming_controls->streamerCheck, &CheckBox::setChecked);
+	CONNECT(this, settings_notifier.disk_cache_upper_limit,
+	        this, &DGWindow::limitSettingsValueChanged);
+}
+
+DGWindow::~DGWindow()
+{
+	delete disk_streaming_controls;
 }
 
 void DGWindow::setDrumKitLoadStatus(LoadStatus load_status)
@@ -278,6 +373,27 @@ void DGWindow::repaintEvent(RepaintEvent* repaintEvent)
 	sidebar.setSize(16, height());
 	p.drawImage(0, 0, sidebar);
 	p.drawImage(width() - 16, 0, sidebar);
+}
+
+void DGWindow::streamerCheckClick(bool value)
+{
+	settings.disk_cache_enable.store(value);
+}
+
+void DGWindow::limitValueChanged(float value)
+{
+	// value is in MB
+	settings.disk_cache_upper_limit.store(value * 1024 * 1024);
+}
+
+void DGWindow::limitSettingsValueChanged(float value)
+{
+	disk_streaming_controls->limitKnob.setValue(value / (1024 * 1024));
+}
+
+void DGWindow::reloadClicked()
+{
+	settings.reload_counter++;
 }
 
 void DGWindow::attackValueChanged(float value)

@@ -78,45 +78,7 @@ void PluginGUI::init()
 	config = new Config();
 	config->load();
 
-	window = new DGWindow(native_window, *config, settings);
-
-
-	CONNECT(this, settings_notifier.drumkit_file,
-	        window->lineedit, &LineEdit::setText);
-	CONNECT(this, settings_notifier.drumkit_load_status,
-	        window, &DGWindow::setDrumKitLoadStatus);
-
-	CONNECT(this, settings_notifier.midimap_file,
-	        window->lineedit2, &LineEdit::setText);
-	CONNECT(this, settings_notifier.midimap_load_status,
-	        window, &DGWindow::setMidiMapLoadStatus);
-
-	CONNECT(this, settings_notifier.enable_velocity_modifier,
-	        window->velocityCheck, &CheckBox::setChecked);
-
-	CONNECT(this, settings_notifier.velocity_modifier_falloff,
-	        window->falloffKnob, &Knob::setValue);
-	CONNECT(this, settings_notifier.velocity_modifier_weight,
-	        window->attackKnob, &Knob::setValue);
-
-
-	// TODO:
-	//CONNECT(this, settings_notifier.enable_velocity_randomiser,
-	//        window->, &CheckBox::setChecked);
-	//CONNECT(this, settings_notifier.velocity_randomiser_weight,
-	//        window->, &Knob::setValue);
-
-	//CONNECT(this, settings_notifier.samplerate,
-	//        window->, &Knob::setValue);
-
-	//CONNECT(this, settings_notifier.enable_resampling,
-	//        window->, &CheckBox::setChecked);
-
-	CONNECT(this, settings_notifier.number_of_files,
-	        window->drumkitFileProgress, &ProgressBar::setTotal);
-
-	CONNECT(this, settings_notifier.number_of_files_loaded,
-	        window->drumkitFileProgress, &ProgressBar::setValue);
+	window = new DGWindow(native_window, *config, settings, settings_notifier);
 
 	auto eventHandler = window->eventHandler();
 	CONNECT(eventHandler, closeNotifier, this, &PluginGUI::closeEventHandler);
