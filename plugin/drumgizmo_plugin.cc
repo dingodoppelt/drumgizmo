@@ -497,6 +497,10 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
 		"  <value name=\"velocity_randomiser_weight\">" +
 		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
+		"  <value name=\"disk_cache_upper_limit\">" +
+		float2str(settings.disk_cache_upper_limit.load()) + "</value>\n"
+		"  <value name=\"disk_cache_enable\">" +
+		bool2str(settings.disk_cache_enable.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -539,6 +543,16 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("enable_resampling") != "")
 	{
 		settings.enable_resampling.store(p.value("enable_resampling") == "true");
+	}
+
+	if(p.value("disk_cache_upper_limit") != "")
+	{
+		settings.disk_cache_upper_limit.store(str2float(p.value("disk_cache_upper_limit")));
+	}
+
+	if(p.value("disk_cache_enable") != "")
+	{
+		settings.disk_cache_enable.store(p.value("disk_cache_enable") == "true");
 	}
 
 	std::string newkit = p.value("drumkitfile");
