@@ -33,7 +33,7 @@
 namespace GUI
 {
 
-PixelBuffer::PixelBuffer(size_t width, size_t height)
+PixelBuffer::PixelBuffer(std::size_t width, std::size_t height)
 	: buf(nullptr)
 {
 	realloc(width, height);
@@ -44,7 +44,7 @@ PixelBuffer::~PixelBuffer()
 	free(buf);
 }
 
-void PixelBuffer::realloc(size_t width, size_t height)
+void PixelBuffer::realloc(std::size_t width, std::size_t height)
 {
 	free(buf);
 	buf = (unsigned char *)calloc(width * height, 3);
@@ -53,7 +53,7 @@ void PixelBuffer::realloc(size_t width, size_t height)
 }
 
 #define PX(k) ((x + y * width) * 3 + k)
-void PixelBuffer::setPixel(size_t x, size_t y,
+void PixelBuffer::setPixel(std::size_t x, std::size_t y,
                            unsigned char red,
                            unsigned char green,
                            unsigned char blue,
@@ -84,7 +84,7 @@ void PixelBuffer::setPixel(size_t x, size_t y,
 	}
 }
 
-PixelBufferAlpha::PixelBufferAlpha(size_t width, size_t height)
+PixelBufferAlpha::PixelBufferAlpha(std::size_t width, std::size_t height)
 	: managed(true)
 	, buf(nullptr)
 	, x(0)
@@ -101,7 +101,7 @@ PixelBufferAlpha::~PixelBufferAlpha()
 	}
 }
 
-void PixelBufferAlpha::realloc(size_t width, size_t height)
+void PixelBufferAlpha::realloc(std::size_t width, std::size_t height)
 {
 	free(buf);
 	buf = (unsigned char *)calloc(width * height, 4);
@@ -111,7 +111,7 @@ void PixelBufferAlpha::realloc(size_t width, size_t height)
 
 #undef PX
 #define PX(k) ((x + y * width) * 4 + k)
-void PixelBufferAlpha::setPixel(size_t x, size_t y,
+void PixelBufferAlpha::setPixel(std::size_t x, std::size_t y,
                                 unsigned char red,
                                 unsigned char green,
                                 unsigned char blue,
@@ -135,7 +135,7 @@ static inline void getAlpha(unsigned char _a, unsigned char _b,
 	b *= (1 - a);
 }
 
-void PixelBufferAlpha::addPixel(size_t x, size_t y,
+void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y,
                                 unsigned char red,
                                 unsigned char green,
                                 unsigned char blue,
@@ -172,13 +172,13 @@ void PixelBufferAlpha::addPixel(size_t x, size_t y,
 	}
 }
 
-void PixelBufferAlpha::addPixel(size_t x, size_t y, const Colour& c)
+void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 {
 	addPixel(x, y,
 	         c.red() * 255, c.green() * 255, c.blue() * 255, c.alpha() * 255);
 }
 
-void PixelBufferAlpha::pixel(size_t x, size_t y,
+void PixelBufferAlpha::pixel(std::size_t x, std::size_t y,
                              unsigned char* red,
                              unsigned char* green,
                              unsigned char* blue,
