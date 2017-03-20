@@ -60,6 +60,9 @@ public:
 
 	bool isValid() const;
 
+	//! Get the number of audio files (as in single channel) in this instrument.
+	std::size_t getNumberOfFiles() const;
+
 private:
 	void* magic;
 

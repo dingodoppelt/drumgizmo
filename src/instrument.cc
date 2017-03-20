@@ -117,3 +117,10 @@ void Instrument::setGroup(const std::string& g)
 {
 	_group = g;
 }
+
+std::size_t Instrument::getNumberOfFiles() const
+{
+	// Note: Each AudioFile instance contains just a single channel even for
+	// multi-channel files.
+	return audiofiles.size();
+}

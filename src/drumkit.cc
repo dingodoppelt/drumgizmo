@@ -68,7 +68,19 @@ std::string DrumKit::getDescription() const
 	return _description;
 }
 
-size_t DrumKit::getSamplerate() const
+std::size_t DrumKit::getSamplerate() const
 {
 	return _samplerate;
+}
+
+std::size_t DrumKit::getNumberOfFiles() const
+{
+	std::size_t number_of_files = 0;
+
+	for(const auto & instrument : instruments)
+	{
+		number_of_files += instrument->getNumberOfFiles();
+	}
+
+	return number_of_files;
 }
