@@ -28,24 +28,23 @@
  */
 #include "audiofile.h"
 
-#include <config.h>
+#include <cassert>
 
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include <sndfile.h>
+
+#include <config.h>
+
 #include <hugin.hpp>
 
-AudioFile::AudioFile(const std::string& filename, int filechannel)
+AudioFile::AudioFile(const std::string& filename, std::size_t filechannel)
+	: filename(filename)
+	, filechannel(filechannel)
+	, magic{this}
 {
-	is_loaded = false;
-	this->filename = filename;
-	this->filechannel = filechannel;
-
-	data = nullptr;
-	size = 0;
-
-	magic = this;
 }
 
 AudioFile::~AudioFile()
@@ -56,6 +55,7 @@ AudioFile::~AudioFile()
 
 bool AudioFile::isValid() const
 {
+	assert(this == magic);
 	return this == magic;
 }
 
@@ -66,19 +66,20 @@ void AudioFile::unload()
 
 	is_loaded = false;
 
+	preloadedsize = 0;
+	size = 0;
 	delete[] data;
 	data = nullptr;
-	size = 0;
 }
 
-#define	BUFFER_SIZE	4092
+#define BUFFER_SIZE 4096
 
-void AudioFile::load(int num_samples)
+void AudioFile::load(std::size_t sample_limit)
 {
 	// Make sure we don't unload the object while loading it...
 	MutexAutolock l(mutex);
 
-	if(data)
+	if(this->data) // already loaded
 	{
 		return;
 	}
@@ -92,17 +93,18 @@ void AudioFile::load(int num_samples)
 		return;
 	}
 
-	if(num_samples == ALL_SAMPLES)
+	if(sf_info.channels < 1)
 	{
-		num_samples = sf_info.frames;
+		// This should never happen but lets check just in case.
+		return;
 	}
 
-	size = sf_info.frames;
-	preloadedsize = sf_info.frames;
+	std::size_t size = sf_info.frames;
+	std::size_t preloadedsize = sf_info.frames;
 
-	if(preloadedsize > (size_t)num_samples)
+	if(preloadedsize > sample_limit)
 	{
-		preloadedsize = num_samples;
+		preloadedsize = sample_limit;
 	}
 
 	sample_t* data = new sample_t[preloadedsize];
@@ -113,35 +115,39 @@ void AudioFile::load(int num_samples)
 	else
 	{
 		// check filechannel exists
-		if(filechannel >= sf_info.channels)
+		if(filechannel >= (std::size_t)sf_info.channels)
 		{
 			filechannel = sf_info.channels - 1;
 		}
 
 		sample_t buffer[BUFFER_SIZE];
-		int readsize = BUFFER_SIZE / sf_info.channels;
-		int totalread = 0;
-		int read;
+		std::size_t frame_count = BUFFER_SIZE / sf_info.channels;
+		std::size_t total_frames_read = 0;
+		int frames_read;
 
 		do
 		{
-	    read = sf_readf_float(fh, buffer, readsize);
-	    for(int i = 0; (i < read) && (totalread < num_samples); ++i)
+	    frames_read = sf_readf_float(fh, buffer, frame_count);
+	    for(int i = 0;
+	        (i < frames_read) && (total_frames_read < sample_limit);
+	        ++i)
 	    {
-		    data[totalread++] = buffer[i * sf_info.channels + filechannel];
+		    data[total_frames_read++] = buffer[i * sf_info.channels + filechannel];
 	    }
 		}
-		while( (read > 0) &&
-		       (totalread < (int)preloadedsize) &&
-		       (totalread < num_samples) );
+		while( (frames_read > 0) &&
+		       (total_frames_read < preloadedsize) &&
+		       (total_frames_read < sample_limit) );
 
 		// set data size to total bytes read
-		preloadedsize = totalread;
+		preloadedsize = total_frames_read;
 	}
 
 	sf_close(fh);
 
 	this->data = data;
+	this->size = size;
+	this->preloadedsize = preloadedsize;
 	is_loaded = true;
 }
 

@@ -61,7 +61,7 @@ public:
 		// Reference file:
 		AudioFile audio_file_ref(filename, channel);
 		printf("audio_file_ref.load\n");
-		audio_file_ref.load(ALL_SAMPLES);
+		audio_file_ref.load();
 
 		// Input file:
 		AudioFile audio_file(filename, channel);

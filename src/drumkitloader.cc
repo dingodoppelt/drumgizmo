@@ -141,6 +141,37 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	DEBUG(loader, "Create AudioFile queue from DrumKit\n");
 
+	auto cache_limit = settings.disk_cache_upper_limit.load();
+	auto cache_enable = settings.disk_cache_enable.load();
+
+	DEBUG(loader, "cache_enable: %s\n", cache_enable?"true":"false");
+
+	if(cache_enable)
+	{
+		auto number_of_files = kit->getNumberOfFiles();
+		auto cache_limit_per_file = cache_limit / number_of_files;
+
+		assert(framesize != 0);
+
+		preload_samples = cache_limit_per_file / sizeof(sample_t);
+
+		if(preload_samples < 4096)
+		{
+			preload_samples = 4096;
+		}
+
+		DEBUG(loader, "cache_limit: %lu, number_of_files: %lu,"
+		      " cache_limit_per_file: %lu, preload_samples: %lu\n",
+		      (unsigned long)cache_limit,
+		      (unsigned long)number_of_files,
+		      (unsigned long)cache_limit_per_file,
+		      (unsigned long)preload_samples);
+	}
+	else
+	{
+		preload_samples = std::numeric_limits<std::size_t>::max();
+	}
+
 	settings.number_of_files_loaded.store(0);
 
 	// Count total number of files that need loading:
@@ -171,7 +202,7 @@ void DrumKitLoader::skip()
 	load_queue.clear();
 }
 
-void DrumKitLoader::setFrameSize(size_t framesize)
+void DrumKitLoader::setFrameSize(std::size_t framesize)
 {
 	std::lock_guard<std::mutex> guard(mutex);
 	this->framesize = framesize;
@@ -188,7 +219,7 @@ void DrumKitLoader::thread_main()
 
 	while(running)
 	{
-		size_t size;
+		std::size_t size;
 		{
 			std::lock_guard<std::mutex> guard(mutex);
 			size = load_queue.size();
@@ -240,16 +271,15 @@ void DrumKitLoader::thread_main()
 			AudioFile *audiofile = load_queue.front();
 			load_queue.pop_front();
 			filename = audiofile->filename;
-			int preload_size = framesize * CHUNK_MULTIPLIER + framesize;
-			if(preload_size < 1024)
+			try
 			{
-				preload_size = 1024;
+				audiofile->load(preload_samples);
 			}
-
-			// Note: Remove this line to enable diskstreaming
-			preload_size = ALL_SAMPLES;
-
-			audiofile->load(preload_size);
+			catch(std::bad_alloc&)
+			{
+				settings.drumkit_load_status.store(LoadStatus::Error);
+				load_queue.clear();
+			}
 		}
 
 		settings.number_of_files_loaded.fetch_add(1);

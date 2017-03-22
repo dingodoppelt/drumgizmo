@@ -129,7 +129,7 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			return;
 		}
 
-		int filechannel = 1; // default, override with optional attribute
+		std::size_t filechannel = 1; // default, override with optional attribute
 		if(attr.find("filechannel") != attr.end())
 		{
 			filechannel = std::stoi(attr.at("filechannel"));

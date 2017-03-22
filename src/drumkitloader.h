@@ -73,7 +73,7 @@ public:
 
 	//! Set the framesize which will be used to preloading samples in next
 	//! loadKit call.
-	void setFrameSize(size_t framesize);
+	void setFrameSize(std::size_t framesize);
 
 protected:
 	void thread_main();
@@ -92,4 +92,5 @@ protected:
 	Resamplers& resamplers;
 	MemChecker memchecker;
 	Random& rand;
+	std::size_t preload_samples{std::numeric_limits<std::size_t>::max()};
 };

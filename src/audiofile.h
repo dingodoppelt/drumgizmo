@@ -29,27 +29,27 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <limits>
 
 #include <sndfile.h>
 
 #include "mutex.h"
 #include "audio.h"
 
-#define ALL_SAMPLES -1
-
-class AudioFile {
+class AudioFile
+{
 public:
-	AudioFile(const std::string& filename, int filechannel);
+	AudioFile(const std::string& filename, std::size_t filechannel);
 	~AudioFile();
 
-	void load(int num_samples = ALL_SAMPLES);
+	void load(std::size_t sample_limit = std::numeric_limits<std::size_t>::max());
 	void unload();
 
 	bool isLoaded() const;
 
-	volatile size_t size{0}; // Full size of the file
-	volatile size_t preloadedsize{0}; // Number of samples preloaded (in data)
-	sample_t *data{nullptr};
+	volatile std::size_t size{0}; // Full size of the file
+	volatile std::size_t preloadedsize{0}; // Number of samples preloaded (in data)
+	sample_t* data{nullptr};
 
 	std::string filename;
 
@@ -57,9 +57,9 @@ public:
 
 	Mutex mutex;
 
-	int filechannel;
+	std::size_t filechannel;
 
 private:
-	void *magic;
-	volatile bool is_loaded;
+	void* magic{nullptr};
+	volatile bool is_loaded{false};
 };
