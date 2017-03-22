@@ -128,10 +128,21 @@ void VBoxLayout::layout()
 	LayoutItemList::iterator i = items.begin();
 	while(i != items.end())
 	{
-		LayoutItem *item = *i;
+		LayoutItem* item = *i;
 		if(resizeChildren)
 		{
-			item->resize(w, parent->height() / items.size());
+			auto num_items = items.size();
+			auto empty_space = (num_items - 1) * spacing;
+			auto available_space = parent->height();
+
+			if (available_space >= empty_space) {
+				auto item_height = (available_space - empty_space) / num_items;
+				item->resize(w, item_height);
+			}
+			else {
+				// TODO: Should this case be handled differently?
+				item->resize(w, 0);
+			}
 		}
 
 		size_t x = 0;
@@ -185,7 +196,19 @@ void HBoxLayout::layout()
 		LayoutItem *item = *i;
 		if(resizeChildren)
 		{
-			item->resize(parent->width() / items.size(), h);
+			auto num_items = items.size();
+			auto empty_space = (num_items - 1) * spacing;
+			auto available_space = parent->width();
+
+			if (available_space >= empty_space) {
+				auto item_width = (available_space - empty_space) / num_items;
+				item->resize(item_width, h);
+			}
+			else {
+				// TODO: Should this case be handled differently?
+				item->resize(0, h);
+			}
+
 			item->move(x, 0);
 		}
 		else
