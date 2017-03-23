@@ -59,6 +59,8 @@ public:
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	static LRESULT CALLBACK subClassProc(HWND hwnd, UINT msg, WPARAM wp,
+	                                     LPARAM lp, UINT_PTR id, DWORD_PTR data);
 
 	HWND parent_window;
 	Window& window;

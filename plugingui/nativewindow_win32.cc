@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <algorithm>
+#include <commctrl.h>
 
 #include "window.h"
 
@@ -54,8 +55,8 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->width = LOWORD(lp);
 			resizeEvent->height = HIWORD(lp);
-			//native->event_queue.push_back(resizeEvent);
-			native->window.resized(resizeEvent->width, resizeEvent->height);
+			native->event_queue.push_back(resizeEvent);
+			//native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
 
@@ -296,6 +297,36 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
 
+LRESULT CALLBACK NativeWindowWin32::subClassProc(HWND hwnd, UINT msg,
+                                                 WPARAM wp, LPARAM lp,
+                                                 UINT_PTR id, DWORD_PTR data)
+{
+	NativeWindowWin32* native = (NativeWindowWin32*)data;
+
+	// NOTE: 'native' is nullptr intil the WM_CREATE message has been handled.
+	if(!native)
+	{
+		return DefWindowProc(hwnd, msg, wp, lp);
+	}
+
+	switch(msg) {
+	case WM_SIZE:
+		{
+			int width = LOWORD(lp);
+			int height = HIWORD(lp);
+			SetWindowPos(native->m_hwnd, nullptr, -1, -1, width, height, SWP_NOMOVE);
+			RECT rect;
+			GetClientRect(native->m_hwnd, &rect);
+			int w = width - rect.right;
+			int h = height - rect.bottom;
+			SetWindowPos(native->m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
+		}
+		break;
+	}
+
+	return DefWindowProc(hwnd, msg, wp, lp);
+}
+
 NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 	: window(window)
 {
@@ -337,6 +368,12 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+
+	if(parent_window)
+	{
+		// Listen in on parent size changes.
+		SetWindowSubclass(parent_window, subClassProc, 42, (LONG_PTR)this);
+	}
 }
 
 NativeWindowWin32::~NativeWindowWin32()
@@ -355,13 +392,17 @@ void NativeWindowWin32::setFixedSize(std::size_t width, std::size_t height)
 
 void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 {
-	SetWindowPos(m_hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
+	auto hwnd = m_hwnd;
+	if(parent_window)
+	{
+		hwnd = parent_window;
+	}
+	SetWindowPos(hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
 	RECT rect;
-	GetClientRect(m_hwnd, &rect);
+	GetClientRect(hwnd, &rect);
 	int w = width - rect.right;
 	int h = height - rect.bottom;
-
-	SetWindowPos(m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
+	SetWindowPos(hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
 std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize()

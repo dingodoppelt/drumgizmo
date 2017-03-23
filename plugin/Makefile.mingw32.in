@@ -86,7 +86,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/lodepng/lodepng.cpp
 
 GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD @GUI_CPPFLAGS@
-GUI_LIBS=-lgdi32 -lsetupapi -lws2_32
+GUI_LIBS=@GUI_LIBS@
 
 DBG_SRC = \
 	@top_srcdir@/hugin/hugin.c \

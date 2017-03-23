@@ -164,7 +164,7 @@ AS_IF(
   [test "x$enable_gui" = "xwin32"],
   [AC_MSG_RESULT([Setting gui backend to Win32])
   GUI_CPPFLAGS="-DUI_WIN32"
-  GUI_LIBS="-lgdi32 -lsetupapi -lws2_32"],
+  GUI_LIBS="-lgdi32 -lsetupapi -lws2_32 -lcomctl32"],
 
   [test "x$enable_gui" = "xpugl"],
   [AC_MSG_RESULT([Setting gui backend to Pugl])
