@@ -26,50 +26,24 @@
  */
 #pragma once
 
-#include <notifier.h>
-
-#include "widget.h"
+#include "toggle.h"
 #include "texture.h"
 
 namespace GUI {
 
-class CheckBox : public Widget {
+class CheckBox : public Toggle {
 public:
 	CheckBox(Widget *parent);
 	virtual ~CheckBox() = default;
 
-	void setText(std::string text);
-
-	// From Widget:
-	bool isFocusable() override { return true; }
-	bool catchMouse() override { return true; }
-
-	bool checked();
-	void setChecked(bool checked);
-
-	Notifier<bool> stateChangedNotifier;
-
 protected:
 	// From Widget:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
-	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
-	virtual void keyEvent(KeyEvent* keyEvent) override;
-	virtual void mouseLeaveEvent() override;
-	virtual void mouseEnterEvent() override;
 
 private:
-	void internalSetChecked(bool checked);
-
 	Texture bg_on;
 	Texture bg_off;
 	Texture knob;
-
-	bool state{false};
-	bool middle{false};
-	bool buttonDown{false};
-	bool inCheckbox{false};
-
-	std::string _text;
 };
 
 } // GUI::

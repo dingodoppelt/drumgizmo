@@ -34,6 +34,7 @@ nodist_libdggui_la_SOURCES = \
 	lineedit.cc \
 	led.cc \
 	checkbox.cc \
+	toggle.cc \
 	mainwindow.cc \
 	slider.cc \
 	scrollbar.cc \
