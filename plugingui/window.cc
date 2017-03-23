@@ -262,10 +262,50 @@ bool Window::updateBuffer()
 				};
 			}
 		}
+
+		if(pixel_buffer->has_last)
+		{
+			auto x1 = (std::size_t)pixel_buffer->last_x;
+			auto x2 = (std::size_t)(pixel_buffer->last_x + pixel_buffer->last_width);
+			auto y1 = (std::size_t)pixel_buffer->last_y;
+			auto y2 = (std::size_t)(pixel_buffer->last_y + pixel_buffer->last_height);
+
+			pixel_buffer->has_last = false;
+			if(!has_dirty_rect)
+			{
+				// Insert this area:
+				dirty_rect = {x1, y1, x2, y2};
+				has_dirty_rect = true;
+			}
+			else
+			{
+				// Expand existing area:
+				auto x1_0 = dirty_rect.x1;
+				auto y1_0 = dirty_rect.y1;
+				auto x2_0 = dirty_rect.x2;
+				auto y2_0 = dirty_rect.y2;
+				dirty_rect = {
+					(x1_0 < x1) ? x1_0 : x1,
+					(y1_0 < y1) ? y1_0 : y1,
+					(x2_0 > x2) ? x2_0 : x2,
+					(y2_0 > y2) ? y2_0 : y2
+				};
+			}
+		}
+	}
+
+	if(!has_dirty_rect)
+	{
+		return false;
 	}
 
 	for(auto& pixel_buffer : pixel_buffers)
 	{
+		if(!pixel_buffer->visible)
+		{
+			continue;
+		}
+
 		int update_width = pixel_buffer->width;
 		int update_height = pixel_buffer->height;
 
@@ -307,6 +347,9 @@ bool Window::updateBuffer()
 			}
 		}
 	}
+
+	dirty_rect.x2 = std::min(wpixbuf.width, dirty_rect.x2);
+	dirty_rect.y2 = std::min(wpixbuf.height, dirty_rect.y2);
 
 	native->redraw(dirty_rect);
 	needs_redraw = false;

@@ -16,14 +16,18 @@ function allfile() {
   fi
   if [ "$USER" == "chaot" ]
   then
-    NAME="André Nusser"; EMAIL="andre.nusser@googlemail.com"
+    NAME="AndrÃ© Nusser"; EMAIL="andre.nusser@googlemail.com"
   fi
   if [ "$DGUSER" == "glocke" ]
   then
-    NAME="Christian Glöckner"; EMAIL="cgloeckner@freenet.de"
+    NAME="Christian GlÃ¶ckner"; EMAIL="cgloeckner@freenet.de"
+  fi
+  if [ "$USER" == "meka" ]
+  then
+    NAME="Goran MekiÄ‡"; EMAIL="meka@tilda.center"
   fi
 
-  echo "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */" > $1;
+  echo "/* -*- Mode: c++ -*- */" > $1;
   echo "/***************************************************************************" >> $1;
   echo " *            $1" >> $1;
   echo " *" >> $1 ;

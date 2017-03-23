@@ -201,7 +201,8 @@ void DrumKitLoader::thread_main()
 		}
 
 		bool newKit = false;
-		if(getter.drumkit_file.hasChanged())
+		if(getter.drumkit_file.hasChanged() ||
+		   getter.reload_counter.hasChanged())
 		{
 			loadkit(getter.drumkit_file.getValue());
 			newKit = true;

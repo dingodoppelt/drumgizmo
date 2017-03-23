@@ -33,47 +33,49 @@
 namespace GUI
 {
 
-class PixelBuffer {
+class PixelBuffer
+{
 public:
-	PixelBuffer(size_t width, size_t height);
+	PixelBuffer(std::size_t width, std::size_t height);
 	~PixelBuffer();
 
-	void realloc(size_t width, size_t height);
+	void realloc(std::size_t width, std::size_t height);
 
-	void setPixel(size_t x, size_t y,
+	void setPixel(std::size_t x, std::size_t y,
 	              unsigned char red,
 	              unsigned char green,
 	              unsigned char blue,
 	              unsigned char alpha);
 
 	unsigned char* buf{nullptr};
-	size_t width{0};
-	size_t height{0};
+	std::size_t width{0};
+	std::size_t height{0};
 };
 
-class PixelBufferAlpha {
+class PixelBufferAlpha
+{
 public:
 	PixelBufferAlpha() = default;
-	PixelBufferAlpha(size_t width, size_t height);
+	PixelBufferAlpha(std::size_t width, std::size_t height);
 	~PixelBufferAlpha();
 
-	void realloc(size_t width, size_t height);
+	void realloc(std::size_t width, std::size_t height);
 
-	void setPixel(size_t x, size_t y,
+	void setPixel(std::size_t x, std::size_t y,
 	              unsigned char red,
 	              unsigned char green,
 	              unsigned char blue,
 	              unsigned char alpha);
 
-	void addPixel(size_t x, size_t y,
+	void addPixel(std::size_t x, std::size_t y,
 	              unsigned char red,
 	              unsigned char green,
 	              unsigned char blue,
 	              unsigned char alpha);
 
-	void addPixel(size_t x, size_t y, const Colour& c);
+	void addPixel(std::size_t x, std::size_t y, const Colour& c);
 
-	void pixel(size_t x, size_t y,
+	void pixel(std::size_t x, std::size_t y,
 	           unsigned char* red,
 	           unsigned char* green,
 	           unsigned char* blue,
@@ -86,6 +88,15 @@ public:
 	int x{0};
 	int y{0};
 	bool dirty{true};
+	bool visible{true};
+
+	// Add optional dirty rect that this pixelbuffer took up since it was last
+	// rendered. Make sure to update this list on resize and/or move.
+	std::size_t last_width{0};
+	std::size_t last_height{0};
+	int last_x{0};
+	int last_y{0};
+	bool has_last{false};
 };
 
 } // GUI::

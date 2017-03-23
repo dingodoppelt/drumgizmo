@@ -42,6 +42,9 @@ Widget::Widget(Widget* parent)
 		parent->addChild(this);
 		_window = parent->window();
 	}
+
+	pixbuf.x = translateToWindowX();
+	pixbuf.y = translateToWindowY();
 }
 
 Widget::~Widget()
@@ -64,12 +67,14 @@ void Widget::hide()
 
 void Widget::setVisible(bool visible)
 {
-	_visible = visible;
-
-	if(visible)
+	if(_visible == visible)
 	{
-		redraw();
+		return;
 	}
+
+	_visible = visible;
+	pixbuf.visible = visible;
+	redraw();
 }
 
 bool Widget::visible() const
@@ -130,7 +135,20 @@ void Widget::resize(std::size_t width, std::size_t height)
 
 	_width = width;
 	_height = height;
+
+	// Store old size/position in pixelbuffer for rendering invalidation.
+	if(!pixbuf.has_last)
+	{
+		pixbuf.last_width = pixbuf.width;
+		pixbuf.last_height = pixbuf.height;
+		pixbuf.last_x = pixbuf.x;
+		pixbuf.last_y = pixbuf.y;
+		pixbuf.has_last = true;
+	}
+
 	pixbuf.realloc(width, height);
+	pixbuf.x = translateToWindowX();
+	pixbuf.y = translateToWindowY();
 	redraw();
 	sizeChangeNotifier(width, height);
 }
@@ -145,6 +163,20 @@ void Widget::move(int x, int y)
 
 	_x = x;
 	_y = y;
+
+	// Store old size/position in pixelbuffer for rendering invalidation.
+	if(!pixbuf.has_last)
+	{
+		pixbuf.last_width = pixbuf.width;
+		pixbuf.last_height = pixbuf.height;
+		pixbuf.last_x = pixbuf.x;
+		pixbuf.last_y = pixbuf.y;
+		pixbuf.has_last = true;
+	}
+
+	//pixbuf.x = translateToWindowX();
+	//pixbuf.y = translateToWindowY();
+
 	positionChangeNotifier(x, y);
 }
 
@@ -216,11 +248,14 @@ std::vector<PixelBufferAlpha*> Widget::getPixelBuffers()
 		dirty = false;
 	}
 
-	pixelBuffers.push_back(&pixbuf);
-
-	for(auto child : children)
+	if(pixbuf.dirty || visible())
 	{
-		if(child->visible())
+		pixelBuffers.push_back(&pixbuf);
+	}
+
+	if(visible())
+	{
+		for(auto child : children)
 		{
 			auto childPixelBuffers = child->getPixelBuffers();
 			pixelBuffers.insert(pixelBuffers.end(),

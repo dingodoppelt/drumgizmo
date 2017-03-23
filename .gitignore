@@ -26,6 +26,7 @@ INSTALL
 *.o
 *.a
 *.la
+*.core
 test_*
 *.exe
 Makefile.am.test
@@ -56,6 +57,7 @@ test/semaphoretest
 test/enginetest
 test/paintertest
 test/drumkitcreatortest
+test/bytesizeparsertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav

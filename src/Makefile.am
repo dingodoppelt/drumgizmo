@@ -17,6 +17,7 @@ nodist_libdg_la_SOURCES = \
 	audiocacheidmanager.cc \
 	audioinputenginemidi.cc \
 	audiofile.cc \
+	bytesizeparser.cc \
 	channel.cc \
 	channelmixer.cc \
 	chresampler.cc \
@@ -57,6 +58,7 @@ EXTRA_DIST = \
 	audioinputenginemidi.h \
 	audiooutputengine.h \
 	beatmapper.h \
+	bytesizeparser.h \
 	channel.h \
 	channelmixer.h \
 	chresampler.h \
@@ -102,6 +104,7 @@ EXTRA_DIST = \
 	audioinputenginemidi.cc \
 	audiooutputengine.cc \
 	beatmapper.cc \
+	bytesizeparser.cc \
 	channel.cc \
 	channelmixer.cc \
 	chresampler.cc \
