@@ -106,6 +106,7 @@ public:
 private:
 	size_t framesize{0};
 	sample_t* nodata{nullptr};
+	size_t nodata_framesize{0};
 	size_t number_of_underruns{0};
 
 	AudioCacheIDManager id_manager;

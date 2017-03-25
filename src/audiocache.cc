@@ -168,7 +168,6 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 			}
 
 			c.localpos += framesize;
-
 			return s;
 		}
 
@@ -255,10 +254,11 @@ void AudioCache::setFrameSize(size_t framesize)
 	// NOTE: Not threaded...
 	//std::lock_guard<AudioCacheIDManager> id_manager_lock(id_manager);
 
-	if(framesize > this->framesize)
+	if(framesize > nodata_framesize)
 	{
 		delete[] nodata;
 		nodata = new sample_t[framesize];
+		nodata_framesize = framesize;
 
 		for(size_t i = 0; i < framesize; ++i)
 		{
