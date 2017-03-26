@@ -57,6 +57,7 @@ public:
 	void redraw(const Rect& dirty_rect) override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
+	void* getNativeWindowHandle() const override;
 
 private:
 	void translateXMessage(XEvent& xevent);

@@ -80,6 +80,9 @@ public:
 	//! Reads all currently enqueued events from the native window system.
 	//! \return A queue of shared pointers to events.
 	virtual EventQueue getEvents() = 0;
+
+	// \returns the native window handle, it HWND on Win32 or Window id on X11
+	virtual void* getNativeWindowHandle() const = 0;
 };
 
 } // GUI::

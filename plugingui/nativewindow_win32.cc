@@ -445,4 +445,9 @@ EventQueue NativeWindowWin32::getEvents()
 	return events;
 }
 
+void* NativeWindowWin32::getNativeWindowHandle() const
+{
+	return (void*)m_hwnd;
+}
+
 } // GUI::

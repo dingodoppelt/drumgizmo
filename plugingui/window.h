@@ -70,6 +70,9 @@ public:
 	//! Tag the window buffer dirty to be rendered.
 	void needsRedraw();
 
+	// \returns the native window handle, it HWND on Win32 or Window id on X11
+	void* getNativeWindowHandle() const;
+
 protected:
 	// For the EventHandler
 	friend class EventHandler;

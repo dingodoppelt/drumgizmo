@@ -181,6 +181,11 @@ void Window::needsRedraw()
 	needs_redraw = true;
 }
 
+void* Window::getNativeWindowHandle() const
+{
+	return native->getNativeWindowHandle();
+}
+
 std::size_t Window::translateToWindowX()
 {
 	return 0;

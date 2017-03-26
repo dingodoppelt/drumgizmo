@@ -35,19 +35,32 @@
 #include <hugin.hpp>
 #include <settings.h>
 
+#include "window.h"
 #include "mainwindow.h"
 
 int main()
 {
 	INFO(example, "We are up and running");
 
-	Settings settings;
-	GUI::MainWindow main_window(settings, nullptr);
-	main_window.show();
-	main_window.resize(370, 330);
+	GUI::Window parent{nullptr};
+	parent.setCaption("PluginGui Test Application");
 
-	while(main_window.processEvents())
+	Settings settings;
+	GUI::MainWindow main_window(settings, parent.getNativeWindowHandle());
+
+	parent.show();
+	main_window.show();
+
+	parent.resize(370, 330);
+
+	while(true)
 	{
+		parent.eventHandler()->processEvents();
+		if(!main_window.processEvents())
+		{
+			break;
+		}
+
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		SleepEx(50, FALSE);
 #else

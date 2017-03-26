@@ -275,6 +275,11 @@ EventQueue NativeWindowX11::getEvents()
 	return events;
 }
 
+void* NativeWindowX11::getNativeWindowHandle() const
+{
+	return (void*)xwindow;
+}
+
 void NativeWindowX11::translateXMessage(XEvent& xevent)
 {
 	switch(xevent.type)

@@ -55,6 +55,7 @@ public:
 	void redraw(const Rect& dirty_rect) override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
+	void* getNativeWindowHandle() const override;
 
 private:
 	static LRESULT CALLBACK dialogProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
