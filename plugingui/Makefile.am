@@ -35,6 +35,7 @@ nodist_libdggui_la_SOURCES = \
 	led.cc \
 	checkbox.cc \
 	toggle.cc \
+	powerbutton.cc \
 	mainwindow.cc \
 	slider.cc \
 	scrollbar.cc \
