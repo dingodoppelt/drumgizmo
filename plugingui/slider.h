@@ -37,6 +37,7 @@ public:
 
 	// From Widget:
 	bool catchMouse() override { return true; }
+	bool isFocusable() override { return true; }
 
 	void setValue(float value);
 	float value();
