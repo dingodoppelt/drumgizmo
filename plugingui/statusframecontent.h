@@ -26,10 +26,11 @@
  */
 #pragma once
 
-#include "widget.h"
 #include "textedit.h"
+#include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class StatusframeContent : public Widget
 {

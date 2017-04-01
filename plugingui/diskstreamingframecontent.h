@@ -26,12 +26,13 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "slider.h"
-#include "label.h"
 #include "button.h"
+#include "label.h"
+#include "slider.h"
+#include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
 class DiskstreamingframeContent : public Widget
 {

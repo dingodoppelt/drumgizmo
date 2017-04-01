@@ -31,24 +31,24 @@
 namespace GUI
 {
 
-FrameWidget::FrameWidget(Widget *parent, bool has_switch)
-	: Widget(parent)
-	, is_switched_on(!has_switch)
-	, bar_height(24)
+FrameWidget::FrameWidget(Widget* parent, bool has_switch)
+    : Widget(parent), is_switched_on(!has_switch), bar_height(24)
 {
-	if (has_switch) {
+	if(has_switch)
+	{
 		// We only have to set this once as nothing happens on a resize
 		power_button.move(4, 4);
 		power_button.resize(16, 16);
 
-		CONNECT(&power_button, stateChangedNotifier, this, &FrameWidget::powerButtonClicked);
+		CONNECT(&power_button, stateChangedNotifier, this,
+		    &FrameWidget::powerButtonClicked);
 	}
 	power_button.setVisible(has_switch);
 
 	CONNECT(this, sizeChangeNotifier, this, &FrameWidget::sizeChanged);
 }
 
-void FrameWidget::repaintEvent(RepaintEvent* repaintEvent) 
+void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 	p.clear();
@@ -77,7 +77,8 @@ void FrameWidget::powerButtonClicked(bool clicked)
 {
 	is_switched_on = !is_switched_on;
 
-	if (content) {
+	if(content)
+	{
 		content->setVisible(true);
 	}
 }
@@ -97,11 +98,12 @@ void FrameWidget::setContent(Widget* content)
 
 void FrameWidget::sizeChanged(int width, int height)
 {
-	if (content) {
+	if(content)
+	{
 		content_start_x = content_margin;
 		content_start_y = bar_height + content_margin;
-		content_width = width - 2*content_margin;
-		content_height = height - (bar_height + 2*content_margin);
+		content_width = width - 2 * content_margin;
+		content_height = height - (bar_height + 2 * content_margin);
 
 		content->move(content_start_x, content_start_y);
 		content->resize(content_width, content_height);

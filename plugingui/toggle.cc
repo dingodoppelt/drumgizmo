@@ -29,8 +29,7 @@
 namespace GUI
 {
 
-Toggle::Toggle(Widget* parent)
-	: Widget(parent)
+Toggle::Toggle(Widget* parent) : Widget(parent)
 {
 }
 

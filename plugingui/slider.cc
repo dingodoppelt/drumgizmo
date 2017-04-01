@@ -31,10 +31,10 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
-namespace GUI {
+namespace GUI
+{
 
-Slider::Slider(Widget *parent)
-	: Widget(parent)
+Slider::Slider(Widget* parent) : Widget(parent)
 {
 	state = State::up;
 
@@ -72,21 +72,21 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 		p.setColour(Colour(0.5, alpha));
 	}
 
-	p.drawFilledRectangle(0,0,width(),height());
+	p.drawFilledRectangle(0, 0, width(), height());
 
-	//p.setColour(Colour(0.1, alpha));
-	//p.drawRectangle(0,0,width()-1,height() - 1);
+	// p.setColour(Colour(0.1, alpha));
+	// p.drawRectangle(0,0,width()-1,height() - 1);
 
 	p.setColour(Colour(1, 0, 0, alpha));
 	p.drawLine(xpos, 0, xpos, height() - 1);
 
-	//p.setColour(Colour(0.8, alpha));
-	//switch(state) {
-	//case State::up:
+	// p.setColour(Colour(0.8, alpha));
+	// switch(state) {
+	// case State::up:
 	//	p.drawLine(0, 0, 0, height() - 1);
 	//	p.drawLine(0, 0, width() - 1, 0);
 	//	break;
-	//case State::down:
+	// case State::down:
 	//	p.drawLine(width() - 1, 0, width() - 1, height() - 1);
 	//	p.drawLine(width() - 1, height() - 1, 0, height() - 1);
 	//	break;
@@ -94,7 +94,8 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 
 	p.setColour(Colour(0.3, alpha));
 
-	if (height() > 0 && width() > 0) {
+	if(height() > 0 && width() > 0)
+	{
 		p.drawPoint(0, height() - 1);
 		p.drawPoint(width() - 1, 0);
 	}

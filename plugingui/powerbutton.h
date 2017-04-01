@@ -26,15 +26,16 @@
  */
 #pragma once
 
-#include "toggle.h"
 #include "texture.h"
+#include "toggle.h"
 
 namespace GUI
 {
 
-class PowerButton : public Toggle {
+class PowerButton : public Toggle
+{
 public:
-	PowerButton(Widget *parent);
+	PowerButton(Widget* parent);
 	virtual ~PowerButton() = default;
 
 protected:

@@ -28,10 +28,10 @@
 
 #include "label.h"
 
-namespace GUI {
+namespace GUI
+{
 
-DrumkitframeContent::DrumkitframeContent(Widget* parent)
-	: Widget(parent)
+DrumkitframeContent::DrumkitframeContent(Widget* parent) : Widget(parent)
 {
 	layout.setHAlignment(HAlignment::left);
 

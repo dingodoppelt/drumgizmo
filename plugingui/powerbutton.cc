@@ -31,8 +31,7 @@
 namespace GUI
 {
 
-PowerButton::PowerButton(Widget* parent)
-	: Toggle(parent)
+PowerButton::PowerButton(Widget* parent) : Toggle(parent)
 {
 }
 
@@ -41,19 +40,25 @@ void PowerButton::repaintEvent(RepaintEvent* repaintEvent)
 	Painter p(*this);
 	p.clear();
 
-	if (state) {
-		if (clicked) {
+	if(state)
+	{
+		if(clicked)
+		{
 			p.drawImage(0, 0, on_clicked);
 		}
-		else {
+		else
+		{
 			p.drawImage(0, 0, on);
 		}
 	}
-	else {
-		if (clicked) {
+	else
+	{
+		if(clicked)
+		{
 			p.drawImage(0, 0, off_clicked);
 		}
-		else {
+		else
+		{
 			p.drawImage(0, 0, off);
 		}
 	}

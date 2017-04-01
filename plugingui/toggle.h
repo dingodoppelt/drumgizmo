@@ -30,11 +30,13 @@
 
 #include <notifier.h>
 
-namespace GUI {
+namespace GUI
+{
 
-class Toggle : public Widget {
+class Toggle : public Widget
+{
 public:
-	Toggle(Widget *parent);
+	Toggle(Widget* parent);
 	virtual ~Toggle() = default;
 
 	void setText(std::string text);

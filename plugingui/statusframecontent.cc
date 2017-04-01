@@ -26,10 +26,10 @@
  */
 #include "statusframecontent.h"
 
-namespace GUI {
+namespace GUI
+{
 
-StatusframeContent::StatusframeContent(Widget* parent)
-	: Widget(parent)
+StatusframeContent::StatusframeContent(Widget* parent) : Widget(parent)
 {
 	text_field.move(0, 0);
 	text_field.setText("This is a status message.");

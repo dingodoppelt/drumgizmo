@@ -28,10 +28,10 @@
 
 #include "painter.h"
 
-namespace GUI {
+namespace GUI
+{
 
-HumanizerframeContent::HumanizerframeContent(Widget* parent)
-	: Widget(parent)
+HumanizerframeContent::HumanizerframeContent(Widget* parent) : Widget(parent)
 {
 	// FIXME, is resizeChildren broken?
 	layout.setResizeChildren(true);
@@ -50,10 +50,10 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent)
 	// TODO: connect the knobs to the right functions
 	// CONNECT(&humanizeControls->velocityCheck, stateChangedNotifier,
 	//         this, &DGWindow::velocityCheckClick);
-	// 
+	//
 	// CONNECT(&humanizeControls->attackKnob, valueChangedNotifier,
 	//         this, &DGWindow::attackValueChanged);
-	// 
+	//
 	// CONNECT(&humanizeControls->falloffKnob, valueChangedNotifier,
 	//         this, &DGWindow::falloffValueChanged);
 }

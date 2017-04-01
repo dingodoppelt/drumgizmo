@@ -26,19 +26,18 @@
  */
 #pragma once
 
-#include "widget.h"
 #include "knob.h"
 #include "label.h"
+#include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
 // TODO move this to an own file?
-class LabeledControl
-	: public Widget
+class LabeledControl : public Widget
 {
 public:
-	LabeledControl(Widget* parent, const std::string& name)
-		: Widget(parent)
+	LabeledControl(Widget* parent, const std::string& name) : Widget(parent)
 	{
 		layout.setResizeChildren(false);
 		layout.setHAlignment(HAlignment::center);

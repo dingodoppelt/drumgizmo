@@ -26,13 +26,15 @@
  */
 #pragma once
 
-#include "widget.h"
 #include "font.h"
 #include "powerbutton.h"
+#include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class FrameWidget : public Widget {
+class FrameWidget : public Widget
+{
 public:
 	FrameWidget(Widget* parent, bool has_switch = false);
 	virtual ~FrameWidget() = default;
@@ -42,6 +44,7 @@ public:
 	virtual bool catchMouse() override { return false; }
 
 	bool isSwitchedOn() { return is_switched_on; }
+
 	void setTitle(std::string const& title);
 	void setContent(Widget* content);
 
@@ -73,14 +76,14 @@ private:
 	std::size_t bar_height;
 	GUI::Colour grey_box_colour{0.7};
 	GUI::Colour background_colour{0.85, 0.8};
-	
+
 	//
 	// content
 	//
 
 	// content frame
 	GUI::Colour frame_colour{0};
-	
+
 	// content box
 	Widget* content{nullptr};
 	std::size_t content_margin{5};

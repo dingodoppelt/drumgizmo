@@ -26,10 +26,10 @@
  */
 #include "maintab.h"
 
-namespace GUI {
+namespace GUI
+{
 
-MainTab::MainTab(Widget* parent)
-	: Widget(parent)
+MainTab::MainTab(Widget* parent) : Widget(parent)
 {
 	layout.setSpacing(10);
 	layout.setResizeChildren(true);

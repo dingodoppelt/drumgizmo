@@ -26,11 +26,11 @@
  */
 #include "diskstreamingframecontent.h"
 
-namespace GUI {
+namespace GUI
+{
 
 DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent)
-	: Widget(parent)
-	, slider_width{250}
+    : Widget(parent), slider_width{250}
 {
 	label_text.setText("Cache limit (max memory usage):");
 	label_text.setAlignment(TextAlignment::center);
@@ -48,7 +48,7 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 	slider_width = 0.8 * width;
 	button_width = width - slider_width;
 
-	label_text.move(0,0);
+	label_text.move(0, 0);
 	slider.move(0, 20);
 	button.move(slider_width, 10);
 	label_size.move(0, 40);

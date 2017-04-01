@@ -29,17 +29,16 @@
 #include "window.h"
 
 #include <assert.h>
-#include <list>
 #include <hugin.hpp>
+#include <list>
 #include <stdio.h>
 
 #define BORDER 10
 
-namespace GUI {
+namespace GUI
+{
 
-TextEdit::TextEdit(Widget *parent)
-	: Widget(parent)
-	, scroll(this)
+TextEdit::TextEdit(Widget* parent) : Widget(parent), scroll(this)
 {
 	setReadOnly(true);
 
@@ -55,8 +54,8 @@ TextEdit::~TextEdit()
 void TextEdit::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
-	scroll.resize(scroll.width(), height-14);
-	scroll.move(width-30,7);
+	scroll.resize(scroll.width(), height - 14);
+	scroll.move(width - 30, 7);
 }
 
 void TextEdit::setReadOnly(bool readonly)
@@ -78,7 +77,7 @@ void TextEdit::setText(const std::string& text)
 	int ran = height() / font.textHeight();
 
 	DEBUG(textedit, "Setting range and max of scrollbar to '%d' and '%d'\n",
-	      ran, (int)preprocessedtext.size());
+	    ran, (int)preprocessedtext.size());
 
 	scroll.setRange(ran);
 	scroll.setMaximum(preprocessedtext.size());
@@ -117,9 +116,8 @@ void TextEdit::preprocessText()
 		{
 			pos = text.find("\n");
 			lines.push_back(text.substr(0, pos));
-			text = text.substr(pos+1);
-		}
-		while(pos != std::string::npos);
+			text = text.substr(pos + 1);
+		} while(pos != std::string::npos);
 	}
 
 	{ // Wrap long lines
@@ -131,7 +129,8 @@ void TextEdit::preprocessText()
 			for(size_t i = 0; i < line.length(); ++i)
 			{
 				size_t linewidth = font.textWidth(line.substr(0, i));
-				if(linewidth >= width() - BORDER - 4 + 3 - 10 - scroll.width()) {
+				if(linewidth >= width() - BORDER - 4 + 3 - 10 - scroll.width())
+				{
 					preprocessedtext.push_back(line.substr(0, i));
 					line = line.substr(i);
 					i = 0;
@@ -156,9 +155,9 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 	}
 
 	box.setSize(w, h);
-	p.drawImage(0,0, box);
+	p.drawImage(0, 0, box);
 
-	p.setColour(Colour(183.0 / 255.0, 219.0 / 255.0 , 255.0 / 255.0, 1));
+	p.setColour(Colour(183.0 / 255.0, 219.0 / 255.0, 255.0 / 255.0, 1));
 
 	int skip = scroll.value();
 
@@ -167,13 +166,13 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 	it = preprocessedtext.begin();
 
 	int c = 0;
-	for( ; c < skip; c++)
+	for(; c < skip; c++)
 	{
 		++it;
 	}
 
 	c = 0;
-	for( ; it != preprocessedtext.end(); it++)
+	for(; it != preprocessedtext.end(); it++)
 	{
 		if((c * font.textHeight()) >= (height() - 8 - font.textHeight()))
 		{

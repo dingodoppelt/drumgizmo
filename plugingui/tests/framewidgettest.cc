@@ -34,22 +34,20 @@
 #endif
 #include <unistd.h>
 
-#include <hugin.hpp>
-#include <window.h>
-#include <frame.h>
-#include <label.h>
-#include <layout.h>
 #include <button.h>
 #include <checkbox.h>
+#include <frame.h>
+#include <hugin.hpp>
+#include <label.h>
+#include <layout.h>
+#include <window.h>
 
 // TODO: fix segfault on close
 
-class Widget1
-	: public GUI::Widget
+class Widget1 : public GUI::Widget
 {
 public:
-	Widget1(GUI::Widget* parent)
-		: GUI::Widget(parent)
+	Widget1(GUI::Widget* parent) : GUI::Widget(parent)
 	{
 		layout.setResizeChildren(true);
 		layout.setHAlignment(GUI::HAlignment::center);
@@ -74,12 +72,10 @@ private:
 	GUI::Label label3{this};
 };
 
-class Widget2
-	: public GUI::Widget
+class Widget2 : public GUI::Widget
 {
 public:
-	Widget2(GUI::Widget* parent)
-		: GUI::Widget(parent)
+	Widget2(GUI::Widget* parent) : GUI::Widget(parent)
 	{
 		layout.setSpacing(10);
 		layout.setResizeChildren(true);
@@ -103,16 +99,14 @@ private:
 	GUI::CheckBox checkbox{this};
 };
 
-class TestWindow
-	: public GUI::Window
+class TestWindow : public GUI::Window
 {
 public:
-	TestWindow()
-		: GUI::Window(nullptr)
+	TestWindow() : GUI::Window(nullptr)
 	{
 		setCaption("FrameWidgetTest Window");
-		CONNECT(eventHandler(), closeNotifier,
-		        this, &TestWindow::closeEventHandler);
+		CONNECT(eventHandler(), closeNotifier, this,
+		    &TestWindow::closeEventHandler);
 		CONNECT(this, sizeChangeNotifier, this, &TestWindow::sizeChanged);
 
 		layout.setSpacing(10);
@@ -181,7 +175,7 @@ int main()
 
 	TestWindow test_window;
 	test_window.show();
-	test_window.resize(300,300);
+	test_window.resize(300, 300);
 
 	while(test_window.processEvents())
 	{

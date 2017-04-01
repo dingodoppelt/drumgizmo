@@ -28,9 +28,11 @@
 
 #include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class Slider : public Widget {
+class Slider : public Widget
+{
 public:
 	Slider(Widget* parent);
 	virtual ~Slider() = default;
@@ -50,7 +52,8 @@ protected:
 	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 
 private:
-	enum class State {
+	enum class State
+	{
 		up,
 		down
 	};

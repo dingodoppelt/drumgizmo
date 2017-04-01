@@ -26,22 +26,20 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "lineedit.h"
-#include "progressbar.h"
 #include "button.h"
 #include "label.h"
+#include "lineedit.h"
+#include "progressbar.h"
+#include "widget.h"
 
 namespace GUI
 {
 
 // TODO: move to own class?
-class File
-	: public Widget
+class File : public Widget
 {
 public:
-	File(Widget* parent)
-		: Widget(parent)
+	File(Widget* parent) : Widget(parent)
 	{
 		layout.setResizeChildren(false);
 		layout.setVAlignment(VAlignment::center);
@@ -66,8 +64,14 @@ public:
 		layout.layout();
 	}
 
-	std::size_t getLineEditWidth() { return lineedit_width; }
-	std::size_t getButtonWidth() { return button_width; }
+	std::size_t getLineEditWidth()
+	{
+		return lineedit_width;
+	}
+	std::size_t getButtonWidth()
+	{
+		return button_width;
+	}
 
 private:
 	HBoxLayout layout{this};
@@ -78,7 +82,10 @@ private:
 	std::size_t lineedit_width;
 	std::size_t button_width;
 
-	LineEdit& getLineEdit() { return lineedit; }
+	LineEdit& getLineEdit()
+	{
+		return lineedit;
+	}
 };
 
 class DrumkitframeContent : public Widget

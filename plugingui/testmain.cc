@@ -35,8 +35,8 @@
 #include <hugin.hpp>
 #include <settings.h>
 
-#include "window.h"
 #include "mainwindow.h"
+#include "window.h"
 
 int main()
 {
@@ -47,8 +47,8 @@ int main()
 
 	Settings settings;
 	GUI::MainWindow main_window(settings, parent.getNativeWindowHandle());
-	CONNECT(&parent, eventHandler()->closeNotifier,
-			&main_window, &GUI::MainWindow::closeEventHandler);
+	CONNECT(&parent, eventHandler()->closeNotifier, &main_window,
+	    &GUI::MainWindow::closeEventHandler);
 
 	parent.show();
 	main_window.show();
