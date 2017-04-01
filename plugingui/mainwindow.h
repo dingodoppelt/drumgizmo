@@ -51,10 +51,10 @@ public:
 
 	//! Notify when window is closing.
 	Notifier<> closeNotifier;
+	void closeEventHandler();
 
 private:
 	void sizeChanged(std::size_t width, std::size_t height);
-	void closeEventHandler();
 
 	// From Widget
 	void repaintEvent(RepaintEvent* repaintEvent) override final;

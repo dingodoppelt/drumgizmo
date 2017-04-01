@@ -47,6 +47,8 @@ int main()
 
 	Settings settings;
 	GUI::MainWindow main_window(settings, parent.getNativeWindowHandle());
+	CONNECT(&parent, eventHandler()->closeNotifier,
+			&main_window, &GUI::MainWindow::closeEventHandler);
 
 	parent.show();
 	main_window.show();
