@@ -28,13 +28,6 @@
 
 #include "painter.h"
 
-// TODO: fix all the segfaults
-// TODO: change look to what it is in the fake GUI
-// TODO: replace CheckBox by some other name
-// TODO: maybe refactor the Toggle thingy
-// TODO: make it possible to use layouts recursively
-// TODO: make it possible to add layouts to tabs
-
 namespace GUI
 {
 
