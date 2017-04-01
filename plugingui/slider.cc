@@ -93,8 +93,11 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 	//}
 
 	p.setColour(Colour(0.3, alpha));
-	p.drawPoint(0, height() - 1);
-	p.drawPoint(width() - 1, 0);
+
+	if (height() > 0 && width() > 0) {
+		p.drawPoint(0, height() - 1);
+		p.drawPoint(width() - 1, 0);
+	}
 }
 
 void Slider::buttonEvent(ButtonEvent* buttonEvent)
