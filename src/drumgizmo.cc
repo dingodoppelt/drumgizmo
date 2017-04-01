@@ -45,14 +45,11 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	: loader(settings, kit, i, resamplers, rand)
 	, oe(o)
 	, ie(i)
-	, kit()
+	, audio_cache(settings)
 	, input_processor(settings, kit, activeevents)
-	, framesize(0)
-	, freewheel(true)
-	, events{}
 	, settings(settings)
 {
-	audioCache.init(10000); // start thread
+	audio_cache.init(10000); // start thread
 	events.reserve(1000);
 	loader.init();
 }
@@ -60,7 +57,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 DrumGizmo::~DrumGizmo()
 {
 	loader.deinit();
-	audioCache.deinit(); // stop thread
+	audio_cache.deinit(); // stop thread
 }
 
 bool DrumGizmo::init()
@@ -94,7 +91,7 @@ void DrumGizmo::setFrameSize(size_t framesize)
 
 		// Update framesize in drumkitloader and cachemanager:
 		loader.setFrameSize(framesize);
-		audioCache.setFrameSize(framesize);
+		audio_cache.setFrameSize(framesize);
 	}
 }
 
@@ -103,7 +100,7 @@ void DrumGizmo::setFreeWheel(bool freewheel)
 	// Freewheel = true means that we are bouncing and therefore running faster
 	// than realtime.
 	this->freewheel = freewheel;
-	audioCache.setAsyncMode(!freewheel);
+	audio_cache.setAsyncMode(!freewheel);
 }
 
 void DrumGizmo::setRandomSeed(unsigned int seed)
@@ -240,7 +237,6 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 		bool removeevent = false;
 
 		Event* event = *i;
-
 		Event::type_t type = event->getType();
 		switch(type) {
 		case Event::sample:
@@ -263,8 +259,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 				if(evt.cache_id == CACHE_NOID)
 				{
 					size_t initial_chunksize = (pos + sz) - evt.offset;
-					evt.buffer = audioCache.open(af, initial_chunksize,
-					                             af.filechannel, evt.cache_id);
+					evt.buffer = audio_cache.open(af, initial_chunksize,
+					                              af.filechannel, evt.cache_id);
 					evt.buffer_size = initial_chunksize;
 				}
 
@@ -342,7 +338,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 					if((evt.t < af.size) && (evt.rampdown != 0))
 					{
-						evt.buffer = audioCache.next(evt.cache_id, evt.buffer_size);
+						evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
 					}
 					else
 					{
@@ -351,7 +347,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 					if(removeevent)
 					{
-						audioCache.close(evt.cache_id);
+						audio_cache.close(evt.cache_id);
 					}
 				}
 			}

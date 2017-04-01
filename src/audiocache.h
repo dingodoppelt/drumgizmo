@@ -36,12 +36,13 @@
 #include "audiocachefile.h"
 #include "audiocacheidmanager.h"
 #include "audiocacheeventhandler.h"
+#include "settings.h"
 
 #define CHUNK_MULTIPLIER 16
 
 class AudioCache {
 public:
-	AudioCache() = default;
+	AudioCache(Settings& settings);
 
 	//! Destroy object and stop thread if needed.
 	~AudioCache();
@@ -97,18 +98,13 @@ public:
 	void setAsyncMode(bool async);
 	bool isAsyncMode() const;
 
-	//! Return the number of chunks that were read too late.
-	size_t getNumberOfUnderruns() const;
-
-	//! Set underrun counter to 0.
-	void resetNumberOfUnderruns();
-
 private:
 	size_t framesize{0};
 	sample_t* nodata{nullptr};
 	size_t nodata_framesize{0};
-	size_t number_of_underruns{0};
 
 	AudioCacheIDManager id_manager;
 	AudioCacheEventHandler event_handler{id_manager};
+
+	Settings& settings;
 };

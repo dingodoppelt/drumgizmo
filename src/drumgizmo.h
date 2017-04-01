@@ -92,14 +92,15 @@ protected:
 
 	std::map<std::string, AudioFile *> audiofiles;
 
-	AudioCache audioCache;
+	AudioCache audio_cache;
 	DrumKit kit;
 	InputProcessor input_processor;
 
-	size_t framesize;
-	bool freewheel;
+	size_t framesize{0};
+	bool freewheel{true};
 
 	std::vector<event_t> events;
 	Settings& settings;
+
 	Random rand;
 };

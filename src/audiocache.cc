@@ -37,6 +37,11 @@
 
 #define CHUNKSIZE(x) (x * CHUNK_MULTIPLIER)
 
+AudioCache::AudioCache(Settings& settings)
+	: settings(settings)
+{
+}
+
 AudioCache::~AudioCache()
 {
 	DEBUG(cache, "~AudioCache() pre\n");
@@ -190,7 +195,7 @@ sample_t* AudioCache::next(cacheid_t id, size_t& size)
 	if(!c.ready)
 	{
 		// Just return silence.
-		++number_of_underruns;
+		settings.number_of_underruns.fetch_add(1);
 		return nodata;
 	}
 
@@ -284,14 +289,4 @@ void AudioCache::setAsyncMode(bool async)
 bool AudioCache::isAsyncMode() const
 {
 	return event_handler.isThreaded();
-}
-
-size_t AudioCache::getNumberOfUnderruns() const
-{
-	return number_of_underruns;
-}
-
-void AudioCache::resetNumberOfUnderruns()
-{
-	number_of_underruns = 0;
 }

@@ -28,6 +28,7 @@
 
 #include <audiofile.h>
 #include <audiocache.h>
+#include <settings.h>
 #include <unistd.h>
 
 #include "drumkit_creator.h"
@@ -68,7 +69,8 @@ public:
 		printf("audio_file.load\n");
 		audio_file.load(4096);
 
-		AudioCache audio_cache;
+		Settings settings;
+		AudioCache audio_cache(settings);
 		printf("audio_cache.init\n");
 		audio_cache.init(100);
 		audio_cache.setAsyncMode(threaded);
@@ -115,7 +117,7 @@ public:
 
 				samples = audio_cache.next(id, size);
 
-				CPPUNIT_ASSERT_EQUAL(0, (int)audio_cache.getNumberOfUnderruns());
+				CPPUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
 
 				for(size_t i = 0; (i < size) && (offset < audio_file_ref.size); ++i)
 				{
