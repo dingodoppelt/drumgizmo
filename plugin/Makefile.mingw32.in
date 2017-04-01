@@ -83,6 +83,14 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/resource.cc \
 	@top_srcdir@/plugingui/resource_data.cc \
+	@top_srcdir@/plugingui/toggle.cc \
+	@top_srcdir@/plugingui/powerbutton.cc \
+	@top_srcdir@/plugingui/drumkitframecontent.cc \
+	@top_srcdir@/plugingui/statusframecontent.cc \
+	@top_srcdir@/plugingui/humanizerframecontent.cc \
+	@top_srcdir@/plugingui/diskstreamingframecontent.cc \
+	@top_srcdir@/plugingui/maintab.cc \
+	@top_srcdir@/plugingui/frame.cc \
 	@top_srcdir@/plugingui/lodepng/lodepng.cpp
 
 GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD @GUI_CPPFLAGS@
