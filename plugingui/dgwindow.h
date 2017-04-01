@@ -66,12 +66,15 @@ protected:
 private:
 	void streamerCheckClick(bool value);
 	void limitValueChanged(float value);
+	void chunkValueChanged(float value);
 	void limitSettingsValueChanged(float value);
+	void chunkSettingsValueChanged(float value);
 	void reloadClicked();
 
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);
 	void velocityCheckClick(bool checked);
+	void underrunsChanged(int underruns);
 	void kitBrowseClick();
 	void midimapBrowseClick();
 	void selectKitFile(const std::string& filename);
@@ -105,6 +108,8 @@ private:
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
+
+	Label lbl_underruns{this};
 };
 
 } // GUI::

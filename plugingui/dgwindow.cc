@@ -141,10 +141,16 @@ public:
 
 		limit.resize(80, 80);
 		float free_mem = calcFreeMemory() / (1024.0 * 1024.0);
-		limitKnob.setRange(std::min(500.0, free_mem / 2.0), free_mem);
+		limitKnob.setRange(std::min(256.0, free_mem / 2.0), free_mem);
 		limitKnob.resize(60, 60);
 		limit.setControl(&limitKnob);
 		layout.addItem(&limit);
+
+		chunk.resize(80, 80);
+		chunkKnob.setRange(64.0, 4096.0);
+		chunkKnob.resize(60, 60);
+		chunk.setControl(&chunkKnob);
+		layout.addItem(&chunk);
 
 		reload_button.setText("Reload");
 		reload_button.resize(100, 50);
@@ -155,9 +161,11 @@ public:
 
 	LabeledControl streamer{this, "Streaming"};
 	LabeledControl limit{this, "MB Limit"};
+	LabeledControl chunk{this, "kB Chunk"};
 
 	CheckBox streamerCheck{&streamer};
 	Knob limitKnob{&limit};
+	Knob chunkKnob{&chunk};
 	Button reload_button{this};
 };
 
@@ -254,13 +262,16 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings,
 	layout.addItem(l3);
 
 	disk_streaming_controls = new DiskStreamingControls(this);
-	disk_streaming_controls->resize(80 * 3, 80);
+	disk_streaming_controls->resize(80 * 4, 80);
 	layout.addItem(disk_streaming_controls);
 	CONNECT(&disk_streaming_controls->streamerCheck, stateChangedNotifier,
 	        this, &DGWindow::streamerCheckClick);
 
 	CONNECT(&disk_streaming_controls->limitKnob, valueChangedNotifier,
 	        this, &DGWindow::limitValueChanged);
+
+	CONNECT(&disk_streaming_controls->chunkKnob, valueChangedNotifier,
+	        this, &DGWindow::chunkValueChanged);
 
 	CONNECT(&disk_streaming_controls->reload_button, clickNotifier,
 	        this, &DGWindow::reloadClicked);
@@ -274,6 +285,11 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings,
 	lbl_version->resize(width, 20);
 	lbl_version->setAlignment(TextAlignment::center);
 	layout.addItem(lbl_version);
+
+	lbl_underruns.setText("Underruns: 0");
+	lbl_underruns.resize(width, 20);
+	lbl_underruns.setAlignment(TextAlignment::center);
+	layout.addItem(&lbl_underruns);
 
 	// Create file browser
 	fileBrowser = new FileBrowser(this);
@@ -309,6 +325,10 @@ DGWindow::DGWindow(void* native_window, Config& config, Settings& settings,
 	        &disk_streaming_controls->streamerCheck, &CheckBox::setChecked);
 	CONNECT(this, settings_notifier.disk_cache_upper_limit,
 	        this, &DGWindow::limitSettingsValueChanged);
+	CONNECT(this, settings_notifier.disk_cache_chunk_size,
+	        this, &DGWindow::chunkSettingsValueChanged);
+	CONNECT(this, settings_notifier.number_of_underruns,
+	        this, &DGWindow::underrunsChanged);
 }
 
 DGWindow::~DGWindow()
@@ -386,9 +406,27 @@ void DGWindow::limitValueChanged(float value)
 	settings.disk_cache_upper_limit.store(value * 1024 * 1024);
 }
 
+void DGWindow::chunkValueChanged(float value)
+{
+	// value is in MB
+	settings.disk_cache_chunk_size.store(value * 1024);
+}
+
 void DGWindow::limitSettingsValueChanged(float value)
 {
 	disk_streaming_controls->limitKnob.setValue(value / (1024 * 1024));
+}
+
+void DGWindow::chunkSettingsValueChanged(float value)
+{
+	disk_streaming_controls->chunkKnob.setValue(value / 1024);
+}
+
+void DGWindow::underrunsChanged(int underruns)
+{
+	static char buf[256];
+	sprintf(buf, "Underuns: %d", underruns);
+	lbl_underruns.setText(buf);
 }
 
 void DGWindow::reloadClicked()
