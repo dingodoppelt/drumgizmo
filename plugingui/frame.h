@@ -64,7 +64,6 @@ private:
 	std::size_t label_width;
 
 	// switch
-	bool has_switch;
 	bool is_switched_on;
 	PowerButton power_button{this};
 

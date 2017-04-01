@@ -40,7 +40,6 @@ namespace GUI
 
 FrameWidget::FrameWidget(Widget *parent, bool has_switch)
 	: Widget(parent)
-	, has_switch(has_switch)
 	, is_switched_on(!has_switch)
 	, bar_height(24)
 {
