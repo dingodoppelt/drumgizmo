@@ -26,7 +26,9 @@
  */
 #include <iostream>
 
-#ifdef WIN32
+#include <platform.h>
+
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
