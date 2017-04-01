@@ -52,7 +52,13 @@ struct Settings
 	//! The maximum amount of memory in bytes that the AudioCache
 	//! is allowed to use for preloading. Default is 1GB.
 	Atomic<std::size_t> disk_cache_upper_limit{1024 * 1024 * 1024};
+
+	//! The optimal read chunk size from the disk.
+	Atomic<std::size_t> disk_cache_chunk_size{1024 * 1024};
+
 	Atomic<bool> disk_cache_enable{true};
+
+	Atomic<std::size_t> number_of_underruns{0};
 
 	//! Increment this in order to invoke a reload of the current drumkit.
 	Atomic<std::size_t> reload_counter{0};
@@ -83,7 +89,9 @@ struct SettingsGetter
 	SettingRef<LoadStatus> drumkit_load_status;
 
 	SettingRef<std::size_t> disk_cache_upper_limit;
+	SettingRef<std::size_t> disk_cache_chunk_size;
 	SettingRef<bool> disk_cache_enable;
+	SettingRef<std::size_t> number_of_underruns;
 	SettingRef<std::size_t> reload_counter;
 
 	SettingRef<std::string> midimap_file;
@@ -108,7 +116,9 @@ struct SettingsGetter
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
 		, disk_cache_upper_limit(settings.disk_cache_upper_limit)
+		, disk_cache_chunk_size(settings.disk_cache_chunk_size)
 		, disk_cache_enable(settings.disk_cache_enable)
+		, number_of_underruns(settings.number_of_underruns)
 		, reload_counter(settings.reload_counter)
 		, midimap_file(settings.midimap_file)
 		, midimap_load_status(settings.midimap_load_status)
@@ -134,7 +144,9 @@ public:
 	Notifier<LoadStatus> drumkit_load_status;
 
 	Notifier<std::size_t> disk_cache_upper_limit;
+	Notifier<std::size_t> disk_cache_chunk_size;
 	Notifier<bool> disk_cache_enable;
+	Notifier<std::size_t> number_of_underruns;
 	Notifier<std::size_t> reload_counter;
 
 	Notifier<std::string> midimap_file;
@@ -163,7 +175,9 @@ public:
 		EVAL(drumkit_load_status);
 
 		EVAL(disk_cache_upper_limit);
+		EVAL(disk_cache_chunk_size);
 		EVAL(disk_cache_enable);
+		EVAL(number_of_underruns);
 		EVAL(reload_counter);
 
 		EVAL(midimap_file);
