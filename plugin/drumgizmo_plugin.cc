@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <algorithm>
+#include <string>
 
 #include <midievent.h>
 
@@ -463,6 +464,13 @@ std::string bool2str(bool a)
 	return a?"true":"false";
 }
 
+std::string int2str(int a)
+{
+	char buf[256];
+	snprintf(buf, sizeof(buf) - 1, "%d", a);
+	return buf;
+}
+
 float str2float(std::string a)
 {
 	if(a == "")
@@ -471,6 +479,18 @@ float str2float(std::string a)
 	}
 
 	return atof_nol(a.c_str());
+}
+
+int str2int(std::string a)
+{
+	try
+	{
+		return std::stoi(a);
+	}
+	catch(...)
+	{
+		return 0;
+	}
 }
 
 } // end anonymous namespace
@@ -498,7 +518,9 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		"  <value name=\"velocity_randomiser_weight\">" +
 		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
 		"  <value name=\"disk_cache_upper_limit\">" +
-		float2str(settings.disk_cache_upper_limit.load()) + "</value>\n"
+		int2str(settings.disk_cache_upper_limit.load()) + "</value>\n"
+		"  <value name=\"disk_cache_chunk_size\">" +
+		int2str(settings.disk_cache_chunk_size.load()) + "</value>\n"
 		"  <value name=\"disk_cache_enable\">" +
 		bool2str(settings.disk_cache_enable.load()) + "</value>\n"
 		"</config>";
@@ -547,7 +569,12 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 
 	if(p.value("disk_cache_upper_limit") != "")
 	{
-		settings.disk_cache_upper_limit.store(str2float(p.value("disk_cache_upper_limit")));
+		settings.disk_cache_upper_limit.store(str2int(p.value("disk_cache_upper_limit")));
+	}
+
+	if(p.value("disk_cache_chunk_size") != "")
+	{
+		settings.disk_cache_chunk_size.store(str2int(p.value("disk_cache_chunk_size")));
 	}
 
 	if(p.value("disk_cache_enable") != "")
