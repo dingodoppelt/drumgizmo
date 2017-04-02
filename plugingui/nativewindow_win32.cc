@@ -381,7 +381,8 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 		auto resizeEvent = std::make_shared<ResizeEvent>();
 		resizeEvent->width = rect.right - rect.left;
 		resizeEvent->height = rect.bottom - rect.top;
-		event_queue.push_back(resizeEvent);
+		//event_queue.push_back(resizeEvent);
+		window.resized(resizeEvent->width, resizeEvent->height);
 	}
 }
 
