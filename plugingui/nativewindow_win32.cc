@@ -373,6 +373,12 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 	{
 		// Listen in on parent size changes.
 		SetWindowSubclass(parent_window, subClassProc, 42, (LONG_PTR)this);
+
+		// Resize newly created window to fit into parent.
+		RECT rect;
+		GetClientRect(parent_window, &rect);
+		resize(rect.right - rect.left, rect.bottom - rect.top);
+
 	}
 }
 
