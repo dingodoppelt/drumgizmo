@@ -26,8 +26,8 @@
  */
 #pragma once
 
-#include <list>
 #include <cstdlib>
+#include <list>
 
 #include <notifier.h>
 
@@ -60,11 +60,13 @@ class Layout
 	: public Listener
 {
 public:
-	Layout(LayoutItem *parent);
-	virtual ~Layout() {}
+	Layout(LayoutItem* parent);
+	virtual ~Layout()
+	{
+	}
 
-	virtual void addItem(LayoutItem *item);
-	virtual void removeItem(LayoutItem *item);
+	virtual void addItem(LayoutItem* item);
+	virtual void removeItem(LayoutItem* item);
 
 	//! \brief Reimplement this method to create a new Layout rule.
 	virtual void layout() = 0;
@@ -72,8 +74,8 @@ public:
 protected:
 	void sizeChanged(int width, int height);
 
-	LayoutItem *parent;
-	typedef std::list<LayoutItem *> LayoutItemList;
+	LayoutItem* parent;
+	typedef std::list<LayoutItem*> LayoutItemList;
 	LayoutItemList items;
 };
 
@@ -82,7 +84,7 @@ class BoxLayout
 	: public Layout
 {
 public:
-	BoxLayout(LayoutItem *parent);
+	BoxLayout(LayoutItem* parent);
 
 	//! \brief Set to false to only move the items, not scale them.
 	void setResizeChildren(bool resize_children);
@@ -90,14 +92,15 @@ public:
 	void setSpacing(size_t spacing);
 
 	// From Layout:
-	virtual void layout() override  = 0;
+	virtual void layout() override = 0;
 
 protected:
 	bool resizeChildren{false};
 	size_t spacing{0};
 };
 
-enum class HAlignment {
+enum class HAlignment
+{
 	left,
 	center,
 	right,
@@ -108,7 +111,7 @@ class VBoxLayout
 	: public BoxLayout
 {
 public:
-	VBoxLayout(LayoutItem *parent);
+	VBoxLayout(LayoutItem* parent);
 
 	void setHAlignment(HAlignment alignment);
 
@@ -119,7 +122,8 @@ protected:
 	HAlignment align;
 };
 
-enum class VAlignment {
+enum class VAlignment
+{
 	top,
 	center,
 	bottom,
@@ -130,7 +134,7 @@ class HBoxLayout
 	: public BoxLayout
 {
 public:
-	HBoxLayout(LayoutItem *parent);
+	HBoxLayout(LayoutItem* parent);
 
 	void setVAlignment(VAlignment alignment);
 

@@ -28,10 +28,12 @@
 
 #include "widget.h"
 
-namespace GUI {
+#include <algorithm>
 
-LayoutItem::LayoutItem()
-	: parent(nullptr)
+namespace GUI
+{
+
+LayoutItem::LayoutItem() : parent(nullptr)
 {
 }
 
@@ -40,7 +42,7 @@ LayoutItem::~LayoutItem()
 	setLayoutParent(nullptr); // Will disconnect from layout if any.
 }
 
-void LayoutItem::setLayoutParent(Layout *p)
+void LayoutItem::setLayoutParent(Layout* p)
 {
 	if(this->parent)
 	{
@@ -50,8 +52,7 @@ void LayoutItem::setLayoutParent(Layout *p)
 	this->parent = p;
 }
 
-Layout::Layout(LayoutItem *parent)
-	: parent(parent)
+Layout::Layout(LayoutItem* parent) : parent(parent)
 {
 	auto widget = dynamic_cast<Widget*>(parent);
 	if(widget)
@@ -60,26 +61,16 @@ Layout::Layout(LayoutItem *parent)
 	}
 }
 
-void Layout::addItem(LayoutItem *item)
+void Layout::addItem(LayoutItem* item)
 {
 	items.push_back(item);
 	item->setLayoutParent(this);
 	layout();
 }
 
-void Layout::removeItem(LayoutItem *item)
+void Layout::removeItem(LayoutItem* item)
 {
-	LayoutItemList::iterator i = items.begin();
-	while(i != items.end())
-	{
-		if(*i == item)
-		{
-			i = items.erase(i);
-			continue;
-		}
-		++i;
-	}
-
+	std::remove(items.begin(), items.end(), item);
 	layout();
 }
 
@@ -92,8 +83,7 @@ void Layout::sizeChanged(int width, int height)
 // BoxLayout
 //
 
-BoxLayout::BoxLayout(LayoutItem *parent)
-	: Layout(parent)
+BoxLayout::BoxLayout(LayoutItem* parent) : Layout(parent)
 {
 }
 
@@ -113,9 +103,8 @@ void BoxLayout::setSpacing(size_t spacing)
 // VBoxLayout
 //
 
-VBoxLayout::VBoxLayout(LayoutItem *parent)
-	: BoxLayout(parent)
-	, align(HAlignment::center)
+VBoxLayout::VBoxLayout(LayoutItem* parent)
+    : BoxLayout(parent), align(HAlignment::center)
 {
 }
 
@@ -123,7 +112,7 @@ void VBoxLayout::layout()
 {
 	size_t y = 0;
 	size_t w = parent->width();
-	//size_t h = parent->height() / items.size();
+	// size_t h = parent->height() / items.size();
 
 	LayoutItemList::iterator i = items.begin();
 	while(i != items.end())
@@ -135,18 +124,21 @@ void VBoxLayout::layout()
 			auto empty_space = (num_items - 1) * spacing;
 			auto available_space = parent->height();
 
-			if (available_space >= empty_space) {
+			if(available_space >= empty_space)
+			{
 				auto item_height = (available_space - empty_space) / num_items;
 				item->resize(w, item_height);
 			}
-			else {
+			else
+			{
 				// TODO: Should this case be handled differently?
 				item->resize(w, 0);
 			}
 		}
 
 		size_t x = 0;
-		switch(align) {
+		switch(align)
+		{
 		case HAlignment::left:
 			x = 0;
 			break;
@@ -173,9 +165,8 @@ void VBoxLayout::setHAlignment(HAlignment alignment)
 // HBoxLayout
 //
 
-HBoxLayout::HBoxLayout(LayoutItem *parent)
-	: BoxLayout(parent)
-	, align(VAlignment::center)
+HBoxLayout::HBoxLayout(LayoutItem* parent)
+    : BoxLayout(parent), align(VAlignment::center)
 {
 }
 
@@ -186,25 +177,27 @@ void HBoxLayout::layout()
 		return;
 	}
 
-//	size_t w = parent->width() / items.size();
+	//	size_t w = parent->width() / items.size();
 	size_t h = parent->height();
 	size_t x = 0;
 
 	LayoutItemList::iterator i = items.begin();
 	while(i != items.end())
 	{
-		LayoutItem *item = *i;
+		LayoutItem* item = *i;
 		if(resizeChildren)
 		{
 			auto num_items = items.size();
 			auto empty_space = (num_items - 1) * spacing;
 			auto available_space = parent->width();
 
-			if (available_space >= empty_space) {
+			if(available_space >= empty_space)
+			{
 				auto item_width = (available_space - empty_space) / num_items;
 				item->resize(item_width, h);
 			}
-			else {
+			else
+			{
 				// TODO: Should this case be handled differently?
 				item->resize(0, h);
 			}
@@ -214,7 +207,8 @@ void HBoxLayout::layout()
 		else
 		{
 			size_t y = 0;
-			switch(align) {
+			switch(align)
+			{
 			case VAlignment::top:
 				y = 0;
 				break;
@@ -226,7 +220,7 @@ void HBoxLayout::layout()
 				break;
 			}
 
-			int diff = 0;//w - item->width();
+			int diff = 0; // w - item->width();
 			item->move(x + diff / 2, y);
 		}
 		x += item->width() + spacing;
