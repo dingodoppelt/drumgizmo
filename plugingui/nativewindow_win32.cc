@@ -377,8 +377,12 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 		// Resize newly created window to fit into parent.
 		RECT rect;
 		GetClientRect(parent_window, &rect);
-		resize(rect.right - rect.left, rect.bottom - rect.top);
 
+		// Hack to make sure we scale the child and not simply the parent (again).
+		auto tmp = parent_window;
+		parent_window = nullptr;
+		resize(rect.right - rect.left, rect.bottom - rect.top);
+		parent_window = tmp;
 	}
 }
 
