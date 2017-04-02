@@ -55,8 +55,8 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->width = LOWORD(lp);
 			resizeEvent->height = HIWORD(lp);
-			//native->event_queue.push_back(resizeEvent);
-			native->window.resized(resizeEvent->width, resizeEvent->height);
+			native->event_queue.push_back(resizeEvent);
+			//native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
 
@@ -378,11 +378,10 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 		RECT rect;
 		GetClientRect(parent_window, &rect);
 
-		// Hack to make sure we scale the child and not simply the parent (again).
-		auto tmp = parent_window;
-		parent_window = nullptr;
-		resize(rect.right - rect.left, rect.bottom - rect.top);
-		parent_window = tmp;
+		auto resizeEvent = std::make_shared<ResizeEvent>();
+		resizeEvent->width = rect.right - rect.left;
+		resizeEvent->height = rect.bottom - rect.top;
+		event_queue.push_back(resizeEvent);
 	}
 }
 
