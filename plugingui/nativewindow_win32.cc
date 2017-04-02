@@ -55,8 +55,8 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->width = LOWORD(lp);
 			resizeEvent->height = HIWORD(lp);
-			native->event_queue.push_back(resizeEvent);
-			//native->window.resized(resizeEvent->width, resizeEvent->height);
+			//native->event_queue.push_back(resizeEvent);
+			native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
 
