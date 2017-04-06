@@ -42,7 +42,7 @@ public:
 	MainTab(Widget* parent);
 
 private:
-	VBoxLayout layout{this};
+	GridLayout layout{this, 2, 9};
 
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};

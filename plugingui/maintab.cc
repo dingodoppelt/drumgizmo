@@ -33,12 +33,15 @@ MainTab::MainTab(Widget* parent) : Widget(parent)
 {
 	layout.setSpacing(10);
 	layout.setResizeChildren(true);
-	layout.setHAlignment(GUI::HAlignment::center);
 
 	layout.addItem(&drumkit_frame);
 	layout.addItem(&status_frame);
 	layout.addItem(&humanizer_frame);
 	layout.addItem(&diskstreaming_frame);
+	layout.setPosition(&drumkit_frame, GridLayout::GridRange{0, 1, 0, 4});
+	layout.setPosition(&status_frame, GridLayout::GridRange{0, 1, 4, 7});
+	layout.setPosition(&humanizer_frame, GridLayout::GridRange{1, 2, 0, 3});
+	layout.setPosition(&diskstreaming_frame, GridLayout::GridRange{1, 2, 3, 5});
 
 	drumkit_frame.setTitle("Drumkit");
 	status_frame.setTitle("Status");

@@ -28,6 +28,7 @@
 
 #include <cstdlib>
 #include <list>
+#include <unordered_map>
 
 #include <notifier.h>
 
@@ -56,8 +57,7 @@ private:
 };
 
 //! \brief Abtract Layout class.
-class Layout
-	: public Listener
+class Layout : public Listener
 {
 public:
 	Layout(LayoutItem* parent);
@@ -80,8 +80,7 @@ protected:
 };
 
 //! \brief Abstract box layout
-class BoxLayout
-	: public Layout
+class BoxLayout : public Layout
 {
 public:
 	BoxLayout(LayoutItem* parent);
@@ -107,8 +106,7 @@ enum class HAlignment
 };
 
 //! \brief A Layout that lays out its elements vertically.
-class VBoxLayout
-	: public BoxLayout
+class VBoxLayout : public BoxLayout
 {
 public:
 	VBoxLayout(LayoutItem* parent);
@@ -130,8 +128,7 @@ enum class VAlignment
 };
 
 //! \brief A Layout that lays out its elements vertically.
-class HBoxLayout
-	: public BoxLayout
+class HBoxLayout : public BoxLayout
 {
 public:
 	HBoxLayout(LayoutItem* parent);
@@ -143,6 +140,53 @@ public:
 
 protected:
 	VAlignment align;
+};
+
+//! \brief A Layout class which places the items in a regular grid. An item can
+//! span multiple rows/columns.
+class GridLayout : public BoxLayout
+{
+public:
+	// The range is open, i.e. end is one past the last one.
+	struct GridRange
+	{
+		int column_begin;
+		int column_end;
+		int row_begin;
+		int row_end;
+	};
+
+	GridLayout(LayoutItem* parent, std::size_t number_of_columns,
+	    std::size_t number_of_rows);
+
+	virtual ~GridLayout()
+	{
+	}
+
+	// From Layout:
+	virtual void removeItem(LayoutItem* item);
+	virtual void layout();
+
+	void setPosition(LayoutItem* item, GridRange const& range);
+
+protected:
+	std::size_t number_of_columns;
+	std::size_t number_of_rows;
+
+	// Note: Yes, this is somewhat redundant to the LayoutItemList of the Layout
+	// class. However, this was the best idea I had such that I could still
+	// derive from Layout. If you find this ugly, feel free to fix it.
+	std::unordered_map<LayoutItem*, GridRange> grid_ranges;
+
+private:
+	struct CellSize {
+		std::size_t width;
+		std::size_t height;
+	};
+
+	CellSize calculateCellSize() const;
+	void moveAndResize(
+	    LayoutItem& item, GridRange const& range, CellSize cell_size) const;
 };
 
 } // GUI::

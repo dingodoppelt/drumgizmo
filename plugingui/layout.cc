@@ -233,4 +233,119 @@ void HBoxLayout::setVAlignment(VAlignment alignment)
 	align = alignment;
 }
 
+//
+// GridLayout
+//
+
+GridLayout::GridLayout(LayoutItem* parent, std::size_t number_of_columns,
+    std::size_t number_of_rows)
+    : BoxLayout(parent)
+    , number_of_columns(number_of_columns)
+    , number_of_rows(number_of_rows)
+{
+}
+
+void GridLayout::removeItem(LayoutItem* item)
+{
+	Layout::removeItem(item);
+
+	// manually remove from grid_ranges as remove_if doesn't work on an
+	// unordered_map
+	for(auto it = grid_ranges.begin(); it != grid_ranges.end(); ++it)
+	{
+		if(it->first == item)
+		{
+			it = grid_ranges.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void GridLayout::layout()
+{
+	if(grid_ranges.empty())
+	{
+		return;
+	}
+
+	// Calculate cell sizes
+	auto cell_size = calculateCellSize();
+
+	for(auto const& pair : grid_ranges)
+	{
+		auto& item = *pair.first;
+		auto const& range = pair.second;
+
+		moveAndResize(item, range, cell_size);
+	}
+}
+
+void GridLayout::setPosition(LayoutItem* item, GridRange const& range)
+{
+	grid_ranges[item] = range;
+}
+
+auto GridLayout::calculateCellSize() const -> CellSize
+{
+	auto empty_width = (number_of_columns - 1) * spacing;
+	auto available_width = parent->width();
+	auto empty_height = (number_of_rows - 1) * spacing;
+	auto available_height = parent->height();
+
+	CellSize cell_size;
+	if(available_width > empty_width && available_height > empty_height)
+	{
+		cell_size.width = (available_width - empty_width) / number_of_columns;
+		cell_size.height = (available_height - empty_height) / number_of_rows;
+	}
+	else
+	{
+		cell_size.width = 0;
+		cell_size.height = 0;
+	}
+
+	return cell_size;
+}
+
+void GridLayout::moveAndResize(
+    LayoutItem& item, GridRange const& range, CellSize cell_size) const
+{
+	std::size_t x = range.column_begin * (cell_size.width + spacing);
+	std::size_t y = range.row_begin * (cell_size.height + spacing);
+
+	std::size_t column_count = (range.column_end - range.column_begin);
+	std::size_t row_count = (range.row_end - range.row_begin);
+	std::size_t width = column_count * (cell_size.width + spacing) - spacing;
+	std::size_t height = row_count * (cell_size.height + spacing) - spacing;
+
+	if(resizeChildren)
+	{
+		item.move(x, y);
+
+		if(cell_size.width * cell_size.height != 0)
+		{
+			item.resize(width, height);
+		}
+		else
+		{
+			item.resize(0, 0);
+		}
+	}
+	else
+	{
+		if(item.width() <= width && item.height() <= height)
+		{
+			item.move(x + (width - item.width()) / 2,
+			    y + (height - item.height()) / 2);
+		}
+		else
+		{
+			item.move(x, y);
+		}
+	}
+}
+
 } // GUI::
