@@ -201,14 +201,14 @@ std::size_t Window::translateToWindowY()
 void Window::resized(std::size_t width, std::size_t height)
 {
 	auto size = native->getSize();
-	if((wpixbuf.width == size.first) &&
-	   (wpixbuf.height == size.second))
+	if((wpixbuf.width != size.first) ||
+	   (wpixbuf.height != size.second))
 	{
-		return;
+		wpixbuf.realloc(size.first, size.second);
+		Widget::resize(size.first, size.second);
 	}
-	wpixbuf.realloc(size.first, size.second);
-	Widget::resize(size.first, size.second);
-	//updateBuffer();
+
+	updateBuffer();
 }
 
 //! Called by event handler when an windowmanager/OS window move event has

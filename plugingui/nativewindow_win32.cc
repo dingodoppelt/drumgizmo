@@ -56,7 +56,6 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			resizeEvent->width = LOWORD(lp);
 			resizeEvent->height = HIWORD(lp);
 			native->event_queue.push_back(resizeEvent);
-			//native->window.resized(resizeEvent->width, resizeEvent->height);
 		}
 		break;
 
@@ -227,6 +226,12 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			RECT rect;
 			GetUpdateRect(hwnd, &rect, FALSE);
 
+			// Bypass partial update, which is apparrently broken.
+			rect.left = 0;
+			rect.top = 0;
+			rect.right = window.wpixbuf.width;
+			rect.bottom = window.wpixbuf.height;
+
 			auto repaintEvent = std::make_shared<RepaintEvent>();
 			repaintEvent->x = rect.left;
 			repaintEvent->y = rect.top;
@@ -320,6 +325,7 @@ LRESULT CALLBACK NativeWindowWin32::subClassProc(HWND hwnd, UINT msg,
 			int w = width - rect.right;
 			int h = height - rect.bottom;
 			SetWindowPos(native->m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
+			native->window.resized(w, h);
 		}
 		break;
 	}
@@ -381,8 +387,7 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 		auto resizeEvent = std::make_shared<ResizeEvent>();
 		resizeEvent->width = rect.right - rect.left;
 		resizeEvent->height = rect.bottom - rect.top;
-		//event_queue.push_back(resizeEvent);
-		window.resized(resizeEvent->width, resizeEvent->height);
+		event_queue.push_back(resizeEvent);
 	}
 }
 
