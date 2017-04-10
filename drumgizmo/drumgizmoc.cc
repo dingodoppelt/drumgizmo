@@ -88,6 +88,7 @@ static const char usage_str[] =
     "  alsa:      dev=<device> (default 'default'), frames=<frames> (default "
     "32)\n"
     "             srate=<samplerate> (default 441000)\n"
+    "  oss:       dev=<device> (default '/dev/dsp'), srate=<samplerate>\n"
     "  wavfile:   file=<filename> (default 'output'), srate=<samplerate> "
     "(default 44100)\n"
     "  jackaudio:\n"

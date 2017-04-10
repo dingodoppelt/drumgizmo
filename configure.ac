@@ -288,6 +288,7 @@ AC_ARG_ENABLE([cli],
 	AS_HELP_STRING([--enable-cli], [Compile the command line interface [default=yes]]),,
         [enable_cli="yes"])
 
+
 AS_IF(
   [test "x$enable_cli" = "xyes"],
   [enable_cli=yes
@@ -422,7 +423,44 @@ AS_IF(
      have_output_wavfile=no]
   )
 
-  OUTPUT_PLUGINS="dummy alsa wavfile jackaudio"
+  dnl *** oss
+  case $host_os in
+    freebsd*)
+      enable_oss_value=yes
+      ;;
+    *)
+      enable_oss_value=no
+      ;;
+  esac
+  AC_ARG_ENABLE([output_oss],
+    AS_HELP_STRING(
+      [--disable-output-oss],
+      [Disable output oss plugin [enabled by default on FreeBSD, disabled otherwise]]),,
+    [enable_output_oss=$enable_oss_value]
+  )
+
+  AS_IF(
+    [test "x$enable_output_oss" = "xyes"],
+    [AC_MSG_CHECKING(for OSS)
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([[
+          #include <sys/soundcard.h>
+          #ifndef AFMT_S32_NE
+          # error no oss
+          #endif
+        ]])],
+        [
+          have_output_oss=yes
+          AC_MSG_RESULT(yes)
+        ],
+        [AC_MSG_FAILURE([no OSS headers found])]
+    )],
+
+    [AC_MSG_RESULT([*** output oss plugin disabled per user request ***])
+    have_output_oss=no]
+  )
+
+  OUTPUT_PLUGINS="dummy alsa wavfile jackaudio oss"
   AC_SUBST(OUTPUT_PLUGINS)
 
   dnl
@@ -448,6 +486,7 @@ AM_CONDITIONAL([HAVE_OUTPUT_DUMMY], [test "x$have_output_dummy" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_ALSA], [test "x$have_output_alsa" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_WAVFILE], [test "x$have_output_wavfile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_JACKAUDIO], [test "x$have_output_jackaudio" = "xyes"])
+AM_CONDITIONAL([HAVE_OUTPUT_OSS], [test "x$have_output_oss" = "xyes"])
 
 dnl ======================
 dnl Check for sndfile

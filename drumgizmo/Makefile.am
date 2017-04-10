@@ -67,6 +67,12 @@ drumgizmo_SOURCES += output/jackaudio.cc
 drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_JACKAUDIO
 endif # HAVE_OUTPUT_JACKAUDIO
 
+if HAVE_OUTPUT_OSS
+drumgizmo_SOURCES += output/oss.cc
+drumgizmo_CXXFLAGS += -DHAVE_OUTPUT_OSS
+endif # HAVE_OUTPUT_OSS
+
+
 # Only compile jackclient.cc if at least one of the jack modules are included.
 if HAVE_OUTPUT_JACKAUDIO
 drumgizmo_SOURCES += jackclient.cc

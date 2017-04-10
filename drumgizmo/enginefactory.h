@@ -69,6 +69,11 @@
 #include "output/jackaudio.h"
 #endif
 
+#ifdef HAVE_OUTPUT_OSS
+#include "output/oss.h"
+#endif
+
+
 //! Factory for various input- and output engines
 class EngineFactory
 {

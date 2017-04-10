@@ -63,6 +63,9 @@ EngineFactory::EngineFactory()
 #ifdef HAVE_OUTPUT_JACKAUDIO
 	output.push_back("jackaudio");
 #endif
+#ifdef HAVE_OUTPUT_OSS
+	output.push_back("oss");
+#endif
 }
 
 #ifdef USE_JACK
@@ -144,6 +147,12 @@ std::unique_ptr<AudioOutputEngine> EngineFactory::createOutput(const std::string
 	{
 		prepareJack();
 		return std::make_unique<JackAudioOutputEngine>(*jack);
+	}
+#endif
+#ifdef HAVE_OUTPUT_OSS
+	if(name == "oss")
+	{
+		return std::make_unique<OSSOutputEngine>();
 	}
 #endif
 
