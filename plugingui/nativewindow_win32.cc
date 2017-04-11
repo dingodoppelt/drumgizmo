@@ -408,15 +408,21 @@ void NativeWindowWin32::setFixedSize(std::size_t width, std::size_t height)
 void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 {
 	auto hwnd = m_hwnd;
-	if(parent_window)
-	{
-		hwnd = parent_window;
-	}
+	//if(parent_window)
+	//{
+	//	hwnd = parent_window;
+	//}
+
+	// Set requested size on the window (or parent)
 	SetWindowPos(hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
+
+	// Ask the client window what size it actually got
 	RECT rect;
-	GetClientRect(hwnd, &rect);
+	GetClientRect(m_hwnd, &rect);
 	int w = width - rect.right;
 	int h = height - rect.bottom;
+
+	// Set the compensated size on the window (or parent)
 	SetWindowPos(hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
