@@ -70,7 +70,9 @@ void Layout::addItem(LayoutItem* item)
 
 void Layout::removeItem(LayoutItem* item)
 {
-	std::remove(items.begin(), items.end(), item);
+	auto new_end = std::remove(items.begin(), items.end(), item);
+	items.erase(new_end, items.end());
+
 	layout();
 }
 
@@ -118,6 +120,7 @@ void VBoxLayout::layout()
 	while(i != items.end())
 	{
 		LayoutItem* item = *i;
+
 		if(resizeChildren)
 		{
 			auto num_items = items.size();
@@ -247,11 +250,10 @@ GridLayout::GridLayout(LayoutItem* parent, std::size_t number_of_columns,
 
 void GridLayout::removeItem(LayoutItem* item)
 {
-	Layout::removeItem(item);
-
 	// manually remove from grid_ranges as remove_if doesn't work on an
-	// unordered_map
-	for(auto it = grid_ranges.begin(); it != grid_ranges.end(); ++it)
+	// unordered_map.
+	auto it = grid_ranges.begin();
+	while(it != grid_ranges.end())
 	{
 		if(it->first == item)
 		{
@@ -262,6 +264,8 @@ void GridLayout::removeItem(LayoutItem* item)
 			++it;
 		}
 	}
+
+	Layout::removeItem(item);
 }
 
 void GridLayout::layout()

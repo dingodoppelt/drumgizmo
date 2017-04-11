@@ -53,8 +53,8 @@ public:
 		layout.addItem(control);
 	}
 
+private:
 	VBoxLayout layout{this};
-
 	Label caption{this};
 };
 
