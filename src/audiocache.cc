@@ -52,7 +52,7 @@ AudioCache::~AudioCache()
 	DEBUG(cache, "~AudioCache() post\n");
 }
 
-void AudioCache::init(size_t poolsize)
+void AudioCache::init(std::size_t poolsize)
 {
 	setAsyncMode(true);
 
@@ -66,7 +66,8 @@ void AudioCache::deinit()
 }
 
 // Invariant: initial_samples_needed < preloaded audio data
-sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
+sample_t* AudioCache::open(const AudioFile& file,
+                           std::size_t initial_samples_needed,
                            int channel, cacheid_t& id)
 {
 	if(!file.isValid())
@@ -100,7 +101,7 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	c.front = nullptr; // This is allocated when needed.
 	c.back = nullptr; // This is allocated when needed.
 
-	size_t cropped_size;
+	std::size_t cropped_size;
 
 	if(file.preloadedsize == file.size)
 	{
@@ -146,7 +147,7 @@ sample_t* AudioCache::open(const AudioFile& file, size_t initial_samples_needed,
 	return c.preloaded_samples; // return preloaded data
 }
 
-sample_t* AudioCache::next(cacheid_t id, size_t& size)
+sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 {
 	size = framesize;
 
@@ -248,7 +249,7 @@ void AudioCache::close(cacheid_t id)
 	event_handler.pushCloseEvent(id);
 }
 
-void AudioCache::setFrameSize(size_t framesize)
+void AudioCache::setFrameSize(std::size_t framesize)
 {
 	DEBUG(cache, "%s\n", __PRETTY_FUNCTION__);
 
@@ -265,7 +266,7 @@ void AudioCache::setFrameSize(size_t framesize)
 		nodata = new sample_t[framesize];
 		nodata_framesize = framesize;
 
-		for(size_t i = 0; i < framesize; ++i)
+		for(std::size_t i = 0; i < framesize; ++i)
 		{
 			nodata[i] = 0.0f;
 		}
@@ -276,7 +277,7 @@ void AudioCache::setFrameSize(size_t framesize)
 	event_handler.setChunkSize(CHUNKSIZE(framesize));
 }
 
-size_t AudioCache::getFrameSize() const
+std::size_t AudioCache::getFrameSize() const
 {
 	return framesize;
 }
