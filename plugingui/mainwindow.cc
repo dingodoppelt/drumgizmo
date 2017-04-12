@@ -38,18 +38,18 @@ namespace
 std::string getGPLText()
 {
 	return
-		"DrumGizmo is free software; you can redistribute it and/or modify\n"
-		"it under the terms of the GNU Lesser General Public License as published by\n"
-		"the Free Software Foundation; either version 3 of the License, or\n"
+		"DrumGizmo is free software; you can redistribute it and/or modify "
+		"it under the terms of the GNU Lesser General Public License as published by "
+		"the Free Software Foundation; either version 3 of the License, or "
 		"(at your option) any later version.\n"
 		"\n"
-		"DrumGizmo is distributed in the hope that it will be useful,\n"
-		"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+		"DrumGizmo is distributed in the hope that it will be useful, "
+		"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
 		"GNU Lesser General Public License for more details.\n"
 		"\n"
-		"You should have received a copy of the GNU Lesser General Public License\n"
-		"along with DrumGizmo; if not, write to the Free Software\n"
+		"You should have received a copy of the GNU Lesser General Public License "
+		"along with DrumGizmo; if not, write to the Free Software "
 		"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.\n";
 }
 
@@ -75,7 +75,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	tabs.addTab("GPL", &gpl_text_field);
 
 	gpl_text_field.setText(getGPLText());
-	gpl_text_field.preprocessText();
+	gpl_text_field.adaptTextOnResize(true);
 	gpl_text_field.setReadOnly(true);
 }
 
@@ -123,6 +123,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
+	gpl_text_field.preprocessText();
 	tabs.resize(width - 2 * 16, height);
 }
 

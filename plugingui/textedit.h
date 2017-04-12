@@ -53,6 +53,7 @@ public:
 	void setReadOnly(bool readonly);
 	bool readOnly();
 
+	void adaptTextOnResize(bool adapt);
 	void preprocessText();
 
 	Notifier<> textChangedNotifier;
@@ -74,6 +75,7 @@ private:
 
 	std::string _text;
 
+	bool adapt_text_on_resize{false};
 	bool readonly{true};
 
 	std::list< std::string > preprocessedtext;
