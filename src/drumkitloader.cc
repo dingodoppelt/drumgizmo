@@ -37,13 +37,15 @@
 DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
                              AudioInputEngine& ie,
                              Resamplers& resamplers,
-                             Random& rand)
+                             Random& rand,
+                             AudioCache& audio_cache)
 	: settings(settings)
 	, getter(settings)
 	, kit(kit)
 	, ie(ie)
 	, resamplers(resamplers)
 	, rand(rand)
+	, audio_cache(audio_cache)
 {
 }
 
@@ -192,6 +194,8 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
 	      (int)settings.number_of_files.load(), (int)load_queue.size());
+
+	audio_cache.updateChunkSize(kit->channels.size());
 
 	semaphore.post(); // Start loader loop.
 }

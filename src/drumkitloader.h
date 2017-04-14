@@ -39,6 +39,7 @@
 #include "audioinputengine.h"
 #include "chresampler.h"
 #include "memchecker.h"
+#include "audiocache.h"
 
 //! This class is responsible for loading the drumkits in its own thread.
 //! All interaction calls are simply modifying queues and not doing any
@@ -50,7 +51,7 @@ class DrumKitLoader
 {
 public:
 	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
-	              Resamplers& resamplers, Random& rand);
+	              Resamplers& resamplers, Random& rand, AudioCache& audio_cache);
 
 	~DrumKitLoader();
 
@@ -92,5 +93,6 @@ protected:
 	Resamplers& resamplers;
 	MemChecker memchecker;
 	Random& rand;
+	AudioCache& audio_cache;
 	std::size_t preload_samples{std::numeric_limits<std::size_t>::max()};
 };

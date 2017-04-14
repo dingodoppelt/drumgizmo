@@ -38,9 +38,8 @@
 #include "audiocacheeventhandler.h"
 #include "settings.h"
 
-#define CHUNK_MULTIPLIER 16
-
-class AudioCache {
+class AudioCache
+{
 public:
 	AudioCache(Settings& settings);
 
@@ -92,6 +91,10 @@ public:
 	void setFrameSize(std::size_t framesize);
 	std::size_t getFrameSize() const;
 
+	//! Signal the AudioCache sub-system to set it's internals according to the
+	//! chunk size parameter from Settings.
+	void updateChunkSize(std::size_t output_channels);
+
 	//! Control/get reader threaded mode.
 	//! True means reading happening threaded, false means all reading done
 	//! synchronious.
@@ -102,6 +105,7 @@ private:
 	std::size_t framesize{0};
 	sample_t* nodata{nullptr};
 	std::size_t nodata_framesize{0};
+	std::size_t chunk_size{0};
 
 	AudioCacheIDManager id_manager;
 	AudioCacheEventHandler event_handler{id_manager};

@@ -42,7 +42,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine& o, AudioInputEngine& i)
-	: loader(settings, kit, i, resamplers, rand)
+	: loader(settings, kit, i, resamplers, rand, audio_cache)
 	, oe(o)
 	, ie(i)
 	, audio_cache(settings)

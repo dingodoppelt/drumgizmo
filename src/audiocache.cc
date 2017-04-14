@@ -35,8 +35,6 @@
 
 #include "audiocachefile.h"
 
-#define CHUNKSIZE(x) (x * CHUNK_MULTIPLIER)
-
 AudioCache::AudioCache(Settings& settings)
 	: settings(settings)
 {
@@ -137,7 +135,7 @@ sample_t* AudioCache::open(const AudioFile& file,
 
 		if(c.back == nullptr)
 		{
-			c.back = new sample_t[CHUNKSIZE(framesize)];
+			c.back = new sample_t[chunk_size];
 		}
 
 		event_handler.pushLoadNextEvent(c.afile, c.channel, c.pos,
@@ -184,7 +182,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	{
 
 		// We are playing from cache:
-		if(c.localpos < CHUNKSIZE(framesize))
+		if(c.localpos < chunk_size)
 		{
 			sample_t* s = c.front + c.localpos;
 			c.localpos += framesize;
@@ -206,7 +204,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	// Next time we go here we have already read the first frame.
 	c.localpos = framesize;
 
-	c.pos += CHUNKSIZE(framesize);
+	c.pos += chunk_size;
 
 	// Does the file have remaining unread samples?
 	assert(c.afile); // Assert that we have an audio file.
@@ -215,7 +213,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 		// Do we have a back buffer to read into?
 		if(c.back == nullptr)
 		{
-			c.back = new sample_t[CHUNKSIZE(framesize)];
+			c.back = new sample_t[chunk_size];
 		}
 
 		event_handler.pushLoadNextEvent(c.afile, c.channel, c.pos,
@@ -273,13 +271,28 @@ void AudioCache::setFrameSize(std::size_t framesize)
 	}
 
 	this->framesize = framesize;
-
-	event_handler.setChunkSize(CHUNKSIZE(framesize));
 }
 
 std::size_t AudioCache::getFrameSize() const
 {
 	return framesize;
+}
+
+void AudioCache::updateChunkSize(std::size_t output_channels)
+{
+	// Make sure we won't get out-of-range chunk sizes.
+	std::size_t disk_cache_chunk_size =
+		std::max(settings.disk_cache_chunk_size.load(), std::size_t(512u * 1024u));
+	output_channels = std::max(output_channels, std::size_t(1u));
+
+	// 1MB pr. chunk divided over 16 channels, 4 bytes pr. sample.
+	const auto ideal_chunk_size =
+		disk_cache_chunk_size / output_channels / sizeof(sample_t);
+
+	// Chunk size must match a whole number of frames.
+	chunk_size = (ideal_chunk_size / framesize) * framesize;
+
+	event_handler.setChunkSize(chunk_size);
 }
 
 void AudioCache::setAsyncMode(bool async)
