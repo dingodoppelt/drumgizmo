@@ -52,7 +52,7 @@ len=<secondes> (-1 par défaut, toujours)
 \fBdummy:\fR
 
 .RE
-\fB-o, --outputengine \fR{dummy|alsa|jackaudio|wavfile}
+\fB-o, --outputengine \fR{dummy|alsa|jackaudio|wavfile|oss}
 .RS 7
 Utilise le moteur de sortie audio indiqué.
 
@@ -72,6 +72,12 @@ srate=<fréquence_d_échantillonnage> (44100 par défaut)
 \fBwavfile:\fR
 .P
 file=<nom_de_fichier> ('output' par défaut)
+.P
+srate=<fréquence_d_échantillonnage> (44100 par défaut)
+
+\fBoss:\fR
+.P
+dev=<périphérique> (/dev/dsp par défaut)
 .P
 srate=<fréquence_d_échantillonnage> (44100 par défaut)
 
