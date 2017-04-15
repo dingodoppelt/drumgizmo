@@ -68,6 +68,8 @@ sample_t* AudioCache::open(const AudioFile& file,
                            std::size_t initial_samples_needed,
                            int channel, cacheid_t& id)
 {
+	assert(chunk_size); // Assert updateChunkSize was called before processing.
+
 	if(!file.isValid())
 	{
 		// File preload not yet ready - skip this sample.

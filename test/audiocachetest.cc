@@ -57,7 +57,7 @@ public:
 	//! \param thread Control if this test is running in threaded mode or not.
 	//! \param framesize The initial framesize to use.
 	void testHelper(const char* filename, int channel, bool threaded,
-	                int framesize)
+	                int framesize, int num_channels)
 	{
 		// Reference file:
 		AudioFile audio_file_ref(filename, channel);
@@ -77,6 +77,7 @@ public:
 
 		// Set initial (upper limit) framesize
 		audio_cache.setFrameSize(framesize);
+		audio_cache.updateChunkSize(num_channels);
 
 		cacheid_t id;
 
@@ -149,7 +150,8 @@ public:
 		// Conduct test
 		int channel = 0;
 		bool threaded = false;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		int num_channels = 1;
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 	}
 
 	void singleChannelThreaded()
@@ -161,7 +163,8 @@ public:
 		// Conduct test
 		int channel = 0;
 		bool threaded = true;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		int num_channels = 1;
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 	}
 
 	void multiChannelNonThreaded()
@@ -173,9 +176,10 @@ public:
 		// Conduct test
 		int channel = 0;
 		bool threaded = false;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		int num_channels = 13;
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 		++channel;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 	}
 
 	void multiChannelThreaded()
@@ -187,9 +191,10 @@ public:
 		// Conduct test
 		int channel = 0;
 		bool threaded = true;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		int num_channels = 13;
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 		++channel;
-		testHelper(filename.c_str(), channel, threaded, FRAMESIZE);
+		testHelper(filename.c_str(), channel, threaded, FRAMESIZE, num_channels);
 	}
 
 };
