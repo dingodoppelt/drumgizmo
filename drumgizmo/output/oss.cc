@@ -38,6 +38,8 @@ OSSOutputEngine::OSSOutputEngine()
 	, srate{44100}
 	, format{AFMT_S32_NE}
 	, data{}
+	, max_fragments{4}
+	, fragment_size{8}
 {
 	data.clear();
 	data.resize(1024 * num_channels);
@@ -45,13 +47,21 @@ OSSOutputEngine::OSSOutputEngine()
 
 bool OSSOutputEngine::init(const Channels& channels)
 {
-	int tmp, mode = O_WRONLY;
+	int tmp, mode = O_WRONLY, fragments;
 	num_channels = channels.size();
 
 	if((fd = open(dev.data(), mode, 0)) == -1)
 	{
 		std::cerr << dev.data() << ' ' << std::strerror(errno) << std::endl;
 		return false;
+	}
+
+	fragments = max_fragments << 16 | fragment_size;
+	tmp = fragments;
+	if (ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 || tmp != fragments)
+	{
+		perror("SNDCTL_DSP_SETFRAGMENT");
+		exit(-1);
 	}
 
 	tmp = format;
@@ -99,11 +109,54 @@ void OSSOutputEngine::setParm(const std::string& parm, const std::string& value)
 			std::cerr << value << std::endl;
 		}
 	}
+	else if(parm == "max_fragments")
+	{
+		try
+		{
+			max_fragments = std::stoi(value);
+		}
+		catch(...)
+		{
+			std::cerr << "[OSSOutputEngine] Invalid max_fragments ";
+			std::cerr << value << std::endl;
+		}
+		if(max_fragments < 2)
+		{
+			std::cerr << "[OSSoutputEngine] max_fragments must be at least 2\n";
+			std::cerr << "Setting max_fragments to 2" << std::endl;
+			max_fragments = 2;
+		}
+	}
+	else if(parm == "fragment_size")
+	{
+		try
+		{
+			fragment_size = std::stoi(value);
+		}
+		catch(...)
+		{
+			std::cerr << "[OSSOutputEngine] Invalid fragment_size ";
+			std::cerr << value << std::endl;
+		}
+		if(fragment_size < 4)
+		{
+			std::cerr << "[OSSoutputEngine] fragment_size must be at least 4\n";
+			std::cerr << "Setting fragment_size to 4 (";
+			fragment_size = 4;
+			auto fragment_byte_size = 1 << fragment_size;
+			std::cerr << fragment_byte_size << "Bytes)" << std::endl;
+		}
+	}
 	else
 	{
 		std::cerr << "[OSSOutputEngine] Unsupported parameter '";
 		std::cerr << parm << std::endl;
 	}
+}
+
+void OSSOutputEngine::pre(size_t nsamples)
+{
+	data.resize(nsamples * num_channels);
 }
 
 void OSSOutputEngine::run(int ch, sample_t* samples, size_t nsamples)

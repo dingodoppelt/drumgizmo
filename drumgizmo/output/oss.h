@@ -39,7 +39,7 @@ public:
 	void setParm(const std::string& parm, const std::string& value) override;
 	bool start() override { return true; };
 	void stop() override {};
-	void pre(size_t nsamples) override { data.resize(nsamples * num_channels); };
+	void pre(size_t nsamples) override;
 	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
 	bool isFreewheeling() const override { return false; };
@@ -52,5 +52,7 @@ private:
 	std::size_t num_channels;
 	unsigned int srate;
 	unsigned int format;
+	unsigned int max_fragments;
+	unsigned int fragment_size;
 	std::vector<std::int32_t> data;
 };
