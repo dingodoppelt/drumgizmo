@@ -35,13 +35,18 @@ namespace GUI
 EventHandler::EventHandler(NativeWindow& nativeWindow, Window& window)
 	: window(window)
 	, nativeWindow(nativeWindow)
-//	, last_click(0)
 	, lastWasDoubleClick(false)
 {}
 
 bool EventHandler::hasEvent()
 {
 	return !events.empty();
+}
+
+bool EventHandler::queryNextEventType(EventType type)
+{
+	return !events.empty() &&
+		(events.front()->type() == type);
 }
 
 std::shared_ptr<Event> EventHandler::getNextEvent()
@@ -94,13 +99,9 @@ void EventHandler::processEvents()
 
 		case EventType::mouseMove:
 			{
-				while(true)
+				// Skip all consecutive mouse move events and handle only the last one.
+				while(queryNextEventType(EventType::mouseMove))
 				{
-					if(!hasEvent())
-					{
-						break;
-					}
-
 					event = getNextEvent();
 				}
 
@@ -147,7 +148,6 @@ void EventHandler::processEvents()
 		case EventType::button:
 			{
 				auto buttonEvent = static_cast<ButtonEvent*>(event.get());
-
 				if(lastWasDoubleClick && (buttonEvent->direction == Direction::down))
 				{
 					lastWasDoubleClick = false;

@@ -43,13 +43,16 @@ class EventHandler
 public:
 	EventHandler(NativeWindow& nativeWindow, Window& window);
 
-	//! \brief Process all events currently in the event queue.
+	//! Process all events currently in the event queue.
 	void processEvents();
 
-	//! \brief Query if any events are currently in the event queue.
+	//! Query if any events are currently in the event queue.
 	bool hasEvent();
 
-	//! \brief Get a single event from the event queue.
+	//! Query if the topmost event in the event queue is of type.
+	bool queryNextEventType(EventType type);
+
+	//! Get a single event from the event queue.
 	//! \return A pointer to the event or nullptr if there are none.
 	std::shared_ptr<Event> getNextEvent();
 
