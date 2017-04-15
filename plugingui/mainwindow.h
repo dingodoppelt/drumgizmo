@@ -60,7 +60,7 @@ private:
 	void repaintEvent(RepaintEvent* repaintEvent) override final;
 
 	TabWidget tabs{this};
-	
+
 	MainTab main_tab{this};
 	// TODO use some nice textfield widget here
 	TextEdit gpl_text_field{&tabs};
@@ -77,6 +77,8 @@ private:
 
 	Settings& settings;
 	SettingsNotifier settings_notifier{settings};
+
+	Resource gpl{":../../COPYING"};
 };
 
 } // GUI::

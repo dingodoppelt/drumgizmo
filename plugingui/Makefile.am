@@ -2,7 +2,7 @@ noinst_PROGRAMS = plugingui rcgen
 noinst_LTLIBRARIES = libdggui.la
 
 resource_data.cc : rcgen
-	(cd resources; ../rcgen * > ../resource_data.cc)
+	(cd resources; ../rcgen * ../../COPYING > ../resource_data.cc)
 
 libdggui_la_CPPFLAGS = \
 	$(GUI_CPPFLAGS) \
