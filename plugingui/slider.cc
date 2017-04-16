@@ -69,9 +69,9 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawImage(0, 0, bar);
 
 	// draw inner bar
-	inner_bar_green.setSize(
+	inner_bar_blue.setSize(
 	    button_x - bar_boundary, height() - 2 * bar_boundary);
-	p.drawImage(bar_boundary, bar_boundary, inner_bar_green);
+	p.drawImage(bar_boundary, bar_boundary, inner_bar_blue);
 
 	// draw button
 	p.drawImage(button_x, button_y, button);
