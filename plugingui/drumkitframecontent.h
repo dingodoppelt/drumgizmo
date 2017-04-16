@@ -59,7 +59,7 @@ public:
 		button_width = width - lineedit_width;
 
 		lineedit.resize(lineedit_width, 29);
-		browse_button.resize(button_width, 41);
+		browse_button.resize(button_width, 30);
 
 		layout.layout();
 	}
