@@ -85,6 +85,8 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 	Painter painter(*this);
 
+	auto bar_height = tabs.getBarHeight();
+
 	// Grey background
 	painter.drawImageStretched(0, 0, back, width(), height());
 
@@ -92,10 +94,15 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	painter.drawImage(width() - logo.width() - 16,
 	                  height() - logo.height(), logo);
 
+	// Topbar above the sidebars
+	topbar.setSize(16, bar_height);
+	painter.drawImage(0, 0, topbar);
+	painter.drawImage(width() - 16, 0, topbar);
+
 	// Sidebars
-	sidebar.setSize(16, height());
-	painter.drawImage(0, 0, sidebar);
-	painter.drawImage(width() - 16, 0, sidebar);
+	sidebar.setSize(16, height() - bar_height + 1);
+	painter.drawImage(0, bar_height-1, sidebar);
+	painter.drawImage(width() - 16, bar_height-1, sidebar);
 }
 
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)

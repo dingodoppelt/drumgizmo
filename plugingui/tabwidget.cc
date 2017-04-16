@@ -26,6 +26,8 @@
  */
 #include "tabwidget.h"
 
+#include "painter.h"
+
 namespace GUI
 {
 
@@ -34,6 +36,7 @@ TabWidget::TabWidget(Widget *parent)
 	, stack(this)
 {
 	CONNECT(this, sizeChangeNotifier, this, &TabWidget::sizeChanged);
+	CONNECT(&stack, currentChanged, this, &TabWidget::setActiveButtons);
 }
 
 void TabWidget::addTab(const std::string& title, Widget* widget)
@@ -46,29 +49,72 @@ void TabWidget::addTab(const std::string& title, Widget* widget)
 	sizeChanged(width(), height());
 }
 
+std::size_t TabWidget::getBarHeight() const
+{
+	return topbar.height();
+}
+
 void TabWidget::switchTab(Widget* tabWidget)
 {
 	stack.setCurrentWidget(tabWidget);
 }
 
+void TabWidget::setActiveButtons(Widget* current_widget)
+{
+	for (auto& button : buttons) {
+		if (button.getTabWidget() == current_widget) {
+			button.setActive(true);
+		}
+		else {
+			button.setActive(false);
+		}
+	}
+}
+
 void TabWidget::sizeChanged(int width, int height)
 {
 	std::size_t pos = 0;
-	std::size_t buttonWidth = 1;
+
+	std::size_t button_width = 1;
+	std::size_t bar_height = 25;
+	std::size_t button_border_width = 10;
+
+	std::size_t button_padding_left = 25;
+	std::size_t button_padding_inner = 3;
+	std::size_t logo_padding_right = button_padding_left / 2;
+
+	Painter p(*this);
+	p.clear();
+
 	if(buttons.size() > 0)
 	{
-		buttonWidth = width / buttons.size();
+		for (auto& button : buttons)
+		{
+			auto min_width = button.getMinimalWidth();
+			button_width = std::max(button_width, min_width + button_border_width);
+		}
+
+		button_width = std::min(button_width, width / buttons.size());
 	}
 
+	// draw the upper bar
+	topbar.setSize(width, bar_height);
+	p.drawImage(0, 0, topbar);
+	auto x_logo = width - toplogo.width() - logo_padding_right;
+	auto y_logo = (bar_height - toplogo.height()) / 2;
+	p.drawImage(x_logo, y_logo, toplogo);
+
+	// place the buttons
+	pos = button_padding_left;
 	for(auto& button : buttons)
 	{
-		button.resize(buttonWidth, 40);
+		button.resize(button_width, bar_height);
 		button.move(pos, 0);
-		pos += buttonWidth;
+		pos += button_width + button_padding_inner;
 	}
 
-	stack.move(0, 40);
-	stack.resize(width, height - 40);
+	stack.move(0, bar_height);
+	stack.resize(width, height - bar_height);
 }
 
 } // GUI::

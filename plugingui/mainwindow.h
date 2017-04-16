@@ -73,6 +73,11 @@ private:
 			16, 0, 0, // delta-x
 			14, 1, 14}; // delta-y
 
+	TexturedBox topbar{getImageCache(), ":topbar.png",
+			0, 0, // atlas offset (x, y)
+			1, 1, 1, // dx1, dx2, dx3
+			17, 1, 1}; // dy1, dy2, dy3
+
 	bool closing{false};
 
 	Settings& settings;
