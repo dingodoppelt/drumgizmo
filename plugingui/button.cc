@@ -28,49 +28,19 @@
 
 #include "painter.h"
 
-#include <stdio.h>
 #include <hugin.hpp>
+#include <stdio.h>
 
-namespace GUI {
+namespace GUI
+{
 
-Button::Button(Widget *parent)
-	: Widget(parent)
-	, draw_state(up)
-	, button_state(up)
+Button::Button(Widget* parent)
+	: ButtonBase(parent)
 {
 }
 
 Button::~Button()
 {
-}
-
-void Button::buttonEvent(ButtonEvent* buttonEvent)
-{
-	// Ignore everything except left clicks.
-	if(buttonEvent->button != MouseButton::left)
-	{
-		return;
-	}
-
-	if(buttonEvent->direction == Direction::down)
-	{
-		draw_state = down;
-		button_state = down;
-		in_button = true;
-		redraw();
-	}
-
-	if(buttonEvent->direction == Direction::up)
-	{
-		draw_state = up;
-		button_state = up;
-		redraw();
-		if(in_button)
-		{
-			clicked();
-			clickNotifier();
-		}
-	}
 }
 
 void Button::repaintEvent(RepaintEvent* repaintEvent)
@@ -89,48 +59,24 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 		return;
 	}
 
-	switch(draw_state) {
-	case up:
+	switch(draw_state)
+	{
+	case State::Up:
 		box_up.setSize(w - padLeft, h - padTop);
 		p.drawImage(padLeft, padTop, box_up);
-
 		break;
-	case down:
+
+	case State::Down:
 		box_down.setSize(w - padLeft, h - padTop);
 		p.drawImage(padLeft, padTop, box_down);
 		break;
 	}
 
 	p.setColour(Colour(0.1));
-	p.drawText(width()/2-(text.length()*3)+(draw_state==up?0:1) + (padLeft / 2),
-	           height()/2+5+1+(draw_state==up?0:1) + (padTop / 2), font, text,
-	           true);
+	auto x = (w / 2) - (3 * text.length()) + (draw_state == State::Up ? 0 : 1) +
+	         (padLeft / 2);
+	auto y = (h / 2) + 5 + 1 + (draw_state == State::Up ? 0 : 1) + (padTop / 2);
+	p.drawText(x, y, font, text, true);
 }
 
-void Button::setText(const std::string& text)
-{
-	this->text = text;
-	redraw();
-}
-
-void Button::mouseLeaveEvent()
-{
-	in_button = false;
-	if(button_state == down)
-	{
-		draw_state = up;
-		redraw();
-	}
-}
-
-void Button::mouseEnterEvent()
-{
-	in_button = true;
-	if(button_state == down)
-	{
-		draw_state = down;
-		redraw();
-	}
-}
-
-} //GUI::
+} // GUI::

@@ -26,24 +26,96 @@
  */
 #include "tabbutton.h"
 
+#include "painter.h"
+
 namespace GUI
 {
 
-TabButton::TabButton(Widget* parent, Widget* tabWidget)
-	: Button(parent)
-	, tabWidget(tabWidget)
+TabButton::TabButton(Widget* parent, Widget* tab_widget)
+	: ButtonBase(parent)
+	, tab_widget(tab_widget)
 {
 	CONNECT(this, clickNotifier, this, &TabButton::clickHandler);
 }
 
-Widget *TabButton::getTabWidget()
+TabButton::~TabButton()
 {
-	return tabWidget;
+}
+
+Widget* TabButton::getTabWidget()
+{
+	return tab_widget;
+}
+
+std::size_t TabButton::getMinimalWidth() const
+{
+	std::size_t padding = 15;
+	auto font_width = font.textWidth(text);
+
+	return font_width + padding;
+}
+
+std::size_t TabButton::getMinimalHeight() const
+{
+	std::size_t padding = 10;
+	auto font_height= font.textHeight(text);
+
+	return font_height + padding;
+}
+
+void TabButton::setActive(bool active)
+{
+	if (active) {
+		draw_state = State::Down;
+	}
+	else {
+		draw_state = State::Up;
+	}
+
+	redraw();
+}
+
+void TabButton::repaintEvent(RepaintEvent* e)
+{
+	Painter p(*this);
+
+	p.clear();
+
+	int padTop = 3;
+	int padLeft = 0;
+
+	int w = width();
+	int h = height();
+	if(w == 0 || h == 0)
+	{
+		return;
+	}
+
+	switch(draw_state)
+	{
+	case State::Up:
+		tab_passive.setSize(w - padLeft, h - padTop);
+		p.drawImage(padLeft, padTop, tab_passive);
+		break;
+
+	case State::Down:
+		tab_active.setSize(w - padLeft, h - padTop);
+		p.drawImage(padLeft, padTop, tab_active);
+		break;
+	}
+
+	p.setColour(Colour(0.1));
+	// FIXME: fix all the magic values here
+	auto x = (width() / 2) - (3 * text.length()) +
+	         (draw_state == State::Up ? 0 : 1) + (padLeft / 2);
+	auto y = (height() / 2) + 5 + 1 + (draw_state == State::Up ? 0 : 1) +
+	         (padTop / 2);
+	p.drawText(x, y + 4, font, text, true);
 }
 
 void TabButton::clickHandler()
 {
-	switchTabNotifier(tabWidget);
+	switchTabNotifier(tab_widget);
 }
 
 } // GUI::

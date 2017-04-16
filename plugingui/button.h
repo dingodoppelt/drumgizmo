@@ -26,42 +26,23 @@
  */
 #pragma once
 
-#include <string>
-
-#include <notifier.h>
-
-#include "widget.h"
-#include "painter.h"
+#include "button_base.h"
 #include "font.h"
 #include "texturedbox.h"
 
 namespace GUI {
 
-class Button : public Widget {
+class Button
+	: public ButtonBase {
 public:
-	Button(Widget *parent);
+	Button(Widget* parent);
 	virtual ~Button();
 
-	// From Widget:
-	bool isFocusable() override { return true; }
-	bool catchMouse() override { return true; }
-
-	void setText(const std::string& text);
-
-	Notifier<> clickNotifier;
-
 protected:
-	virtual void clicked() {}
-
 	// From Widget:
 	virtual void repaintEvent(RepaintEvent* e) override;
-	virtual void buttonEvent(ButtonEvent* e) override;
-	virtual void mouseLeaveEvent() override;
-	virtual void mouseEnterEvent() override;
 
 private:
-	bool in_button{false};
-
 	TexturedBox box_up{getImageCache(), ":pushbutton.png",
 			0, 0, // atlas offset (x, y)
 			11, 1, 11, // dx1, dx2, dx3
@@ -72,17 +53,7 @@ private:
 			11, 1, 11, // dx1, dx2, dx3
 			10, 72, 12}; // dy1, dy2, dy3
 
-	typedef enum {
-		up,
-		down
-	} state_t;
-
-	std::string text;
-
 	Font font{":fontemboss.png"};
-
-	state_t draw_state{up};
-	state_t button_state{up};
 };
 
 } // GUI::

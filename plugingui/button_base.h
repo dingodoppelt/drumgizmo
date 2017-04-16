@@ -1,10 +1,10 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            tabbutton.h
+ *            button_base.h
  *
- *  Thu Nov 24 18:52:26 CET 2016
- *  Copyright 2016 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Sat Apr 15 21:45:30 CEST 2017
+ *  Copyright 2017 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -26,50 +26,49 @@
  */
 #pragma once
 
+#include <string>
+
 #include <notifier.h>
 
-#include "button_base.h"
-#include "font.h"
-#include "texturedbox.h"
+#include "widget.h"
 
-namespace GUI
-{
+namespace GUI {
 
-class TabButton
-	: public ButtonBase
+class ButtonBase
+	: public Widget
 {
 public:
-	TabButton(Widget* parent, Widget* tab_widget);
-	virtual ~TabButton();
+	ButtonBase(Widget* parent);
+	virtual ~ButtonBase();
 
-	Widget* getTabWidget();
-	std::size_t getMinimalWidth() const;
-	std::size_t getMinimalHeight() const;
-	void setActive(bool active);
+	// From Widget:
+	bool isFocusable() override { return true; }
+	bool catchMouse() override { return true; }
 
-	Notifier<Widget*> switchTabNotifier;
+	void setText(const std::string& text);
+
+	Notifier<> clickNotifier;
 
 protected:
+	virtual void clicked() {}
+
 	// From Widget:
-	virtual void repaintEvent(RepaintEvent* e) override;
+	virtual void repaintEvent(RepaintEvent* e) override {};
+	virtual void buttonEvent(ButtonEvent* e) override;
+	virtual void mouseLeaveEvent() override;
+	virtual void mouseEnterEvent() override;
 
-private:
-	void clickHandler();
+	bool in_button{false};
 
-	Widget* tab_widget;
-	bool active;
+	enum class State {
+		Up,
+		Down
+	};
 
-	TexturedBox tab_active{getImageCache(), ":tab.png",
-			0, 0, // atlas offset (x, y)
-			5, 1, 5, // dx1, dx2, dx3
-			5, 13, 1}; // dy1, dy2, dy3
+	std::string text;
 
-	TexturedBox tab_passive{getImageCache(), ":tab.png",
-			11, 0, // atlas offset (x, y)
-			5, 1, 5, // dx1, dx2, dx3
-			5, 13, 1}; // dy1, dy2, dy3
-
-	Font font{":fontemboss.png"};
+	State draw_state{State::Up};
+	State button_state{State::Up};
 };
 
 } // GUI::

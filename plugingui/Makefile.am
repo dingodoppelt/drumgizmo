@@ -29,6 +29,7 @@ nodist_libdggui_la_SOURCES = \
 	widget.cc \
 	colour.cc \
 	painter.cc \
+	button_base.cc \
 	button.cc \
 	pixelbuffer.cc \
 	lineedit.cc \
