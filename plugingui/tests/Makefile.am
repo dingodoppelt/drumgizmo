@@ -1,4 +1,5 @@
-noinst_PROGRAMS = resizetest tabwidgettest dgwindowtest framewidgettest
+noinst_PROGRAMS = resizetest tabwidgettest dgwindowtest framewidgettest \
+	filebrowsertest
 
 resizetest_LDADD = $(top_srcdir)/plugingui/libdggui.la
 resizetest_CXXFLAGS = \
@@ -16,6 +17,15 @@ tabwidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/hugin
 tabwidgettest_SOURCES = \
 	tabwidgettest.cc \
+	$(top_srcdir)/hugin/hugin.c
+
+filebrowsertest_LDADD = $(top_srcdir)/plugingui/libdggui.la
+filebrowsertest_CXXFLAGS = \
+	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin
+filebrowsertest_SOURCES = \
+	filebrowsertest.cc \
 	$(top_srcdir)/hugin/hugin.c
 
 dgwindowtest_LDADD = \
