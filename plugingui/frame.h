@@ -88,7 +88,7 @@ private:
 
 	// content box
 	Widget* content{nullptr};
-	std::size_t content_margin{5};
+	std::size_t content_margin{12};
 
 	std::size_t content_start_x;
 	std::size_t content_start_y;
