@@ -41,6 +41,7 @@
 #include <label.h>
 #include <layout.h>
 #include <window.h>
+#include <painter.h>
 
 // TODO: fix segfault on close
 

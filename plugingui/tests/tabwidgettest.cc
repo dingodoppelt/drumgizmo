@@ -40,6 +40,7 @@
 #include <label.h>
 #include <layout.h>
 #include <button.h>
+#include <painter.h>
 
 class Widget1
 	: public GUI::Widget
