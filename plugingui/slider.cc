@@ -38,67 +38,42 @@ Slider::Slider(Widget* parent) : Widget(parent)
 {
 	state = State::up;
 
-	currentValue = 0.0;
+	current_value = 0.0;
 	maximum = 1.0;
 	minimum = 0.0;
 }
 
-void Slider::setValue(float newValue)
+void Slider::setValue(float new_value)
 {
-	currentValue = newValue;
+	current_value = new_value;
 	redraw();
 	clickNotifier();
 }
 
-float Slider::value()
+float Slider::value() const
 {
-	return currentValue;
+	return current_value;
 }
 
 void Slider::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
+	p.clear();
 
-	float alpha = 0.8;
+	auto inner_offset = (current_value / maximum) * getControlWidth();
+	auto button_x = button_offset + inner_offset - (button.width() / 2);
+	auto button_y = (height() - button.height())/2;
 
-	int xpos = (int)((currentValue / maximum) * (float)(width() - 1));
+	// draw bar
+	bar.setSize(width(), height());
+	p.drawImage(0, 0, bar);
 
-	if(hasKeyboardFocus())
-	{
-		p.setColour(Colour(0.6, alpha));
-	}
-	else
-	{
-		p.setColour(Colour(0.5, alpha));
-	}
+	// draw inner bar
+	inner_bar_green.setSize(button_x - bar_boundary, height() - 2*bar_boundary);
+	p.drawImage(bar_boundary, bar_boundary, inner_bar_green);
 
-	p.drawFilledRectangle(0, 0, width(), height());
-
-	// p.setColour(Colour(0.1, alpha));
-	// p.drawRectangle(0,0,width()-1,height() - 1);
-
-	p.setColour(Colour(1, 0, 0, alpha));
-	p.drawLine(xpos, 0, xpos, height() - 1);
-
-	// p.setColour(Colour(0.8, alpha));
-	// switch(state) {
-	// case State::up:
-	//	p.drawLine(0, 0, 0, height() - 1);
-	//	p.drawLine(0, 0, width() - 1, 0);
-	//	break;
-	// case State::down:
-	//	p.drawLine(width() - 1, 0, width() - 1, height() - 1);
-	//	p.drawLine(width() - 1, height() - 1, 0, height() - 1);
-	//	break;
-	//}
-
-	p.setColour(Colour(0.3, alpha));
-
-	if(height() > 0 && width() > 0)
-	{
-		p.drawPoint(0, height() - 1);
-		p.drawPoint(width() - 1, 0);
-	}
+	// draw button
+	p.drawImage(button_x, button_y, button);
 }
 
 void Slider::buttonEvent(ButtonEvent* buttonEvent)
@@ -112,16 +87,16 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 	if(buttonEvent->direction == Direction::down)
 	{
 		state = State::down;
-		currentValue = maximum / (float)width() * (float)buttonEvent->x;
+		recomputeCurrentValue(buttonEvent->x);
 
-		if(currentValue < 0)
+		if(current_value < 0)
 		{
-			currentValue = 0;
+			current_value = 0;
 		}
 
-		if(currentValue > 1)
+		if(current_value > 1)
 		{
-			currentValue = 1;
+			current_value = 1;
 		}
 
 		redraw();
@@ -131,16 +106,16 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 	if(buttonEvent->direction == Direction::up)
 	{
 		state = State::up;
-		currentValue = maximum / (float)width() * (float)buttonEvent->x;
+		recomputeCurrentValue(buttonEvent->x);
 
-		if(currentValue < 0)
+		if(current_value < 0)
 		{
-			currentValue = 0;
+			current_value = 0;
 		}
 
-		if(currentValue > 1)
+		if(current_value > 1)
 		{
-			currentValue = 1;
+			current_value = 1;
 		}
 
 		redraw();
@@ -152,21 +127,41 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 {
 	if(state == State::down)
 	{
-		currentValue = maximum / (float)width() * (float)mouseMoveEvent->x;
+		recomputeCurrentValue(mouseMoveEvent->x);
 
-		if(currentValue < 0)
+		if(current_value < 0)
 		{
-			currentValue = 0;
+			current_value = 0;
 		}
 
-		if(currentValue > 1)
+		if(current_value > 1)
 		{
-			currentValue = 1;
+			current_value = 1;
 		}
 
 		redraw();
 		clickNotifier();
 	}
+}
+
+std::size_t Slider::getControlWidth() const
+{
+	if (width() < 2*button_offset) {
+		return 0;
+	}
+
+	return width() - 2*button_offset;
+}
+
+void Slider::recomputeCurrentValue(float x)
+{
+	if (x < button_offset) {
+		current_value = 0;
+	}
+	else {
+		current_value = (maximum / getControlWidth()) * (x - button_offset);
+	}
+	
 }
 
 } // GUI::

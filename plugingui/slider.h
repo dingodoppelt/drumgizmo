@@ -27,6 +27,8 @@
 #pragma once
 
 #include "widget.h"
+#include "texture.h"
+#include "texturedbox.h"
 
 namespace GUI
 {
@@ -41,8 +43,8 @@ public:
 	bool catchMouse() override { return true; }
 	bool isFocusable() override { return true; }
 
-	void setValue(float value);
-	float value();
+	void setValue(float new_value);
+	float value() const;
 
 	Notifier<> clickNotifier;
 
@@ -58,11 +60,42 @@ private:
 		down
 	};
 
-	float currentValue;
+	float current_value;
 	float maximum;
 	float minimum;
 
 	State state;
+
+	TexturedBox bar{getImageCache(), ":slider.png",
+			0, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			7, 1, 7 // dy1, dy2, dy3
+	};
+	TexturedBox inner_bar_green{getImageCache(), ":slider.png",
+		30, 0, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
+	// TexturedBox inner_bar_red{getImageCache(), ":slider.png",
+	//     30, 5, // atlas offset (x, y)
+	//     2, 1, 2, // dx1, dx2, dx3
+	//     2, 1, 2 // dy1, dy2, dy3
+	// };
+	// TexturedBox inner_bar_blue{getImageCache(), ":slider.png",
+	//     30, 10, // atlas offset (x, y)
+	//     2, 1, 2, // dx1, dx2, dx3
+	//     2, 1, 2 // dy1, dy2, dy3
+	// };
+	Texture button{getImageCache(), ":slider.png",
+		15, 0, // atlas offset (x, y)
+		15, 15 // width, height
+	};
+
+	std::size_t bar_boundary{5};
+	std::size_t button_offset{7};
+
+	std::size_t getControlWidth() const;
+	void recomputeCurrentValue(float x);
 };
 
 } // GUI::
