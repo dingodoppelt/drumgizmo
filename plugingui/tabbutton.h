@@ -57,7 +57,7 @@ private:
 	void clickHandler();
 
 	Widget* tab_widget;
-	bool active;
+	bool active{false};
 
 	TexturedBox tab_active{getImageCache(), ":tab.png",
 			0, 0, // atlas offset (x, y)

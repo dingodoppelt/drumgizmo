@@ -65,6 +65,8 @@ std::size_t TabButton::getMinimalHeight() const
 
 void TabButton::setActive(bool active)
 {
+	this->active = active;
+
 	if (active) {
 		draw_state = State::Down;
 	}
@@ -91,25 +93,19 @@ void TabButton::repaintEvent(RepaintEvent* e)
 		return;
 	}
 
-	switch(draw_state)
-	{
-	case State::Up:
+	if (draw_state == State::Up && !active) {
 		tab_passive.setSize(w - padLeft, h - padTop);
 		p.drawImage(padLeft, padTop, tab_passive);
-		break;
-
-	case State::Down:
+	}
+	else {
 		tab_active.setSize(w - padLeft, h - padTop);
 		p.drawImage(padLeft, padTop, tab_active);
-		break;
 	}
 
 	p.setColour(Colour(0.1));
 	// FIXME: fix all the magic values here
-	auto x = (width() / 2) - (3 * text.length()) +
-	         (draw_state == State::Up ? 0 : 1) + (padLeft / 2);
-	auto y = (height() / 2) + 5 + 1 + (draw_state == State::Up ? 0 : 1) +
-	         (padTop / 2);
+	auto x = (width() / 2) - (3 * text.length()) + (padLeft / 2);
+	auto y = (height() / 2) + 5 + 1 + (padTop / 2);
 	p.drawText(x, y + 4, font, text, true);
 }
 
