@@ -101,14 +101,14 @@ private:
 	Texture seg_h;
 	Texture seg_i;
 
-	std::size_t _width{100};
-	std::size_t _height{100};
 	std::size_t dx1;
 	std::size_t dx2;
 	std::size_t dx3;
 	std::size_t dy1;
 	std::size_t dy2;
 	std::size_t dy3;
+	std::size_t _width{100};
+	std::size_t _height{100};
 
 	Colour outOfRange{0.0f, 0.0f, 0.0f, 0.0f};
 };

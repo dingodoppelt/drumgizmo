@@ -50,6 +50,8 @@ TexturedBox::TexturedBox(ImageCache& image_cache, const std::string& filename,
 	, dy1(dy1)
 	, dy2(dy2)
 	, dy3(dy3)
+	, _width(dx1 + dx2 + dx3)
+	, _height(dy1 + dy2 + dy3)
 {
 }
 
