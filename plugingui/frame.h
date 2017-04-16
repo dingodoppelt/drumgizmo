@@ -82,7 +82,9 @@ private:
 	//
 
 	// content frame
-	GUI::Colour frame_colour{0};
+	GUI::Colour frame_colour_top{0.95};
+	GUI::Colour frame_colour_bottom{0.4};
+	GUI::Colour frame_colour_side{0.6};
 
 	// content box
 	Widget* content{nullptr};

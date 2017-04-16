@@ -61,8 +61,13 @@ void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawFilledRectangle(1, 1, width() - 2, bar_height);
 
 	// frame
-	p.setColour(frame_colour);
-	p.drawRectangle(0, 0, width() - 1, height() - 1);
+	p.setColour(frame_colour_top);
+	p.drawLine(0, 0, width() - 1, 0);
+	p.setColour(frame_colour_bottom);
+	p.drawLine(0, height() - 1, width() - 1, height() - 1);
+	p.setColour(frame_colour_side);
+	p.drawLine(0, 0, 0, height() - 1);
+	p.drawLine(width() - 1, 0, width() - 1, height() - 1);
 
 	// background
 	p.setColour(background_colour);
