@@ -51,6 +51,10 @@ Window::Window(void* native_window)
 	: Widget(nullptr)
 	, wpixbuf(1, 1)
 {
+	// Defaults to true for widgets but the window should be considered invisble
+	// until show is called.
+	_visible = false;
+
 	// Make sure we have a valid size when initialising the NativeWindow
 	_width = wpixbuf.width;
 	_height = wpixbuf.height;
