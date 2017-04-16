@@ -29,7 +29,7 @@
 #include <notifier.h>
 #include <platform.h>
 
-#include "widget.h"
+#include "dialog.h"
 #include "button.h"
 #include "listbox.h"
 #include "lineedit.h"
@@ -40,10 +40,11 @@
 namespace GUI
 {
 
-class FileBrowser : public Widget {
+class FileBrowser
+	: public Dialog
+{
 public:
-	FileBrowser(Widget *parent);
-	virtual ~FileBrowser();
+	FileBrowser(Widget* parent);
 
 	void setPath(const std::string& path);
 

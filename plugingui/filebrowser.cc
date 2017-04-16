@@ -46,10 +46,11 @@
 #include <direct.h>
 #endif
 
-namespace GUI {
+namespace GUI
+{
 
-FileBrowser::FileBrowser(Widget *parent)
-	: Widget(parent)
+FileBrowser::FileBrowser(Widget* parent)
+	: Dialog(parent, true)
 	, dir(Directory::cwd())
 	, lbl_path(this)
 	, lineedit(this)
@@ -78,10 +79,6 @@ FileBrowser::FileBrowser(Widget *parent)
 	changeDir();
 }
 
-FileBrowser::~FileBrowser()
-{
-}
-
 void FileBrowser::setPath(const std::string& path)
 {
 	INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
@@ -102,7 +99,7 @@ void FileBrowser::setPath(const std::string& path)
 
 void FileBrowser::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	Dialog::resize(width, height);
 
 	int offset = 0;
 	int brd = 5; // border
