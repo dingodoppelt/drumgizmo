@@ -28,6 +28,7 @@
 
 #include "window.h"
 #include "painter.h"
+#include "dialog.h"
 
 namespace GUI
 {
@@ -63,6 +64,16 @@ std::shared_ptr<Event> EventHandler::getNextEvent()
 
 void EventHandler::processEvents()
 {
+	bool block_interaction{false};
+	for(auto dialog : dialogs)
+	{
+		if(dialog->visible())
+		{
+			block_interaction |= dialog->isModal();
+			dialog->eventHandler()->processEvents();
+		}
+	}
+
 	events = nativeWindow.getEvents();
 
 	while(hasEvent())
@@ -147,6 +158,11 @@ void EventHandler::processEvents()
 
 		case EventType::button:
 			{
+				if(block_interaction)
+				{
+					continue;
+				}
+
 				auto buttonEvent = static_cast<ButtonEvent*>(event.get());
 				if(lastWasDoubleClick && (buttonEvent->direction == Direction::down))
 				{
@@ -195,6 +211,11 @@ void EventHandler::processEvents()
 
 		case EventType::scroll:
 			{
+				if(block_interaction)
+				{
+					continue;
+				}
+
 				auto scrollEvent = static_cast<ScrollEvent*>(event.get());
 
 				auto widget = window.find(scrollEvent->x, scrollEvent->y);
@@ -210,6 +231,10 @@ void EventHandler::processEvents()
 
 		case EventType::key:
 			{
+				if(block_interaction)
+				{
+					continue;
+				}
 
 				// TODO: Filter out multiple arrow events.
 
@@ -222,6 +247,11 @@ void EventHandler::processEvents()
 			break;
 
 		case EventType::close:
+			if(block_interaction)
+			{
+				continue;
+			}
+
 			closeNotifier();
 			break;
 		}
@@ -231,5 +261,16 @@ void EventHandler::processEvents()
 	// NOTE: This method will invoke native->redraw() if a redraw is needed.
 	window.updateBuffer();
 }
+
+void EventHandler::registerDialog(Dialog* dialog)
+{
+	dialogs.push_back(dialog);
+}
+
+void EventHandler::unregisterDialog(Dialog* dialog)
+{
+	dialogs.remove(dialog);
+}
+
 
 } // GUI::

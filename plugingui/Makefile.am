@@ -20,53 +20,54 @@ libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
 nodist_libdggui_la_SOURCES = \
-	dgwindow.cc \
-	plugingui.cc \
-	label.cc \
-	eventhandler.cc \
-	font.cc \
-	window.cc \
-	widget.cc \
-	colour.cc \
-	painter.cc \
-	button_base.cc \
 	button.cc \
-	pixelbuffer.cc \
-	lineedit.cc \
-	led.cc \
+	button_base.cc \
 	checkbox.cc \
-	toggle.cc \
-	powerbutton.cc \
-	mainwindow.cc \
-	drumkitframecontent.cc \
-	statusframecontent.cc \
-	humanizerframecontent.cc \
+	colour.cc \
+	combobox.cc \
+	dgwindow.cc \
+	dialog.cc \
+	directory.cc \
 	diskstreamingframecontent.cc \
-	slider.cc \
+	drumkitframecontent.cc \
+	eventhandler.cc \
+	filebrowser.cc \
+	font.cc \
+	frame.cc \
+	humanizerframecontent.cc \
+	image.cc \
+	imagecache.cc \
+	knob.cc \
+	label.cc \
+	layout.cc \
+	led.cc \
+	lineedit.cc \
+	listbox.cc \
+	listboxbasic.cc \
+	listboxthin.cc \
+	maintab.cc \
+	mainwindow.cc \
+	painter.cc \
+	pixelbuffer.cc \
+	pluginconfig.cc \
+	plugingui.cc \
+	powerbutton.cc \
+	progressbar.cc \
+	resource.cc \
+	resource_data.cc \
 	scrollbar.cc \
+	slider.cc \
 	stackedwidget.cc \
+	statusframecontent.cc \
 	tabbutton.cc \
 	tabwidget.cc \
 	textedit.cc \
 	texture.cc \
 	texturedbox.cc \
-	layout.cc \
-	listbox.cc \
-	listboxthin.cc \
-	listboxbasic.cc \
-	maintab.cc \
-	knob.cc \
-	filebrowser.cc \
-	directory.cc \
-	pluginconfig.cc \
-	imagecache.cc \
-	image.cc \
-	combobox.cc \
-	progressbar.cc \
+	toggle.cc \
 	verticalline.cc \
-	resource.cc \
-	resource_data.cc \
-	frame.cc \
+	widget.cc \
+	window.cc \
 	lodepng/lodepng.cpp
 
 if ENABLE_X11
@@ -106,12 +107,14 @@ rcgen_SOURCES = rcgen.cc
 
 EXTRA_DIST = \
 	button.h \
+	button_base.h \
 	canvas.h \
 	checkbox.h \
 	colour.h \
 	combobox.h \
 	dgwindow.h \
 	drawable.h \
+	dialog.h \
 	directory.h \
 	eventhandler.h \
 	filebrowser.h \

@@ -29,6 +29,7 @@
 #include <notifier.h>
 #include <memory>
 #include <queue>
+#include <list>
 
 #include "guievent.h"
 #include "nativewindow.h"
@@ -37,6 +38,7 @@ namespace GUI
 {
 
 class Window;
+class Dialog;
 
 class EventHandler
 {
@@ -56,6 +58,9 @@ public:
 	//! \return A pointer to the event or nullptr if there are none.
 	std::shared_ptr<Event> getNextEvent();
 
+	void registerDialog(Dialog* dialog);
+	void unregisterDialog(Dialog* dialog);
+
 	Notifier<> closeNotifier;
 
 private:
@@ -66,6 +71,8 @@ private:
 	bool lastWasDoubleClick;
 
 	EventQueue events;
+
+	std::list<Dialog*> dialogs;
 };
 
 } // GUI::
