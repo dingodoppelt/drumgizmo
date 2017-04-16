@@ -49,7 +49,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 
 	tabs.addTab("Main", &main_tab);
-	tabs.addTab("GPL", &gpl_text_field);
+	tabs.addTab("License", &gpl_text_field);
 
 	gpl_text_field.setText(gpl.data());
 	gpl_text_field.adaptTextOnResize(true);
