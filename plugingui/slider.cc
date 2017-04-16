@@ -62,14 +62,15 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 
 	auto inner_offset = (current_value / maximum) * getControlWidth();
 	auto button_x = button_offset + inner_offset - (button.width() / 2);
-	auto button_y = (height() - button.height())/2;
+	auto button_y = (height() - button.height()) / 2;
 
 	// draw bar
 	bar.setSize(width(), height());
 	p.drawImage(0, 0, bar);
 
 	// draw inner bar
-	inner_bar_green.setSize(button_x - bar_boundary, height() - 2*bar_boundary);
+	inner_bar_green.setSize(
+	    button_x - bar_boundary, height() - 2 * bar_boundary);
 	p.drawImage(bar_boundary, bar_boundary, inner_bar_green);
 
 	// draw button
@@ -146,22 +147,24 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 std::size_t Slider::getControlWidth() const
 {
-	if (width() < 2*button_offset) {
+	if(width() < 2 * button_offset)
+	{
 		return 0;
 	}
 
-	return width() - 2*button_offset;
+	return width() - 2 * button_offset;
 }
 
 void Slider::recomputeCurrentValue(float x)
 {
-	if (x < button_offset) {
+	if(x < button_offset)
+	{
 		current_value = 0;
 	}
-	else {
+	else
+	{
 		current_value = (maximum / getControlWidth()) * (x - button_offset);
 	}
-	
 }
 
 } // GUI::

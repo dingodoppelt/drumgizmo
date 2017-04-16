@@ -26,22 +26,29 @@
  */
 #pragma once
 
-#include "widget.h"
 #include "texture.h"
 #include "texturedbox.h"
+#include "widget.h"
 
 namespace GUI
 {
 
-class Slider : public Widget
+class Slider
+	: public Widget
 {
 public:
 	Slider(Widget* parent);
 	virtual ~Slider() = default;
 
 	// From Widget:
-	bool catchMouse() override { return true; }
-	bool isFocusable() override { return true; }
+	bool catchMouse() override
+	{
+		return true;
+	}
+	bool isFocusable() override
+	{
+		return true;
+	}
 
 	void setValue(float new_value);
 	float value() const;
@@ -66,15 +73,15 @@ private:
 
 	State state;
 
-	TexturedBox bar{getImageCache(), ":slider.png",
-			0, 0, // atlas offset (x, y)
-			7, 1, 7, // dx1, dx2, dx3
-			7, 1, 7 // dy1, dy2, dy3
+	TexturedBox bar{
+	    getImageCache(), ":slider.png", 0, 0, // atlas offset (x, y)
+	    7, 1, 7,                              // dx1, dx2, dx3
+	    7, 1, 7                               // dy1, dy2, dy3
 	};
-	TexturedBox inner_bar_green{getImageCache(), ":slider.png",
-		30, 0, // atlas offset (x, y)
-		2, 1, 2, // dx1, dx2, dx3
-		2, 1, 2 // dy1, dy2, dy3
+	TexturedBox inner_bar_green{
+	    getImageCache(), ":slider.png", 30, 0, // atlas offset (x, y)
+	    2, 1, 2,                               // dx1, dx2, dx3
+	    2, 1, 2                                // dy1, dy2, dy3
 	};
 	// TexturedBox inner_bar_red{getImageCache(), ":slider.png",
 	//     30, 5, // atlas offset (x, y)
@@ -86,9 +93,9 @@ private:
 	//     2, 1, 2, // dx1, dx2, dx3
 	//     2, 1, 2 // dy1, dy2, dy3
 	// };
-	Texture button{getImageCache(), ":slider.png",
-		15, 0, // atlas offset (x, y)
-		15, 15 // width, height
+	Texture button{
+	    getImageCache(), ":slider.png", 15, 0, // atlas offset (x, y)
+	    15, 15                                 // width, height
 	};
 
 	std::size_t bar_boundary{5};
