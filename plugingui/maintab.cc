@@ -31,7 +31,7 @@ namespace GUI
 
 MainTab::MainTab(Widget* parent) : Widget(parent)
 {
-	layout.setSpacing(10);
+	layout.setSpacing(0);
 	layout.setResizeChildren(true);
 
 	layout.addItem(&drumkit_frame);
