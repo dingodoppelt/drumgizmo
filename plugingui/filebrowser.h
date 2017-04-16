@@ -49,11 +49,19 @@ public:
 	void setPath(const std::string& path);
 
 	Notifier<const std::string&> fileSelectNotifier; // (const std::string& path)
+	Notifier<> fileSelectCancelNotifier;
 
 	// From Widget:
 	bool isFocusable() override { return true; }
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 	virtual void resize(std::size_t width, std::size_t height) override;
+
+	//! Return the filename selected in the browser.
+	std::string getFilename() const;
+
+	//! Returns true if the filebrowser has a selection, false if the window was
+	//! closed or the cancel button was clicked.
+	bool hasFilename() const;
 
 private:
 	void listSelectionChanged();
@@ -68,6 +76,7 @@ private:
 #endif
 
 	void cancel();
+	void select(const std::string& file);
 	void changeDir();
 
 	Label lbl_path;
@@ -79,6 +88,9 @@ private:
 	Button btn_esc;
 
 	Image back;
+
+	bool has_filename{false};
+	std::string filename;
 };
 
 } // GUI::

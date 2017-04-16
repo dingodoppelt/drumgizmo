@@ -53,6 +53,14 @@ public:
 
 		CONNECT(file_browser.eventHandler(), closeNotifier,
 		        this, &TestWindow::dialogCloseEventHandler);
+
+		CONNECT(&file_browser, fileSelectNotifier,
+		        this, &TestWindow::fileSelected);
+
+		CONNECT(&file_browser, fileSelectCancelNotifier,
+		        this, &TestWindow::fileCanceled);
+
+
 		button.move(0, 0);
 		button.resize(120, 30);
 		button.setText("Browse...");
@@ -63,6 +71,16 @@ public:
 
 		CONNECT(&button, clickNotifier,
 		        this, &TestWindow::dialogShow);
+	}
+
+	void fileSelected(const std::string& filename)
+	{
+		label.setText(filename);
+	}
+
+	void fileCanceled()
+	{
+		label.setText("[Canceled]");
 	}
 
 	void closeEventHandler()
@@ -78,7 +96,7 @@ public:
 	void dialogShow()
 	{
 		file_browser.show();
-		//file_browser.resize(300, 300);
+		file_browser.resize(300, 300);
 	}
 
 	bool processEvents()

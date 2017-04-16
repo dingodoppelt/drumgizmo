@@ -69,6 +69,8 @@ FileBrowser::FileBrowser(Widget* parent)
 	CONNECT(&lineedit, enterPressedNotifier, this, &FileBrowser::handleKeyEvent);
 	CONNECT(&listbox, selectionNotifier,
 	        this, &FileBrowser::listSelectionChanged);
+	CONNECT(this, fileSelectNotifier,
+	        this, &FileBrowser::select);
 
 	btn_sel.setText("Select");
 	CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
@@ -166,6 +168,15 @@ void FileBrowser::handleKeyEvent()
 
 void FileBrowser::cancel()
 {
+	has_filename = false;
+	hide();
+	fileSelectCancelNotifier();
+}
+
+void FileBrowser::select(const std::string& file)
+{
+	has_filename = true;
+	filename = file;
 	hide();
 }
 
@@ -253,6 +264,16 @@ void FileBrowser::changeDir()
 	}
 
 	listbox.addItems(items);
+}
+
+std::string FileBrowser::getFilename() const
+{
+	return filename;
+}
+
+bool FileBrowser::hasFilename() const
+{
+	return has_filename;
 }
 
 } // GUI::
