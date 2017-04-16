@@ -135,7 +135,7 @@ void ScrollBar::repaintEvent(RepaintEvent* repaintEvent)
 		int offset = width() + 2;
 
 		int y_val1 = (currentValue * h) / maxValue;
-		int y_val2 = ((currentValue + rangeValue) * h) / maxValue;
+		int y_val2 = ((currentValue + rangeValue) * h) / maxValue - 1;
 
 		p.drawFilledRectangle(2, y_val1 + offset, width() - 1, y_val2 + offset);
 	}
