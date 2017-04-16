@@ -42,8 +42,8 @@ TextEdit::TextEdit(Widget* parent) : Widget(parent), scroll(this)
 {
 	setReadOnly(true);
 
-	scroll.move(width() - 5, 1);
-	scroll.resize(20, 100);
+	scroll.move(width() - 23, 1);
+	scroll.resize(16, 100);
 	CONNECT(&scroll, valueChangeNotifier, this, &TextEdit::scrolled);
 }
 
@@ -55,7 +55,7 @@ void TextEdit::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 	scroll.resize(scroll.width(), height - 14);
-	scroll.move(width - 30, 7);
+	scroll.move(width - 23, 7);
 
 	// TODO: This might be bad for performance. Improve at some point.
 	if (adapt_text_on_resize)
