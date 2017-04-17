@@ -55,6 +55,21 @@ float Slider::value() const
 	return current_value;
 }
 
+void Slider::setColour(Colour colour)
+{
+	switch (colour) {
+	case Colour::Green:
+		inner_bar = &inner_bar_green;
+		break;
+	case Colour::Red:
+		inner_bar = &inner_bar_red;
+		break;
+	case Colour::Blue:
+		inner_bar = &inner_bar_blue;
+		break;
+	}
+}
+
 void Slider::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
@@ -69,9 +84,8 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawImage(0, 0, bar);
 
 	// draw inner bar
-	inner_bar_blue.setSize(
-	    button_x - bar_boundary, height() - 2 * bar_boundary);
-	p.drawImage(bar_boundary, bar_boundary, inner_bar_blue);
+	inner_bar->setSize(button_x - bar_boundary, height() - 2 * bar_boundary);
+	p.drawImage(bar_boundary, bar_boundary, *inner_bar);
 
 	// draw button
 	p.drawImage(button_x, button_y, button);
