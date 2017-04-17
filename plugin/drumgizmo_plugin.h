@@ -39,7 +39,7 @@
 #include <drumgizmo.h>
 #include <audioinputenginemidi.h>
 #include <audiooutputengine.h>
-#include <plugingui.h>
+#include <mainwindow.h>
 
 #include <texturedbox.h>
 #include <imagecache.h>
@@ -199,7 +199,7 @@ private:
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	std::shared_ptr<GUI::PluginGUI> plugin_gui;
+	std::shared_ptr<GUI::MainWindow> plugin_gui;
 	std::shared_ptr<DrumGizmo> drumgizmo;
 	std::uint32_t inlineDisplayBuffer[1024*1024];
 };
