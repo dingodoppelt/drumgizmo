@@ -38,9 +38,9 @@ namespace GUI
 
 MainWindow::MainWindow(Settings& settings, void* native_window)
 	: Window(native_window)
-	, settings{settings}
-	, settings_notifier{settings}
-	, main_tab{this, settings, settings_notifier}
+	, settings(settings)
+	, settings_notifier(settings)
+	, main_tab(this, settings, settings_notifier)
 {
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
