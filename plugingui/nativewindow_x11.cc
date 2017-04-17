@@ -351,6 +351,11 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 				scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
 				event_queue.push_back(scrollEvent);
 			}
+			else if ((xevent.xbutton.button == 6) || (xevent.xbutton.button == 7))
+			{
+				// Horizontal scrolling case
+				// FIXME Introduce horizontal scrolling event to handle this.
+			}
 			else
 			{
 				auto buttonEvent = std::make_shared<ButtonEvent>();
