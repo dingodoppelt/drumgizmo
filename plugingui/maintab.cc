@@ -48,7 +48,7 @@ MainTab::MainTab(Widget* parent,
 	layout.addItem(&diskstreaming_frame);
 
 	auto h1 = 21;
-	auto h2 = 18;
+	auto h2 = 21;
 	auto h3 = 13;
 	auto h4 = 11;
 	auto drumkit_range = GridLayout::GridRange{0, 1, 0, h1};
