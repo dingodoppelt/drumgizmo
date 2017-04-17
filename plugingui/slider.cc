@@ -135,7 +135,7 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 void Slider::scrollEvent(ScrollEvent* scrollEvent)
 {
-	current_value += scrollEvent->delta/(float)getControlWidth();
+	current_value -= scrollEvent->delta/(float)getControlWidth();
 	if (current_value < 0.)
 	{
 		current_value = 0.;
@@ -145,6 +145,8 @@ void Slider::scrollEvent(ScrollEvent* scrollEvent)
 	}
 
 	redraw();
+	clickNotifier();
+	valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
 }
 
 std::size_t Slider::getControlWidth() const

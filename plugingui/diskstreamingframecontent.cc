@@ -83,9 +83,8 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 
 void DiskstreamingframeContent::limitSettingsValueChanged(float value)
 {
-	char buf[32];
-	snprintf(buf, sizeof(buf) - 1, "%.2f MB", value / (1024 * 1024));
-	label_size.setText(buf);
+	int value_in_mb = value/(1024 * 1024);
+	label_size.setText(std::to_string(value_in_mb) + " MB");
 	slider.setValue(value);
 }
 
