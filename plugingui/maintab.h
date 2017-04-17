@@ -33,7 +33,6 @@
 #include "statusframecontent.h"
 #include "humanizerframecontent.h"
 #include "diskstreamingframecontent.h"
-#include "label.h"
 
 namespace GUI {
 
@@ -54,8 +53,6 @@ private:
 	StatusframeContent statusframe_content{this};
 	HumanizerframeContent humanizerframe_content{this};
 	DiskstreamingframeContent diskstreamingframe_content{this};
-
-	Label version_label{this};
 };
 
 } // GUI::

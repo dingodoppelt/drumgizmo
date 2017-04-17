@@ -27,6 +27,7 @@
 #include "mainwindow.h"
 
 #include <config.h>
+#include <version.h>
 
 #include "painter.h"
 
@@ -93,6 +94,13 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	// DrumGizmo logo
 	painter.drawImage(width() - logo.width() - 16,
 	                  height() - logo.height(), logo);
+	
+	// DrumGizmo version
+	std::string version_string("v." + std::string(VERSION));
+	auto version_x = width() - font.textWidth(version_string) - sidebar.width() - 5;
+	auto version_y = height() - 5;
+	painter.setColour(Colour(0.18));
+	painter.drawText(version_x, version_y, font, version_string);
 
 	// Topbar above the sidebars
 	topbar.setSize(16, bar_height);

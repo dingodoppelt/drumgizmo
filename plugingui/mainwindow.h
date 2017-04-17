@@ -35,6 +35,7 @@
 #include "texturedbox.h"
 #include "window.h"
 #include "maintab.h"
+#include "font.h"
 
 namespace GUI
 {
@@ -84,6 +85,8 @@ private:
 	SettingsNotifier settings_notifier{settings};
 
 	Resource gpl{":../../COPYING"};
+
+	Font font;
 };
 
 } // GUI::

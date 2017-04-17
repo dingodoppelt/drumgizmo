@@ -26,8 +26,6 @@
  */
 #include "maintab.h"
 
-#include <version.h>
-
 namespace GUI
 {
 
@@ -63,12 +61,6 @@ MainTab::MainTab(Widget* parent) : Widget(parent)
 	status_frame.setContent(&statusframe_content);
 	humanizer_frame.setContent(&humanizerframe_content);
 	diskstreaming_frame.setContent(&diskstreamingframe_content);
-
-	version_label.setText("v." + std::string(VERSION) + " ");
-	version_label.setAlignment(TextAlignment::right);
-	version_label.setColour(Colour(0.1, 0.1, 0.2));
-	layout.addItem(&version_label);
-	layout.setPosition(&version_label, GridLayout::GridRange{1, 2, 39, 40});
 }
 
 } // GUI::
