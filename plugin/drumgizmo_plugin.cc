@@ -63,7 +63,7 @@ DrumGizmoPlugin::DrumGizmoPlugin()
 	init();
 
 	drumgizmo = std::make_shared<DrumGizmo>(settings, output, input);
-	resizeWindow(750, 480);
+	resizeWindow(750, 400);
 	drumgizmo->setFreeWheel(true);
 	drumgizmo->setSamplerate(44100);
 	drumgizmo->setFrameSize(2048);

@@ -41,12 +41,14 @@ MainTab::MainTab(Widget* parent) : Widget(parent)
 	layout.addItem(&humanizer_frame);
 	layout.addItem(&diskstreaming_frame);
 
-	auto h1 = 60;
-	auto h2 = 40;
+	auto h1 = 21;
+	auto h2 = 18;
+	auto h3 = 13;
+	auto h4 = 11;
 	auto drumkit_range = GridLayout::GridRange{0, 1, 0, h1};
-	auto status_range = GridLayout::GridRange{0, 1, h1, h1 + 55};
-	auto humanizer_range = GridLayout::GridRange{1, 2, 0, h2};
-	auto diskstreaming_range = GridLayout::GridRange{1, 2, h2, h2 + 35};
+	auto status_range = GridLayout::GridRange{0, 1, h1, h1 + h2};
+	auto humanizer_range = GridLayout::GridRange{1, 2, 0, h3};
+	auto diskstreaming_range = GridLayout::GridRange{1, 2, h3, h3 + h4};
 	layout.setPosition(&drumkit_frame, drumkit_range);
 	layout.setPosition(&status_frame, status_range);
 	layout.setPosition(&humanizer_frame, humanizer_range);
@@ -66,7 +68,7 @@ MainTab::MainTab(Widget* parent) : Widget(parent)
 	version_label.setAlignment(TextAlignment::right);
 	version_label.setColour(Colour(0.1, 0.1, 0.2));
 	layout.addItem(&version_label);
-	layout.setPosition(&version_label, GridLayout::GridRange{1, 2, 31, 32});
+	layout.setPosition(&version_label, GridLayout::GridRange{1, 2, 39, 40});
 }
 
 } // GUI::

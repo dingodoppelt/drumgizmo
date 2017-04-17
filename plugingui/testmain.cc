@@ -53,7 +53,7 @@ int main()
 	parent.show();
 	main_window.show();
 
-	parent.resize(750, 480);
+	parent.resize(750, 400);
 
 	while(true)
 	{
