@@ -34,7 +34,7 @@
 #include "humanizerframecontent.h"
 #include "diskstreamingframecontent.h"
 
-class Settings;
+struct Settings;
 class SettingsNotifier;
 
 namespace GUI
