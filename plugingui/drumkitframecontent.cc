@@ -31,7 +31,7 @@
 namespace GUI
 {
 
-File::File(Widget* parent)
+BrowseFile::BrowseFile(Widget* parent)
 	: Widget(parent)
 {
 	layout.setResizeChildren(false);
@@ -43,7 +43,7 @@ File::File(Widget* parent)
 	browse_button.setText("Browse...");
 }
 
-void File::resize(std::size_t width, std::size_t height)
+void BrowseFile::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
@@ -56,27 +56,28 @@ void File::resize(std::size_t width, std::size_t height)
 	layout.layout();
 }
 
-std::size_t File::getLineEditWidth()
+std::size_t BrowseFile::getLineEditWidth()
 {
 	return lineedit_width;
 }
 
-std::size_t File::getButtonWidth()
+std::size_t BrowseFile::getButtonWidth()
 {
 	return button_width;
 }
 
-Button& File::getBrowseButton()
+Button& BrowseFile::getBrowseButton()
 {
 	return browse_button;
 }
 
-LineEdit& File::getLineEdit()
+LineEdit& BrowseFile::getLineEdit()
 {
 	return lineedit;
 }
 
-DrumkitframeContent::DrumkitframeContent(Widget* parent) : Widget(parent)
+DrumkitframeContent::DrumkitframeContent(Widget* parent)
+	: Widget(parent)
 {
 	layout.setHAlignment(HAlignment::left);
 

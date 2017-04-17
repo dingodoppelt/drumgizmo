@@ -36,11 +36,11 @@
 namespace GUI
 {
 
-class File
+class BrowseFile
 	: public Widget
 {
 public:
-	File(Widget* parent);
+	BrowseFile(Widget* parent);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -81,8 +81,8 @@ private:
 
 	Label drumkitCaption{this};
 	Label midimapCaption{this};
-	File drumkitFile{this};
-	File midimapFile{this};
+	BrowseFile drumkitFile{this};
+	BrowseFile midimapFile{this};
 	ProgressBar drumkitFileProgress{this};
 	ProgressBar midimapFileProgress{this};
 
