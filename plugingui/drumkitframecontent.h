@@ -55,7 +55,7 @@ public:
 	{
 		Widget::resize(width, height);
 
-		lineedit_width = 0.8 * width;
+		lineedit_width = 0.72 * width;
 		button_width = width - lineedit_width;
 
 		lineedit.resize(lineedit_width, 29);
