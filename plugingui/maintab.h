@@ -49,6 +49,8 @@ public:
 	        SettingsNotifier& settings_notifier);
 
 private:
+	void humanizerOnChange(bool on);
+
 	GridLayout layout{this, 2, 40};
 
 	FrameWidget drumkit_frame{this, false};
@@ -58,8 +60,11 @@ private:
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content{this};
-	HumanizerframeContent humanizerframe_content{this};
+	HumanizerframeContent humanizerframe_content;
 	DiskstreamingframeContent diskstreamingframe_content{this};
+
+	Settings& settings;
+	SettingsNotifier& settings_notifier;
 };
 
 } // GUI::

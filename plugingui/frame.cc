@@ -32,7 +32,9 @@ namespace GUI
 {
 
 FrameWidget::FrameWidget(Widget* parent, bool has_switch)
-    : Widget(parent), is_switched_on(!has_switch), bar_height(24)
+	: Widget(parent)
+	, is_switched_on(!has_switch)
+	, bar_height(24)
 {
 	if(has_switch)
 	{
@@ -82,6 +84,8 @@ void FrameWidget::powerButtonClicked(bool clicked)
 {
 	is_switched_on = !is_switched_on;
 
+	onSwitchChangeNotifier(is_switched_on);
+
 	if(content)
 	{
 		content->setVisible(true);
@@ -99,6 +103,13 @@ void FrameWidget::setContent(Widget* content)
 	this->content = content;
 	content->reparent(this);
 	content->setVisible(true);
+}
+
+void FrameWidget::setOnSwitch(bool on)
+{
+	is_switched_on = on;
+	onSwitchChangeNotifier(is_switched_on);
+	redraw();
 }
 
 void FrameWidget::sizeChanged(int width, int height)

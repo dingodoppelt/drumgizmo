@@ -33,14 +33,19 @@
 #include <iomanip>
 #include <sstream>
 
+struct Settings;
+class SettingsNotifier;
+
 namespace GUI
 {
 
 // TODO move this to an own file?
-class LabeledControl : public Widget
+class LabeledControl
+	: public Widget
 {
 public:
-	LabeledControl(Widget* parent, const std::string& name) : Widget(parent)
+	LabeledControl(Widget* parent, const std::string& name)
+		: Widget(parent)
 	{
 		layout.setResizeChildren(false);
 		layout.setHAlignment(HAlignment::center);
@@ -76,19 +81,28 @@ private:
 	}
 };
 
-class HumanizerframeContent : public Widget
+class HumanizerframeContent
+	: public Widget
 {
 public:
-	HumanizerframeContent(Widget* parent);
+	HumanizerframeContent(Widget* parent,
+	                      Settings& settings,
+	                      SettingsNotifier& settings_notifier);
 
 private:
+	void attackValueChanged(float value);
+	void falloffValueChanged(float value);
+
 	HBoxLayout layout{this};
 
 	LabeledControl attack{this, "Attack"};
 	LabeledControl falloff{this, "Release"};
 
-	Knob attackKnob{&attack};
-	Knob falloffKnob{&falloff};
+	Knob attack_knob{&attack};
+	Knob falloff_knob{&falloff};
+
+	Settings& settings;
+	SettingsNotifier& settings_notifier;
 };
 
 } // GUI::

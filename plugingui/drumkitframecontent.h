@@ -86,8 +86,8 @@ private:
 
 	VBoxLayout layout{this};
 
-	Label drumkitCaption{this};
-	Label midimapCaption{this};
+	Label drumkit_caption{this};
+	Label midimap_caption{this};
 	BrowseFile drumkit_file{this};
 	BrowseFile midimap_file{this};
 	ProgressBar drumkit_file_progress{this};

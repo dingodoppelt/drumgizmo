@@ -26,38 +26,57 @@
  */
 #include "humanizerframecontent.h"
 
+#include <settings.h>
+
 #include "painter.h"
 
 namespace GUI
 {
 
-HumanizerframeContent::HumanizerframeContent(Widget* parent) : Widget(parent)
+HumanizerframeContent::HumanizerframeContent(Widget* parent,
+                                             Settings& settings,
+                                             SettingsNotifier& settings_notifier)
+	: Widget(parent)
+	, settings(settings)
+	, settings_notifier(settings_notifier)
 {
 	// FIXME, is resizeChildren broken?
 	layout.setResizeChildren(true);
 	layout.setVAlignment(VAlignment::center);
 
 	attack.resize(80, 80);
-	attackKnob.resize(30, 30);
-	attackKnob.showValue(false);
-	attack.setControl(&attackKnob);
+	attack_knob.resize(30, 30);
+	attack_knob.showValue(false);
+	attack.setControl(&attack_knob);
 	layout.addItem(&attack);
 
 	falloff.resize(80, 80);
-	falloffKnob.resize(30, 30);
-	falloffKnob.showValue(false);
-	falloff.setControl(&falloffKnob);
+	falloff_knob.resize(30, 30);
+	falloff_knob.showValue(false);
+	falloff.setControl(&falloff_knob);
 	layout.addItem(&falloff);
 
-	// TODO: connect the knobs to the right functions
-	// CONNECT(&humanizeControls->velocityCheck, stateChangedNotifier,
-	//         this, &DGWindow::velocityCheckClick);
-	//
-	// CONNECT(&humanizeControls->attackKnob, valueChangedNotifier,
-	//         this, &DGWindow::attackValueChanged);
-	//
-	// CONNECT(&humanizeControls->falloffKnob, valueChangedNotifier,
-	//         this, &DGWindow::falloffValueChanged);
+	CONNECT(this, settings_notifier.velocity_modifier_falloff,
+	        &falloff_knob, &Knob::setValue);
+	CONNECT(this, settings_notifier.velocity_modifier_weight,
+	        &attack_knob, &Knob::setValue);
+
+	CONNECT(&attack_knob, valueChangedNotifier,
+	        this, &HumanizerframeContent::attackValueChanged);
+
+	CONNECT(&falloff_knob, valueChangedNotifier,
+	        this, &HumanizerframeContent::falloffValueChanged);
+
+}
+
+void HumanizerframeContent::attackValueChanged(float value)
+{
+	settings.velocity_modifier_weight.store(value);
+}
+
+void HumanizerframeContent::falloffValueChanged(float value)
+{
+	settings.velocity_modifier_falloff.store(value);
 }
 
 } // GUI::

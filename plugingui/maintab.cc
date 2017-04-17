@@ -34,6 +34,9 @@ MainTab::MainTab(Widget* parent,
                  SettingsNotifier& settings_notifier)
 	: Widget(parent)
 	, drumkitframe_content{this, settings, settings_notifier}
+	, humanizerframe_content{this, settings, settings_notifier}
+	, settings(settings)
+	, settings_notifier(settings_notifier)
 {
 	layout.setSpacing(0);
 	layout.setResizeChildren(true);
@@ -65,6 +68,17 @@ MainTab::MainTab(Widget* parent,
 	status_frame.setContent(&statusframe_content);
 	humanizer_frame.setContent(&humanizerframe_content);
 	diskstreaming_frame.setContent(&diskstreamingframe_content);
+
+	CONNECT(this, settings_notifier.enable_velocity_modifier,
+	        &humanizer_frame, &FrameWidget::setOnSwitch);
+
+	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
+	        this, &MainTab::humanizerOnChange);
+}
+
+void MainTab::humanizerOnChange(bool on)
+{
+	settings.enable_velocity_modifier.store(on);
 }
 
 } // GUI::

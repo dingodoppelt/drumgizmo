@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <notifier.h>
+
 #include "font.h"
 #include "powerbutton.h"
 #include "widget.h"
@@ -33,7 +35,8 @@
 namespace GUI
 {
 
-class FrameWidget : public Widget
+class FrameWidget
+	: public Widget
 {
 public:
 	FrameWidget(Widget* parent, bool has_switch = false);
@@ -47,6 +50,10 @@ public:
 
 	void setTitle(std::string const& title);
 	void setContent(Widget* content);
+
+	void setOnSwitch(bool on);
+
+	Notifier<bool> onSwitchChangeNotifier; // (bool on)
 
 protected:
 	// From Widget:

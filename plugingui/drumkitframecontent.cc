@@ -87,13 +87,13 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
 {
 	layout.setHAlignment(HAlignment::left);
 
-	drumkitCaption.setText("Drumkit file:");
-	midimapCaption.setText("Midimap file:");
+	drumkit_caption.setText("Drumkit file:");
+	midimap_caption.setText("Midimap file:");
 
-	layout.addItem(&drumkitCaption);
+	layout.addItem(&drumkit_caption);
 	layout.addItem(&drumkit_file);
 	layout.addItem(&drumkit_file_progress);
-	layout.addItem(&midimapCaption);
+	layout.addItem(&midimap_caption);
 	layout.addItem(&midimap_file);
 	layout.addItem(&midimap_file_progress);
 
@@ -130,11 +130,11 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
-	drumkitCaption.resize(width, 15);
+	drumkit_caption.resize(width, 15);
 	drumkit_file.resize(width, 37);
 	drumkit_file_progress.resize(drumkit_file.getLineEditWidth(), 11);
 
-	midimapCaption.resize(width, 15);
+	midimap_caption.resize(width, 15);
 	midimap_file.resize(width, 37);
 	midimap_file_progress.resize(drumkit_file.getLineEditWidth(), 11);
 
