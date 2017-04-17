@@ -52,7 +52,6 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/checkbox.cc \
 	@top_srcdir@/plugingui/colour.cc \
 	@top_srcdir@/plugingui/combobox.cc \
-	@top_srcdir@/plugingui/dgwindow.cc \
 	@top_srcdir@/plugingui/dialog.cc \
 	@top_srcdir@/plugingui/directory.cc \
 	@top_srcdir@/plugingui/diskstreamingframecontent.cc \
@@ -78,7 +77,6 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/painter.cc \
 	@top_srcdir@/plugingui/pixelbuffer.cc \
 	@top_srcdir@/plugingui/pluginconfig.cc \
-	@top_srcdir@/plugingui/plugingui.cc \
 	@top_srcdir@/plugingui/powerbutton.cc \
 	@top_srcdir@/plugingui/progressbar.cc \
 	@top_srcdir@/plugingui/resource.cc \

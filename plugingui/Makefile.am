@@ -25,7 +25,6 @@ nodist_libdggui_la_SOURCES = \
 	checkbox.cc \
 	colour.cc \
 	combobox.cc \
-	dgwindow.cc \
 	dialog.cc \
 	directory.cc \
 	diskstreamingframecontent.cc \
@@ -50,7 +49,6 @@ nodist_libdggui_la_SOURCES = \
 	painter.cc \
 	pixelbuffer.cc \
 	pluginconfig.cc \
-	plugingui.cc \
 	powerbutton.cc \
 	progressbar.cc \
 	resource.cc \
@@ -112,7 +110,6 @@ EXTRA_DIST = \
 	checkbox.h \
 	colour.h \
 	combobox.h \
-	dgwindow.h \
 	drawable.h \
 	dialog.h \
 	directory.h \
@@ -137,7 +134,6 @@ EXTRA_DIST = \
 	painter.h \
 	pixelbuffer.h \
 	pluginconfig.h \
-	plugingui.h \
 	progressbar.h \
 	resource.h \
 	resource_data.h \
