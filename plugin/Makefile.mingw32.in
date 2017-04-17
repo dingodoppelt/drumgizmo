@@ -73,6 +73,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/listboxbasic.cc \
 	@top_srcdir@/plugingui/listboxthin.cc \
 	@top_srcdir@/plugingui/maintab.cc \
+	@top_srcdir@/plugingui/mainwindow.cc \
 	@top_srcdir@/plugingui/nativewindow_win32.cc \
 	@top_srcdir@/plugingui/painter.cc \
 	@top_srcdir@/plugingui/pixelbuffer.cc \
@@ -86,6 +87,8 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/slider.cc \
 	@top_srcdir@/plugingui/stackedwidget.cc \
 	@top_srcdir@/plugingui/statusframecontent.cc \
+	@top_srcdir@/plugingui/tabbutton.cc \
+	@top_srcdir@/plugingui/tabwidget.cc \
 	@top_srcdir@/plugingui/textedit.cc \
 	@top_srcdir@/plugingui/texture.cc \
 	@top_srcdir@/plugingui/texturedbox.cc \
