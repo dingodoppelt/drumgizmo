@@ -83,7 +83,7 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
                                          SettingsNotifier& settings_notifier)
 	: Widget(parent)
 	, settings{settings}
-	, settings_notifier{settings_notifier}
+	, settings_notifier(settings_notifier)
 {
 	layout.setHAlignment(HAlignment::left);
 
