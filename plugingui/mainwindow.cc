@@ -38,7 +38,9 @@ namespace GUI
 
 MainWindow::MainWindow(Settings& settings, void* native_window)
 	: Window(native_window)
-	, settings(settings)
+	, settings{settings}
+	, settings_notifier{settings}
+	, main_tab{this, settings, settings_notifier}
 {
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
@@ -94,7 +96,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	// DrumGizmo logo
 	painter.drawImage(width() - logo.width() - 16,
 	                  height() - logo.height() - 10, logo);
-	
+
 	// DrumGizmo version
 	std::string version_string("v." + std::string(VERSION));
 	auto version_x = width() - font.textWidth(version_string) - sidebar.width() - 5;

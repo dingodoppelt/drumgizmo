@@ -34,12 +34,19 @@
 #include "humanizerframecontent.h"
 #include "diskstreamingframecontent.h"
 
-namespace GUI {
+class Settings;
+class SettingsNotifier;
 
-class MainTab : public Widget
+namespace GUI
+{
+
+class MainTab
+	: public Widget
 {
 public:
-	MainTab(Widget* parent);
+	MainTab(Widget* parent,
+	        Settings& settings,
+	        SettingsNotifier& settings_notifier);
 
 private:
 	GridLayout layout{this, 2, 40};
@@ -49,7 +56,7 @@ private:
 	FrameWidget humanizer_frame{this, true};
 	FrameWidget diskstreaming_frame{this, true};
 
-	DrumkitframeContent drumkitframe_content{this};
+	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content{this};
 	HumanizerframeContent humanizerframe_content{this};
 	DiskstreamingframeContent diskstreamingframe_content{this};

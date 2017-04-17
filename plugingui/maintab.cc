@@ -29,7 +29,11 @@
 namespace GUI
 {
 
-MainTab::MainTab(Widget* parent) : Widget(parent)
+MainTab::MainTab(Widget* parent,
+                 Settings& settings,
+                 SettingsNotifier& settings_notifier)
+	: Widget(parent)
+	, drumkitframe_content{this, settings, settings_notifier}
 {
 	layout.setSpacing(0);
 	layout.setResizeChildren(true);

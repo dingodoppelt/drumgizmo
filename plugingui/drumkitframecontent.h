@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <settings.h>
+
 #include "button.h"
 #include "label.h"
 #include "lineedit.h"
@@ -65,7 +67,9 @@ class DrumkitframeContent
 	: public Widget
 {
 public:
-	DrumkitframeContent(Widget* parent);
+	DrumkitframeContent(Widget* parent,
+	                    Settings& settings,
+	                    SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -77,16 +81,22 @@ private:
 	void selectKitFile(const std::string& filename);
 	void selectMapFile(const std::string& filename);
 
+	void setDrumKitLoadStatus(LoadStatus load_status);
+	void setMidiMapLoadStatus(LoadStatus load_status);
+
 	VBoxLayout layout{this};
 
 	Label drumkitCaption{this};
 	Label midimapCaption{this};
-	BrowseFile drumkitFile{this};
-	BrowseFile midimapFile{this};
-	ProgressBar drumkitFileProgress{this};
-	ProgressBar midimapFileProgress{this};
+	BrowseFile drumkit_file{this};
+	BrowseFile midimap_file{this};
+	ProgressBar drumkit_file_progress{this};
+	ProgressBar midimap_file_progress{this};
 
 	FileBrowser file_browser{this};
+
+	Settings& settings;
+	SettingsNotifier& settings_notifier;
 };
 
 } // GUI::

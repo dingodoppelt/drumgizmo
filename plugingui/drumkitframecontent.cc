@@ -26,6 +26,8 @@
  */
 #include "drumkitframecontent.h"
 
+#include <settings.h>
+
 #include "label.h"
 
 namespace GUI
@@ -76,8 +78,12 @@ LineEdit& BrowseFile::getLineEdit()
 	return lineedit;
 }
 
-DrumkitframeContent::DrumkitframeContent(Widget* parent)
+DrumkitframeContent::DrumkitframeContent(Widget* parent,
+                                         Settings& settings,
+                                         SettingsNotifier& settings_notifier)
 	: Widget(parent)
+	, settings{settings}
+	, settings_notifier{settings_notifier}
 {
 	layout.setHAlignment(HAlignment::left);
 
@@ -85,18 +91,36 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent)
 	midimapCaption.setText("Midimap file:");
 
 	layout.addItem(&drumkitCaption);
-	layout.addItem(&drumkitFile);
-	layout.addItem(&drumkitFileProgress);
+	layout.addItem(&drumkit_file);
+	layout.addItem(&drumkit_file_progress);
 	layout.addItem(&midimapCaption);
-	layout.addItem(&midimapFile);
-	layout.addItem(&midimapFileProgress);
+	layout.addItem(&midimap_file);
+	layout.addItem(&midimap_file_progress);
 
-	CONNECT(&drumkitFile.getBrowseButton(), clickNotifier,
+	CONNECT(&drumkit_file.getBrowseButton(), clickNotifier,
 	        this, &DrumkitframeContent::kitBrowseClick);
-	CONNECT(&midimapFile.getBrowseButton(), clickNotifier,
+
+	CONNECT(&midimap_file.getBrowseButton(), clickNotifier,
 	        this, &DrumkitframeContent::midimapBrowseClick);
 
-	midimapFileProgress.setTotal(2);
+
+	CONNECT(this, settings_notifier.drumkit_file,
+	        &drumkit_file.getLineEdit(), &LineEdit::setText);
+	CONNECT(this, settings_notifier.drumkit_load_status,
+	        this, &DrumkitframeContent::setDrumKitLoadStatus);
+
+	CONNECT(this, settings_notifier.midimap_file,
+	        &midimap_file.getLineEdit(), &LineEdit::setText);
+	CONNECT(this, settings_notifier.midimap_load_status,
+	        this, &DrumkitframeContent::setMidiMapLoadStatus);
+
+	CONNECT(this, settings_notifier.number_of_files,
+	        &drumkit_file_progress, &ProgressBar::setTotal);
+
+	CONNECT(this, settings_notifier.number_of_files_loaded,
+	        &drumkit_file_progress, &ProgressBar::setValue);
+
+	midimap_file_progress.setTotal(2);
 
 	file_browser.resize(450, 350);
 	file_browser.setFixedSize(450, 350);
@@ -107,12 +131,12 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 	Widget::resize(width, height);
 
 	drumkitCaption.resize(width, 15);
-	drumkitFile.resize(width, 37);
-	drumkitFileProgress.resize(drumkitFile.getLineEditWidth(), 11);
+	drumkit_file.resize(width, 37);
+	drumkit_file_progress.resize(drumkit_file.getLineEditWidth(), 11);
 
 	midimapCaption.resize(width, 15);
-	midimapFile.resize(width, 37);
-	midimapFileProgress.resize(drumkitFile.getLineEditWidth(), 11);
+	midimap_file.resize(width, 37);
+	midimap_file_progress.resize(drumkit_file.getLineEditWidth(), 11);
 
 	layout.layout();
 }
@@ -133,28 +157,65 @@ void DrumkitframeContent::midimapBrowseClick()
 
 void DrumkitframeContent::selectKitFile(const std::string& filename)
 {
-	auto& line_edit = drumkitFile.getLineEdit();
-	line_edit.setText(filename);
-
 	// TODO:
 	//config.lastkit = drumkit;
 	//config.save();
 
-	// TODO:
-	//settings.drumkit_file.store(drumkit);
+	settings.drumkit_file.store(filename);
 }
 
 void DrumkitframeContent::selectMapFile(const std::string& filename)
 {
-	auto& line_edit = midimapFile.getLineEdit();
-	line_edit.setText(filename);
-
 	// TODO:
 	//config.lastmidimap = midimap;
 	//config.save();
 
-	// TODO:
-	//settings.midimap_file.store(midimap);
+	settings.midimap_file.store(filename);
+}
+
+void DrumkitframeContent::setDrumKitLoadStatus(LoadStatus load_status)
+{
+	ProgressBarState state = ProgressBarState::Blue;
+	switch(load_status)
+	{
+	case LoadStatus::Idle:
+	case LoadStatus::Loading:
+		state = ProgressBarState::Blue;
+		break;
+	case LoadStatus::Done:
+		state = ProgressBarState::Green;
+		break;
+	case LoadStatus::Error:
+		state = ProgressBarState::Red;
+		break;
+	}
+
+	drumkit_file_progress.setState(state);
+}
+
+void DrumkitframeContent::setMidiMapLoadStatus(LoadStatus load_status)
+{
+	ProgressBarState state = ProgressBarState::Blue;
+	switch(load_status)
+	{
+	case LoadStatus::Idle:
+		midimap_file_progress.setValue(0);
+		break;
+	case LoadStatus::Loading:
+		midimap_file_progress.setValue(1);
+		state = ProgressBarState::Blue;
+		break;
+	case LoadStatus::Done:
+		midimap_file_progress.setValue(2);
+		state = ProgressBarState::Green;
+		break;
+	case LoadStatus::Error:
+		midimap_file_progress.setValue(2);
+		state = ProgressBarState::Red;
+		break;
+	}
+
+	midimap_file_progress.setState(state);
 }
 
 } // GUI::

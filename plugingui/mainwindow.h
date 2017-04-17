@@ -62,7 +62,10 @@ private:
 
 	TabWidget tabs{this};
 
-	MainTab main_tab{this};
+	Settings& settings;
+	SettingsNotifier settings_notifier{settings};
+
+	MainTab main_tab;
 	// TODO use some nice textfield widget here
 	TextEdit gpl_text_field{&tabs};
 
@@ -80,9 +83,6 @@ private:
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
-
-	Settings& settings;
-	SettingsNotifier settings_notifier{settings};
 
 	Resource gpl{":../../COPYING"};
 
