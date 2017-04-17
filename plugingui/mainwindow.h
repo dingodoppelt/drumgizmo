@@ -60,14 +60,15 @@ private:
 	// From Widget
 	void repaintEvent(RepaintEvent* repaintEvent) override final;
 
+	std::string getAboutText();
+
 	TabWidget tabs{this};
 
 	Settings& settings;
 	SettingsNotifier settings_notifier;
 
 	MainTab main_tab;
-	// TODO use some nice textfield widget here
-	TextEdit gpl_text_field{&tabs};
+	TextEdit about_text_field{&tabs};
 
 	Image back{":bg.png"};
 	Image logo{":logo.png"};

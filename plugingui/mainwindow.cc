@@ -45,18 +45,16 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
 
-	// TODO: use fixed size?
-	// setFixedSize(450, 600);
 	setCaption("DrumGizmo v" VERSION);
 
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 
 	tabs.addTab("Main", &main_tab);
-	tabs.addTab("License", &gpl_text_field);
+	tabs.addTab("About", &about_text_field);
 
-	gpl_text_field.setText(gpl.data());
-	gpl_text_field.adaptTextOnResize(true);
-	gpl_text_field.setReadOnly(true);
+	about_text_field.setText(getAboutText());
+	about_text_field.adaptTextOnResize(true);
+	about_text_field.setReadOnly(true);
 }
 
 bool MainWindow::processEvents()
@@ -117,13 +115,57 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
-	gpl_text_field.preprocessText();
+	about_text_field.preprocessText();
 	tabs.resize(width - 2 * 16, height);
 }
 
 void MainWindow::closeEventHandler()
 {
 	closing = true;
+}
+
+std::string MainWindow::getAboutText()
+{
+	std::string about_text;
+
+	// About
+	about_text.append(
+	"=============\n"
+	"             About\n"
+	"=============\n"
+	"\n"
+	"DrumGizmo is an open source, multichannel, multilayered, cross-platform\n"
+	"drum plugin and stand-alone application. It enables you to compose drums\n"
+	"in midi and mix them with a multichannel approach. It is comparable to\n"
+	"that of mixing a real drumkit that has been recorded with a multimic setup.\n"
+	"\n"
+	"\n");
+
+	// Authors
+	about_text.append(
+	"=============\n"
+	"            Authors\n"
+	"=============\n"
+	"\n"
+	"Bent Bisballe Nyeng\n"
+	"Jonas Suhr Cristensen\n"
+	"Lars Muldjord\n"
+	"Andre Nusser\n"
+	"Christian Gloeckner\n"
+	"Goran Mekic\n"
+	"... and others.\n"
+	"\n"
+	"\n");
+
+	// GPL
+	about_text.append(
+	"=============\n"
+	"            License\n"
+	"=============\n"
+	"\n");
+	about_text.append(gpl.data());
+
+	return about_text;
 }
 
 } // GUI::
