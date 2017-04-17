@@ -190,6 +190,11 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 	}
 }
 
+void TextEdit::scrollEvent(ScrollEvent* scrollEvent)
+{
+	scroll.setValue(scroll.value() + scrollEvent->delta);
+}
+
 void TextEdit::scrolled(int value)
 {
 	(void)value;
