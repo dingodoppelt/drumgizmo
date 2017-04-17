@@ -28,6 +28,7 @@
 
 #include "knob.h"
 #include "label.h"
+#include "layout.h"
 #include "widget.h"
 
 #include <iomanip>
@@ -93,7 +94,7 @@ private:
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);
 
-	HBoxLayout layout{this};
+	GridLayout layout{this, 4, 1};
 
 	LabeledControl attack{this, "Attack"};
 	LabeledControl falloff{this, "Release"};

@@ -40,9 +40,7 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
-	// FIXME, is resizeChildren broken?
-	layout.setResizeChildren(true);
-	layout.setVAlignment(VAlignment::center);
+	layout.setResizeChildren(false);
 
 	attack.resize(80, 80);
 	attack_knob.resize(30, 30);
@@ -55,6 +53,9 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	falloff_knob.showValue(false);
 	falloff.setControl(&falloff_knob);
 	layout.addItem(&falloff);
+
+	layout.setPosition(&attack, GridLayout::GridRange{1, 2, 0, 1});
+	layout.setPosition(&falloff, GridLayout::GridRange{2, 3, 0, 1});
 
 	CONNECT(this, settings_notifier.velocity_modifier_falloff,
 	        &falloff_knob, &Knob::setValue);
