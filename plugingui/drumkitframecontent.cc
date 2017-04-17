@@ -31,6 +31,51 @@
 namespace GUI
 {
 
+File::File(Widget* parent)
+	: Widget(parent)
+{
+	layout.setResizeChildren(false);
+	layout.setVAlignment(VAlignment::center);
+
+	layout.addItem(&lineedit);
+	layout.addItem(&browse_button);
+
+	browse_button.setText("Browse...");
+}
+
+void File::resize(std::size_t width, std::size_t height)
+{
+	Widget::resize(width, height);
+
+	lineedit_width = 0.72 * width;
+	button_width = width - lineedit_width;
+
+	lineedit.resize(lineedit_width, 29);
+	browse_button.resize(button_width, 30);
+
+	layout.layout();
+}
+
+std::size_t File::getLineEditWidth()
+{
+	return lineedit_width;
+}
+
+std::size_t File::getButtonWidth()
+{
+	return button_width;
+}
+
+Button& File::getBrowseButton()
+{
+	return browse_button;
+}
+
+LineEdit& File::getLineEdit()
+{
+	return lineedit;
+}
+
 DrumkitframeContent::DrumkitframeContent(Widget* parent) : Widget(parent)
 {
 	layout.setHAlignment(HAlignment::left);
@@ -45,14 +90,15 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent) : Widget(parent)
 	layout.addItem(&midimapFile);
 	layout.addItem(&midimapFileProgress);
 
-	// TODO:
-	// CONNECT(&drumkitFile.browseButton, clickNotifier,
-	//         this, &DGWindow::kitBrowseClick);
-	// TODO:
-	// CONNECT(&midimapFile.browseButton, clickNotifier,
-	//         this, &DGWindow::midimapBrowseClick);
+	CONNECT(&drumkitFile.getBrowseButton(), clickNotifier,
+	        this, &DrumkitframeContent::kitBrowseClick);
+	CONNECT(&midimapFile.getBrowseButton(), clickNotifier,
+	        this, &DrumkitframeContent::midimapBrowseClick);
 
 	midimapFileProgress.setTotal(2);
+
+	file_browser.resize(450, 350);
+	file_browser.setFixedSize(450, 350);
 }
 
 void DrumkitframeContent::resize(std::size_t width, std::size_t height)
@@ -68,6 +114,46 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 	midimapFileProgress.resize(drumkitFile.getLineEditWidth(), 11);
 
 	layout.layout();
+}
+
+void DrumkitframeContent::kitBrowseClick()
+{
+	CONNECT(&file_browser, fileSelectNotifier,
+	        this, &DrumkitframeContent::selectKitFile);
+	file_browser.show();
+}
+
+void DrumkitframeContent::midimapBrowseClick()
+{
+	CONNECT(&file_browser, fileSelectNotifier,
+	        this, &DrumkitframeContent::selectMapFile);
+	file_browser.show();
+}
+
+void DrumkitframeContent::selectKitFile(const std::string& filename)
+{
+	auto& line_edit = drumkitFile.getLineEdit();
+	line_edit.setText(filename);
+
+	// TODO:
+	//config.lastkit = drumkit;
+	//config.save();
+
+	// TODO:
+	//settings.drumkit_file.store(drumkit);
+}
+
+void DrumkitframeContent::selectMapFile(const std::string& filename)
+{
+	auto& line_edit = midimapFile.getLineEdit();
+	line_edit.setText(filename);
+
+	// TODO:
+	//config.lastmidimap = midimap;
+	//config.save();
+
+	// TODO:
+	//settings.midimap_file.store(midimap);
 }
 
 } // GUI::

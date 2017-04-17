@@ -71,6 +71,8 @@ FileBrowser::FileBrowser(Widget* parent)
 	        this, &FileBrowser::listSelectionChanged);
 	CONNECT(this, fileSelectNotifier,
 	        this, &FileBrowser::select);
+	CONNECT(eventHandler(), closeNotifier,
+	        this, &FileBrowser::cancel);
 
 	btn_sel.setText("Select");
 	CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);

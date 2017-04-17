@@ -31,47 +31,25 @@
 #include "lineedit.h"
 #include "progressbar.h"
 #include "widget.h"
+#include "filebrowser.h"
 
 namespace GUI
 {
 
-// TODO: move to own class?
-class File : public Widget
+class File
+	: public Widget
 {
 public:
-	File(Widget* parent) : Widget(parent)
-	{
-		layout.setResizeChildren(false);
-		layout.setVAlignment(VAlignment::center);
-
-		layout.addItem(&lineedit);
-		layout.addItem(&browse_button);
-
-		browse_button.setText("Browse...");
-	}
+	File(Widget* parent);
 
 	// From Widget
-	virtual void resize(std::size_t width, std::size_t height) override
-	{
-		Widget::resize(width, height);
+	virtual void resize(std::size_t width, std::size_t height) override;
 
-		lineedit_width = 0.72 * width;
-		button_width = width - lineedit_width;
+	std::size_t getLineEditWidth();
+	std::size_t getButtonWidth();
 
-		lineedit.resize(lineedit_width, 29);
-		browse_button.resize(button_width, 30);
-
-		layout.layout();
-	}
-
-	std::size_t getLineEditWidth()
-	{
-		return lineedit_width;
-	}
-	std::size_t getButtonWidth()
-	{
-		return button_width;
-	}
+	Button& getBrowseButton();
+	LineEdit& getLineEdit();
 
 private:
 	HBoxLayout layout{this};
@@ -81,14 +59,10 @@ private:
 
 	std::size_t lineedit_width;
 	std::size_t button_width;
-
-	LineEdit& getLineEdit()
-	{
-		return lineedit;
-	}
 };
 
-class DrumkitframeContent : public Widget
+class DrumkitframeContent
+	: public Widget
 {
 public:
 	DrumkitframeContent(Widget* parent);
@@ -96,7 +70,13 @@ public:
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
+	void kitBrowseClick();
+	void midimapBrowseClick();
+
 private:
+	void selectKitFile(const std::string& filename);
+	void selectMapFile(const std::string& filename);
+
 	VBoxLayout layout{this};
 
 	Label drumkitCaption{this};
@@ -105,6 +85,8 @@ private:
 	File midimapFile{this};
 	ProgressBar drumkitFileProgress{this};
 	ProgressBar midimapFileProgress{this};
+
+	FileBrowser file_browser{this};
 };
 
 } // GUI::
