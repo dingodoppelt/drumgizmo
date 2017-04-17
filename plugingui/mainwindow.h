@@ -63,7 +63,7 @@ private:
 	TabWidget tabs{this};
 
 	Settings& settings;
-	SettingsNotifier settings_notifier{settings};
+	SettingsNotifier settings_notifier;
 
 	MainTab main_tab;
 	// TODO use some nice textfield widget here
