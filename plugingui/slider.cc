@@ -104,16 +104,6 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 		state = State::down;
 		recomputeCurrentValue(buttonEvent->x);
 
-		if(current_value < 0)
-		{
-			current_value = 0;
-		}
-
-		if(current_value > 1)
-		{
-			current_value = 1;
-		}
-
 		redraw();
 		clickNotifier();
 	}
@@ -122,16 +112,6 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 	{
 		state = State::up;
 		recomputeCurrentValue(buttonEvent->x);
-
-		if(current_value < 0)
-		{
-			current_value = 0;
-		}
-
-		if(current_value > 1)
-		{
-			current_value = 1;
-		}
 
 		redraw();
 		clickNotifier();
@@ -144,19 +124,23 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 	{
 		recomputeCurrentValue(mouseMoveEvent->x);
 
-		if(current_value < 0)
-		{
-			current_value = 0;
-		}
-
-		if(current_value > 1)
-		{
-			current_value = 1;
-		}
-
 		redraw();
 		clickNotifier();
 	}
+}
+
+void Slider::scrollEvent(ScrollEvent* scrollEvent)
+{
+	current_value += scrollEvent->delta/(float)getControlWidth();
+	if (current_value < 0.)
+	{
+		current_value = 0.;
+	}
+	else if (current_value > 1.0) {
+		current_value = 1.0;
+	}
+
+	redraw();
 }
 
 std::size_t Slider::getControlWidth() const
@@ -178,6 +162,14 @@ void Slider::recomputeCurrentValue(float x)
 	else
 	{
 		current_value = (maximum / getControlWidth()) * (x - button_offset);
+	}
+
+	if (current_value < 0.)
+	{
+		current_value = 0.;
+	}
+	else if (current_value > 1.0) {
+		current_value = 1.0;
 	}
 }
 

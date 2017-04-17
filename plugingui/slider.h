@@ -63,6 +63,7 @@ protected:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
 	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
+	virtual void scrollEvent(ScrollEvent* scrollEvent) override;
 
 private:
 	enum class State
