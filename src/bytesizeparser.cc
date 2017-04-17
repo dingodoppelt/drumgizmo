@@ -54,7 +54,7 @@ static std::size_t suffixToSize(const char& suffix)
 std::size_t byteSizeParser(const std::string& argument)
 {
 	std::string::size_type suffix_index;
-	std::size_t stream_size;
+	std::size_t size;
 	std::string suffix;
 	bool error = false;
 
@@ -65,7 +65,7 @@ std::size_t byteSizeParser(const std::string& argument)
 
 	try
 	{
-		stream_size = std::stoi(argument, &suffix_index);
+		size = std::stoi(argument, &suffix_index);
 	}
 	catch(std::invalid_argument)
 	{
@@ -85,19 +85,14 @@ std::size_t byteSizeParser(const std::string& argument)
 			error = true;
 		}
 	}
-	if(!error)
+	if(!error && suffix.size() > 0)
 	{
-		std::size_t suffix_size = 1;
-		if(suffix_index <= suffix.length())
-		{
-			suffix_size = suffixToSize(suffix[0]);
-
-		}
-		stream_size *= suffix_size;
+		std::size_t suffix_size = suffixToSize(suffix[0]);
+		size *= suffix_size;
 	}
 	if(error)
 	{
 		return 0;
 	}
-	return stream_size;
+	return size;
 }

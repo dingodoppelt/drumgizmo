@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sstream>
 
 #include <hugin.hpp>
 
@@ -66,11 +67,12 @@ static const char usage_str[] =
     "output engine.\n"
     "  -O, --outputparms      parmlist  Set output engine parameters.\n"
     "  -e, --endpos           Number of samples to process, -1: infinite.\n"
-    "  -m, --diskstreamsize   Size of buffer for disk streaming, eg. 5{k,M,G}.\n"
 #ifndef DISABLE_HUGIN
     "  -D, --debug ddd        Enable debug messages on 'ddd'; see hugin "
     "documentation for details\n"
 #endif /*DISABLE_HUGIN*/
+    "  -s, --streaming        Enable streaming.\n"
+    "  -S, --streamingparms   Streaming options.\n"
     "  -v, --version          Print version information and exit.\n"
     "  -h, --help             Print this message and exit.\n"
     "\n"
@@ -95,6 +97,10 @@ static const char usage_str[] =
     "(default 44100)\n"
     "  jackaudio:\n"
     "  dummy:\n"
+    "\n"
+    "Streaming parameters:\n"
+    "  limit:         maximum size in k,M,G\n"
+    "  chunk_size:    chunk size in k,M,G\n"
     "\n";
 
 
@@ -113,30 +119,32 @@ int main(int argc, char* argv[])
 	std::string inputengine;
 	std::string iparms;
 	std::string oparms;
+	std::string sparms;
 	bool async = false;
 	int endpos = -1;
 
 	EngineFactory factory;
 
 	int option_index = 0;
+	static struct option long_options[] = {
+		{"async-load", no_argument, 0, 'a'},
+		{"inputengine", required_argument, 0, 'i'},
+		{"inputparms", required_argument, 0, 'I'},
+		{"outputengine", required_argument, 0, 'o'},
+		{"outputparms", required_argument, 0, 'O'},
+		{"endpos", required_argument, 0, 'e'},
+#ifndef DISABLE_HUGIN
+		{"debug", required_argument, 0, 'D'},
+#endif /*DISABLE_HUGIN*/
+		{"streaming", no_argument, 0, 's'},
+		{"streamingparams", required_argument, 0, 'S'},
+		{"version", no_argument, 0, 'v'},
+		{"help", no_argument, 0, 'h'},
+		{0, 0, 0, 0}
+	};
 	while(1)
 	{
-		static struct option long_options[] = {
-		    {"async-load", no_argument, 0, 'a'},
-		    {"inputengine", required_argument, 0, 'i'},
-		    {"inputparms", required_argument, 0, 'I'},
-		    {"outputengine", required_argument, 0, 'o'},
-		    {"outputparms", required_argument, 0, 'O'},
-		    {"endpos", required_argument, 0, 'e'},
-		    {"diskstreamsize", required_argument, 0, 'm'},
-#ifndef DISABLE_HUGIN
-		    {"debug", required_argument, 0, 'D'},
-#endif /*DISABLE_HUGIN*/
-		    {"version", no_argument, 0, 'v'},
-		    {"help", no_argument, 0, 'h'},
-		    {0, 0, 0, 0}};
-
-		c = getopt_long(argc, argv, "hvpo:O:i:I:e:am:"
+		c = getopt_long(argc, argv, "hvpo:O:i:I:e:asS:"
 #ifndef DISABLE_HUGIN
 		                "D:"
 #endif /*DISABLE_HUGIN*/
@@ -211,18 +219,13 @@ int main(int argc, char* argv[])
 			printf("%s", copyright_str);
 			return 0;
 
-		case 'm':
-			settings.disk_cache_upper_limit = byteSizeParser(optarg);
-			if(!settings.disk_cache_upper_limit)
-			{
-				printf("%s", version_str);
-				printf(usage_str, argv[0]);
-				std::cerr << "Stream size should be in <number>[suffix] format ";
-				std::cerr << "where [suffix] is k, M, or G." << std::endl;
-				std::cerr << "Example: 10M which is 10 * 1024 * 1024 bytes" << std::endl;
-				return 1;
-			}
+		case 's':
 			settings.disk_cache_enable = true;
+			break;
+
+		case 'S':
+			sparms = optarg;
+			break;
 
 		default:
 			break;
@@ -257,7 +260,7 @@ int main(int argc, char* argv[])
 		std::string parm;
 		std::string val;
 		bool inval = false;
-		for(size_t i = 0; i < iparms.size(); i++)
+		for(size_t i = 0; i < iparms.size(); ++i)
 		{
 			if(iparms[i] == ',')
 			{
@@ -289,6 +292,56 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	{
+		if(sparms.size() != 0)
+		{
+			if(sparms[0] == ',' || sparms[sparms.size()-1] == ',')
+			{
+				std::cerr << "Invalid streamparms" << std::endl;
+				return 1;
+			}
+			std::string token;
+			std::istringstream tokenstream(sparms);
+			while(getline(tokenstream, token, ','))
+			{
+				std::size_t index = token.find('=');
+				if(index == std::string::npos || index == token.size()-1 || index == 0)
+				{
+					std::cerr << "Invalid streamparms" << std::endl;
+					return 1;
+				}
+
+				std::string parm = token.substr(0, index);
+				std::string value = token.substr(index+1);
+
+				if(parm == "limit")
+				{
+					settings.disk_cache_upper_limit = byteSizeParser(value);
+					if(settings.disk_cache_upper_limit == 0)
+					{
+						std::cerr << "Invalid argument for streamparms limit: " << value << std::endl;
+						return 1;
+					}
+				}
+				else if(parm == "chunk_size")
+				{
+					settings.disk_cache_chunk_size = byteSizeParser(value);
+					if(settings.disk_cache_chunk_size == 0)
+					{
+						std::cerr << "Invalid argument for streamparms chunk_size: " << value << std::endl;
+						return 1;
+					}
+				}
+				else
+				{
+					std::cerr << "Unknown streamingparms argument " << parm << std::endl;
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
+
 	if(outputengine == "")
 	{
 		printf("Missing output engine\n");
@@ -307,7 +360,7 @@ int main(int argc, char* argv[])
 		std::string parm;
 		std::string val;
 		bool inval = false;
-		for(size_t i = 0; i < oparms.size(); i++)
+		for(size_t i = 0; i < oparms.size(); ++i)
 		{
 			if(oparms[i] == ',')
 			{

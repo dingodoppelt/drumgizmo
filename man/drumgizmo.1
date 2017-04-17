@@ -99,6 +99,21 @@ http://manuals.opensound.com/developer/SNDCTL_DSP_SETFRAGMENT.html
 Number of samples to process, (default -1: infinite)
 
 .RE
+\fB-s, --streaming\fR
+.RS 7
+Enable diskstreaming
+
+.RE
+\fB-S, --strimingparms parmlist\fR
+.RS 7
+Parameters for controling the streaming buffers.
+
+.P
+\fBlimit\fR=<size> (maximum size in k,M,G)
+.P
+\fBchunk_size\fR=<size> (chunk size in k,M,G)
+
+.RE
 \fB-v, --version\fR
 .RS 7
 Print drumgizmo version and exit.
