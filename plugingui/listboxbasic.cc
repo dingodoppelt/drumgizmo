@@ -36,7 +36,7 @@ ListBoxBasic::ListBoxBasic(Widget *parent)
 	, scroll(this)
 {
 	scroll.move(0,0);
-	scroll.resize(18, 100);
+	scroll.resize(16, 100);
 
 	CONNECT(&scroll, valueChangeNotifier,
 	        this, &ListBoxBasic::onScrollBarValueChange);
@@ -84,10 +84,6 @@ void ListBoxBasic::addItems(const std::vector<ListBoxBasic::Item>& newItems)
 		//setSelection((int)items.size() - 1);
 		setSelection(0);
 	}
-
-	int numitems = height() / (font.textHeight() + padding);
-	scroll.setRange(numitems);
-	scroll.setMaximum(items.size());
 	redraw();
 }
 
@@ -146,7 +142,6 @@ void ListBoxBasic::onScrollBarValueChange(int value)
 void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-
 	p.clear();
 
 	int w = width();
@@ -190,6 +185,9 @@ void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 		p.drawText(2, yoffset + font.textHeight(), font, item.name);
 		yoffset += font.textHeight() + padding;
 	}
+
+	scroll.setRange(numitems);
+	scroll.setMaximum(items.size());
 }
 
 void ListBoxBasic::scrollEvent(ScrollEvent* scrollEvent)
