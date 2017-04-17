@@ -63,6 +63,8 @@ FileBrowser::FileBrowser(Widget* parent)
 	above_root = false;
 #endif
 
+	setCaption("Open file...");
+
 	lbl_path.setText("Path:");
 
 	//lineedit.setReadOnly(true);
