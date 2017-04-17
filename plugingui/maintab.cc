@@ -38,10 +38,17 @@ MainTab::MainTab(Widget* parent) : Widget(parent)
 	layout.addItem(&status_frame);
 	layout.addItem(&humanizer_frame);
 	layout.addItem(&diskstreaming_frame);
-	layout.setPosition(&drumkit_frame, GridLayout::GridRange{0, 1, 0, 4});
-	layout.setPosition(&status_frame, GridLayout::GridRange{0, 1, 4, 7});
-	layout.setPosition(&humanizer_frame, GridLayout::GridRange{1, 2, 0, 3});
-	layout.setPosition(&diskstreaming_frame, GridLayout::GridRange{1, 2, 3, 5});
+
+	auto h1 = 60;
+	auto h2 = 40;
+	auto drumkit_range = GridLayout::GridRange{0, 1, 0, h1};
+	auto status_range = GridLayout::GridRange{0, 1, h1, h1 + 55};
+	auto humanizer_range = GridLayout::GridRange{1, 2, 0, h2};
+	auto diskstreaming_range = GridLayout::GridRange{1, 2, h2, h2 + 35};
+	layout.setPosition(&drumkit_frame, drumkit_range);
+	layout.setPosition(&status_frame, status_range);
+	layout.setPosition(&humanizer_frame, humanizer_range);
+	layout.setPosition(&diskstreaming_frame, diskstreaming_range);
 
 	drumkit_frame.setTitle("Drumkit");
 	status_frame.setTitle("Status");
