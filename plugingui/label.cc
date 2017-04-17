@@ -29,6 +29,8 @@
 #include "painter.h"
 #include "guievent.h"
 
+#include <cpp11fix.h>
+
 namespace GUI {
 
 Label::Label(Widget *parent)
@@ -47,6 +49,16 @@ void Label::setAlignment(TextAlignment alignment)
 	this->alignment = alignment;
 }
 
+void Label::setColour(Colour colour)
+{
+	this->colour = std::make_unique<Colour>(colour);
+}
+
+void Label::resetColour()
+{
+	colour.release();
+}
+
 void Label::resizeToText()
 {
 	resize(font.textWidth(_text) + border, font.textHeight());
@@ -55,10 +67,7 @@ void Label::resizeToText()
 void Label::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-
 	p.clear();
-
-	p.setColour(Colour(1));
 
 	int offset = 0;
 	switch(alignment) {
@@ -73,7 +82,13 @@ void Label::repaintEvent(RepaintEvent* repaintEvent)
 		break;
 	}
 
-	p.drawText(offset, (height() + font.textHeight()) / 2, font, _text, true);
+	if (colour) {
+		p.setColour(*colour);
+		p.drawText(offset, (height() + font.textHeight()) / 2, font, _text);
+	}
+	else {
+		p.drawText(offset, (height() + font.textHeight()) / 2, font, _text, true);
+	}
 }
 
 } // GUI::

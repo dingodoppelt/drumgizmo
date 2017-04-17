@@ -31,6 +31,7 @@
 #include "font.h"
 
 #include <string>
+#include <memory>
 
 namespace GUI {
 
@@ -46,9 +47,9 @@ public:
 	virtual ~Label() = default;
 
 	void setText(const std::string& text);
-
 	void setAlignment(TextAlignment alignment);
-
+	void setColour(Colour colour);
+	void resetColour();
 	void resizeToText();
 
 protected:
@@ -60,6 +61,9 @@ private:
 	Font font{":fontemboss.png"};
 	TextAlignment alignment{TextAlignment::left};
 	int border{0};
+
+	// optional colour
+	std::unique_ptr<Colour> colour;
 };
 
 } // GUI::
