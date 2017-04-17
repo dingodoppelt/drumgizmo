@@ -202,4 +202,7 @@ private:
 	std::shared_ptr<GUI::MainWindow> plugin_gui;
 	std::shared_ptr<DrumGizmo> drumgizmo;
 	std::uint32_t inlineDisplayBuffer[1024*1024];
+
+	static constexpr std::size_t width{750};
+	static constexpr std::size_t height{400};
 };
