@@ -31,18 +31,27 @@
 #include "slider.h"
 #include "widget.h"
 
+struct Settings;
+class SettingsNotifier;
+
 namespace GUI
 {
 
 class DiskstreamingframeContent : public Widget
 {
 public:
-	DiskstreamingframeContent(Widget* parent);
+	DiskstreamingframeContent(Widget* parent,
+	                          Settings& settings,
+	                          SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
+	void limitSettingsValueChanged(float value);
+	void limitValueChanged(float value);
+	void reloadClicked();
+
 	Label label_text{this};
 	Label label_size{this};
 
@@ -51,6 +60,9 @@ private:
 
 	std::size_t slider_width;
 	std::size_t button_width;
+
+	Settings& settings;
+	SettingsNotifier& settings_notifier;
 };
 
 } // GUI::

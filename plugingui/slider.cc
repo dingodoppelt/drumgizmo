@@ -34,6 +34,8 @@
 namespace GUI
 {
 
+static constexpr float _4GB = 1024.0 * 1024.0 * 1024.0 * 4.0;
+
 Slider::Slider(Widget* parent) : Widget(parent)
 {
 	state = State::up;
@@ -45,9 +47,10 @@ Slider::Slider(Widget* parent) : Widget(parent)
 
 void Slider::setValue(float new_value)
 {
-	current_value = new_value;
+	current_value = new_value / (float)_4GB; // TODO: Scale to [0, 1] range
 	redraw();
 	clickNotifier();
+	valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
 }
 
 float Slider::value() const
@@ -126,6 +129,7 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 		redraw();
 		clickNotifier();
+		valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
 	}
 }
 

@@ -35,6 +35,7 @@ MainTab::MainTab(Widget* parent,
 	: Widget(parent)
 	, drumkitframe_content{this, settings, settings_notifier}
 	, humanizerframe_content{this, settings, settings_notifier}
+	, diskstreamingframe_content{this, settings, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -74,11 +75,22 @@ MainTab::MainTab(Widget* parent,
 
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
+
+	CONNECT(this, settings_notifier.disk_cache_enable,
+	        &diskstreaming_frame, &FrameWidget::setOnSwitch);
+
+	CONNECT(&diskstreaming_frame, onSwitchChangeNotifier,
+	        this, &MainTab::diskStreamingOnChange);
 }
 
 void MainTab::humanizerOnChange(bool on)
 {
 	settings.enable_velocity_modifier.store(on);
+}
+
+void MainTab::diskStreamingOnChange(bool on)
+{
+	settings.disk_cache_enable.store(on);
 }
 
 } // GUI::

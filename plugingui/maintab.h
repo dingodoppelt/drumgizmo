@@ -50,6 +50,7 @@ public:
 
 private:
 	void humanizerOnChange(bool on);
+	void diskStreamingOnChange(bool on);
 
 	GridLayout layout{this, 2, 40};
 
@@ -61,7 +62,7 @@ private:
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content{this};
 	HumanizerframeContent humanizerframe_content;
-	DiskstreamingframeContent diskstreamingframe_content{this};
+	DiskstreamingframeContent diskstreamingframe_content;
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

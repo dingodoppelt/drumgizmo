@@ -58,6 +58,7 @@ public:
 	void setColour(Colour colour);
 
 	Notifier<> clickNotifier;
+	Notifier<float> valueChangedNotifier; // (float value)
 
 protected:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;

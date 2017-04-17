@@ -26,19 +26,41 @@
  */
 #include "diskstreamingframecontent.h"
 
+#include <settings.h>
+
 namespace GUI
 {
 
-DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent)
-    : Widget(parent), slider_width{250}
+DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
+                                                     Settings& settings,
+                                                     SettingsNotifier& settings_notifier)
+	: Widget(parent)
+	, slider_width{250}
+	, settings(settings)
+	, settings_notifier(settings_notifier)
 {
 	label_text.setText("Cache limit (max memory usage):");
 	label_text.setAlignment(TextAlignment::center);
 
 	button.setText("Apply"); // TODO connect
 
-	label_size.setText("600 MB"); // TODO connect
+	label_size.setText("0 MB");
 	label_size.setAlignment(TextAlignment::center);
+
+	CONNECT(this, settings_notifier.disk_cache_upper_limit,
+	        this, &DiskstreamingframeContent::limitSettingsValueChanged);
+
+	CONNECT(&slider, valueChangedNotifier,
+	        this, &DiskstreamingframeContent::limitValueChanged);
+
+	CONNECT(&button, clickNotifier,
+	        this, &DiskstreamingframeContent::reloadClicked);
+
+	// TODO:
+	//	CONNECT(this, settings_notifier.disk_cache_chunk_size,
+	//	        this, &DGWindow::chunkSettingsValueChanged);
+	//	CONNECT(this, settings_notifier.number_of_underruns,
+	//	        this, &DGWindow::underrunsChanged);
 }
 
 void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
@@ -58,5 +80,24 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 	button.resize(button_width, 30);
 	label_size.resize(slider_width, 15);
 }
+
+void DiskstreamingframeContent::limitSettingsValueChanged(float value)
+{
+	char buf[32];
+	snprintf(buf, sizeof(buf) - 1, "%.2f MB", value / (1024 * 1024));
+	label_size.setText(buf);
+	slider.setValue(value);
+}
+
+void DiskstreamingframeContent::limitValueChanged(float value)
+{
+	settings.disk_cache_upper_limit.store(value);
+}
+
+void DiskstreamingframeContent::reloadClicked()
+{
+	settings.reload_counter++;
+}
+
 
 } // GUI::
