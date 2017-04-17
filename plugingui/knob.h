@@ -46,6 +46,7 @@ public:
 	void setValue(float value);
 	void setRange(float minimum, float maximum);
 	float value();
+	void showValue(bool show_value);
 
 	Notifier<float> valueChangedNotifier; // (float newValue)
 
@@ -73,6 +74,8 @@ private:
 	float current_value;
 	float maximum;
 	float minimum;
+
+	bool show_value{true};
 
 	Texture img_knob;
 

@@ -30,6 +30,9 @@
 #include "label.h"
 #include "widget.h"
 
+#include <iomanip>
+#include <sstream>
+
 namespace GUI
 {
 
@@ -41,6 +44,7 @@ public:
 	{
 		layout.setResizeChildren(false);
 		layout.setHAlignment(HAlignment::center);
+		layout.setSpacing(2);
 
 		caption.setText(name);
 		caption.resize(100, 20);
@@ -48,14 +52,28 @@ public:
 		layout.addItem(&caption);
 	}
 
-	void setControl(Widget* control)
+	void setControl(Knob* control)
 	{
 		layout.addItem(control);
+
+		CONNECT(control, valueChangedNotifier, this, &LabeledControl::setValue);
+		setValue(control->value());
+		value.resize(100, 20);
+		value.setAlignment(TextAlignment::center);
+		layout.addItem(&value);
 	}
 
 private:
 	VBoxLayout layout{this};
 	Label caption{this};
+	Label value{this};
+
+	void setValue(float new_value)
+	{
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(2) << new_value;
+		value.setText(stream.str());
+	}
 };
 
 class HumanizerframeContent : public Widget

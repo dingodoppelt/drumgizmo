@@ -73,6 +73,11 @@ float Knob::value()
 	return current_value * (maximum - minimum) + minimum;
 }
 
+void Knob::showValue(bool show_value)
+{
+	this->show_value = show_value;
+}
+
 void Knob::scrollEvent(ScrollEvent* scrollEvent)
 {
 	float value = (current_value - (scrollEvent->delta / 200.0));
@@ -168,22 +173,24 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 
 	float range = maximum - minimum;
 
-	// Show 0, 1 or 2 decimal point depending on the size of the range
-	char buf[64];
-	if(range> 100.0f)
-	{
-		sprintf(buf, "%.0f", current_value * range + minimum);
+	if (show_value) {
+		// Show 0, 1 or 2 decimal point depending on the size of the range
+		char buf[64];
+		if(range> 100.0f)
+		{
+			sprintf(buf, "%.0f", current_value * range + minimum);
+		}
+		else if(range > 10.0f)
+		{
+			sprintf(buf, "%.1f", current_value * range + minimum);
+		}
+		else
+		{
+			sprintf(buf, "%.2f", current_value * range + minimum);
+		}
+		p.drawText(center_x - font.textWidth(buf) / 2 + 1,
+				   center_y + font.textHeight(buf) / 2 + 1, font, buf);
 	}
-	else if(range > 10.0f)
-	{
-		sprintf(buf, "%.1f", current_value * range + minimum);
-	}
-	else
-	{
-		sprintf(buf, "%.2f", current_value * range + minimum);
-	}
-	p.drawText(center_x - font.textWidth(buf) / 2 + 1,
-	           center_y + font.textHeight(buf) / 2 + 1, font, buf);
 
 	// Make it start from 20% and stop at 80%
 	double padval = current_value * 0.8 + 0.1;

@@ -38,12 +38,14 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent) : Widget(parent)
 	layout.setVAlignment(VAlignment::center);
 
 	attack.resize(80, 80);
-	attackKnob.resize(60, 60);
+	attackKnob.resize(30, 30);
+	attackKnob.showValue(false);
 	attack.setControl(&attackKnob);
 	layout.addItem(&attack);
 
 	falloff.resize(80, 80);
-	falloffKnob.resize(60, 60);
+	falloffKnob.resize(30, 30);
+	falloffKnob.showValue(false);
 	falloff.setControl(&falloffKnob);
 	layout.addItem(&falloff);
 
