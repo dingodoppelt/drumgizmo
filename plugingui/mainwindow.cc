@@ -93,7 +93,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 	// DrumGizmo logo
 	painter.drawImage(width() - logo.width() - 16,
-	                  height() - logo.height(), logo);
+	                  height() - logo.height() - 10, logo);
 	
 	// DrumGizmo version
 	std::string version_string("v." + std::string(VERSION));
