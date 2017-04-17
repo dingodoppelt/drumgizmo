@@ -43,7 +43,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	, main_tab(this, settings, settings_notifier)
 {
 	// FIXME: remove this when settings are actually used in this class
-	(void)settings;
+	(void)this->settings;
 
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
