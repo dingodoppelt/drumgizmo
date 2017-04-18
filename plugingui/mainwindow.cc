@@ -38,12 +38,10 @@ namespace GUI
 
 MainWindow::MainWindow(Settings& settings, void* native_window)
 	: Window(native_window)
-	, settings(settings)
 	, settings_notifier(settings)
-	, main_tab(this, settings, settings_notifier)
+	, main_tab(this, settings, settings_notifier, config)
 {
-	// FIXME: remove this when settings are actually used in this class
-	(void)this->settings;
+	config.load();
 
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
@@ -57,6 +55,11 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 
 	about_text_field.setText(getAboutText());
 	about_text_field.setReadOnly(true);
+}
+
+MainWindow::~MainWindow()
+{
+	config.save();
 }
 
 bool MainWindow::processEvents()

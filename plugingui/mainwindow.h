@@ -36,6 +36,7 @@
 #include "window.h"
 #include "maintab.h"
 #include "font.h"
+#include "pluginconfig.h"
 
 namespace GUI
 {
@@ -45,6 +46,7 @@ class MainWindow
 {
 public:
 	MainWindow(Settings& settings, void* native_window);
+	~MainWindow();
 
 	//! Process all events and messages in queue
 	//! \return true if not closing, returns false if closing.
@@ -64,7 +66,7 @@ private:
 
 	TabWidget tabs{this};
 
-	Settings& settings;
+	Config config;
 	SettingsNotifier settings_notifier;
 
 	MainTab main_tab;

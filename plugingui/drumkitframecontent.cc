@@ -29,6 +29,7 @@
 #include <settings.h>
 
 #include "label.h"
+#include "pluginconfig.h"
 
 namespace GUI
 {
@@ -80,10 +81,12 @@ LineEdit& BrowseFile::getLineEdit()
 
 DrumkitframeContent::DrumkitframeContent(Widget* parent,
                                          Settings& settings,
-                                         SettingsNotifier& settings_notifier)
+                                         SettingsNotifier& settings_notifier,
+                                         Config& config)
 	: Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
+	, config(config)
 {
 	layout.setHAlignment(HAlignment::left);
 
@@ -143,6 +146,18 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 
 void DrumkitframeContent::kitBrowseClick()
 {
+	std::string path = drumkit_file.getLineEdit().text();
+	if(path == "")
+	{
+		path = config.lastkit;
+	}
+
+	if(path == "")
+	{
+		path = midimap_file.getLineEdit().text();
+	}
+
+	file_browser.setPath(path);
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectKitFile);
 	file_browser.show();
@@ -150,6 +165,18 @@ void DrumkitframeContent::kitBrowseClick()
 
 void DrumkitframeContent::midimapBrowseClick()
 {
+	std::string path = midimap_file.getLineEdit().text();
+	if(path == "")
+	{
+		path = config.lastmidimap;
+	}
+
+	if(path == "")
+	{
+		path = drumkit_file.getLineEdit().text();
+	}
+
+	file_browser.setPath(path);
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectMapFile);
 	file_browser.show();
@@ -157,18 +184,16 @@ void DrumkitframeContent::midimapBrowseClick()
 
 void DrumkitframeContent::selectKitFile(const std::string& filename)
 {
-	// TODO:
-	//config.lastkit = drumkit;
-	//config.save();
+	config.lastkit = filename;
+	config.save();
 
 	settings.drumkit_file.store(filename);
 }
 
 void DrumkitframeContent::selectMapFile(const std::string& filename)
 {
-	// TODO:
-	//config.lastmidimap = midimap;
-	//config.save();
+	config.lastmidimap = filename;
+	config.save();
 
 	settings.midimap_file.store(filename);
 }

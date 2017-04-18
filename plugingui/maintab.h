@@ -36,6 +36,7 @@
 
 struct Settings;
 class SettingsNotifier;
+class Config;
 
 namespace GUI
 {
@@ -46,7 +47,8 @@ class MainTab
 public:
 	MainTab(Widget* parent,
 	        Settings& settings,
-	        SettingsNotifier& settings_notifier);
+	        SettingsNotifier& settings_notifier,
+	        Config& config);
 
 private:
 	void humanizerOnChange(bool on);

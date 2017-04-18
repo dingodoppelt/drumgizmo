@@ -38,6 +38,8 @@
 namespace GUI
 {
 
+class Config;
+
 class BrowseFile
 	: public Widget
 {
@@ -69,7 +71,8 @@ class DrumkitframeContent
 public:
 	DrumkitframeContent(Widget* parent,
 	                    Settings& settings,
-	                    SettingsNotifier& settings_notifier);
+	                    SettingsNotifier& settings_notifier,
+	                    Config& config);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -97,6 +100,7 @@ private:
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
+	Config& config;
 };
 
 } // GUI::

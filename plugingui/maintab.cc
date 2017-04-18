@@ -31,9 +31,10 @@ namespace GUI
 
 MainTab::MainTab(Widget* parent,
                  Settings& settings,
-                 SettingsNotifier& settings_notifier)
+                 SettingsNotifier& settings_notifier,
+                 Config& config)
 	: Widget(parent)
-	, drumkitframe_content{this, settings, settings_notifier}
+	, drumkitframe_content{this, settings, settings_notifier, config}
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
 	, settings(settings)
