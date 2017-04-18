@@ -225,6 +225,18 @@ void NativeWindowX11::hide()
 	XUnmapWindow(display, xwindow);
 }
 
+bool NativeWindowX11::visible() const
+{
+	if(display == nullptr)
+	{
+		return false;
+	}
+
+	XWindowAttributes xwa;
+	XGetWindowAttributes(display, xwindow, &xwa);
+	return (xwa.map_state == IsViewable);
+}
+
 void NativeWindowX11::redraw(const Rect& dirty_rect)
 {
 	if(display == nullptr)

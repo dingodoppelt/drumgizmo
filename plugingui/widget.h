@@ -53,7 +53,7 @@ public:
 	virtual void show();
 	virtual void hide();
 	void setVisible(bool visible);
-	bool visible() const;
+	virtual bool visible() const;
 
 	//! Mark widget dirty and shedule redraw on next window redraw.
 	void redraw();

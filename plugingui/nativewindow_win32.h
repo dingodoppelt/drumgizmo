@@ -50,9 +50,10 @@ public:
 	void move(int x, int y) override;
 	std::pair<int, int> getPosition() override;
 	void show() override;
-	void setCaption(const std::string &caption) override;
+	bool visible() const override;
 	void hide() override;
 	void redraw(const Rect& dirty_rect) override;
+	void setCaption(const std::string &caption) override;
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
 	void* getNativeWindowHandle() const override;

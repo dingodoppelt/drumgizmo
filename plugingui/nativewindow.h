@@ -68,6 +68,9 @@ public:
 	//! Hides the window.
 	virtual void hide() = 0;
 
+	//! Return visibility state of the native window.
+	virtual bool visible() const = 0;
+
 	//! Sets the window caption in the title bar (if it has one).
 	virtual void setCaption(const std::string &caption) = 0;
 

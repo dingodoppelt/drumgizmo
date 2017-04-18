@@ -53,6 +53,7 @@ public:
 	std::pair<int, int> getPosition() override;
 	void show() override;
 	void hide() override;
+	bool visible() const override;
 	void setCaption(const std::string &caption) override;
 	void redraw(const Rect& dirty_rect) override;
 	void grabMouse(bool grab) override;
