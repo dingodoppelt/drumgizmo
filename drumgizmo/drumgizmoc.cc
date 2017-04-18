@@ -99,8 +99,8 @@ static const char usage_str[] =
     "  dummy:\n"
     "\n"
     "Streaming parameters:\n"
-    "  limit:         maximum size in k,M,G\n"
-    "  chunk_size:    chunk size in k,M,G\n"
+    "  limit:         Limit the amount of preloaded drumkit data to the size\n"
+    // "  chunk_size:    chunk size in k,M,G\n"
     "\n";
 
 
@@ -323,15 +323,15 @@ int main(int argc, char* argv[])
 						return 1;
 					}
 				}
-				else if(parm == "chunk_size")
-				{
-					settings.disk_cache_chunk_size = byteSizeParser(value);
-					if(settings.disk_cache_chunk_size == 0)
-					{
-						std::cerr << "Invalid argument for streamparms chunk_size: " << value << std::endl;
-						return 1;
-					}
-				}
+				// else if(parm == "chunk_size")
+				// {
+				// 	settings.disk_cache_chunk_size = byteSizeParser(value);
+				// 	if(settings.disk_cache_chunk_size == 0)
+				// 	{
+				// 		std::cerr << "Invalid argument for streamparms chunk_size: " << value << std::endl;
+				// 		return 1;
+				// 	}
+				// }
 				else
 				{
 					std::cerr << "Unknown streamingparms argument " << parm << std::endl;
