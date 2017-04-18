@@ -136,32 +136,23 @@ std::string MainWindow::getAboutText()
 	"=============\n"
 	"             About\n"
 	"=============\n"
-	"\n"
-	"DrumGizmo is an open source, multichannel, multilayered, cross-platform\n"
-	"drum plugin and stand-alone application. It enables you to compose drums\n"
-	"in midi and mix them with a multichannel approach. It is comparable to\n"
-	"that of mixing a real drumkit that has been recorded with a multimic setup.\n"
-	"\n"
 	"\n");
+	about_text.append(about.data());
 
 	// Authors
 	about_text.append(
+	"\n"
+	"\n"
 	"=============\n"
 	"            Authors\n"
 	"=============\n"
-	"\n"
-	"Bent Bisballe Nyeng\n"
-	"Jonas Suhr Cristensen\n"
-	"Lars Muldjord\n"
-	"Andre Nusser\n"
-	"Christian Gloeckner\n"
-	"Goran Mekic\n"
-	"... and others.\n"
-	"\n"
 	"\n");
+	about_text.append(authors.data());
 
 	// GPL
 	about_text.append(
+	"\n"
+	"\n"
 	"=============\n"
 	"            License\n"
 	"=============\n"

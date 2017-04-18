@@ -85,6 +85,8 @@ private:
 
 	bool closing{false};
 
+	Resource about{":../../ABOUT"};
+	Resource authors{":../../AUTHORS"};
 	Resource gpl{":../../COPYING"};
 
 	Font font;
