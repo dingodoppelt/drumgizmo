@@ -73,7 +73,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 			auto closeEvent = std::make_shared<CloseEvent>();
 			native->event_queue.push_back(closeEvent);
 		}
-		break;
+		return 0; // Do not call DefWindowProc for this event.
 //		HWND child, old;
 //		old	= 0;
 
