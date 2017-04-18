@@ -139,6 +139,16 @@ std::string MainWindow::getAboutText()
 	"\n");
 	about_text.append(about.data());
 
+	// Version
+	about_text.append(
+	"\n"
+	"\n"
+	"=============\n"
+	"            Version\n"
+	"=============\n"
+	"\n");
+	about_text.append(std::string(VERSION) + "\n");
+
 	// Authors
 	about_text.append(
 	"\n"
