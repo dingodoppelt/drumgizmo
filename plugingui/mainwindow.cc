@@ -56,7 +56,6 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	tabs.addTab("About", &about_text_field);
 
 	about_text_field.setText(getAboutText());
-	about_text_field.adaptTextOnResize(true);
 	about_text_field.setReadOnly(true);
 }
 
@@ -118,7 +117,6 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
-	about_text_field.preprocessText();
 	tabs.resize(width - 2 * 16, height);
 }
 

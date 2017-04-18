@@ -56,12 +56,6 @@ void TextEdit::resize(std::size_t width, std::size_t height)
 	Widget::resize(width, height);
 	scroll.resize(scroll.width(), height - 14);
 	scroll.move(width - 23, 7);
-
-	// TODO: This might be bad for performance. Improve at some point.
-	if (adapt_text_on_resize)
-	{
-		preprocessText();
-	}
 }
 
 void TextEdit::setReadOnly(bool readonly)
@@ -86,11 +80,6 @@ void TextEdit::setText(const std::string& text)
 std::string TextEdit::text()
 {
 	return _text;
-}
-
-void TextEdit::adaptTextOnResize(bool adapt)
-{
-	adapt_text_on_resize = adapt;
 }
 
 void TextEdit::preprocessText()
