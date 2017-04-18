@@ -367,7 +367,9 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
 	                        "DGBasisWidget",
-	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) | WS_VISIBLE,
+	                        native_window?
+	                        (WS_CHILD | WS_VISIBLE):
+	                        WS_OVERLAPPEDWINDOW,
 	                        0, 0, //window.x(), window.y(),
 	                        1, 1, //window.width(), window.height(),
 	                        parent_window, nullptr,
