@@ -55,7 +55,7 @@ AudioFile::~AudioFile()
 
 bool AudioFile::isValid() const
 {
-	assert(this == magic);
+	//assert(this == magic);
 	return this == magic;
 }
 
