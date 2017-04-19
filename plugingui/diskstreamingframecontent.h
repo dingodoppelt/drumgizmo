@@ -53,7 +53,7 @@ private:
 	void reloadClicked();
 
 	// For now the maximum disk streaming limit is 4GB
-	static constexpr std::size_t max_limit = 1024.0 * 1024.0 * 1024.0 * 4.0;
+	static constexpr std::size_t max_limit = 1024.0 * 1024.0 * 1024.0 * 4.0 - 1;
 
 	Label label_text{this};
 	Label label_size{this};
