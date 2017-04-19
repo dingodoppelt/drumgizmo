@@ -81,16 +81,16 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 	label_size.resize(slider_width, 15);
 }
 
-void DiskstreamingframeContent::limitSettingsValueChanged(float value)
+void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 {
 	int value_in_mb = value/(1024 * 1024);
 	label_size.setText(std::to_string(value_in_mb) + " MB");
-	slider.setValue(value);
+	slider.setValue((float)value/max_limit);
 }
 
 void DiskstreamingframeContent::limitValueChanged(float value)
 {
-	settings.disk_cache_upper_limit.store(value);
+	settings.disk_cache_upper_limit.store(value * max_limit);
 }
 
 void DiskstreamingframeContent::reloadClicked()

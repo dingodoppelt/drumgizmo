@@ -48,9 +48,12 @@ public:
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	void limitSettingsValueChanged(float value);
+	void limitSettingsValueChanged(std::size_t value);
 	void limitValueChanged(float value);
 	void reloadClicked();
+
+	// For now the maximum disk streaming limit is 4GB
+	static constexpr std::size_t max_limit = 1024.0 * 1024.0 * 1024.0 * 4.0;
 
 	Label label_text{this};
 	Label label_size{this};

@@ -34,8 +34,6 @@
 namespace GUI
 {
 
-static constexpr float _4GB = 1024.0 * 1024.0 * 1024.0 * 4.0;
-
 Slider::Slider(Widget* parent) : Widget(parent)
 {
 	state = State::up;
@@ -47,10 +45,12 @@ Slider::Slider(Widget* parent) : Widget(parent)
 
 void Slider::setValue(float new_value)
 {
-	current_value = new_value / (float)_4GB; // TODO: Scale to [0, 1] range
+	// TODO make sure that we get values in range [0, 1]
+
+	current_value = new_value;
 	redraw();
 	clickNotifier();
-	valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
+	valueChangedNotifier(current_value);
 }
 
 float Slider::value() const
@@ -109,6 +109,7 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 
 		redraw();
 		clickNotifier();
+		valueChangedNotifier(current_value);
 	}
 
 	if(buttonEvent->direction == Direction::up)
@@ -118,6 +119,7 @@ void Slider::buttonEvent(ButtonEvent* buttonEvent)
 
 		redraw();
 		clickNotifier();
+		valueChangedNotifier(current_value);
 	}
 }
 
@@ -129,7 +131,7 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 		redraw();
 		clickNotifier();
-		valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
+		valueChangedNotifier(current_value);
 	}
 }
 
@@ -146,7 +148,7 @@ void Slider::scrollEvent(ScrollEvent* scrollEvent)
 
 	redraw();
 	clickNotifier();
-	valueChangedNotifier(current_value * _4GB); // TODO: Scale up to full range
+	valueChangedNotifier(current_value);
 }
 
 std::size_t Slider::getControlWidth() const
@@ -167,7 +169,7 @@ void Slider::recomputeCurrentValue(float x)
 	}
 	else
 	{
-		current_value = (maximum / getControlWidth()) * (x - button_offset);
+		current_value = (x - button_offset) / getControlWidth();
 	}
 
 	if (current_value < 0.)
