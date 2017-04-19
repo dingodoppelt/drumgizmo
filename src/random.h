@@ -58,10 +58,6 @@ private:
 	std::minstd_rand0 generator;
 
 	float generateFloat();
-
-	// variables for normalDistribution
-	bool has_saved_value = false;
-	float saved_value;
 };
 
 template <typename T>

@@ -103,28 +103,18 @@ float Random::floatInRange(float lower_bound, float upper_bound)
 // https://en.wikipedia.org/wiki/Marsaglia_polar_method
 float Random::normalDistribution(float mean, float stddev)
 {
-	if (has_saved_value)
+	float u, v, s;
+	do
 	{
-		has_saved_value = false;
-		return saved_value * stddev + mean;
+		u = 2.0*generateFloat() - 1.0;
+		v = 2.0*generateFloat() - 1.0;
+		s = (u * u) + (v * v);
 	}
-	else
-	{
-		float u, v, s;
-		do
-		{
-			u = 2.0f*generateFloat() - 1;
-			v = 2.0f*generateFloat() - 1;
-			s = (u * u) + (v * v);
-		}
-		while (s > 1.0f || s == 0.0f);
+	while (s > 1.0 || s == 0.0);
 
-		s = std::sqrt(-2*std::log(s) / s);
-		saved_value = u * s;
-		has_saved_value = true;
+	s = std::sqrt(-2*std::log(s) / s);
 
-		return mean + stddev * (v * s);
-	}
+	return stddev * (v * s) + mean;
 }
 
 float Random::generateFloat()
