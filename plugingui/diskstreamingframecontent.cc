@@ -42,7 +42,7 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 	label_text.setText("Cache limit (max memory usage):");
 	label_text.setAlignment(TextAlignment::center);
 
-	button.setText("Apply"); // TODO connect
+	button.setText("Apply");
 
 	label_size.setText("0 MB");
 	label_size.setAlignment(TextAlignment::center);

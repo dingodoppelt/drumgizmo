@@ -45,9 +45,15 @@ Slider::Slider(Widget* parent) : Widget(parent)
 
 void Slider::setValue(float new_value)
 {
-	// TODO make sure that we get values in range [0, 1]
-
 	current_value = new_value;
+	if (current_value < 0.)
+	{
+		current_value = 0.;
+	}
+	else if (current_value > 1.0) {
+		current_value = 1.0;
+	}
+
 	redraw();
 	clickNotifier();
 	valueChangedNotifier(current_value);
