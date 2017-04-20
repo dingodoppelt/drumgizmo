@@ -92,9 +92,11 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 	if (new_slider_value < 0.99) {
 		int value_in_mb = value/(1024 * 1024);
 		label_size.setText(std::to_string(value_in_mb) + " MB");
+		slider.setColour(Slider::Colour::Blue);
 	}
 	else {
 		label_size.setText("Unlimited");
+		slider.setColour(Slider::Colour::Green);
 	}
 
 	button.setEnabled(true);
