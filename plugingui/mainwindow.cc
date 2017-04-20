@@ -104,7 +104,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	std::string version_string("v." + std::string(VERSION));
 	auto version_x = width() - font.textWidth(version_string) - sidebar.width() - 1;
 	auto version_y = height() - 1;
-	painter.setColour(Colour(0.4));
+	painter.setColour(Colour(0.47));
 	painter.drawText(version_x, version_y, font, version_string);
 
 	// Topbar above the sidebars
