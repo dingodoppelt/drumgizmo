@@ -28,6 +28,8 @@
 
 #include <settings.h>
 
+#include <limits>
+
 namespace GUI
 {
 
@@ -83,19 +85,34 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 
 void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 {
-	int value_in_mb = value/(1024 * 1024);
-	label_size.setText(std::to_string(value_in_mb) + " MB");
-	slider.setValue((float)value/max_limit);
+	float new_slider_value = (float)value/max_limit;
+	slider.setValue(new_slider_value);
+
+	if (new_slider_value < 0.99) {
+		int value_in_mb = value/(1024 * 1024);
+		label_size.setText(std::to_string(value_in_mb) + " MB");
+	}
+	else {
+		label_size.setText("Unlimited");
+	}
+
+	// TODO: un-grayout "Apply" button
 }
 
 void DiskstreamingframeContent::limitValueChanged(float value)
 {
-	settings.disk_cache_upper_limit.store(value * max_limit);
+	std::size_t new_limit = value < 0.99 ?
+		value * max_limit :
+		std::numeric_limits<std::size_t>::max();
+
+	settings.disk_cache_upper_limit.store(new_limit);
 }
 
 void DiskstreamingframeContent::reloadClicked()
 {
 	settings.reload_counter++;
+
+	// TODO: grayout "Apply" button
 }
 
 

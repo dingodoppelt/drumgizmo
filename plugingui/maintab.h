@@ -59,7 +59,7 @@ private:
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};
 	FrameWidget humanizer_frame{this, true};
-	FrameWidget diskstreaming_frame{this, true};
+	FrameWidget diskstreaming_frame{this, false};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content{this};
