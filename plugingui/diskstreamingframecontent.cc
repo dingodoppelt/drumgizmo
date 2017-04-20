@@ -70,12 +70,14 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
+	std::size_t slider_button_gap = 10;
+
 	slider_width = 0.8 * width;
-	button_width = width - slider_width;
+	button_width = width - slider_width - slider_button_gap;
 
 	label_text.move(0, 0);
 	slider.move(0, 20);
-	button.move(slider_width, 10);
+	button.move(slider_width + slider_button_gap, 10);
 	label_size.move(0, 40);
 
 	label_text.resize(slider_width, 15);

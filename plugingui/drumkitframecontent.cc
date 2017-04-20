@@ -39,6 +39,7 @@ BrowseFile::BrowseFile(Widget* parent)
 {
 	layout.setResizeChildren(false);
 	layout.setVAlignment(VAlignment::center);
+	layout.setSpacing(gap);
 
 	layout.addItem(&lineedit);
 	layout.addItem(&browse_button);
@@ -50,8 +51,8 @@ void BrowseFile::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
-	lineedit_width = 0.72 * width;
-	button_width = width - lineedit_width;
+	lineedit_width = 0.72 * width - gap;
+	button_width = width - lineedit_width - gap;
 
 	lineedit.resize(lineedit_width, 29);
 	browse_button.resize(button_width, 30);

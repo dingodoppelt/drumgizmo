@@ -63,6 +63,7 @@ private:
 
 	std::size_t lineedit_width;
 	std::size_t button_width;
+	std::size_t gap{10};
 };
 
 class DrumkitframeContent
