@@ -77,7 +77,7 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 		box_grey.setSize(w - padLeft, h - padTop);
 		p.drawImage(padLeft, padTop, box_grey);
 
-		p.setColour(Colour(0.3));
+		p.setColour(Colour(0.55));
 	}
 
 	auto x = (w / 2) - (3 * text.length()) + (draw_state == State::Up ? 0 : 1) +
