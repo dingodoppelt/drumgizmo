@@ -63,7 +63,7 @@ public:
 	void testDrawImage()
 	{
 		// Success criterion is simply to not assert in the drawing routines...
-		GUI::Image image(":logo.png");
+		GUI::Image image(":resources/logo.png");
 
 		{ // Image fits in pixelbuffer
 			TestableCanvas canvas(image.width(), image.height());

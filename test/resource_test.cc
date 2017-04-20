@@ -67,7 +67,7 @@ public:
 
 	void internalReadTest()
 	{
-		ResourceTester rc(":bg.png");
+		ResourceTester rc(":resources/bg.png");
 		CPPUNIT_ASSERT(rc.probeIsInternal());
 		CPPUNIT_ASSERT(rc.valid());
 		CPPUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
