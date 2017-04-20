@@ -47,6 +47,9 @@ public:
 
 	void setText(const std::string& text);
 
+	void setEnabled(bool enabled);
+	bool isEnabled() const;
+
 	Notifier<> clickNotifier;
 
 protected:
@@ -58,6 +61,7 @@ protected:
 	virtual void mouseLeaveEvent() override;
 	virtual void mouseEnterEvent() override;
 
+	bool enabled{true};
 	bool in_button{false};
 
 	enum class State {

@@ -45,6 +45,7 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 	label_text.setAlignment(TextAlignment::center);
 
 	button.setText("Apply");
+	button.setEnabled(false);
 
 	label_size.setText("0 MB");
 	label_size.setAlignment(TextAlignment::center);
@@ -96,7 +97,7 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 		label_size.setText("Unlimited");
 	}
 
-	// TODO: un-grayout "Apply" button
+	button.setEnabled(true);
 }
 
 void DiskstreamingframeContent::limitValueChanged(float value)
@@ -112,7 +113,7 @@ void DiskstreamingframeContent::reloadClicked()
 {
 	settings.reload_counter++;
 
-	// TODO: grayout "Apply" button
+	button.setEnabled(false);
 }
 
 

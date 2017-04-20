@@ -45,13 +45,18 @@ protected:
 private:
 	TexturedBox box_up{getImageCache(), ":pushbutton.png",
 			0, 0, // atlas offset (x, y)
-			11, 1, 11, // dx1, dx2, dx3
-			10, 72, 12}; // dy1, dy2, dy3
+			7, 1, 7, // dx1, dx2, dx3
+			6, 12, 9}; // dy1, dy2, dy3
 
 	TexturedBox box_down{getImageCache(), ":pushbutton.png",
-			23, 0, // atlas offset (x, y)
-			11, 1, 11, // dx1, dx2, dx3
-			10, 72, 12}; // dy1, dy2, dy3
+			15, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			6, 12, 9}; // dy1, dy2, dy3
+
+	TexturedBox box_grey{getImageCache(), ":pushbutton.png",
+			30, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			6, 12, 9}; // dy1, dy2, dy3
 
 	Font font{":fontemboss.png"};
 };

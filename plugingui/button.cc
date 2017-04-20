@@ -59,24 +59,31 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 		return;
 	}
 
-	switch(draw_state)
-	{
-	case State::Up:
-		box_up.setSize(w - padLeft, h - padTop);
-		p.drawImage(padLeft, padTop, box_up);
-		break;
+	if (enabled) {
+		switch(draw_state)
+		{
+		case State::Up:
+			box_up.setSize(w - padLeft, h - padTop);
+			p.drawImage(padLeft, padTop, box_up);
+			break;
 
-	case State::Down:
-		box_down.setSize(w - padLeft, h - padTop);
-		p.drawImage(padLeft, padTop, box_down);
-		break;
+		case State::Down:
+			box_down.setSize(w - padLeft, h - padTop);
+			p.drawImage(padLeft, padTop, box_down);
+			break;
+		}
+	}
+	else {
+		box_grey.setSize(w - padLeft, h - padTop);
+		p.drawImage(padLeft, padTop, box_grey);
+
+		p.setColour(Colour(0.3));
 	}
 
-	p.setColour(Colour(0.1));
 	auto x = (w / 2) - (3 * text.length()) + (draw_state == State::Up ? 0 : 1) +
 	         (padLeft / 2);
 	auto y = (h / 2) + 5 + 1 + (draw_state == State::Up ? 0 : 1) + (padTop / 2);
-	p.drawText(x, y, font, text, true);
+	p.drawText(x, y, font, text, enabled);
 }
 
 } // GUI::

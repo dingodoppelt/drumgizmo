@@ -42,7 +42,7 @@ ButtonBase::~ButtonBase()
 void ButtonBase::buttonEvent(ButtonEvent* buttonEvent)
 {
 	// Ignore everything except left clicks.
-	if(buttonEvent->button != MouseButton::left)
+	if(!enabled || buttonEvent->button != MouseButton::left)
 	{
 		return;
 	}
@@ -74,8 +74,23 @@ void ButtonBase::setText(const std::string& text)
 	redraw();
 }
 
+void ButtonBase::setEnabled(bool enabled)
+{
+	this->enabled = enabled;
+	redraw();
+}
+
+bool ButtonBase::isEnabled() const
+{
+	return enabled;
+}
+
 void ButtonBase::mouseLeaveEvent()
 {
+	if (!enabled) {
+		return;
+	}
+
 	in_button = false;
 	if(button_state == State::Down)
 	{
@@ -86,6 +101,10 @@ void ButtonBase::mouseLeaveEvent()
 
 void ButtonBase::mouseEnterEvent()
 {
+	if (!enabled) {
+		return;
+	}
+
 	in_button = true;
 	if(button_state == State::Down)
 	{
