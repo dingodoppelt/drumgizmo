@@ -84,6 +84,8 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 	slider.resize(slider_width, 15);
 	button.resize(button_width, 30);
 	label_size.resize(slider_width, 15);
+
+	button.setEnabled(false);
 }
 
 void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
