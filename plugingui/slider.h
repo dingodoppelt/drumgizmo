@@ -79,29 +79,29 @@ private:
 
 	State state;
 
-	TexturedBox bar{getImageCache(), ":slider.png",
+	TexturedBox bar{getImageCache(), ":resources/slider.png",
 		0, 0, // atlas offset (x, y)
 	    7, 1, 7, // dx1, dx2, dx3
 	    7, 1, 7 // dy1, dy2, dy3
 	};
-	TexturedBox inner_bar_green{getImageCache(), ":slider.png",
+	TexturedBox inner_bar_green{getImageCache(), ":resources/slider.png",
 		30, 0, // atlas offset (x, y)
 		2, 1, 2, // dx1, dx2, dx3
 		2, 1, 2 // dy1, dy2, dy3
 	};
-	TexturedBox inner_bar_red{getImageCache(), ":slider.png",
+	TexturedBox inner_bar_red{getImageCache(), ":resources/slider.png",
 		30, 5, // atlas offset (x, y)
 		2, 1, 2, // dx1, dx2, dx3
 		2, 1, 2 // dy1, dy2, dy3
 	};
-	TexturedBox inner_bar_blue{getImageCache(), ":slider.png",
+	TexturedBox inner_bar_blue{getImageCache(), ":resources/slider.png",
 		30, 10, // atlas offset (x, y)
 		2, 1, 2, // dx1, dx2, dx3
 		2, 1, 2 // dy1, dy2, dy3
 	};
 
 	Texture button{
-	    getImageCache(), ":slider.png", 15, 0, // atlas offset (x, y)
+	    getImageCache(), ":resources/slider.png", 15, 0, // atlas offset (x, y)
 	    15, 15                                 // width, height
 	};
 

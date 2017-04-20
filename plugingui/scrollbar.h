@@ -68,7 +68,7 @@ private:
 	int valueOffset{0};
 	bool dragging{false};
 
-	Texture bg_img{getImageCache(), ":widget.png", 7, 7, 1, 63};
+	Texture bg_img{getImageCache(), ":resources/widget.png", 7, 7, 1, 63};
 };
 
 } // GUI::

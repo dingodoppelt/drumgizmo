@@ -78,7 +78,7 @@ protected:
 
 	ScrollBar scroll;
 
-	Texture bg_img{getImageCache(), ":widget.png", 7, 7, 1, 63};
+	Texture bg_img{getImageCache(), ":resources/widget.png", 7, 7, 1, 63};
 
 	void setSelection(int index);
 

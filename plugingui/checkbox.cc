@@ -33,9 +33,9 @@ namespace GUI
 
 CheckBox::CheckBox(Widget* parent)
     : Toggle(parent)
-    , bg_on(getImageCache(), ":switch_back_on.png")
-    , bg_off(getImageCache(), ":switch_back_off.png")
-    , knob(getImageCache(), ":switch_front.png")
+    , bg_on(getImageCache(), ":resources/switch_back_on.png")
+    , bg_off(getImageCache(), ":resources/switch_back_off.png")
+    , knob(getImageCache(), ":resources/switch_front.png")
 {
 }
 

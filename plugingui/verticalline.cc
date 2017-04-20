@@ -32,7 +32,7 @@ namespace GUI {
 
 VerticalLine::VerticalLine(Widget *parent)
 	: Widget(parent)
-	, vline(":vertline.png")
+	, vline(":resources/vertline.png")
 {
 }
 

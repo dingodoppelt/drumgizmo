@@ -1,8 +1,33 @@
 noinst_PROGRAMS = plugingui rcgen
 noinst_LTLIBRARIES = libdggui.la
 
-resource_data.cc : rcgen
-	(cd resources; ../rcgen * ../../ABOUT ../../AUTHORS ../../COPYING > ../resource_data.cc)
+RES = \
+	resources/bg.png \
+	resources/bypass_button.png \
+	resources/font.png \
+	resources/fontemboss.png \
+	resources/knob.png \
+	resources/logo.png \
+	resources/png_error \
+	resources/progress.png \
+	resources/pushbutton.png \
+	resources/sidebar.png \
+	resources/slider.png \
+	resources/switch_back_off.png \
+	resources/switch_back_on.png \
+	resources/switch_front.png \
+	resources/tab.png \
+	resources/thinlistbox.png \
+	resources/topbar.png \
+	resources/toplogo.png \
+	resources/vertline.png \
+	resources/widget.png \
+	../ABOUT \
+	../AUTHORS \
+	../COPYING
+
+resource_data.cc : rcgen $(RES)
+	./rcgen $(RES) > resource_data.cc
 
 libdggui_la_CPPFLAGS = \
 	$(GUI_CPPFLAGS) \

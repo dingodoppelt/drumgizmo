@@ -42,7 +42,7 @@ namespace GUI
 
 Knob::Knob(Widget *parent)
 	: Widget(parent)
-	, img_knob(getImageCache(), ":knob.png")
+	, img_knob(getImageCache(), ":resources/knob.png")
 {
 	state = up;
 

@@ -59,17 +59,17 @@ private:
 	Widget* tab_widget;
 	bool active{false};
 
-	TexturedBox tab_active{getImageCache(), ":tab.png",
+	TexturedBox tab_active{getImageCache(), ":resources/tab.png",
 			0, 0, // atlas offset (x, y)
 			5, 1, 5, // dx1, dx2, dx3
 			5, 13, 1}; // dy1, dy2, dy3
 
-	TexturedBox tab_passive{getImageCache(), ":tab.png",
+	TexturedBox tab_passive{getImageCache(), ":resources/tab.png",
 			11, 0, // atlas offset (x, y)
 			5, 1, 5, // dx1, dx2, dx3
 			5, 13, 1}; // dy1, dy2, dy3
 
-	Font font{":fontemboss.png"};
+	Font font{":resources/fontemboss.png"};
 };
 
 } // GUI::

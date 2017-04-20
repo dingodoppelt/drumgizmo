@@ -66,7 +66,7 @@ public:
 private:
 	ListBoxBasic basic;
 
-	TexturedBox box{getImageCache(), ":thinlistbox.png",
+	TexturedBox box{getImageCache(), ":resources/thinlistbox.png",
 			0, 0, // atlas offset (x, y)
 			1, 1, 1, // dx1, dx2, dx3
 			1, 1, 1}; // dy1, dy2, dy3

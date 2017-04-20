@@ -72,24 +72,24 @@ private:
 	MainTab main_tab;
 	TextEdit about_text_field{&tabs};
 
-	Image back{":bg.png"};
-	Image logo{":logo.png"};
+	Image back{":resources/bg.png"};
+	Image logo{":resources/logo.png"};
 
-	TexturedBox sidebar{getImageCache(), ":sidebar.png",
+	TexturedBox sidebar{getImageCache(), ":resources/sidebar.png",
 			0, 0, // offset
 			16, 0, 0, // delta-x
 			14, 1, 14}; // delta-y
 
-	TexturedBox topbar{getImageCache(), ":topbar.png",
+	TexturedBox topbar{getImageCache(), ":resources/topbar.png",
 			0, 0, // atlas offset (x, y)
 			1, 1, 1, // dx1, dx2, dx3
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
 
-	Resource about{":../../ABOUT"};
-	Resource authors{":../../AUTHORS"};
-	Resource gpl{":../../COPYING"};
+	Resource about{":../ABOUT"};
+	Resource authors{":../AUTHORS"};
+	Resource gpl{":../COPYING"};
 
 	Font font;
 };

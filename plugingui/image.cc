@@ -80,7 +80,7 @@ Image& Image::operator=(Image&& other)
 
 void Image::setError()
 {
-	Resource rc(":png_error");
+	Resource rc(":resources/png_error");
 
 	const unsigned char* ptr = (const unsigned char*)rc.data();
 

@@ -36,7 +36,7 @@ namespace GUI {
 
 class Font {
 public:
-	Font(const std::string& fontfile = ":font.png");
+	Font(const std::string& fontfile = ":resources/font.png");
 
 	size_t textWidth(const std::string& text) const;
 	size_t textHeight(const std::string& text = "") const;

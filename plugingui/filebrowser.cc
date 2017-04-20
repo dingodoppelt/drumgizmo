@@ -57,7 +57,7 @@ FileBrowser::FileBrowser(Widget* parent)
 	, listbox(this)
 	, btn_sel(this)
 	, btn_esc(this)
-	, back(":bg.png")
+	, back(":resources/bg.png")
 {
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	above_root = false;

@@ -58,7 +58,7 @@ protected:
 
 private:
 	std::string _text;
-	Font font{":fontemboss.png"};
+	Font font{":resources/fontemboss.png"};
 	TextAlignment alignment{TextAlignment::left};
 	int border{0};
 

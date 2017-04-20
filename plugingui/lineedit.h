@@ -62,7 +62,7 @@ protected:
 	virtual void textChanged() {}
 
 private:
-	TexturedBox box{getImageCache(), ":widget.png",
+	TexturedBox box{getImageCache(), ":resources/widget.png",
 			0, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			7, 63, 7}; // dy1, dy2, dy3

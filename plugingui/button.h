@@ -43,22 +43,22 @@ protected:
 	virtual void repaintEvent(RepaintEvent* e) override;
 
 private:
-	TexturedBox box_up{getImageCache(), ":pushbutton.png",
+	TexturedBox box_up{getImageCache(), ":resources/pushbutton.png",
 			0, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			6, 12, 9}; // dy1, dy2, dy3
 
-	TexturedBox box_down{getImageCache(), ":pushbutton.png",
+	TexturedBox box_down{getImageCache(), ":resources/pushbutton.png",
 			15, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			6, 12, 9}; // dy1, dy2, dy3
 
-	TexturedBox box_grey{getImageCache(), ":pushbutton.png",
+	TexturedBox box_grey{getImageCache(), ":resources/pushbutton.png",
 			30, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			6, 12, 9}; // dy1, dy2, dy3
 
-	Font font{":fontemboss.png"};
+	Font font{":resources/fontemboss.png"};
 };
 
 } // GUI::
