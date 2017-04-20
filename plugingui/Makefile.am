@@ -1,6 +1,7 @@
 noinst_PROGRAMS = plugingui rcgen
 noinst_LTLIBRARIES = libdggui.la
 
+# If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 RES = \
 	resources/bg.png \
 	resources/bypass_button.png \
@@ -44,6 +45,7 @@ libdggui_la_CPPFLAGS = \
 libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
+# If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdggui_la_SOURCES = \
 	button.cc \
 	button_base.cc \

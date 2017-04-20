@@ -128,9 +128,34 @@ SRC = \
 	@top_srcdir@/plugin/plugingizmo/pluginvst.cc \
 	drumgizmo_plugin.cc
 
+RES = \
+	resources/bg.png \
+	resources/bypass_button.png \
+	resources/font.png \
+	resources/fontemboss.png \
+	resources/knob.png \
+	resources/logo.png \
+	resources/png_error \
+	resources/progress.png \
+	resources/pushbutton.png \
+	resources/sidebar.png \
+	resources/slider.png \
+	resources/switch_back_off.png \
+	resources/switch_back_on.png \
+	resources/switch_front.png \
+	resources/tab.png \
+	resources/thinlistbox.png \
+	resources/topbar.png \
+	resources/toplogo.png \
+	resources/vertline.png \
+	resources/widget.png \
+	../ABOUT \
+	../AUTHORS \
+	../COPYING
+
 all:
 	g++ @top_srcdir@/plugingui/rcgen.cc -o @top_srcdir@/plugingui/rcgen
-	(cd @top_srcdir@/plugingui/resources; ../rcgen * > ../resource_data.cc)
+	(cd @top_srcdir@/plugingui; ./rcgen $(RES) > resource_data.cc)
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
 	g++ $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(SRC_CFLAGS) $(ZITA_CXXFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) $(ZITA_LIBS) -shared -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a

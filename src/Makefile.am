@@ -10,6 +10,7 @@ libdg_la_LIBADD = \
 	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS) \
 	$(PTHREAD_LIBS)
 
+# If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdg_la_SOURCES = \
 	audiocachefile.cc \
 	audiocache.cc \
