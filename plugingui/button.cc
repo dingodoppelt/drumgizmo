@@ -51,6 +51,7 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 
 	int padTop = 3;
 	int padLeft = 0;
+	int padTextTop = 3;
 
 	int w = width();
 	int h = height();
@@ -80,9 +81,8 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 		p.setColour(Colour(0.55));
 	}
 
-	auto x = (w / 2) - (3 * text.length()) + (draw_state == State::Up ? 0 : 1) +
-	         (padLeft / 2);
-	auto y = (h / 2) + 5 + 1 + (draw_state == State::Up ? 0 : 1) + (padTop / 2);
+	auto x = padLeft + (width() - font.textWidth(text)) / 2;
+	auto y = padTop + padTextTop + font.textHeight(text);
 	p.drawText(x, y, font, text, enabled);
 }
 

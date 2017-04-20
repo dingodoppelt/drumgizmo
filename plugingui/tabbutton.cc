@@ -85,6 +85,7 @@ void TabButton::repaintEvent(RepaintEvent* e)
 
 	int padTop = 3;
 	int padLeft = 0;
+	int padTextTop = 3;
 
 	int w = width();
 	int h = height();
@@ -102,11 +103,9 @@ void TabButton::repaintEvent(RepaintEvent* e)
 		p.drawImage(padLeft, padTop, tab_active);
 	}
 
-	p.setColour(Colour(0.1));
-	// FIXME: fix all the magic values here
-	auto x = (width() / 2) - (3 * text.length()) + (padLeft / 2);
-	auto y = (height() / 2) + 5 + 1 + (padTop / 2);
-	p.drawText(x, y + 4, font, text, true);
+	auto x = padLeft + (width() - font.textWidth(text)) / 2;
+	auto y = padTop + padTextTop + font.textHeight(text);
+	p.drawText(x, y, font, text, true);
 }
 
 void TabButton::clickHandler()
