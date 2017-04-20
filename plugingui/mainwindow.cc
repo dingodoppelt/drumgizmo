@@ -98,13 +98,13 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 	// DrumGizmo logo
 	painter.drawImage(width() - logo.width() - 16,
-	                  height() - logo.height() - 10, logo);
+	                  height() - logo.height(), logo);
 
 	// DrumGizmo version
 	std::string version_string("v." + std::string(VERSION));
-	auto version_x = width() - font.textWidth(version_string) - sidebar.width() - 5;
-	auto version_y = height() - 5;
-	painter.setColour(Colour(0.18));
+	auto version_x = width() - font.textWidth(version_string) - sidebar.width();
+	auto version_y = height();
+	painter.setColour(Colour(0.4));
 	painter.drawText(version_x, version_y, font, version_string);
 
 	// Topbar above the sidebars
