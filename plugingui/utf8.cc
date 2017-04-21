@@ -26,6 +26,9 @@
  */
 #include "utf8.h"
 
+// Disable clang encoding warnings for creation of this map.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-source-encoding"
 UTF8::UTF8()
 {
 	// Encode Map
@@ -290,6 +293,7 @@ UTF8::UTF8()
 	// FIXME: This is just a hack to make Goran Mekic's name work.
 	map_decode["Ä\x87"] = "c";
 }
+#pragma clang diagnostic pop
 
 std::string UTF8::fromLatin1(std::string const& s)
 {
