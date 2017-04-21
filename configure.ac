@@ -122,7 +122,7 @@ dnl Set up debug compile args if the user requested it
 dnl ===========================
 AS_IF([test "x$with_debug" == "xyes"],
       [AC_MSG_WARN([*** Building with debug support!])
-	     CXXFLAGS="$CXXFLAGS -Wall -Werror -Wno-invalid-source-encoding -g $NO_UNDEFINED_PARAM"
+	     CXXFLAGS="$CXXFLAGS -Wall -Werror -g $NO_UNDEFINED_PARAM"
 	     HUGIN_PARM=""]
 )
 
