@@ -287,6 +287,8 @@ UTF8::UTF8()
   map_decode["Ã½"] = "ý";
   map_decode["Ã¾"] = "þ";
   map_decode["Ã¿"] = "ÿ";
+  // FIXME: This is just a hack to make Goran Mekic's name work.
+  map_decode["Ä‡"] = "c";
 }
 
 std::string UTF8::fromLatin1(std::string const& s)
