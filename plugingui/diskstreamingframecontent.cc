@@ -59,6 +59,9 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 	CONNECT(&button, clickNotifier,
 	        this, &DiskstreamingframeContent::reloadClicked);
 
+	CONNECT(this, settings_notifier.reload_counter,
+	        this, &DiskstreamingframeContent::reloaded);
+
 	// TODO:
 	//	CONNECT(this, settings_notifier.disk_cache_chunk_size,
 	//	        this, &DGWindow::chunkSettingsValueChanged);
@@ -118,9 +121,11 @@ void DiskstreamingframeContent::limitValueChanged(float value)
 void DiskstreamingframeContent::reloadClicked()
 {
 	settings.reload_counter++;
-
-	button.setEnabled(false);
 }
 
+void DiskstreamingframeContent::reloaded(std::size_t)
+{
+	button.setEnabled(false);
+}
 
 } // GUI::

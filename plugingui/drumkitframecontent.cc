@@ -189,6 +189,7 @@ void DrumkitframeContent::selectKitFile(const std::string& filename)
 	config.save();
 
 	settings.drumkit_file.store(filename);
+	settings.reload_counter++;
 }
 
 void DrumkitframeContent::selectMapFile(const std::string& filename)

@@ -51,6 +51,7 @@ private:
 	void limitSettingsValueChanged(std::size_t value);
 	void limitValueChanged(float value);
 	void reloadClicked();
+	void reloaded(std::size_t);
 
 	// For now the maximum disk streaming limit is 4GB
 	static constexpr std::size_t min_limit = 1024.0 * 1024.0 * 32;
