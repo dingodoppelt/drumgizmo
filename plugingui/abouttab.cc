@@ -63,7 +63,6 @@ std::string AboutTab::getAboutText()
 	// Version
 	about_text.append(
 	"\n"
-	"\n"
 	"=============\n"
 	"            Version\n"
 	"=============\n"
@@ -73,7 +72,6 @@ std::string AboutTab::getAboutText()
 	// Authors
 	about_text.append(
 	"\n"
-	"\n"
 	"=============\n"
 	"            Authors\n"
 	"=============\n"
@@ -82,7 +80,6 @@ std::string AboutTab::getAboutText()
 
 	// GPL
 	about_text.append(
-	"\n"
 	"\n"
 	"=============\n"
 	"            License\n"
