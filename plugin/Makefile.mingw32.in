@@ -91,6 +91,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/texture.cc \
 	@top_srcdir@/plugingui/texturedbox.cc \
 	@top_srcdir@/plugingui/toggle.cc \
+	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/widget.cc \
 	@top_srcdir@/plugingui/window.cc \
