@@ -35,6 +35,7 @@ MainTab::MainTab(Widget* parent,
                  Config& config)
 	: Widget(parent)
 	, drumkitframe_content{this, settings, settings_notifier, config}
+	, statusframe_content{this, settings_notifier}
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
 	, settings(settings)

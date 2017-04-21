@@ -26,8 +26,11 @@
  */
 #pragma once
 
+#include "settings.h"
 #include "textedit.h"
 #include "widget.h"
+
+class SettingsNotifier;
 
 namespace GUI
 {
@@ -35,13 +38,29 @@ namespace GUI
 class StatusframeContent : public Widget
 {
 public:
-	StatusframeContent(Widget* parent);
+	StatusframeContent(Widget* parent, SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
+	void updateContent();
+
+	void updateDrumkitLoadStatus(LoadStatus load_status);
+	void updateMidimapLoadStatus(LoadStatus load_status);
+	void updateSamplerate(double samplerate);
+	void updateResamplingEnabled(bool enable_resampling);
+	void updateNumberOfUnderruns(std::size_t number_of_underruns);
+
 private:
 	TextEdit text_field{this};
+
+	SettingsNotifier& settings_notifier;
+
+	std::string drumkit_load_status;
+	std::string midimap_load_status;
+	std::string samplerate;
+	std::string resampling_enabled;
+	std::string number_of_underruns;
 };
 
 } // GUI::

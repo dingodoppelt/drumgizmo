@@ -62,7 +62,7 @@ private:
 	FrameWidget diskstreaming_frame{this, false};
 
 	DrumkitframeContent drumkitframe_content;
-	StatusframeContent statusframe_content{this};
+	StatusframeContent statusframe_content;
 	HumanizerframeContent humanizerframe_content;
 	DiskstreamingframeContent diskstreamingframe_content;
 
