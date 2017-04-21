@@ -90,7 +90,7 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 
 void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 {
-	float new_slider_value = (float)value/max_limit;
+	float new_slider_value = (float)(value - min_limit)/(max_limit - min_limit);
 	slider.setValue(new_slider_value);
 
 	if (new_slider_value < 0.99) {
@@ -109,7 +109,7 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 void DiskstreamingframeContent::limitValueChanged(float value)
 {
 	std::size_t new_limit = value < 0.99 ?
-		value * max_limit :
+		value * (max_limit - min_limit) + min_limit :
 		std::numeric_limits<std::size_t>::max();
 
 	settings.disk_cache_upper_limit.store(new_limit);
