@@ -71,6 +71,8 @@ Window::Window(void* native_window)
 #endif // !UI_PUGL
 
 	eventhandler = new EventHandler(*native, *this);
+
+	setVisible(true); // The root widget is always visible.
 }
 
 Window::~Window()
@@ -116,11 +118,6 @@ void Window::hide()
 {
 	native->hide();
 	Widget::hide();
-}
-
-bool Window::visible() const
-{
-	return native->visible();
 }
 
 Window* Window::window()

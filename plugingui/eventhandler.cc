@@ -67,7 +67,8 @@ void EventHandler::processEvents()
 	bool block_interaction{false};
 	for(auto dialog : dialogs)
 	{
-		if(dialog->visible())
+		// Check if the dialog nativewindow (not the contained widget) is visible
+		if(dialog->native->visible())
 		{
 			block_interaction |= dialog->isModal();
 			dialog->eventHandler()->processEvents();

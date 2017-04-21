@@ -52,7 +52,6 @@ public:
 	void move(int x, int y) override;
 	void show() override;
 	void hide() override;
-	bool visible() const override;
 	Window* window() override;
 
 	ImageCache& getImageCache() override;
