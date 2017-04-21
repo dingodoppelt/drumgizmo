@@ -30,7 +30,6 @@
 #include <version.h>
 
 #include "painter.h"
-#include "utf8.h"
 
 #include <string>
 
@@ -50,12 +49,8 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	setCaption("DrumGizmo v" VERSION);
 
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
-
 	tabs.addTab("Main", &main_tab);
-	tabs.addTab("About", &about_text_field);
-
-	about_text_field.setText(getAboutText());
-	about_text_field.setReadOnly(true);
+	tabs.addTab("About", &about_tab);
 }
 
 MainWindow::~MainWindow()
@@ -127,51 +122,6 @@ void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 void MainWindow::closeEventHandler()
 {
 	closing = true;
-}
-
-std::string MainWindow::getAboutText()
-{
-	std::string about_text;
-
-	// About
-	about_text.append(
-	"=============\n"
-	"             About\n"
-	"=============\n"
-	"\n");
-	about_text.append(about.data());
-
-	// Version
-	about_text.append(
-	"\n"
-	"\n"
-	"=============\n"
-	"            Version\n"
-	"=============\n"
-	"\n");
-	about_text.append(std::string(VERSION) + "\n");
-
-	// Authors
-	about_text.append(
-	"\n"
-	"\n"
-	"=============\n"
-	"            Authors\n"
-	"=============\n"
-	"\n");
-	about_text.append(UTF8().toLatin1(authors.data()));
-
-	// GPL
-	about_text.append(
-	"\n"
-	"\n"
-	"=============\n"
-	"            License\n"
-	"=============\n"
-	"\n");
-	about_text.append(gpl.data());
-
-	return about_text;
 }
 
 } // GUI::

@@ -28,9 +28,8 @@
 
 #include <settings.h>
 
-#include "frame.h"
+#include "abouttab.h"
 #include "image.h"
-#include "textedit.h"
 #include "tabwidget.h"
 #include "texturedbox.h"
 #include "window.h"
@@ -62,15 +61,12 @@ private:
 	// From Widget
 	void repaintEvent(RepaintEvent* repaintEvent) override final;
 
-	std::string getAboutText();
-
-	TabWidget tabs{this};
-
 	Config config;
 	SettingsNotifier settings_notifier;
 
+	TabWidget tabs{this};
 	MainTab main_tab;
-	TextEdit about_text_field{&tabs};
+	AboutTab about_tab{&tabs};
 
 	Image back{":resources/bg.png"};
 	Image logo{":resources/logo.png"};
@@ -86,10 +82,6 @@ private:
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
-
-	Resource about{":../ABOUT"};
-	Resource authors{":../AUTHORS"};
-	Resource gpl{":../COPYING"};
 
 	Font font;
 };
