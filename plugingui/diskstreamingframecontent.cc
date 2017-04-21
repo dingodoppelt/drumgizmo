@@ -100,7 +100,7 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 	}
 	else {
 		label_size.setText("Unlimited");
-		slider.setColour(Slider::Colour::Green);
+		slider.setColour(Slider::Colour::Grey);
 	}
 
 	button.setEnabled(true);

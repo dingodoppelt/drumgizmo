@@ -53,7 +53,7 @@ public:
 	void setValue(float new_value);
 	float value() const;
 
-	enum class Colour { Green, Red, Blue };
+	enum class Colour { Green, Red, Blue, Yellow, Purple, Grey };
 	// Changes the colour of the inner bar
 	void setColour(Colour colour);
 
@@ -84,6 +84,11 @@ private:
 	    7, 1, 7, // dx1, dx2, dx3
 	    7, 1, 7 // dy1, dy2, dy3
 	};
+	Texture button{
+	    getImageCache(), ":resources/slider.png", 15, 0, // atlas offset (x, y)
+	    15, 15                                 // width, height
+	};
+
 	TexturedBox inner_bar_green{getImageCache(), ":resources/slider.png",
 		30, 0, // atlas offset (x, y)
 		2, 1, 2, // dx1, dx2, dx3
@@ -99,10 +104,20 @@ private:
 		2, 1, 2, // dx1, dx2, dx3
 		2, 1, 2 // dy1, dy2, dy3
 	};
-
-	Texture button{
-	    getImageCache(), ":resources/slider.png", 15, 0, // atlas offset (x, y)
-	    15, 15                                 // width, height
+	TexturedBox inner_bar_yellow{getImageCache(), ":resources/slider.png",
+		35, 0, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
+	TexturedBox inner_bar_purple{getImageCache(), ":resources/slider.png",
+		35, 5, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
+	TexturedBox inner_bar_grey{getImageCache(), ":resources/slider.png",
+		35, 10, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
 	};
 
 	// This points to the inner_bar_* of the current color.

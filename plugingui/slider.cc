@@ -76,6 +76,15 @@ void Slider::setColour(Colour colour)
 	case Colour::Blue:
 		inner_bar = &inner_bar_blue;
 		break;
+	case Colour::Yellow:
+		inner_bar = &inner_bar_yellow;
+		break;
+	case Colour::Purple:
+		inner_bar = &inner_bar_purple;
+		break;
+	case Colour::Grey:
+		inner_bar = &inner_bar_grey;
+		break;
 	}
 }
 
