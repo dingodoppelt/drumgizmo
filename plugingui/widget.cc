@@ -67,11 +67,6 @@ void Widget::hide()
 
 void Widget::setVisible(bool visible)
 {
-	if(_visible == visible)
-	{
-		return;
-	}
-
 	_visible = visible;
 	pixbuf.visible = visible;
 	redraw();
