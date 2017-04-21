@@ -30,6 +30,7 @@
 #include <version.h>
 
 #include "painter.h"
+#include "utf8.h"
 
 #include <string>
 
@@ -158,7 +159,7 @@ std::string MainWindow::getAboutText()
 	"            Authors\n"
 	"=============\n"
 	"\n");
-	about_text.append(authors.data());
+	about_text.append(UTF8().toLatin1(authors.data()));
 
 	// GPL
 	about_text.append(

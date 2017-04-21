@@ -90,6 +90,7 @@ nodist_libdggui_la_SOURCES = \
 	texture.cc \
 	texturedbox.cc \
 	toggle.cc \
+	utf8.cc \
 	verticalline.cc \
 	widget.cc \
 	window.cc \
