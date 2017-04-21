@@ -179,22 +179,22 @@ private:
 	SettingsGetter settingsGetter{settings};
 
 	GUI::ImageCache imageCache;
-	GUI::TexturedBox box{imageCache, ":progress.png",
+	GUI::TexturedBox box{imageCache, ":resources/progress.png",
 			0, 0, // atlas offset (x, y)
 			6, 1, 6, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_red{imageCache, ":progress.png",
+	GUI::TexturedBox bar_red{imageCache, ":resources/progress.png",
 			13, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_green{imageCache, ":progress.png",
+	GUI::TexturedBox bar_green{imageCache, ":resources/progress.png",
 			18, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_blue{imageCache, ":progress.png",
+	GUI::TexturedBox bar_blue{imageCache, ":resources/progress.png",
 			23, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
