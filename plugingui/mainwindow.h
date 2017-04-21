@@ -34,7 +34,6 @@
 #include "texturedbox.h"
 #include "window.h"
 #include "maintab.h"
-#include "font.h"
 #include "pluginconfig.h"
 
 namespace GUI
@@ -69,7 +68,6 @@ private:
 	AboutTab about_tab{&tabs};
 
 	Image back{":resources/bg.png"};
-	Image logo{":resources/logo.png"};
 
 	TexturedBox sidebar{getImageCache(), ":resources/sidebar.png",
 			0, 0, // offset
@@ -82,8 +80,6 @@ private:
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
-
-	Font font;
 };
 
 } // GUI::

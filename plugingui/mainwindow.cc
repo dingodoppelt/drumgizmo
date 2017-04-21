@@ -60,11 +60,6 @@ MainWindow::~MainWindow()
 
 bool MainWindow::processEvents()
 {
-//	if(!initialised)
-//	{
-//		return running;
-//	}
-
 	settings_notifier.evaluate();
 	eventHandler()->processEvents();
 
@@ -86,22 +81,12 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	}
 
 	Painter painter(*this);
+	painter.clear();
 
 	auto bar_height = tabs.getBarHeight();
 
 	// Grey background
 	painter.drawImageStretched(0, 0, back, width(), height());
-
-	// DrumGizmo logo
-	painter.drawImage(width() - logo.width() - sidebar.width(),
-	                  height() - logo.height(), logo);
-
-	// DrumGizmo version
-	std::string version_string("v." + std::string(VERSION));
-	auto version_x = width() - font.textWidth(version_string) - sidebar.width() - 1;
-	auto version_y = height() - 1;
-	painter.setColour(Colour(0.47));
-	painter.drawText(version_x, version_y, font, version_string);
 
 	// Topbar above the sidebars
 	topbar.setSize(16, bar_height);

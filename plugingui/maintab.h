@@ -50,9 +50,14 @@ public:
 	        SettingsNotifier& settings_notifier,
 	        Config& config);
 
+	// From Widget:
+	void resize(std::size_t width, std::size_t height) override;
+
 private:
 	void humanizerOnChange(bool on);
 	void diskStreamingOnChange(bool on);
+
+	Image logo{":resources/logo.png"};
 
 	GridLayout layout{this, 2, 40};
 

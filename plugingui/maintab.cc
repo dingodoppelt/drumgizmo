@@ -74,15 +74,23 @@ MainTab::MainTab(Widget* parent,
 
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
-
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
-
 	CONNECT(this, settings_notifier.disk_cache_enable,
 	        &diskstreaming_frame, &FrameWidget::setOnSwitch);
-
 	CONNECT(&diskstreaming_frame, onSwitchChangeNotifier,
 	        this, &MainTab::diskStreamingOnChange);
+}
+
+void MainTab::resize(std::size_t width, std::size_t height)
+{
+	Widget::resize(width, height);
+
+	// DrumGizmo logo
+	Painter painter(*this);
+	painter.clear();
+
+	painter.drawImage(width - logo.width(), height - logo.height(), logo);
 }
 
 void MainTab::humanizerOnChange(bool on)
