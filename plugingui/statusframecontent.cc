@@ -88,13 +88,13 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		drumkit_load_status = "Idle";
+		drumkit_load_status = "No Kit Loaded";
 		break;
 	case LoadStatus::Loading:
 		drumkit_load_status = "Loading...";
 		break;
 	case LoadStatus::Done:
-		drumkit_load_status = "Done";
+		drumkit_load_status = "Ready";
 		break;
 	case LoadStatus::Error:
 		drumkit_load_status = "Error";
@@ -139,13 +139,13 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		midimap_load_status = "Idle";
+		midimap_load_status = "No Midimap Loaded";
 		break;
 	case LoadStatus::Loading:
 		midimap_load_status = "Loading...";
 		break;
 	case LoadStatus::Done:
-		midimap_load_status = "Done";
+		midimap_load_status = "Ready";
 		break;
 	case LoadStatus::Error:
 		midimap_load_status = "Error";
