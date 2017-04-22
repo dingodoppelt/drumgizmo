@@ -48,6 +48,10 @@ struct Settings
 {
 	Atomic<std::string> drumkit_file{""};
 	Atomic<LoadStatus> drumkit_load_status{LoadStatus::Idle};
+	Atomic<std::string> drumkit_name{""};
+	Atomic<std::string> drumkit_description{""};
+	Atomic<std::string> drumkit_version{""};
+	Atomic<std::size_t> drumkit_samplerate{0};
 
 	//! The maximum amount of memory in bytes that the AudioCache
 	//! is allowed to use for preloading. Default is 1GB.
@@ -76,6 +80,7 @@ struct Settings
 	Atomic<double> samplerate{44100.0};
 
 	Atomic<bool> enable_resampling{true};
+	Atomic<bool> resampling_active{false};
 
 	Atomic<std::size_t> number_of_files{0};
 	Atomic<std::size_t> number_of_files_loaded{0};
@@ -87,6 +92,10 @@ struct SettingsGetter
 {
 	SettingRef<std::string> drumkit_file;
 	SettingRef<LoadStatus> drumkit_load_status;
+	SettingRef<std::string> drumkit_name;
+	SettingRef<std::string> drumkit_description;
+	SettingRef<std::string> drumkit_version;
+	SettingRef<std::size_t> drumkit_samplerate;
 
 	SettingRef<std::size_t> disk_cache_upper_limit;
 	SettingRef<std::size_t> disk_cache_chunk_size;
@@ -107,6 +116,7 @@ struct SettingsGetter
 	SettingRef<double> samplerate;
 
 	SettingRef<bool> enable_resampling;
+	SettingRef<bool> resampling_active;
 
 	SettingRef<std::size_t> number_of_files;
 	SettingRef<std::size_t> number_of_files_loaded;
@@ -115,6 +125,10 @@ struct SettingsGetter
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
+		, drumkit_name(settings.drumkit_name)
+		, drumkit_description(settings.drumkit_description)
+		, drumkit_version(settings.drumkit_version)
+		, drumkit_samplerate(settings.drumkit_samplerate)
 		, disk_cache_upper_limit(settings.disk_cache_upper_limit)
 		, disk_cache_chunk_size(settings.disk_cache_chunk_size)
 		, disk_cache_enable(settings.disk_cache_enable)
@@ -129,6 +143,7 @@ struct SettingsGetter
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
 		, samplerate{settings.samplerate}
 		, enable_resampling{settings.enable_resampling}
+		, resampling_active{settings.resampling_active}
 		, number_of_files{settings.number_of_files}
 		, number_of_files_loaded{settings.number_of_files_loaded}
 		, current_file{settings.current_file}
@@ -142,6 +157,10 @@ class SettingsNotifier
 public:
 	Notifier<std::string> drumkit_file;
 	Notifier<LoadStatus> drumkit_load_status;
+	Notifier<std::string> drumkit_name;
+	Notifier<std::string> drumkit_description;
+	Notifier<std::string> drumkit_version;
+	Notifier<std::size_t> drumkit_samplerate;
 
 	Notifier<std::size_t> disk_cache_upper_limit;
 	Notifier<std::size_t> disk_cache_chunk_size;
@@ -162,6 +181,7 @@ public:
 	Notifier<double> samplerate;
 
 	Notifier<bool> enable_resampling;
+	Notifier<bool> resampling_active;
 
 	Notifier<std::size_t> number_of_files;
 	Notifier<std::size_t> number_of_files_loaded;
@@ -173,6 +193,10 @@ public:
 
 		EVAL(drumkit_file);
 		EVAL(drumkit_load_status);
+		EVAL(drumkit_name);
+		EVAL(drumkit_description);
+		EVAL(drumkit_version);
+		EVAL(drumkit_samplerate);
 
 		EVAL(disk_cache_upper_limit);
 		EVAL(disk_cache_chunk_size);
@@ -193,6 +217,7 @@ public:
 		EVAL(samplerate);
 
 		EVAL(enable_resampling);
+		EVAL(resampling_active);
 
 		EVAL(number_of_files);
 		EVAL(number_of_files_loaded);

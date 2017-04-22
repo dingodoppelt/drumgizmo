@@ -35,12 +35,22 @@ StatusframeContent::StatusframeContent(
 {
 	CONNECT(this, settings_notifier.drumkit_load_status,
 	        this, &StatusframeContent::updateDrumkitLoadStatus);
+	CONNECT(this, settings_notifier.drumkit_name,
+	        this, &StatusframeContent::updateDrumkitName);
+	CONNECT(this, settings_notifier.drumkit_description,
+	        this, &StatusframeContent::updateDrumkitDescription);
+	CONNECT(this, settings_notifier.drumkit_version,
+	        this, &StatusframeContent::updateDrumkitVersion);
+	CONNECT(this, settings_notifier.drumkit_samplerate,
+	        this, &StatusframeContent::updateDrumkitSamplerate);
 	CONNECT(this, settings_notifier.midimap_load_status,
 	        this, &StatusframeContent::updateMidimapLoadStatus);
 	CONNECT(this, settings_notifier.samplerate,
 	        this, &StatusframeContent::updateSamplerate);
 	CONNECT(this, settings_notifier.enable_resampling,
 	        this, &StatusframeContent::updateResamplingEnabled);
+	CONNECT(this, settings_notifier.resampling_active,
+	        this, &StatusframeContent::updateResamplingActive);
 	CONNECT(this, settings_notifier.number_of_underruns,
 	        this, &StatusframeContent::updateNumberOfUnderruns);
 
@@ -62,8 +72,13 @@ void StatusframeContent::updateContent()
 	text_field.setText(
 		"Drumkit load status: " + drumkit_load_status + "\n"
 		"Midimap load status: " + midimap_load_status + "\n"
+		"Drumkit name: " + drumkit_name + "\n"
+		"Drumkit description: " + drumkit_description + "\n"
+		"Drumkit version: " + drumkit_version + "\n"
+		"Drumkit samplerate: " + drumkit_samplerate + "\n"
 		"Samplerate: " + samplerate + "\n"
 		"Resampling enabled: " + resampling_enabled + "\n"
+		"Resampling active: " + resampling_active + "\n"
 		"Number of underruns: " + number_of_underruns + "\n"
 	);
 }
@@ -85,6 +100,36 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 		drumkit_load_status = "error";
 		break;
 	}
+
+	updateContent();
+}
+
+void StatusframeContent::updateDrumkitName(std::string const& drumkit_name)
+{
+	this->drumkit_name = drumkit_name;
+
+	updateContent();
+}
+
+void StatusframeContent::updateDrumkitDescription(std::string const& drumkit_description)
+{
+	this->drumkit_description = drumkit_description;
+
+	updateContent();
+}
+
+void StatusframeContent::updateDrumkitVersion(std::string const& drumkit_version)
+{
+	this->drumkit_version = drumkit_version;
+
+	updateContent();
+}
+
+void StatusframeContent::updateDrumkitSamplerate(std::size_t drumkit_samplerate)
+{
+	this->drumkit_samplerate = drumkit_samplerate == 0
+		? ""
+		: std::to_string(drumkit_samplerate);
 
 	updateContent();
 }
@@ -120,6 +165,13 @@ void StatusframeContent::updateSamplerate(double samplerate)
 void StatusframeContent::updateResamplingEnabled(bool enable_resampling)
 {
 	this->resampling_enabled = enable_resampling ? "yes" : "no";
+
+	updateContent();
+}
+
+void StatusframeContent::updateResamplingActive(bool resampling_active)
+{
+	this->resampling_active = resampling_active ? "yes" : "no";
 
 	updateContent();
 }

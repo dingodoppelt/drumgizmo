@@ -68,6 +68,11 @@ std::string DrumKit::getDescription() const
 	return _description;
 }
 
+VersionStr DrumKit::getVersion() const
+{
+	return _version;
+}
+
 std::size_t DrumKit::getSamplerate() const
 {
 	return _samplerate;

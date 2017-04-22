@@ -44,6 +44,7 @@ public:
 
 	std::string getName() const;
 	std::string getDescription() const;
+	VersionStr getVersion() const;
 
 	Instruments instruments;
 	Channels channels;

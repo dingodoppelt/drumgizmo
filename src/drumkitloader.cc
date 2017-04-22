@@ -125,12 +125,18 @@ bool DrumKitLoader::loadkit(const std::string& file)
 		       "Trying to load it anyway...\n");
 	}
 
+	// Put some information about the kit into the settings
+	settings.drumkit_name = kit.getName();
+	settings.drumkit_description = kit.getDescription();
+	settings.drumkit_version = kit.getVersion();
+	settings.drumkit_samplerate = kit.getSamplerate();
+
 	loadKit(&kit);
 
 #ifdef WITH_RESAMPLER
 	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
 #endif/*WITH_RESAMPLER*/
-
+	settings.resampling_active.store(resamplers.isActive());
 
 	DEBUG(loadkit, "loadkit: Success\n");
 
