@@ -42,7 +42,6 @@ CheckBox::CheckBox(Widget* parent)
 void CheckBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	p.drawImage(
 	    0, (knob.height() - bg_on.height()) / 2, state ? bg_on : bg_off);

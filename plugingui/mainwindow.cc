@@ -81,7 +81,6 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 	}
 
 	Painter painter(*this);
-	painter.clear();
 
 	auto bar_height = tabs.getBarHeight();
 

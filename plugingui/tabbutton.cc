@@ -81,8 +81,6 @@ void TabButton::repaintEvent(RepaintEvent* e)
 {
 	Painter p(*this);
 
-	p.clear();
-
 	int padTop = 3;
 	int padLeft = 0;
 	int padTextTop = 3;

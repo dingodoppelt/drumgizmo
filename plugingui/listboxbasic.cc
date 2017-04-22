@@ -142,7 +142,6 @@ void ListBoxBasic::onScrollBarValueChange(int value)
 void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	int w = width();
 	int h = height();

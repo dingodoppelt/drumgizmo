@@ -167,8 +167,8 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 	int center_y = height() / 2;
 
 	Painter p(*this);
-
 	p.clear();
+
 	p.drawImageStretched(0, 0, img_knob, diameter, diameter);
 
 	float range = maximum - minimum;

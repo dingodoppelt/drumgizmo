@@ -38,7 +38,6 @@ PowerButton::PowerButton(Widget* parent) : Toggle(parent)
 void PowerButton::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	if(state)
 	{

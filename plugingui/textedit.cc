@@ -134,7 +134,6 @@ void TextEdit::preprocessText()
 void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	// update values of scroll bar
 	scroll.setRange(height() / font.textHeight());

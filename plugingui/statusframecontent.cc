@@ -76,7 +76,7 @@ void StatusframeContent::updateContent()
 		"Drumkit description: " + drumkit_description + "\n"
 		"Drumkit version: " + drumkit_version + "\n"
 		"Drumkit samplerate: " + drumkit_samplerate + "\n"
-		"Samplerate: " + samplerate + "\n"
+		"Session samplerate: " + samplerate + "\n"
 		"Resampling enabled: " + resampling_enabled + "\n"
 		"Resampling active: " + resampling_active + "\n"
 		"Number of underruns: " + number_of_underruns + "\n"

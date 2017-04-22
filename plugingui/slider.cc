@@ -91,7 +91,6 @@ void Slider::setColour(Colour colour)
 void Slider::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	auto inner_offset = (current_value / maximum) * getControlWidth();
 	auto button_x = button_offset + inner_offset - (button.width() / 2);

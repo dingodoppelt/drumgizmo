@@ -99,8 +99,6 @@ void ComboBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
-	p.clear();
-
 	std::string _text = selectedName();
 
 	int w = width();

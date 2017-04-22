@@ -53,7 +53,6 @@ FrameWidget::FrameWidget(Widget* parent, bool has_switch)
 void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-	p.clear();
 
 	int center_x = width() / 2;
 	auto title_buf = title.c_str();

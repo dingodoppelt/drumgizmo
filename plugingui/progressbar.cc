@@ -78,8 +78,6 @@ void ProgressBar::repaintEvent(RepaintEvent* repaintEvent)
 	int brd = 4;
 	int val = (width() - (2 * brd)) * progress;
 
-	p.clear();
-
 	bar_bg.setSize(width(), height());
 	p.drawImage(0, 0, bar_bg);
 

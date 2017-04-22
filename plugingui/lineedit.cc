@@ -202,7 +202,6 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 {
 	Painter p(*this);
 
-	p.clear();
 	int w = width();
 	int h = height();
 	if((w == 0) || (h == 0))

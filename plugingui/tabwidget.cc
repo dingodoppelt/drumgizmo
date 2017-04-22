@@ -84,7 +84,6 @@ void TabWidget::sizeChanged(int width, int height)
 	std::size_t logo_padding_right = button_padding_left / 2;
 
 	Painter p(*this);
-	p.clear();
 
 	if(buttons.size() > 0)
 	{

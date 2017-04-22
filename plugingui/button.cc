@@ -46,7 +46,6 @@ Button::~Button()
 void Button::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-
 	p.clear();
 
 	int padTop = 3;
