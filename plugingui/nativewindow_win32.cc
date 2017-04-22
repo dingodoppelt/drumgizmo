@@ -365,17 +365,7 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 	parent_window = (HWND)native_window;
 
-	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
-	                        "DGBasisWidget",
-	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) |
-	                        (native_window?WS_VISIBLE:0),
-	                        0, 0, //window.x(), window.y(),
-	                        1, 1, //window.width(), window.height(),
-	                        parent_window, nullptr,
-	                        GetModuleHandle(nullptr), nullptr);
-
-	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
-
+	int width = 1, height = 1;
 	if(parent_window)
 	{
 		// Listen in on parent size changes.
@@ -386,10 +376,21 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 		GetClientRect(parent_window, &rect);
 
 		auto resizeEvent = std::make_shared<ResizeEvent>();
-		resizeEvent->width = rect.right - rect.left;
-		resizeEvent->height = rect.bottom - rect.top;
+		width = resizeEvent->width = rect.right - rect.left;
+		height = resizeEvent->height = rect.bottom - rect.top;
 		event_queue.push_back(resizeEvent);
 	}
+
+	m_hwnd = CreateWindowEx(0/*ex_style*/, m_className,
+	                        "DGBasisWidget",
+	                        (native_window?WS_CHILD:WS_OVERLAPPEDWINDOW) |
+	                        (native_window?WS_VISIBLE:0),
+	                        0, 0,
+	                        width, height,
+	                        parent_window, nullptr,
+	                        GetModuleHandle(nullptr), nullptr);
+
+	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 }
 
 NativeWindowWin32::~NativeWindowWin32()
