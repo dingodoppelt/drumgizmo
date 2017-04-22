@@ -42,6 +42,7 @@ FrameWidget::FrameWidget(Widget* parent, bool has_switch)
 		power_button.move(4, 4);
 		power_button.resize(16, 16);
 
+		power_button.setChecked(is_switched_on);
 		CONNECT(&power_button, stateChangedNotifier, this,
 		    &FrameWidget::powerButtonClicked);
 	}
@@ -82,7 +83,6 @@ void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 void FrameWidget::powerButtonClicked(bool clicked)
 {
 	is_switched_on = !is_switched_on;
-
 	onSwitchChangeNotifier(is_switched_on);
 
 	if(content)
@@ -108,6 +108,7 @@ void FrameWidget::setOnSwitch(bool on)
 {
 	is_switched_on = on;
 	onSwitchChangeNotifier(is_switched_on);
+
 	redraw();
 }
 
