@@ -330,7 +330,7 @@ LRESULT CALLBACK NativeWindowWin32::subClassProc(HWND hwnd, UINT msg,
 		break;
 	}
 
-	return DefWindowProc(hwnd, msg, wp, lp);
+	return DefSubclassProc(hwnd, msg, wp, lp);
 }
 
 NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
