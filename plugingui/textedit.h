@@ -76,6 +76,7 @@ private:
 	std::string _text;
 
 	bool readonly{true};
+	bool needs_preprocessing{false};
 
 	std::list< std::string > preprocessedtext;
 };

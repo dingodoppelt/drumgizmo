@@ -54,6 +54,8 @@ TextEdit::~TextEdit()
 void TextEdit::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
+
+	needs_preprocessing = true;
 	scroll.resize(scroll.width(), height - 14);
 	scroll.move(width - 23, 7);
 }
@@ -72,7 +74,7 @@ void TextEdit::setText(const std::string& text)
 {
 	_text = text;
 
-	preprocessText();
+	needs_preprocessing = true;
 	redraw();
 	textChangedNotifier();
 }
@@ -144,6 +146,11 @@ void TextEdit::preprocessText()
 
 void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 {
+	if(needs_preprocessing) 
+	{
+		preprocessText();
+	}
+
 	Painter p(*this);
 
 	// update values of scroll bar
