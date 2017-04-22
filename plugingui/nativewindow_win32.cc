@@ -395,6 +395,10 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 
 NativeWindowWin32::~NativeWindowWin32()
 {
+	if(parent_window)
+	{
+		RemoveWindowSubclass(parent_window, subClassProc, 42);
+	}
 	UnregisterClass(m_className, GetModuleHandle(nullptr));
 	free(m_className);
 }
