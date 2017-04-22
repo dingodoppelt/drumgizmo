@@ -99,6 +99,17 @@ void TextEdit::preprocessText()
 		}
 	}
 
+	{ // Handle "\r"
+		for(size_t i = 0; i < text.length(); ++i)
+		{
+			char ch = text.at(i);
+			if(ch == '\r')
+			{
+				text.erase(i, 1);
+			}
+		}
+	}
+
 	std::list<std::string> lines;
 	{ // Handle new line characters
 		size_t pos = 0;
