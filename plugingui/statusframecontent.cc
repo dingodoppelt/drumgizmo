@@ -70,16 +70,16 @@ void StatusframeContent::resize(std::size_t width, std::size_t height)
 void StatusframeContent::updateContent()
 {
 	text_field.setText(
-		"Drumkit load status: " + drumkit_load_status + "\n"
-		"Midimap load status: " + midimap_load_status + "\n"
-		"Drumkit name: " + drumkit_name + "\n"
-		"Drumkit description: " + drumkit_description + "\n"
-		"Drumkit version: " + drumkit_version + "\n"
-		"Drumkit samplerate: " + drumkit_samplerate + "\n"
-		"Session samplerate: " + samplerate + "\n"
-		"Resampling enabled: " + resampling_enabled + "\n"
-		"Resampling active: " + resampling_active + "\n"
-		"Number of underruns: " + number_of_underruns + "\n"
+		"Drumkit status:   " + drumkit_load_status + "\n"
+		// "Midimap status: " + midimap_load_status + "\n"
+		"Drumkit name:   " + drumkit_name + "\n"
+		"Drumkit description:   " + drumkit_description + "\n"
+		// "Drumkit version:   " + drumkit_version + "\n"
+		"Drumkit samplerate:   " + drumkit_samplerate + "\n"
+		"Session samplerate:   " + samplerate + "\n"
+		// "Resampling enabled: " + resampling_enabled + "\n"
+		"Resampling active:   " + resampling_active + "\n"
+		// "Number of underruns: " + number_of_underruns + "\n"
 	);
 }
 
@@ -88,16 +88,16 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		drumkit_load_status = "idle";
+		drumkit_load_status = "Idle";
 		break;
 	case LoadStatus::Loading:
-		drumkit_load_status = "loading";
+		drumkit_load_status = "Loading...";
 		break;
 	case LoadStatus::Done:
-		drumkit_load_status = "done";
+		drumkit_load_status = "Done";
 		break;
 	case LoadStatus::Error:
-		drumkit_load_status = "error";
+		drumkit_load_status = "Error";
 		break;
 	}
 
@@ -139,16 +139,16 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		midimap_load_status = "idle";
+		midimap_load_status = "Idle";
 		break;
 	case LoadStatus::Loading:
-		midimap_load_status = "loading";
+		midimap_load_status = "Loading...";
 		break;
 	case LoadStatus::Done:
-		midimap_load_status = "done";
+		midimap_load_status = "Done";
 		break;
 	case LoadStatus::Error:
-		midimap_load_status = "error";
+		midimap_load_status = "Error";
 		break;
 	}
 
@@ -164,14 +164,14 @@ void StatusframeContent::updateSamplerate(double samplerate)
 
 void StatusframeContent::updateResamplingEnabled(bool enable_resampling)
 {
-	this->resampling_enabled = enable_resampling ? "yes" : "no";
+	this->resampling_enabled = enable_resampling ? "Yes" : "No";
 
 	updateContent();
 }
 
 void StatusframeContent::updateResamplingActive(bool resampling_active)
 {
-	this->resampling_active = resampling_active ? "yes" : "no";
+	this->resampling_active = resampling_active ? "Yes" : "No";
 
 	updateContent();
 }
