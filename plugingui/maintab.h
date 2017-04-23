@@ -55,7 +55,6 @@ public:
 
 private:
 	void humanizerOnChange(bool on);
-	void diskStreamingOnChange(bool on);
 
 	Image logo{":resources/logo.png"};
 

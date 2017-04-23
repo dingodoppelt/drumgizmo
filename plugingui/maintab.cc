@@ -76,10 +76,6 @@ MainTab::MainTab(Widget* parent,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
-	CONNECT(this, settings_notifier.disk_cache_enable,
-	        &diskstreaming_frame, &FrameWidget::setOnSwitch);
-	CONNECT(&diskstreaming_frame, onSwitchChangeNotifier,
-	        this, &MainTab::diskStreamingOnChange);
 }
 
 void MainTab::resize(std::size_t width, std::size_t height)
@@ -94,11 +90,6 @@ void MainTab::resize(std::size_t width, std::size_t height)
 void MainTab::humanizerOnChange(bool on)
 {
 	settings.enable_velocity_modifier.store(on);
-}
-
-void MainTab::diskStreamingOnChange(bool on)
-{
-	settings.disk_cache_enable.store(on);
 }
 
 } // GUI::
