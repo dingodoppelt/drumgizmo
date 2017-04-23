@@ -48,6 +48,7 @@ nodist_libdg_la_SOURCES = \
 	versionstr.cc
 
 EXTRA_DIST = \
+	$(nodist_libdg_la_SOURCES) \
 	atomic.h \
 	audio.h \
 	audiocache.h \
@@ -94,42 +95,4 @@ EXTRA_DIST = \
 	staminafilter.h \
 	syncedsettings.h \
 	thread.h \
-	versionstr.h \
- \
-	audiocache.cc \
-	audiocacheeventhandler.cc \
-	audiocachefile.cc \
-	audiocacheidmanager.cc \
-	audiofile.cc \
-	audioinputengine.cc \
-	audioinputenginemidi.cc \
-	audiooutputengine.cc \
-	beatmapper.cc \
-	bytesizeparser.cc \
-	channel.cc \
-	channelmixer.cc \
-	chresampler.cc \
-	configfile.cc \
-	configparser.cc \
-	drumgizmo.cc \
-	drumkit.cc \
-	drumkitloader.cc \
-	drumkitparser.cc \
-	events.cc \
-	inputprocessor.cc \
-	instrument.cc \
-	instrumentparser.cc \
-	latencyfilter.cc \
-	memchecker.cc \
-	midimapparser.cc \
-	midimapper.cc \
-	mutex.cc \
-	path.cc \
-	powerlist.cc \
-	random.cc \
-	sample.cc \
-	saxparser.cc \
-	semaphore.cc \
-	staminafilter.cc \
-	thread.cc \
-	versionstr.cc
+	versionstr.h

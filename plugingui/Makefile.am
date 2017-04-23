@@ -133,19 +133,26 @@ plugingui_SOURCES = \
 rcgen_SOURCES = rcgen.cc
 
 EXTRA_DIST = \
+	$(nodist_libdggui_la_SOURCES) \
+	$(RES) \
+	abouttab.h \
 	button.h \
 	button_base.h \
 	canvas.h \
 	checkbox.h \
 	colour.h \
 	combobox.h \
-	drawable.h \
 	dialog.h \
 	directory.h \
+	diskstreamingframecontent.h \
+	drawable.h \
+	drumkitframecontent.h \
 	eventhandler.h \
 	filebrowser.h \
 	font.h \
+	frame.h \
 	guievent.h \
+	humanizerframecontent.h \
 	image.h \
 	imagecache.h \
 	knob.h \
@@ -156,24 +163,31 @@ EXTRA_DIST = \
 	listbox.h \
 	listboxbasic.h \
 	listboxthin.h \
+	maintab.h \
+	mainwindow.h \
 	nativewindow.h \
-	nativewindow.h \
+	nativewindow_cocoa.h \
+	nativewindow_pugl.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \
 	painter.h \
 	pixelbuffer.h \
 	pluginconfig.h \
+	powerbutton.h \
 	progressbar.h \
 	resource.h \
 	resource_data.h \
 	scrollbar.h \
 	slider.h \
 	stackedwidget.h \
+	statusframecontent.h \
 	tabbutton.h \
 	tabwidget.h \
 	textedit.h \
 	texture.h \
 	texturedbox.h \
+	toggle.h \
+	utf8.h \
 	verticalline.h \
 	widget.h \
 	window.h \

@@ -1,5 +1,5 @@
 # Rules for the test code (use `make check` to execute)
-SUBDIRS = dgreftest
+SUBDIRS = dgreftest uitests
 
 if ENABLE_TESTS
 
