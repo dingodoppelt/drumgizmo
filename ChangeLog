@@ -1,3 +1,44 @@
+Version 0.9.13
+==============
+Release date: April 23rd 2017
+Contributors: deva, chaot4, Muldjord, meka
+
+Highlighted changes / fixes:
+ - New ui
+ - Diskstreaming
+ - OSS support
+
+All changes / fixes:
+ - Fixed rcgen compilation with BSD make
+ - Made ui and engine compile as internal libs instead of compiling all sources in each component
+ - Implemented settings for controlling diskstreaming
+ - Complete gui makeover
+ - Made changes to UI to incorporate diskstreaming controls
+   - Now generates resources at compile-time
+   - Made window resize flicker-free on X11
+   - Fixed missing redraw on resize event on X11
+   - Now uses XShmImage for rendering on X11
+   - Refactored event system on X11 and Win32
+   - Now supports size and position changes in the same event on X11
+   - New rendering system based on ''dirty'' flag
+   - Added "partial rendering" support in rendering system
+   - Fixed double click
+   - Scroll-wheel inside textareas now works
+ - Made diskstreaming controls work in the engine
+   - Made DrumKitLoader use disk streaming settings
+   - Fixed crash or channel overload on stop/start command or loop due to invalid pointer returned to the engine from the diskstreamer
+   - Made AudioCache use configurable fixed size chunks
+   - Stores memory limit and chunk size in config as ints instead of floats
+ - Made cli support for disk cache controls
+   - ''-s'' and ''-S'' enables diskstreaming and set its parameters
+   - Updated man page
+   - Changed onsite info for cli
+   - Added FreeBSD OSS audio output support
+   - Added buffer size control for OSS audio output module
+ - Fixed the dgreftest for aasimonster2
+ - Added dependency check for rcgen so resource_data.cc is regenerated whenever one of the resource png files change
+
+
 Version 0.9.12
 ==============
 Release date: January 18th 2017
@@ -19,7 +60,6 @@ Version 0.9.11
 ==============
 Release date: October 29th 2016
 Contributors: deva, cglocke, chaot4, Jin^Eld
-
  - Unicode crash bug fixed
  - lv2 inline display
  - Fixed problems when running more than one instance of DrumGizmo plugin in
