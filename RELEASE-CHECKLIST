@@ -2,13 +2,13 @@ Check list for releasing:
 
  [ ]  Bump version in version.h
 
- [ ]  Test dist with testdist.sh script.
-
- [ ]  Test the VSTs from latest Jenkins build.
-
  [ ]  Update ChangeLog
 
  [ ]  Make sure plugin/README_VST.txt is up-to-date.
+
+ [ ]  Test dist with testdist.sh script.
+
+ [ ]  Test the VSTs from latest Jenkins build.
 
  [ ]  Tag git
 
