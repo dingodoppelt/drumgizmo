@@ -44,7 +44,7 @@ FrameWidget::FrameWidget(Widget* parent, bool has_switch)
 
 		power_button.setChecked(is_switched_on);
 		CONNECT(&power_button, stateChangedNotifier, this,
-		    &FrameWidget::powerButtonClicked);
+		    &FrameWidget::powerButtonStateChanged);
 	}
 	power_button.setVisible(has_switch);
 
@@ -80,15 +80,10 @@ void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawText(center_x - label_width, bar_height - 4, font, title_buf);
 }
 
-void FrameWidget::powerButtonClicked(bool clicked)
+void FrameWidget::powerButtonStateChanged(bool new_state)
 {
-	is_switched_on = !is_switched_on;
+	is_switched_on = new_state;
 	onSwitchChangeNotifier(is_switched_on);
-
-	if(content)
-	{
-		content->setVisible(true);
-	}
 }
 
 void FrameWidget::setTitle(std::string const& title)
@@ -101,15 +96,12 @@ void FrameWidget::setContent(Widget* content)
 {
 	this->content = content;
 	content->reparent(this);
-	content->setVisible(true);
 }
 
 void FrameWidget::setOnSwitch(bool on)
 {
 	is_switched_on = on;
-	onSwitchChangeNotifier(is_switched_on);
-
-	redraw();
+	power_button.setChecked(is_switched_on);
 }
 
 void FrameWidget::sizeChanged(int width, int height)

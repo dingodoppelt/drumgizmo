@@ -77,7 +77,7 @@ private:
 	bool is_switched_on;
 	PowerButton power_button{this};
 
-	void powerButtonClicked(bool clicked);
+	void powerButtonStateChanged(bool clicked);
 
 	// grey box
 	std::size_t bar_height;
