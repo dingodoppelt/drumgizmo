@@ -27,7 +27,6 @@
 #include "mainwindow.h"
 
 #include <config.h>
-#include <version.h>
 
 #include "painter.h"
 
