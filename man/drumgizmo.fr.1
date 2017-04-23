@@ -1,4 +1,4 @@
-.TH "DRUMGIZMO" "1" "4 Février 2015" "drumgizmo" ""
+.TH "DRUMGIZMO" "1" "23 April 2017" "drumgizmo" ""
 
 .SH NOM
 drumgizmo \- application de batterie
@@ -35,7 +35,7 @@ file=<fichier_midi>
 .P
 speed=<tempo> (1.0 par défaut)
 .P
-track=<piste_midi> (-1 par défaut, toutes les pites)
+track=<piste_midi> (-1 par défaut, toutes les pistes)
 .P
 midimap=<fichier_midimap>
 .P
@@ -45,7 +45,7 @@ loop=<true|false>
 .P
 p=<probabilité_de_coup> (0.1 par défaut)
 .P
-instr=<instrument> (-1 par défaut -1, instrument aléatoire)
+instr=<instrument> (-1 par défaut, instrument aléatoire)
 .P
 len=<secondes> (-1 par défaut, toujours)
 
@@ -80,6 +80,14 @@ srate=<fréquence_d_échantillonnage> (44100 par défaut)
 dev=<périphérique> (/dev/dsp par défaut)
 .P
 srate=<fréquence_d_échantillonnage> (44100 par défaut)
+.P
+max_fragments=<fragments> (4 par défaut)
+.P
+fragment_size=<taille> (8 par défaut)
+
+.P
+Davantage d'informations sur \fBmax_fragments\fR et \fBfragment_size\fR sur la page
+http://manuals.opensound.com/developer/SNDCTL_DSP_SETFRAGMENT.html (en anglais)
 
 \fBjackaudio:\fR
 
@@ -89,6 +97,21 @@ srate=<fréquence_d_échantillonnage> (44100 par défaut)
 \fB-e, --endpos\fR
 .RS 7
 Nombre d'échantillons à traiter, (-1 par défaut : infini)
+
+.RE
+\fB-s, --streaming\fR
+.RS 7
+Active le streaming du disque
+
+.RE
+\fB-S, --strimingparms liste_de_paramètres\fR
+.RS 7
+Paramètres pour le contrôle des tampons de streaming.
+
+.P
+\fBlimit\fR=<taille> (Limite à cette taille, la quantité de données du kit de batterie préchargées)
+\" .P
+\" \fBchunk_size\fR=<taille> (taille de la quantité en k,M,G)
 
 .RE
 \fB-v, --version\fR
@@ -119,4 +142,4 @@ drumgizmo -i jackmidi -I midimap=midimap.xml -o jackaudio drumkit.xml
 Rapporter les bogues à http://www.drumgizmo.org/wiki/doku.php?id=bugs (en anglais).
 
 .SH "INFORMATION ADDITIONELLE"
-Pour d'avantage d'information, visitez le site internet http://www.drumgizmo.org.
+Pour davantage d'informations, visitez le site internet http://www.drumgizmo.org.
