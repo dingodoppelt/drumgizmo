@@ -61,6 +61,10 @@ test/bytesizeparsertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav
+test/uitests/filebrowsertest
+test/uitests/framewidgettest
+test/uitests/resizetest
+test/uitests/tabwidgettest
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
