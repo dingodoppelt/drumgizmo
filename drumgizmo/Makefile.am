@@ -93,6 +93,7 @@ EXTRA_DIST = \
 	output/alsa.h \
 	output/jackaudio.h \
 	output/outputdummy.h \
+	output/oss.h \
 	output/wavfile.h
 
 endif # ENABLE_CLI
