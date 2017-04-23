@@ -76,7 +76,6 @@ tools/performance_test/*.dat
 tools/performance_test/*.png
 plugin/vst/pluginterfaces/
 plugin/vst/public.sdk/
-plugingui/tests/*test
 *~
 \#*\#
 .\#*
