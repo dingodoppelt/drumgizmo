@@ -72,6 +72,8 @@ MainTab::MainTab(Widget* parent,
 	humanizer_frame.setContent(&humanizerframe_content);
 	diskstreaming_frame.setContent(&diskstreamingframe_content);
 
+	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
+
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
