@@ -86,6 +86,7 @@ void MainTab::resize(std::size_t width, std::size_t height)
 
 	// DrumGizmo logo
 	Painter painter(*this);
+	painter.clear();
 	painter.drawImage(width - logo.width(), height - logo.height(), logo);
 }
 
