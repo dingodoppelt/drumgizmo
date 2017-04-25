@@ -59,9 +59,9 @@ drumgizmo_vst_la_LIBADD = vst/libvstsdk.la \
 	$(top_srcdir)/src/libdg.la
 
 
-install-exec-hook:
-	rm -f $(DESTDIR)$(libdir)/lv2/drumgizmo.lv2/drumgizmo.la
-	rm -f $(DESTDIR)$(libdir)/vst/drumgizmo_vst.la
+install-data-hook:
+	rm -f $(lv2plugindir)/drumgizmo.la
+	rm -f $(vstplugindir)/drumgizmo_vst.la
 
 
 EXTRA_DIST = \
