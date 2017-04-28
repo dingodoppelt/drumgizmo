@@ -88,7 +88,6 @@ void EventHandler::processEvents()
 
 		switch(event->type()) {
 		case EventType::repaint:
-			window.redraw();
 			break;
 
 		case EventType::move:
