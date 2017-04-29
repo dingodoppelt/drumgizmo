@@ -79,7 +79,7 @@ void StatusframeContent::updateContent()
 		"Session samplerate:   " + samplerate + "\n"
 		// "Resampling enabled: " + resampling_enabled + "\n"
 		"Resampling active:   " + resampling_active + "\n"
-		// "Number of underruns: " + number_of_underruns + "\n"
+		"Number of underruns: " + number_of_underruns + "\n"
 	);
 }
 
