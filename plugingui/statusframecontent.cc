@@ -176,8 +176,7 @@ void StatusframeContent::updateResamplingActive(bool resampling_active)
 	updateContent();
 }
 
-void StatusframeContent::updateNumberOfUnderruns(
-    std::size_t number_of_underruns)
+void StatusframeContent::updateNumberOfUnderruns(std::size_t number_of_underruns)
 {
 	this->number_of_underruns = std::to_string(number_of_underruns);
 
