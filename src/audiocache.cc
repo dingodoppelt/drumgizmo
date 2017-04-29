@@ -98,6 +98,7 @@ sample_t* AudioCache::open(const AudioFile& file,
 	// Next call to 'next()' will read from this point.
 	c.localpos = initial_samples_needed;
 
+	c.ready = false;
 	c.front = nullptr; // This is allocated when needed.
 	c.back = nullptr; // This is allocated when needed.
 
@@ -186,6 +187,14 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 		// We are playing from cache:
 		if(c.localpos < chunk_size)
 		{
+			if(c.front == nullptr)
+			{
+				// Just return silence.
+				settings.number_of_underruns.fetch_add(1);
+				assert(nodata);
+				return nodata;
+			}
+
 			sample_t* s = c.front + c.localpos;
 			c.localpos += framesize;
 			return s;
@@ -197,6 +206,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	{
 		// Just return silence.
 		settings.number_of_underruns.fetch_add(1);
+		assert(nodata);
 		return nodata;
 	}
 
