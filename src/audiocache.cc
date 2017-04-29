@@ -191,6 +191,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 			{
 				// Just return silence.
 				settings.number_of_underruns.fetch_add(1);
+				c.localpos += framesize; // Skip these samples so we don't loose sync.
 				assert(nodata);
 				return nodata;
 			}
@@ -206,6 +207,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	{
 		// Just return silence.
 		settings.number_of_underruns.fetch_add(1);
+		c.localpos += framesize; // Skip these samples so we don't loose sync.
 		assert(nodata);
 		return nodata;
 	}
