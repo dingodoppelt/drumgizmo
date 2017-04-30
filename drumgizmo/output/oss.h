@@ -54,5 +54,6 @@ private:
 	unsigned int format;
 	unsigned int max_fragments;
 	unsigned int fragment_size;
+	unsigned int buffer_size;
 	std::vector<std::int32_t> data;
 };

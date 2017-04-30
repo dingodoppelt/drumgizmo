@@ -40,6 +40,7 @@ OSSOutputEngine::OSSOutputEngine()
 	, data{}
 	, max_fragments{4}
 	, fragment_size{8}
+	, buffer_size{1024}
 {
 	data.clear();
 	data.resize(1024 * num_channels);
@@ -63,6 +64,15 @@ bool OSSOutputEngine::init(const Channels& channels)
 		perror("SNDCTL_DSP_SETFRAGMENT");
 		exit(-1);
 	}
+
+	audio_buf_info info;
+	if(ioctl(fd, SNDCTL_DSP_GETOSPACE, &info) == -1)
+	{
+		std::cerr << "Can not get buffer info: ";
+		std::cerr << std::strerror(errno) << std::endl;
+		return false;
+	}
+	buffer_size = info.bytes / 4;
 
 	tmp = format;
 	if(ioctl(fd, SNDCTL_DSP_SETFMT, &tmp) == -1 || tmp != format)
@@ -195,7 +205,7 @@ void OSSOutputEngine::post(size_t nsamples)
 
 std::size_t OSSOutputEngine::getBufferSize() const
 {
-	return data.size() / num_channels;
+	return buffer_size;
 }
 
 std::size_t OSSOutputEngine::getSamplerate() const
