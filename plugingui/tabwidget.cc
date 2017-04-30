@@ -46,12 +46,31 @@ void TabWidget::addTab(const std::string& title, Widget* widget)
 	button.setText(title);
 	stack.addWidget(widget);
 	CONNECT(&button, switchTabNotifier, this, &TabWidget::switchTab);
+	CONNECT(&button, scrollNotifier, this, &TabWidget::rotateTab);
 	sizeChanged(width(), height());
 }
 
 std::size_t TabWidget::getBarHeight() const
 {
 	return topbar.height();
+}
+
+void TabWidget::rotateTab(float delta)
+{
+	Widget* widget{nullptr};
+	if(delta > 0.0f)
+	{
+		widget = stack.getWidgetAfter(stack.getCurrentWidget());
+	}
+	else
+	{
+		widget = stack.getWidgetBefore(stack.getCurrentWidget());
+	}
+
+	if(widget)
+	{
+		switchTab(widget);
+	}
 }
 
 void TabWidget::switchTab(Widget* tabWidget)

@@ -106,6 +106,11 @@ void TabButton::repaintEvent(RepaintEvent* e)
 	p.drawText(x, y, font, text, true);
 }
 
+void TabButton::scrollEvent(ScrollEvent* scroll_event)
+{
+	scrollNotifier(scroll_event->delta);
+}
+
 void TabButton::clickHandler()
 {
 	switchTabNotifier(tab_widget);

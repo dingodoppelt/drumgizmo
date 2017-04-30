@@ -93,6 +93,51 @@ void StackedWidget::setCurrentWidget(Widget *widget)
 	currentChanged(currentWidget);
 }
 
+Widget* StackedWidget::getWidgetAfter(Widget* widget)
+{
+	bool found_it{false};
+
+	for(auto w : widgets)
+	{
+		if(found_it)
+		{
+			return w;
+		}
+
+		if(w == widget)
+		{
+			found_it = true;
+		}
+	}
+
+	if(found_it)
+	{
+		// widget was the last in the list.
+		return nullptr;
+	}
+
+	// The Widget pointed to by 'widget' was not in the list...
+	return nullptr;
+}
+
+Widget* StackedWidget::getWidgetBefore(Widget* widget)
+{
+	Widget* last{nullptr};
+
+	for(auto w : widgets)
+	{
+		if(w == widget)
+		{
+			return last;
+		}
+
+		last = w;
+	}
+
+	// The Widget pointed to by 'widget' was not in the list...
+	return nullptr;
+}
+
 void StackedWidget::sizeChanged(int width, int height)
 {
 	// Propagate size change to child:

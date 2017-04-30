@@ -42,21 +42,29 @@ class StackedWidget
 	: public Widget
 {
 public:
-	StackedWidget(Widget *parent);
+	StackedWidget(Widget* parent);
 	~StackedWidget();
 
 	//! Add a widget to the stack.
-	void addWidget(Widget *widget);
+	void addWidget(Widget* widget);
 
 	//! Remove a widget from the stack.
-	void removeWidget(Widget *widget);
+	void removeWidget(Widget* widget);
 
 	//! Get currently visible widget.
-	Widget *getCurrentWidget() const;
+	Widget* getCurrentWidget() const;
 
 	//! Show widget. Hide all the others.
 	//! If widget is not in the stack nothing happens.
-	void setCurrentWidget(Widget *widget);
+	void setCurrentWidget(Widget* widget);
+
+	//! Returns a pointer to the Widget after the one referenced by 'widget' or
+	//! nullptr if 'widget' is the last in the list.
+	Widget* getWidgetAfter(Widget* widget);
+
+	//! Returns a pointer to the Widget beforer the one referenced by 'widget' or
+	//! nullptr if 'widget' is the first in the list.
+	Widget* getWidgetBefore(Widget* widget);
 
 	//! Reports whn a new widget is shown.
 	Notifier<Widget*> currentChanged;

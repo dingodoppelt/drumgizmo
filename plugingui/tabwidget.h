@@ -52,6 +52,8 @@ private:
 	void sizeChanged(int width, int height);
 
 private:
+	//! Switch to the next tab if delta is > 0 or previous tab if delta is <= 0.
+	void rotateTab(float delta);
 	void switchTab(Widget* tabWidget);
 	void setActiveButtons(Widget* current_widget);
 

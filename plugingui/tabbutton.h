@@ -35,6 +35,8 @@
 namespace GUI
 {
 
+class ScrollEvent;
+
 class TabButton
 	: public ButtonBase
 {
@@ -48,10 +50,12 @@ public:
 	void setActive(bool active);
 
 	Notifier<Widget*> switchTabNotifier;
+	Notifier<float> scrollNotifier; // float delta
 
 protected:
 	// From Widget:
 	virtual void repaintEvent(RepaintEvent* e) override;
+	virtual void scrollEvent(ScrollEvent* scroll_event) override;
 
 private:
 	void clickHandler();
