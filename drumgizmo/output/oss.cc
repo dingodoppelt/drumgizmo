@@ -48,7 +48,7 @@ OSSOutputEngine::OSSOutputEngine()
 
 bool OSSOutputEngine::init(const Channels& channels)
 {
-	int tmp, mode = O_WRONLY, fragments;
+	std::size_t tmp, mode = O_WRONLY, fragments;
 	num_channels = channels.size();
 
 	if((fd = open(dev.data(), mode, 0)) == -1)
@@ -59,10 +59,19 @@ bool OSSOutputEngine::init(const Channels& channels)
 
 	fragments = max_fragments << 16 | fragment_size;
 	tmp = fragments;
-	if (ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 || tmp != fragments)
+	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1)
 	{
-		perror("SNDCTL_DSP_SETFRAGMENT");
-		exit(-1);
+		std::cerr << "Can not set buffer size: ";
+		std::cerr << std::strerror(errno) << std::endl;
+		return false;
+	}
+	if(tmp != fragments)
+	{
+		std::size_t real_fragment_size = fragments & 0xffff;
+		std::size_t real_max_fragments = (fragments - real_fragment_size) >> 16;
+		std::cerr << "Values corrected to:" << std::endl;
+		std::cerr << "  fragment_size: " << real_fragment_size << std::endl;
+		std::cerr << "  max_fragments: " << real_max_fragments << std::endl;
 	}
 
 	audio_buf_info info;
@@ -72,7 +81,7 @@ bool OSSOutputEngine::init(const Channels& channels)
 		std::cerr << std::strerror(errno) << std::endl;
 		return false;
 	}
-	buffer_size = info.bytes / 4;
+	buffer_size = info.bytes / sizeof(decltype (data)::value_type);
 
 	tmp = format;
 	if(ioctl(fd, SNDCTL_DSP_SETFMT, &tmp) == -1 || tmp != format)
@@ -150,11 +159,19 @@ void OSSOutputEngine::setParm(const std::string& parm, const std::string& value)
 		}
 		if(fragment_size < 4)
 		{
-			std::cerr << "[OSSoutputEngine] fragment_size must be at least 4\n";
-			std::cerr << "Setting fragment_size to 4 (";
 			fragment_size = 4;
-			auto fragment_byte_size = 1 << fragment_size;
-			std::cerr << fragment_byte_size << "Bytes)" << std::endl;
+			std::cerr << "[OSSoutputEngine] fragment_size must be at least ";
+			std::cerr << fragment_size << std::endl;
+			std::cerr << "Setting fragment_size to ";
+			std::cerr << fragment_size << std::endl;
+		}
+		else if(fragment_size > 0xffff)
+		{
+			fragment_size = 0xffff;
+			std::cerr << "[OSSoutputEngine] fragment_size must be at most ";
+			std::cerr << fragment_size << std::endl;
+			std::cerr << "Setting fragment_size to ";
+			std::cerr << fragment_size << std::endl;
 		}
 	}
 	else

@@ -52,8 +52,8 @@ private:
 	std::size_t num_channels;
 	unsigned int srate;
 	unsigned int format;
-	unsigned int max_fragments;
-	unsigned int fragment_size;
-	unsigned int buffer_size;
+	std::size_t max_fragments;
+	std::size_t fragment_size;
+	std::size_t buffer_size;
 	std::vector<std::int32_t> data;
 };
