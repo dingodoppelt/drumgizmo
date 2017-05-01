@@ -52,6 +52,7 @@ public:
 	void updateDrumkitSamplerate(std::size_t drumkit_samplerate);
 	void updateMidimapLoadStatus(LoadStatus load_status);
 	void updateSamplerate(double samplerate);
+	void updateBufferSize(std::size_t buffer_size);
 	void updateResamplingEnabled(bool enable_resampling);
 	void updateResamplingActive(bool resampling_active);
 	void updateNumberOfUnderruns(std::size_t number_of_underruns);
@@ -68,6 +69,7 @@ private:
 	std::string drumkit_samplerate;
 	std::string midimap_load_status;
 	std::string samplerate;
+	std::string buffer_size;
 	std::string resampling_enabled;
 	std::string resampling_active;
 	std::string number_of_underruns;

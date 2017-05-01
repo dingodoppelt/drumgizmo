@@ -77,6 +77,8 @@ bool DrumGizmo::init()
 
 void DrumGizmo::setFrameSize(size_t framesize)
 {
+	settings.buffer_size.store(framesize);
+
 	// If we are resampling override the frame size.
 	if(resamplers.isActive())
 	{

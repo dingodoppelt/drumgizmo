@@ -47,6 +47,8 @@ StatusframeContent::StatusframeContent(
 	        this, &StatusframeContent::updateMidimapLoadStatus);
 	CONNECT(this, settings_notifier.samplerate,
 	        this, &StatusframeContent::updateSamplerate);
+	CONNECT(this, settings_notifier.buffer_size,
+	        this, &StatusframeContent::updateBufferSize);
 	CONNECT(this, settings_notifier.enable_resampling,
 	        this, &StatusframeContent::updateResamplingEnabled);
 	CONNECT(this, settings_notifier.resampling_active,
@@ -77,6 +79,7 @@ void StatusframeContent::updateContent()
 		// "Drumkit version:   " + drumkit_version + "\n"
 		"Drumkit samplerate:   " + drumkit_samplerate + "\n"
 		"Session samplerate:   " + samplerate + "\n"
+		"Session buffer size:   " + buffer_size + "\n"
 		// "Resampling enabled: " + resampling_enabled + "\n"
 		"Resampling active:   " + resampling_active + "\n"
 		"Number of underruns: " + number_of_underruns + "\n"
@@ -158,6 +161,13 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 void StatusframeContent::updateSamplerate(double samplerate)
 {
 	this->samplerate = std::to_string((std::size_t)samplerate);
+
+	updateContent();
+}
+
+void StatusframeContent::updateBufferSize(std::size_t buffer_size)
+{
+	this->buffer_size = std::to_string(buffer_size);
 
 	updateContent();
 }
