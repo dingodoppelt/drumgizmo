@@ -158,7 +158,7 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 	int ypos = font.textHeight() + y_border;
 
 	auto scroll_value = scroll.value();
-	for(int i = 0; i < preprocessed_text.size() - scroll_value; ++i)
+	for(std::size_t i = 0; i < preprocessed_text.size() - scroll_value; ++i)
 	{
 		if(i * font.textHeight() >= (height() - y_border - font.textHeight()))
 		{
