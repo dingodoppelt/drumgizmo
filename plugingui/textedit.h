@@ -27,27 +27,32 @@
 #pragma once
 
 #include <string>
-#include <list>
+#include <vector>
 
-#include "widget.h"
 #include "font.h"
-#include "painter.h"
+#include "notifier.h"
 #include "scrollbar.h"
 #include "texturedbox.h"
-#include "notifier.h"
+#include "widget.h"
 
-namespace GUI {
+namespace GUI
+{
 
-class TextEdit : public Widget {
+class TextEdit
+	: public Widget
+{
 public:
-	TextEdit(Widget *parent);
+	TextEdit(Widget* parent);
 	virtual ~TextEdit();
 
 	// From Widget
-	bool isFocusable() override { return true; }
+	bool isFocusable() override
+	{
+		return true;
+	}
 	void resize(std::size_t width, std::size_t height) override;
 
-	std::string text();
+	std::string getText();
 	void setText(const std::string& text);
 
 	void setReadOnly(bool readonly);
@@ -65,20 +70,23 @@ protected:
 private:
 	void scrolled(int value);
 
-	TexturedBox box{getImageCache(), ":resources/widget.png",
-			0, 0, // atlas offset (x, y)
-			7, 1, 7, // dx1, dx2, dx3
-			7, 63, 7}; // dy1, dy2, dy3
+	TexturedBox box{getImageCache(), ":resources/widget.png", 0,
+	    0,         // atlas offset (x, y)
+	    7, 1, 7,   // dx1, dx2, dx3
+	    7, 63, 7}; // dy1, dy2, dy3
+	
+	static constexpr std::size_t x_border{10};
+	static constexpr std::size_t y_border{8};
 
 	ScrollBar scroll;
 	Font font;
 
-	std::string _text;
+	std::string text;
 
 	bool readonly{true};
 	bool needs_preprocessing{false};
 
-	std::list< std::string > preprocessedtext;
+	std::vector<std::string> preprocessed_text;
 };
 
 } // GUI::

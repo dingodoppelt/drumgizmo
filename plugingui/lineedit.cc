@@ -65,7 +65,7 @@ void LineEdit::setText(const std::string& text)
 	textChanged();
 }
 
-std::string LineEdit::text()
+std::string LineEdit::getText()
 {
 	return _text;
 }

@@ -147,7 +147,7 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 
 void DrumkitframeContent::kitBrowseClick()
 {
-	std::string path = drumkit_file.getLineEdit().text();
+	std::string path = drumkit_file.getLineEdit().getText();
 	if(path == "")
 	{
 		path = config.lastkit;
@@ -155,7 +155,7 @@ void DrumkitframeContent::kitBrowseClick()
 
 	if(path == "")
 	{
-		path = midimap_file.getLineEdit().text();
+		path = midimap_file.getLineEdit().getText();
 	}
 
 	file_browser.setPath(path);
@@ -166,7 +166,7 @@ void DrumkitframeContent::kitBrowseClick()
 
 void DrumkitframeContent::midimapBrowseClick()
 {
-	std::string path = midimap_file.getLineEdit().text();
+	std::string path = midimap_file.getLineEdit().getText();
 	if(path == "")
 	{
 		path = config.lastmidimap;
@@ -174,7 +174,7 @@ void DrumkitframeContent::midimapBrowseClick()
 
 	if(path == "")
 	{
-		path = drumkit_file.getLineEdit().text();
+		path = drumkit_file.getLineEdit().getText();
 	}
 
 	file_browser.setPath(path);

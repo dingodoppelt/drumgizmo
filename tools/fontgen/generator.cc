@@ -73,9 +73,9 @@ Generator::~Generator()
 void Generator::initGenerate()
 {
   qDebug("Generating font to file '%s' using font '%s' at size '%s'...",
-         outputLineEdit->text().toStdString().c_str(),
-         fontLineEdit->text().toStdString().c_str(),
-         sizeLineEdit->text().toStdString().c_str());
+         outputLineEdit->getText().toStdString().c_str(),
+         fontLineEdit->getText().toStdString().c_str(),
+         sizeLineEdit->getText().toStdString().c_str());
 
   QList<QImage> chars;
 
@@ -84,8 +84,8 @@ void Generator::initGenerate()
   int vertOffset = 0;
   int fontHeight = maxSize;
   
-  font.setFamily(fontLineEdit->text());
-  font.setPixelSize(sizeLineEdit->text().toInt());
+  font.setFamily(fontLineEdit->getText());
+  font.setPixelSize(sizeLineEdit->getText().toInt());
   //font.setStretch(96);
   font.setHintingPreference(QFont::PreferFullHinting);
   
@@ -108,7 +108,7 @@ void Generator::initGenerate()
       */
     if(a == 32) {
       horizOffset = 0;
-      charWidth = sizeLineEdit->text().toInt() / 8;
+      charWidth = sizeLineEdit->getText().toInt() / 8;
     }
     QImage finalChar(image.copy(horizOffset, vertOffset, charWidth + 2, fontHeight));
     QPainter p(&finalChar);
@@ -240,6 +240,6 @@ void Generator::assembleFinalFont(const QList<QImage> &chars, const int &fontHei
     p.drawImage(curOffset, 0, chars.at(a));
     curOffset += chars.at(a).width();
   }
-  finalFont.save(outputLineEdit->text() + ".png");
+  finalFont.save(outputLineEdit->getText() + ".png");
 
 }

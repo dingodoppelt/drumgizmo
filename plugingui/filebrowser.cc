@@ -158,7 +158,7 @@ void FileBrowser::handleKeyEvent()
 {
 	listbox.clearSelectedValue();
 
-	std::string value = lineedit.text();
+	std::string value = lineedit.getText();
 	if((value.size() > 1) && (value[0] == '@'))
 	{
 		DEBUG(filebrowser, "Selecting ref-file '%s'\n", value.c_str());
@@ -166,7 +166,7 @@ void FileBrowser::handleKeyEvent()
 		return;
 	}
 
-	dir.setPath(lineedit.text());
+	dir.setPath(lineedit.getText());
 	changeDir();
 }
 

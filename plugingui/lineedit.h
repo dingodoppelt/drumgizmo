@@ -45,7 +45,7 @@ public:
 
 	bool isFocusable() override { return true; }
 
-	std::string text();
+	std::string getText();
 	void setText(const std::string& text);
 
 	void setReadOnly(bool readonly);

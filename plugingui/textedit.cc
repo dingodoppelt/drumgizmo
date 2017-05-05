@@ -26,14 +26,7 @@
  */
 #include "textedit.h"
 
-#include "window.h"
-
-#include <assert.h>
-#include <hugin.hpp>
-#include <list>
-#include <stdio.h>
-
-#define BORDER 10
+#include "painter.h"
 
 namespace GUI
 {
@@ -42,7 +35,7 @@ TextEdit::TextEdit(Widget* parent) : Widget(parent), scroll(this)
 {
 	setReadOnly(true);
 
-	scroll.move(width() - 23, 1);
+	scroll.move(width() - 2*x_border - 3, y_border - 1);
 	scroll.resize(16, 100);
 	CONNECT(&scroll, valueChangeNotifier, this, &TextEdit::scrolled);
 }
@@ -56,8 +49,8 @@ void TextEdit::resize(std::size_t width, std::size_t height)
 	Widget::resize(width, height);
 
 	needs_preprocessing = true;
-	scroll.resize(scroll.width(), height - 14);
-	scroll.move(width - 23, 7);
+	scroll.move(width - 2*x_border - 3, y_border - 1);
+	scroll.resize(scroll.width(), height - 2*(y_border - 1));
 }
 
 void TextEdit::setReadOnly(bool readonly)
@@ -72,75 +65,71 @@ bool TextEdit::readOnly()
 
 void TextEdit::setText(const std::string& text)
 {
-	_text = text;
+	this->text = text;
 
 	needs_preprocessing = true;
 	redraw();
 	textChangedNotifier();
 }
 
-std::string TextEdit::text()
+std::string TextEdit::getText()
 {
-	return _text;
+	return text;
 }
 
 void TextEdit::preprocessText()
 {
-	preprocessedtext.clear();
-	std::string text = _text;
+	std::vector<std::string> lines;
 
-	{ // Handle tab characters
-		for(size_t i = 0; i < text.length(); ++i)
+	preprocessed_text.clear();
+	std::string text = this->text;
+
+	// Handle tab characters
+	for(std::size_t i = 0; i < text.length(); ++i)
+	{
+		char ch = text.at(i);
+		if(ch == '\t')
 		{
-			char ch = text.at(i);
-			if(ch == '\t')
-			{
-				text.erase(i, 1);
-				text.insert(i, 4, ' ');
-			}
+			text.erase(i, 1);
+			text.insert(i, 4, ' ');
 		}
 	}
 
-	{ // Handle "\r"
-		for(size_t i = 0; i < text.length(); ++i)
+	// Handle "\r"
+	for(std::size_t i = 0; i < text.length(); ++i)
+	{
+		char ch = text.at(i);
+		if(ch == '\r')
 		{
-			char ch = text.at(i);
-			if(ch == '\r')
-			{
-				text.erase(i, 1);
-			}
+			text.erase(i, 1);
 		}
 	}
 
-	std::list<std::string> lines;
-	{ // Handle new line characters
-		size_t pos = 0;
-		do
-		{
-			pos = text.find("\n");
-			lines.push_back(text.substr(0, pos));
-			text = text.substr(pos + 1);
-		} while(pos != std::string::npos);
-	}
+	// Handle new line characters
+	std::size_t pos = 0;
+	do
+	{
+		pos = text.find("\n");
+		lines.push_back(text.substr(0, pos));
+		text = text.substr(pos + 1);
+	} while(pos != std::string::npos);
 
-	{ // Wrap long lines
-		std::list<std::string>::iterator it;
-		for(it = lines.begin(); it != lines.end(); ++it)
-		{
-			std::string line = *it;
+	// Wrap long lines
+	for(auto it = lines.begin(); it != lines.end(); ++it)
+	{
+		auto line = *it;
 
-			for(size_t i = 0; i < line.length(); ++i)
+		for(std::size_t i = 0; i < line.length(); ++i)
+		{
+			auto linewidth = font.textWidth(line.substr(0, i));
+			if(linewidth >= width() - 2*x_border - 10 - scroll.width())
 			{
-				size_t linewidth = font.textWidth(line.substr(0, i));
-				if(linewidth >= width() - BORDER - 20 - scroll.width())
-				{
-					preprocessedtext.push_back(line.substr(0, i));
-					line = line.substr(i);
-					i = 0;
-				}
+				preprocessed_text.push_back(line.substr(0, i));
+				line = line.substr(i);
+				i = 0;
 			}
-			preprocessedtext.push_back(line);
 		}
+		preprocessed_text.push_back(line);
 	}
 }
 
@@ -155,44 +144,30 @@ void TextEdit::repaintEvent(RepaintEvent* repaintEvent)
 
 	// update values of scroll bar
 	scroll.setRange(height() / font.textHeight());
-	scroll.setMaximum(preprocessedtext.size());
+	scroll.setMaximum(preprocessed_text.size());
 
-	int w = width();
-	int h = height();
-	if((w == 0) || (h == 0))
+	if((width() == 0) || (height() == 0))
 	{
 		return;
 	}
 
-	box.setSize(w, h);
+	box.setSize(width(), height());
 	p.drawImage(0, 0, box);
-
 	p.setColour(Colour(183.0 / 255.0, 219.0 / 255.0, 255.0 / 255.0, 1));
 
-	int skip = scroll.value();
+	int ypos = font.textHeight() + y_border;
 
-	int ypos = font.textHeight() + 5 + 1 + 1 + 1;
-	std::list<std::string>::iterator it;
-	it = preprocessedtext.begin();
-
-	int c = 0;
-	for(; c < skip; c++)
+	auto scroll_value = scroll.value();
+	for(int i = 0; i < preprocessed_text.size() - scroll_value; ++i)
 	{
-		++it;
-	}
-
-	c = 0;
-	for(; it != preprocessedtext.end(); it++)
-	{
-		if((c * font.textHeight()) >= (height() - 8 - font.textHeight()))
+		if(i * font.textHeight() >= (height() - y_border - font.textHeight()))
 		{
 			break;
 		}
 
-		std::string line = *it;
-		p.drawText(BORDER - 4 + 3, ypos, font, line);
+		auto const& line = preprocessed_text[scroll_value + i];
+		p.drawText(x_border, ypos, font, line);
 		ypos += font.textHeight();
-		++c;
 	}
 }
 
