@@ -136,7 +136,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 #ifdef WITH_RESAMPLER
 	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
 #endif/*WITH_RESAMPLER*/
-	settings.resampling_active.store(resamplers.isActive());
+	settings.resamplig_recommended.store(resamplers.isActive());
 
 	DEBUG(loadkit, "loadkit: Success\n");
 

@@ -33,6 +33,7 @@
 #include "statusframecontent.h"
 #include "humanizerframecontent.h"
 #include "diskstreamingframecontent.h"
+#include "resamplingframecontent.h"
 
 struct Settings;
 class SettingsNotifier;
@@ -55,6 +56,7 @@ public:
 
 private:
 	void humanizerOnChange(bool on);
+	void resamplingOnChange(bool on);
 
 	Image logo{":resources/logo.png"};
 
@@ -64,11 +66,13 @@ private:
 	FrameWidget status_frame{this, false};
 	FrameWidget humanizer_frame{this, true};
 	FrameWidget diskstreaming_frame{this, false};
+	FrameWidget resampling_frame{this, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
 	HumanizerframeContent humanizerframe_content;
 	DiskstreamingframeContent diskstreamingframe_content;
+	ResamplingframeContent resamplingframe_content;
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

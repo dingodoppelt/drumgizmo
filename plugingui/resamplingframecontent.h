@@ -1,8 +1,8 @@
 /* -*- Mode: c++ -*- */
 /***************************************************************************
- *            statusframecontent.h
+ *            resamplingframecontent.h
  *
- *  Fri Mar 24 21:49:50 CET 2017
+ *  Fri May  5 23:43:28 CEST 2017
  *  Copyright 2017 André Nusser
  *  andre.nusser@googlemail.com
  ****************************************************************************/
@@ -26,45 +26,41 @@
  */
 #pragma once
 
-#include "settings.h"
-#include "textedit.h"
 #include "widget.h"
+#include "textedit.h"
 
+struct Settings;
 class SettingsNotifier;
 
 namespace GUI
 {
 
-class StatusframeContent : public Widget
+class ResamplingframeContent
+	: public Widget
 {
 public:
-	StatusframeContent(Widget* parent, SettingsNotifier& settings_notifier);
+	ResamplingframeContent(Widget* parent,
+	                      Settings& settings,
+	                      SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 	void updateContent();
 
-	void updateDrumkitLoadStatus(LoadStatus load_status);
-	void updateDrumkitName(std::string const& drumkit_name);
-	void updateDrumkitDescription(std::string const& drumkit_description);
-	void updateDrumkitVersion(std::string const& drumkit_version);
-	void updateMidimapLoadStatus(LoadStatus load_status);
-	void updateBufferSize(std::size_t buffer_size);
-	void updateNumberOfUnderruns(std::size_t number_of_underruns);
+	void updateDrumkitSamplerate(std::size_t drumkit_samplerate);
+	void updateSessionSamplerate(double samplerate);
+	void updateResamplingRecommended(bool resamplig_recommended);
 
 private:
 	TextEdit text_field{this};
 
+	Settings& settings;
 	SettingsNotifier& settings_notifier;
 
-	std::string drumkit_load_status;
-	std::string drumkit_name;
-	std::string drumkit_description;
-	std::string drumkit_version;
-	std::string midimap_load_status;
-	std::string buffer_size;
-	std::string number_of_underruns;
+	std::string drumkit_samplerate;
+	std::string session_samplerate;
+	std::string resamplig_recommended;
 };
 
 } // GUI::

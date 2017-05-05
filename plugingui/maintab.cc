@@ -38,6 +38,7 @@ MainTab::MainTab(Widget* parent,
 	, statusframe_content{this, settings_notifier}
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
+	, resamplingframe_content{this, settings, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -48,36 +49,47 @@ MainTab::MainTab(Widget* parent,
 	layout.addItem(&status_frame);
 	layout.addItem(&humanizer_frame);
 	layout.addItem(&diskstreaming_frame);
+	layout.addItem(&resampling_frame);
 
 	auto h1 = 20;
 	auto h2 = 22;
 	auto h3 = 13;
 	auto h4 = 11;
+	auto h5 = 14;
 	auto drumkit_range = GridLayout::GridRange{0, 1, 0, h1};
 	auto status_range = GridLayout::GridRange{0, 1, h1, h1 + h2};
 	auto humanizer_range = GridLayout::GridRange{1, 2, 0, h3};
 	auto diskstreaming_range = GridLayout::GridRange{1, 2, h3, h3 + h4};
+	auto resampling_range = GridLayout::GridRange{1, 2, h3 + h4, h3 + h4 + h5};
 	layout.setPosition(&drumkit_frame, drumkit_range);
 	layout.setPosition(&status_frame, status_range);
 	layout.setPosition(&humanizer_frame, humanizer_range);
 	layout.setPosition(&diskstreaming_frame, diskstreaming_range);
+	layout.setPosition(&resampling_frame, resampling_range);
 
 	drumkit_frame.setTitle("Drumkit");
 	status_frame.setTitle("Status");
 	humanizer_frame.setTitle("Humanizer");
 	diskstreaming_frame.setTitle("Disk streaming");
+	resampling_frame.setTitle("Resampling");
 
 	drumkit_frame.setContent(&drumkitframe_content);
 	status_frame.setContent(&statusframe_content);
 	humanizer_frame.setContent(&humanizerframe_content);
 	diskstreaming_frame.setContent(&diskstreamingframe_content);
+	resampling_frame.setContent(&resamplingframe_content);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
+	resampling_frame.setOnSwitch(settings.enable_resampling);
 
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
+	CONNECT(this, settings_notifier.enable_resampling,
+	        &resampling_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
+	CONNECT(&resampling_frame, onSwitchChangeNotifier,
+	        this, &MainTab::resamplingOnChange);
 }
 
 void MainTab::resize(std::size_t width, std::size_t height)
@@ -93,6 +105,11 @@ void MainTab::resize(std::size_t width, std::size_t height)
 void MainTab::humanizerOnChange(bool on)
 {
 	settings.enable_velocity_modifier.store(on);
+}
+
+void MainTab::resamplingOnChange(bool on)
+{
+	settings.enable_resampling.store(on);
 }
 
 } // GUI::

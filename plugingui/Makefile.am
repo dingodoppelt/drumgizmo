@@ -79,6 +79,7 @@ nodist_libdggui_la_SOURCES = \
 	pluginconfig.cc \
 	powerbutton.cc \
 	progressbar.cc \
+	resamplingframecontent.cc \
 	resource.cc \
 	resource_data.cc \
 	scrollbar.cc \

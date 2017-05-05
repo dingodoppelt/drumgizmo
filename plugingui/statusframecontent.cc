@@ -41,18 +41,10 @@ StatusframeContent::StatusframeContent(
 	        this, &StatusframeContent::updateDrumkitDescription);
 	CONNECT(this, settings_notifier.drumkit_version,
 	        this, &StatusframeContent::updateDrumkitVersion);
-	CONNECT(this, settings_notifier.drumkit_samplerate,
-	        this, &StatusframeContent::updateDrumkitSamplerate);
 	CONNECT(this, settings_notifier.midimap_load_status,
 	        this, &StatusframeContent::updateMidimapLoadStatus);
-	CONNECT(this, settings_notifier.samplerate,
-	        this, &StatusframeContent::updateSamplerate);
 	CONNECT(this, settings_notifier.buffer_size,
 	        this, &StatusframeContent::updateBufferSize);
-	CONNECT(this, settings_notifier.enable_resampling,
-	        this, &StatusframeContent::updateResamplingEnabled);
-	CONNECT(this, settings_notifier.resampling_active,
-	        this, &StatusframeContent::updateResamplingActive);
 	CONNECT(this, settings_notifier.number_of_underruns,
 	        this, &StatusframeContent::updateNumberOfUnderruns);
 
@@ -77,11 +69,7 @@ void StatusframeContent::updateContent()
 		"Drumkit name:   " + drumkit_name + "\n"
 		"Drumkit description:   " + drumkit_description + "\n"
 		// "Drumkit version:   " + drumkit_version + "\n"
-		"Drumkit samplerate:   " + drumkit_samplerate + "\n"
-		"Session samplerate:   " + samplerate + "\n"
 		"Session buffer size:   " + buffer_size + "\n"
-		// "Resampling enabled: " + resampling_enabled + "\n"
-		"Resampling active:   " + resampling_active + "\n"
 		"Number of underruns: " + number_of_underruns + "\n"
 	);
 }
@@ -128,15 +116,6 @@ void StatusframeContent::updateDrumkitVersion(std::string const& drumkit_version
 	updateContent();
 }
 
-void StatusframeContent::updateDrumkitSamplerate(std::size_t drumkit_samplerate)
-{
-	this->drumkit_samplerate = drumkit_samplerate == 0
-		? ""
-		: std::to_string(drumkit_samplerate);
-
-	updateContent();
-}
-
 void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 {
 	switch(load_status)
@@ -158,30 +137,9 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 	updateContent();
 }
 
-void StatusframeContent::updateSamplerate(double samplerate)
-{
-	this->samplerate = std::to_string((std::size_t)samplerate);
-
-	updateContent();
-}
-
 void StatusframeContent::updateBufferSize(std::size_t buffer_size)
 {
 	this->buffer_size = std::to_string(buffer_size);
-
-	updateContent();
-}
-
-void StatusframeContent::updateResamplingEnabled(bool enable_resampling)
-{
-	this->resampling_enabled = enable_resampling ? "Yes" : "No";
-
-	updateContent();
-}
-
-void StatusframeContent::updateResamplingActive(bool resampling_active)
-{
-	this->resampling_active = resampling_active ? "Yes" : "No";
 
 	updateContent();
 }
