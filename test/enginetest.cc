@@ -26,8 +26,10 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <thread>
+#include <chrono>
+
 #include <drumgizmo.h>
-#include <unistd.h>
 
 #include "drumkit_creator.h"
 
@@ -100,18 +102,18 @@ public:
 		for(int i = 0; i < 100; ++i)
 		{
 			settings.drumkit_file.store(kit1_file);
-			usleep(100);
+			std::this_thread::sleep_for(std::chrono::microseconds(100));
 			settings.drumkit_file.store(kit2_file);
-			usleep(100);
+			std::this_thread::sleep_for(std::chrono::microseconds(100));
 		}
 
 		// Switch kits with bigger delay giving the loader time to finish
 		for(int i = 0; i < 100; ++i)
 		{
 			settings.drumkit_file.store(kit1_file);
-			usleep(10000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			settings.drumkit_file.store(kit2_file);
-			usleep(10000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 	}
 };

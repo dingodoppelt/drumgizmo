@@ -26,10 +26,12 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <thread>
+#include <chrono>
+
 #include <audiofile.h>
 #include <audiocache.h>
 #include <settings.h>
-#include <unistd.h>
 
 #include "drumkit_creator.h"
 
@@ -108,7 +110,7 @@ public:
 					int timeout = 1000;
 					while(!audio_cache.isReady(id))
 					{
-						usleep(1000);
+						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 						if(--timeout == 0)
 						{
 							CPPUNIT_ASSERT(false); // timeout

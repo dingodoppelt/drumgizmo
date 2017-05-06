@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <vector>
 #include <string.h>
+#include <unistd.h>
 
 #include <platform.h>
 
@@ -51,7 +52,8 @@
 #define SEP "/"
 #endif
 
-namespace GUI {
+namespace GUI
+{
 
 Directory::Directory(std::string path)
 {

@@ -29,7 +29,8 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include <unistd.h>
+#include <thread>
+#include <chrono>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
 
 	while(settings.drumkit_load_status.load() != LoadStatus::Done)
 	{
-		usleep(10000);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 		int total = settings.number_of_files.load();
 		int loaded = settings.number_of_files_loaded.load();

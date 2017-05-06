@@ -26,9 +26,6 @@
  */
 #include "sample.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-
 #include <sndfile.h>
 
 Sample::Sample(const std::string& name, float power)

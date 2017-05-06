@@ -32,7 +32,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sstream>
 #include <chrono>
 #include <thread>
@@ -49,13 +48,13 @@
 static const char version_str[] = "DrumGizmo v" VERSION "\n";
 
 static const char copyright_str[] =
-    "Copyright (C) 2008-2011 Bent Bisballe Nyeng - Aasimon.org.\n"
-    "This is free software.  You may redistribute copies of it under the terms "
-    "of\n"
-    "the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
-    "There is NO WARRANTY, to the extent permitted by law.\n"
-    "\n"
-    "Written by Bent Bisballe Nyeng (deva@aasimon.org)\n";
+	"Copyright (C) 2008-2011 Bent Bisballe Nyeng - Aasimon.org.\n"
+	"This is free software.  You may redistribute copies of it under the terms "
+	"of\n"
+	"the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
+	"There is NO WARRANTY, to the extent permitted by law.\n"
+	"\n"
+	"Written by Bent Bisballe Nyeng (deva@aasimon.org)\n";
 
 static const char usage_str[] =
     "Usage: %s [options] drumkitfile\n"

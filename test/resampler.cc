@@ -27,7 +27,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../src/chresampler.h"
-#include <unistd.h>
 
 #define BUFSZ 500
 

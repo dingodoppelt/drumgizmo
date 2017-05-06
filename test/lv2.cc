@@ -26,7 +26,8 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <unistd.h>
+#include <thread>
+#include <chrono>
 #include <memory.h>
 #include <stdio.h>
 #include <arpa/inet.h>
@@ -139,7 +140,7 @@ public:
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
-		usleep(1000); // wait for kit to get loaded (async),
+		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for kit to get loaded (async),
 
 		res = h.run(100);
 		CPPUNIT_ASSERT_EQUAL(0, res);
@@ -217,7 +218,7 @@ public:
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
-		usleep(1000); // wait for kit to get loaded (async),
+		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(100);
@@ -307,13 +308,13 @@ public:
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
 		CPPUNIT_ASSERT_EQUAL(0, res);
-		sleep(1); // wait for kit to get loaded (async),
+		std::this_thread::sleep_for(std::chrono::seconds(1));  // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
 		for(int i = 0; i < 10; i++)
 		{
 			res = h.run(10);
-			usleep(1000);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			CPPUNIT_ASSERT_EQUAL(0, res);
 
 			//printf("Iteration:\n");
@@ -330,7 +331,7 @@ public:
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(10);
-		usleep(1000);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		CPPUNIT_ASSERT_EQUAL(0, res);
 
 		/*
