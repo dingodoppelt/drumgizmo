@@ -143,7 +143,7 @@ AS_IF([test "x$enable_gui" = "xauto"],
 	     AS_CASE([$host_os],
 		      [darwin*], [enable_gui="cocoa"],
 		      [linux*|*bsd*], [enable_gui="x11"],
-		      [mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
+		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
 
 		      AC_MSG_ERROR([Your platform is not currently supported])
 	     )]
@@ -251,7 +251,7 @@ AS_IF(
 	AS_CASE([$host_os],
 		[darwin*], [ ],
 		[linux*|*bsd*], [VST_CPPFLAGS="$VST_CPPFLAGS -D__cdecl="],
-		[mingw*|windows*|winnt|cygwin], [ ],
+		[msys|mingw*|windows*|winnt|cygwin], [ ],
 		AC_MSG_ERROR([Your platform is not currently supported])
 	)
 
