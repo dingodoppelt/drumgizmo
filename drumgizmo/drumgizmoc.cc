@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sstream>
+#include <chrono>
+#include <thread>
 
 #include <hugin.hpp>
 
@@ -428,11 +430,7 @@ int main(int argc, char* argv[])
 	{
 		while(settings.drumkit_load_status.load() != LoadStatus::Done)
 		{
-#ifdef WIN32
-			SleepEx(10, FALSE);
-#else
-			usleep(10000);
-#endif /*WIN32*/
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 			int total = settings.number_of_files.load();
 			int loaded =  settings.number_of_files_loaded.load();

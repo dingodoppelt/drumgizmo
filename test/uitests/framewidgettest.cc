@@ -25,14 +25,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include <iostream>
-
-#include <platform.h>
-
-#if DG_PLATFORM == DG_PLATFORM_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-#include <unistd.h>
+#include <chrono>
+#include <thread>
 
 #include <button.h>
 #include <checkbox.h>
@@ -180,11 +174,7 @@ int main()
 
 	while(test_window.processEvents())
 	{
-#ifdef WIN32
-		SleepEx(50, FALSE);
-#else
-		usleep(50000);
-#endif
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 
 	return 0;
