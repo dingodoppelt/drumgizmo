@@ -12,6 +12,7 @@ endif
 
 drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
 	$(LV2_CFLAGS) \
+	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/plugin/plugingizmo \
 	-I$(top_srcdir)/plugingui \
@@ -40,6 +41,7 @@ vstplugin_DATA =
 endif
 
 drumgizmo_vst_la_CXXFLAGS = -DVST \
+	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/plugin/plugingizmo \
 	-I$(top_srcdir)/plugingui \
