@@ -31,7 +31,8 @@
 
 struct mutex_private_t;
 
-class Mutex {
+class Mutex
+{
 public:
 	Mutex();
 	~Mutex();
@@ -44,14 +45,8 @@ private:
 	struct mutex_private_t* prv;
 };
 
-#if DG_PLATFORM == DG_PLATFORM_WINDOWS
-// Hack: mingw doesn't have std::mutex
-namespace std {
-	class mutex : public Mutex {};
-}
-#endif
-
-class MutexAutolock {
+class MutexAutolock
+{
 public:
 	MutexAutolock(Mutex &mutex);
 	~MutexAutolock();
