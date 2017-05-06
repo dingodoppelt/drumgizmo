@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstring>
+#include <mutex>
 
 #include <event.h>
 #include <audiotypes.h>
@@ -267,7 +268,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 				}
 
 				{
-					MutexAutolock l(af.mutex);
+					std::lock_guard<std::mutex> guard(af.mutex);
 
 					size_t n = 0; // default start point is 0.
 

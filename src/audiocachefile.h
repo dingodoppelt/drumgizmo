@@ -30,16 +30,15 @@
 #include <list>
 #include <map>
 #include <vector>
-
 #include <mutex>
-#include "mutex.h"
 
 #include <sndfile.h>
 
 #include <audiotypes.h>
 
 //! Channel data container in the cache world.
-class CacheChannel {
+class CacheChannel
+{
 public:
 	size_t channel; //< Channel number
 	sample_t* samples; //< Sample buffer pointer.
@@ -52,7 +51,8 @@ using CacheChannels = std::list<CacheChannel>;
 //! This class is used to encapsulate reading from a single file source.
 //! The access is ref counted so that the file is only opened once and closed
 //! when it is no longer required.
-class AudioCacheFile {
+class AudioCacheFile
+{
 	friend class AudioCacheFiles;
 	friend class TestableAudioCacheFiles;
 public:
@@ -82,7 +82,8 @@ private:
 	std::vector<sample_t>& read_buffer;
 };
 
-class AudioCacheFiles {
+class AudioCacheFiles
+{
 public:
 	//! Get the CacheAudioFile object corresponding to filename.
 	//! If it does not exist it will be created.

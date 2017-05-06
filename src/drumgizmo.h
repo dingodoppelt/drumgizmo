@@ -37,7 +37,6 @@
 #include "drumkit.h"
 #include "drumkitloader.h"
 #include "audiocache.h"
-#include "mutex.h"
 #include "chresampler.h"
 #include "settings.h"
 #include "inputprocessor.h"
@@ -78,8 +77,6 @@ private:
 
 protected:
 	DrumKitLoader loader;
-
-	Mutex mutex;
 
 	AudioOutputEngine& oe;
 	AudioInputEngine& ie;

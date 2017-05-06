@@ -37,7 +37,6 @@ audiocache_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
@@ -52,7 +51,6 @@ audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
 audiocachefile_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
@@ -79,7 +77,6 @@ audiocacheeventhandler_SOURCES = \
 	$(top_srcdir)/src/audiocacheeventhandler.cc \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/audiocachefile.cc \
-	$(top_srcdir)/src/mutex.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	test.cc \

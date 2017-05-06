@@ -30,10 +30,10 @@
 #include <map>
 #include <vector>
 #include <limits>
+#include <mutex>
 
 #include <sndfile.h>
 
-#include "mutex.h"
 #include "audio.h"
 
 class AudioFile
@@ -55,7 +55,7 @@ public:
 
 	bool isValid() const;
 
-	Mutex mutex;
+	std::mutex mutex;
 
 	std::size_t filechannel;
 

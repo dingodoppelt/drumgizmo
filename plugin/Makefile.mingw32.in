@@ -32,7 +32,6 @@ DG_SRC = \
 	@top_srcdir@/src/memchecker.cc \
 	@top_srcdir@/src/midimapparser.cc \
 	@top_srcdir@/src/midimapper.cc \
-	@top_srcdir@/src/mutex.cc \
 	@top_srcdir@/src/path.cc \
 	@top_srcdir@/src/powerlist.cc \
 	@top_srcdir@/src/random.cc \

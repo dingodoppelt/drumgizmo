@@ -30,7 +30,6 @@
 #include <atomic>
 
 #include <mutex>
-#include "mutex.h"
 
 template <typename T, typename = void>
 class Atomic;

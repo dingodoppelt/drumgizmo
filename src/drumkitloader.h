@@ -29,7 +29,6 @@
 #include <string>
 #include <list>
 #include <mutex>
-#include "mutex.h"
 
 #include "thread.h"
 #include "semaphore.h"

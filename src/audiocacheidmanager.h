@@ -33,7 +33,6 @@
 #include <audiotypes.h>
 
 #include <mutex>
-#include "mutex.h"
 
 class AudioCacheFile;
 
@@ -42,7 +41,8 @@ class AudioCacheFile;
 
 typedef int cacheid_t;
 
-typedef struct {
+struct cache_t
+{
 	cacheid_t id{CACHE_NOID}; //< Current id of this cache_t. CACHE_NOID means not in use.
 
 	AudioCacheFile* afile{nullptr};
@@ -55,9 +55,10 @@ typedef struct {
 
 	sample_t* preloaded_samples{nullptr}; // nullptr means preload buffer not active.
 	size_t preloaded_samples_size{0};
-} cache_t;
+};
 
-class AudioCacheIDManager {
+class AudioCacheIDManager
+{
 	friend class AudioCacheEventHandler;
 public:
 	AudioCacheIDManager() = default;

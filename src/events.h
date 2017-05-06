@@ -29,11 +29,12 @@
 #include <map>
 #include <stdio.h>
 #include <string>
+#include <mutex>
+
 #include <sndfile.h>
 
 #include "audiofile.h"
 #include "audio.h"
-#include "mutex.h"
 #include "audiocache.h"
 
 typedef unsigned int timepos_t;
@@ -105,6 +106,6 @@ public:
 
 private:
 	std::multimap<timepos_t, Event*> queue;
-	Mutex mutex;
+	std::mutex mutex;
 };
 

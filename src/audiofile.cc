@@ -62,7 +62,7 @@ bool AudioFile::isValid() const
 void AudioFile::unload()
 {
 	// Make sure we don't unload the object while loading it...
-	MutexAutolock l(mutex);
+	std::lock_guard<std::mutex> guard(mutex);
 
 	is_loaded = false;
 
@@ -77,7 +77,7 @@ void AudioFile::unload()
 void AudioFile::load(std::size_t sample_limit)
 {
 	// Make sure we don't unload the object while loading it...
-	MutexAutolock l(mutex);
+	std::lock_guard<std::mutex> guard(mutex);
 
 	if(this->data) // already loaded
 	{

@@ -29,7 +29,6 @@
 #include <map>
 #include <string>
 #include <mutex>
-#include "mutex.h"
 
 typedef std::map<int, std::string> midimap_t;
 typedef std::map<std::string, int> instrmap_t;

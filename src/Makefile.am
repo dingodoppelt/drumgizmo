@@ -36,7 +36,6 @@ nodist_libdg_la_SOURCES = \
 	memchecker.cc \
 	midimapparser.cc \
 	midimapper.cc \
-	mutex.cc \
 	path.cc \
 	powerlist.cc \
 	random.cc \
@@ -80,7 +79,6 @@ EXTRA_DIST = \
 	memchecker.h \
 	midimapparser.h \
 	midimapper.h \
-	mutex.h \
 	nolocale.h \
 	notifier.h \
 	path.h \
