@@ -32,9 +32,8 @@ namespace GUI
 {
 
 ResamplingframeContent::ResamplingframeContent(
-    Widget* parent, Settings& settings, SettingsNotifier& settings_notifier)
+    Widget* parent, SettingsNotifier& settings_notifier)
     : Widget(parent)
-	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	CONNECT(this, settings_notifier.drumkit_samplerate,

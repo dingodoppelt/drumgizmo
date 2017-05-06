@@ -38,7 +38,7 @@ MainTab::MainTab(Widget* parent,
 	, statusframe_content{this, settings_notifier}
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
-	, resamplingframe_content{this, settings, settings_notifier}
+	, resamplingframe_content{this, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {

@@ -29,7 +29,6 @@
 #include "widget.h"
 #include "textedit.h"
 
-struct Settings;
 class SettingsNotifier;
 
 namespace GUI
@@ -39,9 +38,7 @@ class ResamplingframeContent
 	: public Widget
 {
 public:
-	ResamplingframeContent(Widget* parent,
-	                      Settings& settings,
-	                      SettingsNotifier& settings_notifier);
+	ResamplingframeContent(Widget* parent, SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -55,7 +52,6 @@ public:
 private:
 	TextEdit text_field{this};
 
-	Settings& settings;
 	SettingsNotifier& settings_notifier;
 
 	std::string drumkit_samplerate;
