@@ -49,6 +49,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	, audio_cache(settings)
 	, input_processor(settings, kit, activeevents)
 	, settings(settings)
+	, settings_getter(settings)
 {
 	audio_cache.init(10000); // start thread
 	events.reserve(1000);
@@ -81,7 +82,7 @@ void DrumGizmo::setFrameSize(size_t framesize)
 	settings.buffer_size.store(framesize);
 
 	// If we are resampling override the frame size.
-	if(resamplers.isActive())
+	if(resamplers.isActive() && enable_resampling)
 	{
 		framesize = RESAMPLER_INPUT_BUFFER;
 	}
@@ -91,6 +92,12 @@ void DrumGizmo::setFrameSize(size_t framesize)
 		DEBUG(drumgizmo, "New framesize: %d\n", (int)framesize);
 
 		this->framesize = framesize;
+
+		// Remove all active events as they are cached using the old framesize.
+		for(std::size_t ch = 0; ch < MAX_NUM_CHANNELS; ++ch)
+		{
+			activeevents[ch].clear();
+		}
 
 		// Update framesize in drumkitloader and cachemanager:
 		loader.setFrameSize(framesize);
@@ -113,6 +120,11 @@ void DrumGizmo::setRandomSeed(unsigned int seed)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+	if(settings_getter.enable_resampling.hasChanged())
+	{
+		enable_resampling = settings_getter.enable_resampling.getValue();
+	}
+
 	setFrameSize(nsamples);
 	setFreeWheel(ie.isFreewheeling() && oe.isFreewheeling());
 
@@ -127,6 +139,10 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	ie.run(pos, nsamples, events);
 
 	double resample_ratio = resamplers.getRatio();
+	if(enable_resampling == false)
+	{
+		resample_ratio = 1.0;
+	}
 	bool active_events_left =
 		input_processor.process(events, pos, resample_ratio);
 
@@ -141,8 +157,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	// Write audio
 	//
 #ifdef WITH_RESAMPLER
-	if((settings.enable_resampling.load() == false) ||
-	   (!resamplers.isActive())) // No resampling needed
+	if(!enable_resampling || !resamplers.isActive()) // No resampling needed
 	{
 #endif
 		for(size_t c = 0; c < kit.channels.size(); ++c)
@@ -378,7 +393,13 @@ void DrumGizmo::stop()
 
 std::size_t DrumGizmo::getLatency() const
 {
-	return input_processor.getLatency() + resamplers.getLatency();
+	auto latency = input_processor.getLatency();
+	if(enable_resampling)
+	{
+		latency += resamplers.getLatency();
+	}
+
+	return latency;
 }
 
 int DrumGizmo::samplerate()
@@ -396,10 +417,5 @@ void DrumGizmo::setSamplerate(int samplerate)
 
 #ifdef WITH_RESAMPLER
 	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
-
-	if(resamplers.isActive())
-	{
-		setFrameSize(RESAMPLER_INPUT_BUFFER);
-	}
 #endif/*WITH_RESAMPLER*/
 }

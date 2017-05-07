@@ -86,6 +86,7 @@ protected:
 	Resamplers resamplers;
 	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][RESAMPLER_OUTPUT_BUFFER];
 	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
+	bool enable_resampling{true};
 
 	std::map<std::string, AudioFile *> audiofiles;
 
@@ -98,6 +99,7 @@ protected:
 
 	std::vector<event_t> events;
 	Settings& settings;
+	SettingsGetter settings_getter;
 
 	Random rand;
 };
