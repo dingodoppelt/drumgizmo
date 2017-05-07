@@ -72,6 +72,7 @@ sample_t* AudioCache::open(const AudioFile& file,
 
 	if(!file.isValid())
 	{
+		settings.number_of_underruns.fetch_add(1);
 		// File preload not yet ready - skip this sample.
 		id = CACHE_DUMMYID;
 		assert(nodata);
@@ -84,6 +85,7 @@ sample_t* AudioCache::open(const AudioFile& file,
 	// If we are out of available ids we get CACHE_DUMMYID
 	if(id == CACHE_DUMMYID)
 	{
+		settings.number_of_underruns.fetch_add(1);
 		// Use nodata buffer instead.
 		assert(nodata);
 		return nodata;
@@ -154,6 +156,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 
 	if(id == CACHE_DUMMYID)
 	{
+		settings.number_of_underruns.fetch_add(1);
 		assert(nodata);
 		return nodata;
 	}
