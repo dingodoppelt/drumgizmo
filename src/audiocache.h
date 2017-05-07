@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <memory>
 
 #include "audiotypes.h"
 #include "audiofile.h"
@@ -106,6 +107,7 @@ private:
 	sample_t* nodata{nullptr};
 	std::size_t nodata_framesize{0};
 	std::size_t chunk_size{0};
+	std::list<std::unique_ptr<sample_t[]>> nodata_dirty;
 
 	AudioCacheIDManager id_manager;
 	AudioCacheEventHandler event_handler{id_manager};

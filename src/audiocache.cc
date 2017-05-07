@@ -277,7 +277,10 @@ void AudioCache::setFrameSize(std::size_t framesize)
 
 	if(framesize > nodata_framesize)
 	{
-		delete[] nodata;
+		if(nodata)
+		{
+			nodata_dirty.emplace_back(std::move(nodata)); // Store for later deletion.
+		}
 		nodata = new sample_t[framesize];
 		nodata_framesize = framesize;
 
