@@ -517,6 +517,8 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
 		"  <value name=\"velocity_randomiser_weight\">" +
 		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
+		"  <value name=\"enable_resampling\">" +
+		bool2str(settings.enable_resampling.load()) + "</value>\n"
 		"  <value name=\"disk_cache_upper_limit\">" +
 		int2str(settings.disk_cache_upper_limit.load()) + "</value>\n"
 		"  <value name=\"disk_cache_chunk_size\">" +
