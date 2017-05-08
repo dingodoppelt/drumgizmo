@@ -73,6 +73,7 @@ static const char usage_str[] =
     "  -D, --debug ddd        Enable debug messages on 'ddd'; see hugin "
     "documentation for details\n"
 #endif /*DISABLE_HUGIN*/
+    "  -r, --no-resampling    Disable resampling.\n"
     "  -s, --streaming        Enable streaming.\n"
     "  -S, --streamingparms   Streaming options.\n"
     "  -v, --version          Print version information and exit.\n"
@@ -142,11 +143,12 @@ int main(int argc, char* argv[])
 		{"streamingparams", required_argument, 0, 'S'},
 		{"version", no_argument, 0, 'v'},
 		{"help", no_argument, 0, 'h'},
+		{"no-resample", no_argument, 0, 'r'},
 		{0, 0, 0, 0}
 	};
 	while(1)
 	{
-		c = getopt_long(argc, argv, "hvpo:O:i:I:e:asS:"
+		c = getopt_long(argc, argv, "hvpo:O:i:I:e:arsS:"
 #ifndef DISABLE_HUGIN
 		                "D:"
 #endif /*DISABLE_HUGIN*/
@@ -220,6 +222,10 @@ int main(int argc, char* argv[])
 			printf("%s", version_str);
 			printf("%s", copyright_str);
 			return 0;
+
+		case 'r':
+			settings.enable_resampling = false;
+			break;
 
 		case 's':
 			settings.disk_cache_enable = true;
