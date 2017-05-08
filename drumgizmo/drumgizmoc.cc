@@ -35,6 +35,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <wordexp.h>
 
 #include <hugin.hpp>
 
@@ -261,11 +262,19 @@ int main(int argc, char* argv[])
 		std::string parm;
 		std::string val;
 		bool inval = false;
+		wordexp_t exp_result;
 		for(size_t i = 0; i < iparms.size(); ++i)
 		{
 			if(iparms[i] == ',')
 			{
-				ie->setParm(parm, val);
+				int error = wordexp(val.data(), &exp_result, 0);
+				if(error)
+				{
+					std::cerr << "Wrong argument: ";
+					std::cerr << parm << " = " << val << std::endl;
+					return 1;
+				}
+				ie->setParm(parm, exp_result.we_wordv[0]);
 				parm = "";
 				val = "";
 				inval = false;
@@ -289,7 +298,14 @@ int main(int argc, char* argv[])
 		}
 		if(parm != "")
 		{
-			ie->setParm(parm, val);
+			int error = wordexp(val.data(), &exp_result, 0);
+			if(error)
+			{
+				std::cerr << "Wrong argument: ";
+				std::cerr << parm << " = " << val << std::endl;
+				return 1;
+			}
+			ie->setParm(parm, exp_result.we_wordv[0]);
 		}
 	}
 
