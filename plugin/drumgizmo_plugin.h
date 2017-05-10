@@ -100,7 +100,7 @@ public:
 	// GUI
 	//
 	bool hasGUI() override;
-	void createWindow(void *parent) override;
+	void* createWindow(void *parent) override;
 	void onDestroyWindow() override;
 	void onShowWindow() override;
 	void onHideWindow() override;

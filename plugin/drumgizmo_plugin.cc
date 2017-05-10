@@ -259,11 +259,13 @@ bool DrumGizmoPlugin::hasGUI()
 	return true;
 }
 
-void DrumGizmoPlugin::createWindow(void *parent)
+void* DrumGizmoPlugin::createWindow(void *parent)
 {
 	plugin_gui = std::make_shared<GUI::MainWindow>(settings, parent);
 	resizeWindow(width, height);
 	onShowWindow();
+
+	return plugin_gui->getNativeWindowHandle();
 }
 
 void DrumGizmoPlugin::onDestroyWindow()
