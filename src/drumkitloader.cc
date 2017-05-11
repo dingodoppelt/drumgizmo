@@ -252,7 +252,6 @@ void DrumKitLoader::thread_main()
 		if(getter.midimap_file.hasChanged() || newKit)
 		{
 			auto ie_midi = dynamic_cast<AudioInputEngineMidi*>(&ie);
-			std::cout << "ie_midi: " << (void*)ie_midi << std::endl;
 			if(ie_midi)
 			{
 				settings.midimap_load_status.store(LoadStatus::Loading);
