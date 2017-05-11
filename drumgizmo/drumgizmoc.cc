@@ -422,6 +422,7 @@ int main(int argc, char* argv[])
 	gizmo.setFrameSize(oe->getBufferSize());
 
 	settings.drumkit_file.store(kitfile);
+	settings.reload_counter++;
 
 	printf("Loading drumkit, this may take a while:\n");
 
