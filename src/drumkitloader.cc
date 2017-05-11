@@ -85,11 +85,14 @@ bool DrumKitLoader::loadkit(const std::string& file)
 
 	if(file == "")
 	{
-		settings.drumkit_load_status.store(LoadStatus::Error);
+		if (getter.reload_counter.getValue() != 0)
+		{
+			settings.drumkit_load_status.store(LoadStatus::Error);
 
-		// Show a full bar
-		settings.number_of_files.store(1);
-		settings.number_of_files_loaded.store(1);
+			// Show a full bar
+			settings.number_of_files.store(1);
+			settings.number_of_files_loaded.store(1);
+		}
 
 		return false;
 	}
@@ -252,7 +255,11 @@ void DrumKitLoader::thread_main()
 		if(getter.midimap_file.hasChanged() || newKit)
 		{
 			auto ie_midi = dynamic_cast<AudioInputEngineMidi*>(&ie);
-			if(ie_midi)
+
+			// if there's a midi engine and this is not just the default midimap
+			// name which is set.
+			if(ie_midi && (getter.midimap_file.getValue() != "" ||
+						   getter.reload_counter.getValue() != 0))
 			{
 				settings.midimap_load_status.store(LoadStatus::Loading);
 				bool ret = ie_midi->loadMidiMap(getter.midimap_file.getValue(),
