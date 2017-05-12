@@ -8,3 +8,6 @@
 	path = plugingui/lodepng
 	url = https://github.com/lvandeve/lodepng
 	branch = a71964ed5fe4f82a32ac7f8201338900f66e855d
+[submodule "getoptpp"]
+	path = getoptpp
+	url = https://github.com/cgloeckner/getoptpp

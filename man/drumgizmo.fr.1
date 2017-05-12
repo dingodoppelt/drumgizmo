@@ -15,7 +15,11 @@ DrumGizmo utilise un format de fichier de kit de batterie ouvert, permettant à 
 .SH "OPTIONS"
 .PD 0
 .RE
+\fB-a, --async_load\fR
 .RS 7
+Charger le kit en arrière-plan.
+
+.RE
 \fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
 .RS 7
 Utilise le moteur d'entrée d'évènements indiqué.
@@ -97,6 +101,11 @@ http://manuals.opensound.com/developer/SNDCTL_DSP_SETFRAGMENT.html (en anglais)
 \fB-e, --endpos\fR
 .RS 7
 Nombre d'échantillons à traiter, (-1 par défaut : infini)
+
+.RE
+\fB-r, --no-resampling\fR
+.RS 7
+Désactiver le ré-échantillonnage
 
 .RE
 \fB-s, --streaming\fR

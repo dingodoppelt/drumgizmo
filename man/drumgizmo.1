@@ -15,7 +15,11 @@ DrumGizmo uses an open drumkit file format, allowing the community to create the
 .SH "OPTIONS"
 .PD 0
 .RE
+\fB-a, --async_load\fR
 .RS 7
+Load kit in the background.
+
+.RE
 \fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
 .RS 7
 Use said event input engine.
@@ -99,6 +103,11 @@ http://manuals.opensound.com/developer/SNDCTL_DSP_SETFRAGMENT.html
 Number of samples to process, (default -1: infinite)
 
 .RE
+\fB-r, --no-resampling\fR
+.RS 7
+Disable resampling
+
+.RE
 \fB-s, --streaming\fR
 .RS 7
 Enable diskstreaming
@@ -106,7 +115,7 @@ Enable diskstreaming
 .RE
 \fB-S, --strimingparms parmlist\fR
 .RS 7
-Parameters for controling the streaming buffers.
+Parameters for controlling the streaming buffers.
 
 .P
 \fBlimit\fR=<size> (Limit the amount of preloaded drumkit data to the size)
