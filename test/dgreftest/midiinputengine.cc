@@ -29,6 +29,7 @@
 #include <iostream>
 
 static int const NOTE_ON = 0x90;
+static int const NOTE_MASK = 0xF0;
 
 MidifileInputEngine::MidifileInputEngine()
 	: AudioInputEngineMidi{}
@@ -147,7 +148,7 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 		if(!smf_event_is_metadata(current_event))
 		{
 			if((current_event->midi_buffer_length == 3) &&
-			    ((current_event->midi_buffer[0] & NOTE_ON) == NOTE_ON) &&
+			    ((current_event->midi_buffer[0] & NOTE_MASK) == NOTE_ON) &&
 			    (track == -1 || current_event->track_number == track) &&
 			    current_event->midi_buffer[2] > 0)
 			{

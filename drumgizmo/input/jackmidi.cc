@@ -31,6 +31,7 @@
 #include "jackmidi.h"
 
 static int const NOTE_ON = 0x90;
+static int const NOTE_MASK = 0xF0;
 
 JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	: AudioInputEngineMidi{}
@@ -122,7 +123,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		{
 			continue;
 		}
-		if((event.buffer[0] & NOTE_ON) != NOTE_ON)
+		if((event.buffer[0] & NOTE_MASK) != NOTE_ON)
 		{
 			continue;
 		}
