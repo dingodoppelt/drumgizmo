@@ -176,6 +176,7 @@ EXTRA_DIST = \
 	pluginconfig.h \
 	powerbutton.h \
 	progressbar.h \
+	resamplingframecontent.h \
 	resource.h \
 	resource_data.h \
 	scrollbar.h \
