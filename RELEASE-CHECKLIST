@@ -1,5 +1,9 @@
 Check list for releasing:
 
+ [ ]  Ask translators for translations (a few days in advance if possible)
+
+ [ ]  Update man page
+
  [ ]  Bump version in version.h
 
  [ ]  Update ChangeLog
