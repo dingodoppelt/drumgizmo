@@ -1,3 +1,43 @@
+Version 0.9.14
+==============
+Note: LAC2017 release
+Release date: May 14th 2017
+Contributors: deva, chaot4, Muldjord, meka, Hans Petter Selasky
+Special extra thanks with a cherry on top: Robin Gareus
+
+Features:
+ - Introduced new resampler module in ui
+
+Bugfixes:
+ - CLI
+   - CLI exits right away, doesn't do anything
+   - Make ''-i midifile -I midimap=~/...'' recognize the home directory. Replace "~" by the home directory in ./drumgizmo/input/midifile.cc
+   - Properly get/set OSS buffers
+   - Add ---no-resampling option
+
+ - Engine
+   - Fix midi note on/off mask
+   - Streamer BUG: If there is a cache miss on one of the audiofiles (1 channel) in a sample that one sample will get delayed compared to the others
+   - Streamer BUG: When nodata buffer is being reallocated we need to make sure that the old buffer is not being used by one of the cache ids
+   - Resampler BUG: Fix corruption/crash when enabling/disabling resampler at run-time
+   - Update Window build environment to a more recent mingw64
+   - Remove obsolete old mingw32 thread hacks
+   - Introduce clear signal, showing if we had an underrun because of diskstreaming
+   - Fix crash on with low preload size
+   - Initial status of drumkit is "Error" on first opening the plugin
+
+ - UI
+   - Scroll-wheel on tab buttons should iterate through the tabs
+   - Refactor TextEdit. (use vector in preprocessing etc.)
+   - Fix "unexpected easter egg"
+   - Fix high CPU load of plugingui when shown in a host (All platforms/DAWs)
+   - Return handle to the newly created window in ''PluginLV2::uiInstantiate'' in the ''widget'' pointer
+   - Add bypass button for the resampler
+   - Fix redraw on changing desktops
+
+ - General
+   - Don't put .a and .la files in lv2 folder on install
+
 Version 0.9.13
 ==============
 Release date: April 23rd 2017
