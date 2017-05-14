@@ -316,6 +316,13 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 			repaintEvent->width = xevent.xexpose.width;
 			repaintEvent->height = xevent.xexpose.height;
 			event_queue.push_back(repaintEvent);
+
+			if(image)
+			{
+				// Redraw the entire window.
+				Rect rect{0, 0, window.wpixbuf.width, window.wpixbuf.height};
+				redraw(rect);
+			}
 		}
 		break;
 
