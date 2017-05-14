@@ -1,9 +1,0 @@
--std=c++11
--I.
--I..
--I../include
--I../drumgizmo
--I../hugin
--I../../include
--I../../drumgizmo
--I../../hugin
