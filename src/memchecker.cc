@@ -60,7 +60,7 @@ uint64_t MemChecker::calcFreeMemory() const
 #if DG_PLATFORM == DG_PLATFORM_LINUX
 	struct sysinfo sys_info;
 	sysinfo(&sys_info);
-	free_memory = sys_info.freeram * sys_info.mem_unit;
+	free_memory = (uint64_t)sys_info.freeram * (uint64_t)sys_info.mem_unit;
 #elif DG_PLATFORM == DG_PLATFORM_WINDOWS
 	MEMORYSTATUSEX status;
 	status.dwLength = sizeof(status);
