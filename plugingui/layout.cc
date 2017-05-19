@@ -106,7 +106,8 @@ void BoxLayout::setSpacing(size_t spacing)
 //
 
 VBoxLayout::VBoxLayout(LayoutItem* parent)
-    : BoxLayout(parent), align(HAlignment::center)
+	: BoxLayout(parent)
+	, align(HAlignment::center)
 {
 }
 
@@ -315,7 +316,7 @@ auto GridLayout::calculateCellSize() const -> CellSize
 }
 
 void GridLayout::moveAndResize(
-    LayoutItem& item, GridRange const& range, CellSize cell_size) const
+	LayoutItem& item, GridRange const& range, CellSize cell_size) const
 {
 	std::size_t x = range.column_begin * (cell_size.width + spacing);
 	std::size_t y = range.row_begin * (cell_size.height + spacing);

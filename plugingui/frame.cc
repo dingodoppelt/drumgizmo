@@ -110,8 +110,8 @@ void FrameWidget::sizeChanged(int width, int height)
 	{
 		content_start_x = content_margin;
 		content_start_y = bar_height + content_margin;
-		content_width = width - 2 * content_margin;
-		content_height = height - (bar_height + 2 * content_margin);
+		content_width = std::max((int)width - 2 * content_margin, 0);
+		content_height = std::max((int)height - (bar_height + 2 * content_margin), 0);
 
 		content->move(content_start_x, content_start_y);
 		content->resize(content_width, content_height);

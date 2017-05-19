@@ -122,6 +122,7 @@ void Widget::reparent(Widget* parent)
 
 void Widget::resize(std::size_t width, std::size_t height)
 {
+	assert(width < 32000 && height < 32000); // Catch negative values as size_t
 	if((width < 1) || (height < 1) ||
 	   ((width == _width) && (height == _height)))
 	{

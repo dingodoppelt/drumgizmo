@@ -63,8 +63,8 @@ private:
 	Slider slider{this};
 	Button button{this};
 
-	std::size_t slider_width;
-	std::size_t button_width;
+	int slider_width;
+	int button_width;
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

@@ -80,7 +80,7 @@ private:
 	void powerButtonStateChanged(bool clicked);
 
 	// grey box
-	std::size_t bar_height;
+	int bar_height;
 	GUI::Colour grey_box_colour{0.7};
 	GUI::Colour background_colour{0.85, 0.8};
 
@@ -95,12 +95,12 @@ private:
 
 	// content box
 	Widget* content{nullptr};
-	std::size_t content_margin{12};
+	int content_margin{12};
 
-	std::size_t content_start_x;
-	std::size_t content_start_y;
-	std::size_t content_width;
-	std::size_t content_height;
+	int content_start_x;
+	int content_start_y;
+	int content_width;
+	int content_height;
 };
 
 } // GUI::

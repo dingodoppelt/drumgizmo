@@ -61,9 +61,9 @@ private:
 	LineEdit lineedit{this};
 	Button browse_button{this};
 
-	std::size_t lineedit_width;
-	std::size_t button_width;
-	std::size_t gap{10};
+	int lineedit_width;
+	int button_width;
+	int gap{10};
 };
 
 class DrumkitframeContent

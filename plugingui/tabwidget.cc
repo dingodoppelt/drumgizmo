@@ -94,13 +94,13 @@ void TabWidget::sizeChanged(int width, int height)
 {
 	std::size_t pos = 0;
 
-	std::size_t button_width = 1;
-	std::size_t bar_height = 25;
-	std::size_t button_border_width = 10;
+	int button_width = 1;
+	int bar_height = 25;
+	int button_border_width = 10;
 
-	std::size_t button_padding_left = 25;
-	std::size_t button_padding_inner = 3;
-	std::size_t logo_padding_right = button_padding_left / 2;
+	int button_padding_left = 25;
+	int button_padding_inner = 3;
+	int logo_padding_right = button_padding_left / 2;
 
 	Painter p(*this);
 
@@ -108,11 +108,11 @@ void TabWidget::sizeChanged(int width, int height)
 	{
 		for (auto& button : buttons)
 		{
-			auto min_width = button.getMinimalWidth();
+			int min_width = button.getMinimalWidth();
 			button_width = std::max(button_width, min_width + button_border_width);
 		}
 
-		button_width = std::min(button_width, width / buttons.size());
+		button_width = std::min(button_width, width / (int)buttons.size());
 	}
 
 	// draw the upper bar
@@ -132,7 +132,7 @@ void TabWidget::sizeChanged(int width, int height)
 	}
 
 	stack.move(0, bar_height);
-	stack.resize(width, height - bar_height);
+	stack.resize(width, std::max((int)height - bar_height, 0));
 }
 
 } // GUI::

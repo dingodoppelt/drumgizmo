@@ -118,18 +118,19 @@ void FileBrowser::resize(std::size_t width, std::size_t height)
 	offset += btn_h;
 
 	lbl_path.resize(60, btn_h);
-	lineedit.resize(width - 60 - brd, btn_h);
+	lineedit.resize(std::max((int)width - 60 - brd, 0), btn_h);
 
 	offset += brd;
 
 	listbox.move(brd, offset);
-	listbox.resize(width - 1 - 2*brd, height - btn_h - 2*brd - offset);
+	listbox.resize(std::max((int)width - 1 - 2*brd, 0),
+	               std::max((int)height - btn_h - 2*brd - offset, 0));
 
 	btn_esc.move(brd, height - btn_h - brd);
-	btn_esc.resize((width - 1 - 2*brd) / 2 - brd / 2, btn_h);
+	btn_esc.resize(std::max(((int)width - 1 - 2*brd) / 2 - brd / 2, 0), btn_h);
 
 	btn_sel.move(brd + width / 2 - brd / 2, height - btn_h - brd);
-	btn_sel.resize((width - 1 - 2*brd) / 2, btn_h);
+	btn_sel.resize(std::max((int)((int)width - 1 - 2*brd) / 2, 0), btn_h);
 }
 
 void FileBrowser::repaintEvent(RepaintEvent* repaintEvent)

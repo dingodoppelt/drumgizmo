@@ -237,7 +237,7 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 	while(true)
 	{
 		int textWidth = font.textWidth(visibleText);
-		if(textWidth <= (w - BORDER - 4 + 3))
+		if(textWidth <= std::max(w - BORDER - 4 + 3, 0))
 		{
 			break;
 		}

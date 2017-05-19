@@ -51,8 +51,8 @@ void BrowseFile::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
-	lineedit_width = 0.77 * width - gap;
-	button_width = width - lineedit_width - gap;
+	lineedit_width = std::max((int)(0.77 * (int)width - gap), 0);
+	button_width = std::max((int)width - lineedit_width - gap, 0);
 
 	lineedit.resize(lineedit_width, 29);
 	browse_button.resize(button_width, 30);

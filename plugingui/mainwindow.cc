@@ -99,7 +99,7 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
-	tabs.resize(width - 2 * 16, height);
+	tabs.resize(std::max((int)width - 2 * 16, 0), height);
 }
 
 void MainWindow::closeEventHandler()

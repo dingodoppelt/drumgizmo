@@ -50,7 +50,7 @@ void TextEdit::resize(std::size_t width, std::size_t height)
 
 	needs_preprocessing = true;
 	scroll.move(width - 2*x_border - 3, y_border - 1);
-	scroll.resize(scroll.width(), height - 2*(y_border - 1));
+	scroll.resize(scroll.width(), std::max((int)height - 2*(y_border - 1), 0));
 }
 
 void TextEdit::setReadOnly(bool readonly)

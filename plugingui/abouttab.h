@@ -48,7 +48,7 @@ private:
 	std::string getAboutText();
 
 	TextEdit text_edit{this};
-	std::size_t margin{10};
+	int margin{10};
 
 	Resource about{":../ABOUT"};
 	Resource authors{":../AUTHORS"};

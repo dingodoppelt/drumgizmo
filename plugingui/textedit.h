@@ -74,9 +74,9 @@ private:
 	    0,         // atlas offset (x, y)
 	    7, 1, 7,   // dx1, dx2, dx3
 	    7, 63, 7}; // dy1, dy2, dy3
-	
-	static constexpr std::size_t x_border{10};
-	static constexpr std::size_t y_border{8};
+
+	static constexpr int x_border{10};
+	static constexpr int y_border{8};
 
 	ScrollBar scroll;
 	Font font;

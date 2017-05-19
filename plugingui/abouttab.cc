@@ -38,14 +38,16 @@ AboutTab::AboutTab(Widget* parent)
 {
 	text_edit.setText(getAboutText());
 	text_edit.setReadOnly(true);
-	text_edit.resize(width() - 2*margin, height() - 2*margin);
+	text_edit.resize(std::max((int)width() - 2*margin,0),
+	                 std::max((int)height() - 2*margin, 0));
 	text_edit.move(margin, margin);
 }
 
 void AboutTab::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
-	text_edit.resize(width - 2*margin, height - 2*margin);
+	text_edit.resize(std::max((int)width - 2*margin, 0),
+	                 std::max((int)height - 2*margin, 0));
 }
 
 std::string AboutTab::getAboutText()
