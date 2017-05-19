@@ -200,48 +200,86 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
                                      std::size_t max_height,
                                      InlineDrawContext& context)
 {
-	std::size_t height = std::min(std::size_t(11), max_height);
-	if(!context.data ||
-	   (context.width != width) ||
-	   (context.height != height) ||
-	   settingsGetter.number_of_files.hasChanged() ||
-	   settingsGetter.number_of_files_loaded.hasChanged() ||
-	   settingsGetter.drumkit_load_status.hasChanged())
+	std::size_t bar_height = bar_red.height();
+	std::size_t image_height = ((double)width / inline_display_image.width()) * inline_display_image.height();
+
+	bool show_bar{false};
+	bool show_image{false};
+	std::size_t height = 0;
+
+	if(bar_height <= max_height) {
+		show_bar = true;
+		height += bar_height;
+	}
+	if(bar_height + image_height <= max_height) {
+		show_image = true;
+		height += image_height;
+	}
+
+	bool context_needs_update =
+		!context.data ||
+	   	context.width != width ||
+	   	context.height != height;
+	bool bar_needs_update = 
+		settingsGetter.number_of_files.hasChanged() ||
+		settingsGetter.number_of_files_loaded.hasChanged() ||
+		settingsGetter.drumkit_load_status.hasChanged() ||
+		context_needs_update;
+	bool image_needs_update = inline_image_first_draw || context_needs_update;
+		// TODO: settingsGetter.inline_image_filename.hasChanged();
+	bool something_needs_update =
+		context_needs_update ||
+		bar_needs_update ||
+		image_needs_update;
+
+	if (something_needs_update)
 	{
 		context.width = width;
 		context.height = height;
 		assert(context.width * context.height <= sizeof(inlineDisplayBuffer));
 
 		context.data = (unsigned char*)inlineDisplayBuffer;
-		box.setSize(context.width, context.height);
-
 		InlineCanvas canvas(context);
 		GUI::Painter painter(canvas);
-		painter.clear();
-		painter.drawImage(0, 0, box);
 
-		double progress =
-			(double)settingsGetter.number_of_files_loaded.getValue() /
-			(double)settingsGetter.number_of_files.getValue();
-
-		int brd = 4;
-		int val = (width - (2 * brd)) * progress;
-
-		switch(settingsGetter.drumkit_load_status.getValue())
+		if(show_bar && bar_needs_update)
 		{
-		case LoadStatus::Error:
-			bar_red.setSize(val, height);
-			painter.drawImage(brd, 0, bar_red);
-			break;
-		case LoadStatus::Done:
-			bar_green.setSize(val, height);
-			painter.drawImage(brd, 0, bar_green);
-			break;
-		case LoadStatus::Loading:
-		case LoadStatus::Idle:
-			bar_blue.setSize(val, height);
-			painter.drawImage(brd, 0, bar_blue);
-			break;
+			box.setSize(context.width, bar_height);
+			painter.drawImage(0, height - bar_height, box);
+
+			double progress =
+				(double)settingsGetter.number_of_files_loaded.getValue() /
+				(double)settingsGetter.number_of_files.getValue();
+
+			int brd = 4;
+			int val = (width - (2 * brd)) * progress;
+
+			switch(settingsGetter.drumkit_load_status.getValue())
+			{
+			case LoadStatus::Error:
+				bar_red.setSize(val, bar_height);
+				painter.drawImage(brd, height - bar_height, bar_red);
+				break;
+			case LoadStatus::Done:
+				bar_green.setSize(val, bar_height);
+				painter.drawImage(brd, height - bar_height, bar_green);
+				break;
+			case LoadStatus::Loading:
+			case LoadStatus::Idle:
+				bar_blue.setSize(val, bar_height);
+				painter.drawImage(brd, height - bar_height, bar_blue);
+				break;
+			}
+		}
+
+		if(show_image && image_needs_update)
+		{
+			// TODO: load new image and remove the bool
+			inline_image_first_draw = false;
+
+			painter.setColour(.5);
+			painter.drawFilledRectangle(0, 0, width, image_height);
+			painter.drawImageStretched(0, 0, inline_display_image, width, image_height);
 		}
 
 		// Convert to correct pixel format
