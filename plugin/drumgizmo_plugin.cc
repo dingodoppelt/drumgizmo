@@ -207,30 +207,30 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 	bool show_image{false};
 	std::size_t height = 0;
 
-	if(bar_height <= max_height) {
+	if(bar_height <= max_height)
+	{
 		show_bar = true;
 		height += bar_height;
 	}
-	if(bar_height + image_height <= max_height) {
+	if(bar_height + image_height <= max_height)
+	{
 		show_image = true;
 		height += image_height;
 	}
 
+	// They have to be called seperately to avoid lazy evaluation
+	bool nof_changed = settingsGetter.number_of_files.hasChanged();
+	bool nofl_changed = settingsGetter.number_of_files_loaded.hasChanged();
+	bool dls_changed = settingsGetter.drumkit_load_status.hasChanged();
+
 	bool context_needs_update =
-		!context.data ||
-	   	context.width != width ||
-	   	context.height != height;
-	bool bar_needs_update = 
-		settingsGetter.number_of_files.hasChanged() ||
-		settingsGetter.number_of_files_loaded.hasChanged() ||
-		settingsGetter.drumkit_load_status.hasChanged() ||
-		context_needs_update;
+	    !context.data || context.width != width || context.height != height;
+	bool bar_needs_update =
+		nof_changed || nofl_changed || dls_changed || context_needs_update;
 	bool image_needs_update = inline_image_first_draw || context_needs_update;
-		// TODO: settingsGetter.inline_image_filename.hasChanged();
+	// TODO: settingsGetter.inline_image_filename.hasChanged();
 	bool something_needs_update =
-		context_needs_update ||
-		bar_needs_update ||
-		image_needs_update;
+	    context_needs_update || bar_needs_update || image_needs_update;
 
 	if (something_needs_update)
 	{
@@ -297,7 +297,7 @@ bool DrumGizmoPlugin::hasGUI()
 	return true;
 }
 
-void* DrumGizmoPlugin::createWindow(void *parent)
+void* DrumGizmoPlugin::createWindow(void* parent)
 {
 	plugin_gui = std::make_shared<GUI::MainWindow>(settings, parent);
 	resizeWindow(width, height);
@@ -434,7 +434,7 @@ void DrumGizmoPlugin::Output::pre(size_t nsamples)
 	}
 }
 
-void DrumGizmoPlugin::Output::run(int ch, sample_t *samples, size_t nsamples)
+void DrumGizmoPlugin::Output::run(int ch, sample_t* samples, size_t nsamples)
 {
 	assert(plugin.output_samples);
 
