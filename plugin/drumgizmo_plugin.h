@@ -208,5 +208,5 @@ private:
 	bool inline_image_first_draw{true};
 
 	static constexpr std::size_t width{750};
-	static constexpr std::size_t height{400};
+	static constexpr std::size_t height{385};
 };

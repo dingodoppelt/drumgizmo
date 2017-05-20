@@ -52,7 +52,7 @@ MainTab::MainTab(Widget* parent,
 	layout.addItem(&resampling_frame);
 
 	auto h1 = 20;
-	auto h2 = 22;
+	auto h2 = 20;
 	auto h3 = 13;
 	auto h4 = 11;
 	auto h5 = 14;
