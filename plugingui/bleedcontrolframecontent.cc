@@ -52,8 +52,8 @@ BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
 
 	// TODO:
 	// connect to settings (see diskstreaming frame)
-	(void) settings;
-	(void) settings_notifier;
+	(void) this->settings;
+	(void) this->settings_notifier;
 }
 
 void BleedcontrolframeContent::resize(std::size_t width, std::size_t height)
