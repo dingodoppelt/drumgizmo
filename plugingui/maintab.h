@@ -33,6 +33,7 @@
 #include "statusframecontent.h"
 #include "humanizerframecontent.h"
 #include "diskstreamingframecontent.h"
+#include "bleedcontrolframecontent.h"
 #include "resamplingframecontent.h"
 
 struct Settings;
@@ -60,19 +61,24 @@ private:
 
 	Image logo{":resources/logo.png"};
 
-	GridLayout layout{this, 2, 40};
+	GridLayout layout{this, 2, 49};
 
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};
 	FrameWidget humanizer_frame{this, true};
 	FrameWidget diskstreaming_frame{this, false};
+	FrameWidget bleedcontrol_frame{this, false};
 	FrameWidget resampling_frame{this, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
 	HumanizerframeContent humanizerframe_content;
 	DiskstreamingframeContent diskstreamingframe_content;
+	BleedcontrolframeContent bleedcontrolframe_content;
 	ResamplingframeContent resamplingframe_content;
+
+	void add(std::string const& title, FrameWidget& frame, Widget& content,
+	         std::size_t height, int column);
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

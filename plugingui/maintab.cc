@@ -26,9 +26,13 @@
  */
 #include "maintab.h"
 
+// FIXME:
+#include <iostream>
+
 namespace GUI
 {
 
+// TODO: Reduce boilerplate code in this constructor
 MainTab::MainTab(Widget* parent,
                  Settings& settings,
                  SettingsNotifier& settings_notifier,
@@ -38,6 +42,7 @@ MainTab::MainTab(Widget* parent,
 	, statusframe_content{this, settings_notifier}
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
+	, bleedcontrolframe_content{this, settings, settings_notifier}
 	, resamplingframe_content{this, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
@@ -45,39 +50,12 @@ MainTab::MainTab(Widget* parent,
 	layout.setSpacing(0);
 	layout.setResizeChildren(true);
 
-	layout.addItem(&drumkit_frame);
-	layout.addItem(&status_frame);
-	layout.addItem(&humanizer_frame);
-	layout.addItem(&diskstreaming_frame);
-	layout.addItem(&resampling_frame);
-
-	auto h1 = 20;
-	auto h2 = 20;
-	auto h3 = 13;
-	auto h4 = 11;
-	auto h5 = 14;
-	auto drumkit_range = GridLayout::GridRange{0, 1, 0, h1};
-	auto status_range = GridLayout::GridRange{0, 1, h1, h1 + h2};
-	auto humanizer_range = GridLayout::GridRange{1, 2, 0, h3};
-	auto diskstreaming_range = GridLayout::GridRange{1, 2, h3, h3 + h4};
-	auto resampling_range = GridLayout::GridRange{1, 2, h3 + h4, h3 + h4 + h5};
-	layout.setPosition(&drumkit_frame, drumkit_range);
-	layout.setPosition(&status_frame, status_range);
-	layout.setPosition(&humanizer_frame, humanizer_range);
-	layout.setPosition(&diskstreaming_frame, diskstreaming_range);
-	layout.setPosition(&resampling_frame, resampling_range);
-
-	drumkit_frame.setTitle("Drumkit");
-	status_frame.setTitle("Status");
-	humanizer_frame.setTitle("Humanizer");
-	diskstreaming_frame.setTitle("Disk streaming");
-	resampling_frame.setTitle("Resampling");
-
-	drumkit_frame.setContent(&drumkitframe_content);
-	status_frame.setContent(&statusframe_content);
-	humanizer_frame.setContent(&humanizerframe_content);
-	diskstreaming_frame.setContent(&diskstreamingframe_content);
-	resampling_frame.setContent(&resamplingframe_content);
+	add("Drumkit", drumkit_frame, drumkitframe_content, 20, 0);
+	add("Status", status_frame, statusframe_content, 29, 0);
+	add("Humanizer", humanizer_frame, humanizerframe_content, 13, 1);
+	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 11, 1);
+	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 11, 1);
+	add("Resampling", resampling_frame, resamplingframe_content, 14, 1);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
 	resampling_frame.setOnSwitch(settings.enable_resampling);
@@ -110,6 +88,21 @@ void MainTab::humanizerOnChange(bool on)
 void MainTab::resamplingOnChange(bool on)
 {
 	settings.enable_resampling.store(on);
+}
+
+void MainTab::add(std::string const& title, FrameWidget& frame, Widget& content,
+		 std::size_t height, int column)
+{
+	layout.addItem(&frame);
+	frame.setTitle(title);
+	frame.setContent(&content);
+
+	auto grid_start = layout.lastUsedRow(column) + 1;
+	auto range = GridLayout::GridRange{column,
+	                                   column + 1,
+	                                   grid_start,
+	                                   grid_start + int(height)};
+	layout.setPosition(&frame, range);
 }
 
 } // GUI::

@@ -293,6 +293,35 @@ void GridLayout::setPosition(LayoutItem* item, GridRange const& range)
 	grid_ranges[item] = range;
 }
 
+int GridLayout::lastUsedRow(int column) const
+{
+	int last_row = -1;
+
+	for (auto const& grid_range : grid_ranges) {
+		auto const& range = grid_range.second;
+		if (column >= range.column_begin && column < range.column_end) {
+			last_row = std::max(last_row, range.row_end - 1);
+		}
+	}
+
+	return last_row;
+}
+
+int GridLayout::lastUsedColumn(int row) const
+{
+	int last_column = -1;
+
+	for (auto const& grid_range : grid_ranges) {
+		auto const& range = grid_range.second;
+		if (row >= range.row_begin && row < range.row_end) {
+			last_column = std::max(last_column, range.column_end - 1);
+		}
+	}
+
+	return last_column;
+
+}
+
 auto GridLayout::calculateCellSize() const -> CellSize
 {
 	auto empty_width = (number_of_columns - 1) * spacing;

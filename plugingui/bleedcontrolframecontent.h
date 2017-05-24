@@ -1,8 +1,8 @@
 /* -*- Mode: c++ -*- */
 /***************************************************************************
- *            diskstreamingframecontent.h
+ *            bleedcontrolframecontent.h
  *
- *  Fri Mar 24 21:50:07 CET 2017
+ *  Wed May 24 14:40:16 CEST 2017
  *  Copyright 2017 André Nusser
  *  andre.nusser@googlemail.com
  ****************************************************************************/
@@ -24,7 +24,6 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
 
 #include "button.h"
 #include "label.h"
@@ -37,25 +36,21 @@ class SettingsNotifier;
 namespace GUI
 {
 
-class DiskstreamingframeContent : public Widget
+class BleedcontrolframeContent : public Widget
 {
 public:
-	DiskstreamingframeContent(Widget* parent,
-	                          Settings& settings,
-	                          SettingsNotifier& settings_notifier);
+	BleedcontrolframeContent(Widget* parent,
+	                         Settings& settings,
+	                         SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	void limitSettingsValueChanged(std::size_t value);
-	void limitValueChanged(float value);
+	void bleedSettingsValueChanged(float value);
+	void bleedValueChanged(float value);
 	void reloadClicked();
-	void reloaded(std::size_t);
-
-	// For now the maximum disk streaming limit is 4GB
-	static constexpr std::size_t min_limit = 1024.0 * 1024.0 * 32;
-	static constexpr std::size_t max_limit = 1024.0 * 1024.0 * 1024.0 * 4.0 - 1;
+	void reloaded(float);
 
 	Label label_text{this};
 	Label label_value{this};
@@ -71,3 +66,4 @@ private:
 };
 
 } // GUI::
+#pragma once

@@ -47,8 +47,8 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 	button.setText("Apply");
 	button.setEnabled(false);
 
-	label_size.setText("0 MB");
-	label_size.setAlignment(TextAlignment::center);
+	label_value.setText("0 MB");
+	label_value.setAlignment(TextAlignment::center);
 
 	CONNECT(this, settings_notifier.disk_cache_upper_limit,
 	        this, &DiskstreamingframeContent::limitSettingsValueChanged);
@@ -81,12 +81,12 @@ void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 	label_text.move(0, 0);
 	slider.move(0, 20);
 	button.move(slider_width + slider_button_gap, 10);
-	label_size.move(0, 40);
+	label_value.move(0, 40);
 
 	label_text.resize(slider_width, 15);
 	slider.resize(slider_width, 15);
 	button.resize(button_width, 30);
-	label_size.resize(slider_width, 15);
+	label_value.resize(slider_width, 15);
 
 	button.setEnabled(false);
 }
@@ -98,11 +98,11 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 
 	if (new_slider_value < 0.99) {
 		int value_in_mb = value/(1024 * 1024);
-		label_size.setText(std::to_string(value_in_mb) + " MB");
+		label_value.setText(std::to_string(value_in_mb) + " MB");
 		slider.setColour(Slider::Colour::Blue);
 	}
 	else {
-		label_size.setText("Unlimited");
+		label_value.setText("Unlimited");
 		slider.setColour(Slider::Colour::Grey);
 	}
 

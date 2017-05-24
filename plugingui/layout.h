@@ -169,6 +169,9 @@ public:
 
 	void setPosition(LayoutItem* item, GridRange const& range);
 
+	int lastUsedRow(int column) const;
+	int lastUsedColumn(int row) const;
+
 protected:
 	std::size_t number_of_columns;
 	std::size_t number_of_rows;

@@ -47,6 +47,7 @@ DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/include -I@top_srcdir@/src \
 
 GUI_SRC = \
 	@top_srcdir@/plugingui/abouttab.cc \
+	@top_srcdir@/plugingui/bleedcontrolframecontent.cc \
 	@top_srcdir@/plugingui/button.cc \
 	@top_srcdir@/plugingui/button_base.cc \
 	@top_srcdir@/plugingui/checkbox.cc \

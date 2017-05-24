@@ -43,6 +43,7 @@ GUI_SRC = \
 	statusframecontent.cc \
 	humanizerframecontent.cc \
 	diskstreamingframecontent.cc \
+	bleedcontrolframecontent.cc \
 	maintab.cc \
 	frame.cc \
 	knob.cc \

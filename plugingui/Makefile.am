@@ -48,6 +48,7 @@ libdggui_la_LIBADD = \
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdggui_la_SOURCES = \
 	abouttab.cc \
+	bleedcontrolframecontent.cc \
 	button.cc \
 	button_base.cc \
 	checkbox.cc \
