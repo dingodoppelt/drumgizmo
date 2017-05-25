@@ -67,7 +67,7 @@ private:
 	FrameWidget status_frame{this, false};
 	FrameWidget humanizer_frame{this, true};
 	FrameWidget diskstreaming_frame{this, false};
-	FrameWidget bleedcontrol_frame{this, false};
+	FrameWidget bleedcontrol_frame{this, true};
 	FrameWidget resampling_frame{this, true};
 
 	DrumkitframeContent drumkitframe_content;

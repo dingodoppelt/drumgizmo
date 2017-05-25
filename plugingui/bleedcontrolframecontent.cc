@@ -41,7 +41,7 @@ BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
-	label_text.setText("Amount of Microphone Bleed:");
+	label_text.setText("Master Bleed Volume:");
 	label_text.setAlignment(TextAlignment::center);
 
 	label_value.setText("0 %");
@@ -58,10 +58,11 @@ void BleedcontrolframeContent::resize(std::size_t width, std::size_t height)
 	Widget::resize(width, height);
 
 	slider_width = 0.8 * width;
+	auto x_start = 0.1 * width;
 
-	label_text.move(0, 0);
-	slider.move(0, 20);
-	label_value.move(0, 40);
+	label_text.move(x_start, 0);
+	slider.move(x_start, 20);
+	label_value.move(x_start, 40);
 
 	label_text.resize(slider_width, 15);
 	slider.resize(slider_width, 15);

@@ -26,13 +26,9 @@
  */
 #include "maintab.h"
 
-// FIXME:
-#include <iostream>
-
 namespace GUI
 {
 
-// TODO: Reduce boilerplate code in this constructor
 MainTab::MainTab(Widget* parent,
                  Settings& settings,
                  SettingsNotifier& settings_notifier,
@@ -66,6 +62,7 @@ MainTab::MainTab(Widget* parent,
 	        &resampling_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
+	// TODO: Connect bleed control switch to settings
 	CONNECT(&resampling_frame, onSwitchChangeNotifier,
 	        this, &MainTab::resamplingOnChange);
 }
