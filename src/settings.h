@@ -87,6 +87,7 @@ struct Settings
 	Atomic<std::size_t> number_of_files_loaded{0};
 	Atomic<std::string> current_file{""};
 
+	Atomic<bool> enable_bleed_control{false};
 	Atomic<float> master_bleed{1.0f};
 };
 
@@ -126,6 +127,7 @@ struct SettingsGetter
 	SettingRef<std::size_t> number_of_files_loaded;
 	SettingRef<std::string> current_file;
 
+	SettingRef<bool> enable_bleed_control;
 	SettingRef<float> master_bleed;
 
 	SettingsGetter(Settings& settings)
@@ -154,6 +156,7 @@ struct SettingsGetter
 		, number_of_files{settings.number_of_files}
 		, number_of_files_loaded{settings.number_of_files_loaded}
 		, current_file{settings.current_file}
+		, enable_bleed_control{settings.enable_bleed_control}
 		, master_bleed{settings.master_bleed}
 	{
 	}
@@ -196,6 +199,7 @@ public:
 	Notifier<std::size_t> number_of_files_loaded;
 	Notifier<std::string> current_file;
 
+	Notifier<bool> enable_bleed_control;
 	Notifier<float> master_bleed;
 
 	void evaluate()
@@ -235,6 +239,7 @@ public:
 		EVAL(number_of_files_loaded);
 		EVAL(current_file);
 
+		EVAL(enable_bleed_control);
 		EVAL(master_bleed);
 	}
 

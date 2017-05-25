@@ -54,6 +54,7 @@ MainTab::MainTab(Widget* parent,
 	add("Resampling", resampling_frame, resamplingframe_content, 14, 1);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
+	bleedcontrol_frame.setOnSwitch(settings.enable_bleed_control);
 	resampling_frame.setOnSwitch(settings.enable_resampling);
 
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
@@ -62,7 +63,8 @@ MainTab::MainTab(Widget* parent,
 	        &resampling_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
-	// TODO: Connect bleed control switch to settings
+	CONNECT(&bleedcontrol_frame, onSwitchChangeNotifier,
+	        this, &MainTab::bleedcontrolOnChange);
 	CONNECT(&resampling_frame, onSwitchChangeNotifier,
 	        this, &MainTab::resamplingOnChange);
 }
@@ -80,6 +82,11 @@ void MainTab::resize(std::size_t width, std::size_t height)
 void MainTab::humanizerOnChange(bool on)
 {
 	settings.enable_velocity_modifier.store(on);
+}
+
+void MainTab::bleedcontrolOnChange(bool on)
+{
+	settings.enable_bleed_control.store(on);
 }
 
 void MainTab::resamplingOnChange(bool on)

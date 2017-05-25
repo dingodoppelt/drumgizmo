@@ -57,6 +57,7 @@ public:
 
 private:
 	void humanizerOnChange(bool on);
+	void bleedcontrolOnChange(bool on);
 	void resamplingOnChange(bool on);
 
 	Image logo{":resources/logo.png"};
