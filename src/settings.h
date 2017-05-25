@@ -86,6 +86,8 @@ struct Settings
 	Atomic<std::size_t> number_of_files{0};
 	Atomic<std::size_t> number_of_files_loaded{0};
 	Atomic<std::string> current_file{""};
+
+	Atomic<float> master_bleed{1.0f};
 };
 
 //! Settings getter class.
@@ -124,6 +126,8 @@ struct SettingsGetter
 	SettingRef<std::size_t> number_of_files_loaded;
 	SettingRef<std::string> current_file;
 
+	SettingRef<float> master_bleed;
+
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
@@ -150,6 +154,7 @@ struct SettingsGetter
 		, number_of_files{settings.number_of_files}
 		, number_of_files_loaded{settings.number_of_files_loaded}
 		, current_file{settings.current_file}
+		, master_bleed{settings.master_bleed}
 	{
 	}
 };
@@ -191,6 +196,8 @@ public:
 	Notifier<std::size_t> number_of_files_loaded;
 	Notifier<std::string> current_file;
 
+	Notifier<float> master_bleed;
+
 	void evaluate()
 	{
 #define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
@@ -227,6 +234,8 @@ public:
 		EVAL(number_of_files);
 		EVAL(number_of_files_loaded);
 		EVAL(current_file);
+
+		EVAL(master_bleed);
 	}
 
 	SettingsNotifier(Settings& settings)

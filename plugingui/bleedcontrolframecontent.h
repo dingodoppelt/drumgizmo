@@ -25,7 +25,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "button.h"
 #include "label.h"
 #include "slider.h"
 #include "widget.h"
@@ -49,14 +48,11 @@ public:
 private:
 	void bleedSettingsValueChanged(float value);
 	void bleedValueChanged(float value);
-	void reloadClicked();
-	void reloaded(float);
 
 	Label label_text{this};
 	Label label_value{this};
 
 	Slider slider{this};
-	Button button{this};
 
 	int slider_width;
 	int button_width;

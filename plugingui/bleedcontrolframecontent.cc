@@ -44,63 +44,42 @@ BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
 	label_text.setText("Amount of Microphone Bleed:");
 	label_text.setAlignment(TextAlignment::center);
 
-	button.setText("Apply");
-	button.setEnabled(false);
-
 	label_value.setText("0 %");
 	label_value.setAlignment(TextAlignment::center);
 
-	// TODO:
-	// connect to settings (see diskstreaming frame)
-	(void) this->settings;
-	(void) this->settings_notifier;
+	CONNECT(this, settings_notifier.master_bleed,
+	        this, &BleedcontrolframeContent::bleedSettingsValueChanged);
+	CONNECT(&slider, valueChangedNotifier,
+	        this, &BleedcontrolframeContent::bleedValueChanged);
 }
 
 void BleedcontrolframeContent::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
 
-	int slider_button_gap = 10;
-
 	slider_width = 0.8 * width;
-	button_width = std::max((int)width - slider_width - slider_button_gap, 0);
 
 	label_text.move(0, 0);
 	slider.move(0, 20);
-	button.move(slider_width + slider_button_gap, 10);
 	label_value.move(0, 40);
 
 	label_text.resize(slider_width, 15);
 	slider.resize(slider_width, 15);
-	button.resize(button_width, 30);
 	label_value.resize(slider_width, 15);
-
-	button.setEnabled(false);
 }
 
 void BleedcontrolframeContent::bleedSettingsValueChanged(float value)
 {
 	slider.setValue(value);
 
-	label_value.setText(std::to_string(100 * value) + " %");
+	int percentage = 100 * value;
+	label_value.setText(std::to_string(percentage) + " %");
 	slider.setColour(Slider::Colour::Blue);
-
-	button.setEnabled(true);
 }
 
 void BleedcontrolframeContent::bleedValueChanged(float value)
 {
-	// TODO: store new value in settings
-}
-
-void BleedcontrolframeContent::reloadClicked()
-{
-	// TODO
-}
-
-void BleedcontrolframeContent::reloaded(float)
-{
-	button.setEnabled(false);
+	settings.master_bleed.store(value);
 }
 
 } // GUI::
