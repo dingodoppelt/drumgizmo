@@ -565,6 +565,8 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		int2str(settings.disk_cache_chunk_size.load()) + "</value>\n"
 		"  <value name=\"disk_cache_enable\">" +
 		bool2str(settings.disk_cache_enable.load()) + "</value>\n"
+		"  <value name=\"master_bleed\">" +
+		float2str(settings.master_bleed.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -622,6 +624,11 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("disk_cache_enable") != "")
 	{
 		settings.disk_cache_enable.store(p.value("disk_cache_enable") == "true");
+	}
+
+	if(p.value("master_bleed") != "")
+	{
+		settings.master_bleed.store(str2float(p.value("master_bleed")));
 	}
 
 	std::string newkit = p.value("drumkitfile");
