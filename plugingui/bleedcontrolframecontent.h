@@ -55,7 +55,6 @@ private:
 	Slider slider{this};
 
 	int slider_width;
-	int button_width;
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
