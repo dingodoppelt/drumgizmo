@@ -37,7 +37,7 @@ Font::Font(const std::string& fontfile)
 	std::size_t px = 0;
 	std::size_t c;
 
-	for(c = 0; c < (characters.size() - 1) && px < img_font.width(); ++c)
+	for(c = 0; c < characters.size() && px < img_font.width(); ++c)
 	{
 		auto& character = characters[c];
 		character.offset = px + 1;
@@ -71,7 +71,7 @@ Font::Font(const std::string& fontfile)
 		characters[c] = character;
 	}
 
-	++c;
+	--c;
 
 	assert(characters[c].offset >= characters[c - 1].offset);
 	characters[c - 1].width = characters[c].offset - characters[c - 1].offset;
