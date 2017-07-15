@@ -358,6 +358,17 @@ bool Window::updateBuffer()
 	dirty_rect.x2 = std::min(wpixbuf.width, dirty_rect.x2);
 	dirty_rect.y2 = std::min(wpixbuf.height, dirty_rect.y2);
 
+	// Make sure we don't try to paint a rect backwards.
+	if(dirty_rect.x1 > dirty_rect.x2)
+	{
+		std::swap(dirty_rect.x1, dirty_rect.x2);
+	}
+
+	if(dirty_rect.y1 > dirty_rect.y2)
+	{
+		std::swap(dirty_rect.y1, dirty_rect.y2);
+	}
+
 	native->redraw(dirty_rect);
 	needs_redraw = false;
 

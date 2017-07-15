@@ -33,8 +33,8 @@
 #include <sys/shm.h>
 #include <cerrno>
 #include <cstring>
+#include <cassert>
 
-#include <stdlib.h>
 #include <chrono>
 
 #include <hugin.hpp>
@@ -249,16 +249,9 @@ void NativeWindowX11::redraw(const Rect& dirty_rect)
 	auto x2 = dirty_rect.x2;
 	auto y2 = dirty_rect.y2;
 
-	// Make sure we don't try to paint a rect backwards.
-	if(x1 > x2)
-	{
-		std::swap(x1, x2);
-	}
-
-	if(y1 > y2)
-	{
-		std::swap(y1, y2);
-	}
+	// Assert that we don't try to paint a backwards rect.
+	assert(x1 <= x2);
+	assert(y1 <= y2);
 
 	updateImageFromBuffer(x1, y1, x2, y2);
 
