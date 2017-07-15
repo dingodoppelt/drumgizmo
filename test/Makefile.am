@@ -6,7 +6,7 @@ if ENABLE_TESTS
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	memchecker randomtest atomictest syncedsettingstest imagecachetest \
-	semaphoretest drumkitcreatortest bytesizeparsertest
+	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest
 
 if ENABLE_LV2
 TESTS += lv2
@@ -203,6 +203,13 @@ bytesizeparsertest_LDFLAGS = $(CPPUNIT_LIBS)
 bytesizeparsertest_SOURCES = \
 	$(top_srcdir)/src/bytesizeparser.cc \
 	bytesizeparsertest.cc \
+	test.cc
+
+notifiertest_CXXFLAGS = -DOUTPUT=\"notifiertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src
+notifiertest_LDFLAGS = $(CPPUNIT_LIBS)
+notifiertest_SOURCES = \
+	notifiertest.cc \
 	test.cc
 
 endif

@@ -27,10 +27,9 @@
 #pragma once
 
 #include <functional>
-#include <vector>
-#include <map>
+#include <list>
+#include <utility>
 #include <set>
-#include <memory>
 
 namespace aux
 {
@@ -124,7 +123,7 @@ public:
 	template<typename O, typename F>
 	void connect(O* p, const F& fn)
 	{
-		slots[p] = std::move(construct_mem_fn(fn, p, aux::gen_int_sequence<sizeof...(Args)>{}));
+		slots.emplace_back(std::make_pair(p, std::move(construct_mem_fn(fn, p, aux::gen_int_sequence<sizeof...(Args)>{}))));
 		if(p && dynamic_cast<Listener*>(p))
 		{
 			dynamic_cast<Listener*>(p)->registerNotifier(this);
@@ -134,7 +133,14 @@ public:
 	//! \brief Disconnect object from this Notifier.
 	void disconnect(Listener* object)
 	{
-		slots.erase(object);
+		for(auto it = slots.begin(); it != slots.end(); ++it)
+		{
+			if(it->first == object)
+			{
+				slots.erase(it);
+				return;
+			}
+		}
 	}
 
 	//! \brief Activate this notifier by pretending it is a function.
@@ -148,7 +154,7 @@ public:
 	}
 
 private:
-	std::map<Listener*, callback_type> slots;
+	std::list<std::pair<Listener*, callback_type>> slots;
 
 	template<typename F, typename O, int... Ns>
 	callback_type construct_mem_fn(const F& fn, O* p, aux::int_sequence<Ns...>) const
