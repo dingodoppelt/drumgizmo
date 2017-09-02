@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <deque>
 
 #include "rangemap.h"
 #include "powerlist.h"
@@ -79,7 +80,7 @@ private:
 	void finalise(); ///< Signal instrument that no more samples will be added.
 
 	std::vector<Sample*> samplelist;
-	std::vector<InstrumentChannel> instrument_channels;
+	std::deque<InstrumentChannel> instrument_channels;
 
 	size_t lastpos;
 	float mod;
