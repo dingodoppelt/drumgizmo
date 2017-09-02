@@ -67,19 +67,19 @@ void PowerList::add(Sample* sample)
 	samples.push_back(item);
 }
 
-Channel* PowerList::getMasterChannel()
+const Channel* PowerList::getMasterChannel()
 {
-	std::map<Channel*, int> count;
+	std::map<const Channel*, int> count;
 
 	for (auto& item: samples)
 	{
 		Sample* sample{item.sample};
-		Channel* max_channel{nullptr};
+		const Channel* max_channel{nullptr};
 		sample_t max_val{0};
 
 		for (auto& pair: sample->audiofiles)
 		{
-			Channel* c = pair.first;
+			const Channel* c = pair.first;
 			AudioFile* af = pair.second;
 
 			af->load(LOAD_SIZE);
@@ -116,7 +116,7 @@ Channel* PowerList::getMasterChannel()
 		}
 	}
 
-	Channel* master{nullptr};
+	const Channel* master{nullptr};
 	int max_count{-1};
 
 	for (auto& pair: count)
@@ -134,7 +134,7 @@ Channel* PowerList::getMasterChannel()
 void PowerList::finalise()
 {
 #ifdef AUTO_CALCULATE_POWER
-	Channel* master_channel = getMasterChannel();
+	const Channel* master_channel = getMasterChannel();
 
 	if(master_channel == nullptr)
 	{

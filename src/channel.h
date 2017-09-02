@@ -43,6 +43,13 @@ public:
 	channel_t num;
 };
 
-typedef Channel InstrumentChannel;
+class InstrumentChannel
+	: public Channel
+{
+public:
+	InstrumentChannel(const std::string& name = "");
+
+	bool main{true};
+};
 
 typedef std::vector<Channel> Channels;

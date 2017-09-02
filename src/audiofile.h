@@ -39,7 +39,7 @@
 class AudioFile
 {
 public:
-	AudioFile(const std::string& filename, std::size_t filechannel);
+	AudioFile(const std::string& filename, std::size_t filechannel, bool main = true);
 	~AudioFile();
 
 	void load(std::size_t sample_limit = std::numeric_limits<std::size_t>::max());
@@ -58,6 +58,8 @@ public:
 	std::mutex mutex;
 
 	std::size_t filechannel;
+
+	bool main;
 
 private:
 	void* magic{nullptr};

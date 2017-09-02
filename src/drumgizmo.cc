@@ -248,6 +248,10 @@ typedef float vNsf __attribute__ ((vector_size(sizeof(sample_t)*N)));
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 {
+	// Store local values of settings to ensure they don't change intra-iteration
+	const auto enable_bleed_control = settings.enable_bleed_control.load();
+	const auto master_bleed = settings.master_bleed.load();
+
 	std::vector< Event* > erase_list;
 	std::list< Event* >::iterator i = activeevents[ch].begin();
 	for(; i != activeevents[ch].end(); ++i)
@@ -279,6 +283,11 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					size_t initial_chunksize = (pos + sz) - evt.offset;
 					evt.buffer = audio_cache.open(af, initial_chunksize,
 					                              af.filechannel, evt.cache_id);
+					if(!af.main && enable_bleed_control)
+					{
+						evt.scale = master_bleed;
+					}
+
 					evt.buffer_size = initial_chunksize;
 				}
 
@@ -336,7 +345,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 							assert(t >= 0);
 							assert(t < evt.buffer_size);
 
-							s[n] += evt.buffer[t];
+							s[n] += evt.buffer[t] * evt.scale;
 							++t;
 						}
 					}
@@ -345,7 +354,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown; ++n)
 						{
 							float scale = (float)evt.rampdown/(float)evt.ramp_start;
-							s[n] += evt.buffer[t] * scale;
+							s[n] += evt.buffer[t]  * evt.scale * scale;
 							++t;
 							evt.rampdown--;
 						}

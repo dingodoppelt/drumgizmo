@@ -187,16 +187,17 @@ void DrumKitParser::endTag(const std::string& name)
 	{
 		auto ptr = std::make_unique<Instrument>(settings, rand);
 		ptr->setGroup(instr_group);
-		
+
 		InstrumentParser parser(*ptr);
 		parser.parseFile(path + "/" + instr_file);
 
 		// Transfer ownership to the DrumKit object.
-		kit.instruments.push_back(std::move(ptr));
+		kit.instruments.emplace_back(std::move(ptr));
+		Instrument& instrument = *kit.instruments.back();
 
 		// Assign kit channel numbers to instruments channels.
-		for (auto& c: parser.channellist) {
-			std::string cname = c->name;
+		for (auto& c: instrument.instrument_channels) {
+			std::string cname = c.name;
 			if(channelmap.find(cname) != channelmap.end())
 			{
 				cname = channelmap[cname];
@@ -206,14 +207,14 @@ void DrumKitParser::endTag(const std::string& name)
 			{
 				if(kit.channels[cnt].name == cname)
 				{
-					c->num = kit.channels[cnt].num;
+					c.num = kit.channels[cnt].num;
 				}
 			}
 
-			if(c->num == NO_CHANNEL)
+			if(c.num == NO_CHANNEL)
 			{
 				ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
-				      c->name.c_str(), ptr->getName().c_str());
+				    c.name.c_str(), instrument.getName().c_str());
 			}
 			else
 			{

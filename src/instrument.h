@@ -42,6 +42,7 @@
 class Instrument
 {
 	friend class InstrumentParser;
+	friend class DrumKitParser;
 public:
 	Instrument(Settings& settings, Random& rand);
 	~Instrument();
@@ -78,6 +79,7 @@ private:
 	void finalise(); ///< Signal instrument that no more samples will be added.
 
 	std::vector<Sample*> samplelist;
+	std::vector<InstrumentChannel> instrument_channels;
 
 	size_t lastpos;
 	float mod;

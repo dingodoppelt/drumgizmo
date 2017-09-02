@@ -41,13 +41,15 @@ public:
 
 	virtual int parseFile(const std::string& filename) override;
 
-	std::vector<InstrumentChannel*> channellist;
+	std::vector<InstrumentChannel> channellist;
 
 protected:
 	virtual void startTag(const std::string& name, const attr_t& attr) override;
 	virtual void endTag(const std::string& name) override;
 
 private:
+	InstrumentChannel* addOrGetChannel(const std::string& name);
+
 	Instrument& instrument;
 	Sample* sample{nullptr};
 

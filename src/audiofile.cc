@@ -35,9 +35,10 @@
 
 #include <hugin.hpp>
 
-AudioFile::AudioFile(const std::string& filename, std::size_t filechannel)
+AudioFile::AudioFile(const std::string& filename, std::size_t filechannel, bool main)
 	: filename(filename)
 	, filechannel(filechannel)
+	, main(main)
 	, magic{this}
 {
 }

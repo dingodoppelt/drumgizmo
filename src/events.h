@@ -91,6 +91,7 @@ public:
 	void* instrument;
 	int rampdown;
 	int ramp_start;
+	float scale{1.0f};
 };
 
 class EventQueue

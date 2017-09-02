@@ -151,7 +151,7 @@ bool InputProcessor::processOnset(event_t& event,
 
 	for(Channel& ch: kit.channels)
 	{
-		AudioFile* af = sample->getAudioFile(&ch);
+		AudioFile* af = sample->getAudioFile(ch);
 		if(af == nullptr || !af->isValid())
 		{
 			//DEBUG(inputprocessor, "Missing AudioFile.\n");

@@ -39,12 +39,12 @@ Sample::~Sample()
 {
 }
 
-void Sample::addAudioFile(Channel* c, AudioFile* a)
+void Sample::addAudioFile(InstrumentChannel* c, AudioFile* a)
 {
 	audiofiles[c] = a;
 }
 
-AudioFile* Sample::getAudioFile(Channel* c)
+AudioFile* Sample::getAudioFile(const Channel& channel)
 {
 	/*
 	if(audiofiles.find(c) == audiofiles.end()) return nullptr;
@@ -54,7 +54,7 @@ AudioFile* Sample::getAudioFile(Channel* c)
 	// todo: std::find_if ??
 	for (auto& pair: audiofiles)
 	{
-		if (pair.first->num == c->num)
+		if (pair.first->num == channel.num)
 		{
 			return pair.second;
 		}
