@@ -9,6 +9,7 @@ config.guess
 config.h
 config.h.in*
 config.log
+config.rpath
 config.status
 config.sub
 configure
@@ -58,6 +59,7 @@ test/enginetest
 test/paintertest
 test/drumkitcreatortest
 test/bytesizeparsertest
+test/notifiertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav
@@ -80,3 +82,12 @@ plugin/vst/public.sdk/
 \#*\#
 .\#*
 .clang_complete
+*.tar.gz
+*.zip
+*.tgz
+*.asc
+*.patch
+*.log
+*.pch
+*.gch
+cov-int/
