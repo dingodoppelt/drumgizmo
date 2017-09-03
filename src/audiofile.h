@@ -35,11 +35,15 @@
 #include <sndfile.h>
 
 #include "audio.h"
+#include "channel.h"
+
+class InstrumentChannel;
 
 class AudioFile
 {
 public:
-	AudioFile(const std::string& filename, std::size_t filechannel, bool main = true);
+	AudioFile(const std::string& filename, std::size_t filechannel,
+	          InstrumentChannel* instrument_channel = nullptr);
 	~AudioFile();
 
 	void load(std::size_t sample_limit = std::numeric_limits<std::size_t>::max());
@@ -55,13 +59,16 @@ public:
 
 	bool isValid() const;
 
+	//! Returns if this audio file is to be played on a main channel (ie. not a
+	//! secondary channel)
+	main_state_t mainState() const;
+
 	std::mutex mutex;
 
 	std::size_t filechannel;
 
-	bool main;
-
 private:
 	void* magic{nullptr};
 	volatile bool is_loaded{false};
+	InstrumentChannel* instrument_channel;
 };

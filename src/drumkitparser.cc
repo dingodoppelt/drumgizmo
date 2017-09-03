@@ -177,7 +177,14 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 			return;
 		}
 
-		channelmap[attr.at("in")] = attr.at("out");
+		channel_attribute_t cattr{attr.at("out"), main_state_t::unset};
+		if(attr.find("main") != attr.end())
+		{
+			cattr.main_state = (attr.at("main") == "true") ?
+				main_state_t::is_main : main_state_t::is_not_main;
+		}
+
+		channelmap[attr.at("in")] = cattr;
 	}
 }
 
@@ -185,43 +192,63 @@ void DrumKitParser::endTag(const std::string& name)
 {
 	if(name == "instrument")
 	{
-		auto ptr = std::make_unique<Instrument>(settings, rand);
-		ptr->setGroup(instr_group);
+		{
+			// Scope the std::unique_ptr 'ptr' so we don't accidentally use it after
+			// it is std::move'd to the instruments list.
+			auto ptr = std::make_unique<Instrument>(settings, rand);
+			ptr->setGroup(instr_group);
 
-		InstrumentParser parser(*ptr);
-		parser.parseFile(path + "/" + instr_file);
+			InstrumentParser parser(*ptr);
+			parser.parseFile(path + "/" + instr_file);
 
-		// Transfer ownership to the DrumKit object.
-		kit.instruments.emplace_back(std::move(ptr));
-		Instrument& instrument = *kit.instruments.back();
+			// Transfer ownership to the DrumKit object.
+			kit.instruments.emplace_back(std::move(ptr));
+		}
 
-		// Assign kit channel numbers to instruments channels.
-		for (auto& c: instrument.instrument_channels) {
-			std::string cname = c.name;
-			if(channelmap.find(cname) != channelmap.end())
+		auto& instrument = *kit.instruments.back();
+
+		// Only use main attribute from drumkit file if at least one exists.
+		main_state_t default_main_state = main_state_t::unset;
+		for(const auto& channel: channelmap)
+		{
+			if(channel.second.main_state != main_state_t::unset)
 			{
-				cname = channelmap[cname];
+				default_main_state = main_state_t::is_not_main;
+			}
+		}
+
+		// Assign kit channel numbers to instruments channels and reset
+		// main_state attribute as needed.
+		for(auto& instrument_channel: instrument.instrument_channels)
+		{
+			channel_attribute_t cattr{instrument_channel.name, main_state_t::unset};
+			if(channelmap.find(instrument_channel.name) != channelmap.end())
+			{
+				cattr = channelmap[instrument_channel.name];
 			}
 
-			for(std::size_t cnt = 0; cnt < kit.channels.size(); cnt++)
+			if(cattr.main_state == main_state_t::unset)
 			{
-				if(kit.channels[cnt].name == cname)
+				cattr.main_state = default_main_state;
+			}
+
+			if(cattr.main_state != main_state_t::unset)
+			{
+				instrument_channel.main = cattr.main_state;
+			}
+
+			for(auto cnt = 0u; cnt < kit.channels.size(); ++cnt)
+			{
+				if(kit.channels[cnt].name == cattr.cname)
 				{
-					c.num = kit.channels[cnt].num;
+					instrument_channel.num = kit.channels[cnt].num;
 				}
 			}
 
-			if(c.num == NO_CHANNEL)
+			if(instrument_channel.num == NO_CHANNEL)
 			{
 				ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
-				    c.name.c_str(), instrument.getName().c_str());
-			}
-			else
-			{
-				/*
-				  DEBUG(kitparser, "Assigned channel '%s' to number %d in instrument '%s'\n",
-				  c->name.c_str(), c->num, i.name().c_str());
-				*/
+				    instrument_channel.name.c_str(), instrument.getName().c_str());
 			}
 		}
 

@@ -49,7 +49,12 @@ private:
 	DrumKit& kit;
 	std::string path;
 
-	std::unordered_map<std::string, std::string> channelmap;
+	struct channel_attribute_t
+	{
+		std::string cname;
+		main_state_t main_state;
+	};
+	std::unordered_map<std::string, channel_attribute_t> channelmap;
 	std::string instr_file;
 	std::string instr_name;
 	std::string instr_group;

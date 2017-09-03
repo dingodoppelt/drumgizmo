@@ -34,6 +34,13 @@
 #define ALL_CHANNELS ((channel_t)0xffffffff)
 #define NO_CHANNEL ((channel_t)0xfffffffe)
 
+enum class main_state_t
+{
+	unset,
+	is_main,
+	is_not_main
+};
+
 class Channel
 {
 public:
@@ -49,7 +56,7 @@ class InstrumentChannel
 public:
 	InstrumentChannel(const std::string& name = "");
 
-	bool main{true};
+	main_state_t main{main_state_t::unset};
 };
 
 typedef std::vector<Channel> Channels;

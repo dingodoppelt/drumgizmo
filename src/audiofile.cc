@@ -35,11 +35,14 @@
 
 #include <hugin.hpp>
 
-AudioFile::AudioFile(const std::string& filename, std::size_t filechannel, bool main)
+#include "channel.h"
+
+AudioFile::AudioFile(const std::string& filename, std::size_t filechannel,
+                     InstrumentChannel* instrument_channel)
 	: filename(filename)
 	, filechannel(filechannel)
-	, main(main)
 	, magic{this}
+	, instrument_channel(instrument_channel)
 {
 }
 
@@ -150,4 +153,15 @@ void AudioFile::load(std::size_t sample_limit)
 bool AudioFile::isLoaded() const
 {
 	return is_loaded;
+}
+
+main_state_t AudioFile::mainState() const
+{
+	if(instrument_channel == nullptr)
+	{
+		DEBUG(audiofile, "no instrument_channel!");
+		return main_state_t::unset;
+	}
+
+	return instrument_channel->main;
 }

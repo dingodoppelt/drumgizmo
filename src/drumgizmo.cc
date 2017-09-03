@@ -283,7 +283,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					size_t initial_chunksize = (pos + sz) - evt.offset;
 					evt.buffer = audio_cache.open(af, initial_chunksize,
 					                              af.filechannel, evt.cache_id);
-					if(!af.main && enable_bleed_control)
+					if((af.mainState() == main_state_t::is_not_main) &&
+					   enable_bleed_control)
 					{
 						evt.scale = master_bleed;
 					}
@@ -333,7 +334,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 						for(; (n < optend) && (t < evt.buffer_size); n += N)
 						{
-							*(vNsf*)&(s[n]) += *(vNsf*)&(evt.buffer[t]);
+							*(vNsf*)&(s[n]) += *(vNsf*)&(evt.buffer[t]) * evt.scale;
 							t += N;
 						}
 #endif
@@ -354,7 +355,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown; ++n)
 						{
 							float scale = (float)evt.rampdown/(float)evt.ramp_start;
-							s[n] += evt.buffer[t]  * evt.scale * scale;
+							s[n] += evt.buffer[t] * evt.scale * scale;
 							++t;
 							evt.rampdown--;
 						}

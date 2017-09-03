@@ -94,14 +94,13 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 			return;
 		}
 
-		bool main = false;
+		InstrumentChannel* channel = addOrGetChannel(attr.at("name"));
+		channel->main = main_state_t::is_not_main;
 		if(attr.find("main") != attr.end())
 		{
-			main = attr.at("main") == "true";
+			channel->main = (attr.at("main") == "true") ?
+				main_state_t::is_main : main_state_t::is_not_main;
 		}
-
-		InstrumentChannel* channel = addOrGetChannel(attr.at("name"));
-		channel->main = main;
 	}
 
 	if(name == "samples")
@@ -169,7 +168,7 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 		auto audio_file =
 			std::make_unique<AudioFile>(path + "/" + attr.at("file"),
 			                            filechannel,
-			                            instrument_channel->main);
+			                            instrument_channel);
 
 		sample->addAudioFile(instrument_channel, audio_file.get());
 
@@ -263,8 +262,7 @@ InstrumentChannel* InstrumentParser::addOrGetChannel(const std::string& name)
 
 	instrument.instrument_channels.emplace_back(name);
 	InstrumentChannel& channel = instrument.instrument_channels.back();
-	channel.main = true; // Ad-hoc added channels are all main by default for
-	                     // backwards compatibility.
+	channel.main = main_state_t::unset;
 
 	return &channel;
 }
