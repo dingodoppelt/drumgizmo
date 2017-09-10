@@ -130,25 +130,14 @@ void NativeWindowX11::setFixedSize(std::size_t width, std::size_t height)
 
 	resize(width, height);
 
-	XSizeHints* size_hints;
-	size_hints = XAllocSizeHints();
+	XSizeHints size_hints;
+	memset(&size_hints, 0, sizeof(size_hints));
 
-	if(size_hints == nullptr)
-	{
-		ERR(X11,"XMallocSizeHints() failed");
-		return;
-	}
+	size_hints.flags = PMinSize|PMaxSize;
+	size_hints.min_width = size_hints.max_width = (int)width;
+	size_hints.min_height = size_hints.max_height = (int)height;
 
-	size_hints->flags = USPosition | PMinSize | PMaxSize;
-	size_hints->min_width = size_hints->max_width = width;
-	size_hints->min_height = size_hints->max_height = height;
-
-	//size_hints->min_aspect.x = (float)window.width()/(float)window.height();
-	//size_hints->max_aspect.x = (float)window.width()/(float)window.height();
-	//size_hints->min_aspect.y = (float)window.width()/(float)window.height();
-	//size_hints->max_aspect.y = size_hints->min_aspect.y;
-
-	XSetWMNormalHints(display, xwindow, size_hints);
+	XSetNormalHints(display, xwindow, &size_hints);
 }
 
 void NativeWindowX11::resize(std::size_t width, std::size_t height)
@@ -161,7 +150,7 @@ void NativeWindowX11::resize(std::size_t width, std::size_t height)
 	XResizeWindow(display, xwindow, width, height);
 }
 
-std::pair<std::size_t, std::size_t> NativeWindowX11::getSize()
+std::pair<std::size_t, std::size_t> NativeWindowX11::getSize() const
 {
 //	XWindowAttributes attributes;
 //	XGetWindowAttributes(display, xwindow, &attributes);
@@ -175,7 +164,7 @@ std::pair<std::size_t, std::size_t> NativeWindowX11::getSize()
 	             &x, &y,
 	             &width, &height, &border, &depth);
 
-	return std::make_pair(width, height);
+	return {width, height};
 }
 
 void NativeWindowX11::move(int x, int y)
@@ -188,7 +177,7 @@ void NativeWindowX11::move(int x, int y)
 	XMoveWindow(display, xwindow, x, y);
 }
 
-std::pair<int, int> NativeWindowX11::getPosition()
+std::pair<int, int> NativeWindowX11::getPosition() const
 {
 	::Window root_window;
 	::Window child_window;

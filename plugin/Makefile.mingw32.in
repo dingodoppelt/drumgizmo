@@ -74,7 +74,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/listboxthin.cc \
 	@top_srcdir@/plugingui/maintab.cc \
 	@top_srcdir@/plugingui/mainwindow.cc \
-	@top_srcdir@/plugingui/nativewindow_win32.cc \
+	@top_srcdir@/plugingui/nativewindow_pugl.cc \
 	@top_srcdir@/plugingui/painter.cc \
 	@top_srcdir@/plugingui/pixelbuffer.cc \
 	@top_srcdir@/plugingui/pluginconfig.cc \
@@ -97,9 +97,10 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/widget.cc \
 	@top_srcdir@/plugingui/window.cc \
-	@top_srcdir@/plugingui/lodepng/lodepng.cpp
+	@top_srcdir@/plugingui/lodepng/lodepng.cpp \
+	@top_srcdir@/pugl/pugl/pugl_win.cpp
 
-GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD @GUI_CPPFLAGS@
+GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -I@top_srcdir@/pugl -DUSE_THREAD @GUI_CPPFLAGS@
 GUI_LIBS=@GUI_LIBS@
 
 DBG_SRC = \

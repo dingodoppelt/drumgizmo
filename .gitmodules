@@ -11,3 +11,6 @@
 [submodule "getoptpp"]
 	path = getoptpp
 	url = https://github.com/cgloeckner/getoptpp
+[submodule "pugl"]
+	path = pugl
+	url = http://git.drobilla.net/pugl.git/

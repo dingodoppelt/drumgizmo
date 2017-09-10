@@ -136,7 +136,7 @@ dnl Check for GUI backend
 dnl ===========================
 AC_CANONICAL_HOST
 AC_ARG_ENABLE([gui],
-	AS_HELP_STRING([--enable-gui[=backend]], [Use specified gui backend. Can be win32, x11, pugl or auto [default=auto]]),,
+	AS_HELP_STRING([--enable-gui[=backend]], [Use specified gui backend. Can be x11, win32, cocoa, pugl-x11, pugl-win32, pugl-cocoa or auto [default=auto]]),,
         [enable_gui="auto"])
 
 AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
@@ -144,9 +144,9 @@ AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
 AS_IF([test "x$enable_gui" = "xauto"],
       [AC_MSG_RESULT([Auto setting gui based on host: $host_os])
 	     AS_CASE([$host_os],
-		      [darwin*], [enable_gui="cocoa"],
-		      [linux*|*bsd*], [enable_gui="x11"],
-		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
+		      [darwin*], [enable_gui="pugl-cocoa"],
+		      [linux*|*bsd*], [enable_gui="pugl-x11"],
+		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="pugl-win32"],
 
 		      AC_MSG_ERROR([Your platform is not currently supported])
 	     )]
@@ -155,12 +155,8 @@ AS_IF([test "x$enable_gui" = "xauto"],
 AS_IF(
   [test "x$enable_gui" = "xx11"],
   [AC_MSG_RESULT([Setting gui backend to X11])
-  dnl ======================
-  dnl Check for Xlib
-  dnl ======================
   PKG_CHECK_MODULES(X11, x11 >= 1.0)
   PKG_CHECK_MODULES(XEXT, xext >= 1.0)
-
   GUI_CPPFLAGS="-DUI_X11 $X11_CFLAGS $XEXT_CFLAGS"
   GUI_LIBS="$X11_LIBS $XEXT_LIBS"],
 
@@ -169,15 +165,27 @@ AS_IF(
   GUI_CPPFLAGS="-DUI_WIN32"
   GUI_LIBS="-lgdi32 -lsetupapi -lws2_32 -lcomctl32"],
 
-  [test "x$enable_gui" = "xpugl"],
-  [AC_MSG_RESULT([Setting gui backend to Pugl])
-  GUI_CPPFLAGS="-DUI_PUGL -I../../pugl"
-  GUI_LIBS="-lGLU -lGL -lglut"],
-
   [test "x$enable_gui" = "xcocoa"],
   [AC_MSG_RESULT([Setting gui backend to Cocoa])
   GUI_CPPFLAGS="-DUI_COCOA -framework Cocoa"
   GUI_LIBS="-framework Cocoa"],
+
+  [test "x$enable_gui" = "xpugl-x11"],
+  [AC_MSG_RESULT([Setting gui backend to Pugl-X11])
+  PKG_CHECK_MODULES(X11, x11 >= 1.0)
+  PKG_CHECK_MODULES(XEXT, xext >= 1.0)
+  GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL $X11_CFLAGS $XEXT_CFLAGS"
+  GUI_LIBS="-lGL $X11_LIBS $XEXT_LIBS"],
+
+  [test "x$enable_gui" = "xpugl-win32"],
+  [AC_MSG_RESULT([Setting gui backend to Pugl-Win32])
+  GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL"
+  GUI_LIBS="-lopengl32 -lgdi32 -luser32 -lsetupapi -lws2_32 -lcomctl32"],
+
+  [test "x$enable_gui" = "xpugl-cocoa"],
+  [AC_MSG_RESULT([Setting gui backend to Pugl-Cocoa])
+  GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL -framework Cocoa"
+  GUI_LIBS="-lCocoa -lOpenGL -framework Cocoa"],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
 )
@@ -185,10 +193,12 @@ AS_IF(
 AC_SUBST(GUI_CPPFLAGS)
 AC_SUBST(GUI_LIBS)
 
-AM_CONDITIONAL([ENABLE_PUGL], [test "x$enable_gui" = "xpugl"])
-AM_CONDITIONAL([ENABLE_WIN32], [test "x$enable_gui" = "xwin32"])
 AM_CONDITIONAL([ENABLE_X11], [test "x$enable_gui" = "xx11"])
+AM_CONDITIONAL([ENABLE_WIN32], [test "x$enable_gui" = "xwin32"])
 AM_CONDITIONAL([ENABLE_COCOA], [test "x$enable_gui" = "xcocoa"])
+AM_CONDITIONAL([ENABLE_PUGL_X11], [test "x$enable_gui" = "xpugl-x11"])
+AM_CONDITIONAL([ENABLE_PUGL_WIN32], [test "x$enable_gui" = "xpugl-win32"])
+AM_CONDITIONAL([ENABLE_PUGL_COCOA], [test "x$enable_gui" = "xpugl-cocoa"])
 
 dnl ======================
 dnl Compile unit tests

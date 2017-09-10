@@ -52,7 +52,7 @@ public:
 	virtual void resize(std::size_t width, std::size_t height) = 0;
 
 	//! Query size of the native window.
-	virtual std::pair<std::size_t, std::size_t> getSize() = 0;
+	virtual std::pair<std::size_t, std::size_t> getSize() const = 0;
 
 	//! Move the window to a new position.
 	//! Note: negative value are allowed.
@@ -60,7 +60,7 @@ public:
 
 	//! Query the screen position of the native window.
 	//! Note: returned values can be negative.
-	virtual std::pair<int, int> getPosition() = 0;
+	virtual std::pair<int, int> getPosition() const = 0;
 
 	//! Show the window if it is hidden.
 	virtual void show() = 0;

@@ -432,7 +432,7 @@ void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 	SetWindowPos(hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
-std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize()
+std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize() const
 {
 	RECT rect;
 	GetClientRect(m_hwnd, &rect);
@@ -444,7 +444,7 @@ void NativeWindowWin32::move(int x, int y)
 	SetWindowPos(m_hwnd, nullptr, (int)x, (int)y, -1, -1, SWP_NOSIZE);
 }
 
-std::pair<int, int> NativeWindowWin32::getPosition()
+std::pair<int, int> NativeWindowWin32::getPosition() const
 {
 	RECT rect;
 	GetClientRect(m_hwnd, &rect);

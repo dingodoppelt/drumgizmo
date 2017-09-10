@@ -42,6 +42,8 @@ libdggui_la_CPPFLAGS = \
 	-DLODEPNG_NO_COMPILE_ERROR_TEXT \
 	-DLODEPNG_NO_COMPILE_CPP
 
+libdggui_la_CFLAGS =
+
 libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
@@ -110,17 +112,41 @@ nodist_libdggui_la_SOURCES += \
 	nativewindow_win32.cc
 endif
 
-if ENABLE_PUGL
-nodist_libdggui_la_SOURCES += \
-	nativewindow_pugl.cc \
-	$(top_srcdir)/pugl/pugl/pugl_x11.c
-endif
-
 #if ENABLE_COCOA
 #nodist_libdggui_la_SOURCES += \
 #	nativewindow_cocoa.m \
 #	nativewindow_cocoa.cc
 #endif
+
+if ENABLE_PUGL_X11
+nodist_libdggui_la_SOURCES += \
+	nativewindow_pugl.cc \
+	$(top_srcdir)/pugl/pugl/pugl_x11.c
+
+libdggui_la_CPPFLAGS += \
+	-I$(top_srcdir)/pugl
+
+libdggui_la_CFLAGS += \
+	-std=c99
+endif
+
+if ENABLE_PUGL_WIN32
+nodist_libdggui_la_SOURCES += \
+	nativewindow_pugl.cc \
+	$(top_srcdir)/pugl/pugl/pugl_win.cpp
+
+libdggui_la_CPPFLAGS += \
+	-I$(top_srcdir)/pugl
+endif
+
+if ENABLE_PUGL_COCOA
+nodist_libdggui_la_SOURCES += \
+	nativewindow_pugl.cc \
+	$(top_srcdir)/pugl/pugl/pugl_osx.m
+
+libdggui_la_CPPFLAGS += \
+	-I$(top_srcdir)/pugl
+endif
 
 plugingui_LDADD = libdggui.la $(top_srcdir)/src/libdg.la
 

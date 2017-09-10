@@ -27,11 +27,15 @@
 #pragma once
 
 #include "nativewindow.h"
-#include "pugl.h"
+extern "C"
+{
+#include <pugl/pugl.h>
+}
 
 #include <list>
 
-namespace GUI {
+namespace GUI
+{
 
 class Event;
 class Window;
@@ -41,32 +45,39 @@ public:
 	NativeWindowPugl(void* native_window, Window& window);
 	~NativeWindowPugl();
 
-	void init();
-	void setFixedSize(int width, int height);
-	void resize(int width, int height);
-	void move(int x, int y);
-	void show();
-	void setCaption(const std::string &caption);
-	void hide();
-	void handleBuffer();
-	void redraw();
-	void grabMouse(bool grab);
+	void setFixedSize(std::size_t width, std::size_t height) override;
+	void resize(std::size_t width, std::size_t height) override;
+	std::pair<std::size_t, std::size_t> getSize() const override;
 
-	bool hasEvent();
-	Event *getNextEvent();
-	Event *peekNextEvent();
+	void move(int x, int y) override;
+	std::pair<int, int> getPosition() const override{ return {}; }
+
+	void show() override;
+	void setCaption(const std::string &caption) override;
+	void hide() override;
+	bool visible() const override;
+	void redraw(const Rect& dirty_rect) override;
+	void grabMouse(bool grab) override;
+
+	EventQueue getEvents() override;
+
+	void* getNativeWindowHandle() const override;
 
 private:
 	Window& window;
-	void* native_window{nullptr};
 	PuglView* view{nullptr};
 
 	std::list<Event*> eventq;
 
 	// Internal pugl c-callbacks
+	static void onEvent(PuglView* view, const PuglEvent* event);
+	static void onReshape(PuglView* view, int width, int height);
 	static void onDisplay(PuglView* view);
 	static void onMouse(PuglView* view, int button, bool press, int x, int y);
 	static void onKeyboard(PuglView* view, bool press, uint32_t key);
+
+	EventQueue event_queue;
+	std::uint32_t last_click{0};
 };
 
 } // GUI::
