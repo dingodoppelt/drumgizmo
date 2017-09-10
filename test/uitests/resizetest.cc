@@ -114,7 +114,7 @@ public:
 
 private:
 	bool closing{false};
-	GUI::Font font{":font.png"};
+	GUI::Font font{":resources/font.png"};
 	std::pair<std::size_t, std::size_t> reportedSize;
 	std::pair<int, int> reportedPosition;
 };
