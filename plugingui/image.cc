@@ -86,10 +86,16 @@ void Image::setError()
 
 	std::uint32_t iw, ih;
 
-	std::memcpy(&iw, ptr, sizeof(uint32_t));
+	iw = (uint32_t) ptr[0] |
+	     (uint32_t) ptr[1] << 8 |
+	     (uint32_t) ptr[2] << 16 |
+	     (uint32_t) ptr[3] << 24;
 	ptr += sizeof(uint32_t);
 
-	std::memcpy(&ih, ptr, sizeof(uint32_t));
+	ih = (uint32_t) ptr[0] |
+	     (uint32_t) ptr[1] << 8 |
+	     (uint32_t) ptr[2] << 16 |
+	     (uint32_t) ptr[3] << 24;
 	ptr += sizeof(uint32_t);
 
 	_width = iw;
