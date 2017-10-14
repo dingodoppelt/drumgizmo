@@ -39,14 +39,15 @@
 
 InputProcessor::InputProcessor(Settings& settings,
                                DrumKit& kit,
-                               std::list<Event*>* activeevents)
+                               std::list<Event*>* activeevents,
+                               Random& random)
 	: kit(kit)
 	, activeevents(activeevents)
 	, is_stopping(false)
 {
 	// Build filter list
 	filters.emplace_back(std::make_unique<StaminaFilter>(settings));
-	filters.emplace_back(std::make_unique<LatencyFilter>(settings));
+	filters.emplace_back(std::make_unique<LatencyFilter>(settings, random));
 }
 
 bool InputProcessor::process(std::vector<event_t>& events,

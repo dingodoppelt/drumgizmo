@@ -54,7 +54,7 @@ public:
 	virtual type_t getType() const = 0;
 
 	channel_t channel;
-	timepos_t offset;
+	timepos_t offset; //< Global position (ie. not relative to buffer)
 };
 
 #define NO_RAMPDOWN -1

@@ -90,6 +90,29 @@ struct Settings
 
 	Atomic<bool> enable_bleed_control{false};
 	Atomic<float> master_bleed{1.0f};
+
+	Atomic<bool> enable_latency_modifier{true};
+
+	//! Maximum "early hits" introduces latency. In no. samples.
+	Atomic<std::size_t> latency_max{5000u};
+
+	//! 0 := on-beat
+	//! positive := laid back
+	//! negative := up-beat
+	Atomic<int> latency_laid_back{0};
+
+	//!   0 := Robot
+	//! 100 := Good drummer
+	//! 200 := Decent drummer
+	//! 300 := Decent drummer on a bad day
+	//! 400 := Bad drummer
+	//! 500 := Bad and drunk drummer
+	Atomic<float> latency_stddev{100.0f};
+
+	//! Regain on-beat position.
+	//! 0: instantaniously
+	//! 1: never
+	Atomic<float> latency_regain{0.9f};
 };
 
 //! Settings getter class.

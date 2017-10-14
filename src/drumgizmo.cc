@@ -47,7 +47,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	, oe(o)
 	, ie(i)
 	, audio_cache(settings)
-	, input_processor(settings, kit, activeevents)
+	, input_processor(settings, kit, activeevents, rand)
 	, settings(settings)
 	, settings_getter(settings)
 {

@@ -29,17 +29,21 @@
 #include "inputfilter.h"
 
 struct Settings;
+class Random;
 
 class LatencyFilter
 	: public InputFilter
 {
 public:
-	LatencyFilter(Settings& settings);
+	LatencyFilter(Settings& settings, Random& random);
 
-	bool filter(event_t& events, size_t pos) override;
+	bool filter(event_t& events, std::size_t pos) override;
 
 	std::size_t getLatency() const override;
 
 private:
-	//Settings& settings;
+	Settings& settings;
+	Random& random;
+	double latency_offset{0.0};
+	std::size_t latency_last_pos{0};
 };

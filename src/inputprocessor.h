@@ -37,13 +37,15 @@
 #include "inputfilter.h"
 
 struct Settings;
+class Random;
 
 class InputProcessor
 {
 public:
 	InputProcessor(Settings& settings,
 	               DrumKit& kit,
-	               std::list<Event*>* activeevents);
+	               std::list<Event*>* activeevents,
+	               Random& random);
 
 	bool process(std::vector<event_t>& events,
 	             std::size_t pos,

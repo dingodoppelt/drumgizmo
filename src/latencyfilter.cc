@@ -26,19 +26,70 @@
  */
 #include "latencyfilter.h"
 
-LatencyFilter::LatencyFilter(Settings& settings)
-	//: settings(settings)
+#include <cmath>
+#include <hugin.hpp>
+
+#include "settings.h"
+#include "random.h"
+
+LatencyFilter::LatencyFilter(Settings& settings, Random& random)
+	: settings(settings)
+	, random(random)
 {
 }
 
-bool LatencyFilter::filter(event_t& events, size_t pos)
+bool LatencyFilter::filter(event_t& event, std::size_t pos)
 {
+	auto enabled = settings.enable_latency_modifier.load();
+	auto latency = settings.latency_max.load();
+	auto samplerate = settings.samplerate.load();
+	auto latency_laid_back = settings.latency_laid_back.load();
+	auto latency_stddev = settings.latency_stddev.load();
+	auto latency_regain = settings.latency_regain.load();
+
+	if(!enabled)
+	{
+		return true;
+	}
+
+	// Assert latency_regain is within range [0; 1].
+	assert(latency_regain >= 0.0f && latency_regain <= 1.0f);
+
+	float duration = (pos - latency_last_pos) / samplerate;
+	latency_offset *= pow(latency_regain, duration);
+
+	latency_last_pos = pos;
+
+	float offset_min = latency * -1.0f;
+	float offset_max = latency * 1.0f;
+
+	float mean = latency_laid_back;
+	float stddev = latency_stddev;
+
+	float offset = random.normalDistribution(mean, stddev);
+
+	latency_offset += offset;
+
+	if(latency_offset > offset_max) latency_offset = offset_max;
+	if(latency_offset < offset_min) latency_offset = offset_min;
+
+	DEBUG(offset, "latency: %d, offset: %f, drift: %f",
+	      (int)latency, offset, latency_offset);
+
+	event.offset += latency;
+	event.offset += latency_offset;//(int)std::round(offset);
+
 	return true;
 }
 
 std::size_t LatencyFilter::getLatency() const
 {
-	// TODO: If enabled in settings, return the maximum number of samples
-	// with which the latency filter can move notes forward.
-	return 0;
+	bool enabled = settings.enable_latency_modifier.load();
+	std::size_t max_latency = settings.latency_max.load();
+	if(enabled)
+	{
+		return max_latency;
+	}
+
+	return 0u;
 }
