@@ -92,6 +92,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/textedit.cc \
 	@top_srcdir@/plugingui/texture.cc \
 	@top_srcdir@/plugingui/texturedbox.cc \
+	@top_srcdir@/plugingui/timingframecontent.cc \
 	@top_srcdir@/plugingui/toggle.cc \
 	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \

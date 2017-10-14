@@ -35,6 +35,7 @@
 #include "diskstreamingframecontent.h"
 #include "bleedcontrolframecontent.h"
 #include "resamplingframecontent.h"
+#include "timingframecontent.h"
 
 struct Settings;
 class SettingsNotifier;
@@ -59,6 +60,7 @@ private:
 	void humanizerOnChange(bool on);
 	void bleedcontrolOnChange(bool on);
 	void resamplingOnChange(bool on);
+	void timingOnChange(bool on);
 
 	Image logo{":resources/logo.png"};
 
@@ -70,6 +72,7 @@ private:
 	FrameWidget diskstreaming_frame{this, false};
 	FrameWidget bleedcontrol_frame{this, true};
 	FrameWidget resampling_frame{this, true};
+	FrameWidget timing_frame{this, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
@@ -77,6 +80,7 @@ private:
 	DiskstreamingframeContent diskstreamingframe_content;
 	BleedcontrolframeContent bleedcontrolframe_content;
 	ResamplingframeContent resamplingframe_content;
+	TimingframeContent timingframe_content;
 
 	void add(std::string const& title, FrameWidget& frame, Widget& content,
 	         std::size_t height, int column);

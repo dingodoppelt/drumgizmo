@@ -92,6 +92,7 @@ nodist_libdggui_la_SOURCES = \
 	textedit.cc \
 	texture.cc \
 	texturedbox.cc \
+	timingframecontent.cc \
 	toggle.cc \
 	utf8.cc \
 	verticalline.cc \
@@ -189,6 +190,7 @@ EXTRA_DIST = \
 	textedit.h \
 	texture.h \
 	texturedbox.h \
+	timingframecontent.h \
 	toggle.h \
 	utf8.h \
 	verticalline.h \

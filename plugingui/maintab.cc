@@ -40,22 +40,26 @@ MainTab::MainTab(Widget* parent,
 	, diskstreamingframe_content{this, settings, settings_notifier}
 	, bleedcontrolframe_content{this, settings, settings_notifier}
 	, resamplingframe_content{this, settings_notifier}
+	, timingframe_content{this, settings, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	layout.setSpacing(0);
 	layout.setResizeChildren(true);
 
-	add("Drumkit", drumkit_frame, drumkitframe_content, 20, 0);
-	add("Status", status_frame, statusframe_content, 29, 0);
-	add("Humanizer", humanizer_frame, humanizerframe_content, 13, 1);
-	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 11, 1);
-	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 11, 1);
-	add("Resampling", resampling_frame, resamplingframe_content, 14, 1);
+	add("Drumkit", drumkit_frame, drumkitframe_content, 15, 0);
+	add("Status", status_frame, statusframe_content, 24, 0);
+	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 0);
+
+	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 12, 1);
+	add("Timing Humanizer", timing_frame, timingframe_content, 12, 1);
+	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 10, 1);
+	add("Resampling", resampling_frame, resamplingframe_content, 15, 1);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
 	bleedcontrol_frame.setOnSwitch(settings.enable_bleed_control);
 	resampling_frame.setOnSwitch(settings.enable_resampling);
+	timing_frame.setOnSwitch(settings.enable_latency_modifier);
 
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
@@ -67,6 +71,8 @@ MainTab::MainTab(Widget* parent,
 	        this, &MainTab::bleedcontrolOnChange);
 	CONNECT(&resampling_frame, onSwitchChangeNotifier,
 	        this, &MainTab::resamplingOnChange);
+	CONNECT(&timing_frame, onSwitchChangeNotifier,
+	        this, &MainTab::timingOnChange);
 }
 
 void MainTab::resize(std::size_t width, std::size_t height)
@@ -94,8 +100,13 @@ void MainTab::resamplingOnChange(bool on)
 	settings.enable_resampling.store(on);
 }
 
+void MainTab::timingOnChange(bool on)
+{
+	settings.enable_latency_modifier.store(on);
+}
+
 void MainTab::add(std::string const& title, FrameWidget& frame, Widget& content,
-		 std::size_t height, int column)
+                  std::size_t height, int column)
 {
 	layout.addItem(&frame);
 	frame.setTitle(title);

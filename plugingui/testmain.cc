@@ -49,7 +49,7 @@ int main()
 	main_window.show();
 
 	// TODO: automatically use drumgizmo_plugin.h size here
-	parent.resize(750, 466);
+	parent.resize(750, 613);
 
 	while(true)
 	{

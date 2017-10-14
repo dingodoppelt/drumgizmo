@@ -69,6 +69,9 @@ public:
 		layout.addItem(&value);
 	}
 
+	float offset{0.0f};
+	float scale{1.0f};
+
 private:
 	VBoxLayout layout{this};
 	Label caption{this};
@@ -76,6 +79,8 @@ private:
 
 	void setValue(float new_value)
 	{
+		new_value *= scale;
+		new_value += offset;
 		std::stringstream stream;
 		stream << std::fixed << std::setprecision(2) << new_value;
 		value.setText(stream.str());
