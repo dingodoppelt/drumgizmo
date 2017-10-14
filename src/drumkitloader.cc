@@ -121,12 +121,12 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	}
 
 	// Check if there is enough free RAM to load the drumkit.
-	if(!memchecker.enoughFreeMemory(kit))
-	{
-		printf("WARNING: "
-		       "There doesn't seem to be enough RAM available to load the kit.\n"
-		       "Trying to load it anyway...\n");
-	}
+	//if(!memchecker.enoughFreeMemory(kit))
+	//{
+	//	printf("WARNING: "
+	//	       "There doesn't seem to be enough RAM available to load the kit.\n"
+	//	       "Trying to load it anyway...\n");
+	//}
 
 	// Put some information about the kit into the settings
 	settings.drumkit_name = kit.getName();

@@ -37,7 +37,7 @@
 #include "settings.h"
 #include "audioinputengine.h"
 #include "chresampler.h"
-#include "memchecker.h"
+//#include "memchecker.h"
 #include "audiocache.h"
 
 //! This class is responsible for loading the drumkits in its own thread.
@@ -90,7 +90,7 @@ protected:
 	DrumKit& kit;
 	AudioInputEngine& ie;
 	Resamplers& resamplers;
-	MemChecker memchecker;
+	//MemChecker memchecker;
 	Random& rand;
 	AudioCache& audio_cache;
 	std::size_t preload_samples{std::numeric_limits<std::size_t>::max()};

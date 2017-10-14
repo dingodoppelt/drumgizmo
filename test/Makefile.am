@@ -5,7 +5,7 @@ if ENABLE_TESTS
 
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
-	memchecker randomtest atomictest syncedsettingstest imagecachetest \
+	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest
 
 if ENABLE_LV2

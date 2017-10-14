@@ -33,7 +33,6 @@ nodist_libdg_la_SOURCES = \
 	instrument.cc \
 	instrumentparser.cc \
 	latencyfilter.cc \
-	memchecker.cc \
 	midimapparser.cc \
 	midimapper.cc \
 	path.cc \
@@ -76,7 +75,6 @@ EXTRA_DIST = \
 	instrument.h \
 	instrumentparser.h \
 	latencyfilter.h \
-	memchecker.h \
 	midimapparser.h \
 	midimapper.h \
 	nolocale.h \
