@@ -29,8 +29,8 @@
 #include <atomic.h>
 
 class AtomicTest
-	: public CppUnit::TestFixture {
-		
+	: public CppUnit::TestFixture
+{
 	CPPUNIT_TEST_SUITE(AtomicTest);
 	CPPUNIT_TEST(podAtomicsUseStandardImpl);
 	CPPUNIT_TEST(nonPodAtomicsUseOwnImpl);
@@ -42,95 +42,104 @@ class AtomicTest
 	CPPUNIT_TEST(nonPodAtomicCanBeValueAssigned);
 	CPPUNIT_TEST(podAtomicsAreLockFree);
 	CPPUNIT_TEST_SUITE_END();
-	
-	public:
-		void setUp() {}
-		void tearDown() {}
-		
-		void podAtomicsUseStandardImpl() {
-			CPPUNIT_ASSERT(isUsingStandardImpl<bool>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<short int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<long int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<long long int>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<float>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<double>());
-			CPPUNIT_ASSERT(isUsingStandardImpl<long double>());
-		}
-		
-		void nonPodAtomicsUseOwnImpl() {
-			CPPUNIT_ASSERT(!isUsingStandardImpl<std::string>());
-		}
-		
-		void podAtomicCanBeDefaultInitialized() {
-			Atomic<int> i;
-			// note: i is initialized with garbage
-			(void)i; // prevent compiler 'unused' warning
-		}
-		
-		void nonPodAtomicCanBeDefaultInitialized() {
-			Atomic<std::string> s;
-			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{});
-		}
-		
-		void podAtomicCanBeValueInitialized() {
-			Atomic<int> i{5};
-			CPPUNIT_ASSERT_EQUAL(i.load(), 5);
-		}
-		
-		void nonPodAtomicCanBeValueInitialized() {
-			Atomic<std::string> s{"hello world"};
-			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
-		}
-		
-		void podAtomicCanBeValueAssigned() {
-			Atomic<int> i;
-			i = 5;
-			CPPUNIT_ASSERT_EQUAL(i.load(), 5);
-		}
-		
-		void nonPodAtomicCanBeValueAssigned() {
-			Atomic<std::string> s;
-			s = "hello world";
-			CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
-		}
-		
-		void podAtomicsAreLockFree() {
-			CPPUNIT_ASSERT(isLockFree<bool>());
-			CPPUNIT_ASSERT(isLockFree<unsigned short int>());
-			CPPUNIT_ASSERT(isLockFree<short int>());
-			CPPUNIT_ASSERT(isLockFree<unsigned int>());
-			CPPUNIT_ASSERT(isLockFree<int>());
-			CPPUNIT_ASSERT(isLockFree<unsigned long int>());
-			CPPUNIT_ASSERT(isLockFree<long int>());
-			CPPUNIT_ASSERT(isLockFree<unsigned long long int>());
-			CPPUNIT_ASSERT(isLockFree<long long int>());
-			CPPUNIT_ASSERT(isLockFree<float>());
-			CPPUNIT_ASSERT(isLockFree<double>());
-			
-			// compile error: undefined reference to `__atomic_is_lock_free'
-			//CPPUNIT_ASSERT(isLockFree<long double>());
-		}
-		
-		// todo: further testing
-		
-	private:
-		template <typename T>
-		bool isUsingStandardImpl() {
-			return std::is_base_of<std::atomic<T>, Atomic<T>>::value;
-		}
-		
-		template <typename T>
-		bool isLockFree() {
-			Atomic<T> a;
-			return a.is_lock_free();
-		}
+
+public:
+	void setUp() {}
+	void tearDown() {}
+
+	void podAtomicsUseStandardImpl()
+	{
+		CPPUNIT_ASSERT(isUsingStandardImpl<bool>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<short int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<long int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<long long int>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<float>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<double>());
+		CPPUNIT_ASSERT(isUsingStandardImpl<long double>());
+	}
+
+	void nonPodAtomicsUseOwnImpl()
+	{
+		CPPUNIT_ASSERT(!isUsingStandardImpl<std::string>());
+	}
+
+	void podAtomicCanBeDefaultInitialized()
+	{
+		Atomic<int> i;
+		// note: i is initialized with garbage
+		(void)i; // prevent compiler 'unused' warning
+	}
+
+	void nonPodAtomicCanBeDefaultInitialized()
+	{
+		Atomic<std::string> s;
+		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{});
+	}
+
+	void podAtomicCanBeValueInitialized()
+	{
+		Atomic<int> i{5};
+		CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+	}
+
+	void nonPodAtomicCanBeValueInitialized()
+	{
+		Atomic<std::string> s{"hello world"};
+		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+	}
+
+	void podAtomicCanBeValueAssigned()
+	{
+		Atomic<int> i;
+		i = 5;
+		CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+	}
+
+	void nonPodAtomicCanBeValueAssigned()
+	{
+		Atomic<std::string> s;
+		s = "hello world";
+		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+	}
+
+	void podAtomicsAreLockFree()
+	{
+		CPPUNIT_ASSERT(isLockFree<bool>());
+		CPPUNIT_ASSERT(isLockFree<unsigned short int>());
+		CPPUNIT_ASSERT(isLockFree<short int>());
+		CPPUNIT_ASSERT(isLockFree<unsigned int>());
+		CPPUNIT_ASSERT(isLockFree<int>());
+		CPPUNIT_ASSERT(isLockFree<unsigned long int>());
+		CPPUNIT_ASSERT(isLockFree<long int>());
+		CPPUNIT_ASSERT(isLockFree<float>());
+		CPPUNIT_ASSERT(isLockFree<std::size_t>());
+
+		// NOTE: Not lock free on small systems
+		//CPPUNIT_ASSERT(isLockFree<unsigned long long int>());
+		//CPPUNIT_ASSERT(isLockFree<long long int>());
+		//CPPUNIT_ASSERT(isLockFree<double>());
+		//CPPUNIT_ASSERT(isLockFree<long double>());
+	}
+
+private:
+	template <typename T>
+	bool isUsingStandardImpl()
+	{
+		return std::is_base_of<std::atomic<T>, Atomic<T>>::value;
+	}
+
+	template <typename T>
+	bool isLockFree()
+	{
+		Atomic<T> a;
+		return a.is_lock_free();
+	}
 };
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(AtomicTest);
-

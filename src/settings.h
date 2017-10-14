@@ -77,7 +77,7 @@ struct Settings
 	Atomic<bool> enable_velocity_randomiser{false};
 	Atomic<float> velocity_randomiser_weight{0.1f};
 
-	Atomic<double> samplerate{44100.0};
+	Atomic<float> samplerate{44100.0};
 	Atomic<std::size_t> buffer_size{1024}; // Only used to show in the UI.
 
 	Atomic<bool> enable_resampling{true};
@@ -117,7 +117,7 @@ struct SettingsGetter
 	SettingRef<bool> enable_velocity_randomiser;
 	SettingRef<float> velocity_randomiser_weight;
 
-	SettingRef<double> samplerate;
+	SettingRef<float> samplerate;
 	SettingRef<std::size_t> buffer_size;
 
 	SettingRef<bool> enable_resampling;
@@ -189,7 +189,7 @@ public:
 	Notifier<bool> enable_velocity_randomiser;
 	Notifier<float> velocity_randomiser_weight;
 
-	Notifier<double> samplerate;
+	Notifier<float> samplerate;
 	Notifier<std::size_t> buffer_size;
 
 	Notifier<bool> enable_resampling;
