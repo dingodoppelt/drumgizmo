@@ -110,6 +110,17 @@ public:
 			"  <value name=\"enable_velocity_randomiser\">%s</value>\n"
 			"  <value name=\"velocity_randomiser_weight\">%f</value>\n"
 			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"disk_cache_upper_limit\">%d</value>\n"
+			"  <value name=\"disk_cache_chunk_size\">%d</value>\n"
+			"  <value name=\"disk_cache_enable\">%s</value>\n"
+			"  <value name=\"enable_bleed_control\">%s</value>\n"
+			"  <value name=\"master_bleed\">%f</value>\n"
+			"  <value name=\"enable_latency_modifier\">%s</value>\n"
+			"  <value name=\"latency_max\">%d</value>\n"
+			"  <value name=\"latency_laid_back\">%d</value>\n"
+			"  <value name=\"latency_stddev\">%f</value>\n"
+			"  <value name=\"latency_regain\">%f</value>\n"
 			"</config>";
 
 		// Create drumkit
@@ -122,6 +133,16 @@ public:
 		bool enable_velocity_randomiser = false;
 		float velocity_randomiser_weight = 0.1;
 		bool enable_resampling = false;
+		int disk_cache_upper_limit = 1024 * 1024;
+		int disk_cache_chunk_size = 1024 * 1024 * 1024;
+		bool disk_cache_enable = true;
+		bool enable_bleed_control = false;
+		float master_bleed = 1.0f;
+		bool enable_latency_modifier = false;
+		int latency_max = 0u;
+		int latency_laid_back = 0u;
+		float latency_stddev = 100.0f;
+		float latency_regain = 0.9f;
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
@@ -132,7 +153,18 @@ public:
 		        velocity_modifier_weight,
 		        enable_velocity_randomiser?"true":"false",
 		        velocity_randomiser_weight,
-		        enable_resampling?"true":"false");
+		        enable_resampling?"true":"false",
+		        enable_resampling?"true":"false",
+		        disk_cache_upper_limit,
+		        disk_cache_chunk_size,
+		        disk_cache_enable?"true":"false",
+		        enable_bleed_control?"true":"false",
+		        master_bleed,
+		        enable_latency_modifier?"true":"false",
+		        latency_max,
+		        latency_laid_back,
+		        latency_stddev,
+		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
 		CPPUNIT_ASSERT_EQUAL(0, res);
@@ -177,6 +209,17 @@ public:
 			"  <value name=\"enable_velocity_randomiser\">%s</value>\n"
 			"  <value name=\"velocity_randomiser_weight\">%f</value>\n"
 			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"disk_cache_upper_limit\">%d</value>\n"
+			"  <value name=\"disk_cache_chunk_size\">%d</value>\n"
+			"  <value name=\"disk_cache_enable\">%s</value>\n"
+			"  <value name=\"enable_bleed_control\">%s</value>\n"
+			"  <value name=\"master_bleed\">%f</value>\n"
+			"  <value name=\"enable_latency_modifier\">%s</value>\n"
+			"  <value name=\"latency_max\">%d</value>\n"
+			"  <value name=\"latency_laid_back\">%d</value>\n"
+			"  <value name=\"latency_stddev\">%f</value>\n"
+			"  <value name=\"latency_regain\">%f</value>\n"
 			"</config>";
 
 		// Create drumkit
@@ -189,6 +232,16 @@ public:
 		bool enable_velocity_randomiser = false;
 		float velocity_randomiser_weight = 0.1;
 		bool enable_resampling = false;
+		int disk_cache_upper_limit = 1024 * 1024;
+		int disk_cache_chunk_size = 1024 * 1024 * 1024;
+		bool disk_cache_enable = true;
+		bool enable_bleed_control = false;
+		float master_bleed = 1.0f;
+		bool enable_latency_modifier = false;
+		int latency_max = 0u;
+		int latency_laid_back = 0u;
+		float latency_stddev = 100.0f;
+		float latency_regain = 0.9f;
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
@@ -199,7 +252,18 @@ public:
 		        velocity_modifier_weight,
 		        enable_velocity_randomiser?"true":"false",
 		        velocity_randomiser_weight,
-		        enable_resampling?"true":"false");
+		        enable_resampling?"true":"false",
+		        enable_resampling?"true":"false",
+		        disk_cache_upper_limit,
+		        disk_cache_chunk_size,
+		        disk_cache_enable?"true":"false",
+		        enable_bleed_control?"true":"false",
+		        master_bleed,
+		        enable_latency_modifier?"true":"false",
+		        latency_max,
+		        latency_laid_back,
+		        latency_stddev,
+		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
 		CPPUNIT_ASSERT_EQUAL(0, res);
@@ -256,6 +320,17 @@ public:
 			"  <value name=\"enable_velocity_randomiser\">%s</value>\n"
 			"  <value name=\"velocity_randomiser_weight\">%f</value>\n"
 			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"enable_resampling\">%s</value>\n"
+			"  <value name=\"disk_cache_upper_limit\">%d</value>\n"
+			"  <value name=\"disk_cache_chunk_size\">%d</value>\n"
+			"  <value name=\"disk_cache_enable\">%s</value>\n"
+			"  <value name=\"enable_bleed_control\">%s</value>\n"
+			"  <value name=\"master_bleed\">%f</value>\n"
+			"  <value name=\"enable_latency_modifier\">%s</value>\n"
+			"  <value name=\"latency_max\">%d</value>\n"
+			"  <value name=\"latency_laid_back\">%d</value>\n"
+			"  <value name=\"latency_stddev\">%f</value>\n"
+			"  <value name=\"latency_regain\">%f</value>\n"
 			"</config>";
 
 		// Create drumkit
@@ -268,6 +343,16 @@ public:
 		bool enable_velocity_randomiser = false;
 		float velocity_randomiser_weight = 0.1;
 		bool enable_resampling = false;
+		int disk_cache_upper_limit = 1024 * 1024;
+		int disk_cache_chunk_size = 1024 * 1024 * 1024;
+		bool disk_cache_enable = true;
+		bool enable_bleed_control = false;
+		float master_bleed = 1.0f;
+		bool enable_latency_modifier = false;
+		int latency_max = 0u;
+		int latency_laid_back = 0u;
+		float latency_stddev = 100.0f;
+		float latency_regain = 0.9f;
 
 		char config[sizeof(config_fmt) * 2];
 		sprintf(config, config_fmt,
@@ -278,7 +363,18 @@ public:
 		        velocity_modifier_weight,
 		        enable_velocity_randomiser?"true":"false",
 		        velocity_randomiser_weight,
-		        enable_resampling?"true":"false");
+		        enable_resampling?"true":"false",
+		        enable_resampling?"true":"false",
+		        disk_cache_upper_limit,
+		        disk_cache_chunk_size,
+		        disk_cache_enable?"true":"false",
+		        enable_bleed_control?"true":"false",
+		        master_bleed,
+		        enable_latency_modifier?"true":"false",
+		        latency_max,
+		        latency_laid_back,
+		        latency_stddev,
+		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
 		CPPUNIT_ASSERT_EQUAL(0, res);

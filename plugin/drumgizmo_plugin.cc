@@ -571,6 +571,16 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		bool2str(settings.enable_bleed_control.load()) + "</value>\n"
 		"  <value name=\"master_bleed\">" +
 		float2str(settings.master_bleed.load()) + "</value>\n"
+		"  <value name=\"enable_latency_modifier\">" +
+		bool2str(settings.enable_latency_modifier.load()) + "</value>\n"
+		"  <value name=\"latency_max\">" +
+		int2str(settings.latency_max.load()) + "</value>\n"
+		"  <value name=\"latency_laid_back\">" +
+		int2str(settings.latency_laid_back.load()) + "</value>\n"
+		"  <value name=\"latency_stddev\">" +
+		float2str(settings.latency_stddev.load()) + "</value>\n"
+		"  <value name=\"latency_regain\">" +
+		float2str(settings.latency_regain.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -643,6 +653,31 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("master_bleed") != "")
 	{
 		settings.master_bleed.store(str2float(p.value("master_bleed")));
+	}
+
+	if(p.value("enable_latency_modifier") != "")
+	{
+		settings.enable_latency_modifier.store(p.value("enable_latency_modifier") == "true");
+	}
+
+	if(p.value("latency_max") != "")
+	{
+		settings.latency_max.store(str2int(p.value("latency_max")));
+	}
+
+	if(p.value("latency_laid_back") != "")
+	{
+		settings.latency_laid_back.store(str2int(p.value("latency_laid_back")));
+	}
+
+	if(p.value("latency_stddev") != "")
+	{
+		settings.latency_stddev.store(str2float(p.value("latency_stddev")));
+	}
+
+	if(p.value("latency_regain") != "")
+	{
+		settings.latency_regain.store(str2float(p.value("latency_regain")));
 	}
 
 	std::string newkit = p.value("drumkitfile");

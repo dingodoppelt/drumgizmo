@@ -155,6 +155,12 @@ struct SettingsGetter
 	SettingRef<bool> enable_bleed_control;
 	SettingRef<float> master_bleed;
 
+	SettingRef<bool> enable_latency_modifier;
+	SettingRef<std::size_t> latency_max;
+	SettingRef<int> latency_laid_back;
+	SettingRef<float> latency_stddev;
+	SettingRef<float> latency_regain;
+
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
@@ -184,6 +190,11 @@ struct SettingsGetter
 		, current_file{settings.current_file}
 		, enable_bleed_control{settings.enable_bleed_control}
 		, master_bleed{settings.master_bleed}
+		, enable_latency_modifier{settings.enable_latency_modifier}
+		, latency_max{settings.latency_max}
+		, latency_laid_back{settings.latency_laid_back}
+		, latency_stddev{settings.latency_stddev}
+		, latency_regain{settings.latency_regain}
 	{
 	}
 };
@@ -229,6 +240,12 @@ public:
 	Notifier<bool> enable_bleed_control;
 	Notifier<float> master_bleed;
 
+	Notifier<bool> enable_latency_modifier;
+	Notifier<std::size_t> latency_max;
+	Notifier<int> latency_laid_back;
+	Notifier<float> latency_stddev;
+	Notifier<float> latency_regain;
+
 	void evaluate()
 	{
 #define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
@@ -269,6 +286,12 @@ public:
 
 		EVAL(enable_bleed_control);
 		EVAL(master_bleed);
+
+		EVAL(enable_latency_modifier);
+		EVAL(latency_max);
+		EVAL(latency_laid_back);
+		EVAL(latency_stddev);
+		EVAL(latency_regain);
 	}
 
 	SettingsNotifier(Settings& settings)
