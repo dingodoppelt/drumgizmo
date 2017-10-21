@@ -375,6 +375,21 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 	}
+
+	if(ie == nullptr)
+	{
+		std::cerr << "No input engine selected.\n";
+		std::cout << usage(argv[0]);
+		return 1;
+	}
+
+	if(oe == nullptr)
+	{
+		std::cerr << "No output engine selected.\n";
+		std::cout << usage(argv[0]);
+		return 1;
+	}
+
 	std::cout << "Using kitfile: " << kitfile << std::endl;
 
 	DrumGizmo gizmo(settings, *oe.get(), *ie.get());
