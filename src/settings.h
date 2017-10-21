@@ -94,7 +94,7 @@ struct Settings
 	Atomic<bool> enable_latency_modifier{true};
 
 	//! Maximum "early hits" introduces latency. In no. samples.
-	Atomic<std::size_t> latency_max{5000u};
+	Atomic<std::size_t> latency_max{10000u};
 
 	//! 0 := on-beat
 	//! positive := laid back

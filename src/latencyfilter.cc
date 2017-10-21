@@ -55,6 +55,10 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	// Assert latency_regain is within range [0; 1].
 	assert(latency_regain >= 0.0f && latency_regain <= 1.0f);
 
+	// User inputs 0 as no regain and 1 as instant - pow() is the other way around
+	latency_regain *= -1.0f;
+	latency_regain += 1.0f;
+
 	float duration = (pos - latency_last_pos) / samplerate;
 	latency_offset *= pow(latency_regain, duration);
 
@@ -63,8 +67,8 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	float offset_min = latency * -1.0f;
 	float offset_max = latency * 1.0f;
 
-	float mean = latency_laid_back;
-	float stddev = latency_stddev;
+	float mean = 0.0f;//latency_laid_back;
+	float stddev = latency_stddev / 2.0f;
 
 	float offset = random.normalDistribution(mean, stddev);
 
@@ -76,8 +80,9 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	DEBUG(offset, "latency: %d, offset: %f, drift: %f",
 	      (int)latency, offset, latency_offset);
 
-	event.offset += latency;
-	event.offset += latency_offset;//(int)std::round(offset);
+	event.offset += latency; // fixed latency offset
+	event.offset += latency_laid_back; // laid back offset (user controlled)
+	event.offset += latency_offset; // current drift
 
 	return true;
 }
