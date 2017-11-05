@@ -553,6 +553,8 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		float2str(settings.velocity_modifier_falloff.load()) + "</value>\n"
 		"  <value name=\"velocity_modifier_weight\">" +
 		float2str(settings.velocity_modifier_weight.load()) + "</value>\n"
+		"  <value name=\"velocity_stddev\">" +
+		float2str(settings.velocity_stddev.load()) + "</value>\n"
 		"  <value name=\"enable_velocity_randomiser\">" +
 		bool2str(settings.enable_velocity_randomiser.load()) + "</value>\n"
 		"  <value name=\"velocity_randomiser_weight\">" +
@@ -596,6 +598,11 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("velocity_modifier_weight") != "")
 	{
 		settings.velocity_modifier_weight.store(str2float(p.value("velocity_modifier_weight")));
+	}
+
+	if(p.value("velocity_stddev") != "")
+	{
+		settings.velocity_stddev.store(str2float(p.value("velocity_stddev")));
 	}
 
 	if(p.value("enable_velocity_randomiser") != "")
