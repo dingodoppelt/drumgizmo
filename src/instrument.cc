@@ -33,7 +33,7 @@
 Instrument::Instrument(Settings& settings, Random& rand)
 	: settings(settings)
 	, rand(rand)
-	, powerlist(rand)
+	, powerlist(rand, settings)
 {
 	DEBUG(instrument, "new %p\n", this);
 	mod = 1.0;

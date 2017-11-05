@@ -29,12 +29,14 @@
 #include <vector>
 
 #include "sample.h"
-#include "random.h"
+
+class Random;
+class Settings;
 
 class PowerList
 {
 public:
-	PowerList(Random& rand);
+	PowerList(Random& rand, Settings& settings);
 
 	void add(Sample* s);
 	void finalise(); ///< Call this when no more samples will be added.
@@ -49,6 +51,7 @@ private:
 	};
 
 	Random& rand;
+	Settings& settings;
 
 	std::vector<PowerListItem> samples;
 	float power_max;

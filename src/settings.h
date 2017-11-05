@@ -73,6 +73,7 @@ struct Settings
 	Atomic<bool> enable_velocity_modifier{true};
 	Atomic<float> velocity_modifier_falloff{0.5f};
 	Atomic<float> velocity_modifier_weight{0.25f};
+	Atomic<float> velocity_stddev{1.0f};
 
 	Atomic<bool> enable_velocity_randomiser{false};
 	Atomic<float> velocity_randomiser_weight{0.1f};
@@ -113,6 +114,7 @@ struct SettingsGetter
 	SettingRef<bool> enable_velocity_modifier;
 	SettingRef<float> velocity_modifier_falloff;
 	SettingRef<float> velocity_modifier_weight;
+	SettingRef<float> velocity_stddev;
 
 	SettingRef<bool> enable_velocity_randomiser;
 	SettingRef<float> velocity_randomiser_weight;
@@ -147,6 +149,7 @@ struct SettingsGetter
 		, enable_velocity_modifier{settings.enable_velocity_modifier}
 		, velocity_modifier_falloff{settings.velocity_modifier_falloff}
 		, velocity_modifier_weight{settings.velocity_modifier_weight}
+		, velocity_stddev{settings.velocity_stddev}
 		, enable_velocity_randomiser{settings.enable_velocity_randomiser}
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
 		, samplerate{settings.samplerate}
@@ -185,6 +188,7 @@ public:
 	Notifier<bool> enable_velocity_modifier;
 	Notifier<float> velocity_modifier_falloff;
 	Notifier<float> velocity_modifier_weight;
+	Notifier<float> velocity_stddev;
 
 	Notifier<bool> enable_velocity_randomiser;
 	Notifier<float> velocity_randomiser_weight;
@@ -225,6 +229,7 @@ public:
 		EVAL(enable_velocity_modifier);
 		EVAL(velocity_modifier_falloff);
 		EVAL(velocity_modifier_weight);
+		EVAL(velocity_stddev);
 
 		EVAL(enable_velocity_randomiser);
 		EVAL(velocity_randomiser_weight);

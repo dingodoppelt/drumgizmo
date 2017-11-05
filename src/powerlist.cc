@@ -38,6 +38,9 @@
 #endif
 #include <math.h>
 
+#include "random.h"
+#include "settings.h"
+
 /**
  * Minimum sample set size.
  * Smaller means wider 'velocity groups'.
@@ -50,8 +53,9 @@ unsigned int const MIN_SAMPLE_SET_SIZE = 26u;
 //#define AUTO_CALCULATE_POWER
 unsigned int const LOAD_SIZE = 500u;
 
-PowerList::PowerList(Random& rand)
+PowerList::PowerList(Random& rand, Settings& settings)
 	: rand(rand)
+	, settings(settings)
 {
 	power_max = 0;
 	power_min = 100000000;
@@ -204,6 +208,8 @@ void PowerList::finalise()
 
 Sample* PowerList::get(level_t level)
 {
+	auto velocity_stddev = settings.velocity_stddev.load();
+
 	if(!samples.size())
 	{
 		return nullptr; // No samples to choose from.
@@ -226,6 +232,7 @@ Sample* PowerList::get(level_t level)
 	// Cut off mean value with stddev/2 in both ends in order to make room for
 	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
 	float mean = level * (power_span - stddev) + (stddev / 2.0);
+	stddev *= velocity_stddev;
 
 	float power{0.f};
 
