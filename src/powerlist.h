@@ -31,7 +31,7 @@
 #include "sample.h"
 
 class Random;
-class Settings;
+struct Settings;
 
 class PowerList
 {
