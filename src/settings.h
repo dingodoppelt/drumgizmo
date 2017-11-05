@@ -73,7 +73,7 @@ struct Settings
 	Atomic<bool> enable_velocity_modifier{true};
 	Atomic<float> velocity_modifier_falloff{0.5f};
 	Atomic<float> velocity_modifier_weight{0.25f};
-	Atomic<float> velocity_stddev{1.0f};
+	Atomic<float> velocity_stddev{1.0f}; // [0.5; 3.0]
 
 	Atomic<bool> enable_velocity_randomiser{false};
 	Atomic<float> velocity_randomiser_weight{0.1f};

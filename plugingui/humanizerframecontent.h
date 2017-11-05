@@ -93,14 +93,18 @@ public:
 private:
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);
+	void stddevKnobValueChanged(float value);
+	void stddevSettingsValueChanged(float value);
 
 	GridLayout layout{this, 4, 1};
 
 	LabeledControl attack{this, "Attack"};
 	LabeledControl falloff{this, "Release"};
+	LabeledControl stddev{this, "StdDev"};
 
 	Knob attack_knob{&attack};
 	Knob falloff_knob{&falloff};
+	Knob stddev_knob{&stddev};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

@@ -54,20 +54,29 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	falloff.setControl(&falloff_knob);
 	layout.addItem(&falloff);
 
+	stddev.resize(80, 80);
+	stddev_knob.resize(30, 30);
+	stddev_knob.showValue(false);
+	stddev.setControl(&stddev_knob);
+	layout.addItem(&stddev);
+
 	layout.setPosition(&attack, GridLayout::GridRange{1, 2, 0, 1});
 	layout.setPosition(&falloff, GridLayout::GridRange{2, 3, 0, 1});
+	layout.setPosition(&stddev, GridLayout::GridRange{3, 3, 0, 1});
 
-	CONNECT(this, settings_notifier.velocity_modifier_falloff,
-	        &falloff_knob, &Knob::setValue);
 	CONNECT(this, settings_notifier.velocity_modifier_weight,
 	        &attack_knob, &Knob::setValue);
+	CONNECT(this, settings_notifier.velocity_modifier_falloff,
+	        &falloff_knob, &Knob::setValue);
+	CONNECT(this, settings_notifier.velocity_stddev,
+	        this, &HumanizerframeContent::stddevSettingsValueChanged);
 
 	CONNECT(&attack_knob, valueChangedNotifier,
 	        this, &HumanizerframeContent::attackValueChanged);
-
 	CONNECT(&falloff_knob, valueChangedNotifier,
 	        this, &HumanizerframeContent::falloffValueChanged);
-
+	CONNECT(&stddev_knob, valueChangedNotifier,
+	        this, &HumanizerframeContent::stddevKnobValueChanged);
 }
 
 void HumanizerframeContent::attackValueChanged(float value)
@@ -78,6 +87,16 @@ void HumanizerframeContent::attackValueChanged(float value)
 void HumanizerframeContent::falloffValueChanged(float value)
 {
 	settings.velocity_modifier_falloff.store(value);
+}
+
+void HumanizerframeContent::stddevKnobValueChanged(float value)
+{
+	settings.velocity_stddev.store(value * 3.0f + 0.5f );
+}
+
+void HumanizerframeContent::stddevSettingsValueChanged(float value)
+{
+	stddev_knob.setValue((value - 0.5f) / 3.0f);
 }
 
 } // GUI::
