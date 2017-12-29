@@ -25,3 +25,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
+#include <audioinputengine.h>
+
+class OSSInputEngine
+	: public AudioInputEngine
+{
+public:
+	OSSInputEngine();
+	~OSSInputEngine();
+
+	// based on AudioInputEngine
+	bool init(const Instruments& instruments) override;
+	void setParm(const std::string& parm, const std::string& value) override;
+	bool start() override;
+	void stop() override;
+	void pre() override;
+	void run(size_t pos, size_t len, std::vector<event_t>& events) override;
+	void post() override;
+	bool isFreewheeling() const override;
+
+private:
+	std::string dev;
+	int fd;
+	std::size_t pos;
+	std::vector<event_t> events;
+};

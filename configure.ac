@@ -359,7 +359,44 @@ AS_IF(
      have_input_midifile=no]
   )
 
-  INPUT_PLUGINS="midifile jackmidi dummy test"
+  dnl *** oss
+  case $host_os in
+    freebsd*)
+      enable_oss_midi_value=yes
+      ;;
+    *)
+      enable_oss_midi_value=no
+      ;;
+  esac
+  AC_ARG_ENABLE([input_oss],
+    AS_HELP_STRING(
+      [--disable-input-oss],
+      [Disable input oss plugin [enabled by default on FreeBSD, disabled otherwise]]),,
+    [enable_input_ossmidi=$enable_oss_midi_value]
+  )
+
+  AS_IF(
+    [test "x$enable_input_ossmidi" = "xyes"],
+    [AC_MSG_CHECKING(for OSS in)
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([[
+          #include <sys/soundcard.h>
+          #ifndef AFMT_S32_NE
+          # error no oss
+          #endif
+        ]])],
+        [
+          have_input_ossmidi=yes
+          AC_MSG_RESULT(yes)
+        ],
+        [AC_MSG_FAILURE([no OSS headers found])]
+    )],
+
+    [AC_MSG_RESULT([*** input ossmidi plugin disabled per user request ***])
+    have_input_ossmidi=no]
+  )
+
+  INPUT_PLUGINS="midifile jackmidi dummy test ossmidi"
   AC_SUBST(INPUT_PLUGINS)
 
   dnl ***
@@ -441,7 +478,7 @@ AS_IF(
 
   AS_IF(
     [test "x$enable_output_oss" = "xyes"],
-    [AC_MSG_CHECKING(for OSS)
+    [AC_MSG_CHECKING(for OSS out)
       AC_COMPILE_IFELSE(
         [AC_LANG_SOURCE([[
           #include <sys/soundcard.h>

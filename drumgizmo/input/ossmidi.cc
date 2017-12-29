@@ -25,4 +25,54 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "ossmidi.h"
+#include <iostream>
+
+
+OSSInputEngine::OSSInputEngine()
+{
+}
+
+OSSInputEngine::~OSSInputEngine()
+{
+}
+
+bool OSSInputEngine::init(const Instruments& instruments)
+{
+	return true;
+}
+
+void OSSInputEngine::setParm(const std::string& parm, const std::string& value)
+{
+	if(parm == "dev")
+	{
+		dev = value;
+    std::cout << "dev = " << dev << std::endl;
+	}
+}
+
+bool OSSInputEngine::start()
+{
+	return true;
+}
+
+void OSSInputEngine::stop()
+{
+}
+
+void OSSInputEngine::pre()
+{
+}
+
+void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
+{
+}
+
+void OSSInputEngine::post()
+{
+}
+
+bool OSSInputEngine::isFreewheeling() const
+{
+	return false;
+}
 
