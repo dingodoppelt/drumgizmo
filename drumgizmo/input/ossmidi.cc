@@ -32,6 +32,10 @@
 #include <iostream>
 
 
+static int const NOTE_ON = 0x90;
+static int const NOTE_MASK = 0xF0;
+
+
 OSSInputEngine::OSSInputEngine()
 	: AudioInputEngineMidi{}
 	, dev{"/dev/midi"}
@@ -95,15 +99,15 @@ void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 	unsigned char buf[128];
 	if ((l = read (fd, buf, sizeof (buf))) != -1)
 	{
-		for (int i = 0; i < l; i++)
-		{
-			if (buf[i] & 0x80)	/* Status byte */
-			{
-				std::cout << std::endl;
-			}
-			std::cout << buf[i];
+		int masked_note = buf[0] & NOTE_MASK;
+		if (masked_note == NOTE_ON) {
+			int note = buf[1];
+			int velocity = buf[2];
+			std::cout << "note = " << note << ", velocity = " << velocity << std::endl;
 		}
-		std::cout << std::flush;
+	} else if (errno != EAGAIN) {
+		std::cerr << "Error code: " << errno << std::endl;
+		std::cerr << std::strerror(errno) << std::endl;
 	}
 }
 
