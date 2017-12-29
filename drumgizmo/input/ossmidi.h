@@ -25,10 +25,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
-#include <audioinputengine.h>
+#include "audioinputenginemidi.h"
+
 
 class OSSInputEngine
-	: public AudioInputEngine
+	: public AudioInputEngineMidi
 {
 public:
 	OSSInputEngine();
@@ -45,8 +46,9 @@ public:
 	bool isFreewheeling() const override;
 
 private:
-	std::string dev;
 	int fd;
+	std::string dev;
 	std::size_t pos;
 	std::vector<event_t> events;
+	std::string midimap_file;
 };

@@ -78,6 +78,11 @@
 #endif
 
 
+#ifdef HAVE_INPUT_OSSMIDI
+#include "input/ossmidi.h"
+#endif
+
+
 //! Factory for various input- and output engines
 class EngineFactory
 {

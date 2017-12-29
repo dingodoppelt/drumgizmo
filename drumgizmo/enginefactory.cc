@@ -118,10 +118,10 @@ std::unique_ptr<AudioInputEngine> EngineFactory::createInput(const std::string& 
 		return std::make_unique<JackMidiInputEngine>(*jack);
 	}
 #endif
-#ifdef HAVE_INPUT_OSS
-	if(name == "oss")
+#ifdef HAVE_INPUT_OSSMIDI
+	if(name == "ossmidi")
 	{
-		return std::make_unique<OssMidiInputEngine>();
+		return std::make_unique<OSSInputEngine>();
 	}
 #endif
 

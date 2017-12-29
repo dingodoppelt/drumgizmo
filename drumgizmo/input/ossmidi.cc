@@ -25,30 +25,54 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #include "ossmidi.h"
+#include <sys/soundcard.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <iostream>
 
 
 OSSInputEngine::OSSInputEngine()
+	: AudioInputEngineMidi{}
+	, dev{"/dev/midi"}
 {
 }
+
 
 OSSInputEngine::~OSSInputEngine()
 {
 }
 
+
 bool OSSInputEngine::init(const Instruments& instruments)
 {
+	if(!loadMidiMap(midimap_file, instruments))
+	{
+		std::cerr << "[OSSInputEngine] Failed to parse midimap '"
+		          << midimap_file << std::endl;
+		return false;
+	}
+	if ((fd = open(dev.data(), O_RDONLY | O_NONBLOCK, 0)) == -1)
+	{
+		std::cerr << dev.data() << ' ' << std::strerror(errno) << std::endl;
+		return false;
+	}
 	return true;
 }
+
 
 void OSSInputEngine::setParm(const std::string& parm, const std::string& value)
 {
 	if(parm == "dev")
 	{
 		dev = value;
-    std::cout << "dev = " << dev << std::endl;
+	}
+	else if(parm == "midimap")
+	{
+		midimap_file = value;
 	}
 }
+
 
 bool OSSInputEngine::start()
 {
@@ -59,20 +83,37 @@ void OSSInputEngine::stop()
 {
 }
 
+
 void OSSInputEngine::pre()
 {
 }
 
+
 void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 {
+	int l;
+	unsigned char buf[128];
+	if ((l = read (fd, buf, sizeof (buf))) != -1)
+	{
+		for (int i = 0; i < l; i++)
+		{
+			if (buf[i] & 0x80)	/* Status byte */
+			{
+				std::cout << std::endl;
+			}
+			std::cout << buf[i];
+		}
+		std::cout << std::flush;
+	}
 }
+
 
 void OSSInputEngine::post()
 {
 }
 
+
 bool OSSInputEngine::isFreewheeling() const
 {
 	return false;
 }
-

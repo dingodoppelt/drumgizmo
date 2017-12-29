@@ -103,7 +103,7 @@ static std::string usage(std::string name)
 	output << "  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n";
 	output << "             track=<miditrack> (default -1, all tracks)\n";
 	output << "             midimap=<midimapfile>, loop=<true|false>\n";
-	output << "  ossmidi:   midimap=<midimapfile>, dev=<device> (default '/dev/dsp')\n";
+	output << "  ossmidi:   midimap=<midimapfile>, dev=<device> (default '/dev/midi')\n";
 	output << "  test:      p=<hit_propability> (default 0.1)\n";
 	output << "             instr=<instrument> (default -1, random instrument)\n";
 	output << "             len=<seconds> (default -1, forever)\n";
