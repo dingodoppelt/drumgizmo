@@ -95,16 +95,18 @@ dnl Check for -Wl,--no-undefined or -Wl,-undefined,error support
 dnl ===========================
 AC_LANG_PUSH([C++])
 TMP_CXXFLAGS="$CXXFLAGS"
-AC_MSG_CHECKING([whether CXX supports '-Wl,--no-undefined'])
-CXXFLAGS="-Wall -Werror -Wl,--no-undefined"
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+TMP_LDFLAGS="$LDFLAGS"
+AC_MSG_CHECKING([whether linker supports '-Wl,-no-undefined'])
+CXXFLAGS="-Wall -Werror"
+LDFLAGS="-no-undefined"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
 	[ AC_MSG_RESULT([yes])
-		NO_UNDEFINED_PARAM=-Wl,--no-undefined
+		NO_UNDEFINED_PARAM=-Wl,-no-undefined
 	],
 	[ AC_MSG_RESULT([no])
-		AC_MSG_CHECKING([whether CXX supports '-Wl,-undefined,error'])
-		CXXFLAGS="-Wall -Werror -Wl,-undefined,error"
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		AC_MSG_CHECKING([whether linker supports '-Wl,-undefined,error'])
+		LDFLAGS="-undefined,error"
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
 			[AC_MSG_RESULT([yes])
 				NO_UNDEFINED_PARAM=-Wl,-undefined,error
 			],
@@ -115,6 +117,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 	]
 )
 CXXFLAGS="$TMP_CXXFLAGS"
+LDFLAGS="$TMP_LDFLAGS"
 AC_LANG_POP([C++])
 
 dnl ===========================
