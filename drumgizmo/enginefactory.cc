@@ -49,6 +49,9 @@ EngineFactory::EngineFactory()
 #ifdef HAVE_INPUT_JACKMIDI
 	input.push_back("jackmidi");
 #endif
+#ifdef HAVE_INPUT_OSS
+	input.push_back("oss");
+#endif
 
 // list available output engines
 #ifdef HAVE_OUTPUT_DUMMY
@@ -113,6 +116,12 @@ std::unique_ptr<AudioInputEngine> EngineFactory::createInput(const std::string& 
 	{
 		prepareJack();
 		return std::make_unique<JackMidiInputEngine>(*jack);
+	}
+#endif
+#ifdef HAVE_INPUT_OSSMIDI
+	if(name == "ossmidi")
+	{
+		return std::make_unique<OSSInputEngine>();
 	}
 #endif
 

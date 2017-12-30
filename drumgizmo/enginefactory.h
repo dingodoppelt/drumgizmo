@@ -53,6 +53,10 @@
 #include "input/jackmidi.h"
 #endif
 
+#ifdef HAVE_INPUT_OSS
+#include "input/ossmidi.h"
+#endif
+
 #ifdef HAVE_OUTPUT_DUMMY
 #include "output/outputdummy.h"
 #endif
@@ -71,6 +75,11 @@
 
 #ifdef HAVE_OUTPUT_OSS
 #include "output/oss.h"
+#endif
+
+
+#ifdef HAVE_INPUT_OSSMIDI
+#include "input/ossmidi.h"
 #endif
 
 
