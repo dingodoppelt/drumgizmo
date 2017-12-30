@@ -105,16 +105,14 @@ void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 			int note = buf[1];
 			int velocity = buf[2];
 			event_t event;
-			event.type = 0;
-			event.offset = 0;
-			int i = mmap.lookup(note);
-			if(i != -1)
+			event.instrument = mmap.lookup(note);
+			if(event.instrument != -1)
 			{
-				event.instrument = i;
 				event.velocity = velocity / 127.0;
+				event.type = 0;
+				event.offset = 0;
+				events.push_back(event);
 			}
-			events.push_back(event);
-			std::cout << "note = " << note << ", velocity = " << velocity << std::endl;
 		}
 	} else if (errno != EAGAIN) {
 		std::cerr << "Error code: " << errno << std::endl;
