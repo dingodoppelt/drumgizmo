@@ -90,6 +90,7 @@ void OSSInputEngine::stop()
 
 void OSSInputEngine::pre()
 {
+	events.clear();
 }
 
 
@@ -103,6 +104,12 @@ void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 		if (masked_note == NOTE_ON) {
 			int note = buf[1];
 			int velocity = buf[2];
+			event_t event;
+			event.type = 0;
+			event.offset = 0;
+			event.velocity = velocity / 127.0;
+			event.instrument = 12;
+			events.push_back(event);
 			std::cout << "note = " << note << ", velocity = " << velocity << std::endl;
 		}
 	} else if (errno != EAGAIN) {
