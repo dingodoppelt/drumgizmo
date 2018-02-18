@@ -159,6 +159,8 @@ void DrumkitframeContent::kitBrowseClick()
 	}
 
 	file_browser.setPath(path);
+	file_browser.fileSelectNotifier.disconnect(this);
+
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectKitFile);
 	file_browser.show();
@@ -178,6 +180,7 @@ void DrumkitframeContent::midimapBrowseClick()
 	}
 
 	file_browser.setPath(path);
+	file_browser.fileSelectNotifier.disconnect(this);
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectMapFile);
 	file_browser.show();
