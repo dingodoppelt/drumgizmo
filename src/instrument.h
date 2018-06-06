@@ -42,8 +42,6 @@
 
 class Instrument
 {
-	friend class InstrumentParser;
-	friend class DrumKitParser;
 public:
 	Instrument(Settings& settings, Random& rand);
 	~Instrument();
@@ -66,6 +64,13 @@ public:
 	std::size_t getNumberOfFiles() const;
 
 private:
+	// For parser:
+	friend class InstrumentParser;
+	friend class DrumKitParser;
+
+	// For unit-tests:
+	friend class InstrumentParserTest;
+
 	void* magic;
 
 	std::string _group;

@@ -37,6 +37,7 @@ public:
 	std::vector<T2> get(T1 at);
 
 private:
+	friend class InstrumentParserTest;
 	std::multimap<std::pair<T1, T1>, T2> values;
 };
 

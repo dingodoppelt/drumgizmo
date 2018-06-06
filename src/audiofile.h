@@ -68,6 +68,8 @@ public:
 	std::size_t filechannel;
 
 private:
+	friend class InstrumentParserTest;
+
 	void* magic{nullptr};
 	volatile bool is_loaded{false};
 	InstrumentChannel* instrument_channel;

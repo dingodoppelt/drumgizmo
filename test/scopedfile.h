@@ -1,9 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            sample.h
+ *            scopedfile.h
  *
- *  Mon Jul 21 10:23:20 CEST 2008
- *  Copyright 2008 Bent Bisballe Nyeng
+ *  Wed Jun  6 15:15:31 CEST 2018
+ *  Copyright 2018 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -26,31 +26,17 @@
  */
 #pragma once
 
-#include <map>
 #include <string>
+#include <memory>
 
-#include "channel.h"
-#include "audiofile.h"
-
-using AudioFiles = std::map<const InstrumentChannel*, AudioFile*>;
-
-class Sample
+class ScopedFile
 {
 public:
-	Sample(const std::string& name, float power);
-	~Sample();
+	ScopedFile(const std::string& data);
+	~ScopedFile();
 
-	AudioFile* getAudioFile(const Channel& channel);
+	std::string filename() const;
 
 private:
-	friend class InstrumentParser;
-	friend class PowerList;
-	friend class InstrumentParserTest;
-
-	void addAudioFile(InstrumentChannel* instrument_channel,
-	                  AudioFile* audio_file);
-
-	std::string name;
-	float power;
-	AudioFiles audiofiles;
+	std::unique_ptr<struct Pimpl> pimpl;
 };

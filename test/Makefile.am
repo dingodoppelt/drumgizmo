@@ -6,7 +6,8 @@ if ENABLE_TESTS
 TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
-	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest
+	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
+	instrumentparsertest
 
 if ENABLE_LV2
 TESTS += lv2
@@ -210,6 +211,16 @@ notifiertest_CXXFLAGS = -DOUTPUT=\"notifiertest\" $(CPPUNIT_CFLAGS) \
 notifiertest_LDFLAGS = $(CPPUNIT_LIBS)
 notifiertest_SOURCES = \
 	notifiertest.cc \
+	test.cc
+
+instrumentparsertest_CXXFLAGS = -DOUTPUT=\"instrumentparsertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include
+instrumentparsertest_LDFLAGS = $(CPPUNIT_LIBS) \
+	 $(top_srcdir)/src/libdg.la
+instrumentparsertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	instrumentparsertest.cc \
+	scopedfile.cc \
 	test.cc
 
 endif
