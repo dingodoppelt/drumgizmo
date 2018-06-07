@@ -32,7 +32,7 @@
 #include <memory>
 #include <vector>
 
-class Settings;
+struct Settings;
 
 class InstrumentParser
 	: public SAXParser
