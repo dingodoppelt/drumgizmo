@@ -44,6 +44,7 @@
 
 #include "event.h"
 
+#include "nolocale.h"
 
 typedef struct parm_token
 {
@@ -80,6 +81,7 @@ static std::string usage(std::string name)
 	output << "Usage: " << name << " [options] drumkitfile\n";
 	output << "Options:\n";
 	output << "  -a, --async-load       Load drumkit in the background and start the ";
+	output << "  -b  --bleed            Set and enable master bleed";
 	output << "engine immediately.\n";
 	output << "  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event ";
 	output << "input engine.\n";
@@ -203,6 +205,12 @@ int main(int argc, char* argv[])
 	opt.add("async-load", no_argument, 'a', [&]() {
 		async = true;
 	});
+
+	opt.add("bleed", required_argument, 'B', [&]() {
+			float bleed = atof_nol(optarg);
+			settings.enable_bleed_control = true;
+			settings.master_bleed = bleed;
+		});
 
 	opt.add("inputengine", required_argument, 'i', [&]() {
 		std::string engine = optarg;
