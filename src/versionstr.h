@@ -55,7 +55,7 @@ public:
 	 * @param v A std::string containing a version string on the form a.b or
 	 * a.b.c
 	 */
-	VersionStr(const std::string& v) throw(const char*);
+	VersionStr(const std::string& v);
 
 	/**
 	 * Constructor.
@@ -78,7 +78,7 @@ public:
 	 * Same as in the VersionStr(std::string v) constructor.
 	 * Throws an exeption if the string does not parse.
 	 */
-	void operator=(const std::string& v) throw(const char*);
+	void operator=(const std::string& v);
 
 	/**
 	 * Comparison operator.
@@ -107,6 +107,6 @@ public:
 	size_t patch() const;
 
 private:
-	void set(const std::string& v) throw(const char*);
+	void set(const std::string& v);
 	size_t version[3];
 };

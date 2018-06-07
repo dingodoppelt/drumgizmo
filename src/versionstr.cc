@@ -43,7 +43,7 @@
 #undef patch
 #endif
 
-VersionStr::VersionStr(const std::string& v) throw(const char*)
+VersionStr::VersionStr(const std::string& v)
 {
 	memset(version, 0, sizeof(version));
 	set(v);
@@ -56,7 +56,7 @@ VersionStr::VersionStr(size_t major, size_t minor, size_t patch)
 	version[2] = patch;
 }
 
-void VersionStr::set(const std::string& v) throw(const char*)
+void VersionStr::set(const std::string& v)
 {
 	std::string num;
 	size_t idx = 0;
@@ -104,7 +104,7 @@ VersionStr::operator std::string() const
 	return v;
 }
 
-void VersionStr::operator=(const std::string& v) throw(const char*)
+void VersionStr::operator=(const std::string& v)
 {
 	set(v);
 }
