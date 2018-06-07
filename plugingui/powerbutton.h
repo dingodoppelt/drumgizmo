@@ -38,15 +38,21 @@ public:
 	PowerButton(Widget* parent);
 	virtual ~PowerButton() = default;
 
+	void setEnabled(bool enabled);
+
 protected:
 	// From Widget:
 	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+
+	bool enabled = true;
 
 private:
 	Texture on{getImageCache(), ":resources/bypass_button.png", 32, 0, 16, 16};
 	Texture on_clicked{getImageCache(), ":resources/bypass_button.png", 48, 0, 16, 16};
 	Texture off{getImageCache(), ":resources/bypass_button.png", 0, 0, 16, 16};
 	Texture off_clicked{getImageCache(), ":resources/bypass_button.png", 16, 0, 16, 16};
+	Texture disabled{getImageCache(), ":resources/bypass_button.png", 64, 0, 16, 16};
+	Texture disabled_clicked{getImageCache(), ":resources/bypass_button.png", 80, 0, 16, 16};
 };
 
 } // GUI::

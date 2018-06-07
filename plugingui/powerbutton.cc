@@ -35,10 +35,30 @@ PowerButton::PowerButton(Widget* parent) : Toggle(parent)
 {
 }
 
+void PowerButton::setEnabled(bool enabled)
+{
+	this->enabled = enabled;
+}
+
 void PowerButton::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
 
+	// disabled
+	if(!enabled)
+	{
+		if(clicked)
+		{
+			p.drawImage(0, 0, disabled_clicked);
+		}
+		else
+		{
+			p.drawImage(0, 0, disabled);
+		}
+		return;
+	}
+
+	// enabled and on
 	if(state)
 	{
 		if(clicked)
@@ -49,17 +69,17 @@ void PowerButton::repaintEvent(RepaintEvent* repaintEvent)
 		{
 			p.drawImage(0, 0, on);
 		}
+		return;
+	}
+
+	// enabled and off
+	if(clicked)
+	{
+		p.drawImage(0, 0, off_clicked);
 	}
 	else
 	{
-		if(clicked)
-		{
-			p.drawImage(0, 0, off_clicked);
-		}
-		else
-		{
-			p.drawImage(0, 0, off);
-		}
+		p.drawImage(0, 0, off);
 	}
 }
 
