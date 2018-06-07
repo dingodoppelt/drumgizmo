@@ -56,6 +56,7 @@ public:
 	enum class Colour { Green, Red, Blue, Yellow, Purple, Grey };
 	// Changes the colour of the inner bar
 	void setColour(Colour colour);
+	void setEnabled(bool enabled);
 
 	Notifier<> clickNotifier;
 	Notifier<float> valueChangedNotifier; // (float value)
@@ -65,6 +66,8 @@ protected:
 	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
 	virtual void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 	virtual void scrollEvent(ScrollEvent* scrollEvent) override;
+
+	bool enabled = true;;
 
 private:
 	enum class State
@@ -123,6 +126,7 @@ private:
 	// This points to the inner_bar_* of the current color.
 	// It should never be a nullptr!
 	TexturedBox* inner_bar{&inner_bar_blue};
+	TexturedBox* active_inner_bar = inner_bar;
 
 	std::size_t bar_boundary{5};
 	std::size_t button_offset{7};

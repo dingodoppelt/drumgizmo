@@ -61,10 +61,15 @@ MainTab::MainTab(Widget* parent,
 	resampling_frame.setOnSwitch(settings.enable_resampling);
 	timing_frame.setOnSwitch(settings.enable_latency_modifier);
 
+	// FIXME:
+	bleedcontrol_frame.setEnabled(false);
+
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
 	        &humanizer_frame, &FrameWidget::setOnSwitch);
 	CONNECT(this, settings_notifier.enable_resampling,
 	        &resampling_frame, &FrameWidget::setOnSwitch);
+	CONNECT(this, settings_notifier.has_bleed_control,
+	        &bleedcontrol_frame, &FrameWidget::setEnabled);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
 	CONNECT(&bleedcontrol_frame, onSwitchChangeNotifier,
@@ -73,6 +78,8 @@ MainTab::MainTab(Widget* parent,
 	        this, &MainTab::resamplingOnChange);
 	CONNECT(&timing_frame, onSwitchChangeNotifier,
 	        this, &MainTab::timingOnChange);
+	CONNECT(&bleedcontrol_frame, onEnabledChanged,
+	        &bleedcontrolframe_content, &BleedcontrolframeContent::setEnabled);
 }
 
 void MainTab::resize(std::size_t width, std::size_t height)

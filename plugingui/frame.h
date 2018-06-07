@@ -52,8 +52,10 @@ public:
 	void setContent(Widget* content);
 
 	void setOnSwitch(bool on);
+	void setEnabled(bool enabled);
 
 	Notifier<bool> onSwitchChangeNotifier; // (bool on)
+	Notifier<bool> onEnabledChanged; // (bool enabled)
 
 protected:
 	// From Widget:
@@ -61,6 +63,8 @@ protected:
 
 	//! Callback for Widget::sizeChangeNotifier
 	void sizeChanged(int width, int height);
+
+	bool enabled = true;
 
 private:
 	//
@@ -71,6 +75,7 @@ private:
 	Font font;
 	std::string title;
 	GUI::Colour label_colour{0.1};
+	GUI::Colour label_colour_disabled{0.5};
 	std::size_t label_width;
 
 	// switch
@@ -82,6 +87,7 @@ private:
 	// grey box
 	int bar_height;
 	GUI::Colour grey_box_colour{0.7};
+	GUI::Colour grey_box_colour_disabled{0.7};
 	GUI::Colour background_colour{0.85, 0.8};
 
 	//

@@ -69,6 +69,24 @@ void BleedcontrolframeContent::resize(std::size_t width, std::size_t height)
 	label_value.resize(slider_width, 15);
 }
 
+void BleedcontrolframeContent::setEnabled(bool enabled)
+{
+	this->enabled = enabled;
+
+	if (enabled) {
+		label_text.resetColour();
+		label_value.resetColour();
+		slider.setEnabled(true);
+	}
+	else {
+		label_text.setColour(0.7);
+		label_value.setColour(0.7);
+		slider.setEnabled(false);
+	}
+
+	redraw();
+}
+
 void BleedcontrolframeContent::bleedSettingsValueChanged(float value)
 {
 	slider.setValue(value);

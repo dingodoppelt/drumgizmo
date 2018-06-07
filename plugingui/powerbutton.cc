@@ -38,6 +38,8 @@ PowerButton::PowerButton(Widget* parent) : Toggle(parent)
 void PowerButton::setEnabled(bool enabled)
 {
 	this->enabled = enabled;
+
+	redraw();
 }
 
 void PowerButton::repaintEvent(RepaintEvent* repaintEvent)

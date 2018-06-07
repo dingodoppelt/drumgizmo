@@ -59,7 +59,7 @@ void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 	auto title_buf = title.c_str();
 
 	// draw the dark grey box
-	p.setColour(grey_box_colour);
+	p.setColour(enabled ? grey_box_colour : grey_box_colour_disabled);
 	p.drawFilledRectangle(1, 1, width() - 2, bar_height);
 
 	// frame
@@ -76,8 +76,9 @@ void FrameWidget::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawFilledRectangle(1, bar_height, width() - 2, height() - 2);
 
 	// draw the label
-	p.setColour(label_colour);
+	p.setColour(enabled ? label_colour : label_colour_disabled);
 	p.drawText(center_x - label_width, bar_height - 4, font, title_buf);
+	power_button.setEnabled(enabled);
 }
 
 void FrameWidget::powerButtonStateChanged(bool new_state)
@@ -102,6 +103,14 @@ void FrameWidget::setOnSwitch(bool on)
 {
 	is_switched_on = on;
 	power_button.setChecked(is_switched_on);
+}
+
+void FrameWidget::setEnabled(bool enabled)
+{
+	this->enabled = enabled;
+	onEnabledChanged(enabled);
+
+	redraw();
 }
 
 void FrameWidget::sizeChanged(int width, int height)

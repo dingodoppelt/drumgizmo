@@ -68,24 +68,41 @@ void Slider::setColour(Colour colour)
 {
 	switch (colour) {
 	case Colour::Green:
-		inner_bar = &inner_bar_green;
+		active_inner_bar = &inner_bar_green;
 		break;
 	case Colour::Red:
-		inner_bar = &inner_bar_red;
+		active_inner_bar = &inner_bar_red;
 		break;
 	case Colour::Blue:
-		inner_bar = &inner_bar_blue;
+		active_inner_bar = &inner_bar_blue;
 		break;
 	case Colour::Yellow:
-		inner_bar = &inner_bar_yellow;
+		active_inner_bar = &inner_bar_yellow;
 		break;
 	case Colour::Purple:
-		inner_bar = &inner_bar_purple;
+		active_inner_bar = &inner_bar_purple;
 		break;
 	case Colour::Grey:
-		inner_bar = &inner_bar_grey;
+		active_inner_bar = &inner_bar_grey;
 		break;
 	}
+
+	if (enabled) { inner_bar = active_inner_bar; }
+}
+
+void Slider::setEnabled(bool enabled)
+{
+	this->enabled = enabled;
+
+	if (enabled) {
+		inner_bar = active_inner_bar;
+	}
+	else {
+		active_inner_bar = inner_bar;
+		inner_bar = &inner_bar_grey;
+	}
+
+	redraw();
 }
 
 void Slider::repaintEvent(RepaintEvent* repaintEvent)
@@ -111,7 +128,7 @@ void Slider::repaintEvent(RepaintEvent* repaintEvent)
 void Slider::buttonEvent(ButtonEvent* buttonEvent)
 {
 	// Ignore everything except left clicks.
-	if(buttonEvent->button != MouseButton::left)
+	if(!enabled || buttonEvent->button != MouseButton::left)
 	{
 		return;
 	}
@@ -151,6 +168,8 @@ void Slider::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 
 void Slider::scrollEvent(ScrollEvent* scrollEvent)
 {
+	if (!enabled) { return; }
+
 	current_value -= scrollEvent->delta/(float)getControlWidth();
 	if (current_value < 0.)
 	{

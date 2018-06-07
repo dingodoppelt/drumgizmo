@@ -45,9 +45,13 @@ public:
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
+	void setEnabled(bool enabled);
+
 private:
 	void bleedSettingsValueChanged(float value);
 	void bleedValueChanged(float value);
+
+	bool enabled = true;
 
 	Label label_text{this};
 	Label label_value{this};

@@ -52,11 +52,13 @@ void Label::setAlignment(TextAlignment alignment)
 void Label::setColour(Colour colour)
 {
 	this->colour = std::make_unique<Colour>(colour);
+	redraw();
 }
 
 void Label::resetColour()
 {
 	colour.release();
+	redraw();
 }
 
 void Label::resizeToText()
