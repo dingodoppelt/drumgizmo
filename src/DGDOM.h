@@ -29,6 +29,8 @@
 #include <vector>
 #include <string>
 
+#include "channel.h"
+
 // Instrument DOM:
 
 struct AudioFileDOM
@@ -48,6 +50,7 @@ struct SampleDOM
 struct InstrumentChannelDOM
 {
 	std::string name;
+	main_state_t main;
 };
 
 struct InstrumentDOM
@@ -69,7 +72,7 @@ struct ChannelMapDOM
 {
 	std::string in;
 	std::string out;
-	bool main;
+	main_state_t main;
 };
 
 struct InstrumentRefDOM
