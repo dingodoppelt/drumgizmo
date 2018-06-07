@@ -46,6 +46,7 @@
 
 VersionStr::VersionStr(const std::string& v)
 {
+	version = {{0, 0, 0}};
 	set(v);
 }
 
@@ -66,7 +67,7 @@ void VersionStr::set(const std::string& v)
 		{
 			if(idx > 2)
 			{
-				version = {0, 0, 0};
+				version = {{0, 0, 0}};
 				ERR(version, "Version string is too long.");
 				return;
 			}
@@ -80,14 +81,14 @@ void VersionStr::set(const std::string& v)
 		}
 		else
 		{
-			version = {0, 0, 0};
+			version = {{0, 0, 0}};
 			ERR(version, "Version string contains illegal character.");
 			return;
 		}
 	}
 	if(idx > 2)
 	{
-		version = {0, 0, 0};
+		version = {{0, 0, 0}};
 		ERR(version, "Version string is too long.");
 		return;
 	}

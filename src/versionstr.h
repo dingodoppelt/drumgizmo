@@ -108,5 +108,5 @@ public:
 
 private:
 	void set(const std::string& v);
-	std::array<size_t, 3> version = {0, 0, 0};
+	std::array<size_t, 3> version;
 };
