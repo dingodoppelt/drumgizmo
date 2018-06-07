@@ -31,13 +31,15 @@
 
 #include <hugin.hpp>
 
+#include "settings.h"
 #include "cpp11fix.h"
 #include "path.h"
 
 #include "nolocale.h"
 
-InstrumentParser::InstrumentParser(Instrument& instrument)
+InstrumentParser::InstrumentParser(Instrument& instrument, Settings& settings)
 	: instrument(instrument)
+	, settings(settings)
 {
 
 }
@@ -100,6 +102,10 @@ void InstrumentParser::startTag(const std::string& name, const attr_t& attr)
 		{
 			channel->main = (attr.at("main") == "true") ?
 				main_state_t::is_main : main_state_t::is_not_main;
+			if(channel->main == main_state_t::is_main)
+			{
+				settings.has_bleed_control.store(true);
+			}
 		}
 	}
 

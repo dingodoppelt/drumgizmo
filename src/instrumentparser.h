@@ -32,11 +32,13 @@
 #include <memory>
 #include <vector>
 
+class Settings;
+
 class InstrumentParser
 	: public SAXParser
 {
 public:
-	InstrumentParser(Instrument &instrument);
+	InstrumentParser(Instrument &instrument, Settings& settings);
 	virtual ~InstrumentParser() = default;
 
 	virtual int parseFile(const std::string& filename) override;
@@ -57,4 +59,6 @@ private:
 
 	level_t lower{0};
 	level_t upper{0};
+
+	Settings& settings;
 };

@@ -90,6 +90,7 @@ struct Settings
 
 	Atomic<bool> enable_bleed_control{false};
 	Atomic<float> master_bleed{1.0f};
+	Atomic<bool> has_bleed_control{false};
 
 	Atomic<bool> enable_latency_modifier{true};
 
@@ -154,6 +155,7 @@ struct SettingsGetter
 
 	SettingRef<bool> enable_bleed_control;
 	SettingRef<float> master_bleed;
+	SettingRef<bool> has_bleed_control;
 
 	SettingRef<bool> enable_latency_modifier;
 	SettingRef<std::size_t> latency_max;
@@ -190,6 +192,7 @@ struct SettingsGetter
 		, current_file{settings.current_file}
 		, enable_bleed_control{settings.enable_bleed_control}
 		, master_bleed{settings.master_bleed}
+		, has_bleed_control{settings.has_bleed_control}
 		, enable_latency_modifier{settings.enable_latency_modifier}
 		, latency_max{settings.latency_max}
 		, latency_laid_back{settings.latency_laid_back}
@@ -239,6 +242,7 @@ public:
 
 	Notifier<bool> enable_bleed_control;
 	Notifier<float> master_bleed;
+	Notifier<bool> has_bleed_control;
 
 	Notifier<bool> enable_latency_modifier;
 	Notifier<std::size_t> latency_max;
@@ -286,6 +290,7 @@ public:
 
 		EVAL(enable_bleed_control);
 		EVAL(master_bleed);
+		EVAL(has_bleed_control);
 
 		EVAL(enable_latency_modifier);
 		EVAL(latency_max);

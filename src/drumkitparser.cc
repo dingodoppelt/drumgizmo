@@ -45,6 +45,8 @@ DrumKitParser::DrumKitParser(Settings& settings, DrumKit& k, Random& rand)
 
 int DrumKitParser::parseFile(const std::string& filename)
 {
+	settings.has_bleed_control.store(false);
+
 	auto edited_filename(filename);
 
 	if(refs.load())
@@ -182,6 +184,10 @@ void DrumKitParser::startTag(const std::string& name, const attr_t& attr)
 		{
 			cattr.main_state = (attr.at("main") == "true") ?
 				main_state_t::is_main : main_state_t::is_not_main;
+			if(cattr.main_state == main_state_t::is_main)
+			{
+				settings.has_bleed_control.store(true);
+			}
 		}
 
 		channelmap[attr.at("in")] = cattr;
@@ -198,7 +204,7 @@ void DrumKitParser::endTag(const std::string& name)
 			auto ptr = std::make_unique<Instrument>(settings, rand);
 			ptr->setGroup(instr_group);
 
-			InstrumentParser parser(*ptr);
+			InstrumentParser parser(*ptr, settings);
 			parser.parseFile(path + "/" + instr_file);
 
 			// Transfer ownership to the DrumKit object.
