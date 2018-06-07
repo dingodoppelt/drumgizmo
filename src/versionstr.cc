@@ -1,5 +1,4 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set et sw=2 ts=2: */
 /***************************************************************************
  *            versionstr.cc
  *
@@ -31,6 +30,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <hugin.hpp>
+
 // Workaround - major, minor and patch are defined as macros when using
 // _GNU_SOURCES
 #ifdef major
@@ -45,7 +46,6 @@
 
 VersionStr::VersionStr(const std::string& v)
 {
-	memset(version, 0, sizeof(version));
 	set(v);
 }
 
@@ -66,7 +66,9 @@ void VersionStr::set(const std::string& v)
 		{
 			if(idx > 2)
 			{
-				throw "Version string is too long.";
+				version = {0, 0, 0};
+				ERR(version, "Version string is too long.");
+				return;
 			}
 			version[idx] = atoi(num.c_str());
 			idx++;
@@ -78,12 +80,16 @@ void VersionStr::set(const std::string& v)
 		}
 		else
 		{
-			throw "Version string contains illegal character.";
+			version = {0, 0, 0};
+			ERR(version, "Version string contains illegal character.");
+			return;
 		}
 	}
 	if(idx > 2)
 	{
-		throw "Version string is too long.";
+		version = {0, 0, 0};
+		ERR(version, "Version string is too long.");
+		return;
 	}
 	version[idx] = atoi(num.c_str());
 }

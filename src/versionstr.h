@@ -1,5 +1,4 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set et sw=2 ts=2: */
 /***************************************************************************
  *            versionstr.h
  *
@@ -27,6 +26,7 @@
  */
 #pragma once
 
+#include <array>
 #include <string>
 
 // Workaround - major, minor and patch are defined as macros when using
@@ -108,5 +108,5 @@ public:
 
 private:
 	void set(const std::string& v);
-	size_t version[3];
+	std::array<size_t, 3> version = {0, 0, 0};
 };
