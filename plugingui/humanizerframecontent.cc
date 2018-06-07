@@ -60,9 +60,9 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	stddev.setControl(&stddev_knob);
 	layout.addItem(&stddev);
 
-	layout.setPosition(&attack, GridLayout::GridRange{1, 2, 0, 1});
-	layout.setPosition(&falloff, GridLayout::GridRange{2, 3, 0, 1});
-	layout.setPosition(&stddev, GridLayout::GridRange{3, 3, 0, 1});
+	layout.setPosition(&attack, GridLayout::GridRange{0, 1, 0, 1});
+	layout.setPosition(&falloff, GridLayout::GridRange{1, 2, 0, 1});
+	layout.setPosition(&stddev, GridLayout::GridRange{2, 3, 0, 1});
 
 	CONNECT(this, settings_notifier.velocity_modifier_weight,
 	        &attack_knob, &Knob::setValue);

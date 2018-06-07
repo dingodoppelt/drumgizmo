@@ -101,7 +101,7 @@ private:
 	void stddevKnobValueChanged(float value);
 	void stddevSettingsValueChanged(float value);
 
-	GridLayout layout{this, 4, 1};
+	GridLayout layout{this, 3, 1};
 
 	LabeledControl attack{this, "Attack"};
 	LabeledControl falloff{this, "Release"};
