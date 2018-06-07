@@ -70,7 +70,7 @@ public:
 			" </samples>\n" \
 			"</instrument>");
 		Instrument instrument(settings, rand);
-		InstrumentParser parser(instrument);
+		InstrumentParser parser(instrument, settings);
 		CPPUNIT_ASSERT_EQUAL(0, parser.parseFile(scoped_file.filename()));
 
 		CPPUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
