@@ -7,7 +7,7 @@ TESTS = resource enginetest paintertest resampler configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
-	instrumentparsertest
+	instrumentparsertest drumkitparsertest
 
 if ENABLE_LV2
 TESTS += lv2
@@ -220,6 +220,16 @@ instrumentparsertest_LDFLAGS = $(CPPUNIT_LIBS) \
 instrumentparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	instrumentparsertest.cc \
+	scopedfile.cc \
+	test.cc
+
+drumkitparsertest_CXXFLAGS = -DOUTPUT=\"drumkitparsertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include
+drumkitparsertest_LDFLAGS = $(CPPUNIT_LIBS) \
+	 $(top_srcdir)/src/libdg.la
+drumkitparsertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	drumkitparsertest.cc \
 	scopedfile.cc \
 	test.cc
 

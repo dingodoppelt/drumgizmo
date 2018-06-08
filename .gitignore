@@ -60,6 +60,8 @@ test/paintertest
 test/drumkitcreatortest
 test/bytesizeparsertest
 test/notifiertest
+test/drumkitparsertest
+test/instrumentparsertest
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav

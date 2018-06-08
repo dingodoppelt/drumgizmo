@@ -59,6 +59,8 @@ public:
 	std::size_t getNumberOfFiles() const;
 
 private:
+	friend class DrumkitParserTest;
+
 	void* magic{nullptr};
 
 	std::string _file;
