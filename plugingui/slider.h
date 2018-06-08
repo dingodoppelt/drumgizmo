@@ -122,6 +122,21 @@ private:
 		2, 1, 2, // dx1, dx2, dx3
 		2, 1, 2 // dy1, dy2, dy3
 	};
+	TexturedBox inner_bar_turquoise{getImageCache(), ":resources/slider.png",
+		40, 0, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
+	TexturedBox inner_bar_orange{getImageCache(), ":resources/slider.png",
+		40, 5, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
+	TexturedBox inner_bar_light_grey{getImageCache(), ":resources/slider.png",
+		40, 10, // atlas offset (x, y)
+		2, 1, 2, // dx1, dx2, dx3
+		2, 1, 2 // dy1, dy2, dy3
+	};
 
 	// This points to the inner_bar_* of the current color.
 	// It should never be a nullptr!

@@ -99,7 +99,7 @@ void Slider::setEnabled(bool enabled)
 	}
 	else {
 		active_inner_bar = inner_bar;
-		inner_bar = &inner_bar_grey;
+		inner_bar = &inner_bar_light_grey;
 	}
 
 	redraw();
