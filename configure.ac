@@ -145,8 +145,8 @@ AS_IF([test "x$enable_gui" = "xauto"],
       [AC_MSG_RESULT([Auto setting gui based on host: $host_os])
 	     AS_CASE([$host_os],
 		      [darwin*], [enable_gui="pugl-cocoa"],
-		      [linux*|*bsd*], [enable_gui="pugl-x11"],
-		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="pugl-win32"],
+		      [linux*|*bsd*], [enable_gui="x11"],
+		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
 
 		      AC_MSG_ERROR([Your platform is not currently supported])
 	     )]
