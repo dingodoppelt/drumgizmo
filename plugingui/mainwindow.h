@@ -29,6 +29,7 @@
 #include <settings.h>
 
 #include "abouttab.h"
+#include "drumkittab.h"
 #include "image.h"
 #include "tabwidget.h"
 #include "texturedbox.h"
@@ -65,6 +66,7 @@ private:
 
 	TabWidget tabs{this};
 	MainTab main_tab;
+	DrumkitTab drumkit_tab;
 	AboutTab about_tab{&tabs};
 
 	Image back{":resources/bg.png"};

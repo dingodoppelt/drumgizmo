@@ -39,6 +39,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	: Window(native_window)
 	, settings_notifier(settings)
 	, main_tab(this, settings, settings_notifier, config)
+	, drumkit_tab(this, settings, settings_notifier, config)
 {
 	config.load();
 
@@ -49,6 +50,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 	tabs.addTab("Main", &main_tab);
+	tabs.addTab("Drumkit", &drumkit_tab);
 	tabs.addTab("About", &about_tab);
 }
 

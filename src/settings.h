@@ -128,6 +128,10 @@ struct Settings
 
 	// Current latency offset in ms - for UI
 	Atomic<float> latency_current{0};
+
+	Atomic<std::size_t> audition_counter{0};
+	Atomic<std::string> audition_instrument;
+	Atomic<float> audition_velocity;
 };
 
 //! Settings getter class.
@@ -179,6 +183,10 @@ struct SettingsGetter
 	SettingRef<float> latency_regain;
 	SettingRef<float> latency_current;
 
+	SettingRef<std::size_t> audition_counter;
+	SettingRef<std::string> audition_instrument;
+	SettingRef<float> audition_velocity;
+
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
@@ -216,6 +224,9 @@ struct SettingsGetter
 		, latency_stddev{settings.latency_stddev}
 		, latency_regain{settings.latency_regain}
 		, latency_current{settings.latency_current}
+		, audition_counter{settings.audition_counter}
+		, audition_instrument{settings.audition_instrument}
+		, audition_velocity{settings.audition_velocity}
 	{
 	}
 };
@@ -270,6 +281,10 @@ public:
 	Notifier<float> latency_regain;
 	Notifier<float> latency_current;
 
+	Notifier<std::size_t> audition_counter;
+	Notifier<std::string> audition_instrument;
+	Notifier<int> audition_velocity;
+
 	void evaluate()
 	{
 #define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
@@ -319,6 +334,10 @@ public:
 		EVAL(latency_stddev);
 		EVAL(latency_regain);
 		EVAL(latency_current);
+
+		EVAL(audition_counter);
+		EVAL(audition_instrument);
+		EVAL(audition_velocity);
 	}
 
 	SettingsNotifier(Settings& settings)
