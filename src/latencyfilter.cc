@@ -68,7 +68,7 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	float offset_max = latency * 1.0f;
 
 	float mean = 0.0f;//latency_laid_back;
-	float stddev = latency_stddev / 2.0f;
+	float stddev = latency_stddev;
 
 	float offset = random.normalDistribution(mean, stddev);
 

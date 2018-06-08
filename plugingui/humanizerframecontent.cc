@@ -84,12 +84,12 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 
 float HumanizerframeContent::stddevSettingsToKnob(float value) const
 {
-	return (value - 0.5f) / 3.0f;
+	return (value - 0.5f) / 8.0f;
 }
 
 float HumanizerframeContent::stddevKnobToSettings(float value) const
 {
-	return value * 3.0f + 0.5f;
+	return value * 8.0f + 0.5f;
 }
 
 void HumanizerframeContent::attackValueChanged(float value)
