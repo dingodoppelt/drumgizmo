@@ -1,10 +1,10 @@
 /* -*- Mode: c++ -*- */
 /***************************************************************************
- *            timingframecontent.h
+ *            labeledcontrol.h
  *
- *  Sat Oct 14 19:39:33 CEST 2017
- *  Copyright 2017 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Fri Jun  8 11:56:50 CEST 2018
+ *  Copyright 2018 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -26,50 +26,59 @@
  */
 #pragma once
 
-#include "knob.h"
 #include "label.h"
-#include "layout.h"
 #include "widget.h"
-
-#include "labeledcontrol.h"
 
 #include <iomanip>
 #include <sstream>
 
-struct Settings;
-class SettingsNotifier;
-
 namespace GUI
 {
 
-class TimingframeContent
+class LabeledControl
 	: public Widget
 {
 public:
-	TimingframeContent(Widget* parent,
-	                   Settings& settings,
-	                   SettingsNotifier& settings_notifier);
+	LabeledControl(Widget* parent, const std::string& name)
+		: Widget(parent)
+	{
+		layout.setResizeChildren(false);
+		layout.setHAlignment(HAlignment::center);
+		layout.setSpacing(2);
+
+		caption.setText(name);
+		caption.resize(100, 20);
+		caption.setAlignment(TextAlignment::center);
+		layout.addItem(&caption);
+	}
+
+	void setControl(Knob* control)
+	{
+		layout.addItem(control);
+
+		CONNECT(control, valueChangedNotifier, this, &LabeledControl::setValue);
+		setValue(control->value());
+		value.resize(100, 20);
+		value.setAlignment(TextAlignment::center);
+		layout.addItem(&value);
+	}
+
+	float offset{0.0f};
+	float scale{1.0f};
 
 private:
-	void tightnessKnobValueChanged(float value);
-	void tightnessSettingsValueChanged(float value);
-	void regainKnobValueChanged(float value);
-	void regainSettingsValueChanged(float value);
-	void laidbackKnobValueChanged(float value);
-	void laidbackSettingsValueChanged(int value);
+	VBoxLayout layout{this};
+	Label caption{this};
+	Label value{this};
 
-	GridLayout layout{this, 3, 1};
-
-	LabeledControl tightness{this, "Tightness"};
-	LabeledControl regain{this, "Timing Regain"};
-	LabeledControl laidback{this, "Laid Back-ness"};
-
-	Knob tightness_knob{&tightness};
-	Knob regain_knob{&regain};
-	Knob laidback_knob{&laidback};
-
-	Settings& settings;
-	SettingsNotifier& settings_notifier;
+	void setValue(float new_value)
+	{
+		new_value *= scale;
+		new_value += offset;
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(2) << new_value;
+		value.setText(stream.str());
+	}
 };
 
-} // GUI::
+}

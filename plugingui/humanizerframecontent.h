@@ -27,65 +27,15 @@
 #pragma once
 
 #include "knob.h"
-#include "label.h"
+#include "labeledcontrol.h"
 #include "layout.h"
 #include "widget.h"
-
-#include <iomanip>
-#include <sstream>
 
 struct Settings;
 class SettingsNotifier;
 
 namespace GUI
 {
-
-// TODO move this to an own file?
-class LabeledControl
-	: public Widget
-{
-public:
-	LabeledControl(Widget* parent, const std::string& name)
-		: Widget(parent)
-	{
-		layout.setResizeChildren(false);
-		layout.setHAlignment(HAlignment::center);
-		layout.setSpacing(2);
-
-		caption.setText(name);
-		caption.resize(100, 20);
-		caption.setAlignment(TextAlignment::center);
-		layout.addItem(&caption);
-	}
-
-	void setControl(Knob* control)
-	{
-		layout.addItem(control);
-
-		CONNECT(control, valueChangedNotifier, this, &LabeledControl::setValue);
-		setValue(control->value());
-		value.resize(100, 20);
-		value.setAlignment(TextAlignment::center);
-		layout.addItem(&value);
-	}
-
-	float offset{0.0f};
-	float scale{1.0f};
-
-private:
-	VBoxLayout layout{this};
-	Label caption{this};
-	Label value{this};
-
-	void setValue(float new_value)
-	{
-		new_value *= scale;
-		new_value += offset;
-		std::stringstream stream;
-		stream << std::fixed << std::setprecision(2) << new_value;
-		value.setText(stream.str());
-	}
-};
 
 class HumanizerframeContent
 	: public Widget
