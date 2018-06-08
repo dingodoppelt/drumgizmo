@@ -61,6 +61,11 @@ void Knob::setValue(float value)
 	internalSetValue(value);
 }
 
+void Knob::setDefaultValue(float value)
+{
+	default_value = value;
+}
+
 void Knob::setRange(float minimum, float maximum)
 {
 	this->minimum = minimum;
@@ -145,10 +150,16 @@ void Knob::buttonEvent(ButtonEvent* buttonEvent)
 		return;
 	}
 
+	if (buttonEvent->doubleClick) {
+		internalSetValue(default_value);
+		return;
+	}
+
 	if(buttonEvent->direction == Direction::down)
 	{
 		state = down;
 		mouse_offset_x = buttonEvent->x + (-1 * buttonEvent->y);
+		return;
 	}
 
 	if(buttonEvent->direction == Direction::up)
@@ -156,6 +167,7 @@ void Knob::buttonEvent(ButtonEvent* buttonEvent)
 		state = up;
 		mouse_offset_x = buttonEvent->x + (-1 * buttonEvent->y);
 		clicked();
+		return;
 	}
 }
 

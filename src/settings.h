@@ -71,9 +71,13 @@ struct Settings
 	Atomic<LoadStatus> midimap_load_status{LoadStatus::Idle};
 
 	Atomic<bool> enable_velocity_modifier{true};
-	Atomic<float> velocity_modifier_falloff{0.5f};
-	Atomic<float> velocity_modifier_weight{0.25f};
-	Atomic<float> velocity_stddev{1.0f}; // [0.5; 3.0]
+
+	static float constexpr velocity_modifier_falloff_default = 0.5f;
+	static float constexpr velocity_modifier_weight_default = 0.25f;
+	static float constexpr velocity_stddev_default = 1.0f;
+	Atomic<float> velocity_modifier_falloff{velocity_modifier_falloff_default};
+	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
+	Atomic<float> velocity_stddev{velocity_stddev_default}; // [0.5; 3.0]
 
 	Atomic<bool> enable_velocity_randomiser{false};
 	Atomic<float> velocity_randomiser_weight{0.1f};
@@ -100,7 +104,8 @@ struct Settings
 	//! 0 := on-beat
 	//! positive := laid back
 	//! negative := up-beat
-	Atomic<int> latency_laid_back{0};
+	static int constexpr latency_laid_back_default = 0;
+	Atomic<int> latency_laid_back{latency_laid_back_default};
 
 	//!   0 := Robot
 	//! 100 := Good drummer
@@ -108,12 +113,14 @@ struct Settings
 	//! 300 := Decent drummer on a bad day
 	//! 400 := Bad drummer
 	//! 500 := Bad and drunk drummer
-	Atomic<float> latency_stddev{100.0f};
+	static float constexpr latency_stddev_default = 100.0f;
+	Atomic<float> latency_stddev{latency_stddev_default};
 
 	//! Regain on-beat position.
 	//! 0: instantaniously
 	//! 1: never
-	Atomic<float> latency_regain{0.9f};
+	static float constexpr latency_regain_default = 0.9f;
+	Atomic<float> latency_regain{latency_regain_default};
 };
 
 //! Settings getter class.

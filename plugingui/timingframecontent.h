@@ -28,15 +28,15 @@
 
 #include "knob.h"
 #include "label.h"
+#include "labeledcontrol.h"
 #include "layout.h"
 #include "widget.h"
 
-#include "labeledcontrol.h"
+#include <settings.h>
 
 #include <iomanip>
 #include <sstream>
 
-struct Settings;
 class SettingsNotifier;
 
 namespace GUI
@@ -51,6 +51,11 @@ public:
 	                   SettingsNotifier& settings_notifier);
 
 private:
+	float thightnessKnobToSettings(float value);
+	float tightnessSettingsToKnob(float value);
+	float laidbackKnobToSettings(float value);
+	float laidbackSettingsToKnob(int int_value);
+
 	void tightnessKnobValueChanged(float value);
 	void tightnessSettingsValueChanged(float value);
 	void regainKnobValueChanged(float value);

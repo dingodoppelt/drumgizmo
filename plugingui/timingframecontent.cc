@@ -28,8 +28,6 @@
 
 #include <cmath>
 
-#include <settings.h>
-
 #include "painter.h"
 
 namespace GUI
@@ -47,18 +45,21 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	tightness.resize(80, 80);
 	tightness_knob.resize(30, 30);
 	tightness_knob.showValue(false);
+	tightness_knob.setDefaultValue(tightnessSettingsToKnob(Settings::latency_stddev_default));
 	tightness.setControl(&tightness_knob);
 	layout.addItem(&tightness);
 
 	regain.resize(80, 80);
 	regain_knob.resize(30, 30);
 	regain_knob.showValue(false);
+	regain_knob.setDefaultValue(Settings::latency_regain_default);
 	regain.setControl(&regain_knob);
 	layout.addItem(&regain);
 
 	laidback.resize(80, 80);
 	laidback_knob.resize(30, 30);
 	laidback_knob.showValue(false);
+	laidback_knob.setDefaultValue(laidbackSettingsToKnob(Settings::latency_laid_back_default));
 	laidback.setControl(&laidback_knob);
 	layout.addItem(&laidback);
 	// set range to [-1, 1]
@@ -85,20 +86,53 @@ TimingframeContent::TimingframeContent(Widget* parent,
 
 }
 
-void TimingframeContent::tightnessKnobValueChanged(float value)
+float TimingframeContent::thightnessKnobToSettings(float value)
 {
 	value -= 1.0f;
 	value *= -1.0f;
 	value *= 500.0f;
-	settings.latency_stddev.store(value);
+
+	return value;
 }
 
-void TimingframeContent::tightnessSettingsValueChanged(float value)
+float TimingframeContent::tightnessSettingsToKnob(float value)
 {
 	value /= 500.0f;
 	value *= -1.0f;
 	value += 1.0f;
-	tightness_knob.setValue(value);
+
+	return value;
+}
+
+float TimingframeContent::laidbackKnobToSettings(float value)
+{
+	value -= 0.5f;
+	value *= 2.0f;
+	value *= settings.latency_max.load();
+
+	return std::lround(value);
+}
+
+float TimingframeContent::laidbackSettingsToKnob(int int_value)
+{
+	float value = int_value;
+	value /= (float)settings.latency_max.load();
+	value *= 0.5;
+	value += 0.5;
+
+	return value;
+}
+
+void TimingframeContent::tightnessKnobValueChanged(float value)
+{
+	auto settings_value = thightnessKnobToSettings(value);
+	settings.latency_stddev.store(settings_value);
+}
+
+void TimingframeContent::tightnessSettingsValueChanged(float value)
+{
+	auto knob_value = tightnessSettingsToKnob(value);
+	tightness_knob.setValue(knob_value);
 }
 
 void TimingframeContent::regainKnobValueChanged(float value)
@@ -113,19 +147,14 @@ void TimingframeContent::regainSettingsValueChanged(float value)
 
 void TimingframeContent::laidbackKnobValueChanged(float value)
 {
-	value -= 0.5f;
-	value *= 2.0f;
-	value *= settings.latency_max.load();
-	settings.latency_laid_back.store(std::lround(value));
+	auto settings_value = laidbackKnobToSettings(value);
+	settings.latency_laid_back.store(settings_value);
 }
 
 void TimingframeContent::laidbackSettingsValueChanged(int int_value)
 {
-	float value = int_value;
-	value /= (float)settings.latency_max.load();
-	value *= 0.5;
-	value += 0.5;
-	laidback_knob.setValue(value);
+	auto knob_value = laidbackSettingsToKnob(int_value);
+	laidback_knob.setValue(knob_value);
 }
 
 } // GUI::

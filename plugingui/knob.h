@@ -44,6 +44,7 @@ public:
 	bool isFocusable() override { return true; }
 
 	void setValue(float value);
+	void setDefaultValue(float value);
 	void setRange(float minimum, float maximum);
 	float value();
 	void showValue(bool show_value);
@@ -72,6 +73,7 @@ private:
 	state_t state;
 
 	float current_value;
+	float default_value = 0.0;
 	float maximum;
 	float minimum;
 

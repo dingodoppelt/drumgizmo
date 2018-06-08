@@ -45,18 +45,21 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	attack.resize(80, 80);
 	attack_knob.resize(30, 30);
 	attack_knob.showValue(false);
+	attack_knob.setDefaultValue(Settings::velocity_modifier_weight_default);
 	attack.setControl(&attack_knob);
 	layout.addItem(&attack);
 
 	falloff.resize(80, 80);
 	falloff_knob.resize(30, 30);
 	falloff_knob.showValue(false);
+	falloff_knob.setDefaultValue(Settings::velocity_modifier_falloff_default);
 	falloff.setControl(&falloff_knob);
 	layout.addItem(&falloff);
 
 	stddev.resize(80, 80);
 	stddev_knob.resize(30, 30);
 	stddev_knob.showValue(false);
+	stddev_knob.setDefaultValue(stddevSettingsToKnob(Settings::velocity_stddev_default));
 	stddev.setControl(&stddev_knob);
 	layout.addItem(&stddev);
 
@@ -79,6 +82,16 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	        this, &HumanizerframeContent::stddevKnobValueChanged);
 }
 
+float HumanizerframeContent::stddevSettingsToKnob(float value)
+{
+	return (value - 0.5f) / 3.0f;
+}
+
+float HumanizerframeContent::stddevKnobToSettings(float value)
+{
+	return value * 3.0f + 0.5f;
+}
+
 void HumanizerframeContent::attackValueChanged(float value)
 {
 	settings.velocity_modifier_weight.store(value);
@@ -91,12 +104,14 @@ void HumanizerframeContent::falloffValueChanged(float value)
 
 void HumanizerframeContent::stddevKnobValueChanged(float value)
 {
-	settings.velocity_stddev.store(value * 3.0f + 0.5f );
+	auto settings_value = stddevKnobToSettings(value);
+	settings.velocity_stddev.store(settings_value);
 }
 
 void HumanizerframeContent::stddevSettingsValueChanged(float value)
 {
-	stddev_knob.setValue((value - 0.5f) / 3.0f);
+	auto knob_value = stddevSettingsToKnob(value);
+	stddev_knob.setValue(knob_value);
 }
 
 } // GUI::
