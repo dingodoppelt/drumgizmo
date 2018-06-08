@@ -86,7 +86,7 @@ TimingframeContent::TimingframeContent(Widget* parent,
 
 }
 
-float TimingframeContent::thightnessKnobToSettings(float value)
+float TimingframeContent::thightnessKnobToSettings(float value) const
 {
 	value -= 1.0f;
 	value *= -1.0f;
@@ -95,7 +95,7 @@ float TimingframeContent::thightnessKnobToSettings(float value)
 	return value;
 }
 
-float TimingframeContent::tightnessSettingsToKnob(float value)
+float TimingframeContent::tightnessSettingsToKnob(float value) const
 {
 	value /= 500.0f;
 	value *= -1.0f;
@@ -104,7 +104,7 @@ float TimingframeContent::tightnessSettingsToKnob(float value)
 	return value;
 }
 
-float TimingframeContent::laidbackKnobToSettings(float value)
+float TimingframeContent::laidbackKnobToSettings(float value) const
 {
 	value -= 0.5f;
 	value *= 2.0f;
@@ -113,7 +113,7 @@ float TimingframeContent::laidbackKnobToSettings(float value)
 	return std::lround(value);
 }
 
-float TimingframeContent::laidbackSettingsToKnob(int int_value)
+float TimingframeContent::laidbackSettingsToKnob(int int_value) const
 {
 	float value = int_value;
 	value /= (float)settings.latency_max.load();

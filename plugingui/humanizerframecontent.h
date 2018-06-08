@@ -46,8 +46,8 @@ public:
 	                      SettingsNotifier& settings_notifier);
 
 private:
-	float stddevSettingsToKnob(float value);
-	float stddevKnobToSettings(float value);
+	float stddevSettingsToKnob(float value) const;
+	float stddevKnobToSettings(float value) const;
 
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);

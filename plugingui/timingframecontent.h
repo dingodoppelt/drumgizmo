@@ -51,10 +51,10 @@ public:
 	                   SettingsNotifier& settings_notifier);
 
 private:
-	float thightnessKnobToSettings(float value);
-	float tightnessSettingsToKnob(float value);
-	float laidbackKnobToSettings(float value);
-	float laidbackSettingsToKnob(int int_value);
+	float thightnessKnobToSettings(float value) const;
+	float tightnessSettingsToKnob(float value) const;
+	float laidbackKnobToSettings(float value) const;
+	float laidbackSettingsToKnob(int int_value) const;
 
 	void tightnessKnobValueChanged(float value);
 	void tightnessSettingsValueChanged(float value);
