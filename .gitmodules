@@ -14,3 +14,6 @@
 [submodule "pugl"]
 	path = pugl
 	url = http://git.drobilla.net/pugl.git/
+[submodule "pugixml"]
+	path = pugixml
+	url = https://github.com/zeux/pugixml.git
