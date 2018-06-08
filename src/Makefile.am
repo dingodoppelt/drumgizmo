@@ -2,6 +2,7 @@ noinst_LTLIBRARIES = libdg.la
 
 libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) \
 	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) \
 	$(PTHREAD_CFLAGS)
@@ -12,6 +13,7 @@ libdg_la_LIBADD = \
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdg_la_SOURCES = \
+	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	audiocachefile.cc \
 	audiocache.cc \
 	audiocacheeventhandler.cc \

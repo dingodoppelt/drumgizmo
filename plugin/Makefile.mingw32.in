@@ -9,6 +9,7 @@ VST_SRC = \
 VST_CFLAGS=-I$(VST_BASE)
 
 DG_SRC = \
+	@top_srcdir@/pugixml/src/pugixml.cpp \
 	@top_srcdir@/src/audiocachefile.cc \
 	@top_srcdir@/src/audiocache.cc \
 	@top_srcdir@/src/audiocacheeventhandler.cc \
