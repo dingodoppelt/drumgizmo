@@ -65,24 +65,6 @@ void Toggle::setText(std::string text)
 	redraw();
 }
 
-void Toggle::keyEvent(KeyEvent* keyEvent)
-{
-	if(keyEvent->keycode == Key::character && keyEvent->text == " ")
-	{
-		if(keyEvent->direction == Direction::up)
-		{
-			clicked = false;
-			internalSetChecked(!state);
-		}
-		else
-		{
-			clicked = true;
-		}
-
-		redraw();
-	}
-}
-
 bool Toggle::checked()
 {
 	return state;

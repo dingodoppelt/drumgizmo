@@ -53,7 +53,6 @@ public:
 protected:
 	// From Widget:
 	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
-	virtual void keyEvent(KeyEvent* keyEvent) override;
 	virtual void mouseLeaveEvent() override;
 	virtual void mouseEnterEvent() override;
 
