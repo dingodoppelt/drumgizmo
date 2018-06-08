@@ -37,23 +37,36 @@ int main()
 {
 	INFO(example, "We are up and running");
 
+	void* native_window_handle{nullptr};
+#ifndef UI_PUGL
 	GUI::Window parent{nullptr};
 	parent.setCaption("PluginGui Test Application");
+	native_window_handle = parent.getNativeWindowHandle();
+#endif
 
 	Settings settings;
-	GUI::MainWindow main_window(settings, parent.getNativeWindowHandle());
+	GUI::MainWindow main_window(settings, native_window_handle);
+
+#ifndef UI_PUGL
 	CONNECT(&parent, eventHandler()->closeNotifier, &main_window,
 	    &GUI::MainWindow::closeEventHandler);
 
 	parent.show();
+#endif
 	main_window.show();
 
 	// TODO: automatically use drumgizmo_plugin.h size here
+#ifndef UI_PUGL
 	parent.resize(750, 613);
+#else
+	main_window.resize(750, 613);
+#endif
 
 	while(true)
 	{
+#ifndef UI_PUGL
 		parent.eventHandler()->processEvents();
+#endif
 		if(!main_window.processEvents())
 		{
 			break;

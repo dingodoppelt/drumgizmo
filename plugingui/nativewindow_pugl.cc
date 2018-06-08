@@ -272,7 +272,6 @@ void NativeWindowPugl::onDisplay(PuglView* view)
 	Window& window = native->window;
 	//window.redraw();
 
-	printf("!!! %p %d %d\n", native, (int)window.wpixbuf.width, (int)window.wpixbuf.height);
 	if((window.wpixbuf.width < 16) || (window.wpixbuf.height < 16))
 	{
 		return;
@@ -359,9 +358,8 @@ void NativeWindowPugl::onKeyboard(PuglView* view, bool press, uint32_t key)
 	KeyEvent* e = new KeyEvent();
 	e->direction = press ? Direction::down : Direction::up;
 
-	printf("%d\n", key);
-
-	switch(key) {
+	switch(key)
+	{
 	case PUGL_KEY_LEFT: e->keycode = Key::left; break;
 	case PUGL_KEY_RIGHT: e->keycode = Key::right; break;
 	case PUGL_KEY_UP: e->keycode = Key::up; break;
@@ -377,8 +375,6 @@ void NativeWindowPugl::onKeyboard(PuglView* view, bool press, uint32_t key)
 		e->keycode = Key::character;
 		e->text.assign(1, (char)key);
 	}
-
-	printf("\t text: %s\n", e->text.c_str());
 
 	native->eventq.push_back(e);
 }

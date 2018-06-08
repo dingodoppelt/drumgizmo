@@ -150,8 +150,14 @@ endif
 
 plugingui_LDADD = libdggui.la $(top_srcdir)/src/libdg.la
 
-plugingui_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) $(EXPAT_CFLAGS) \
-	-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/hugin
+plugingui_CXXFLAGS = \
+	$(GUI_CPPFLAGS) \
+	$(SNDFILE_CXXFLAGS) \
+	$(PTHREAD_CFLAGS) \
+	$(EXPAT_CFLAGS) \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin
 
 plugingui_CFLAGS = $(plugingui_CXXFLAGS)
 
