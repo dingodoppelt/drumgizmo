@@ -26,13 +26,17 @@
  */
 #pragma once
 
-namespace GUI {
+#include <cstdint>
+
+namespace GUI
+{
 
 class Colour {
 public:
 	Colour();
 	Colour(float grey, float alpha = 1.0f);
 	Colour(float red, float green, float blue, float alpha = 1.0f);
+	Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a);
 	Colour(Colour&& other);
 	Colour(const Colour& other);
 	~Colour();

@@ -214,7 +214,7 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 	double to_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
 
 	// Draw "fat" line by drawing 9 lines with moved start/ending points.
-	p.setColour(Colour(1, 0, 0, 1));
+	p.setColour(Colour(1.0f, 0.0f, 0.0f, 1.0f));
 	for(int _x = -1; _x < 2; _x++)
 	{
 		for(int _y = -1; _y < 2; _y++)

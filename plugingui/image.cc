@@ -119,10 +119,10 @@ void Image::setError()
 void Image::load(const char* data, size_t size)
 {
 	unsigned int iw{0}, ih{0};
-	unsigned char* char_image_data{nullptr};
-	unsigned int res = lodepng_decode32((unsigned char**)&char_image_data,
+	std::uint8_t* char_image_data{nullptr};
+	unsigned int res = lodepng_decode32((std::uint8_t**)&char_image_data,
 	                                    &iw, &ih,
-	                                    (const unsigned char*)data, size);
+	                                    (const std::uint8_t*)data, size);
 
 	if(res != 0)
 	{
@@ -142,9 +142,8 @@ void Image::load(const char* data, size_t size)
 	{
 		for(std::size_t x = 0; x < _width; ++x)
 		{
-			unsigned char* ptr = &char_image_data[(x + y * _width) * 4];
-			image_data.emplace_back(Colour{ptr[0] / 255.0f, ptr[1] / 255.0f,
-						ptr[2] / 255.0f, ptr[3] / 255.0f});
+			std::uint8_t* ptr = &char_image_data[(x + y * _width) * 4];
+			image_data.emplace_back(Colour{ptr[0], ptr[1], ptr[2], ptr[3]});
 		}
 	}
 

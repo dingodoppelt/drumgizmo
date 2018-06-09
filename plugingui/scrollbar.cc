@@ -124,7 +124,7 @@ void ScrollBar::repaintEvent(RepaintEvent* repaintEvent)
 
 	p.drawImageStretched(0, 0, bg_img, width(), height());
 
-	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+	p.setColour(Colour(183.0f/255.0f, 219.0f/255.0f, 255.0f/255.0f, 1.0f));
 	if(!maxValue)
 	{
 		return;

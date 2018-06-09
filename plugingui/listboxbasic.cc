@@ -153,7 +153,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 
 	p.drawImageStretched(0, 0, bg_img, w, h);
 
-	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+	p.setColour(Colour(183.0f/255.0f, 219.0f/255.0f, 255.0f/255.0f, 1.0f));
 
 	int yoffset = padding / 2;
 	int skip = scroll.value();
@@ -164,7 +164,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 		auto& item = items[idx];
 		if(idx == selected)
 		{
-			p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 0.5));
+			p.setColour(Colour(183.0f/255.0f, 219.0f/255.0f, 255.0f/255.0f, 0.5f));
 			p.drawFilledRectangle(0,
 			                      yoffset - (padding / 2),
 			                      width() - 1,
@@ -179,7 +179,7 @@ void ListBoxBasic::repaintEvent(RepaintEvent* repaintEvent)
 			                yoffset + (font.textHeight() + 1));
 		}
 
-		p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+		p.setColour(Colour(183.0f/255.0f, 219.0f/255.0f, 255.0f/255.0f, 1.0f));
 
 		p.drawText(2, yoffset + font.textHeight(), font, item.name);
 		yoffset += font.textHeight() + padding;

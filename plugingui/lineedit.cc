@@ -212,7 +212,7 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 	box.setSize(w, h);
 	p.drawImage(0, 0, box);
 
-	p.setColour(Colour(183.0/255.0, 219.0/255.0 , 255.0/255.0, 1));
+	p.setColour(Colour(183.0f/255.0f, 219.0f/255.0f, 255.0f/255.0f, 1.0f));
 
 	switch(walkstate) {
 	case WalkLeft:
