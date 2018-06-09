@@ -36,6 +36,7 @@
 class DrumKit
 {
 	friend class DrumKitParser;
+	friend class DrumKitLoader;
 public:
 	DrumKit();
 	~DrumKit();
