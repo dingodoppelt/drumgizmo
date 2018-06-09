@@ -28,6 +28,7 @@
 
 #include <locale.h>
 #include <stdarg.h>
+#include <cstdlib>
 
 static inline double atof_nol(const char* nptr)
 {
