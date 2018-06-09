@@ -59,7 +59,10 @@ void DrumkitTab::resize(std::size_t width, std::size_t height)
 	if (drumkit_image) {
 		Painter painter(*this);
 		painter.clear();
-		painter.drawImage(0 , 0, *drumkit_image);
+
+		drumkit_image_x = (this->width()-drumkit_image->width())/2;
+		drumkit_image_y = (this->height()-drumkit_image->height())/2;
+		painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
 	}
 
 	velocity_label.move(10, height-velocity_label.height()-5);
@@ -86,7 +89,7 @@ void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
 
 void DrumkitTab::triggerAudition(int x, int y)
 {
-	auto map_colour = map_image->getPixel(x, y);
+	auto map_colour = map_image->getPixel(x - drumkit_image_x, y - drumkit_image_y);
 
 	auto it = colour_to_instrument.find(map_colour);
 	if (it == colour_to_instrument.end())

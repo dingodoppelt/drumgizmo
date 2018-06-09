@@ -64,6 +64,9 @@ private:
 
 	std::unique_ptr<Image> drumkit_image;
 	std::unique_ptr<Image> map_image;
+	int drumkit_image_x;
+	int drumkit_image_y;
+
 	Label velocity_label{this};
 
 	Settings& settings;
