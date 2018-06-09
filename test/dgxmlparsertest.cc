@@ -34,6 +34,7 @@ class DGXmlParserTest
 {
 	CPPUNIT_TEST_SUITE(DGXmlParserTest);
 	CPPUNIT_TEST(instrumentParserTest);
+	CPPUNIT_TEST(drumkitParserTest);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -45,7 +46,6 @@ public:
 	{
 	}
 
-	//! This just creates some drumkit.
 	void instrumentParserTest()
 	{
 		ScopedFile scoped_file(
@@ -131,6 +131,93 @@ public:
 		CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, dom.instrument_channels[1].main);
 		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.instrument_channels[2].name);
 		CPPUNIT_ASSERT_EQUAL(main_state_t::unset, dom.instrument_channels[2].main);
+	}
+
+	void drumkitParserTest()
+	{
+		ScopedFile scoped_file(
+			"<?xml version='1.0' encoding='UTF-8'?>\n" \
+			"<drumkit name=\"CrocellKit\" description=\"my description\" samplerate=\"48000\" version=\"2.0.0\">\n" \
+			"  <channels>\n" \
+			"   <channel name=\"AmbLeft\"/>\n" \
+			"   <channel name=\"AmbRight\"/>\n" \
+			"   <channel name=\"SnareTop\"/>\n" \
+			"   <channel name=\"SnareBottom\"/>\n" \
+			"  </channels>\n" \
+			"  <instruments>\n" \
+			"    <instrument name=\"Snare1\" group=\"somegroup\" file=\"foo.wav\">\n" \
+			"      <channelmap in=\"AmbLeft-in\" out=\"AmbLeft\" main=\"true\"/>\n" \
+			"      <channelmap in=\"AmbRight-in\" out=\"AmbRight\" main=\"true\"/>\n" \
+			"      <channelmap in=\"SnareTop-in\" out=\"SnareTop\"/>\n" \
+			"      <channelmap in=\"SnareBottom-in\" out=\"SnareBottom\"/>\n" \
+			"    </instrument>\n" \
+			"    <instrument name=\"Snare2\" file=\"bar.wav\">\n" \
+			"      <channelmap in=\"AmbLeft2-in\" out=\"AmbLeft\" main=\"false\"/>\n" \
+			"      <channelmap in=\"AmbRight2-in\" out=\"AmbRight\" main=\"false\"/>\n" \
+			"      <channelmap in=\"SnareTop2-in\" out=\"SnareTop\"/>\n" \
+			"      <channelmap in=\"SnareBottom2-in\" out=\"SnareBottom\"/>\n" \
+			"    </instrument>\n" \
+			"  </instruments>\n" \
+			"</drumkit>");
+
+		DrumkitDOM dom;
+		CPPUNIT_ASSERT(probeDrumkitFile(scoped_file.filename()));
+		CPPUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), dom));
+
+		CPPUNIT_ASSERT_EQUAL(std::string("CrocellKit"), dom.name);
+		CPPUNIT_ASSERT_EQUAL(std::string("my description"), dom.description);
+		CPPUNIT_ASSERT_EQUAL(48000.0, dom.samplerate);
+		CPPUNIT_ASSERT_EQUAL(std::size_t(2), dom.instruments.size());
+		{
+			const auto& instr = dom.instruments[0];
+			CPPUNIT_ASSERT_EQUAL(std::string("Snare1"), instr.name);
+			CPPUNIT_ASSERT_EQUAL(std::string("foo.wav"), instr.file);
+			CPPUNIT_ASSERT_EQUAL(std::string("somegroup"), instr.group);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
+
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft-in"), instr.channel_map[0].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight-in"), instr.channel_map[1].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom-in"), instr.channel_map[2].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop-in"), instr.channel_map[3].in);
+
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
+
+			CPPUNIT_ASSERT_EQUAL(main_state_t::is_main, instr.channel_map[0].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::is_main, instr.channel_map[1].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[2].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[3].main);
+		}
+		{
+			const auto& instr = dom.instruments[1];
+			CPPUNIT_ASSERT_EQUAL(std::string("Snare2"), instr.name);
+			CPPUNIT_ASSERT_EQUAL(std::string("bar.wav"), instr.file);
+			CPPUNIT_ASSERT_EQUAL(std::string(""), instr.group);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
+
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft2-in"), instr.channel_map[0].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight2-in"), instr.channel_map[1].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom2-in"), instr.channel_map[2].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop2-in"), instr.channel_map[3].in);
+
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
+
+			CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, instr.channel_map[0].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, instr.channel_map[1].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[2].main);
+			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[3].main);
+		}
+
+		CPPUNIT_ASSERT_EQUAL(std::size_t(4), dom.channels.size());
+		CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.channels[0].name);
+		CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.channels[1].name);
+		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.channels[2].name);
+		CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), dom.channels[3].name);
 	}
 };
 
