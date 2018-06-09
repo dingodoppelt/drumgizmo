@@ -215,7 +215,8 @@ drumkitparsertest_SOURCES = \
 	dgtest.cc
 
 dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" $(CPPUNIT_CFLAGS) \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/pugixml/src
+	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/pugixml/src
 dgxmlparsertest_LDFLAGS = $(CPPUNIT_LIBS)
 dgxmlparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
