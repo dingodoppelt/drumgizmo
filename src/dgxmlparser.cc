@@ -27,7 +27,9 @@
 #include "dgxmlparser.h"
 
 #include <unordered_map>
+
 #include <pugixml.hpp>
+#include <hugin.hpp>
 
 #include "nolocale.h"
 
@@ -43,31 +45,42 @@ bool probeInstrumentFile(const std::string& filename)
 	return parseInstrumentFile(filename, d);
 }
 
-static bool assign(double& dest, std::string val)
+static bool assign(double& dest, const std::string& val)
 {
+	//TODO: figure out how to handle error value 0.0
 	dest = atof_nol(val.c_str());
-	return dest > 0;
+	return true;
 }
 
-static bool assign(std::string& dest, std::string val)
+static bool assign(std::string& dest, const std::string& val)
 {
 	dest = val;
 	return true;
 }
 
-static bool assign(size_t& dest, std::string val)
+static bool assign(size_t& dest, const std::string& val)
 {
-	dest = atoi(val.c_str());
-	return dest > 0;
+	int tmp = atoi(val.c_str());
+	if(tmp < 0) return false;
+	dest = tmp;
+	return std::to_string(dest) == val; 
 }
 
 template<typename T>
-static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string attr)
+static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr)
 {
 	const char* val = src.attribute(attr.c_str()).as_string(nullptr); 
-	if(!val) return false;
+	if(!val) {
+		ERR("Attribute %s not found in %s, offset %s\n", attr.c_str(), src.path().c_str(), (int) src.offset_debug());
+		return false;
+	}
 
-	return assign(dest, std::string(val));
+	if(!assign(dest, std::string(val))) {
+		ERR("Attribute %s could not be assigned, offset %s\n", attr.c_str(), (int) src.offset_debug());
+		return false;
+	}
+
+	return true;
 }
 
 bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
@@ -77,6 +90,11 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filename.c_str());
 	res &= !result.status;
+
+	if(!res) {
+		printf("PugiXml error %d\n", (int) result.offset);
+		return false;
+	}
 
 	//TODO: handle xml version 
 	
