@@ -32,17 +32,17 @@ namespace GUI {
 
 Colour::Colour()
 {
-	data = {1.0f, 1.0f, 1.0f, 1.0f};
+	data = {{1.0f, 1.0f, 1.0f, 1.0f}};
 }
 
 Colour::Colour(float grey, float a)
 {
-	data = {grey, grey, grey, a};
+	data = {{grey, grey, grey, a}};
 }
 
 Colour::Colour(float r, float g, float b, float a)
 {
-	data = {r, g, b, a};
+	data = {{r, g, b, a}};
 }
 
 Colour::Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
@@ -57,6 +57,7 @@ Colour::Colour(const Colour& other)
 Colour& Colour::operator=(const Colour& other)
 {
 	data = other.data;
+	return *this;
 }
 
 bool Colour::operator==(const Colour& other) const
