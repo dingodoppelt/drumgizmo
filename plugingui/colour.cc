@@ -32,79 +32,41 @@ namespace GUI {
 
 Colour::Colour()
 {
-	data = new float[4];
-	data[0] = data[1] = data[2] = data[3] = 1.0f;
+	data = {1.0f, 1.0f, 1.0f, 1.0f};
 }
 
 Colour::Colour(float grey, float a)
 {
-	data = new float[4];
-
-	data[0] = data[1] = data[2] = grey;
-	data[3] = a;
+	data = {grey, grey, grey, a};
 }
 
 Colour::Colour(float r, float g, float b, float a)
 {
-	data = new float[4];
-
-	data[0] = r;
-	data[1] = g;
-	data[2] = b;
-	data[3] = a;
+	data = {r, g, b, a};
 }
 
 Colour::Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
 	: Colour(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)
 {}
 
-Colour::Colour(Colour&& other)
-{
-	if(data)
-	{
-		delete[] data;
-	}
-
-	data = other.data;
-	other.data = nullptr;
-}
-
 Colour::Colour(const Colour& other)
 {
-	if(data)
-	{
-		delete[] data;
-	}
-
-	data = new float[4];
-
-	std::memcpy(data, other.data, 4 * sizeof(float));
-}
-
-Colour::~Colour()
-{
-	if(data)
-	{
-		delete[] data;
-	}
+	data = other.data;
 }
 
 Colour& Colour::operator=(const Colour& other)
 {
-	std::memcpy(data, other.data, 4 * sizeof(float));
-	return *this;
+	data = other.data;
 }
 
-Colour& Colour::operator=(Colour&& other)
+bool Colour::operator==(const Colour& other) const
 {
-	if(data)
-	{
-		delete[] data;
-	}
+	return data == other.data;
+}
 
-	data = other.data;
-	other.data = nullptr;
-	return *this;
+bool Colour::operator!=(const Colour& other) const
+{
+	return !(*this == other);
 }
 
 } // GUI::

@@ -26,6 +26,7 @@
  */
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 namespace GUI
@@ -37,12 +38,12 @@ public:
 	Colour(float grey, float alpha = 1.0f);
 	Colour(float red, float green, float blue, float alpha = 1.0f);
 	Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a);
-	Colour(Colour&& other);
 	Colour(const Colour& other);
-	~Colour();
 
 	Colour& operator=(const Colour& other);
-	Colour& operator=(Colour&& other);
+
+	bool operator==(const Colour& other) const;
+	bool operator!=(const Colour& other) const;
 
 	inline float red() const { return data[0]; }
 	inline float green() const { return data[1]; }
@@ -50,7 +51,7 @@ public:
 	inline float alpha() const { return data[3]; }
 
 private:
-	float *data{nullptr};
+	std::array<float, 4> data;
 };
 
 } // GUI::
