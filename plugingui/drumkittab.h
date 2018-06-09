@@ -26,6 +26,7 @@
  */
 #pragma once
 
+#include <unordered_map>
 #include <memory>
 #include <string>
 
@@ -59,6 +60,7 @@ public:
 
 private:
 	float current_velocity = .5;
+	std::unordered_map<Colour, std::string, ColourHasher> colour_to_instrument;
 
 	std::unique_ptr<Image> drumkit_image;
 	std::unique_ptr<Image> map_image;

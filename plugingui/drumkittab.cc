@@ -88,14 +88,14 @@ void DrumkitTab::triggerAudition(int x, int y)
 {
 	auto map_colour = map_image->getPixel(x, y);
 
-	// TODO: convert color to instrument
-	if (map_colour != Colour(0))
+	auto it = colour_to_instrument.find(map_colour);
+	if (it == colour_to_instrument.end())
 	{
 		return;
 	}
 
 	++settings.audition_counter;
-	settings.audition_instrument = "Snare";
+	settings.audition_instrument = it->second;
 	settings.audition_velocity = current_velocity;
 }
 
@@ -106,11 +106,18 @@ void DrumkitTab::updateVelocityLabel()
 	velocity_label.setText("Velocity: " + stream.str());
 }
 
-// FIXME: this should actually be done somewhere else maybe?
 void DrumkitTab::loadImageFiles(std::string const& image_file, std::string const& map_file)
 {
 	drumkit_image = std::make_unique<Image>(image_file);
 	map_image = std::make_unique<Image>(map_file);
+
+	// TODO: actually use mapping from drumkit file here
+	colour_to_instrument = {
+		{Colour(0), "Snare"},
+		{Colour(255./255, 15./255, 55./255), "KdrumL"},
+		{Colour(154./255, 153./255, 33./255), "HihatClosed"},
+		{Colour(248./255, 221./255, 37./255), "Tom4"}
+	};
 }
 
 } // GUI::
