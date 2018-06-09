@@ -58,6 +58,7 @@ test/semaphoretest
 test/enginetest
 test/paintertest
 test/drumkitcreatortest
+test/dgxmlparsertest
 test/bytesizeparsertest
 test/notifiertest
 test/drumkitparsertest

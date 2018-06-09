@@ -7,7 +7,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
-	instrumentparsertest drumkitparsertest
+	instrumentparsertest drumkitparsertest dgxmlparsertest
 
 EXTRA_DIST = \
 	dgunit.h \
@@ -213,5 +213,16 @@ drumkitparsertest_SOURCES = \
 	drumkitparsertest.cc \
 	scopedfile.cc \
 	dgtest.cc
+
+dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/pugixml/src
+dgxmlparsertest_LDFLAGS = $(CPPUNIT_LIBS)
+dgxmlparsertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/src/dgxmlparser.cc \
+	$(top_srcdir)/pugixml/src/pugixml.cpp \
+	dgxmlparsertest.cc \
+	scopedfile.cc \
+	test.cc
 
 endif
