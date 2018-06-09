@@ -46,9 +46,9 @@ class DrumkitTab
 {
 public:
 	DrumkitTab(Widget* parent,
-	           Settings& settings,
+	           Settings& settings/*,
 	           SettingsNotifier& settings_notifier,
-	           Config& config);
+	           Config& config*/);
 
 	// From Widget:
 	void resize(std::size_t width, std::size_t height) override;
@@ -65,8 +65,8 @@ private:
 	Label velocity_label{this};
 
 	Settings& settings;
-	SettingsNotifier& settings_notifier;
-	Config& config;
+	// SettingsNotifier& settings_notifier;
+	// Config& config;
 
 	void triggerAudition(int x, int y);
 	void updateVelocityLabel();

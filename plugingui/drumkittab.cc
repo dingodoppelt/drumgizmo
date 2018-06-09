@@ -37,13 +37,13 @@ namespace GUI
 {
 
 DrumkitTab::DrumkitTab(Widget* parent,
-                       Settings& settings,
+                       Settings& settings/*,
                        SettingsNotifier& settings_notifier,
-                       Config& config)
+                       Config& config*/)
 	: Widget(parent)
 	, settings(settings)
-	, settings_notifier(settings_notifier)
-	, config(config)
+	/*, settings_notifier(settings_notifier)
+	, config(config)*/
 {
 	loadImageFiles("/home/chaot/Programming/drumgizmo/crocellkit01.png", "/home/chaot/Programming/drumgizmo/crocellkit01_map.png");
 

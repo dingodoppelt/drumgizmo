@@ -39,7 +39,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	: Window(native_window)
 	, settings_notifier(settings)
 	, main_tab(this, settings, settings_notifier, config)
-	, drumkit_tab(this, settings, settings_notifier, config)
+	, drumkit_tab(this, settings)
 {
 	config.load();
 
