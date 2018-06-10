@@ -62,7 +62,9 @@ Colour& Colour::operator=(const Colour& other)
 
 bool Colour::operator==(const Colour& other) const
 {
-	return data == other.data;
+	return data[0] == other.data[0] &&
+	       data[1] == other.data[1] &&
+	       data[2] == other.data[2];
 }
 
 bool Colour::operator!=(const Colour& other) const

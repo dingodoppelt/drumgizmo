@@ -29,6 +29,9 @@
 #include <iomanip>
 #include <sstream>
 
+// FIXME
+#include <iostream>
+
 #include "cpp11fix.h" // required for c++11
 #include "painter.h"
 #include "settings.h"
@@ -50,6 +53,9 @@ DrumkitTab::DrumkitTab(Widget* parent,
 	velocity_label.move(10, height()-velocity_label.height()-5);
 	updateVelocityLabel();
 	velocity_label.resizeToText();
+
+	instrument_name_label.move(velocity_label.width()+30, height()-instrument_name_label.height()-5);
+	updateInstrumentLabel();
 }
 
 void DrumkitTab::resize(std::size_t width, std::size_t height)
@@ -66,10 +72,33 @@ void DrumkitTab::resize(std::size_t width, std::size_t height)
 	}
 
 	velocity_label.move(10, height-velocity_label.height()-5);
+	instrument_name_label.move(velocity_label.width()+30, height-instrument_name_label.height()-5);
 }
 
 void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 {
+	if (map_image) {
+		if (buttonEvent->button == MouseButton::right) {
+			if (buttonEvent->direction == GUI::Direction::down) {
+				Painter painter(*this);
+				painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
+				redraw();
+
+				shows_overlay = true;
+				return;
+			}
+			if (buttonEvent->direction == GUI::Direction::up) {
+				Painter painter(*this);
+				painter.clear();
+				painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
+				redraw();
+
+				shows_overlay = false;
+				return;
+			}
+		}
+	}
+
 	if (buttonEvent->button == MouseButton::left &&
 	    buttonEvent->direction == GUI::Direction::down)
 	{
@@ -87,9 +116,22 @@ void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
 	triggerAudition(scrollEvent->x, scrollEvent->y);
 }
 
+void DrumkitTab::mouseLeaveEvent()
+{
+	if (map_image && shows_overlay) {
+		Painter painter(*this);
+		painter.clear();
+		painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
+		redraw();
+
+		shows_overlay = false;
+	}
+}
+
 void DrumkitTab::triggerAudition(int x, int y)
 {
 	auto map_colour = map_image->getPixel(x - drumkit_image_x, y - drumkit_image_y);
+	if (map_colour.alpha() == 0.0) { return; }
 
 	auto it = colour_to_instrument.find(map_colour);
 	if (it == colour_to_instrument.end())
@@ -100,6 +142,9 @@ void DrumkitTab::triggerAudition(int x, int y)
 	++settings.audition_counter;
 	settings.audition_instrument = it->second;
 	settings.audition_velocity = current_velocity;
+
+	current_instrument = it->second;
+	updateInstrumentLabel();
 }
 
 void DrumkitTab::updateVelocityLabel()
@@ -107,6 +152,12 @@ void DrumkitTab::updateVelocityLabel()
 	std::stringstream stream;
 	stream << std::fixed << std::setprecision(2) << current_velocity;
 	velocity_label.setText("Velocity: " + stream.str());
+}
+
+void DrumkitTab::updateInstrumentLabel()
+{
+	instrument_name_label.setText("Instrument: " + current_instrument);
+	instrument_name_label.resizeToText();
 }
 
 void DrumkitTab::loadImageFiles(std::string const& image_file, std::string const& map_file)

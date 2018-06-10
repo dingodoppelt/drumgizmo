@@ -59,7 +59,7 @@ struct ColourHasher
 	// TODO: replace by something reasonable
 	std::size_t operator()(const Colour& colour) const
 	{
-		return 7*colour.red() + 11*colour.green() + 13*colour.blue() + 17*colour.alpha();
+		return 7*colour.red() + 11*colour.green() + 13*colour.blue()/* + 17*colour.alpha()*/;
 	}
 };
 

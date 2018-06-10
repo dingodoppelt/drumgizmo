@@ -55,12 +55,16 @@ public:
 	void resize(std::size_t width, std::size_t height) override;
 	void buttonEvent(ButtonEvent* buttonEvent) override;
 	void scrollEvent(ScrollEvent* scrollEvent) override;
+	void mouseLeaveEvent() override;
 
 	void loadImageFiles(std::string const& image_file, std::string const& map_file);
 
 private:
-	float current_velocity = .5;
+	float current_velocity{.5};
+	std::string current_instrument{""};
+
 	std::unordered_map<Colour, std::string, ColourHasher> colour_to_instrument;
+	bool shows_overlay{false};
 
 	std::unique_ptr<Image> drumkit_image;
 	std::unique_ptr<Image> map_image;
@@ -68,6 +72,7 @@ private:
 	int drumkit_image_y;
 
 	Label velocity_label{this};
+	Label instrument_name_label{this};
 
 	Settings& settings;
 	// SettingsNotifier& settings_notifier;
@@ -75,6 +80,7 @@ private:
 
 	void triggerAudition(int x, int y);
 	void updateVelocityLabel();
+	void updateInstrumentLabel();
 };
 
 } // GUI::
