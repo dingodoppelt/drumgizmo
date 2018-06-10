@@ -45,6 +45,8 @@ public:
 	float getPower() const;
 
 private:
+	friend class DOMLoader;
+	friend class DOMLoaderTest;
 	friend class InstrumentParser;
 	friend class PowerList;
 	friend class InstrumentParserTest;

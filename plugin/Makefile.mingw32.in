@@ -20,6 +20,7 @@ DG_SRC = \
 	@top_srcdir@/src/channelmixer.cc \
 	@top_srcdir@/src/configfile.cc \
 	@top_srcdir@/src/configparser.cc \
+	@top_srcdir@/src/domloader.cc \
 	@top_srcdir@/src/drumgizmo.cc \
 	@top_srcdir@/src/drumkit.cc \
 	@top_srcdir@/src/drumkitloader.cc \

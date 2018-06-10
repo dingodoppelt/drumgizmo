@@ -35,6 +35,7 @@
 #include "DGDOM.h"
 #include "dgxmlparser.h"
 #include "path.h"
+#include "domloader.h"
 
 #define REFSFILE "refs.conf"
 
@@ -134,12 +135,17 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	std::string path = getPath(edited_filename);
 	bool parseerror = parseDrumkitFile(edited_filename, drumkitdom);
 
-	for(InstrumentRefDOM ref: drumkitdom.instruments) {
+	for(const auto& ref : drumkitdom.instruments)
+	{
 		instrumentdoms.emplace_back();
-		parseerror |= parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
+		parseerror &= parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
 	}
 
-	if(parseerror) {
+	DOMLoader domloader(settings, rand);
+	parseerror &= domloader.loadDom(drumkitdom, instrumentdoms, kit);
+
+	if(parseerror)
+	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());
 		settings.drumkit_load_status.store(LoadStatus::Error);
 
@@ -148,18 +154,6 @@ bool DrumKitLoader::loadkit(const std::string& file)
 		settings.number_of_files_loaded.store(1);
 
 		return false;
-	}
-
-	//TODO: create
-
-	kit._name = drumkitdom.name;
-	kit._description = drumkitdom.description;
-	kit._samplerate = drumkitdom.samplerate;
-
-	for(auto& channel: drumkitdom.channels) {
-		kit.channels.emplace_back();
-		kit.channels.back().name = channel.name;
-		kit.channels.back().num = kit.channels.size() -1;
 	}
 
 	// Check if there is enough free RAM to load the drumkit.

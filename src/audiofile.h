@@ -68,6 +68,7 @@ public:
 	std::size_t filechannel;
 
 private:
+	friend class DOMLoaderTest;
 	friend class InstrumentParserTest;
 
 	void* magic{nullptr};

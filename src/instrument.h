@@ -67,6 +67,9 @@ public:
 	float getMinPower() const;
 
 private:
+	friend class DOMLoader;
+	friend class DOMLoaderTest;
+
 	// For parser:
 	friend class InstrumentParser;
 	friend class DrumKitParser;

@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <mutex>
+#include <vector>
 
 #include "thread.h"
 #include "semaphore.h"
@@ -37,6 +38,9 @@
 #include "settings.h"
 #include "audioinputengine.h"
 #include "audiocache.h"
+
+class DrumkitDOM;
+class InstrumentDOM;
 
 //! This class is responsible for loading the drumkits in its own thread.
 //! All interaction calls are simply modifying queues and not doing any

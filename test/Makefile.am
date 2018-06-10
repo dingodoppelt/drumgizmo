@@ -7,7 +7,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
-	instrumentparsertest drumkitparsertest dgxmlparsertest
+	instrumentparsertest drumkitparsertest dgxmlparsertest domloadertest
 
 EXTRA_DIST = \
 	dgunit.h \
@@ -223,6 +223,16 @@ dgxmlparsertest_SOURCES = \
 	$(top_srcdir)/src/dgxmlparser.cc \
 	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	dgxmlparsertest.cc \
+	scopedfile.cc \
+	test.cc
+
+domloadertest_CXXFLAGS = -DOUTPUT=\"domloadertest\" $(CPPUNIT_CFLAGS) \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include
+domloadertest_LDFLAGS = $(CPPUNIT_LIBS) \
+	 $(top_srcdir)/src/libdg.la
+domloadertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	domloadertest.cc \
 	scopedfile.cc \
 	test.cc
 

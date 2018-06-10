@@ -1,9 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            drumkit.h
+ *            domloader.h
  *
- *  Wed Mar  9 15:27:26 CET 2011
- *  Copyright 2011 Bent Bisballe Nyeng
+ *  Sun Jun 10 17:39:01 CEST 2018
+ *  Copyright 2018 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -26,51 +26,24 @@
  */
 #pragma once
 
-#include <map>
-#include <string>
+#include <vector>
 
-#include "channel.h"
-#include "instrument.h"
-#include "versionstr.h"
+class DrumkitDOM;
+class InstrumentDOM;
+class DrumKit;
+class Settings;
+class Random;
 
-class DrumKit
+class DOMLoader
 {
 public:
-	DrumKit();
-	~DrumKit();
+	DOMLoader(Settings& settings, Random& random);
 
-	std::string getFile() const;
-
-	std::string getName() const;
-	std::string getDescription() const;
-	VersionStr getVersion() const;
-
-	Instruments instruments;
-	Channels channels;
-
-	void clear();
-
-	bool isValid() const;
-
-	float getSamplerate() const;
-
-	//! Get the number of audio files (as in single channel) in this drumkit.
-	std::size_t getNumberOfFiles() const;
+	bool loadDom(const DrumkitDOM& dom,
+	             const std::vector<InstrumentDOM>& instrumentdoms,
+	             DrumKit& drumkit);
 
 private:
-	friend class DOMLoader;
-	friend class DOMLoaderTest;
-	friend class DrumKitParser;
-	friend class DrumKitLoader;
-	friend class DrumkitParserTest;
-
-	void* magic{nullptr};
-
-	std::string _file;
-
-	std::string _name;
-	std::string _description;
-	float _samplerate{44100.0f};
-
-	VersionStr _version;
+	Settings& settings;
+	Random& random;
 };
