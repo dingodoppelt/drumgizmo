@@ -29,9 +29,6 @@
 #include <iomanip>
 #include <sstream>
 
-// FIXME
-#include <iostream>
-
 #include "cpp11fix.h" // required for c++11
 #include "painter.h"
 #include "settings.h"
