@@ -126,11 +126,11 @@ public:
 
 		CPPUNIT_ASSERT_EQUAL(std::size_t(3), dom.instrument_channels.size());
 		CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.instrument_channels[0].name);
-		CPPUNIT_ASSERT_EQUAL(main_state_t::is_main, dom.instrument_channels[0].main);
+		CPPUNIT_ASSERT(main_state_t::is_main == dom.instrument_channels[0].main);
 		CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.instrument_channels[1].name);
-		CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, dom.instrument_channels[1].main);
+		CPPUNIT_ASSERT(main_state_t::is_not_main == dom.instrument_channels[1].main);
 		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.instrument_channels[2].name);
-		CPPUNIT_ASSERT_EQUAL(main_state_t::unset, dom.instrument_channels[2].main);
+		CPPUNIT_ASSERT(main_state_t::unset == dom.instrument_channels[2].main);
 	}
 
 	void drumkitParserTest()
@@ -185,10 +185,10 @@ public:
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
 
-			CPPUNIT_ASSERT_EQUAL(main_state_t::is_main, instr.channel_map[0].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::is_main, instr.channel_map[1].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[2].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[3].main);
+			CPPUNIT_ASSERT(main_state_t::is_main == instr.channel_map[0].main);
+			CPPUNIT_ASSERT(main_state_t::is_main == instr.channel_map[1].main);
+			CPPUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
+			CPPUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
 		}
 		{
 			const auto& instr = dom.instruments[1];
@@ -207,10 +207,10 @@ public:
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
 
-			CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, instr.channel_map[0].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::is_not_main, instr.channel_map[1].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[2].main);
-			CPPUNIT_ASSERT_EQUAL(main_state_t::unset, instr.channel_map[3].main);
+			CPPUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[0].main);
+			CPPUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[1].main);
+			CPPUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
+			CPPUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
 		}
 
 		CPPUNIT_ASSERT_EQUAL(std::size_t(4), dom.channels.size());
