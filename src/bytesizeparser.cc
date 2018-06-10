@@ -67,12 +67,12 @@ std::size_t byteSizeParser(const std::string& argument)
 	{
 		size = std::stoi(argument, &suffix_index);
 	}
-	catch(std::invalid_argument)
+	catch(std::invalid_argument&)
 	{
 		std::cerr << "Invalid argument for diskstreamsize" << std::endl;
 		error = true;
 	}
-	catch(std::out_of_range)
+	catch(std::out_of_range&)
 	{
 		std::cerr << "Number too big. Try using bigger suffix for diskstreamsize" << std::endl;
 		error = true;
