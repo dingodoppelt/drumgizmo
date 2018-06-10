@@ -52,9 +52,9 @@ public:
 			"<?xml version='1.0' encoding='UTF-8'?>\n" \
 			"<instrument version=\"2.0\" name=\"Snare\">\n" \
 			" <channels>\n" \
-			"  <channel name=\"AmbLeft\" main=\"true\">\">\n" \
-			"  <channel name=\"AmbRight\" main=\"false\">\">\n" \
-			"  <channel name=\"SnareBottom\">\">\n" \
+			"  <channel name=\"AmbLeft\" main=\"true\"/>\n" \
+			"  <channel name=\"AmbRight\" main=\"false\"/>\n" \
+			"  <channel name=\"SnareBottom\"/>\n" \
 			" </channels>\n" \
 			" <samples>\n" \
 			"  <sample name=\"Snare-1\" power=\"0.00985718\">\n" \
@@ -95,11 +95,11 @@ public:
 
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
 			CPPUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[2].file);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(3), s.audiofiles[2].filechannel);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
 
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
 			CPPUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[3].file);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles[3].filechannel);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
 		}
 
 		{
@@ -117,11 +117,11 @@ public:
 
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
 			CPPUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[2].file);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(3), s.audiofiles[2].filechannel);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
 
 			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
 			CPPUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[3].file);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles[3].filechannel);
+			CPPUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
 		}
 
 		CPPUNIT_ASSERT_EQUAL(std::size_t(3), dom.instrument_channels.size());
@@ -177,13 +177,13 @@ public:
 
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft-in"), instr.channel_map[0].in);
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight-in"), instr.channel_map[1].in);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom-in"), instr.channel_map[2].in);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop-in"), instr.channel_map[3].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop-in"), instr.channel_map[2].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom-in"), instr.channel_map[3].in);
 
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
 
 			CPPUNIT_ASSERT(main_state_t::is_main == instr.channel_map[0].main);
 			CPPUNIT_ASSERT(main_state_t::is_main == instr.channel_map[1].main);
@@ -199,13 +199,13 @@ public:
 
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft2-in"), instr.channel_map[0].in);
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight2-in"), instr.channel_map[1].in);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom2-in"), instr.channel_map[2].in);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop2-in"), instr.channel_map[3].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop2-in"), instr.channel_map[2].in);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom2-in"), instr.channel_map[3].in);
 
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
 			CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[2].out);
-			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[3].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
+			CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
 
 			CPPUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[0].main);
 			CPPUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[1].main);
@@ -216,8 +216,8 @@ public:
 		CPPUNIT_ASSERT_EQUAL(std::size_t(4), dom.channels.size());
 		CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.channels[0].name);
 		CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.channels[1].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.channels[2].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), dom.channels[3].name);
+		CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), dom.channels[2].name);
+		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.channels[3].name);
 	}
 };
 

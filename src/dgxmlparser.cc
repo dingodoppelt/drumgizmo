@@ -58,25 +58,40 @@ static bool assign(std::string& dest, const std::string& val)
 	return true;
 }
 
-static bool assign(size_t& dest, const std::string& val)
+static bool assign(std::size_t& dest, const std::string& val)
 {
 	int tmp = atoi(val.c_str());
 	if(tmp < 0) return false;
 	dest = tmp;
-	return std::to_string(dest) == val; 
+	return std::to_string(dest) == val;
+}
+
+static bool assign(main_state_t& dest, const std::string& val)
+{
+	if(val != "true" && val != "false")
+	{
+		return false;
+	}
+	dest = (val == "true") ? main_state_t::is_main : main_state_t::is_not_main;
+	return true;
 }
 
 template<typename T>
-static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr)
+static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr, bool opt = false)
 {
-	const char* val = src.attribute(attr.c_str()).as_string(nullptr); 
+	const char* val = src.attribute(attr.c_str()).as_string(nullptr);
 	if(!val) {
-		ERR("Attribute %s not found in %s, offset %s\n", attr.c_str(), src.path().c_str(), (int) src.offset_debug());
-		return false;
+		if(!opt)
+		{
+			ERR(dgxmlparser, "Attribute %s not found in %s, offset %d\n",
+			    attr.data(), src.path().data(), (int)src.offset_debug());
+		}
+		return opt;
 	}
 
 	if(!assign(dest, std::string(val))) {
-		ERR("Attribute %s could not be assigned, offset %s\n", attr.c_str(), (int) src.offset_debug());
+		ERR(dgxmlparser, "Attribute %s could not be assigned, offset %d\n",
+		    attr.data(), (int)src.offset_debug());
 		return false;
 	}
 
@@ -96,11 +111,12 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 		return false;
 	}
 
-	//TODO: handle xml version 
-	
+	//TODO: handle xml version
+
 	pugi::xml_node drumkit = doc.child("drumkit");
 	res &= attrcpy(dom.description, drumkit, "description");
 	res &= attrcpy(dom.name, drumkit, "name");
+	res &= attrcpy(dom.samplerate, drumkit, "samplerate");
 
 	pugi::xml_node channels = doc.child("drumkit").child("channels");
 	for(pugi::xml_node channel: channels.children("channel"))
@@ -110,20 +126,21 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 	}
 
 	pugi::xml_node instruments = doc.child("drumkit").child("instruments");
-	for(pugi::xml_node instrument: instruments.children("instrument"))
+	for(pugi::xml_node instrument : instruments.children("instrument"))
 	{
 		dom.instruments.emplace_back();
 
 		res &= attrcpy(dom.instruments.back().name, instrument, "name");
 		res &= attrcpy(dom.instruments.back().file, instrument, "file");
-		res &= attrcpy(dom.instruments.back().group, instrument, "group");
+		res &= attrcpy(dom.instruments.back().group, instrument, "group", true);
 
 		for(pugi::xml_node cmap: instrument.children("channelmap"))
 		{
 			dom.instruments.back().channel_map.emplace_back();
 			res &= attrcpy(dom.instruments.back().channel_map.back().in, cmap, "in");
 			res &= attrcpy(dom.instruments.back().channel_map.back().out, cmap, "out");
-			//TODO:handle main
+			dom.instruments.back().channel_map.back().main = main_state_t::unset;
+			res &= attrcpy(dom.instruments.back().channel_map.back().main, cmap, "main", true);
 		}
 	}
 
@@ -135,13 +152,21 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 	bool res = true;
 
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(filename.c_str());
-
+	pugi::xml_parse_result result = doc.load_file(filename.data());
 	res &= !result.status;
 	//TODO: handle version
 
 	pugi::xml_node instrument = doc.child("instrument");
 	res &= attrcpy(dom.name, instrument, "name");
+
+	pugi::xml_node channels = instrument.child("channels");
+	for(pugi::xml_node channel : channels.children("channel"))
+	{
+		dom.instrument_channels.emplace_back();
+		res &= attrcpy(dom.instrument_channels.back().name, channel, "name");
+		dom.instrument_channels.back().main = main_state_t::unset;
+		res &= attrcpy(dom.instrument_channels.back().main, channel, "main", true);
+	}
 
 	pugi::xml_node samples = doc.child("instrument").child("samples");
 	for(pugi::xml_node sample: samples.children("sample"))
