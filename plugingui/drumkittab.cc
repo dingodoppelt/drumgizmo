@@ -96,10 +96,25 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 		}
 	}
 
-	if (buttonEvent->button == MouseButton::left &&
-	    buttonEvent->direction == GUI::Direction::down)
+	if (buttonEvent->button == MouseButton::left)
 	{
-		triggerAudition(buttonEvent->x, buttonEvent->y);
+	    if (buttonEvent->direction == GUI::Direction::down)
+		{
+			triggerAudition(buttonEvent->x, buttonEvent->y);
+		}
+	    if (buttonEvent->direction == GUI::Direction::up)
+		{
+			if (shows_instrument_overlay) {
+				Painter painter(*this);
+				painter.clear();
+				painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
+				if (shows_overlay) {
+					painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
+				}
+				redraw();
+			}
+			shows_instrument_overlay = false;
+		}
 	}
 }
 
@@ -110,12 +125,12 @@ void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
 	updateVelocityLabel();
 	velocity_label.resizeToText();
 
-	triggerAudition(scrollEvent->x, scrollEvent->y);
+	triggerAudition(scrollEvent->x, scrollEvent->y, false);
 }
 
 void DrumkitTab::mouseLeaveEvent()
 {
-	if (map_image && shows_overlay) {
+	if (map_image && (shows_overlay || shows_instrument_overlay)) {
 		Painter painter(*this);
 		painter.clear();
 		painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
@@ -125,7 +140,7 @@ void DrumkitTab::mouseLeaveEvent()
 	}
 }
 
-void DrumkitTab::triggerAudition(int x, int y)
+void DrumkitTab::triggerAudition(int x, int y, bool show_hit)
 {
 	auto map_colour = map_image->getPixel(x - drumkit_image_x, y - drumkit_image_y);
 	if (map_colour.alpha() == 0.0) { return; }
@@ -140,8 +155,17 @@ void DrumkitTab::triggerAudition(int x, int y)
 	settings.audition_instrument = it->second;
 	settings.audition_velocity = current_velocity;
 
+	if (show_hit)
+	{
+		Painter painter(*this);
+		painter.drawRestrictedImage(drumkit_image_x, drumkit_image_y, map_colour, *map_image);
+		shows_instrument_overlay = true;
+	}
+
 	current_instrument = it->second;
 	updateInstrumentLabel();
+
+	redraw();
 }
 
 void DrumkitTab::updateVelocityLabel()

@@ -401,9 +401,21 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 			assert(y0 + y >= 0);
 			assert(x0 + x < pixbuf.width);
 			assert(y0 + y < pixbuf.height);
-			pixbuf.addPixel(x0 + x, y0 + y, c);
+
+			if (!has_restriction || c == restriction_colour)
+			{
+				pixbuf.addPixel(x0 + x, y0 + y, c);
+			}
 		}
 	}
+}
+
+void Painter::drawRestrictedImage(int x0, int y0, Colour const& colour, const Drawable& image)
+{
+	has_restriction = true;
+	restriction_colour = colour;
+	drawImage(x0, y0, image);
+	has_restriction = false;
 }
 
 void Painter::drawImageStretched(int x0, int y0, const Drawable& image,

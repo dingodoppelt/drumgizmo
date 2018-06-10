@@ -65,6 +65,7 @@ private:
 
 	std::unordered_map<Colour, std::string, ColourHasher> colour_to_instrument;
 	bool shows_overlay{false};
+	bool shows_instrument_overlay{false};
 
 	std::unique_ptr<Image> drumkit_image;
 	std::unique_ptr<Image> map_image;
@@ -78,7 +79,7 @@ private:
 	// SettingsNotifier& settings_notifier;
 	// Config& config;
 
-	void triggerAudition(int x, int y);
+	void triggerAudition(int x, int y, bool show_hit = true);
 	void updateVelocityLabel();
 	void updateInstrumentLabel();
 };
