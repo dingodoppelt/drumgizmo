@@ -167,8 +167,9 @@ AS_IF(
 
   [test "x$enable_gui" = "xcocoa"],
   [AC_MSG_RESULT([Setting gui backend to Cocoa])
-  GUI_CPPFLAGS="-DUI_COCOA -framework Cocoa"
-  GUI_LIBS="-framework Cocoa"],
+  GUI_CPPFLAGS="-DUI_COCOA"
+  GUI_LIBS="-framework Cocoa"
+	],
 
   [test "x$enable_gui" = "xpugl-x11"],
   [AC_MSG_RESULT([Setting gui backend to Pugl-X11])
@@ -184,7 +185,7 @@ AS_IF(
 
   [test "x$enable_gui" = "xpugl-cocoa"],
   [AC_MSG_RESULT([Setting gui backend to Pugl-Cocoa])
-  GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL -framework Cocoa"
+  GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL"
   GUI_LIBS="-lCocoa -lOpenGL -framework Cocoa"],
 
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
