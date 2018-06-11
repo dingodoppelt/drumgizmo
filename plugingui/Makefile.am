@@ -43,7 +43,9 @@ libdggui_la_CPPFLAGS = \
 	-DLODEPNG_NO_COMPILE_CPP
 
 libdggui_la_CFLAGS =
-
+if ENABLE_PUGL_COCOA
+libdggui_la_LIBTOOLFLAGS=--tag=CC
+endif
 libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
