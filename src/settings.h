@@ -96,10 +96,10 @@ struct Settings
 	Atomic<float> master_bleed{1.0f};
 	Atomic<bool> has_bleed_control{false};
 
-	Atomic<bool> enable_latency_modifier{true};
+	Atomic<bool> enable_latency_modifier{false};
 
-	//! Maximum "early hits" introduces latency. In no. samples.
-	Atomic<std::size_t> latency_max{10000u};
+	//! Maximum "early hits" introduces latency in milliseconds.
+	Atomic<std::size_t> latency_max{250u};
 
 	//! 0 := on-beat
 	//! positive := laid back
