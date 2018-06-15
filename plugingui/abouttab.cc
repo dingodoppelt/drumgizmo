@@ -71,6 +71,15 @@ std::string AboutTab::getAboutText()
 	"\n");
 	about_text.append(std::string(VERSION) + "\n");
 
+	// Bugs
+	about_text.append(
+	"\n"
+	"=============\n"
+	"            Bugs\n"
+	"=============\n"
+	"\n");
+	about_text.append(bugs.data());
+
 	// Authors
 	about_text.append(
 	"\n"

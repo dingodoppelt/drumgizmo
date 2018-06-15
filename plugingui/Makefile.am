@@ -25,6 +25,7 @@ RES = \
 	resources/widget.png \
 	../ABOUT \
 	../AUTHORS \
+	../BUGS \
 	../COPYING
 
 resource_data.cc : rcgen $(RES)
