@@ -41,7 +41,7 @@ LatencyFilter::LatencyFilter(Settings& settings, Random& random)
 template<typename T1, typename T2>
 static T1 getLatencySamples(T1 latency_ms, T2 samplerate)
 {
-	return latency_ms * samplerate / 1000;
+	return latency_ms * samplerate / 1000.;
 }
 
 bool LatencyFilter::filter(event_t& event, std::size_t pos)
