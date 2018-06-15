@@ -57,13 +57,29 @@ public:
 	void scrollEvent(ScrollEvent* scrollEvent) override;
 	void mouseLeaveEvent() override;
 
-	void loadImageFiles(std::string const& image_file, std::string const& map_file);
+	void init(std::string const& image_file, std::string const& map_file);
 
 private:
 	float current_velocity{.5};
 	std::string current_instrument{""};
 
-	std::unordered_map<Colour, std::string, ColourHasher> colour_to_instrument;
+	std::vector<Colour> colours;
+	std::vector<int> pos_to_colour_index;
+	std::vector<std::string> to_instrument_name;
+
+	struct ColourInstrumentPair
+	{
+		Colour colour;
+		std::string instrument;
+	};
+	// FIXME: load this from instrument file
+	std::vector<ColourInstrumentPair> colour_instrument_pairs = {
+		{Colour(0), "Snare"},
+		{Colour(255./255, 15./255, 55./255), "KdrumL"},
+		{Colour(154./255, 153./255, 33./255), "HihatClosed"},
+		{Colour(248./255, 221./255, 37./255), "Tom4"}
+	};
+
 	bool shows_overlay{false};
 	bool shows_instrument_overlay{false};
 

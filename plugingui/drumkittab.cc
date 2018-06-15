@@ -26,6 +26,7 @@
  */
 #include "drumkittab.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -45,7 +46,7 @@ DrumkitTab::DrumkitTab(Widget* parent,
 	/*, settings_notifier(settings_notifier)
 	, config(config)*/
 {
-	loadImageFiles("/home/chaot/Programming/drumgizmo/crocellkit01.png", "/home/chaot/Programming/drumgizmo/crocellkit01_map.png");
+	init("/home/chaot/Programming/drumgizmo/crocellkit01.png", "/home/chaot/Programming/drumgizmo/crocellkit01_map.png");
 
 	velocity_label.move(10, height()-velocity_label.height()-5);
 	updateVelocityLabel();
@@ -142,27 +143,28 @@ void DrumkitTab::mouseLeaveEvent()
 
 void DrumkitTab::triggerAudition(int x, int y, bool show_hit)
 {
-	auto map_colour = map_image->getPixel(x - drumkit_image_x, y - drumkit_image_y);
-	if (map_colour.alpha() == 0.0) { return; }
-
-	auto it = colour_to_instrument.find(map_colour);
-	if (it == colour_to_instrument.end())
+	// FIXME: introduce matrix/grid class and then make notation more beautiful.
+	auto pos = (x - drumkit_image_x) + (y - drumkit_image_y)*map_image->width();
+	auto index = pos_to_colour_index[pos];
+	if (index == -1)
 	{
 		return;
 	}
+	auto const& colour = colours[index];
+	auto const& instrument = to_instrument_name[index];
 
 	++settings.audition_counter;
-	settings.audition_instrument = it->second;
+	settings.audition_instrument = instrument;
 	settings.audition_velocity = current_velocity;
 
 	if (show_hit)
 	{
 		Painter painter(*this);
-		painter.drawRestrictedImage(drumkit_image_x, drumkit_image_y, map_colour, *map_image);
+		painter.drawRestrictedImage(drumkit_image_x, drumkit_image_y, colour, *map_image);
 		shows_instrument_overlay = true;
 	}
 
-	current_instrument = it->second;
+	current_instrument = instrument;
 	updateInstrumentLabel();
 
 	redraw();
@@ -181,18 +183,52 @@ void DrumkitTab::updateInstrumentLabel()
 	instrument_name_label.resizeToText();
 }
 
-void DrumkitTab::loadImageFiles(std::string const& image_file, std::string const& map_file)
+void DrumkitTab::init(std::string const& image_file, std::string const& map_file)
 {
 	drumkit_image = std::make_unique<Image>(image_file);
 	map_image = std::make_unique<Image>(map_file);
 
-	// TODO: actually use mapping from drumkit file here
-	colour_to_instrument = {
-		{Colour(0), "Snare"},
-		{Colour(255./255, 15./255, 55./255), "KdrumL"},
-		{Colour(154./255, 153./255, 33./255), "HihatClosed"},
-		{Colour(248./255, 221./255, 37./255), "Tom4"}
-	};
+	// collect all colours and build lookup table
+	auto const height = map_image->height();
+	auto const width = map_image->width();
+
+	colours.clear();
+	pos_to_colour_index.assign(height*width, -1);
+	to_instrument_name.clear();
+
+	for (std::size_t y = 0; y < map_image->height(); ++y)
+	{
+		for (std::size_t x = 0; x < map_image->width(); ++x)
+		{
+			auto colour = map_image->getPixel(x, y);
+
+			if (colour.alpha() == 1.)
+			{
+				continue;
+			}
+
+			auto it = std::find(colours.begin(), colours.end(), colour);
+			if (it == colours.end())
+			{
+				colours.push_back(colour);
+			}
+
+			int index = std::distance(colours.begin(), it);
+			pos_to_colour_index[x + y*width] = index;
+		}
+	}
+
+	// set instrument names
+	to_instrument_name.resize(colours.size());
+	for (std::size_t i = 0; i < colours.size(); ++i)
+	{
+		for (auto const& pair: colour_instrument_pairs)
+		{
+			if (pair.colour == colours[i]) {
+				to_instrument_name[i] = pair.instrument;
+			}
+		}
+	}
 }
 
 } // GUI::
