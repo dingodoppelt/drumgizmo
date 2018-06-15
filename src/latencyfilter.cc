@@ -92,6 +92,8 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	event.offset += latency_laid_back; // laid back offset (user controlled)
 	event.offset += latency_offset; // current drift
 
+	settings.latency_current.store(latency_offset + latency_laid_back);
+
 	return true;
 }
 

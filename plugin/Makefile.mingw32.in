@@ -61,6 +61,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/font.cc \
 	@top_srcdir@/plugingui/frame.cc \
 	@top_srcdir@/plugingui/humanizerframecontent.cc \
+	@top_srcdir@/plugingui/humaniservisualiser.cc \
 	@top_srcdir@/plugingui/image.cc \
 	@top_srcdir@/plugingui/imagecache.cc \
 	@top_srcdir@/plugingui/knob.cc \

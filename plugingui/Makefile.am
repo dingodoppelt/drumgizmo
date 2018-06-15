@@ -68,6 +68,7 @@ nodist_libdggui_la_SOURCES = \
 	font.cc \
 	frame.cc \
 	humanizerframecontent.cc \
+	humaniservisualiser.cc \
 	image.cc \
 	imagecache.cc \
 	knob.cc \
@@ -191,6 +192,7 @@ EXTRA_DIST = \
 	frame.h \
 	guievent.h \
 	humanizerframecontent.h \
+	humaniservisualiser.h \
 	image.h \
 	imagecache.h \
 	knob.h \

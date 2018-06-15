@@ -31,6 +31,7 @@
 #include "labeledcontrol.h"
 #include "layout.h"
 #include "widget.h"
+#include "humaniservisualiser.h"
 
 #include <settings.h>
 
@@ -63,6 +64,9 @@ private:
 	void laidbackKnobValueChanged(float value);
 	void laidbackSettingsValueChanged(int value);
 
+	void latencyOffsetChanged(int offset);
+	void velocityOffsetChanged(float offset);
+
 	GridLayout layout{this, 3, 1};
 
 	LabeledControl tightness{this, "Tightness"};
@@ -75,6 +79,7 @@ private:
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
+	HumaniserVisualiser visualiser;
 };
 
 } // GUI::

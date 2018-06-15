@@ -27,6 +27,7 @@
 #include "timingframecontent.h"
 
 #include <cmath>
+#include <iostream>
 
 #include "painter.h"
 
@@ -39,6 +40,7 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	: Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
+	, visualiser(this, settings_notifier)
 {
 	layout.setResizeChildren(false);
 
@@ -70,6 +72,9 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	layout.setPosition(&regain, GridLayout::GridRange{1, 2, 0, 1});
 	layout.setPosition(&laidback, GridLayout::GridRange{2, 3, 0, 1});
 
+	visualiser.move(80, 40);
+	visualiser.resize(40, 40);
+
 	CONNECT(this, settings_notifier.latency_stddev,
 	        this, &TimingframeContent::tightnessSettingsValueChanged);
 	CONNECT(this, settings_notifier.latency_regain,
@@ -83,7 +88,6 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	        this, &TimingframeContent::regainKnobValueChanged);
 	CONNECT(&laidback_knob, valueChangedNotifier,
 	        this, &TimingframeContent::laidbackKnobValueChanged);
-
 }
 
 float TimingframeContent::thightnessKnobToSettings(float value) const

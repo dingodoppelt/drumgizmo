@@ -79,6 +79,9 @@ struct Settings
 	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
 	Atomic<float> velocity_stddev{velocity_stddev_default}; // [0.5; 3.0]
 
+		// Current velocity offset - for UI
+	Atomic<float> velocity_modifier_current{1.0f};
+
 	Atomic<bool> enable_velocity_randomiser{false};
 	Atomic<float> velocity_randomiser_weight{0.1f};
 
@@ -121,6 +124,9 @@ struct Settings
 	//! 1: never
 	static float constexpr latency_regain_default = 0.9f;
 	Atomic<float> latency_regain{latency_regain_default};
+
+	// Current latency offset - for UI
+	Atomic<int> latency_current{0};
 };
 
 //! Settings getter class.
@@ -146,6 +152,7 @@ struct SettingsGetter
 	SettingRef<float> velocity_modifier_falloff;
 	SettingRef<float> velocity_modifier_weight;
 	SettingRef<float> velocity_stddev;
+	SettingRef<float> velocity_modifier_current;
 
 	SettingRef<bool> enable_velocity_randomiser;
 	SettingRef<float> velocity_randomiser_weight;
@@ -169,6 +176,7 @@ struct SettingsGetter
 	SettingRef<int> latency_laid_back;
 	SettingRef<float> latency_stddev;
 	SettingRef<float> latency_regain;
+	SettingRef<int> latency_current;
 
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
@@ -188,6 +196,7 @@ struct SettingsGetter
 		, velocity_modifier_falloff{settings.velocity_modifier_falloff}
 		, velocity_modifier_weight{settings.velocity_modifier_weight}
 		, velocity_stddev{settings.velocity_stddev}
+		, velocity_modifier_current{settings.velocity_modifier_current}
 		, enable_velocity_randomiser{settings.enable_velocity_randomiser}
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
 		, samplerate{settings.samplerate}
@@ -205,6 +214,7 @@ struct SettingsGetter
 		, latency_laid_back{settings.latency_laid_back}
 		, latency_stddev{settings.latency_stddev}
 		, latency_regain{settings.latency_regain}
+		, latency_current{settings.latency_current}
 	{
 	}
 };
@@ -233,6 +243,7 @@ public:
 	Notifier<float> velocity_modifier_falloff;
 	Notifier<float> velocity_modifier_weight;
 	Notifier<float> velocity_stddev;
+	Notifier<float> velocity_modifier_current;
 
 	Notifier<bool> enable_velocity_randomiser;
 	Notifier<float> velocity_randomiser_weight;
@@ -256,6 +267,7 @@ public:
 	Notifier<int> latency_laid_back;
 	Notifier<float> latency_stddev;
 	Notifier<float> latency_regain;
+	Notifier<int> latency_current;
 
 	void evaluate()
 	{
@@ -281,6 +293,7 @@ public:
 		EVAL(velocity_modifier_falloff);
 		EVAL(velocity_modifier_weight);
 		EVAL(velocity_stddev);
+		EVAL(velocity_modifier_current);
 
 		EVAL(enable_velocity_randomiser);
 		EVAL(velocity_randomiser_weight);
@@ -304,6 +317,7 @@ public:
 		EVAL(latency_laid_back);
 		EVAL(latency_stddev);
 		EVAL(latency_regain);
+		EVAL(latency_current);
 	}
 
 	SettingsNotifier(Settings& settings)
