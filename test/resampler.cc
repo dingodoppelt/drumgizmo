@@ -47,7 +47,7 @@ public:
 		CHResampler r;
 		DGUNIT_ASSERT_EQUAL(1.0, r.getRatio());
 
-		r.setup(44100, 48000);
+		r.setup(44100.0, 48000.0);
 		DGUNIT_ASSERT_EQUAL(44100.0/48000.0, r.getRatio());
 
 		float in[BUFSZ];
