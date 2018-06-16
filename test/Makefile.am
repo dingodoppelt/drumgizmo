@@ -15,7 +15,7 @@ endif
 
 check_PROGRAMS = $(TESTS)
 
-resource_CXXFLAGS = -DOUTPUT=\"resource\" \
+resource_CXXFLAGS = -DOUTPUT=\"resource\" $(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
 resource_LDFLAGS = $(SNDFILE_LIBS)
@@ -85,7 +85,7 @@ audiocacheeventhandler_SOURCES = \
 
 enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
+	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 enginetest_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
 	 $(top_srcdir)/src/libdg.la
 enginetest_SOURCES = \
@@ -115,7 +115,7 @@ resampler_SOURCES = \
 lv2_CXXFLAGS = -DOUTPUT=\"lv2\" \
 	-I$(top_srcdir)/src \
 	 `pkg-config --cflags serd-0` `pkg-config --cflags lilv-0` \
-	-DLV2_PATH=\"@LV2DIR@\"
+	-DLV2_PATH=\"@LV2DIR@\" $(SNDFILE_CFLAGS)
 lv2_LDFLAGS = `pkg-config --libs serd-0` \
 	`pkg-config --libs lilv-0` -lcrypto \
 	$(SNDFILE_LIBS)
@@ -134,17 +134,6 @@ configfile_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	dgtest.cc \
 	configtest.cc
-
-memchecker_CXXFLAGS = -DOUTPUT=\"memchecker\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
-	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-memchecker_LDFLAGS = $(PTHREAD_LIBS) \
-	$(top_srcdir)/src/libdg.la
-memchecker_SOURCES = \
-	$(top_srcdir)/hugin/hugin.c \
-	dgtest.cc \
-	drumkit_creator.cc \
-	memcheckertest.cc
 
 randomtest_CXXFLAGS = -DOUTPUT=\"randomtest\" \
 	-I$(top_srcdir)/src \
@@ -189,7 +178,7 @@ semaphoretest_SOURCES = \
 
 drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" \
 	-I$(top_srcdir)/src \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
+	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(SNDFILE_CFLAGS)
 drumkitcreatortest_CFLAGS = -DDISABLE_HUGIN
 drumkitcreatortest_LDFLAGS = $(SNDFILE_LIBS)
 drumkitcreatortest_SOURCES = \
