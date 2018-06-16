@@ -30,7 +30,7 @@
 
 #define BUFSZ 500
 
-static float round(float a) { return a<0.5?0:1; }
+static float roundoff(float a) { return a<0.5?0:1; }
 
 class test_resampler
 	: public DGUnit
@@ -66,7 +66,7 @@ public:
 		int inidx = -1;
 		for(int i = 0; i < BUFSZ - (int)r.getOutputSampleCount(); i++) {
 			if(in[i] == 1.0) inidx = i;
-			if(round(out[i]) == 1.0) outidx = i;
+			if(roundoff(out[i]) == 1.0) outidx = i;
 			//printf("in[% 4d]\t= %f\t", i, in[i]);
 			//printf("out[% 4d]\t= %f\n", i, out[i]);
 		}
