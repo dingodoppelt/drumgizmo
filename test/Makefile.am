@@ -223,14 +223,13 @@ instrumentparsertest_SOURCES = \
 	scopedfile.cc \
 	test.cc
 
-drumkitparsertest_CXXFLAGS = -DOUTPUT=\"drumkitparsertest\" $(CPPUNIT_CFLAGS) \
+drumkitparsertest_CXXFLAGS = -DOUTPUT=\"drumkitparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include
-drumkitparsertest_LDFLAGS = $(CPPUNIT_LIBS) \
-	 $(top_srcdir)/src/libdg.la
+drumkitparsertest_LDFLAGS = $(top_srcdir)/src/libdg.la
 drumkitparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	drumkitparsertest.cc \
 	scopedfile.cc \
-	test.cc
+	dgtest.cc
 
 endif

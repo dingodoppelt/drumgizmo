@@ -29,6 +29,7 @@
 #include <cstddef>
 #include <iostream>
 #include <list>
+#include <vector>
 #include <functional>
 #include <string>
 #include <sstream>
@@ -37,11 +38,19 @@
 class DGUnit
 {
 public:
-	DGUnit(const std::string& test_name, const std::string& test_suite = "all")
-		: test_name(test_name)
-		, test_suite(test_suite)
+	DGUnit()
 	{
-		suites.emplace_back(this);
+		if(DGUnit::suite_list == nullptr)
+		{
+			DGUnit::suite_list = this;
+			return;
+		}
+
+		auto unit = DGUnit::suite_list;
+		while(unit->next_unit)
+		{
+		}
+		unit->next_unit = this;
 	}
 
 	//! Overload to prepare stuff for each of the tests.
@@ -52,8 +61,8 @@ public:
 
 	struct test_result
 	{
-		const char* func;
-		const char* file;
+		std::string func;
+		std::string file;
 		std::size_t line;
 		std::string msg;
 		int id;
@@ -63,9 +72,7 @@ public:
 	//! \param test_suite the name of a test suite or null for all.
 	//! \param test_name the name of a test name inside a test suite. Only valid
 	//!  if test_suite is non-null. nullptr for all tests.
-	static int runTests(std::ofstream& out,
-	                    const std::string& test_suite = "all",
-	                    const std::string& test_name = "all")
+	static int runTests(std::ofstream& out)
 	{
 		std::size_t test_num{0};
 		std::size_t failed{0};
@@ -73,22 +80,8 @@ public:
 		std::list<test_result> failed_tests;
 		std::list<test_result> successful_tests;
 
-		std::cout << "Run tests\n";
-		for(auto suite : suites)
+		for(auto suite = DGUnit::suite_list; suite; suite = suite->next_unit)
 		{
-			if(test_suite != "all" && suite->test_suite != test_suite)
-			{
-				continue;
-			}
-
-			if(test_name != "all" && suite->test_name != test_name)
-			{
-				continue;
-			}
-
-			std::cout << "Test: " << suite->test_suite << "::"
-			          << suite->test_name << std::endl;
-
 			for(auto test : suite->tests)
 			{
 				++test_num;
@@ -115,7 +108,7 @@ public:
 				fflush(stdout);
 				test_result result{test.second};
 				result.id = test_num;
-				successful_tests.emplace_back(result);
+				successful_tests.push_back(result);
 			}
 		}
 
@@ -134,7 +127,7 @@ public:
 			out << "			<Message>" << test.msg << "</Message>\n";
 			out << "		</FailedTest>\n";
 		}
-		out << "	<FailedTests>\n";
+		out << "	</FailedTests>\n";
 		out << "	<SuccessfulTests>\n";
 		for(auto test : successful_tests)
 		{
@@ -164,7 +157,7 @@ protected:
 	#define DGUNIT_TEST(func)	  \
 		registerTest(this, &func, #func)
 
-	void assert(bool value, const char* expr,
+	void dg_assert(bool value, const char* expr,
 	           const char* file, std::size_t line)
 	{
 		if(!value)
@@ -177,7 +170,7 @@ protected:
 	}
 	//! Convenience macro to pass along filename and linenumber
 	#define DGUNIT_ASSERT(value)	  \
-		assert(value, #value, __FILE__, __LINE__)
+		dg_assert(value, #value, __FILE__, __LINE__)
 
 	template<typename T>
 	void assert_equal(T expected, T value,
@@ -197,12 +190,11 @@ protected:
 		assert_equal(expected, value, __FILE__, __LINE__)
 
 private:
-	static std::list<class DGUnit*> suites;
-	std::list<std::pair<std::function<void()>, const char*>> tests;
-	const std::string test_name;
-	const std::string test_suite;
+	static DGUnit* suite_list;
+	DGUnit* next_unit{nullptr};
+	std::vector<std::pair<std::function<void()>, const char*>> tests;
 };
 
 #ifdef DGUNIT_MAIN
-std::list<class DGUnit*> DGUnit::suites;
+DGUnit* DGUnit::suite_list{nullptr};
 #endif

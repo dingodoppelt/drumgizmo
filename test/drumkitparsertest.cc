@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <drumkitparser.h>
 #include <drumkit.h>
@@ -32,23 +32,18 @@
 #include "scopedfile.h"
 
 class DrumkitParserTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(DrumkitParserTest);
-	CPPUNIT_TEST(testTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	DrumkitParserTest()
+		: DGUnit()
+	{
+		std::cout << __PRETTY_FUNCTION__ << "\n";
+		DGUNIT_TEST(DrumkitParserTest::testTest);
+	}
 
 	Settings settings;
 	Random rand;
-
-public:
-	void setUp()
-	{
-	}
-
-	void tearDown()
-	{
-	}
 
 	//! This just creates some drumkit.
 	void testTest()
@@ -120,23 +115,23 @@ public:
 		DrumKit drumkit;
 		DrumKitParser parser(settings, drumkit, rand);
 
-		CPPUNIT_ASSERT_EQUAL(0, parser.parseFile(scoped_file.filename()));
+		DGUNIT_ASSERT_EQUAL(0, parser.parseFile(scoped_file.filename()));
 
-		CPPUNIT_ASSERT_EQUAL(std::size_t(2), drumkit.instruments.size());
-		CPPUNIT_ASSERT_EQUAL(std::size_t(4), drumkit.channels.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(2), drumkit.instruments.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(4), drumkit.channels.size());
 
-		CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), drumkit.channels[0].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), drumkit.channels[1].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), drumkit.channels[2].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), drumkit.channels[3].name);
+		DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), drumkit.channels[0].name);
+		DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), drumkit.channels[1].name);
+		DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), drumkit.channels[2].name);
+		DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), drumkit.channels[3].name);
 
-		CPPUNIT_ASSERT_EQUAL(std::string("CrocellKit"), drumkit._name);
-		CPPUNIT_ASSERT_EQUAL(std::string("my description"), drumkit._description);
-		CPPUNIT_ASSERT_EQUAL(std::size_t(48000), drumkit._samplerate);
+		DGUNIT_ASSERT_EQUAL(std::string("CrocellKit"), drumkit._name);
+		DGUNIT_ASSERT_EQUAL(std::string("my description"), drumkit._description);
+		DGUNIT_ASSERT_EQUAL(std::size_t(48000), drumkit._samplerate);
 
-		CPPUNIT_ASSERT(VersionStr("2.0.0") == drumkit._version);
+		DGUNIT_ASSERT(VersionStr("2.0.0") == drumkit._version);
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(DrumkitParserTest);
+DrumkitParserTest drumkit_parser_test;
