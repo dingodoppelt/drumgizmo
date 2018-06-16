@@ -37,6 +37,11 @@
 #include <cstdlib>
 #include <algorithm>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 DrumkitCreator::~DrumkitCreator()
 {
 	for (const auto& file: created_files)
@@ -51,12 +56,16 @@ DrumkitCreator::~DrumkitCreator()
 
 	for (const auto& dir: created_directories)
 	{
+#ifndef _WIN32
 		auto error = rmdir(dir.c_str());
 
 		if (error) {
 			std::cerr << "Directory could not be deleted in DrumkitCreator destructor"
 			          << std::endl;
 		}
+#else
+		RemoveDirectory(dir.c_str());
+#endif
 	}
 }
 
@@ -82,7 +91,7 @@ std::string DrumkitCreator::create(const DrumkitData& data)
 	{
 		throw "DrumkitData not valid";
 	}
-	
+
 	return drumkit_filename;
 }
 
@@ -256,9 +265,16 @@ bool DrumkitCreator::is_valid(const DrumkitData& data)
 
 std::string DrumkitCreator::createTemporaryDirectory(const std::string& name)
 {
+#ifndef _WIN32
 	std::string dir_template = "/tmp/drumgizmo_" + name + "XXXXXX";
 	const auto dir_name = mkdtemp(&dir_template[0]);
-
+#else
+	char temp_dir[MAX_PATH];
+	char dir_name[MAX_PATH];
+	GetTempPath(sizeof(temp_dir), temp_dir);
+	GetTempFileName(temp_dir, name.c_str(), 0, dir_name);
+	CreateDirectory(dir_name, 0);
+#endif
 	if (dir_name) {
 		created_directories.push_back(dir_name);
 		return std::string(dir_name);

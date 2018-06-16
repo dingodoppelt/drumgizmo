@@ -31,6 +31,11 @@
 
 #include <cpp11fix.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 struct Pimpl
 {
 	std::string filename;
@@ -40,8 +45,14 @@ struct Pimpl
 ScopedFile::ScopedFile(const std::string& data)
 	: pimpl(std::make_unique<struct Pimpl>())
 {
+#ifndef _WIN32
 	char templ[] = "/tmp/dg-scoped-file-XXXXXX"; // buffer for filename
 	pimpl->fd = mkstemp(templ);
+#else
+	char templ[] = "dg-scoped-file-XXXXXX"; // buffer for filename
+	_mktemp_s(templ);
+	pimpl->fd = open(templ);
+#endif
 	pimpl->filename = templ;
 	auto sz = write(pimpl->fd, data.data(), data.size());
 	(void)sz;
