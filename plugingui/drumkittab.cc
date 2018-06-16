@@ -179,11 +179,12 @@ void DrumkitTab::triggerAudition(int x, int y)
 	auto index = pos_to_colour_index(x, y);
 	if (index == -1) { return; }
 
-	++settings.audition_counter;
-	settings.audition_instrument = to_instrument_name[index];
-	settings.audition_velocity = current_velocity;
-
-	redraw();
+	auto const& instrument = to_instrument_name[index];
+	if (!instrument.empty()) {
+		++settings.audition_counter;
+		settings.audition_instrument = instrument;
+		settings.audition_velocity = current_velocity;
+	}
 }
 
 void DrumkitTab::highlightInstrument(int index)
