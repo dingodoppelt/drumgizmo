@@ -29,11 +29,11 @@
 #include <string>
 
 #include "colour.h"
+#include "pixelbuffer.h"
 
 namespace GUI
 {
 
-class PixelBufferAlpha;
 class Font;
 class Drawable;
 class Image;
@@ -59,6 +59,9 @@ public:
 	void drawRestrictedImage(int x0, int y0, Colour const& colour, const Drawable& image);
 	void drawImageStretched(int x, int y, const Drawable& image,
 	                        int width, int height);
+
+	template<typename Iterator>
+	void draw(Iterator begin, Iterator end, int x_offset, int y_offset, Colour const& colour);
 
 	typedef struct {
 		Image* topLeft;
@@ -89,5 +92,14 @@ private:
 	PixelBufferAlpha& pixbuf;
 	Colour colour;
 };
+
+template<typename Iterator>
+void Painter::draw(Iterator begin, Iterator end, int x_offset, int y_offset, Colour const& colour)
+{
+	for (auto it = begin; it != end; ++it)
+	{
+		pixbuf.addPixel(x_offset + it->x, y_offset + it->y, colour);
+	}
+}
 
 } // GUI::

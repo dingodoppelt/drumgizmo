@@ -53,15 +53,18 @@ public:
 	T operator()(Index x, Index y) const;
 	T& operator()(Pos pos);
 	T& operator()(Index x, Index y);
+	std::vector<T> const& getAllEntries() const;
 
 	void resize(Index width, Index height);
 	void assign(Index width, Index height, T value);
+	void setDefaultValue(T value);
 
 private:
 	Index _width;
 	Index _height;
 	std::vector<T> _entries;
 
+	T default_value;
 };
 
 template <typename T>
@@ -99,25 +102,31 @@ auto Grid<T>::height() const -> Index
 template <typename T>
 T Grid<T>::operator()(Pos pos) const
 {
-	return _entries.at(pos.x + _width*pos.y);
+	return is_valid(pos) ? _entries[pos.x + _width*pos.y] : default_value;
 }
 
 template <typename T>
 T Grid<T>::operator()(Index x, Index y) const
 {
-	return _entries.at(x + _width*y);
+	return is_valid(x, y) ? _entries[x + _width*y] : default_value;
 }
 
 template <typename T>
 T& Grid<T>::operator()(Pos pos)
 {
-	return _entries.at(pos.x + _width*pos.y);
+	return is_valid(pos) ? _entries[pos.x + _width*pos.y] : default_value;
 }
 
 template <typename T>
 T& Grid<T>::operator()(Index x, Index y)
 {
-	return _entries.at(x + _width*y);
+	return is_valid(x, y) ? _entries[x + _width*y] : default_value;
+}
+
+template <typename T>
+std::vector<T> const& Grid<T>::getAllEntries() const
+{
+	return _entries;
 }
 
 template <typename T>
@@ -134,4 +143,10 @@ void Grid<T>::assign(Index width, Index height, T value)
 	_width = width;
 	_height = height;
 	_entries.assign(_width*_height, value);
+}
+
+template <typename T>
+void Grid<T>::setDefaultValue(T value)
+{
+	default_value = value;
 }

@@ -30,6 +30,8 @@
 #include <memory>
 #include <string>
 
+#include <grid.h>
+
 #include "image.h"
 #include "label.h"
 #include "widget.h"
@@ -55,6 +57,7 @@ public:
 	void resize(std::size_t width, std::size_t height) override;
 	void buttonEvent(ButtonEvent* buttonEvent) override;
 	void scrollEvent(ScrollEvent* scrollEvent) override;
+	void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
 	void mouseLeaveEvent() override;
 
 	void init(std::string const& image_file, std::string const& map_file);
@@ -62,9 +65,15 @@ public:
 private:
 	float current_velocity{.5};
 	std::string current_instrument{""};
+	int current_index{-1};
+
+	using IndexGrid = Grid<int>;
+	using Position = IndexGrid::Pos;
+	using Positions = std::vector<Position>;
 
 	std::vector<Colour> colours;
-	std::vector<int> pos_to_colour_index;
+	IndexGrid pos_to_colour_index;
+	std::vector<Positions> colour_index_to_positions;
 	std::vector<std::string> to_instrument_name;
 
 	struct ColourInstrumentPair
@@ -95,9 +104,10 @@ private:
 	// SettingsNotifier& settings_notifier;
 	// Config& config;
 
-	void triggerAudition(int x, int y, bool show_hit = true);
+	void triggerAudition(int x, int y);
+	void highlightInstrument(int index);
 	void updateVelocityLabel();
-	void updateInstrumentLabel();
+	void updateInstrumentLabel(int index);
 };
 
 } // GUI::

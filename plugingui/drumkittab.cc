@@ -34,6 +34,9 @@
 #include "painter.h"
 #include "settings.h"
 
+// TODO:
+// make consistent with clicks etc
+
 namespace GUI
 {
 
@@ -53,7 +56,9 @@ DrumkitTab::DrumkitTab(Widget* parent,
 	velocity_label.resizeToText();
 
 	instrument_name_label.move(velocity_label.width()+30, height()-instrument_name_label.height()-5);
-	updateInstrumentLabel();
+	updateInstrumentLabel(-1);
+
+	pos_to_colour_index.setDefaultValue(-1);
 }
 
 void DrumkitTab::resize(std::size_t width, std::size_t height)
@@ -126,7 +131,20 @@ void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
 	updateVelocityLabel();
 	velocity_label.resizeToText();
 
-	triggerAudition(scrollEvent->x, scrollEvent->y, false);
+	triggerAudition(scrollEvent->x, scrollEvent->y);
+}
+
+void DrumkitTab::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
+{
+	// change to image coordinates
+	auto const x = mouseMoveEvent->x - drumkit_image_x;
+	auto const y = mouseMoveEvent->y - drumkit_image_y;
+
+	auto index = pos_to_colour_index(x, y);
+
+	highlightInstrument(index);
+	updateInstrumentLabel(index);
+	redraw();
 }
 
 void DrumkitTab::mouseLeaveEvent()
@@ -135,39 +153,45 @@ void DrumkitTab::mouseLeaveEvent()
 		Painter painter(*this);
 		painter.clear();
 		painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
-		redraw();
 
 		shows_overlay = false;
+		redraw();
 	}
 }
 
-void DrumkitTab::triggerAudition(int x, int y, bool show_hit)
+void DrumkitTab::triggerAudition(int x, int y)
 {
-	// FIXME: introduce matrix/grid class and then make notation more beautiful.
-	auto pos = (x - drumkit_image_x) + (y - drumkit_image_y)*map_image->width();
-	auto index = pos_to_colour_index[pos];
-	if (index == -1)
-	{
-		return;
-	}
-	auto const& colour = colours[index];
-	auto const& instrument = to_instrument_name[index];
+	// change to image coordinates
+	x -= drumkit_image_x;
+	y -= drumkit_image_y;
+
+	auto index = pos_to_colour_index(x, y);
+	if (index == -1) { return; }
 
 	++settings.audition_counter;
-	settings.audition_instrument = instrument;
+	settings.audition_instrument = to_instrument_name[index];
 	settings.audition_velocity = current_velocity;
 
-	if (show_hit)
-	{
-		Painter painter(*this);
-		painter.drawRestrictedImage(drumkit_image_x, drumkit_image_y, colour, *map_image);
+	redraw();
+}
+
+void DrumkitTab::highlightInstrument(int index)
+{
+	if (index == current_index) { return; }
+	current_index = index;
+
+	Painter painter(*this);
+	painter.clear();
+	painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
+	shows_overlay = false;
+
+	if (index != -1) {
+		auto const& colour = colours[index];
+		auto const& positions = colour_index_to_positions[index];
+		painter.draw(positions.begin(), positions.end(), drumkit_image_x, drumkit_image_y, colour);
+
 		shows_instrument_overlay = true;
 	}
-
-	current_instrument = instrument;
-	updateInstrumentLabel();
-
-	redraw();
 }
 
 void DrumkitTab::updateVelocityLabel()
@@ -177,8 +201,9 @@ void DrumkitTab::updateVelocityLabel()
 	velocity_label.setText("Velocity: " + stream.str());
 }
 
-void DrumkitTab::updateInstrumentLabel()
+void DrumkitTab::updateInstrumentLabel(int index)
 {
+	current_instrument = (index == -1 ? "" : to_instrument_name[index]);
 	instrument_name_label.setText("Instrument: " + current_instrument);
 	instrument_name_label.resizeToText();
 }
@@ -193,7 +218,8 @@ void DrumkitTab::init(std::string const& image_file, std::string const& map_file
 	auto const width = map_image->width();
 
 	colours.clear();
-	pos_to_colour_index.assign(height*width, -1);
+	pos_to_colour_index.assign(width, height, -1);
+	colour_index_to_positions.clear();
 	to_instrument_name.clear();
 
 	for (std::size_t y = 0; y < map_image->height(); ++y)
@@ -202,19 +228,20 @@ void DrumkitTab::init(std::string const& image_file, std::string const& map_file
 		{
 			auto colour = map_image->getPixel(x, y);
 
-			if (colour.alpha() == 1.)
-			{
-				continue;
-			}
+			if (colour.alpha() == 0.) { continue; }
 
 			auto it = std::find(colours.begin(), colours.end(), colour);
+			int index = std::distance(colours.begin(), it);
+
 			if (it == colours.end())
 			{
-				colours.push_back(colour);
+				// XXX: avoids low alpha values due to feathering of edges
+				colours.emplace_back(colour.red(), colour.green(), colour.blue(), 0.7);
+				colour_index_to_positions.emplace_back();
 			}
 
-			int index = std::distance(colours.begin(), it);
-			pos_to_colour_index[x + y*width] = index;
+			pos_to_colour_index(x, y) = index;
+			colour_index_to_positions[index].emplace_back(x, y);
 		}
 	}
 
