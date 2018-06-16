@@ -34,9 +34,6 @@
 #include "painter.h"
 #include "settings.h"
 
-// TODO:
-// make consistent with clicks etc
-
 namespace GUI
 {
 
@@ -85,18 +82,19 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 			if (buttonEvent->direction == GUI::Direction::down) {
 				Painter painter(*this);
 				painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
-				redraw();
-
 				shows_overlay = true;
+				redraw();
 				return;
 			}
 			if (buttonEvent->direction == GUI::Direction::up) {
 				Painter painter(*this);
 				painter.clear();
 				painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
-				redraw();
+
+				highlightInstrument(current_index);
 
 				shows_overlay = false;
+				redraw();
 				return;
 			}
 		}
@@ -107,6 +105,8 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 	    if (buttonEvent->direction == GUI::Direction::down)
 		{
 			triggerAudition(buttonEvent->x, buttonEvent->y);
+			highlightInstrument(current_index);
+			redraw();
 		}
 	    if (buttonEvent->direction == GUI::Direction::up)
 		{
@@ -117,6 +117,7 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 				if (shows_overlay) {
 					painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
 				}
+				highlightInstrument(current_index);
 				redraw();
 			}
 			shows_instrument_overlay = false;
@@ -141,6 +142,16 @@ void DrumkitTab::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
 	auto const y = mouseMoveEvent->y - drumkit_image_y;
 
 	auto index = pos_to_colour_index(x, y);
+
+	if (index == current_index) { return; }
+	current_index = index;
+
+	Painter painter(*this);
+	painter.clear();
+	painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
+	if (shows_overlay) {
+		painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
+	}
 
 	highlightInstrument(index);
 	updateInstrumentLabel(index);
@@ -177,20 +188,15 @@ void DrumkitTab::triggerAudition(int x, int y)
 
 void DrumkitTab::highlightInstrument(int index)
 {
-	if (index == current_index) { return; }
-	current_index = index;
-
-	Painter painter(*this);
-	painter.clear();
-	painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
-	shows_overlay = false;
-
 	if (index != -1) {
+		Painter painter(*this);
 		auto const& colour = colours[index];
 		auto const& positions = colour_index_to_positions[index];
 		painter.draw(positions.begin(), positions.end(), drumkit_image_x, drumkit_image_y, colour);
-
 		shows_instrument_overlay = true;
+	}
+	else {
+		shows_instrument_overlay = false;
 	}
 }
 
