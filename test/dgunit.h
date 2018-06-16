@@ -34,6 +34,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <cmath>
 
 class DGUnit
 {
@@ -173,6 +174,18 @@ protected:
 	#define DGUNIT_ASSERT(value)	  \
 		dg_assert(value, #value, __FILE__, __LINE__)
 
+	void assert_equal(double expected, double value,
+	                  const char* file, std::size_t line)
+	{
+		if(std::fabs(expected - value) > 0.0000001)
+		{
+			std::stringstream ss;
+			ss << "equality assertion failed\n"
+				"- Expected: " << expected << "\n"
+				"- Actual  : " << value << "\n";
+			throw test_result{"", file, line, ss.str()};
+		}
+	}
 	template<typename T>
 	void assert_equal(T expected, T value,
 	                  const char* file, std::size_t line)
