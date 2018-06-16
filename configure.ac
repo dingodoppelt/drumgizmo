@@ -641,6 +641,12 @@ CPPFLAGS="$tmp_CPPFLAGS"
 CFLAGS="$tmp_CFLAGS"
 LDFLAGS="$tmp_LDFLAGS"
 LIBS="$tmp_LIBS"
+# Add extra (platform specific) libs for semaphore support?
+AS_CASE([$host_os],
+		      [darwin*], [PTHREAD_LIBS="$PTHREAD_LIBS -framework CoreServices"],
+		      [linux*|*bsd*], [],
+		      [msys|mingw*|windows*|winnt|cygwin], [],
+					[])
 AC_SUBST(PTHREAD_CFLAGS)
 AC_SUBST(PTHREAD_LIBS)
 
