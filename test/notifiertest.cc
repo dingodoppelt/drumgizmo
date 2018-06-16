@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <vector>
 
@@ -48,15 +48,13 @@ public:
 };
 
 class NotifierTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(NotifierTest);
-	CPPUNIT_TEST(testTest);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp() { }
-	void tearDown() { }
+	NotifierTest()
+	{
+		DGUNIT_TEST(NotifierTest::testTest);
+	}
 
 	//! This just creates some drumkit.
 	void testTest()
@@ -73,9 +71,9 @@ public:
 			std::vector<Probe*> ref;
 			ref.push_back(&foo1);
 			ref.push_back(&foo2);
-			CPPUNIT_ASSERT_EQUAL(ref.size(), triggers.size());
-			CPPUNIT_ASSERT_EQUAL(ref[0], triggers[0]);
-			CPPUNIT_ASSERT_EQUAL(ref[1], triggers[1]);
+			DGUNIT_ASSERT_EQUAL(ref.size(), triggers.size());
+			DGUNIT_ASSERT_EQUAL(ref[0], triggers[0]);
+			DGUNIT_ASSERT_EQUAL(ref[1], triggers[1]);
 			notifier.disconnect(&foo1);
 			notifier.disconnect(&foo2);
 			triggers.clear();
@@ -88,9 +86,9 @@ public:
 			std::vector<Probe*> ref;
 			ref.push_back(&foo2);
 			ref.push_back(&foo1);
-			CPPUNIT_ASSERT_EQUAL(ref.size(), triggers.size());
-			CPPUNIT_ASSERT_EQUAL(ref[0], triggers[0]);
-			CPPUNIT_ASSERT_EQUAL(ref[1], triggers[1]);
+			DGUNIT_ASSERT_EQUAL(ref.size(), triggers.size());
+			DGUNIT_ASSERT_EQUAL(ref[0], triggers[0]);
+			DGUNIT_ASSERT_EQUAL(ref[1], triggers[1]);
 			notifier.disconnect(&foo1);
 			notifier.disconnect(&foo2);
 			triggers.clear();
@@ -100,4 +98,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(NotifierTest);
+static NotifierTest test;

@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <cstring>
 
@@ -53,19 +53,17 @@ public:
 };
 
 class AudioCacheFileTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(AudioCacheFileTest);
-	CPPUNIT_TEST(refTest);
-	CPPUNIT_TEST(readTest);
-	CPPUNIT_TEST(noFileTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	AudioCacheFileTest()
+	{
+		DGUNIT_TEST(AudioCacheFileTest::refTest);
+		DGUNIT_TEST(AudioCacheFileTest::readTest);
+		DGUNIT_TEST(AudioCacheFileTest::noFileTest);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp() {}
-	void tearDown() {}
 
 	void refTest()
 	{
@@ -74,19 +72,19 @@ public:
 
 		// Conduct tests
 		TestableAudioCacheFiles audiofiles;
-		CPPUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
+		DGUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 
 		audiofiles.getFile(filename);
-		CPPUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
+		DGUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
 
 		audiofiles.getFile(filename);
-		CPPUNIT_ASSERT_EQUAL(2, audiofiles.getRef(filename));
+		DGUNIT_ASSERT_EQUAL(2, audiofiles.getRef(filename));
 
 		audiofiles.releaseFile(filename);
-		CPPUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
+		DGUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
 
 		audiofiles.releaseFile(filename);
-		CPPUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
+		DGUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 	}
 
 	void readTestHelper(size_t buffer_size)
@@ -107,8 +105,8 @@ public:
 		std::vector<sample_t> read_buffer;
 
 		AudioCacheFile file(filename, read_buffer);
-		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
-		CPPUNIT_ASSERT_EQUAL(13, (int)file.getChannelCount()); // Sanity check
+		DGUNIT_ASSERT_EQUAL(filename, file.getFilename());
+		DGUNIT_ASSERT_EQUAL(13, (int)file.getChannelCount()); // Sanity check
 
 		CacheChannels channels;
 
@@ -152,7 +150,7 @@ public:
 
 			for(size_t c = 0; c < 13; ++c)
 			{
-				CPPUNIT_ASSERT_EQUAL(true, ready[c]?true:false);
+				DGUNIT_ASSERT_EQUAL(true, ready[c]?true:false);
 			}
 
 			sample_t diff[13] = {0.0};
@@ -166,7 +164,7 @@ public:
 
 			for(int c = 0; c < 13; ++c)
 			{
-				CPPUNIT_ASSERT_EQUAL((sample_t)0.0, diff[c]);
+				DGUNIT_ASSERT_EQUAL((sample_t)0.0, diff[c]);
 			}
 		}
 
@@ -205,9 +203,9 @@ public:
 		std::vector<sample_t> read_buffer;
 
 		AudioCacheFile file(filename, read_buffer);
-		CPPUNIT_ASSERT_EQUAL(filename, file.getFilename());
-		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
-		CPPUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());
+		DGUNIT_ASSERT_EQUAL(filename, file.getFilename());
+		DGUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
+		DGUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());
 
 		CacheChannels channels;
 
@@ -239,18 +237,18 @@ public:
 
 		for(size_t c = 0; c < 13; ++c)
 		{
-			CPPUNIT_ASSERT_EQUAL(false, ready[c]?true:false);
+			DGUNIT_ASSERT_EQUAL(false, ready[c]?true:false);
 		}
 
 		for(size_t c = 0; c < 13; ++c)
 		{
 			for(size_t i = 0; i < buffer_size; ++i)
 			{
-				CPPUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
+				DGUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
 			}
 		}
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AudioCacheFileTest);
+static AudioCacheFileTest test;

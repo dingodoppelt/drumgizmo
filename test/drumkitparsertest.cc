@@ -36,9 +36,7 @@ class DrumkitParserTest
 {
 public:
 	DrumkitParserTest()
-		: DGUnit()
 	{
-		std::cout << __PRETTY_FUNCTION__ << "\n";
 		DGUNIT_TEST(DrumkitParserTest::testTest);
 	}
 
@@ -134,4 +132,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-DrumkitParserTest drumkit_parser_test;
+static DrumkitParserTest test;

@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <cassert>
 
@@ -45,16 +45,15 @@ std::chrono::nanoseconds dist(const std::chrono::duration<float>& a,
 }
 
 class SemaphoreTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(SemaphoreTest);
-	CPPUNIT_TEST(timeoutTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	SemaphoreTest()
+	{
+		DGUNIT_TEST(SemaphoreTest::timeoutTest);
+	}
 
 public:
-	void setUp() {}
-	void tearDown() {}
-
 	void timeoutTest()
 	{
 		Semaphore sem(0);
@@ -62,26 +61,26 @@ public:
 		{ // 1000ms timeout
 			auto start = std::chrono::steady_clock::now();
 			bool res = sem.wait(std::chrono::milliseconds(1000));
-			CPPUNIT_ASSERT(!res); // false means timeout
+			DGUNIT_ASSERT(!res); // false means timeout
 			auto stop = std::chrono::steady_clock::now();
 
 			// Allow +/-1ms skew
-			CPPUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
+			DGUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
 			               < std::chrono::milliseconds(60));
 		}
 
 		{ // 100ms timeout
 			auto start = std::chrono::steady_clock::now();
 			bool res = sem.wait(std::chrono::milliseconds(100));
-			CPPUNIT_ASSERT(!res); // false means timeout
+			DGUNIT_ASSERT(!res); // false means timeout
 			auto stop = std::chrono::steady_clock::now();
 
 			// Allow +/-1ms skew
-			CPPUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(100))
+			DGUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(100))
 			               < std::chrono::milliseconds(60));
 		}
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(SemaphoreTest);
+static SemaphoreTest test;

@@ -24,20 +24,22 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <audiocacheeventhandler.h>
 
 class AudioCacheEventHandlerTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(AudioCacheEventHandlerTest);
-	CPPUNIT_TEST(threadedTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	AudioCacheEventHandlerTest()
+	{
+		DGUNIT_TEST(AudioCacheEventHandlerTest::threadedTest);
+	}
 
 public:
-	void setUp() {}
-	void tearDown() {}
+	void setup() override {}
+	void teardown() override {}
 
 	void threadedTest()
 	{
@@ -49,4 +51,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AudioCacheEventHandlerTest);
+static AudioCacheEventHandlerTest test;

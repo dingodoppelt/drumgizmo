@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <thread>
 #include <chrono>
@@ -54,20 +54,18 @@ enum class Ports {
  * - Run with buffer size a prime number (and thereby not power of 2)
  * - Run with HUGE number of midi events in one buffer (10000)
  */
-class test_lv2 : public CppUnit::TestFixture
+class test_lv2 : public DGUnit
 {
-	CPPUNIT_TEST_SUITE(test_lv2);
-	CPPUNIT_TEST(open_and_verify);
-	CPPUNIT_TEST(run_no_ports_connected);
-	CPPUNIT_TEST(run_no_output_ports_connected);
-	CPPUNIT_TEST(test1);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	test_lv2()
+	{
+		DGUNIT_TEST(test_lv2::open_and_verify);
+		DGUNIT_TEST(test_lv2::run_no_ports_connected);
+		DGUNIT_TEST(test_lv2::run_no_output_ports_connected);
+		DGUNIT_TEST(test_lv2::test1);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp() {}
-	void tearDown() {}
 
 	void open_and_verify()
 	{
@@ -76,13 +74,13 @@ public:
 		LV2TestHost h(LV2_PATH);
 
 		res = h.open(DG_URI);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.verify();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.close();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 	}
 
 	void run_no_ports_connected()
@@ -92,13 +90,13 @@ public:
 		LV2TestHost h(LV2_PATH);
 
 		res = h.open(DG_URI);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.verify();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.createInstance(44100);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
 			"<config>\n"
@@ -167,21 +165,21 @@ public:
 		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for kit to get loaded (async),
 
 		res = h.run(100);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.destroyInstance();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.close();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 	}
 
 	void run_no_output_ports_connected()
@@ -191,13 +189,13 @@ public:
 		LV2TestHost h(LV2_PATH);
 
 		res = h.open(DG_URI);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.verify();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.createInstance(44100);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
 			"<config>\n"
@@ -266,7 +264,7 @@ public:
 		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		// Port buffers:
 		char sequence_buffer[4096];
@@ -277,22 +275,22 @@ public:
 
 		LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
 		res = h.connectPort((int)Ports::MidiPort, seq.data());
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(100);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.destroyInstance();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.close();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 	}
 
 	void test1()
@@ -302,13 +300,13 @@ public:
 		LV2TestHost h(LV2_PATH);
 
 		res = h.open(DG_URI);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.verify();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.createInstance(44100);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		const char config_fmt[] =
 			"<config>\n"
@@ -377,7 +375,7 @@ public:
 		        latency_regain);
 
 		res = h.loadConfig(config, strlen(config));
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		// Port buffers:
 		char sequence_buffer[4096];
@@ -389,7 +387,7 @@ public:
 
 		LV2TestHost::Sequence seq(sequence_buffer, sizeof(sequence_buffer));
 		res = h.connectPort((int)Ports::MidiPort, seq.data());
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		for(int i = 0; i < 16; ++i)
 		{
@@ -399,11 +397,11 @@ public:
 			}
 			res += h.connectPort((int)Ports::AudioPortOffset + i, pcm_buffer[i]);
 		}
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		// run for 1 samples to trigger kit loading
 		res = h.run(1);
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 		std::this_thread::sleep_for(std::chrono::seconds(1));  // wait for kit to get loaded (async),
 
 		seq.addMidiNote(5, 1, 127);
@@ -411,7 +409,7 @@ public:
 		{
 			res = h.run(10);
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			CPPUNIT_ASSERT_EQUAL(0, res);
+			DGUNIT_ASSERT_EQUAL(0, res);
 
 			//printf("Iteration:\n");
 			//for(int k = 0; k < 16; k++) {
@@ -428,7 +426,7 @@ public:
 		seq.addMidiNote(5, 1, 127);
 		res = h.run(10);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		/*
 		printf("Iteration:\n");
@@ -451,18 +449,18 @@ public:
 		{
 			for(int j = 0; j < 10; j++)
 			{
-				CPPUNIT_ASSERT_EQUAL(((j==5)?comp_val.f:0), pcm_buffer[k][j]);
+				DGUNIT_ASSERT_EQUAL(((j==5)?comp_val.f:0), pcm_buffer[k][j]);
 			}
 		}
 		seq.clear();
 
 		res = h.destroyInstance();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 
 		res = h.close();
-		CPPUNIT_ASSERT_EQUAL(0, res);
+		DGUNIT_ASSERT_EQUAL(0, res);
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(test_lv2);
+static test_lv2 test;

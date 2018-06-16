@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include "../plugingui/resource.h"
 
@@ -42,37 +42,35 @@ public:
 	}
 };
 
-class ResourceTest : public CppUnit::TestFixture
+class ResourceTest : public DGUnit
 {
-	CPPUNIT_TEST_SUITE(ResourceTest);
-	CPPUNIT_TEST(externalReadTest);
-	CPPUNIT_TEST(internalReadTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	ResourceTest()
+	{
+		DGUNIT_TEST(ResourceTest::externalReadTest);
+		DGUNIT_TEST(ResourceTest::internalReadTest);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp() {}
-	void tearDown() {}
 
 	void externalReadTest()
 	{
 		auto filename = drumkit_creator.create0000Wav("0000.wav");
 
 		ResourceTester rc(filename);
-		CPPUNIT_ASSERT(!rc.probeIsInternal());
-		CPPUNIT_ASSERT(rc.valid());
-		CPPUNIT_ASSERT_EQUAL((size_t)46, rc.size());
+		DGUNIT_ASSERT(!rc.probeIsInternal());
+		DGUNIT_ASSERT(rc.valid());
+		DGUNIT_ASSERT_EQUAL((size_t)46, rc.size());
 	}
 
 	void internalReadTest()
 	{
 		ResourceTester rc(":resources/bg.png");
-		CPPUNIT_ASSERT(rc.probeIsInternal());
-		CPPUNIT_ASSERT(rc.valid());
-		CPPUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
+		DGUNIT_ASSERT(rc.probeIsInternal());
+		DGUNIT_ASSERT(rc.valid());
+		DGUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(ResourceTest);
+static ResourceTest test;

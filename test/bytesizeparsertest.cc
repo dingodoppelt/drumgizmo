@@ -24,25 +24,22 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include "bytesizeparser.h"
 
 
 class ByteSizeParserTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(ByteSizeParserTest);
-	CPPUNIT_TEST(suffixTest);
-	CPPUNIT_TEST(falseSuffixTest);
-	CPPUNIT_TEST(falseNumberTest);
-	CPPUNIT_TEST(tooBigNumberTest);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp() {}
-
-	void tearDown() {}
+	ByteSizeParserTest()
+	{
+		DGUNIT_TEST(ByteSizeParserTest::suffixTest);
+		DGUNIT_TEST(ByteSizeParserTest::falseSuffixTest);
+		DGUNIT_TEST(ByteSizeParserTest::falseNumberTest);
+		DGUNIT_TEST(ByteSizeParserTest::tooBigNumberTest);
+	}
 
 	void suffixTest()
 	{
@@ -50,78 +47,78 @@ public:
 		std::size_t kilo = 1024, mega = kilo * 1024, giga = mega * 1024;
 		computed_size = byteSizeParser("3");
 		expected_size = 3;
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3k");
 		expected_size = 3 * kilo;
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3M");
 		expected_size = 3 * mega;
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3G");
 		expected_size = 3 * giga;
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void falseSuffixTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("3K");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3m");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3g");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3ddDD");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void falseNumberTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("K3k");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3k");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3M");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3G");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-k");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("k-3");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-1");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("   -3");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void tooBigNumberTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("999999999999999999999999999999999999G");
-		CPPUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(ByteSizeParserTest);
+static ByteSizeParserTest test;

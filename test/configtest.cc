@@ -24,196 +24,196 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <unistd.h>
 #include <stdio.h>
 
 #include "../src/configfile.h"
 
-class TestConfigFile : public ConfigFile {
+class TestConfigFile
+	: public ConfigFile {
 public:
-  TestConfigFile() : ConfigFile("") {}
+	TestConfigFile()
+		: ConfigFile("")
+	{
+	}
 
 protected:
-  // Overload the built-in open method to use local file instead of homedir.
-  virtual bool open(std::string mode)
-  {
-    fp = fopen("test.conf", mode.c_str());
-    return fp != NULL;
-  }
+	// Overload the built-in open method to use local file instead of homedir.
+	virtual bool open(std::string mode)
+	{
+		fp = fopen("test.conf", mode.c_str());
+		return fp != NULL;
+	}
 };
 
-class test_configtest : public CppUnit::TestFixture
+class test_configtest
+	: public DGUnit
 {
-  CPPUNIT_TEST_SUITE(test_configtest);
-	CPPUNIT_TEST(loading_no_newline);
-	CPPUNIT_TEST(loading_equal_sign);
-	CPPUNIT_TEST(loading_newline);
-	CPPUNIT_TEST(loading_padding_space);
-	CPPUNIT_TEST(loading_padding_space_newline);
-	CPPUNIT_TEST(loading_padding_tab);
-	CPPUNIT_TEST(loading_padding_tab_newline);
-	CPPUNIT_TEST(loading_comment);
-	CPPUNIT_TEST(loading_inline_comment);
-	CPPUNIT_TEST(loading_single_quoted_string);
-	CPPUNIT_TEST(loading_double_quoted_string);
-	CPPUNIT_TEST(loading_error_no_key);
-	CPPUNIT_TEST(loading_error_no_value);
-	CPPUNIT_TEST(loading_error_string_not_terminated_single);
-	CPPUNIT_TEST(loading_error_string_not_terminated_double);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp()
-  {
-  }
-
-	void tearDown()
-  {
-    unlink("test.conf");
-  }
-
-  void writeFile(const char* str)
-  {
-    FILE* fp = fopen("test.conf", "w");
-    fprintf(fp, "%s", str);
-    fclose(fp);
-  }
-
-  void loading_no_newline()
-  {
-    writeFile("a:b");
-
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+	test_configtest()
+	{
+		DGUNIT_TEST(test_configtest::loading_no_newline);
+		DGUNIT_TEST(test_configtest::loading_equal_sign);
+		DGUNIT_TEST(test_configtest::loading_newline);
+		DGUNIT_TEST(test_configtest::loading_padding_space);
+		DGUNIT_TEST(test_configtest::loading_padding_space_newline);
+		DGUNIT_TEST(test_configtest::loading_padding_tab);
+		DGUNIT_TEST(test_configtest::loading_padding_tab_newline);
+		DGUNIT_TEST(test_configtest::loading_comment);
+		DGUNIT_TEST(test_configtest::loading_inline_comment);
+		DGUNIT_TEST(test_configtest::loading_single_quoted_string);
+		DGUNIT_TEST(test_configtest::loading_double_quoted_string);
+		DGUNIT_TEST(test_configtest::loading_error_no_key);
+		DGUNIT_TEST(test_configtest::loading_error_no_value);
+		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_single);
+		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_double);
 	}
 
-  void loading_equal_sign()
-  {
-    writeFile(" a =\tb\t\n");
-
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+	void teardown() override
+	{
+		unlink("test.conf");
 	}
 
-  void loading_newline()
-  {
-    writeFile("a:b\n");
-
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+	void writeFile(const char* str)
+	{
+		FILE* fp = fopen("test.conf", "w");
+		fprintf(fp, "%s", str);
+		fclose(fp);
 	}
 
-  void loading_padding_space()
-  {
-    writeFile(" a : b ");
+	void loading_no_newline()
+	{
+		writeFile("a:b");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_padding_tab()
-  {
-    writeFile("\ta\t:\tb\t");
+	void loading_equal_sign()
+	{
+		writeFile(" a =\tb\t\n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_padding_space_newline()
-  {
-    writeFile(" a : b \n");
+	void loading_newline()
+	{
+		writeFile("a:b\n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_padding_tab_newline()
-  {
-    writeFile("\ta\t:\tb\t\n");
+	void loading_padding_space()
+	{
+		writeFile(" a : b ");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_comment()
-  {
-    writeFile("# comment\na:b\n");
+	void loading_padding_tab()
+	{
+		writeFile("\ta\t:\tb\t");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_inline_comment()
-  {
-    writeFile("a:b #comment\n");
+	void loading_padding_space_newline()
+	{
+		writeFile(" a : b \n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_single_quoted_string()
-  {
-    writeFile("a: '#\"b\" ' \n");
+	void loading_padding_tab_newline()
+	{
+		writeFile("\ta\t:\tb\t\n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("#\"b\" "), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_double_quoted_string()
-  {
-    writeFile("a: \"#'b' \" \n");
+	void loading_comment()
+	{
+		writeFile("# comment\na:b\n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(true, cf.load());
-    CPPUNIT_ASSERT_EQUAL(std::string("#'b' "), cf.getValue("a"));
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_error_no_key()
-  {
-    writeFile(":foo");
+	void loading_inline_comment()
+	{
+		writeFile("a:b #comment\n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
-  void loading_error_no_value()
-  {
-    writeFile("key");
+	void loading_single_quoted_string()
+	{
+		writeFile("a: '#\"b\" ' \n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+		TestConfigFile cf;
+		DGUNIT_ASSERT(cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("#\"b\" "), cf.getValue("a"));
 	}
 
-  void loading_error_string_not_terminated_single()
-  {
-    writeFile("a:'b\n");
+	void loading_double_quoted_string()
+	{
+		writeFile("a: \"#'b' \" \n");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string("#'b' "), cf.getValue("a"));
 	}
 
-  void loading_error_string_not_terminated_double()
-  {
-    writeFile("a:\"b\n");
+	void loading_error_no_key()
+	{
+		writeFile(":foo");
 
-    TestConfigFile cf;
-    CPPUNIT_ASSERT_EQUAL(false, cf.load());
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+	void loading_error_no_value()
+	{
+		writeFile("key");
+
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+	void loading_error_string_not_terminated_single()
+	{
+		writeFile("a:'b\n");
+
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+	void loading_error_string_not_terminated_double()
+	{
+		writeFile("a:\"b\n");
+
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(test_configtest);
-
-
+static test_configtest test;

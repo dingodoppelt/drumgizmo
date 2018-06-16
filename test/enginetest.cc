@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <thread>
 #include <chrono>
@@ -67,17 +67,15 @@ public:
 	bool isFreewheeling() const { return true; }
 };
 
-class test_engine : public CppUnit::TestFixture
+class test_engine : public DGUnit
 {
-	CPPUNIT_TEST_SUITE(test_engine);
-	CPPUNIT_TEST(loading);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	test_engine()
+	{
+		DGUNIT_TEST(test_engine::loading);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp() {}
-	void tearDown() {}
 
 	void loading()
 	{
@@ -119,4 +117,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(test_engine);
+static test_engine test;

@@ -98,6 +98,7 @@ public:
 					result.id = test_num;
 					result.func = test.second;
 					failed_tests.push_back(result);
+					++failed;
 					continue;
 				}
 				catch(...)

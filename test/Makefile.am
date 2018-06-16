@@ -15,23 +15,23 @@ endif
 
 check_PROGRAMS = $(TESTS)
 
-resource_CXXFLAGS = -DOUTPUT=\"resource\" $(CPPUNIT_CFLAGS) \
+resource_CXXFLAGS = -DOUTPUT=\"resource\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
-resource_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+resource_LDFLAGS = $(SNDFILE_LIBS)
 resource_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
 	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	resource_test.cc
 
-audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" $(CPPUNIT_CFLAGS) \
+audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
-audiocache_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocache_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocache_SOURCES = \
 	$(top_srcdir)/src/audiocache.cc \
 	$(top_srcdir)/src/audiocacheeventhandler.cc \
@@ -41,187 +41,187 @@ audiocache_SOURCES = \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	audiocachetest.cc
 
-audiocachefile_CXXFLAGS = -DOUTPUT=\"audiocachefile\" $(CPPUNIT_CFLAGS) \
+audiocachefile_CXXFLAGS = -DOUTPUT=\"audiocachefile\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
-audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocachefile_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	audiocachefiletest.cc
 
 audiocacheidmanager_CXXFLAGS = -DOUTPUT=\"audiocacheidmanager\" \
-	$(CPPUNIT_CFLAGS) \
+	\
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(SNDFILE_CFLAGS)
-audiocacheidmanager_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocacheidmanager_LDFLAGS = $(SNDFILE_LIBS)
 audiocacheidmanager_SOURCES = \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
-	test.cc \
+	dgtest.cc \
 	audiocacheidmanagertest.cc
 
 audiocacheeventhandler_CXXFLAGS = -DOUTPUT=\"audiocacheeventhandler\" \
-	$(CPPUNIT_CFLAGS) \
+	\
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
-audiocacheeventhandler_LDFLAGS = $(PTHREAD_LIBS) $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+audiocacheeventhandler_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocacheeventhandler_SOURCES = \
 	$(top_srcdir)/src/audiocacheeventhandler.cc \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/thread.cc \
 	$(top_srcdir)/src/semaphore.cc \
-	test.cc \
+	dgtest.cc \
 	audiocacheeventhandlertest.cc
 
-enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" $(CPPUNIT_CFLAGS) \
+enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-enginetest_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
+enginetest_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
 	 $(top_srcdir)/src/libdg.la
 enginetest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	enginetest.cc
 
-paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" $(CPPUNIT_CFLAGS) \
+paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-paintertest_LDFLAGS = $(CPPUNIT_LIBS) $(top_srcdir)/plugingui/libdggui.la
+paintertest_LDFLAGS = $(top_srcdir)/plugingui/libdggui.la
 paintertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
-	test.cc \
+	dgtest.cc \
 	paintertest.cc
 
-resampler_CXXFLAGS = -DOUTPUT=\"resampler\" $(CPPUNIT_CFLAGS) \
+resampler_CXXFLAGS = -DOUTPUT=\"resampler\" \
 	$(ZITA_CXXFLAGS) $(SAMPLERATE_CFLAGS) \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
-resampler_LDFLAGS = $(ZITA_LIBS) $(SAMPLERATE_LIBS) $(CPPUNIT_LIBS)
+resampler_LDFLAGS = $(ZITA_LIBS) $(SAMPLERATE_LIBS)
 resampler_SOURCES = \
 	$(top_srcdir)/src/chresampler.cc \
-	test.cc \
+	dgtest.cc \
 	resampler.cc
 
-lv2_CXXFLAGS = -DOUTPUT=\"lv2\" $(CPPUNIT_CFLAGS) \
+lv2_CXXFLAGS = -DOUTPUT=\"lv2\" \
 	-I$(top_srcdir)/src \
 	 `pkg-config --cflags serd-0` `pkg-config --cflags lilv-0` \
 	-DLV2_PATH=\"@LV2DIR@\"
-lv2_LDFLAGS = $(CPPUNIT_LIBS) `pkg-config --libs serd-0` \
+lv2_LDFLAGS = `pkg-config --libs serd-0` \
 	`pkg-config --libs lilv-0` -lcrypto \
 	$(SNDFILE_LIBS)
 lv2_SOURCES = \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	lv2_test_host.cc \
 	lv2.cc
 
-configfile_CXXFLAGS = -DOUTPUT=\"configfile\" $(CPPUNIT_CFLAGS) \
+configfile_CXXFLAGS = -DOUTPUT=\"configfile\" \
 	-I$(top_srcdir)/hugin
-configfile_LDFLAGS = $(CPPUNIT_LIBS)
+configfile_LDFLAGS =
 configfile_SOURCES = \
 	$(top_srcdir)/src/configfile.cc \
 	$(top_srcdir)/hugin/hugin.c \
-	test.cc \
+	dgtest.cc \
 	configtest.cc
 
-memchecker_CXXFLAGS = -DOUTPUT=\"memchecker\" $(CPPUNIT_CFLAGS) \
+memchecker_CXXFLAGS = -DOUTPUT=\"memchecker\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-memchecker_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS) \
+memchecker_LDFLAGS = $(PTHREAD_LIBS) \
 	$(top_srcdir)/src/libdg.la
 memchecker_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	memcheckertest.cc
 
-randomtest_CXXFLAGS = -DOUTPUT=\"randomtest\" $(CPPUNIT_CFLAGS) \
+randomtest_CXXFLAGS = -DOUTPUT=\"randomtest\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
 randomtest_CFLAGS = -DDISABLE_HUGIN
-randomtest_LDFLAGS = $(CPPUNIT_LIBS)
+randomtest_LDFLAGS =
 randomtest_SOURCES = \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	randomtest.cc
 
-atomictest_CXXFLAGS = -DOUTPUT=\"atomictest\" $(CPPUNIT_CFLAGS) \
+atomictest_CXXFLAGS = -DOUTPUT=\"atomictest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
-atomictest_LDFLAGS = $(CPPUNIT_LIBS)
-atomictest_SOURCES = atomictest.cc test.cc
+atomictest_LDFLAGS =
+atomictest_SOURCES = atomictest.cc dgtest.cc
 
 syncedsettingstest_CXXFLAGS = -DOUTPUT=\"syncedsettingstest\" \
-	$(CPPUNIT_CFLAGS) -I$(top_srcdir)/src -I$(top_srcdir)/hugin
-syncedsettingstest_LDFLAGS = $(CPPUNIT_LIBS)
-syncedsettingstest_SOURCES = syncedsettings.cc test.cc
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
+syncedsettingstest_LDFLAGS =
+syncedsettingstest_SOURCES = syncedsettings.cc dgtest.cc
 
 EXTRA_DIST = \
 	lv2_test_host.h \
 	drumkit_creator.h
 
-imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" $(CPPUNIT_CFLAGS) \
+imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
-imagecachetest_LDFLAGS = $(CPPUNIT_LIBS) $(top_srcdir)/plugingui/libdggui.la
+imagecachetest_LDFLAGS = $(top_srcdir)/plugingui/libdggui.la
 imagecachetest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	imagecachetest.cc \
-	test.cc
+	dgtest.cc
 
-semaphoretest_CXXFLAGS = -DOUTPUT=\"semaphoretest\" $(CPPUNIT_CFLAGS) \
+semaphoretest_CXXFLAGS = -DOUTPUT=\"semaphoretest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-semaphoretest_LDFLAGS = $(CPPUNIT_LIBS) $(PTHREAD_LIBS)
+semaphoretest_LDFLAGS = $(PTHREAD_LIBS)
 semaphoretest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/semaphore.cc \
 	semaphoretest.cc \
-	test.cc
+	dgtest.cc
 
-drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" $(CPPUNIT_CFLAGS) \
+drumkitcreatortest_CXXFLAGS = -DOUTPUT=\"drumkitcreatortest\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
 drumkitcreatortest_CFLAGS = -DDISABLE_HUGIN
-drumkitcreatortest_LDFLAGS = $(CPPUNIT_LIBS) $(SNDFILE_LIBS)
+drumkitcreatortest_LDFLAGS = $(SNDFILE_LIBS)
 drumkitcreatortest_SOURCES = \
 	$(top_srcdir)/src/random.cc \
-	test.cc \
+	dgtest.cc \
 	drumkit_creator.cc \
 	drumkitcreatortest.cc
 
-bytesizeparsertest_CXXFLAGS = -DOUTPUT=\"bytesizeparsertest\" $(CPPUNIT_CFLAGS) \
+bytesizeparsertest_CXXFLAGS = -DOUTPUT=\"bytesizeparsertest\" \
 	-I$(top_srcdir)/src
-bytesizeparsertest_LDFLAGS = $(CPPUNIT_LIBS)
+bytesizeparsertest_LDFLAGS =
 bytesizeparsertest_SOURCES = \
 	$(top_srcdir)/src/bytesizeparser.cc \
 	bytesizeparsertest.cc \
-	test.cc
+	dgtest.cc
 
-notifiertest_CXXFLAGS = -DOUTPUT=\"notifiertest\" $(CPPUNIT_CFLAGS) \
+notifiertest_CXXFLAGS = -DOUTPUT=\"notifiertest\" \
 	-I$(top_srcdir)/src
-notifiertest_LDFLAGS = $(CPPUNIT_LIBS)
+notifiertest_LDFLAGS =
 notifiertest_SOURCES = \
 	notifiertest.cc \
-	test.cc
+	dgtest.cc
 
-instrumentparsertest_CXXFLAGS = -DOUTPUT=\"instrumentparsertest\" $(CPPUNIT_CFLAGS) \
+instrumentparsertest_CXXFLAGS = -DOUTPUT=\"instrumentparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include
-instrumentparsertest_LDFLAGS = $(CPPUNIT_LIBS) \
+instrumentparsertest_LDFLAGS = \
 	 $(top_srcdir)/src/libdg.la
 instrumentparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	instrumentparsertest.cc \
 	scopedfile.cc \
-	test.cc
+	dgtest.cc
 
 drumkitparsertest_CXXFLAGS = -DOUTPUT=\"drumkitparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include

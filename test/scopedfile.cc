@@ -43,7 +43,8 @@ ScopedFile::ScopedFile(const std::string& data)
 	char templ[] = "/tmp/dg-scoped-file-XXXXXX"; // buffer for filename
 	pimpl->fd = mkstemp(templ);
 	pimpl->filename = templ;
-	write(pimpl->fd, data.data(), data.size());
+	auto sz = write(pimpl->fd, data.data(), data.size());
+	(void)sz;
 	close(pimpl->fd);
 }
 

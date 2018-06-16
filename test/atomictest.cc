@@ -24,48 +24,46 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <atomic.h>
 
 class AtomicTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(AtomicTest);
-	CPPUNIT_TEST(podAtomicsUseStandardImpl);
-	CPPUNIT_TEST(nonPodAtomicsUseOwnImpl);
-	CPPUNIT_TEST(podAtomicCanBeDefaultInitialized);
-	CPPUNIT_TEST(nonPodAtomicCanBeDefaultInitialized);
-	CPPUNIT_TEST(podAtomicCanBeValueInitialized);
-	CPPUNIT_TEST(nonPodAtomicCanBeValueInitialized);
-	CPPUNIT_TEST(podAtomicCanBeValueAssigned);
-	CPPUNIT_TEST(nonPodAtomicCanBeValueAssigned);
-	CPPUNIT_TEST(podAtomicsAreLockFree);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp() {}
-	void tearDown() {}
+	AtomicTest()
+	{
+		DGUNIT_TEST(AtomicTest::podAtomicsUseStandardImpl);
+		DGUNIT_TEST(AtomicTest::nonPodAtomicsUseOwnImpl);
+		DGUNIT_TEST(AtomicTest::podAtomicCanBeDefaultInitialized);
+		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeDefaultInitialized);
+		DGUNIT_TEST(AtomicTest::podAtomicCanBeValueInitialized);
+		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueInitialized);
+		DGUNIT_TEST(AtomicTest::podAtomicCanBeValueAssigned);
+		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueAssigned);
+		DGUNIT_TEST(AtomicTest::podAtomicsAreLockFree);
+	}
 
 	void podAtomicsUseStandardImpl()
 	{
-		CPPUNIT_ASSERT(isUsingStandardImpl<bool>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<short int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<long int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<long long int>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<float>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<double>());
-		CPPUNIT_ASSERT(isUsingStandardImpl<long double>());
+		DGUNIT_ASSERT(isUsingStandardImpl<bool>());
+		DGUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<short int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<long int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<long long int>());
+		DGUNIT_ASSERT(isUsingStandardImpl<float>());
+		DGUNIT_ASSERT(isUsingStandardImpl<double>());
+		DGUNIT_ASSERT(isUsingStandardImpl<long double>());
 	}
 
 	void nonPodAtomicsUseOwnImpl()
 	{
-		CPPUNIT_ASSERT(!isUsingStandardImpl<std::string>());
+		DGUNIT_ASSERT(!isUsingStandardImpl<std::string>());
 	}
 
 	void podAtomicCanBeDefaultInitialized()
@@ -78,52 +76,52 @@ public:
 	void nonPodAtomicCanBeDefaultInitialized()
 	{
 		Atomic<std::string> s;
-		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{});
+		DGUNIT_ASSERT_EQUAL(s.load(), std::string{});
 	}
 
 	void podAtomicCanBeValueInitialized()
 	{
 		Atomic<int> i{5};
-		CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+		DGUNIT_ASSERT_EQUAL(i.load(), 5);
 	}
 
 	void nonPodAtomicCanBeValueInitialized()
 	{
 		Atomic<std::string> s{"hello world"};
-		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+		DGUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
 	}
 
 	void podAtomicCanBeValueAssigned()
 	{
 		Atomic<int> i;
 		i = 5;
-		CPPUNIT_ASSERT_EQUAL(i.load(), 5);
+		DGUNIT_ASSERT_EQUAL(i.load(), 5);
 	}
 
 	void nonPodAtomicCanBeValueAssigned()
 	{
 		Atomic<std::string> s;
 		s = "hello world";
-		CPPUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+		DGUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
 	}
 
 	void podAtomicsAreLockFree()
 	{
-		CPPUNIT_ASSERT(isLockFree<bool>());
-		CPPUNIT_ASSERT(isLockFree<unsigned short int>());
-		CPPUNIT_ASSERT(isLockFree<short int>());
-		CPPUNIT_ASSERT(isLockFree<unsigned int>());
-		CPPUNIT_ASSERT(isLockFree<int>());
-		CPPUNIT_ASSERT(isLockFree<unsigned long int>());
-		CPPUNIT_ASSERT(isLockFree<long int>());
-		CPPUNIT_ASSERT(isLockFree<float>());
-		CPPUNIT_ASSERT(isLockFree<std::size_t>());
+		DGUNIT_ASSERT(isLockFree<bool>());
+		DGUNIT_ASSERT(isLockFree<unsigned short int>());
+		DGUNIT_ASSERT(isLockFree<short int>());
+		DGUNIT_ASSERT(isLockFree<unsigned int>());
+		DGUNIT_ASSERT(isLockFree<int>());
+		DGUNIT_ASSERT(isLockFree<unsigned long int>());
+		DGUNIT_ASSERT(isLockFree<long int>());
+		DGUNIT_ASSERT(isLockFree<float>());
+		DGUNIT_ASSERT(isLockFree<std::size_t>());
 
 		// NOTE: Not lock free on small systems
-		//CPPUNIT_ASSERT(isLockFree<unsigned long long int>());
-		//CPPUNIT_ASSERT(isLockFree<long long int>());
-		//CPPUNIT_ASSERT(isLockFree<double>());
-		//CPPUNIT_ASSERT(isLockFree<long double>());
+		//DGUNIT_ASSERT(isLockFree<unsigned long long int>());
+		//DGUNIT_ASSERT(isLockFree<long long int>());
+		//DGUNIT_ASSERT(isLockFree<double>());
+		//DGUNIT_ASSERT(isLockFree<long double>());
 	}
 
 private:
@@ -142,4 +140,4 @@ private:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AtomicTest);
+static AtomicTest test;

@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <random.h>
 
@@ -32,22 +32,14 @@
 #include <cmath>
 
 class RandomTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(RandomTest);
-	CPPUNIT_TEST(rangeTest);
-	CPPUNIT_TEST(normalTest);
-	CPPUNIT_TEST(chooseTest);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp()
+	RandomTest()
 	{
-	}
-
-	void tearDown()
-	{
-	
+		DGUNIT_TEST(RandomTest::rangeTest);
+		DGUNIT_TEST(RandomTest::normalTest);
+		DGUNIT_TEST(RandomTest::chooseTest);
 	}
 
 	void rangeTest()
@@ -63,16 +55,16 @@ public:
 		{
 			float rand_float = rand.floatInRange(float_lb, float_ub);
 			float rand_int = rand.intInRange(int_lb, int_ub);
-			CPPUNIT_ASSERT(rand_float >= float_lb && rand_float <= float_ub);
-			CPPUNIT_ASSERT(rand_int >= int_lb && rand_int <= int_ub);
+			DGUNIT_ASSERT(rand_float >= float_lb && rand_float <= float_ub);
+			DGUNIT_ASSERT(rand_int >= int_lb && rand_int <= int_ub);
 		}
-		
+
 		// check if the series of random numbers is the one we expect
 		// for a certain seed.
 		rand = Random(666);
-		CPPUNIT_ASSERT_EQUAL(0, rand.intInRange(0,100));
-		CPPUNIT_ASSERT_EQUAL(61, rand.intInRange(0,100));
-		CPPUNIT_ASSERT_EQUAL(23, rand.intInRange(0,100));
+		DGUNIT_ASSERT_EQUAL(0, rand.intInRange(0,100));
+		DGUNIT_ASSERT_EQUAL(61, rand.intInRange(0,100));
+		DGUNIT_ASSERT_EQUAL(23, rand.intInRange(0,100));
 	}
 
 	void normalTest()
@@ -97,8 +89,8 @@ public:
 		float estimated_stddev = sqrt(sum_of_squares/nr_of_samples - estimated_mean*estimated_mean);
 
 		float epsilon = 0.1;
-		CPPUNIT_ASSERT(estimated_mean >= real_mean-epsilon && estimated_mean <= real_mean+epsilon);
-		CPPUNIT_ASSERT(estimated_stddev >= real_stddev-epsilon && estimated_stddev <= real_stddev+epsilon);
+		DGUNIT_ASSERT(estimated_mean >= real_mean-epsilon && estimated_mean <= real_mean+epsilon);
+		DGUNIT_ASSERT(estimated_stddev >= real_stddev-epsilon && estimated_stddev <= real_stddev+epsilon);
 	}
 
 	void chooseTest()
@@ -110,10 +102,10 @@ public:
 
 		for (int i=0; i<nr_of_samples; i++)
 		{
-			CPPUNIT_ASSERT_EQUAL(42, rand.choose(vec));
+			DGUNIT_ASSERT_EQUAL(42, rand.choose(vec));
 		}
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(RandomTest);
+static RandomTest test;

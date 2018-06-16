@@ -24,28 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include "drumkit_creator.h"
 
 class DrumkitcreatorTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(DrumkitcreatorTest);
-	CPPUNIT_TEST(testTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	DrumkitcreatorTest()
+	{
+		DGUNIT_TEST(DrumkitcreatorTest::testTest);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp()
-	{
-	}
-
-	void tearDown()
-	{
-	
-	}
 
 	//! This just creates some drumkit.
 	void testTest()
@@ -55,4 +47,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(DrumkitcreatorTest);
+static DrumkitcreatorTest test;

@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <cassert>
 
@@ -49,50 +49,48 @@ public:
 };
 
 class ImageCacheTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(ImageCacheTest);
-	CPPUNIT_TEST(refCountTest);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp() {}
-	void tearDown() {}
+	ImageCacheTest()
+	{
+		DGUNIT_TEST(ImageCacheTest::refCountTest);
+	}
 
 	void refCountTest()
 	{
 		TestableImageCache imageCache;
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+		DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 		{
 			auto image1{imageCache.getImage("foo")};
 			(void)image1;
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 			auto image2 = imageCache.getImage("bar");
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			auto image3 = imageCache.getImage("foo");
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			{
 				auto image4 = imageCache.getImage("foo");
-				CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(3u));
-				CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+				DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(3u));
+				DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 			}
 
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
-			CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 		}
 
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
-		CPPUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+		DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 	}
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(ImageCacheTest);
+static ImageCacheTest test;

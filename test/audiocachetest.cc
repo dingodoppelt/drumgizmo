@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <thread>
 #include <chrono>
@@ -38,20 +38,18 @@
 #define FRAMESIZE 64
 
 class AudioCacheTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(AudioCacheTest);
-	CPPUNIT_TEST(singleChannelNonThreaded);
-	CPPUNIT_TEST(singleChannelThreaded);
-	CPPUNIT_TEST(multiChannelNonThreaded);
-	CPPUNIT_TEST(multiChannelThreaded);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	AudioCacheTest()
+	{
+		DGUNIT_TEST(AudioCacheTest::singleChannelNonThreaded);
+		DGUNIT_TEST(AudioCacheTest::singleChannelThreaded);
+		DGUNIT_TEST(AudioCacheTest::multiChannelNonThreaded);
+		DGUNIT_TEST(AudioCacheTest::multiChannelThreaded);
+	}
 
 	DrumkitCreator drumkit_creator;
-
-public:
-	void setUp() {}
-	void tearDown() {}
 
 	//! Test runner.
 	//! \param filename The name of the file to read.
@@ -97,7 +95,7 @@ public:
 			// Test pre cache:
 			for(size_t i = 0; i < size; ++i)
 			{
-				CPPUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
+				DGUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 				++offset;
 			}
 
@@ -113,14 +111,14 @@ public:
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 						if(--timeout == 0)
 						{
-							CPPUNIT_ASSERT(false); // timeout
+							DGUNIT_ASSERT(false); // timeout
 						}
 					}
 				}
 
 				samples = audio_cache.next(id, size);
 
-				CPPUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
+				DGUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
 
 				for(size_t i = 0; (i < size) && (offset < audio_file_ref.size); ++i)
 				{
@@ -132,7 +130,7 @@ public:
 						       (int)(audio_file_ref.size - offset),
 						       (int)i, (int)size, (int)(size - i));
 					}
-					CPPUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
+					DGUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 					++offset;
 				}
 			}
@@ -202,4 +200,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AudioCacheTest);
+static AudioCacheTest test;

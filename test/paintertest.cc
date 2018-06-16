@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include "../plugingui/canvas.h"
 #include "../plugingui/painter.h"
@@ -49,16 +49,14 @@ private:
 };
 
 class PainterTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(PainterTest);
-	CPPUNIT_TEST(testDrawImage);
-	CPPUNIT_TEST(testDrawText);
-	CPPUNIT_TEST_SUITE_END();
-
 public:
-	void setUp() {}
-	void tearDown() {}
+	PainterTest()
+	{
+		DGUNIT_TEST(PainterTest::testDrawImage);
+		DGUNIT_TEST(PainterTest::testDrawText);
+	}
 
 	void testDrawImage()
 	{
@@ -158,4 +156,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(PainterTest);
+static PainterTest test;
