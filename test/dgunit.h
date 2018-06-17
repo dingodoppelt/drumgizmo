@@ -120,13 +120,13 @@ public:
 		for(auto test : failed_tests)
 		{
 			out << "		<FailedTest id=\"" << test.id << "\">\n";
-			out << "			<Name>" << test.func << "</Name>\n";
+			out << "			<Name>" << sanitize(test.func) << "</Name>\n";
 			out << "			<FailureType>Assertion</FailureType>\n";
 			out << "			<Location>\n";
-			out << "				<File>" << test.file << "</File>\n";
+			out << "				<File>" << sanitize(test.file) << "</File>\n";
 			out << "				<Line>" << test.line << "</Line>\n";
 			out << "			</Location>\n";
-			out << "			<Message>" << test.msg << "</Message>\n";
+			out << "			<Message>" << sanitize(test.msg) << "</Message>\n";
 			out << "		</FailedTest>\n";
 		}
 		out << "	</FailedTests>\n";
@@ -134,7 +134,7 @@ public:
 		for(auto test : successful_tests)
 		{
 			out << "		<Test id=\"" << test.id << "\">\n";
-			out << "			<Name>" << test.func << "</Name>\n";
+			out << "			<Name>" << sanitize(test.func) << "</Name>\n";
 			out << "		</Test>\n";
 
 		}
@@ -204,6 +204,33 @@ protected:
 		assert_equal(expected, value, __FILE__, __LINE__)
 
 private:
+	static std::string sanitize(const std::string& input)
+	{
+		std::string output;
+		for(auto c : input)
+		{
+			switch(c)
+			{
+			case '"':
+				output += "&quot;";
+				break;
+			case '&':
+				output += "&amp;";
+				break;
+			case '<':
+				output += "&lt;";
+				break;
+			case '>':
+				output += "&gt;";
+				break;
+			default:
+				output += c;
+				break;
+			}
+		}
+		return output;
+	}
+
 	static DGUnit* suite_list;
 	DGUnit* next_unit{nullptr};
 	std::vector<std::pair<std::function<void()>, const char*>> tests;
