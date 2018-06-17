@@ -39,8 +39,8 @@
 #include "audioinputengine.h"
 #include "audiocache.h"
 
-class DrumkitDOM;
-class InstrumentDOM;
+struct DrumkitDOM;
+struct InstrumentDOM;
 
 //! This class is responsible for loading the drumkits in its own thread.
 //! All interaction calls are simply modifying queues and not doing any
