@@ -27,12 +27,15 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 class DrumkitDOM;
 class InstrumentDOM;
 class DrumKit;
 class Settings;
 class Random;
+class InstrumentChannel;
+class Instrument;
 
 class DOMLoader
 {
@@ -44,6 +47,9 @@ public:
 	             DrumKit& drumkit);
 
 private:
+	static InstrumentChannel* addOrGetChannel(Instrument& instrument,
+	                                          const std::string& name);
+
 	Settings& settings;
 	Random& random;
 };

@@ -56,6 +56,8 @@ struct InstrumentChannelDOM
 struct InstrumentDOM
 {
 	std::string name;
+	std::string version;
+	std::string description;
 	std::vector<SampleDOM> samples;
 	std::vector<InstrumentChannelDOM> instrument_channels;
 };
@@ -86,6 +88,7 @@ struct InstrumentRefDOM
 struct DrumkitDOM
 {
 	std::string name;
+	std::string version;
 	std::string description;
 	double samplerate;
 

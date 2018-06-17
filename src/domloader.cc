@@ -26,10 +26,22 @@
  */
 #include "domloader.h"
 
+#include <unordered_map>
+
+#include <hugin.hpp>
+
 #include "DGDOM.h"
 #include "drumkit.h"
+#include "path.h"
+#include "channel.h"
 
 #include "cpp11fix.h"
+
+struct channel_attribute_t
+{
+	std::string cname;
+	main_state_t main_state;
+};
 
 DOMLoader::DOMLoader(Settings& settings, Random& random)
 	: settings(settings)
@@ -41,7 +53,10 @@ bool DOMLoader::loadDom(const DrumkitDOM& dom,
                         const std::vector<InstrumentDOM>& instrumentdoms,
                         DrumKit& drumkit)
 {
+	settings.has_bleed_control.store(false);
+
 	drumkit._name = dom.name;
+	drumkit._version = dom.version;
 	drumkit._description = dom.description;
 	drumkit._samplerate = dom.samplerate;
 
@@ -54,15 +69,131 @@ bool DOMLoader::loadDom(const DrumkitDOM& dom,
 
 	for(const auto& instrumentref : dom.instruments)
 	{
-		auto ptr = std::make_unique<Instrument>(settings, random);
-		ptr->setGroup(instrumentref.group);
+		bool found{found};
 
-		//InstrumentParser parser(*ptr, settings);
-		//parser.parseFile(path + "/" + instr_file);
+		std::unordered_map<std::string, channel_attribute_t> channelmap;
+		for(const auto& map : instrumentref.channel_map)
+		{
+			channel_attribute_t cattr{map.out, map.main};
+			channelmap[map.in] = cattr;
+		}
 
-		// Transfer ownership to the DrumKit object.
-		drumkit.instruments.emplace_back(std::move(ptr));
+		for(const auto& instrumentdom : instrumentdoms)
+		{
+			if(instrumentdom.name != instrumentref.name)
+			{
+				continue;
+			}
+
+			auto instrument = std::make_unique<Instrument>(settings, random);
+			instrument->setGroup(instrumentref.group);
+			instrument->_name = instrumentdom.name;
+			instrument->version = instrumentdom.version;
+			instrument->_description = instrumentdom.description;
+
+			auto path = getPath(instrumentref.file);
+			for(const auto& sampledom : instrumentdom.samples)
+			{
+				auto sample = new Sample(sampledom.name, sampledom.power);
+				for(const auto& audiofiledom : sampledom.audiofiles)
+				{
+					InstrumentChannel *instrument_channel =
+						DOMLoader::addOrGetChannel(*instrument,
+						                           audiofiledom.instrument_channel);
+
+					auto audio_file =
+						std::make_unique<AudioFile>(path + "/" + audiofiledom.file,
+						                            audiofiledom.filechannel - 1,
+						                            instrument_channel);
+
+					sample->addAudioFile(instrument_channel,
+					                     audio_file.get());
+
+					// Transfer audio_file ownership to the instrument.
+					instrument->audiofiles.push_back(std::move(audio_file));
+				}
+				instrument->samplelist.push_back(sample);
+			}
+
+			main_state_t default_main_state = main_state_t::unset;
+			for(const auto& channel : channelmap)
+			{
+				if(channel.second.main_state != main_state_t::unset)
+				{
+					default_main_state = main_state_t::is_not_main;
+				}
+			}
+
+			// Assign kit channel numbers to instruments channels and reset
+			// main_state attribute as needed.
+			for(auto& instrument_channel: instrument->instrument_channels)
+			{
+				channel_attribute_t cattr{instrument_channel.name, main_state_t::unset};
+				if(channelmap.find(instrument_channel.name) != channelmap.end())
+				{
+					cattr = channelmap[instrument_channel.name];
+				}
+
+				if(cattr.main_state == main_state_t::unset)
+				{
+					cattr.main_state = default_main_state;
+				}
+
+				if(cattr.main_state != main_state_t::unset)
+				{
+					instrument_channel.main = cattr.main_state;
+				}
+
+				for(auto cnt = 0u; cnt < drumkit.channels.size(); ++cnt)
+				{
+					if(drumkit.channels[cnt].name == cattr.cname)
+					{
+						instrument_channel.num = drumkit.channels[cnt].num;
+						instrument_channel.name = drumkit.channels[cnt].name;
+						if(instrument_channel.main == main_state_t::is_main)
+						{
+							settings.has_bleed_control.store(true);
+						}
+					}
+				}
+
+				if(instrument_channel.num == NO_CHANNEL)
+				{
+					ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
+					    instrument_channel.name.c_str(), instrument->getName().c_str());
+				}
+			}
+
+			// Transfer ownership to the DrumKit object.
+			drumkit.instruments.emplace_back(std::move(instrument));
+
+			found = true;
+		}
+
+		if(!found)
+		{
+			ERR(domloader, "No instrument with name '%s'", instrumentref.name.data());
+			return false;
+		}
 	}
 
 	return true;
+}
+
+InstrumentChannel* DOMLoader::addOrGetChannel(Instrument& instrument,
+                                              const std::string& name)
+{
+	for(auto& channel : instrument.instrument_channels)
+	{
+		if(channel.name == name)
+		{
+			return &channel;
+		}
+	}
+
+	instrument.instrument_channels.emplace_back(name);
+	InstrumentChannel& channel = instrument.instrument_channels.back();
+	channel.main = main_state_t::unset;
+
+	return &channel;
 }

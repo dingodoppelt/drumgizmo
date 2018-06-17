@@ -114,9 +114,11 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 	//TODO: handle xml version
 
 	pugi::xml_node drumkit = doc.child("drumkit");
-	res &= attrcpy(dom.description, drumkit, "description");
 	res &= attrcpy(dom.name, drumkit, "name");
-	res &= attrcpy(dom.samplerate, drumkit, "samplerate");
+	res &= attrcpy(dom.version, drumkit, "version");
+	res &= attrcpy(dom.description, drumkit, "description");
+	dom.samplerate = 44100.0;
+	res &= attrcpy(dom.samplerate, drumkit, "samplerate", true);
 
 	pugi::xml_node channels = doc.child("drumkit").child("channels");
 	for(pugi::xml_node channel: channels.children("channel"))
@@ -158,6 +160,8 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 
 	pugi::xml_node instrument = doc.child("instrument");
 	res &= attrcpy(dom.name, instrument, "name");
+	res &= attrcpy(dom.version, instrument, "version");
+	res &= attrcpy(dom.description, instrument, "description", true);
 
 	pugi::xml_node channels = instrument.child("channels");
 	for(pugi::xml_node channel : channels.children("channel"))
@@ -168,7 +172,7 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 		res &= attrcpy(dom.instrument_channels.back().main, channel, "main", true);
 	}
 
-	pugi::xml_node samples = doc.child("instrument").child("samples");
+	pugi::xml_node samples = instrument.child("samples");
 	for(pugi::xml_node sample: samples.children("sample"))
 	{
 		dom.samples.emplace_back();

@@ -43,7 +43,7 @@ public:
 	{
 		ScopedFile scoped_file(
 			"<?xml version='1.0' encoding='UTF-8'?>\n" \
-			"<instrument version=\"2.0\" name=\"Snare\">\n" \
+			"<instrument version=\"2.0\" name=\"Snare\" description=\"A nice snare\">\n" \
 			" <channels>\n" \
 			"  <channel name=\"AmbLeft\" main=\"true\"/>\n" \
 			"  <channel name=\"AmbRight\" main=\"false\"/>\n" \
@@ -70,6 +70,8 @@ public:
 		DGUNIT_ASSERT(parseInstrumentFile(scoped_file.filename(), dom));
 
 		DGUNIT_ASSERT_EQUAL(std::string("Snare"), dom.name);
+		DGUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
+		DGUNIT_ASSERT_EQUAL(std::string("A nice snare"), dom.description);
 		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.samples.size());
 
 		{
@@ -130,7 +132,7 @@ public:
 	{
 		ScopedFile scoped_file(
 			"<?xml version='1.0' encoding='UTF-8'?>\n" \
-			"<drumkit name=\"CrocellKit\" description=\"my description\" samplerate=\"48000\" version=\"2.0.0\">\n" \
+			"<drumkit name=\"CrocellKit\" description=\"my description\" samplerate=\"48000\" version=\"2.0\">\n" \
 			"  <channels>\n" \
 			"   <channel name=\"AmbLeft\"/>\n" \
 			"   <channel name=\"AmbRight\"/>\n" \
@@ -158,6 +160,7 @@ public:
 		DGUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), dom));
 
 		DGUNIT_ASSERT_EQUAL(std::string("CrocellKit"), dom.name);
+		DGUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
 		DGUNIT_ASSERT_EQUAL(std::string("my description"), dom.description);
 		DGUNIT_ASSERT_EQUAL(48000.0, dom.samplerate);
 		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.instruments.size());

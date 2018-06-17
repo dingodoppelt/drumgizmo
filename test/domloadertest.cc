@@ -52,7 +52,7 @@ public:
 	{
 		ScopedFile scoped_instrument_file1(
 			"<?xml version='1.0' encoding='UTF-8'?>\n" \
-			"<instrument version=\"2.0\" name=\"Snare\">\n" \
+			"<instrument version=\"2.0\" name=\"Snare1\">\n" \
 			" <samples>\n" \
 			"  <sample name=\"Snare-1\" power=\"0.00985718\">\n" \
 			"   <audiofile channel=\"AmbLeft\" file=\"1-Snare.wav\" filechannel=\"1\"/>\n" \
@@ -71,7 +71,7 @@ public:
 
 		ScopedFile scoped_instrument_file2(
 			"<?xml version='1.0' encoding='UTF-8'?>\n" \
-			"<instrument version=\"2.0\" name=\"Snare\">\n" \
+			"<instrument version=\"2.0\" name=\"Snare2\">\n" \
 			" <samples>\n" \
 			"  <sample name=\"Snare-1\" power=\"0.00985718\">\n" \
 			"   <audiofile channel=\"AmbLeft2\" file=\"1-Snare.wav\" filechannel=\"1\"/>\n" \
@@ -152,7 +152,7 @@ public:
 		{
 		auto& instrument = *drumkit.instruments[0];
 		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
-		DGUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
+		DGUNIT_ASSERT_EQUAL(std::string("Snare1"), instrument._name);
 		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
 
 		DGUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
@@ -172,19 +172,19 @@ public:
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 1:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 11:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 12:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				default:
 					DGUNIT_ASSERT(false);
@@ -206,19 +206,19 @@ public:
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 1:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 11:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 12:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				default:
 					DGUNIT_ASSERT(false);
@@ -235,7 +235,7 @@ public:
 		{
 		auto& instrument = *drumkit.instruments[1];
 		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
-		DGUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
+		DGUNIT_ASSERT_EQUAL(std::string("Snare2"), instrument._name);
 		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
 
 		DGUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
@@ -255,19 +255,19 @@ public:
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 1:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 11:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 12:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				default:
 					DGUNIT_ASSERT(false);
@@ -289,19 +289,19 @@ public:
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 1:
 					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 11:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				case 12:
 					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
-					                     audiofile.second->instrument_channel->name);
+					                    audiofile.second->instrument_channel->name);
 					break;
 				default:
 					DGUNIT_ASSERT(false);
