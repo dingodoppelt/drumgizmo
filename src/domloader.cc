@@ -69,7 +69,7 @@ bool DOMLoader::loadDom(const DrumkitDOM& dom,
 
 	for(const auto& instrumentref : dom.instruments)
 	{
-		bool found{found};
+		bool found{false};
 
 		std::unordered_map<std::string, channel_attribute_t> channelmap;
 		for(const auto& map : instrumentref.channel_map)
