@@ -214,26 +214,26 @@ drumkitparsertest_SOURCES = \
 	scopedfile.cc \
 	dgtest.cc
 
-dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" $(CPPUNIT_CFLAGS) \
+dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/pugixml/src
-dgxmlparsertest_LDFLAGS = $(CPPUNIT_LIBS)
+dgxmlparsertest_LDFLAGS =
 dgxmlparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/dgxmlparser.cc \
 	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	dgxmlparsertest.cc \
 	scopedfile.cc \
-	test.cc
+	dgtest.cc
 
-domloadertest_CXXFLAGS = -DOUTPUT=\"domloadertest\" $(CPPUNIT_CFLAGS) \
+domloadertest_CXXFLAGS = -DOUTPUT=\"domloadertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include
-domloadertest_LDFLAGS = $(CPPUNIT_LIBS) \
+domloadertest_LDFLAGS = \
 	 $(top_srcdir)/src/libdg.la
 domloadertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	domloadertest.cc \
 	scopedfile.cc \
-	test.cc
+	dgtest.cc
 
 endif

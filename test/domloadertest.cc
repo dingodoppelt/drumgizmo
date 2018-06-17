@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include <cppunit/extensions/HelperMacros.h>
+#include "dgunit.h"
 
 #include <DGDOM.h>
 #include <domloader.h>
@@ -36,23 +36,16 @@
 #include "scopedfile.h"
 
 class DOMLoaderTest
-	: public CppUnit::TestFixture
+	: public DGUnit
 {
-	CPPUNIT_TEST_SUITE(DOMLoaderTest);
-	CPPUNIT_TEST(testTest);
-	CPPUNIT_TEST_SUITE_END();
+public:
+	DOMLoaderTest()
+	{
+		DGUNIT_TEST(DOMLoaderTest::testTest);
+	}
 
 	Settings settings;
 	Random random;
-
-public:
-	void setUp()
-	{
-	}
-
-	void tearDown()
-	{
-	}
 
 	//! This just creates some drumkit.
 	void testTest()
@@ -125,76 +118,76 @@ public:
 
 		DrumkitDOM drumkitdom;
 		std::vector<InstrumentDOM> instrumentdoms;
-		CPPUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), drumkitdom));
+		DGUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), drumkitdom));
 		for(const auto& ref: drumkitdom.instruments)
 		{
 			instrumentdoms.emplace_back();
-			CPPUNIT_ASSERT(parseInstrumentFile(ref.file, instrumentdoms.back()));
+			DGUNIT_ASSERT(parseInstrumentFile(ref.file, instrumentdoms.back()));
 		}
 
 		DOMLoader domloader(settings, random);
-		CPPUNIT_ASSERT(domloader.loadDom(drumkitdom, instrumentdoms, drumkit));
+		DGUNIT_ASSERT(domloader.loadDom(drumkitdom, instrumentdoms, drumkit));
 
 		//
 		// Drumkit:
 		//
 
-		CPPUNIT_ASSERT_EQUAL(std::size_t(2), drumkit.instruments.size());
-		CPPUNIT_ASSERT_EQUAL(std::size_t(4), drumkit.channels.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(2), drumkit.instruments.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(4), drumkit.channels.size());
 
-		CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"), drumkit.channels[0].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"), drumkit.channels[1].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"), drumkit.channels[2].name);
-		CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"), drumkit.channels[3].name);
+		DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), drumkit.channels[0].name);
+		DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), drumkit.channels[1].name);
+		DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), drumkit.channels[2].name);
+		DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), drumkit.channels[3].name);
 
-		CPPUNIT_ASSERT_EQUAL(std::string("CrocellKit"), drumkit._name);
-		CPPUNIT_ASSERT_EQUAL(std::string("my description"), drumkit._description);
-		CPPUNIT_ASSERT_EQUAL(std::size_t(48000), drumkit._samplerate);
+		DGUNIT_ASSERT_EQUAL(std::string("CrocellKit"), drumkit._name);
+		DGUNIT_ASSERT_EQUAL(std::string("my description"), drumkit._description);
+		DGUNIT_ASSERT_EQUAL(std::size_t(48000), drumkit._samplerate);
 
-		CPPUNIT_ASSERT(VersionStr("2.0.0") == drumkit._version);
+		DGUNIT_ASSERT(VersionStr("2.0.0") == drumkit._version);
 
 		//
 		// Instrument1 'Snare1':
 		//
 		{
 		auto& instrument = *drumkit.instruments[0];
-		CPPUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
-		CPPUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
-		CPPUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
+		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
+		DGUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
+		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
 
-		CPPUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
+		DGUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
 
 		// NOTE: instrument.samples are the sample map belonging to version 1.0
-		CPPUNIT_ASSERT_EQUAL(std::size_t(2), instrument.samplelist.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(2), instrument.samplelist.size());
 		{
 			const auto& sample = *instrument.samplelist[0];
-			CPPUNIT_ASSERT_EQUAL(std::string("Snare-1"), sample.name);
-			CPPUNIT_ASSERT_EQUAL(0.00985718f, sample.power);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
+			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), sample.name);
+			DGUNIT_ASSERT_EQUAL(0.00985718f, sample.power);
+			DGUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
 			for(const auto& audiofile : sample.audiofiles)
 			{
-				CPPUNIT_ASSERT_EQUAL(std::string("/tmp/1-Snare.wav"), audiofile.second->filename);
+				DGUNIT_ASSERT_EQUAL(std::string("/tmp/1-Snare.wav"), audiofile.second->filename);
 				switch(audiofile.second->filechannel)
 				{
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 1:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 11:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 12:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				default:
-					CPPUNIT_ASSERT(false);
+					DGUNIT_ASSERT(false);
 					break;
 				}
 			}
@@ -202,33 +195,33 @@ public:
 
 		{
 			const auto& sample = *instrument.samplelist[1];
-			CPPUNIT_ASSERT_EQUAL(std::string("Snare-2"), sample.name);
-			CPPUNIT_ASSERT_EQUAL(0.0124808f, sample.power);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
+			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), sample.name);
+			DGUNIT_ASSERT_EQUAL(0.0124808f, sample.power);
+			DGUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
 			for(const auto& audiofile : sample.audiofiles)
 			{
-				CPPUNIT_ASSERT_EQUAL(std::string("/tmp/2-Snare.wav"), audiofile.second->filename);
+				DGUNIT_ASSERT_EQUAL(std::string("/tmp/2-Snare.wav"), audiofile.second->filename);
 				switch(audiofile.second->filechannel)
 				{
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 1:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 11:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 12:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				default:
-					CPPUNIT_ASSERT(false);
+					DGUNIT_ASSERT(false);
 					break;
 				}
 			}
@@ -241,43 +234,43 @@ public:
 
 		{
 		auto& instrument = *drumkit.instruments[1];
-		CPPUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
-		CPPUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
-		CPPUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
+		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._group);
+		DGUNIT_ASSERT_EQUAL(std::string("Snare"), instrument._name);
+		DGUNIT_ASSERT_EQUAL(std::string(""), instrument._description);
 
-		CPPUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
+		DGUNIT_ASSERT(VersionStr("2.0.0") == instrument.version);
 
 		// NOTE: instrument.samples are the sample map belonging to version 1.0
-		CPPUNIT_ASSERT_EQUAL(std::size_t(2), instrument.samplelist.size());
+		DGUNIT_ASSERT_EQUAL(std::size_t(2), instrument.samplelist.size());
 		{
 			const auto& sample = *instrument.samplelist[0];
-			CPPUNIT_ASSERT_EQUAL(std::string("Snare-1"), sample.name);
-			CPPUNIT_ASSERT_EQUAL(0.00985718f, sample.power);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
+			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), sample.name);
+			DGUNIT_ASSERT_EQUAL(0.00985718f, sample.power);
+			DGUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
 			for(const auto& audiofile : sample.audiofiles)
 			{
-				CPPUNIT_ASSERT_EQUAL(std::string("/tmp/1-Snare.wav"), audiofile.second->filename);
+				DGUNIT_ASSERT_EQUAL(std::string("/tmp/1-Snare.wav"), audiofile.second->filename);
 				switch(audiofile.second->filechannel)
 				{
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 1:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 11:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 12:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				default:
-					CPPUNIT_ASSERT(false);
+					DGUNIT_ASSERT(false);
 					break;
 				}
 			}
@@ -285,33 +278,33 @@ public:
 
 		{
 			const auto& sample = *instrument.samplelist[1];
-			CPPUNIT_ASSERT_EQUAL(std::string("Snare-2"), sample.name);
-			CPPUNIT_ASSERT_EQUAL(0.0124808f, sample.power);
-			CPPUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
+			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), sample.name);
+			DGUNIT_ASSERT_EQUAL(0.0124808f, sample.power);
+			DGUNIT_ASSERT_EQUAL(std::size_t(4), sample.audiofiles.size());
 			for(const auto& audiofile : sample.audiofiles)
 			{
-				CPPUNIT_ASSERT_EQUAL(std::string("/tmp/2-Snare.wav"), audiofile.second->filename);
+				DGUNIT_ASSERT_EQUAL(std::string("/tmp/2-Snare.wav"), audiofile.second->filename);
 				switch(audiofile.second->filechannel)
 				{
 					// NOTE: Channel numbers are zero based - they are 1 based in the xml
 				case 0:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 1:
-					CPPUNIT_ASSERT_EQUAL(std::string("AmbRight"),
+					DGUNIT_ASSERT_EQUAL(std::string("AmbRight"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 11:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				case 12:
-					CPPUNIT_ASSERT_EQUAL(std::string("SnareTop"),
+					DGUNIT_ASSERT_EQUAL(std::string("SnareTop"),
 					                     audiofile.second->instrument_channel->name);
 					break;
 				default:
-					CPPUNIT_ASSERT(false);
+					DGUNIT_ASSERT(false);
 					break;
 				}
 			}
@@ -321,4 +314,4 @@ public:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(DOMLoaderTest);
+static DOMLoaderTest test;
