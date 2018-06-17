@@ -29,10 +29,10 @@
 #include <vector>
 #include <string>
 
-class DrumkitDOM;
-class InstrumentDOM;
+struct DrumkitDOM;
+struct InstrumentDOM;
 class DrumKit;
-class Settings;
+struct Settings;
 class Random;
 class InstrumentChannel;
 class Instrument;
