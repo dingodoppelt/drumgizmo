@@ -6,14 +6,14 @@
 	url = http://git.drumgizmo.org/plugingizmo.git
 [submodule "plugingui/lodepng"]
 	path = plugingui/lodepng
-	url = https://github.com/lvandeve/lodepng
+	url = http://git.drumgizmo.org/lodepng.git
 	branch = a71964ed5fe4f82a32ac7f8201338900f66e855d
 [submodule "getoptpp"]
 	path = getoptpp
-	url = https://github.com/cgloeckner/getoptpp
+	url = http://git.drumgizmo.org/getoptpp.git
 [submodule "pugl"]
 	path = pugl
-	url = http://git.drobilla.net/pugl.git/
+	url = http://git.drumgizmo.org/pugl.git
 [submodule "pugixml"]
 	path = pugixml
 	url = http://git.drumgizmo.org/pugixml.git
