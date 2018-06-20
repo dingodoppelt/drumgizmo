@@ -42,7 +42,8 @@ class DOMLoader
 public:
 	DOMLoader(Settings& settings, Random& random);
 
-	bool loadDom(const DrumkitDOM& dom,
+	bool loadDom(const std::string& basepath,
+	             const DrumkitDOM& dom,
 	             const std::vector<InstrumentDOM>& instrumentdoms,
 	             DrumKit& drumkit);
 

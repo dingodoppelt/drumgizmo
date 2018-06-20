@@ -49,7 +49,8 @@ DOMLoader::DOMLoader(Settings& settings, Random& random)
 {
 }
 
-bool DOMLoader::loadDom(const DrumkitDOM& dom,
+bool DOMLoader::loadDom(const std::string& basepath,
+                        const DrumkitDOM& dom,
                         const std::vector<InstrumentDOM>& instrumentdoms,
                         DrumKit& drumkit)
 {
@@ -91,7 +92,7 @@ bool DOMLoader::loadDom(const DrumkitDOM& dom,
 			instrument->version = instrumentdom.version;
 			instrument->_description = instrumentdom.description;
 
-			auto path = getPath(instrumentref.file);
+			auto path = getPath(basepath + "/" + instrumentref.file);
 			for(const auto& sampledom : instrumentdom.samples)
 			{
 				auto sample = new Sample(sampledom.name, sampledom.power);
@@ -163,6 +164,8 @@ bool DOMLoader::loadDom(const DrumkitDOM& dom,
 					    instrument_channel.name.c_str(), instrument->getName().c_str());
 				}
 			}
+
+			instrument->finalise();
 
 			// Transfer ownership to the DrumKit object.
 			drumkit.instruments.emplace_back(std::move(instrument));

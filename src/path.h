@@ -30,3 +30,6 @@
 
 //! \returns path component of full filename with path.
 std::string getPath(const std::string& file);
+
+//! \returns path component of full filename with path.
+std::string getFile(const std::string& file);

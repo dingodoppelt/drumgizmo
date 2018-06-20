@@ -34,6 +34,7 @@
 #include <random.h>
 
 #include "scopedfile.h"
+#include "path.h"
 
 class DOMLoaderTest
 	: public DGUnit
@@ -99,13 +100,13 @@ public:
 			"   <channel name=\"SnareBottom\"/>\n" \
 			"  </channels>\n" \
 			"  <instruments>\n" \
-			"    <instrument name=\"Snare1\" file=\"") + scoped_instrument_file1.filename() + std::string("\">\n" \
+			"    <instrument name=\"Snare1\" file=\"") + getFile(scoped_instrument_file1.filename()) + std::string("\">\n" \
 			"      <channelmap in=\"AmbLeft\" out=\"AmbLeft\" main=\"true\"/>\n" \
 			"      <channelmap in=\"AmbRight\" out=\"AmbRight\" main=\"true\"/>\n" \
 			"      <channelmap in=\"SnareTop\" out=\"SnareTop\"/>\n" \
 			"      <channelmap in=\"SnareBottom\" out=\"SnareBottom\"/>\n" \
 			"    </instrument>\n" \
-			"    <instrument name=\"Snare2\" file=\"") + scoped_instrument_file2.filename() + std::string("\">\n" \
+			"    <instrument name=\"Snare2\" file=\"") + getFile(scoped_instrument_file2.filename()) + std::string("\">\n" \
 			"      <channelmap in=\"AmbLeft2\" out=\"AmbLeft\" main=\"true\"/>\n" \
 			"      <channelmap in=\"AmbRight2\" out=\"AmbRight\" main=\"true\"/>\n" \
 			"      <channelmap in=\"SnareTop2\" out=\"SnareTop\"/>\n" \
@@ -119,14 +120,15 @@ public:
 		DrumkitDOM drumkitdom;
 		std::vector<InstrumentDOM> instrumentdoms;
 		DGUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), drumkitdom));
+		auto basepath = getPath(scoped_file.filename());
 		for(const auto& ref: drumkitdom.instruments)
 		{
 			instrumentdoms.emplace_back();
-			DGUNIT_ASSERT(parseInstrumentFile(ref.file, instrumentdoms.back()));
+			DGUNIT_ASSERT(parseInstrumentFile(basepath + "/" + ref.file, instrumentdoms.back()));
 		}
 
 		DOMLoader domloader(settings, random);
-		DGUNIT_ASSERT(domloader.loadDom(drumkitdom, instrumentdoms, drumkit));
+		DGUNIT_ASSERT(domloader.loadDom(basepath, drumkitdom, instrumentdoms, drumkit));
 
 		//
 		// Drumkit:

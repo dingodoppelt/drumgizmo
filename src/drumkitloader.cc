@@ -127,23 +127,42 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	}
 	else
 	{
-		ERR(drumkitparser, "Error reading refs.conf");
+		WARN(drumkitparser, "Error reading refs.conf");
 	}
 
 	DrumkitDOM drumkitdom;
 	std::vector<InstrumentDOM> instrumentdoms;
 	std::string path = getPath(edited_filename);
-	bool parseerror = parseDrumkitFile(edited_filename, drumkitdom);
+	bool parseerror = false;
+	bool ret = parseDrumkitFile(edited_filename, drumkitdom);
+	if(!ret)
+	{
+		WARN(drumkitloader, "Drumkit file parser error: '%s'",
+		     edited_filename.data());
+	}
+
+	parseerror |= !ret;
 
 	for(const auto& ref : drumkitdom.instruments)
 	{
 		instrumentdoms.emplace_back();
-		parseerror &= parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
+		bool ret = parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
+		if(!ret)
+		{
+			WARN(drumkitloader, "Instrument file parser error: '%s'",
+			     edited_filename.data());
+		}
+
+		parseerror |= !ret;
 	}
 
 	DOMLoader domloader(settings, rand);
-	parseerror &= domloader.loadDom(drumkitdom, instrumentdoms, kit);
-
+	ret = domloader.loadDom(path, drumkitdom, instrumentdoms, kit);
+	if(!ret)
+	{
+		WARN(drumkitloader, "DOMLoader error");
+	}
+	parseerror |= !ret;
 	if(parseerror)
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", file.c_str());

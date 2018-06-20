@@ -44,6 +44,7 @@
 
 DrumkitCreator::~DrumkitCreator()
 {
+	return;
 	for (const auto& file: created_files)
 	{
 		auto error = unlink(file.c_str());
@@ -304,18 +305,16 @@ void DrumkitCreator::createInstrument(const InstrumentData& data, std::size_t nu
                       const std::string& dir)
 {
 	std::string prefix = "<?xml version='1.0' encoding='UTF-8'?>\n"
-		"<instrument name=\"" + data.name + "\" version=\"2.0\">\n";
+		"<instrument name=\"" + data.name + "\" version=\"2.0\">\n"
+		"  <samples>\n";
 	// FIXME sampleref
-	std::string postfix = "<velocities>\n"
-		"<velocity lower=\"0\" upper=\"1\">\n"
-		"<sampleref probability=\"1\" name=\"stroke1\"/>\n"
-		"</velocity>\n"
-		"</velocities>\n"
-		"</instrument>\n";
+	std::string postfix = "  </samples>\n</instrument>\n";
 
 	std::string samples;
+	float power = 1.0f;
 	for (const auto& sample: data.sample_data) {
-		samples += "<sample name=\"" + sample.name + "\">\n";
+		samples += "<sample name=\"" + sample.name + "\" power=\"" + std::to_string(power) + "\">\n";
+		power += 0.1f;
 
 		for (std::size_t i = 0; i < sample.audiofiles.size(); ++i)
 		{

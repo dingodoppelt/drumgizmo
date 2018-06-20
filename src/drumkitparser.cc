@@ -58,7 +58,7 @@ int DrumKitParser::parseFile(const std::string& filename)
 	}
 	else
 	{
-		ERR(drumkitparser, "Error reading refs.conf");
+		WARN(drumkitparser, "Error reading refs.conf");
 	}
 
 	path = getPath(edited_filename);

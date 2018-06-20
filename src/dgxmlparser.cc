@@ -105,9 +105,10 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filename.c_str());
 	res &= !result.status;
-
-	if(!res) {
-		printf("PugiXml error %d\n", (int) result.offset);
+	if(!res)
+	{
+		ERR(dgxmlparser, "XML parse error: '%s' %d", filename.data(),
+		    (int) result.offset);
 		return false;
 	}
 
@@ -156,6 +157,10 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filename.data());
 	res &= !result.status;
+	if(!res)
+	{
+		ERR(dgxmlparser, "XML parse error: '%s'", filename.data());
+	}
 	//TODO: handle version
 
 	pugi::xml_node instrument = doc.child("instrument");
