@@ -44,7 +44,6 @@
 
 DrumkitCreator::~DrumkitCreator()
 {
-	return;
 	for (const auto& file: created_files)
 	{
 		auto error = unlink(file.c_str());
