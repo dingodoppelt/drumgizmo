@@ -189,7 +189,8 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 			dom.samples.back().audiofiles.emplace_back();
 			res &= attrcpy(dom.samples.back().audiofiles.back().instrument_channel, audiofile, "channel");
 			res &= attrcpy(dom.samples.back().audiofiles.back().file, audiofile, "file");
-			res &= attrcpy(dom.samples.back().audiofiles.back().filechannel, audiofile, "filechannel");
+			dom.samples.back().audiofiles.back().filechannel = 1; // Defaults to channel 1 in mono (1-based)
+			res &= attrcpy(dom.samples.back().audiofiles.back().filechannel, audiofile, "filechannel", true);
 		}
 	}
 

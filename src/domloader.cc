@@ -104,7 +104,7 @@ bool DOMLoader::loadDom(const std::string& basepath,
 
 					auto audio_file =
 						std::make_unique<AudioFile>(path + "/" + audiofiledom.file,
-						                            audiofiledom.filechannel - 1,
+						                            audiofiledom.filechannel - 1, // xml is 1-based
 						                            instrument_channel);
 
 					sample->addAudioFile(instrument_channel,
