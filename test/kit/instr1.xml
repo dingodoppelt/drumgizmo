@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<instrument name="instr1">
+<instrument name="instr1" version="2.0">
  <samples>
-  <sample name="stroke1">
-   <audiofile channel="ch1" file="1111.wav" power="0.1"/>
-   <audiofile channel="ch2" file="1111.wav" power="0.2"/>
-   <audiofile channel="ch3" file="1111.wav" power="0.3"/>
-   <audiofile channel="ch4" file="1111.wav" power="0.4"/>
+  <sample name="stroke1" power="0.1">
+   <audiofile channel="ch1" file="1111.wav"/>
+   <audiofile channel="ch2" file="1111.wav"/>
+   <audiofile channel="ch3" file="1111.wav"/>
+   <audiofile channel="ch4" file="1111.wav"/>
   </sample>
  </samples>
 </instrument>
