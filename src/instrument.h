@@ -31,7 +31,6 @@
 #include <memory>
 #include <deque>
 
-#include "rangemap.h"
 #include "powerlist.h"
 
 #include "sample.h"
@@ -84,8 +83,6 @@ private:
 	std::string _description;
 
 	VersionStr version;
-
-	RangeMap<level_t, Sample*> samples;
 
 	void addSample(level_t a, level_t b, Sample* s);
 	void finalise(); ///< Signal instrument that no more samples will be added.

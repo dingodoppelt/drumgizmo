@@ -25,11 +25,9 @@ DG_SRC = \
 	@top_srcdir@/src/drumgizmo.cc \
 	@top_srcdir@/src/drumkit.cc \
 	@top_srcdir@/src/drumkitloader.cc \
-	@top_srcdir@/src/drumkitparser.cc \
 	@top_srcdir@/src/events.cc \
 	@top_srcdir@/src/inputprocessor.cc \
 	@top_srcdir@/src/instrument.cc \
-	@top_srcdir@/src/instrumentparser.cc \
 	@top_srcdir@/src/latencyfilter.cc \
 	@top_srcdir@/src/midimapparser.cc \
 	@top_srcdir@/src/midimapper.cc \

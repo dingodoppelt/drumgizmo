@@ -30,11 +30,9 @@ nodist_libdg_la_SOURCES = \
 	drumgizmo.cc \
 	drumkit.cc \
 	drumkitloader.cc \
-	drumkitparser.cc \
 	events.cc \
 	inputprocessor.cc \
 	instrument.cc \
-	instrumentparser.cc \
 	latencyfilter.cc \
 	midimapparser.cc \
 	midimapper.cc \
@@ -72,12 +70,10 @@ EXTRA_DIST = \
 	drumgizmo.h \
 	drumkit.h \
 	drumkitloader.h \
-	drumkitparser.h \
 	events.h \
 	inputfilter.h \
 	inputprocessor.h \
 	instrument.h \
-	instrumentparser.h \
 	latencyfilter.h \
 	midimapparser.h \
 	midimapper.h \

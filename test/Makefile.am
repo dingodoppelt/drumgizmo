@@ -7,7 +7,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
-	instrumentparsertest drumkitparsertest dgxmlparsertest domloadertest
+	dgxmlparsertest domloadertest
 
 EXTRA_DIST = \
 	dgunit.h \
@@ -193,25 +193,6 @@ notifiertest_CXXFLAGS = -DOUTPUT=\"notifiertest\" \
 notifiertest_LDFLAGS =
 notifiertest_SOURCES = \
 	notifiertest.cc \
-	dgtest.cc
-
-instrumentparsertest_CXXFLAGS = -DOUTPUT=\"instrumentparsertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include
-instrumentparsertest_LDFLAGS = \
-	 $(top_srcdir)/src/libdg.la
-instrumentparsertest_SOURCES = \
-	$(top_srcdir)/hugin/hugin.c \
-	instrumentparsertest.cc \
-	scopedfile.cc \
-	dgtest.cc
-
-drumkitparsertest_CXXFLAGS = -DOUTPUT=\"drumkitparsertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include
-drumkitparsertest_LDFLAGS = $(top_srcdir)/src/libdg.la
-drumkitparsertest_SOURCES = \
-	$(top_srcdir)/hugin/hugin.c \
-	drumkitparsertest.cc \
-	scopedfile.cc \
 	dgtest.cc
 
 dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" \

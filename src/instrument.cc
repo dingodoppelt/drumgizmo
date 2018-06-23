@@ -56,46 +56,19 @@ bool Instrument::isValid() const
 
 Sample* Instrument::sample(level_t level, size_t pos)
 {
-	Sample *sample = nullptr;
-
-	if(version >= VersionStr("2.0"))
-	{
-		// Version 2.0
-		sample = powerlist.get(level * mod);
-	}
-	else
-	{
-		// Version 1.0
-		std::vector<Sample*> s = samples.get(level * mod);
-		if(s.size() == 0)
-		{
-			return nullptr;
-		}
-
-		sample = rand.choose(s);
-	}
-
-	return sample;
-}
-
-void Instrument::addSample(level_t a, level_t b, Sample* s)
-{
-	samples.insert(a, b, s);
+	return powerlist.get(level * mod);
 }
 
 void Instrument::finalise()
 {
-	if(version >= VersionStr("2.0"))
+	std::vector<Sample*>::iterator s = samplelist.begin();
+	while(s != samplelist.end())
 	{
-		std::vector<Sample*>::iterator s = samplelist.begin();
-		while(s != samplelist.end())
-		{
-			powerlist.add(*s);
-			s++;
-		}
-
-		powerlist.finalise();
+		powerlist.add(*s);
+		s++;
 	}
+
+	powerlist.finalise();
 }
 
 const std::string& Instrument::getName() const

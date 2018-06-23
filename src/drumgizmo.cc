@@ -38,7 +38,6 @@
 
 #include <hugin.hpp>
 
-#include "drumkitparser.h"
 #include "audioinputenginemidi.h"
 
 DrumGizmo::DrumGizmo(Settings& settings,
