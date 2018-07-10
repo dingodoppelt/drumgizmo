@@ -47,7 +47,7 @@
  * Limited by sample set size, ie. only kicks in if sample set size is smaller
  * than this number.
  */
-unsigned int const MIN_SAMPLE_SET_SIZE = 26u;
+std::size_t const MIN_SAMPLE_SET_SIZE = 26u;
 
 // Enable to calculate power on old samples without power attribute
 //#define AUTO_CALCULATE_POWER
@@ -221,18 +221,18 @@ Sample* PowerList::get(level_t level)
 
 	float power_span = power_max - power_min;
 
-	// Width is limited to at least 10. Fioxes problem with instrument with a
+	// Width is limited to at least 10. Fixes problem with instrument with a
 	//  sample set smaller than MIN_SAMPLE_SET_SIZE.
-	float width = fmax(samples.size(), MIN_SAMPLE_SET_SIZE);
+	float width = std::max(samples.size(), MIN_SAMPLE_SET_SIZE);
 
 	// Spread out at most ~2 samples away from center if all samples have a
 	// uniform distribution over the power spectrum (which they probably don't).
-	float stddev = power_span / width;
+	float mean_stepwidth = power_span / width;
 
 	// Cut off mean value with stddev/2 in both ends in order to make room for
 	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
-	float mean = level * (power_span - stddev) + (stddev / 2.0);
-	stddev *= velocity_stddev;
+	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
+	float stddev = velocity_stddev * mean_stepwidth;
 
 	float power{0.f};
 
@@ -249,8 +249,9 @@ Sample* PowerList::get(level_t level)
 		//  (power_min+stddev/2) and (power_max-stddev/2)
 		lvl += power_min;
 
-		DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f)\n", level, lvl,
-			mean, stddev);
+		DEBUG(rand,
+		      "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f, power_min: %f, power_max: %f)\n",
+		      level, lvl, mean, stddev, mean_stepwidth, power_min, power_max);
 
 		for (auto& item: samples)
 		{

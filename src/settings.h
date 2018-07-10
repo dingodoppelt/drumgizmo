@@ -79,7 +79,7 @@ struct Settings
 	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
 	Atomic<float> velocity_stddev{velocity_stddev_default}; // [0.5; 3.0]
 
-		// Current velocity offset - for UI
+	// Current velocity offset - for UI
 	Atomic<float> velocity_modifier_current{1.0f};
 
 	Atomic<bool> enable_velocity_randomiser{false};

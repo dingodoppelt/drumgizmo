@@ -76,7 +76,16 @@ bool StaminaFilter::filter(event_t& event, size_t pos)
 		mod *= velocity_modifier_weight;
 	}
 
-	settings.velocity_modifier_current.store(mod);
+	{
+		auto velocity_modifier_current = settings.velocity_modifier_current.load();
+		float p = 0.9f;
+		float new_value = mod * p + velocity_modifier_current * (1.0f - p);
+		if(mod > new_value)
+		{
+			new_value = mod;
+		}
+		settings.velocity_modifier_current.store(new_value);
+	}
 
 	return true;
 }

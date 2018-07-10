@@ -62,7 +62,7 @@ void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	int x = latency_offset / 2000.0 * width() / 2 + width() / 2;
 	int y = velocity_offset * height();
 	int w = latency_stddev / 10;
-	int h = velocity_stddev * 10;
+	int h = velocity_stddev * 20;
 
 	// Stddev squares
 	float v = w;
@@ -72,7 +72,7 @@ void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
 		a = a * a * a;
 		p.setColour(GUI::Colour(1.0f, 0.0f, 1.0f, a));
 		p.drawFilledRectangle(x - v / 2, 0,
-		                      x + v / 2, height());
+		                      x + v / 2 + 1, height());
 		v -= 1.0f;
 	}
 
@@ -83,7 +83,7 @@ void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
 		a = a * a * a;
 		p.setColour(GUI::Colour(1.0f, 0.0f, 1.0f, a));
 		p.drawFilledRectangle(0, y - v / 2,
-		                      width(), y + v / 2);
+		                      width(), y + v / 2 + 1);
 		v -= 1.0f;
 	}
 
@@ -101,7 +101,8 @@ void HumaniserVisualiser::latencyOffsetChanged(int offset)
 
 void HumaniserVisualiser::velocityOffsetChanged(float offset)
 {
-	velocity_offset = -1 * offset + 1;
+	std::cout << "velocity_offset: " << offset << std::endl;
+	velocity_offset = -1.0f * offset + 1.0f;
 	redraw();
 }
 
@@ -119,6 +120,7 @@ void HumaniserVisualiser::latencyLaidbackChanged(int laidback)
 
 void HumaniserVisualiser::velocityStddevChanged(float stddev)
 {
+	std::cout << "velocity_stddev: " << stddev << std::endl;
 	velocity_stddev = stddev;
 	redraw();
 }
