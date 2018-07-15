@@ -41,6 +41,7 @@ MainTab::MainTab(Widget* parent,
 	, bleedcontrolframe_content{this, settings, settings_notifier}
 	, resamplingframe_content{this, settings_notifier}
 	, timingframe_content{this, settings, settings_notifier}
+	, visualizerframe_content{this, settings, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -49,12 +50,13 @@ MainTab::MainTab(Widget* parent,
 
 	add("Drumkit", drumkit_frame, drumkitframe_content, 15, 0);
 	add("Status", status_frame, statusframe_content, 24, 0);
-	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 0);
+	add("Resampling", resampling_frame, resamplingframe_content, 10, 0);
 
-	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 12, 1);
-	add("Timing Humanizer", timing_frame, timingframe_content, 12, 1);
-	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 10, 1);
-	add("Resampling", resampling_frame, resamplingframe_content, 15, 1);
+	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
+	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
+	add("Timing Humanizer", timing_frame, timingframe_content, 10, 1);
+	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 9, 1);
+	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 1);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
 	bleedcontrol_frame.setOnSwitch(settings.enable_bleed_control);

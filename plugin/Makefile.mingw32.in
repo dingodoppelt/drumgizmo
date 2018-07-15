@@ -95,6 +95,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/toggle.cc \
 	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \
+	@top_srcdir@/plugingui/visualizerframecontent.cc \
 	@top_srcdir@/plugingui/widget.cc \
 	@top_srcdir@/plugingui/window.cc \
 	@top_srcdir@/plugingui/lodepng/lodepng.cpp
@@ -143,6 +144,10 @@ RES = \
 	resources/pushbutton.png \
 	resources/sidebar.png \
 	resources/slider.png \
+	resources/stddev_horizontal.png \
+	resources/stddev_horizontal_disabled.png \
+	resources/stddev_vertical.png \
+	resources/stddev_vertical_disabled.png \
 	resources/switch_back_off.png \
 	resources/switch_back_on.png \
 	resources/switch_front.png \

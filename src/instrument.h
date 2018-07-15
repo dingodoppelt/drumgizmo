@@ -63,6 +63,9 @@ public:
 	//! Get the number of audio files (as in single channel) in this instrument.
 	std::size_t getNumberOfFiles() const;
 
+	float getMaxPower() const;
+	float getMinPower() const;
+
 private:
 	// For parser:
 	friend class InstrumentParser;

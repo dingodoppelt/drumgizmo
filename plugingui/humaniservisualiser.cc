@@ -31,96 +31,168 @@
 #include <notifier.h>
 #include <settings.h>
 
-#include <iostream>
+#include <hugin.hpp>
 
 HumaniserVisualiser::HumaniserVisualiser(GUI::Widget* parent,
+                                         Settings& settings,
                                          SettingsNotifier& settings_notifier)
 	: GUI::Widget(parent)
-	, settings_notifier(settings_notifier)
+	, canvas(this, settings, settings_notifier)
 {
-	CONNECT(this, settings_notifier.latency_current,
-	        this, &HumaniserVisualiser::latencyOffsetChanged);
-	CONNECT(this, settings_notifier.velocity_modifier_current,
-	        this, &HumaniserVisualiser::velocityOffsetChanged);
-
-	CONNECT(this, settings_notifier.latency_stddev,
-	        this, &HumaniserVisualiser::latencyStddevChanged);
-	CONNECT(this, settings_notifier.latency_laid_back,
-	        this, &HumaniserVisualiser::latencyLaidbackChanged);
-	CONNECT(this, settings_notifier.velocity_stddev,
-	        this, &HumaniserVisualiser::velocityStddevChanged);
+	canvas.move(7, 7);
 }
 
 void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
 {
 	GUI::Painter p(*this);
 
-	// Background
-	p.setColour(GUI::Colour(0, 0, 1));
-	p.drawFilledRectangle(0, 0, width(), height());
+	box.setSize(width(), height());
+	p.drawImage(0, 0, box);
+}
 
-	int x = latency_offset / 2000.0 * width() / 2 + width() / 2;
-	int y = velocity_offset * height();
-	int w = latency_stddev / 10;
-	int h = velocity_stddev * 20;
-
-	// Stddev squares
-	float v = w;
-	while(v > 1)
+void HumaniserVisualiser::resize(std::size_t width, std::size_t height)
+{
+	Widget::resize(width, height);
+	if(width < 14 || height < 14)
 	{
-		float a = 1.0f - v / (float)w;
-		a = a * a * a;
-		p.setColour(GUI::Colour(1.0f, 0.0f, 1.0f, a));
-		p.drawFilledRectangle(x - v / 2, 0,
-		                      x + v / 2 + 1, height());
-		v -= 1.0f;
+		canvas.resize(1, 1);
+		return;
+	}
+	canvas.resize(width - 14, height - 14);
+}
+
+HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
+                                    Settings& settings,
+                                    SettingsNotifier& settings_notifier)
+	: GUI::Widget(parent)
+	, settings_notifier(settings_notifier)
+	, latency_max_samples(settings.latency_max.load() *
+	                      settings.samplerate.load() / 1000)
+{
+	CONNECT(this, settings_notifier.enable_latency_modifier,
+	        this, &HumaniserVisualiser::Canvas::latencyEnabledChanged);
+	CONNECT(this, settings_notifier.enable_velocity_modifier,
+	        this, &HumaniserVisualiser::Canvas::velocityEnabledChanged);
+
+	CONNECT(this, settings_notifier.latency_current,
+	        this, &HumaniserVisualiser::Canvas::latencyOffsetChanged);
+	CONNECT(this, settings_notifier.velocity_modifier_current,
+	        this, &HumaniserVisualiser::Canvas::velocityOffsetChanged);
+
+	CONNECT(this, settings_notifier.latency_stddev,
+	        this, &HumaniserVisualiser::Canvas::latencyStddevChanged);
+	CONNECT(this, settings_notifier.latency_laid_back,
+	        this, &HumaniserVisualiser::Canvas::latencyLaidbackChanged);
+	CONNECT(this, settings_notifier.velocity_stddev,
+	        this, &HumaniserVisualiser::Canvas::velocityStddevChanged);
+}
+
+void HumaniserVisualiser::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
+{
+	if(width() < 1 || height() < 1)
+	{
+		return;
 	}
 
-	v = h;
-	while(v > 1)
+	GUI::Painter p(*this);
+
+	p.clear();
+
+	const int spx = latency_max_samples * 2 / width(); // samples pr. pixel
+
+	int x = latency_offset / spx + width() / 2;
+	float v = (-1.0f * velocity_offset + 1.0f) * 0.8;
+	int y = height() * 0.2 + v * height();
+	y = std::max(0, y);
+	int w = latency_stddev / spx * 3 * 2; // stddev is ~ +/- 3 span
+	int h = velocity_stddev * height() / 4;
+
+	DEBUG(vis, "max: %d, spx: %d, x: %d, w: %d", latency_max_samples, spx, x, w);
+
+	// Stddev squares
+	if(latency_enabled)
 	{
-		float a = 1.0f - v / (float)h;
-		a = a * a * a;
-		p.setColour(GUI::Colour(1.0f, 0.0f, 1.0f, a));
-		p.drawFilledRectangle(0, y - v / 2,
-		                      width(), y + v / 2 + 1);
-		v -= 1.0f;
+		p.drawImageStretched(x - w / 2, 0, stddev_h, w, height());
+	}
+	else
+	{
+		p.drawImageStretched(x - w / 2, 0, stddev_h_disabled, w, height());
+	}
+
+	if(velocity_enabled)
+	{
+		p.drawImageStretched(0, y - h / 2, stddev_v, width(), h);
+	}
+	else
+	{
+		p.drawImageStretched(0, y - h / 2, stddev_v_disabled, width(), h);
 	}
 
 	// Lines
-	p.setColour(GUI::Colour(0, 1, 1));
+	if(velocity_enabled)
+	{
+		p.setColour(GUI::Colour(0.0f, 1.0f, 1.0f));
+	}
+	else
+	{
+		p.setColour(GUI::Colour(0.4f, 0.4f, 0.4f));
+	}
 	p.drawLine(0, y, width(), y);
+
+	if(latency_enabled)
+	{
+		p.setColour(GUI::Colour(0.0f, 1.0f, 1.0f));
+	}
+	else
+	{
+		p.setColour(GUI::Colour(0.4f, 0.4f, 0.4f));
+	}
 	p.drawLine(x, 0, x, height());
+
+	// Zero-lines
+	p.setColour(GUI::Colour(0.0f, 1.0f, 0.0f, 0.9f));
+	p.drawLine(0, height() * 0.2f, width(), height() * 0.2f);
+	p.drawLine(width() / 2, 0, width() / 2, height());
 }
 
-void HumaniserVisualiser::latencyOffsetChanged(int offset)
+void HumaniserVisualiser::Canvas::latencyEnabledChanged(bool enabled)
+{
+	latency_enabled = enabled;
+	redraw();
+}
+
+void HumaniserVisualiser::Canvas::velocityEnabledChanged(bool enabled)
+{
+	velocity_enabled = enabled;
+	redraw();
+}
+
+void HumaniserVisualiser::Canvas::latencyOffsetChanged(int offset)
 {
 	latency_offset = offset;
 	redraw();
 }
 
-void HumaniserVisualiser::velocityOffsetChanged(float offset)
+void HumaniserVisualiser::Canvas::velocityOffsetChanged(float offset)
 {
-	std::cout << "velocity_offset: " << offset << std::endl;
-	velocity_offset = -1.0f * offset + 1.0f;
+	velocity_offset = offset;
 	redraw();
 }
 
-void HumaniserVisualiser::latencyStddevChanged(float stddev)
+void HumaniserVisualiser::Canvas::latencyStddevChanged(float stddev)
 {
 	latency_stddev = stddev;
 	redraw();
 }
 
-void HumaniserVisualiser::latencyLaidbackChanged(int laidback)
+void HumaniserVisualiser::Canvas::latencyLaidbackChanged(int laidback)
 {
 	this->laidback = laidback;
 	redraw();
 }
 
-void HumaniserVisualiser::velocityStddevChanged(float stddev)
+void HumaniserVisualiser::Canvas::velocityStddevChanged(float stddev)
 {
-	std::cout << "velocity_stddev: " << stddev << std::endl;
 	velocity_stddev = stddev;
 	redraw();
 }

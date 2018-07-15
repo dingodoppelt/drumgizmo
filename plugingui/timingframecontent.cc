@@ -40,7 +40,6 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	: Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
-	, visualiser(this, settings_notifier)
 {
 	layout.setResizeChildren(false);
 
@@ -71,9 +70,6 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	layout.setPosition(&tightness, GridLayout::GridRange{0, 1, 0, 1});
 	layout.setPosition(&regain, GridLayout::GridRange{1, 2, 0, 1});
 	layout.setPosition(&laidback, GridLayout::GridRange{2, 3, 0, 1});
-
-	visualiser.move(80, 40);
-	visualiser.resize(40, 40);
 
 	CONNECT(this, settings_notifier.latency_stddev,
 	        this, &TimingframeContent::tightnessSettingsValueChanged);
@@ -111,7 +107,7 @@ float TimingframeContent::tightnessSettingsToKnob(float value) const
 float TimingframeContent::laidbackKnobToSettings(float value) const
 {
 	value -= 0.5f;
-	value *= 2.0f;
+	value *= 4.0f;
 	value *= settings.latency_max.load();
 
 	return std::lround(value);
@@ -121,8 +117,8 @@ float TimingframeContent::laidbackSettingsToKnob(int int_value) const
 {
 	float value = int_value;
 	value /= (float)settings.latency_max.load();
-	value *= 0.5;
-	value += 0.5;
+	value /= 4.0f;
+	value += 0.5f;
 
 	return value;
 }

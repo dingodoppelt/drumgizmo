@@ -269,3 +269,13 @@ Sample* PowerList::get(level_t level)
 
 	return sample;
 }
+
+float PowerList::getMaxPower() const
+{
+	return power_max;
+}
+
+float PowerList::getMinPower() const
+{
+	return power_min;
+}

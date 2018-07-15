@@ -14,6 +14,10 @@ RES = \
 	resources/pushbutton.png \
 	resources/sidebar.png \
 	resources/slider.png \
+	resources/stddev_horizontal.png \
+	resources/stddev_horizontal_disabled.png \
+	resources/stddev_vertical.png \
+	resources/stddev_vertical_disabled.png \
 	resources/switch_back_off.png \
 	resources/switch_back_on.png \
 	resources/switch_front.png \
@@ -102,6 +106,7 @@ nodist_libdggui_la_SOURCES = \
 	toggle.cc \
 	utf8.cc \
 	verticalline.cc \
+	visualizerframecontent.cc \
 	widget.cc \
 	window.cc \
 	lodepng/lodepng.cpp
@@ -231,6 +236,7 @@ EXTRA_DIST = \
 	toggle.h \
 	utf8.h \
 	verticalline.h \
+	visualizerframecontent.h \
 	widget.h \
 	window.h \
 	lodepng/lodepng.h

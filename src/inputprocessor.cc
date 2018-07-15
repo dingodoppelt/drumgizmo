@@ -28,7 +28,7 @@
 
 #include <list>
 
-#include "hugin.hpp"
+#include <hugin.hpp>
 
 #include "instrument.h"
 
@@ -133,6 +133,7 @@ bool InputProcessor::processOnset(event_t& event,
 		}
 	}
 
+	auto orig_level = event.velocity;
 	for(auto& filter : filters)
 	{
 		// This line might change the 'event' variable
@@ -151,6 +152,11 @@ bool InputProcessor::processOnset(event_t& event,
 		ERR(inputprocessor, "Missing Sample.\n");
 		return false;
 	}
+
+	auto selected_level =
+		(sample->getPower() - instr->getMinPower()) /
+		(instr->getMaxPower() - instr->getMinPower());
+	settings.velocity_modifier_current.store(selected_level / orig_level);
 
 	for(Channel& ch: kit.channels)
 	{

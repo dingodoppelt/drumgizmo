@@ -124,3 +124,27 @@ std::size_t Instrument::getNumberOfFiles() const
 	// multi-channel files.
 	return audiofiles.size();
 }
+
+float Instrument::getMaxPower() const
+{
+	if(version >= VersionStr("2.0"))
+	{
+		return powerlist.getMaxPower();
+	}
+	else
+	{
+		return 1.0f;
+	}
+}
+
+float Instrument::getMinPower() const
+{
+	if(version >= VersionStr("2.0"))
+	{
+		return powerlist.getMinPower();
+	}
+	else
+	{
+		return 0.0f;
+	}
+}

@@ -1,9 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            powerlist.h
+ *            visualizerframecontent.cc
  *
- *  Sun Jul 28 19:45:47 CEST 2013
- *  Copyright 2013 Bent Bisballe Nyeng
+ *  Tue Jul 10 20:52:22 CEST 2018
+ *  Copyright 2018 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,42 +24,28 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
+#include "visualizerframecontent.h"
 
-#include <vector>
+#include <cmath>
+#include <iostream>
 
-#include "sample.h"
+#include "painter.h"
 
-class Random;
-struct Settings;
-
-class PowerList
+namespace GUI
 {
-public:
-	PowerList(Random& rand, Settings& settings);
 
-	void add(Sample* s);
-	void finalise(); ///< Call this when no more samples will be added.
+VisualizerframeContent::VisualizerframeContent(Widget* parent,
+                                               Settings& settings,
+                                               SettingsNotifier& settings_notifier)
+	: Widget(parent)
+	, visualizer(this, settings, settings_notifier)
+{
+}
 
-	Sample* get(level_t velocity);
+void VisualizerframeContent::resize(std::size_t width, std::size_t height)
+{
+	Widget::resize(width, height);
+	visualizer.resize(width, height);
+}
 
-	float getMaxPower() const;
-	float getMinPower() const;
-
-private:
-	struct PowerListItem
-	{
-		Sample* sample;
-		float power;
-	};
-
-	Random& rand;
-	Settings& settings;
-
-	std::vector<PowerListItem> samples;
-	float power_max;
-	float power_min;
-
-	const Channel* getMasterChannel();
-	Sample* lastsample;
-};
+} // GUI::

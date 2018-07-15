@@ -27,7 +27,10 @@
 #pragma once
 
 #include "widget.h"
+#include "texturedbox.h"
+#include "texture.h"
 
+struct Settings;
 class SettingsNotifier;
 
 class HumaniserVisualiser
@@ -35,22 +38,53 @@ class HumaniserVisualiser
 {
 public:
 	HumaniserVisualiser(GUI::Widget* parent,
+	                    Settings& settings,
 	                    SettingsNotifier& settings_notifier);
 
 	// From Widget:
 	virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
-
-	void latencyOffsetChanged(int offset);
-	void velocityOffsetChanged(float offset);
-	void latencyStddevChanged(float stddev);
-	void latencyLaidbackChanged(int laidback);
-	void velocityStddevChanged(float stddev);
+	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	int latency_offset;
-	float velocity_offset;
-	float latency_stddev;
-	int laidback;
-	float velocity_stddev;
-	SettingsNotifier& settings_notifier;
+	GUI::TexturedBox box{getImageCache(), ":resources/widget.png",
+			0, 0, // atlas offset (x, y)
+			7, 1, 7, // dx1, dx2, dx3
+			7, 63, 7}; // dy1, dy2, dy3
+
+	class Canvas
+		: public GUI::Widget
+	{
+	public:
+		Canvas(GUI::Widget* parent, Settings& settings,
+		       SettingsNotifier& settings_notifier);
+
+		// From Widget:
+		virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
+
+		void latencyEnabledChanged(bool enabled);
+		void velocityEnabledChanged(bool enabled);
+		void latencyOffsetChanged(int offset);
+		void velocityOffsetChanged(float offset);
+		void latencyStddevChanged(float stddev);
+		void latencyLaidbackChanged(int laidback);
+		void velocityStddevChanged(float stddev);
+
+		GUI::Texture stddev_h{getImageCache(), ":resources/stddev_horizontal.png"};
+		GUI::Texture stddev_h_disabled{getImageCache(), ":resources/stddev_horizontal_disabled.png"};
+		GUI::Texture stddev_v{getImageCache(), ":resources/stddev_vertical.png"};
+		GUI::Texture stddev_v_disabled{getImageCache(), ":resources/stddev_vertical_disabled.png"};
+
+		bool latency_enabled{false};
+		bool velocity_enabled{false};
+
+		int latency_offset;
+		float velocity_offset;
+		float latency_stddev;
+		int laidback;
+		float velocity_stddev;
+		SettingsNotifier& settings_notifier;
+		const int latency_max_samples;
+	};
+
+	Canvas canvas;
 };

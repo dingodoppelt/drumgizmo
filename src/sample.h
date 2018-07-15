@@ -42,6 +42,8 @@ public:
 
 	AudioFile* getAudioFile(const Channel& channel);
 
+	float getPower() const;
+
 private:
 	friend class InstrumentParser;
 	friend class PowerList;

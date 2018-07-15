@@ -1,10 +1,10 @@
 /* -*- Mode: c++ -*- */
 /***************************************************************************
- *            humanizerframecontent.h
+ *            visualizerframecontent.h
  *
- *  Fri Mar 24 21:49:58 CET 2017
- *  Copyright 2017 André Nusser
- *  andre.nusser@googlemail.com
+ *  Tue Jul 10 20:52:22 CEST 2018
+ *  Copyright 2018 Bent Bisballe Nyeng
+ *  deva@aasimon.org
  ****************************************************************************/
 
 /*
@@ -25,47 +25,32 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 #pragma once
-
-#include "knob.h"
-#include "labeledcontrol.h"
 #include "layout.h"
 #include "widget.h"
+#include "humaniservisualiser.h"
 
-struct Settings;
+#include <settings.h>
+
+#include <iomanip>
+#include <sstream>
+
 class SettingsNotifier;
 
 namespace GUI
 {
 
-class HumanizerframeContent
+class VisualizerframeContent
 	: public Widget
 {
 public:
-	HumanizerframeContent(Widget* parent,
-	                      Settings& settings,
-	                      SettingsNotifier& settings_notifier);
+	VisualizerframeContent(Widget* parent, Settings& settings,
+	                       SettingsNotifier& settings_notifier);
+
+		// From Widget
+	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	float stddevSettingsToKnob(float value) const;
-	float stddevKnobToSettings(float value) const;
-
-	void attackValueChanged(float value);
-	void falloffValueChanged(float value);
-	void stddevKnobValueChanged(float value);
-	void stddevSettingsValueChanged(float value);
-
-	GridLayout layout{this, 3, 1};
-
-	LabeledControl attack{this, "Attack"}; // drummer strength
-	LabeledControl falloff{this, "Release"}; // regain
-	LabeledControl stddev{this, "StdDev"};
-
-	Knob attack_knob{&attack};
-	Knob falloff_knob{&falloff};
-	Knob stddev_knob{&stddev};
-
-	Settings& settings;
-	SettingsNotifier& settings_notifier;
+	HumaniserVisualiser visualizer;
 };
 
 } // GUI::

@@ -31,7 +31,6 @@
 #include "labeledcontrol.h"
 #include "layout.h"
 #include "widget.h"
-#include "humaniservisualiser.h"
 
 #include <settings.h>
 
@@ -79,7 +78,6 @@ private:
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
-	HumaniserVisualiser visualiser;
 };
 
 } // GUI::

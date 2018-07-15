@@ -62,3 +62,8 @@ AudioFile* Sample::getAudioFile(const Channel& channel)
 
 	return nullptr;
 }
+
+float Sample::getPower() const
+{
+	return power;
+}
