@@ -62,4 +62,6 @@ private:
 	bool processStop(event_t& event);
 
 	std::vector<std::unique_ptr<InputFilter>> filters;
+
+	Settings& settings;
 };

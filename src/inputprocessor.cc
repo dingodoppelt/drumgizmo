@@ -44,6 +44,7 @@ InputProcessor::InputProcessor(Settings& settings,
 	: kit(kit)
 	, activeevents(activeevents)
 	, is_stopping(false)
+	, settings(settings)
 {
 	// Build filter list
 	filters.emplace_back(std::make_unique<StaminaFilter>(settings));
@@ -121,7 +122,8 @@ bool InputProcessor::processOnset(event_t& event,
 					if(event_sample.group == instr->getGroup() &&
 					   event_sample.instrument != instr)
 					{
-						event_sample.rampdown = 3000; // Ramp down 3000 samples
+						// Ramp down 14.7ms (3000 samples in 44k1Hz)
+						event_sample.rampdown = settings.samplerate.load() / 14.7;
 						// TODO: This must be configurable at some point...
 						// ... perhaps even by instrument (ie. in the xml file)
 						event_sample.ramp_start = event_sample.rampdown;
