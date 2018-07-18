@@ -66,7 +66,7 @@ private:
 		void latencyOffsetChanged(int offset);
 		void velocityOffsetChanged(float offset);
 		void latencyStddevChanged(float stddev);
-		void latencyLaidbackChanged(int laidback);
+		void latencyLaidbackChanged(float laidback);
 		void velocityStddevChanged(float stddev);
 
 		GUI::Texture stddev_h{getImageCache(), ":resources/stddev_horizontal.png"};
@@ -84,6 +84,8 @@ private:
 		float velocity_stddev;
 		SettingsNotifier& settings_notifier;
 		const int latency_max_samples;
+
+		Settings& settings;
 	};
 
 	Canvas canvas;

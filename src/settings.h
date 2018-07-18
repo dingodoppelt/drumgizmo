@@ -102,13 +102,14 @@ struct Settings
 	Atomic<bool> enable_latency_modifier{false};
 
 	//! Maximum "early hits" introduces latency in milliseconds.
-	Atomic<std::size_t> latency_max{100u};
+	Atomic<float> latency_max_ms{150.0f};
 
 	//! 0 := on-beat
 	//! positive := laid back
 	//! negative := up-beat
-	static int constexpr latency_laid_back_default = 0;
-	Atomic<int> latency_laid_back{latency_laid_back_default};
+	//! Same range is [-100; 100] ms
+	static float constexpr latency_laid_back_ms_default = 0.0f;
+	Atomic<float> latency_laid_back_ms{latency_laid_back_ms_default};
 
 	//!   0 := Robot
 	//! 100 := Good drummer
@@ -172,8 +173,8 @@ struct SettingsGetter
 	SettingRef<bool> has_bleed_control;
 
 	SettingRef<bool> enable_latency_modifier;
-	SettingRef<std::size_t> latency_max;
-	SettingRef<int> latency_laid_back;
+	SettingRef<float> latency_max_ms;
+	SettingRef<float> latency_laid_back_ms;
 	SettingRef<float> latency_stddev;
 	SettingRef<float> latency_regain;
 	SettingRef<int> latency_current;
@@ -210,8 +211,8 @@ struct SettingsGetter
 		, master_bleed{settings.master_bleed}
 		, has_bleed_control{settings.has_bleed_control}
 		, enable_latency_modifier{settings.enable_latency_modifier}
-		, latency_max{settings.latency_max}
-		, latency_laid_back{settings.latency_laid_back}
+		, latency_max_ms{settings.latency_max_ms}
+		, latency_laid_back_ms{settings.latency_laid_back_ms}
 		, latency_stddev{settings.latency_stddev}
 		, latency_regain{settings.latency_regain}
 		, latency_current{settings.latency_current}
@@ -263,8 +264,8 @@ public:
 	Notifier<bool> has_bleed_control;
 
 	Notifier<bool> enable_latency_modifier;
-	Notifier<std::size_t> latency_max;
-	Notifier<int> latency_laid_back;
+	Notifier<float> latency_max_ms;
+	Notifier<float> latency_laid_back_ms;
 	Notifier<float> latency_stddev;
 	Notifier<float> latency_regain;
 	Notifier<int> latency_current;
@@ -313,8 +314,8 @@ public:
 		EVAL(has_bleed_control);
 
 		EVAL(enable_latency_modifier);
-		EVAL(latency_max);
-		EVAL(latency_laid_back);
+		EVAL(latency_max_ms);
+		EVAL(latency_laid_back_ms);
 		EVAL(latency_stddev);
 		EVAL(latency_regain);
 		EVAL(latency_current);

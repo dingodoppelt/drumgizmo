@@ -576,8 +576,8 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		// Do not store/reload this value
 		//"  <value name=\"latency_max\">" +
 		//int2str(settings.latency_max.load()) + "</value>\n"
-		"  <value name=\"latency_laid_back\">" +
-		int2str(settings.latency_laid_back.load()) + "</value>\n"
+		"  <value name=\"latency_laid_back_ms\">" +
+		float2str(settings.latency_laid_back_ms.load()) + "</value>\n"
 		"  <value name=\"latency_stddev\">" +
 		float2str(settings.latency_stddev.load()) + "</value>\n"
 		"  <value name=\"latency_regain\">" +
@@ -667,9 +667,9 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	//	settings.latency_max.store(str2int(p.value("latency_max")));
 	//}
 
-	if(p.value("latency_laid_back") != "")
+	if(p.value("latency_laid_back_ms") != "")
 	{
-		settings.latency_laid_back.store(str2int(p.value("latency_laid_back")));
+		settings.latency_laid_back_ms.store(str2float(p.value("latency_laid_back_ms")));
 	}
 
 	if(p.value("latency_stddev") != "")

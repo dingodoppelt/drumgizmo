@@ -66,8 +66,9 @@ HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
                                     SettingsNotifier& settings_notifier)
 	: GUI::Widget(parent)
 	, settings_notifier(settings_notifier)
-	, latency_max_samples(settings.latency_max.load() *
+	, latency_max_samples(settings.latency_max_ms.load() *
 	                      settings.samplerate.load() / 1000)
+	, settings(settings)
 {
 	CONNECT(this, settings_notifier.enable_latency_modifier,
 	        this, &HumaniserVisualiser::Canvas::latencyEnabledChanged);
@@ -81,7 +82,7 @@ HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
 
 	CONNECT(this, settings_notifier.latency_stddev,
 	        this, &HumaniserVisualiser::Canvas::latencyStddevChanged);
-	CONNECT(this, settings_notifier.latency_laid_back,
+	CONNECT(this, settings_notifier.latency_laid_back_ms,
 	        this, &HumaniserVisualiser::Canvas::latencyLaidbackChanged);
 	CONNECT(this, settings_notifier.velocity_stddev,
 	        this, &HumaniserVisualiser::Canvas::velocityStddevChanged);
@@ -185,9 +186,9 @@ void HumaniserVisualiser::Canvas::latencyStddevChanged(float stddev)
 	redraw();
 }
 
-void HumaniserVisualiser::Canvas::latencyLaidbackChanged(int laidback)
+void HumaniserVisualiser::Canvas::latencyLaidbackChanged(float laidback_ms)
 {
-	this->laidback = laidback;
+	this->laidback = laidback_ms * settings.samplerate.load() / 1000;
 	redraw();
 }
 

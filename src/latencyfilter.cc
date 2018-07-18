@@ -47,9 +47,9 @@ static T1 getLatencySamples(T1 latency_ms, T2 samplerate)
 bool LatencyFilter::filter(event_t& event, std::size_t pos)
 {
 	auto enabled = settings.enable_latency_modifier.load();
-	auto latency_ms = settings.latency_max.load();
+	auto latency_ms = settings.latency_max_ms.load();
 	auto samplerate = settings.samplerate.load();
-	auto latency_laid_back = settings.latency_laid_back.load();
+	auto latency_laid_back_ms = settings.latency_laid_back_ms.load();
 	auto latency_stddev = settings.latency_stddev.load();
 	auto latency_regain = settings.latency_regain.load();
 
@@ -59,6 +59,7 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	}
 
 	auto latency = getLatencySamples(latency_ms, samplerate);
+	auto latency_laid_back = getLatencySamples(latency_laid_back_ms, samplerate);
 
 	// Assert latency_regain is within range [0; 1].
 	assert(latency_regain >= 0.0f && latency_regain <= 1.0f);
@@ -102,7 +103,7 @@ std::size_t LatencyFilter::getLatency() const
 	bool enabled = settings.enable_latency_modifier.load();
 	if(enabled)
 	{
-		auto latency_ms = settings.latency_max.load();
+		auto latency_ms = settings.latency_max_ms.load();
 		auto samplerate = settings.samplerate.load();
 		return getLatencySamples(latency_ms, samplerate);
 	}

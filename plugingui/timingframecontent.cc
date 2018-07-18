@@ -60,7 +60,7 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	laidback.resize(80, 80);
 	laidback_knob.resize(30, 30);
 	laidback_knob.showValue(false);
-	laidback_knob.setDefaultValue(laidbackSettingsToKnob(Settings::latency_laid_back_default));
+	laidback_knob.setDefaultValue(laidbackSettingsToKnob(Settings::latency_laid_back_ms_default));
 	laidback.setControl(&laidback_knob);
 	layout.addItem(&laidback);
 	// set range to [-1, 1]
@@ -75,7 +75,7 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	        this, &TimingframeContent::tightnessSettingsValueChanged);
 	CONNECT(this, settings_notifier.latency_regain,
 	        this, &TimingframeContent::regainSettingsValueChanged);
-	CONNECT(this, settings_notifier.latency_laid_back,
+	CONNECT(this, settings_notifier.latency_laid_back_ms,
 	        this, &TimingframeContent::laidbackSettingsValueChanged);
 
 	CONNECT(&tightness_knob, valueChangedNotifier,
@@ -104,20 +104,25 @@ float TimingframeContent::tightnessSettingsToKnob(float value) const
 	return value;
 }
 
+
+static constexpr float laid_back_range = 100.0f;
+
 float TimingframeContent::laidbackKnobToSettings(float value) const
 {
+	// knob in range [0, 1] settings in +/- laid_back_range ms
 	value -= 0.5f;
-	value *= 4.0f;
-	value *= settings.latency_max.load();
+	value *= 2.0f;
+	value *= laid_back_range;
 
-	return std::lround(value);
+	return value;
 }
 
-float TimingframeContent::laidbackSettingsToKnob(int int_value) const
+float TimingframeContent::laidbackSettingsToKnob(float value) const
 {
-	float value = int_value;
-	value /= (float)settings.latency_max.load();
-	value /= 4.0f;
+	// settings in +/- laid_back_range ms knob in range [0, 1]
+
+	value /= laid_back_range;
+	value /= 2.0f;
 	value += 0.5f;
 
 	return value;
@@ -148,12 +153,12 @@ void TimingframeContent::regainSettingsValueChanged(float value)
 void TimingframeContent::laidbackKnobValueChanged(float value)
 {
 	auto settings_value = laidbackKnobToSettings(value);
-	settings.latency_laid_back.store(settings_value);
+	settings.latency_laid_back_ms.store(settings_value);
 }
 
-void TimingframeContent::laidbackSettingsValueChanged(int int_value)
+void TimingframeContent::laidbackSettingsValueChanged(float value)
 {
-	auto knob_value = laidbackSettingsToKnob(int_value);
+	auto knob_value = laidbackSettingsToKnob(value);
 	laidback_knob.setValue(knob_value);
 }
 

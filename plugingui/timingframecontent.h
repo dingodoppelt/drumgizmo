@@ -54,14 +54,14 @@ private:
 	float thightnessKnobToSettings(float value) const;
 	float tightnessSettingsToKnob(float value) const;
 	float laidbackKnobToSettings(float value) const;
-	float laidbackSettingsToKnob(int int_value) const;
+	float laidbackSettingsToKnob(float value) const;
 
 	void tightnessKnobValueChanged(float value);
 	void tightnessSettingsValueChanged(float value);
 	void regainKnobValueChanged(float value);
 	void regainSettingsValueChanged(float value);
 	void laidbackKnobValueChanged(float value);
-	void laidbackSettingsValueChanged(int value);
+	void laidbackSettingsValueChanged(float value);
 
 	void latencyOffsetChanged(int offset);
 	void velocityOffsetChanged(float offset);
