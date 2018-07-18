@@ -60,12 +60,10 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	laidback.resize(80, 80);
 	laidback_knob.resize(30, 30);
 	laidback_knob.showValue(false);
-	laidback_knob.setDefaultValue(laidbackSettingsToKnob(Settings::latency_laid_back_ms_default));
+	laidback_knob.setDefaultValue(Settings::latency_laid_back_ms_default);
+	laidback_knob.setRange(-100.0f, 100.0f); // +/- 100 ms range
 	laidback.setControl(&laidback_knob);
 	layout.addItem(&laidback);
-	// set range to [-1, 1]
-	laidback.offset = -1.0f;
-	laidback.scale = 2.0f;
 
 	layout.setPosition(&tightness, GridLayout::GridRange{0, 1, 0, 1});
 	layout.setPosition(&regain, GridLayout::GridRange{1, 2, 0, 1});
@@ -104,30 +102,6 @@ float TimingframeContent::tightnessSettingsToKnob(float value) const
 	return value;
 }
 
-
-static constexpr float laid_back_range = 100.0f;
-
-float TimingframeContent::laidbackKnobToSettings(float value) const
-{
-	// knob in range [0, 1] settings in +/- laid_back_range ms
-	value -= 0.5f;
-	value *= 2.0f;
-	value *= laid_back_range;
-
-	return value;
-}
-
-float TimingframeContent::laidbackSettingsToKnob(float value) const
-{
-	// settings in +/- laid_back_range ms knob in range [0, 1]
-
-	value /= laid_back_range;
-	value /= 2.0f;
-	value += 0.5f;
-
-	return value;
-}
-
 void TimingframeContent::tightnessKnobValueChanged(float value)
 {
 	auto settings_value = thightnessKnobToSettings(value);
@@ -152,14 +126,12 @@ void TimingframeContent::regainSettingsValueChanged(float value)
 
 void TimingframeContent::laidbackKnobValueChanged(float value)
 {
-	auto settings_value = laidbackKnobToSettings(value);
-	settings.latency_laid_back_ms.store(settings_value);
+	settings.latency_laid_back_ms.store(value);
 }
 
 void TimingframeContent::laidbackSettingsValueChanged(float value)
 {
-	auto knob_value = laidbackSettingsToKnob(value);
-	laidback_knob.setValue(knob_value);
+	laidback_knob.setValue(value);
 }
 
 } // GUI::
