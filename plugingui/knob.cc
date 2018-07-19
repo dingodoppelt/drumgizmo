@@ -150,8 +150,12 @@ void Knob::buttonEvent(ButtonEvent* buttonEvent)
 		return;
 	}
 
-	if (buttonEvent->doubleClick) {
-		internalSetValue(default_value);
+	if(buttonEvent->doubleClick)
+	{
+		float value = default_value;
+		value -= minimum;
+		value /= (maximum - minimum);
+		internalSetValue(value);
 		return;
 	}
 
