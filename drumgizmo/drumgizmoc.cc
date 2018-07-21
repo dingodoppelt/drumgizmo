@@ -388,7 +388,7 @@ int main(int argc, char* argv[])
 					std::cerr << "tightness range is [0; 1].\n";
 					exit(1);
 				}
-				settings.latency_stddev.store((-1.0 * val + 1.0) * 500.0);
+				settings.latency_stddev.store((-1.0 * val + 1.0) * 20.0);
 			}
 			else if(token.key == "regain")
 			{
