@@ -134,6 +134,27 @@ Parameters for controlling the streaming buffers.
 \" \fBchunk_size\fR=<size> (chunk size in k,M,G)
 
 .RE
+\fB-t, --timing-humanizer\fR
+.RS 7
+Enable moving of notes in time.
+.P
+\fINote: \fIadds \fIlatency \fIto \fIthe \fIoutput \fIso \fIdo \fInot
+\fIuse \fIthis \fIwith \fIa \fIreal-time \fImidi \fIdrumkit.
+
+.RE
+\fB-T, --timing-humanizerparms parmlist\fR
+.RS 7
+Timing humanizer options.
+
+.P
+\fBlaidback\fR=<val> (Move notes ahead or behind in time in ms
+[+/-100].)
+.P
+\fBtightness\fR=<val> (Control the tightness of the drummer. [0; 1].)
+.P
+\fBregain\fR=<val> (Control how fast the drummer catches up the timing. [0; 1])
+
+.RE
 \fB-v, --version\fR
 .RS 7
 Print drumgizmo version and exit.
