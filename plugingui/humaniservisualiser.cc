@@ -66,8 +66,7 @@ HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
                                     SettingsNotifier& settings_notifier)
 	: GUI::Widget(parent)
 	, settings_notifier(settings_notifier)
-	, latency_max_samples(settings.latency_max_ms.load() *
-	                      settings.samplerate.load() / 1000)
+	, latency_max_ms(settings.latency_max_ms.load())
 	, settings(settings)
 {
 	CONNECT(this, settings_notifier.enable_latency_modifier,
@@ -99,16 +98,16 @@ void HumaniserVisualiser::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 
 	p.clear();
 
-	const int spx = latency_max_samples * 2 / width(); // samples pr. pixel
+	const float mspx = latency_max_ms * 2 / width(); // ms pr. pixel
 
-	int x = latency_offset / spx + width() / 2;
+	int x = latency_offset / mspx + width() / 2;
 	float v = (-1.0f * velocity_offset + 1.0f) * 0.8;
 	int y = height() * 0.2 + v * height();
 	y = std::max(0, y);
-	int w = 50.f * latency_stddev / spx * 3 * 2; // stddev is ~ +/- 3 span
+	int w = (3. * 2.) * latency_stddev / mspx; // stddev is ~ +/- 3 span
 	int h = velocity_stddev * height() / 4;
 
-	DEBUG(vis, "max: %d, spx: %d, x: %d, w: %d", latency_max_samples, spx, x, w);
+	DEBUG(vis, "max: %f, mspx: %f, x: %d, w: %d", latency_max_ms, mspx, x, w);
 
 	// Stddev squares
 	if(latency_enabled)
@@ -168,7 +167,7 @@ void HumaniserVisualiser::Canvas::velocityEnabledChanged(bool enabled)
 	redraw();
 }
 
-void HumaniserVisualiser::Canvas::latencyOffsetChanged(int offset)
+void HumaniserVisualiser::Canvas::latencyOffsetChanged(float offset)
 {
 	latency_offset = offset;
 	redraw();

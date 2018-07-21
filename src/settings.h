@@ -126,8 +126,8 @@ struct Settings
 	static float constexpr latency_regain_default = 0.9f;
 	Atomic<float> latency_regain{latency_regain_default};
 
-	// Current latency offset - for UI
-	Atomic<int> latency_current{0};
+	// Current latency offset in ms - for UI
+	Atomic<float> latency_current{0};
 };
 
 //! Settings getter class.
@@ -177,7 +177,7 @@ struct SettingsGetter
 	SettingRef<float> latency_laid_back_ms;
 	SettingRef<float> latency_stddev;
 	SettingRef<float> latency_regain;
-	SettingRef<int> latency_current;
+	SettingRef<float> latency_current;
 
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
@@ -268,7 +268,7 @@ public:
 	Notifier<float> latency_laid_back_ms;
 	Notifier<float> latency_stddev;
 	Notifier<float> latency_regain;
-	Notifier<int> latency_current;
+	Notifier<float> latency_current;
 
 	void evaluate()
 	{

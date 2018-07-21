@@ -63,7 +63,7 @@ private:
 
 		void latencyEnabledChanged(bool enabled);
 		void velocityEnabledChanged(bool enabled);
-		void latencyOffsetChanged(int offset);
+		void latencyOffsetChanged(float offset);
 		void velocityOffsetChanged(float offset);
 		void latencyStddevChanged(float stddev);
 		void latencyLaidbackChanged(float laidback);
@@ -77,13 +77,13 @@ private:
 		bool latency_enabled{false};
 		bool velocity_enabled{false};
 
-		int latency_offset;
+		float latency_offset;
 		float velocity_offset;
 		float latency_stddev;
 		int laidback;
 		float velocity_stddev;
 		SettingsNotifier& settings_notifier;
-		const int latency_max_samples;
+		const float latency_max_ms;
 
 		Settings& settings;
 	};

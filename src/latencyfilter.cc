@@ -44,6 +44,12 @@ static T1 getLatencySamples(T1 latency_ms, T2 samplerate)
 	return latency_ms * samplerate / 1000.;
 }
 
+template<typename T1, typename T2>
+static T1 getLatencyMs(T1 latency_samples, T2 samplerate)
+{
+	return 1000. * latency_samples / samplerate;
+}
+
 bool LatencyFilter::filter(event_t& event, std::size_t pos)
 {
 	auto enabled = settings.enable_latency_modifier.load();
@@ -86,7 +92,8 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 	event.offset += latency_laid_back; // laid back offset (user controlled)
 	event.offset += latency_offset; // current drift
 
-	settings.latency_current.store(latency_offset + latency_laid_back);
+	auto latency_current_ms = getLatencyMs(latency_offset + latency_laid_back, samplerate);
+	settings.latency_current.store(latency_current_ms);
 
 	return true;
 }
