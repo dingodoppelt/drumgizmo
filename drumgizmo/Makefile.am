@@ -90,7 +90,6 @@ endif # HAVE_OUTPUT_JACKAUDIO
 EXTRA_DIST = \
 	jackclient.h \
 	enginefactory.h \
-	getoptpp/getoptpp.hpp \
 	input/inputdummy.h \
 	input/test.h \
 	input/jackmidi.h \

@@ -4,6 +4,7 @@ DISTDIRS = tools include src plugingui plugin drumgizmo man test
 
 EXTRA_DIST = \
 	version.h \
+\
 	hugin/hugin.h \
 	hugin/hugin.hpp \
 	hugin/hugin.c \
@@ -11,4 +12,8 @@ EXTRA_DIST = \
 	hugin/hugin_syslog.h \
 	hugin/hugin_syslog.c \
 	hugin/hugin_filter.h \
-	hugin/hugin_filter.c
+	hugin/hugin_filter.c \
+\
+	getoptpp/getoptpp.hpp \
+\
+	plugingui/lodepng/lodepng.h

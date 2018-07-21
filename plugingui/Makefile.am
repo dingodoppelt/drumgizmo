@@ -180,6 +180,7 @@ EXTRA_DIST = \
 	$(nodist_libdggui_la_SOURCES) \
 	$(RES) \
 	abouttab.h \
+	bleedcontrolframecontent.h \
 	button.h \
 	button_base.h \
 	canvas.h \
@@ -196,12 +197,14 @@ EXTRA_DIST = \
 	font.h \
 	frame.h \
 	guievent.h \
-	humanizerframecontent.h \
+	humanisertab.h \
 	humaniservisualiser.h \
+	humanizerframecontent.h \
 	image.h \
 	imagecache.h \
 	knob.h \
 	label.h \
+	labeledcontrol.h \
 	layout.h \
 	led.h \
 	lineedit.h \
@@ -238,5 +241,4 @@ EXTRA_DIST = \
 	verticalline.h \
 	visualizerframecontent.h \
 	widget.h \
-	window.h \
-	lodepng/lodepng.h
+	window.h

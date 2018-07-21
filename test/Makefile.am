@@ -9,6 +9,12 @@ TESTS = resource enginetest paintertest resampler configfile audiocache \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
 	instrumentparsertest drumkitparsertest
 
+EXTRA_DIST = \
+	dgunit.h \
+	drumkit_creator.h \
+	lv2_test_host.h \
+	scopedfile.h
+
 if ENABLE_LV2
 TESTS += lv2
 endif
@@ -154,10 +160,6 @@ syncedsettingstest_CXXFLAGS = -DOUTPUT=\"syncedsettingstest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/hugin
 syncedsettingstest_LDFLAGS =
 syncedsettingstest_SOURCES = syncedsettings.cc dgtest.cc
-
-EXTRA_DIST = \
-	lv2_test_host.h \
-	drumkit_creator.h
 
 imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
