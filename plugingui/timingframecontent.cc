@@ -86,20 +86,12 @@ TimingframeContent::TimingframeContent(Widget* parent,
 
 float TimingframeContent::thightnessKnobToSettings(float value) const
 {
-	value -= 1.0f;
-	value *= -1.0f;
-	value *= 500.0f;
-
-	return value;
+	return (1.f - value)*10.f;
 }
 
 float TimingframeContent::tightnessSettingsToKnob(float value) const
 {
-	value /= 500.0f;
-	value *= -1.0f;
-	value += 1.0f;
-
-	return value;
+	return 1.f - (value/10.f);
 }
 
 void TimingframeContent::tightnessKnobValueChanged(float value)

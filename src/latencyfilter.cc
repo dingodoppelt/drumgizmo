@@ -73,21 +73,14 @@ bool LatencyFilter::filter(event_t& event, std::size_t pos)
 
 	latency_last_pos = pos;
 
-	float offset_min = latency * -1.0f;
-	float offset_max = latency * 1.0f;
-
-	float mean = 0.0f;//latency_laid_back;
-	float stddev = latency_stddev;
-
-	float offset = random.normalDistribution(mean, stddev);
-
-	latency_offset += offset;
-
-	if(latency_offset > offset_max) latency_offset = offset_max;
-	if(latency_offset < offset_min) latency_offset = offset_min;
+	float offset_min = -latency;
+	float offset_max = latency;
+	float offset_ms = random.normalDistribution(0.0f, latency_stddev);
+	latency_offset += getLatencySamples(offset_ms, samplerate);
+	latency_offset = std::max(offset_min, std::min(offset_max, latency_offset));
 
 	DEBUG(offset, "latency: %d, offset: %f, drift: %f",
-	      (int)latency, offset, latency_offset);
+	      (int)latency, offset_ms, latency_offset);
 
 	event.offset += latency; // fixed latency offset
 	event.offset += latency_laid_back; // laid back offset (user controlled)

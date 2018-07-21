@@ -44,6 +44,6 @@ public:
 private:
 	Settings& settings;
 	Random& random;
-	double latency_offset{0.0};
+	float latency_offset{0.0};
 	std::size_t latency_last_pos{0};
 };

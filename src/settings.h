@@ -111,13 +111,13 @@ struct Settings
 	static float constexpr latency_laid_back_ms_default = 0.0f;
 	Atomic<float> latency_laid_back_ms{latency_laid_back_ms_default};
 
-	//!   0 := Robot
-	//! 100 := Good drummer
-	//! 200 := Decent drummer
-	//! 300 := Decent drummer on a bad day
-	//! 400 := Bad drummer
-	//! 500 := Bad and drunk drummer
-	static float constexpr latency_stddev_default = 100.0f;
+	//! 0.0 := Robot
+	//! 2.0 := Good drummer
+	//! 4.0 := Decent drummer
+	//! 6.0 := Decent drummer on a bad day
+	//! 8.0 := Bad drummer
+	//! 10.0 := Bad and drunk drummer
+	static float constexpr latency_stddev_default = 2.0f;
 	Atomic<float> latency_stddev{latency_stddev_default};
 
 	//! Regain on-beat position.

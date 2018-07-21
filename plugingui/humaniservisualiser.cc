@@ -105,7 +105,7 @@ void HumaniserVisualiser::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	float v = (-1.0f * velocity_offset + 1.0f) * 0.8;
 	int y = height() * 0.2 + v * height();
 	y = std::max(0, y);
-	int w = latency_stddev / spx * 3 * 2; // stddev is ~ +/- 3 span
+	int w = 50.f * latency_stddev / spx * 3 * 2; // stddev is ~ +/- 3 span
 	int h = velocity_stddev * height() / 4;
 
 	DEBUG(vis, "max: %d, spx: %d, x: %d, w: %d", latency_max_samples, spx, x, w);
