@@ -88,7 +88,6 @@ endif #  HAVE_INPUT_JACKMIDI
 endif # HAVE_OUTPUT_JACKAUDIO
 
 EXTRA_DIST = \
-	drumgizmoc.h \
 	jackclient.h \
 	enginefactory.h \
 	getoptpp/getoptpp.hpp \

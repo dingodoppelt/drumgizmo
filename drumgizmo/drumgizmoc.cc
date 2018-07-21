@@ -38,7 +38,6 @@
 #include <hugin.hpp>
 
 #include "drumgizmo.h"
-#include "drumgizmoc.h"
 #include "enginefactory.h"
 #include "bytesizeparser.h"
 
@@ -46,12 +45,11 @@
 
 #include "nolocale.h"
 
-typedef struct parm_token
+struct ParmToken
 {
 	std::string key;
 	std::string value;
-} parm_token_t;
-
+};
 
 static std::string version()
 {
@@ -60,11 +58,10 @@ static std::string version()
 	return output.str();
 }
 
-
 static std::string copyright()
 {
 	std::ostringstream output;
-	output << "Copyright (C) 2008-2011 Bent Bisballe Nyeng - Aasimon.org.\n";
+	output << "Copyright (C) 2008-2018 Bent Bisballe Nyeng - Aasimon.org.\n";
 	output << "This is free software.  You may redistribute copies of it under the terms ";
 	output << "of\n";
 	output << "the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n";
@@ -74,66 +71,85 @@ static std::string copyright()
 	return output.str();
 }
 
-
 static std::string usage(std::string name)
 {
 	std::ostringstream output;
-	output << "Usage: " << name << " [options] drumkitfile\n";
-	output << "Options:\n";
-	output << "  -a, --async-load       Load drumkit in the background and start the ";
-	output << "  -b  --bleed            Set and enable master bleed";
-	output << "engine immediately.\n";
-	output << "  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event ";
-	output << "input engine.\n";
-	output << "  -I, --inputparms       parmlist  Set input engine parameters.\n";
-	output << "  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio ";
-	output << "output engine.\n";
-	output << "  -O, --outputparms      parmlist  Set output engine parameters.\n";
-	output << "  -e, --endpos           Number of samples to process, -1: infinite.\n";
+	output <<
+		"Usage: " << name << " [options] drumkitfile\n"
+		"Options:\n"
+		"  -a, --async-load       Load drumkit in the background and start the"
+		" engine immediately.\n"
+		"  -b  --bleed            Set and enable master bleed\n"
+
+//	stddev
+//	velocity-attack
+//	velocity-release
+//	tightness
+//	timing-regain
+//	laidback
+
+		"  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event "
+		"input engine.\n"
+		"  -I, --inputparms       parmlist  Set input engine parameters.\n"
+		"  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio "
+		"output engine.\n"
+		"  -O, --outputparms      parmlist  Set output engine parameters.\n"
+		"  -e, --endpos           Number of samples to process, -1: infinite.\n"
 #ifndef DISABLE_HUGIN
-	output << "  -D, --debug ddd        Enable debug messages on 'ddd'; see hugin ";
-	output << "documentation for details\n";
+		"  -D, --debug ddd        Enable debug messages on 'ddd' see hugin "
+		"documentation for details\n"
 #endif /*DISABLE_HUGIN*/
-	output << "  -r, --no-resampling    Disable resampling.\n";
-	output << "  -s, --streaming        Enable streaming.\n";
-	output << "  -S, --streamingparms   Streaming options.\n";
-	output << "  -v, --version          Print version information and exit.\n";
-	output << "  -h, --help             Print this message and exit.\n";
-	output << "\n";
-	output << "Input engine parameters:\n";
-	output << "  jackmidi:  midimap=<midimapfile>\n";
-	output << "  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n";
-	output << "             track=<miditrack> (default -1, all tracks)\n";
-	output << "             midimap=<midimapfile>, loop=<true|false>\n";
-	output << "  ossmidi:   midimap=<midimapfile>, dev=<device> (default '/dev/midi')\n";
-	output << "  test:      p=<hit_propability> (default 0.1)\n";
-	output << "             instr=<instrument> (default -1, random instrument)\n";
-	output << "             len=<seconds> (default -1, forever)\n";
-	output << "  dummy:\n";
-	output << "\n";
-	output << "Output engine parameters:\n";
-	output << "  alsa:      dev=<device> (default 'default'), frames=<frames> (default ";
-	output << "32)\n";
-	output << "             srate=<samplerate> (default 441000)\n";
-	output << "  oss:       dev=<device> (default '/dev/dsp'), srate=<samplerate>,\n";
-	output << "             max_fragments=<number> (default 4, see man page for more info),\n";
-	output << "             fragment_size=<selector> (default 8, see man page for more info)\n";
-	output << "  wavfile:   file=<filename> (default 'output'), srate=<samplerate> ";
-	output << "(default 44100)\n";
-	output << "  jackaudio:\n";
-	output << "  dummy:\n";
-	output << "\n";
-	output << "Streaming parameters:\n";
-	output << "  limit:         Limit the amount of preloaded drumkit data to the size\n";
-	// output << "  chunk_size:    chunk size in k,M,G\n"
-	output << "\n";
+		"  -r, --no-resampling    Disable resampling.\n"
+		"  -s, --streaming        Enable streaming.\n"
+		"  -S, --streamingparms parmlist\n"
+		"                         Streaming options.\n"
+		"  -t, --timing-humanizer\n"
+		"                         Enable moving of notes in time. Note adds latency to the output so do not\n"
+		"                         use this with a real-time drumkit.\n"
+		"  -T, --timing-humanizerparms parmlist\n"
+		"                         Timing humanizer options.\n"
+		"  -v, --version          Print version information and exit.\n"
+		"  -h, --help             Print this message and exit.\n"
+		"\n"
+		"Input engine parameters:\n"
+		"  jackmidi:  midimap=<midimapfile>\n"
+		"  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n"
+		"             track=<miditrack> (default -1, all tracks)\n"
+		"             midimap=<midimapfile>, loop=<true|false>\n"
+		"  ossmidi:   midimap=<midimapfile>, dev=<device> (default '/dev/midi')\n"
+		"  test:      p=<hit_propability> (default 0.1)\n"
+		"             instr=<instrument> (default -1, random instrument)\n"
+		"             len=<seconds> (default -1, forever)\n"
+		"  dummy:\n"
+		"\n"
+		"Output engine parameters:\n"
+		"  alsa:      dev=<device> (default 'default'), frames=<frames> (default "
+		"32)\n"
+		"             srate=<samplerate> (default 441000)\n"
+		"  oss:       dev=<device> (default '/dev/dsp'), srate=<samplerate>,\n"
+		"             max_fragments=<number> (default 4, see man page for more info),\n"
+		"             fragment_size=<selector> (default 8, see man page for more info)\n"
+		"  wavfile:   file=<filename> (default 'output'), srate=<samplerate> "
+		"(default 44100)\n"
+		"  jackaudio:\n"
+		"  dummy:\n"
+		"\n"
+		"Streaming parameters:\n"
+		"  limit:         Limit the amount of preloaded drumkit data to the size\n"
+		//"  chunk_size:    chunk size in k,M,G\n"
+		"\n"
+		"Timing humanizer parameters:\n"
+		"  laidback:      Move notes ahead or behind in time in ms [+/-100].\n"
+		"  tightness:     Control the tightness of the drummer. [0; 1].\n"
+		"  regain:        Control how fast the drummer catches up the timing. [0; 1]\n"
+		"\n";
 	return output.str();
 }
 
 
-std::vector<parm_token_t> parse_parameters(std::string &parms)
+std::vector<ParmToken> parseParameters(std::string &parms)
 {
-	std::vector<parm_token_t> result;
+	std::vector<ParmToken> result;
 	std::string parm;
 	std::string val;
 	bool inval = false;
@@ -239,7 +255,7 @@ int main(int argc, char* argv[])
 
 	opt.add("inputparms", required_argument, 'I', [&]() {
 		std::string parms = optarg;
-		auto tokens = parse_parameters(parms);
+		auto tokens = parseParameters(parms);
 		for(auto &token : tokens)
 		{
 			ie->setParm(token.key, token.value);
@@ -273,7 +289,7 @@ int main(int argc, char* argv[])
 
 	opt.add("outputparms", required_argument, 'O', [&]() {
 		std::string parms = optarg;
-		auto tokens = parse_parameters(parms);
+		auto tokens = parseParameters(parms);
 		for(auto &token : tokens)
 		{
 			oe->setParm(token.key, token.value);
@@ -308,7 +324,7 @@ int main(int argc, char* argv[])
 
 	opt.add("streamingparms", required_argument, 'S', [&]() {
 		std::string parms = optarg;
-		auto tokens = parse_parameters(parms);
+		auto tokens = parseParameters(parms);
 		for(auto &token : tokens)
 		{
 			if(token.key == "limit")
@@ -316,22 +332,78 @@ int main(int argc, char* argv[])
 				settings.disk_cache_upper_limit = byteSizeParser(token.value);
 				if(settings.disk_cache_upper_limit == 0)
 				{
-					std::cerr << "Invalid argument for streamparms limit: " << token.value << std::endl;
+					std::cerr << "Invalid argument for streamparms limit: " <<
+						token.value << std::endl;
 					exit(1);
 				}
 			}
-			// else if(token.key == "chunk_size")
-			// {
-			// 	settings.disk_cache_chunk_size = byteSizeParser(token.value);
-			// 	if(settings.disk_cache_chunk_size == 0)
-			// 	{
-			// 		std::cerr << "Invalid argument for streamparms chunk_size: " << token.value << std::endl;
-			// 		exit(1);
-			// 	}
+			//else if(token.key == "chunk_size")
+			//{
+			//	settings.disk_cache_chunk_size = byteSizeParser(token.value);
+			//	if(settings.disk_cache_chunk_size == 0)
+			//	{
+			//		std::cerr << "Invalid argument for streamparms chunk_size: " <<
+			//			token.value << std::endl;
+			//		exit(1);
+			//	}
 			// }
 			else
 			{
-				std::cerr << "Unknown streamingparms argument " << token.key << std::endl;
+				std::cerr << "Unknown streamingparms argument " << token.key <<
+					std::endl;
+				exit(1);
+			}
+		}
+	});
+
+	// Default is to disable timing humanizer
+	settings.enable_latency_modifier.store(false);
+
+	opt.add("timing-humanizer", no_argument, 't', [&]() {
+		settings.enable_latency_modifier.store(true);
+	});
+
+	opt.add("timing-humanizerparms", required_argument, 'T', [&]() {
+		std::string parms = optarg;
+		auto tokens = parseParameters(parms);
+		for(auto &token : tokens)
+		{
+			if(token.key == "laidback")
+			{
+				// Input range [+/- 100] ms
+				auto val = atof_nol(token.value.data());
+				if(val < -100.0 || val > 100.0)
+				{
+					std::cerr << "laidback range is +/- 100 and is in ms.\n";
+					exit(1);
+				}
+				settings.latency_laid_back_ms.store(val);
+			}
+			else if(token.key == "tightness")
+			{
+				// Input range [0; 1]
+				auto val = atof_nol(token.value.data());
+				if(val < 0.0 || val > 1.0)
+				{
+					std::cerr << "tightness range is [0; 1].\n";
+					exit(1);
+				}
+				settings.latency_stddev.store((-1.0 * val + 1.0) * 500.0);
+			}
+			else if(token.key == "regain")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0.0 || val > 1.0)
+				{
+					std::cerr << "regain range is [0; 1].\n";
+					exit(1);
+				}
+				settings.latency_regain.store(val);
+			}
+			else
+			{
+				std::cerr << "Unknown timing-humanizerparms argument " << token.key <<
+					std::endl;
 				exit(1);
 			}
 		}
