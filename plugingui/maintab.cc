@@ -53,8 +53,8 @@ MainTab::MainTab(Widget* parent,
 	add("Resampling", resampling_frame, resamplingframe_content, 10, 0);
 
 	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
-	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
 	add("Timing Humanizer", timing_frame, timingframe_content, 10, 1);
+	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
 	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 9, 1);
 	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 1);
 
