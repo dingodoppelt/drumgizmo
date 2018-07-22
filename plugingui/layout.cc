@@ -370,15 +370,10 @@ void GridLayout::moveAndResize(
 	}
 	else
 	{
-		if(item.width() <= width && item.height() <= height)
-		{
-			item.move(x + (width - item.width()) / 2,
-			    y + (height - item.height()) / 2);
-		}
-		else
-		{
-			item.move(x, y);
-		}
+		auto x_new = (item.width() > width) ? x : x + (width - item.width()) / 2;
+		auto y_new = (item.height() > height) ? y : y + (height - item.height()) / 2;
+
+		item.move(x_new, y_new);
 	}
 }
 
