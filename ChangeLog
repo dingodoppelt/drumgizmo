@@ -1,3 +1,31 @@
+Version 0.9.15
+==============
+Release date: July 24th 2018
+Contributors: deva, chaot4, meka, suhr, Muldjord, cglocke, Roman Garifullin, James Cowgill
+
+New engine features:
+ - New humanized timing feature.
+ - Master bleed control.
+ - Remove memory warning.
+ - Replaced cppunit with new dgunit header-only test framework.
+
+New CLI features:
+ - OSS midi input support.
+ - Finish and integrate getoptpp as a submodule.
+
+UI:
+ - Double click knobs to reset them to their default value.
+ - Ignore spacebar key in UI (used by DAW and toggled the buttons).
+ - Add cute little image in the inline display.
+
+Bugfixes:
+ - Fix X11 BadValue crash bug.
+ - Fix black render when opened as LV2 on Ardour and FreeBSD.
+ - Fix UI crash on underflow in resize()
+ - Fix valgrind errors of GUI.
+ - Fix crash if CLI is invoked without input and/or output engine. (deva)
+ - Fix out of bounds drawing of frame (chaot4)
+
 Version 0.9.14
 ==============
 Note: LAC2017 release
