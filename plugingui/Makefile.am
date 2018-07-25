@@ -164,7 +164,6 @@ plugingui_CXXFLAGS = \
 	$(GUI_CPPFLAGS) \
 	$(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) \
-	$(EXPAT_CFLAGS) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin

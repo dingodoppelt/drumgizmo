@@ -605,31 +605,6 @@ AS_CASE([$host_os],
 AC_SUBST(PTHREAD_CFLAGS)
 AC_SUBST(PTHREAD_LIBS)
 
-dnl ======================
-dnl Check for eXpat library
-dnl ======================
-tmp_CXXFLAGS="$CXXFLAGS"
-tmp_CPPFLAGS="$CPPFLAGS"
-tmp_CFLAGS="$CFLAGS"
-tmp_LDFLAGS="$LDFLAGS"
-tmp_LIBS="$LIBS"
-CXXFLAGS=""
-CPPFLAGS=""
-CFLAGS="$EXPAT_CFLAGS"
-LDFLAGS="$EXPAT_LDFLAGS"
-LIBS=""
-AC_CHECK_HEADER(expat.h, , AC_MSG_ERROR([*** eXpat header file not found!]))
-AC_CHECK_LIB(expat, XML_ParserCreate, , AC_MSG_ERROR([*** eXpat library not found!]))
-EXPAT_CFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
-EXPAT_LIBS="$LDFLAGS $LIBS"
-CXXFLAGS="$tmp_CXXFLAGS"
-CPPFLAGS="$tmp_CPPFLAGS"
-CFLAGS="$tmp_CFLAGS"
-LDFLAGS="$tmp_LDFLAGS"
-LIBS="$tmp_LIBS"
-AC_SUBST(EXPAT_CFLAGS)
-AC_SUBST(EXPAT_LIBS)
-
 dnl ===========================
 dnl Check for SSE instructions
 dnl ===========================

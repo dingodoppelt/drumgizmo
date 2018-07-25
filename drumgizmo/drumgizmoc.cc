@@ -30,6 +30,7 @@
 #include <getoptpp.hpp>
 
 #include <string.h>
+#include <fstream>
 #include <sstream>
 #include <chrono>
 #include <thread>

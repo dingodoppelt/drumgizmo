@@ -7,7 +7,7 @@ documentation for detailed instructions on how to do this.
 
 NOTE2: Be aware that if you are planning on running the LV2 plugin from within
 one of the binary releases of Ardour, you must make sure that drumgizmo is using
-the same version of libpng, pthread and expat as Ardour was compiled with (or
+the same version of pthread as Ardour was compiled with (or
 at least versions matching the ABI), otherwise the plugin will show strange
 behaviour or even crash upon load.
 
@@ -22,13 +22,10 @@ Prerequisites
 * lv2-devel package >= 1.0
 * libsndfile-devel >= 1.0.21
 * zita-resampler-devel (no minimal version specified)
-* libexpat-devel (no minimal version specified)
 * pkg-config >= 0.23
 * Xlib >= 1.0
-* libpng >= 1.2
 * libsmf (no minimal version specified)
 * pthread (no minimal version specified)
-* libcppunit-dev (only necessary when compiling from git sources)
 
 Compiling source tarball
 ------------------------

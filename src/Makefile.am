@@ -4,12 +4,10 @@ libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/include -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) \
-	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) \
-	$(PTHREAD_CFLAGS)
+	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
-	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) \
-	$(PTHREAD_LIBS)
+	$(ZITA_LIBS) $(SNDFILE_LIBS) $(PTHREAD_LIBS)
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdg_la_SOURCES = \
@@ -41,7 +39,6 @@ nodist_libdg_la_SOURCES = \
 	random.cc \
 	sample.cc \
 	semaphore.cc \
-	saxparser.cc \
 	staminafilter.cc \
 	thread.cc \
 	versionstr.cc
@@ -85,7 +82,6 @@ EXTRA_DIST = \
 	random.h \
 	rangemap.h \
 	sample.h \
-	saxparser.h \
 	semaphore.h \
 	settings.h \
 	staminafilter.h \
