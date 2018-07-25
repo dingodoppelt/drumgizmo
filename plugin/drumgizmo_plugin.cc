@@ -595,7 +595,7 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	DEBUG(config, "Load config: %s\n", config_string.c_str());
 
 	ConfigParser p;
-	if(p.parseString(config_string))
+	if(!p.parseString(config_string))
 	{
 		ERR(config, "Config parse error.\n");
 		return false;

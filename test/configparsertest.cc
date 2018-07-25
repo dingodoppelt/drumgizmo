@@ -35,6 +35,7 @@ public:
 	ConfigParserTest()
 	{
 		DGUNIT_TEST(ConfigParserTest::test);
+		DGUNIT_TEST(ConfigParserTest::invalid);
 	}
 
 	void test()
@@ -44,19 +45,35 @@ public:
 			"<config>\n" \
 			"  <value name=\"foo\">42</value>\n" \
 			"  <value name=\"bar\">true</value>\n" \
-			"  <value name=\"bas\">\"</value>\n" \
+			"  <value name=\"bas\">&quot;&lt;</value>\n" \
 			"</config>";
 
 
 		ConfigParser parser;
-		DGUNIT_ASSERT(!parser.parseString(xml));
+		DGUNIT_ASSERT(parser.parseString(xml));
 
 		DGUNIT_ASSERT_EQUAL(std::string("42"), parser.value("foo", "-"));
 		DGUNIT_ASSERT_EQUAL(std::string("true"), parser.value("bar", "-"));
-		DGUNIT_ASSERT_EQUAL(std::string("\""), parser.value("bas", "-"));
+		DGUNIT_ASSERT_EQUAL(std::string("\"<"), parser.value("bas", "-"));
 
 		// Non-existing value
 		DGUNIT_ASSERT_EQUAL(std::string("-"), parser.value("bas2", "-"));
+	}
+
+	void invalid()
+	{
+		std::string xml =
+			"<?xml version='1.0' encoding='UTF-8'?>\n" \
+			"<config\n" \
+			"  <value name=\"foo\">42</value>\n" \
+			"  <value name=\"bar\">true</value>\n" \
+			"  <value name=\"bas\">&quot;&lt;</value>\n" \
+			"</config>";
+
+
+		ConfigParser parser;
+		// Epxect parser error (missing '>' in line 2)
+		DGUNIT_ASSERT(!parser.parseString(xml));
 	}
 };
 

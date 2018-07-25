@@ -27,37 +27,33 @@
 #include "configparser.h"
 
 #include <hugin.hpp>
+#include <pugixml.hpp>
 
-#include "saxparser.h"
-
-ConfigParser::ConfigParser()
+bool ConfigParser::parseString(const std::string& xml)
 {
-	str = nullptr;
-}
-
-void ConfigParser::characterData(const std::string& data)
-{
-	if(str)
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_buffer(xml.data(), xml.size());
+	if(result.status)
 	{
-		str->append(data);
+		ERR(configparser, "XML parse error: %d", (int)result.offset);
+		return false;
 	}
-}
 
-void ConfigParser::startTag(const std::string& name, const attr_t& attr)
-{
-	if(name == "value" && attr.find("name") != attr.end())
-	{
-		values[attr.at("name")] = "";
-		str = &values[attr.at("name")];
-	}
-}
+	//TODO: handle xml version
 
-void ConfigParser::endTag(const std::string& name)
-{
-	if(name == "value")
+	pugi::xml_node config_node = doc.child("config");
+	for(pugi::xml_node value_node : config_node.children("value"))
 	{
-		str = nullptr;
+		auto name = value_node.attribute("name").as_string();
+		if(std::string(name) == "")
+		{
+			continue;
+		}
+		auto value = value_node.child_value();
+		values[name] = value;
 	}
+
+	return true;
 }
 
 std::string ConfigParser::value(const std::string& name, const std::string& def)

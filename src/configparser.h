@@ -28,20 +28,14 @@
 
 #include <unordered_map>
 
-#include "saxparser.h"
-
 class ConfigParser
-	: public SAXParser
 {
 public:
-	ConfigParser();
+	//! Returns false on failure, true on success.
+	bool parseString(const std::string& xml);
 
-	void characterData(const std::string& data) override;
-	void startTag(const std::string& name, const attr_t& attr) override;
-	void endTag(const std::string& name) override;
 	std::string value(const std::string& name, const std::string& def = "");
 
 private:
 	std::unordered_map<std::string, std::string> values;
-	std::string* str;
 };

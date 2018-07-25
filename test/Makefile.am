@@ -219,12 +219,11 @@ domloadertest_SOURCES = \
 
 configparsertest_CXXFLAGS = -DOUTPUT=\"configparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
-	-I$(top_srcdir)/pugixml/src $(EXPAT_CFLAGS)
-configparsertest_LDFLAGS = $(EXPAT_LIBS)
+	-I$(top_srcdir)/pugixml/src
+configparsertest_LDFLAGS =
 configparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/configparser.cc \
-	$(top_srcdir)/src/saxparser.cc \
 	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	configparsertest.cc \
 	dgtest.cc
