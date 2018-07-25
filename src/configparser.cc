@@ -39,8 +39,6 @@ bool ConfigParser::parseString(const std::string& xml)
 		return false;
 	}
 
-	//TODO: handle xml version
-
 	pugi::xml_node config_node = doc.child("config");
 	for(pugi::xml_node value_node : config_node.children("value"))
 	{

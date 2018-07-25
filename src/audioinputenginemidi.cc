@@ -67,7 +67,7 @@ bool AudioInputEngineMidi::loadMidiMap(const std::string& file,
 	}
 
 	MidiMapParser midimap_parser;
-	if(midimap_parser.parseFile(f))
+	if(!midimap_parser.parseFile(f))
 	{
 		return false;
 	}

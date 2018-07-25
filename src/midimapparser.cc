@@ -26,14 +26,32 @@
  */
 #include "midimapparser.h"
 
-void MidiMapParser::startTag(const std::string& name, const attr_t& attr)
+#include <pugixml.hpp>
+#include <hugin.hpp>
+
+bool MidiMapParser::parseFile(const std::string& filename)
 {
-	if(name == "map")
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(filename.data());
+	if(result.status)
 	{
-		if((attr.find("note") != attr.end()) &&
-		   (attr.find("instr") != attr.end()))
-		{
-			midimap[std::stoi(attr.at("note"))] = attr.at("instr");
-		}
+		ERR(midimapparser, "XML parse error: %d", (int)result.offset);
+		return false;
 	}
+
+	pugi::xml_node midimap_node = doc.child("midimap");
+	for(pugi::xml_node map_node : midimap_node.children("map"))
+	{
+		constexpr int bad_value = 10000;
+		auto note = map_node.attribute("note").as_int(bad_value);
+		auto instr = map_node.attribute("instr").as_string();
+		if(std::string(instr) == "" || note == bad_value)
+		{
+			continue;
+		}
+
+		midimap[note] = instr;
+	}
+
+	return true;
 }

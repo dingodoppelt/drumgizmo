@@ -26,14 +26,13 @@
  */
 #pragma once
 
-#include "saxparser.h"
 #include "midimapper.h"
 
 class MidiMapParser
-	: public SAXParser
 {
 public:
-	void startTag(const std::string& name, const attr_t& attr) override;
+	//! Returns false on error, true on success.
+	bool parseFile(const std::string& filename);
 
 	midimap_t midimap;
 };

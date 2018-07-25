@@ -53,7 +53,7 @@ public:
 			"</midimap>");
 
 		MidiMapParser parser;
-		DGUNIT_ASSERT(!parser.parseFile(scoped_file.filename()));
+		DGUNIT_ASSERT(parser.parseFile(scoped_file.filename()));
 
 		DGUNIT_ASSERT(parser.midimap.find(54) != parser.midimap.end());
 		DGUNIT_ASSERT(parser.midimap.find(60) != parser.midimap.end());
@@ -81,7 +81,7 @@ public:
 			"</midimap>");
 
 		MidiMapParser parser;
-		DGUNIT_ASSERT(parser.parseFile(scoped_file.filename()));
+		DGUNIT_ASSERT(!parser.parseFile(scoped_file.filename()));
 	}
 };
 

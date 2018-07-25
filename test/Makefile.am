@@ -230,12 +230,12 @@ configparsertest_SOURCES = \
 
 midimapparsertest_CXXFLAGS = -DOUTPUT=\"midimapparsertest\" \
 	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
-	-I$(top_srcdir)/pugixml/src $(EXPAT_CFLAGS)
-midimapparsertest_LDFLAGS = $(EXPAT_LIBS)
+	-I$(top_srcdir)/pugixml/src
+midimapparsertest_LDFLAGS =
 midimapparsertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/midimapparser.cc \
-	$(top_srcdir)/src/saxparser.cc \
+	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	scopedfile.cc \
 	midimapparsertest.cc \
 	dgtest.cc
