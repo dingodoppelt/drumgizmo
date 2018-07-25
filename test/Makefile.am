@@ -7,7 +7,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
-	dgxmlparsertest domloadertest configparsertest
+	dgxmlparsertest domloadertest configparsertest midimapparsertest
 
 EXTRA_DIST = \
 	dgunit.h \
@@ -226,6 +226,18 @@ configparsertest_SOURCES = \
 	$(top_srcdir)/src/configparser.cc \
 	$(top_srcdir)/pugixml/src/pugixml.cpp \
 	configparsertest.cc \
+	dgtest.cc
+
+midimapparsertest_CXXFLAGS = -DOUTPUT=\"midimapparsertest\" \
+	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/pugixml/src $(EXPAT_CFLAGS)
+midimapparsertest_LDFLAGS = $(EXPAT_LIBS)
+midimapparsertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/src/midimapparser.cc \
+	$(top_srcdir)/src/saxparser.cc \
+	scopedfile.cc \
+	midimapparsertest.cc \
 	dgtest.cc
 
 endif
