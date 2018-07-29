@@ -11,6 +11,7 @@ lv2plugin_DATA = manifest.ttl drumgizmo.ttl
 endif
 
 drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
+	-fvisibility=hidden \
 	$(LV2_CFLAGS) \
 	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/include \
@@ -19,13 +20,17 @@ drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
 
+drumgizmo_la_CFLAGS = -fvisibility=hidden
+
 drumgizmo_la_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/plugin/plugingizmo/midievent.cc \
 	$(top_srcdir)/plugin/plugingizmo/pluginlv2.cc \
 	drumgizmo_plugin.cc
 
-drumgizmo_la_LDFLAGS = -shared -module -avoid-version
+drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
+	-export-symbols-regex "lv2_descriptor|lv2ui_descriptor"
+
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
 	$(top_srcdir)/plugingui/libdggui.la \
 	$(top_srcdir)/src/libdg.la
