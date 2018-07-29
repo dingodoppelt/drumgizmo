@@ -29,7 +29,7 @@ drumgizmo_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
-	-export-symbols-regex "lv2_descriptor|lv2ui_descriptor"
+	-export-symbols drumgizmo_lv2.sym
 
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
 	$(top_srcdir)/plugingui/libdggui.la \
