@@ -98,17 +98,17 @@ void Instrument::finalise()
 	}
 }
 
-std::string Instrument::getName() const
+const std::string& Instrument::getName() const
 {
 	return _name;
 }
 
-std::string Instrument::getDescription() const
+const std::string& Instrument::getDescription() const
 {
 	return _description;
 }
 
-std::string Instrument::getGroup() const
+const std::string& Instrument::getGroup() const
 {
 	return _group;
 }

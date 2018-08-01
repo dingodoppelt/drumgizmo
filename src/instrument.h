@@ -48,9 +48,9 @@ public:
 
 	Sample* sample(level_t level, size_t pos);
 
-	std::string getName() const;
-	std::string getDescription() const;
-	std::string getGroup() const;
+	const std::string& getName() const;
+	const std::string& getDescription() const;
+	const std::string& getGroup() const;
 
 	void setGroup(const std::string& group);
 
