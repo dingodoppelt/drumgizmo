@@ -123,6 +123,7 @@ bool InputProcessor::processOnset(event_t& event,
 					   event_sample.instrument != instr)
 					{
 						// Ramp down 14.7ms (3000 samples in 44k1Hz)
+						// FIXME: Isn't that a rampdown of 1000/14.7 ms?
 						event_sample.rampdown = settings.samplerate.load() / 14.7;
 						// TODO: This must be configurable at some point...
 						// ... perhaps even by instrument (ie. in the xml file)
