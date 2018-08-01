@@ -151,7 +151,8 @@ private:
 		void post(size_t nsamples) override;
 
 		sample_t *getBuffer(int ch) const override;
-		size_t getBufferSize() const override;
+		std::size_t getBufferSize() const override;
+		std::size_t getSamplerate() const override;
 		bool isFreewheeling() const override;
 
 	protected:

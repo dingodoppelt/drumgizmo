@@ -64,6 +64,11 @@ void DummyOutputEngine::post(size_t nsamples)
 {
 }
 
+std::size_t DummyOutputEngine::getSamplerate() const
+{
+	return 44100;
+}
+
 bool DummyOutputEngine::isFreewheeling() const
 {
 	return true;

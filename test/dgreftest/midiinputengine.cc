@@ -192,6 +192,11 @@ void MidifileInputEngine::post()
 {
 }
 
+void MidifileInputEngine::setSampleRate(double sample_rate)
+{
+	this->samplerate = sample_rate;
+}
+
 bool MidifileInputEngine::isFreewheeling() const
 {
 	return true;

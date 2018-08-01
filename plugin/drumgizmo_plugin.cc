@@ -479,6 +479,11 @@ size_t DrumGizmoPlugin::Output::getBufferSize() const
 	return plugin.getFramesize();
 }
 
+std::size_t DrumGizmoPlugin::Output::getSamplerate() const
+{
+	return plugin.drumgizmo->samplerate();
+}
+
 bool DrumGizmoPlugin::Output::isFreewheeling() const
 {
 	return plugin.getFreeWheel();
