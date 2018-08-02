@@ -319,9 +319,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					}
 
 					size_t t = 0; // Internal buffer counter
-					if(evt.rampdown == NO_RAMPDOWN)
+					if(!evt.rampdownInProgress())
 					{
-
 #ifdef SSE
 						size_t optend = ((end - n) / N) * N + n;
 
@@ -352,19 +351,19 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					}
 					else
 					{ // Ramp down in progress.
-						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown; ++n)
+						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown_count; ++n)
 						{
-							float scale = (float)evt.rampdown/(float)evt.ramp_start;
+							float scale = std::min((float)evt.rampdown_count/evt.ramp_length, 1.f);
 							s[n] += evt.buffer[t] * evt.scale * scale;
 							++t;
-							evt.rampdown--;
+							evt.rampdown_count--;
 						}
 					}
 
 					// Add internal buffer counter to "global" event counter.
 					evt.t += evt.buffer_size;
 
-					if((evt.t < af.size) && (evt.rampdown != 0))
+					if((evt.t < af.size) && (evt.rampdown_count != 0))
 					{
 						evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
 					}

@@ -42,6 +42,11 @@ typedef unsigned int timepos_t;
 class Event
 {
 public:
+	Event(channel_t channel, timepos_t offset = 0)
+		: channel(channel), offset(offset)
+	{
+	}
+
 	virtual ~Event()
 	{
 	}
@@ -57,27 +62,31 @@ public:
 	timepos_t offset; //< Global position (ie. not relative to buffer)
 };
 
-#define NO_RAMPDOWN -1
 class EventSample : public Event
 {
 public:
 	EventSample(channel_t c, float g, AudioFile* af,
 	            const std::string& grp, void* instr)
+		: Event(c)
+		, cache_id(CACHE_NOID)
+		, gain(g)
+		, t(0)
+		, file(af)
+		, group(grp)
+		, instrument(instr)
+		, rampdown_count(-1)
+		, ramp_length(0)
 	{
-		cache_id = CACHE_NOID;
-		channel = c;
-		gain = g;
-		t = 0;
-		file = af;
-		group = grp;
-		instrument = instr;
-		rampdown = NO_RAMPDOWN;
-		ramp_start = 0;
 	}
 
 	Event::type_t getType() const
 	{
 		return Event::sample;
+	}
+
+	bool rampdownInProgress() const
+	{
+		return rampdown_count != -1;
 	}
 
 	cacheid_t cache_id;
@@ -89,8 +98,8 @@ public:
 	AudioFile* file;
 	std::string group;
 	void* instrument;
-	int rampdown;
-	int ramp_start;
+	int rampdown_count;
+	int ramp_length;
 	float scale{1.0f};
 };
 

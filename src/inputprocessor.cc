@@ -109,31 +109,6 @@ bool InputProcessor::processOnset(event_t& event,
 		return false;
 	}
 
-	if(instr->getGroup() != "")
-	{
-		// Add event to ramp down all existing events with the same groupname.
-		for(Channel& ch: kit.channels)
-		{
-			for(Event* event: activeevents[ch.num])
-			{
-				if(event->getType() == Event::sample)
-				{
-					auto& event_sample = *static_cast<EventSample*>(event);
-					if(event_sample.group == instr->getGroup() &&
-					   event_sample.instrument != instr)
-					{
-						// Fixed ramp of 68ms, independent of samplerate
-						std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
-						event_sample.rampdown = ramp_length;
-						// TODO: This must be configurable at some point...
-						// ... perhaps even by instrument (ie. in the xml file)
-						event_sample.ramp_start = event_sample.rampdown;
-					}
-				}
-			}
-		}
-	}
-
 	auto orig_level = event.velocity;
 	for(auto& filter : filters)
 	{
@@ -143,6 +118,31 @@ bool InputProcessor::processOnset(event_t& event,
 		if(!keep)
 		{
 			return false; // Skip event completely
+		}
+	}
+
+	if(instr->getGroup() != "")
+	{
+		// Add event to ramp down all existing events with the same groupname.
+		for(Channel& ch: kit.channels)
+		{
+			for(Event* active_event: activeevents[ch.num])
+			{
+				if(active_event->getType() == Event::sample)
+				{
+					auto& event_sample = *static_cast<EventSample*>(active_event);
+					if(event_sample.group == instr->getGroup() &&
+					   event_sample.instrument != instr)
+					{
+						// Fixed ramp of 68ms, independent of samplerate
+						// TODO: This must be configurable at some point...
+						// ... perhaps even by instrument (ie. in the xml file)
+						std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
+						event_sample.rampdown_count = event.offset + ramp_length;
+						event_sample.ramp_length = ramp_length;
+					}
+				}
+			}
 		}
 	}
 
