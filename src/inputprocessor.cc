@@ -122,9 +122,9 @@ bool InputProcessor::processOnset(event_t& event,
 					if(event_sample.group == instr->getGroup() &&
 					   event_sample.instrument != instr)
 					{
-						// Ramp down 14.7ms (3000 samples in 44k1Hz)
-						// FIXME: Isn't that a rampdown of 1000/14.7 ms?
-						event_sample.rampdown = settings.samplerate.load() / 14.7;
+						// Fixed ramp of 68ms, independent of samplerate
+						std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
+						event_sample.rampdown = ramp_length;
 						// TODO: This must be configurable at some point...
 						// ... perhaps even by instrument (ie. in the xml file)
 						event_sample.ramp_start = event_sample.rampdown;
