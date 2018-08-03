@@ -33,6 +33,7 @@ CompareOutputEngine::CompareOutputEngine()
 	, info{}
 	, file{"output"}
 {
+	info = {};
 	info.samplerate = 44100;
 	info.channels = 1;
 	info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
@@ -44,9 +45,9 @@ CompareOutputEngine::~CompareOutputEngine()
 	sf_close(handle);
 }
 
-bool CompareOutputEngine::init(const Channels& data)
+bool CompareOutputEngine::init(const Channels& channels)
 {
-	info.channels = data.size();
+	info.channels = channels.size();
 
 	handle = sf_open(file.c_str(), SFM_READ, &info);
 	if(handle == nullptr)
@@ -116,8 +117,11 @@ void CompareOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
 
 void CompareOutputEngine::post(size_t nsamples)
 {
-	sample_t ref_buffer[sizeof(buffer) / sizeof(sample_t)];
-	sf_readf_float(handle, ref_buffer, nsamples);
+	nsamples = sf_readf_float(handle, ref_buffer, nsamples);
+	if(nsamples == 0)
+	{
+		return;
+	}
 
 	for(std::size_t i = 0; i < nsamples; ++i)
 	{
@@ -126,10 +130,17 @@ void CompareOutputEngine::post(size_t nsamples)
 			if(buffer[i * info.channels + ch] != ref_buffer[i * info.channels + ch])
 			{
 				++diff_samples;
+
+				// Use this to quit on first bad sample.
+				//std::cerr << "ch: " << ch << ", pos: " << pos + i <<
+				//	" expected: " << ref_buffer[i * info.channels + ch] <<
+				//	" got: " << buffer[i * info.channels + ch] << std::endl;
+				//exit(1);
+
 			}
 		}
 	}
-
+	pos += nsamples;
 }
 
 size_t CompareOutputEngine::getSamplerate() const

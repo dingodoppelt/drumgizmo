@@ -31,8 +31,6 @@
 #include <string>
 #include <mutex>
 
-#include <sndfile.h>
-
 #include "audiofile.h"
 #include "audio.h"
 #include "audiocache.h"
@@ -62,7 +60,8 @@ public:
 	timepos_t offset; //< Global position (ie. not relative to buffer)
 };
 
-class EventSample : public Event
+class EventSample
+	: public Event
 {
 public:
 	EventSample(channel_t c, float g, AudioFile* af,
@@ -91,10 +90,12 @@ public:
 
 	cacheid_t cache_id;
 	sample_t* buffer;
-	size_t buffer_size;
+	std::size_t buffer_size;
+	std::size_t buffer_ptr{0}; //< Internal pointer into the current buffer
+	std::size_t sample_size{0}; //< Total number of audio samples in this sample.
 
 	float gain;
-	unsigned int t;
+	unsigned int t; //< Internal sample position.
 	AudioFile* file;
 	std::string group;
 	void* instrument;
@@ -118,4 +119,3 @@ private:
 	std::multimap<timepos_t, Event*> queue;
 	std::mutex mutex;
 };
-

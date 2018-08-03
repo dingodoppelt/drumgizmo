@@ -93,12 +93,6 @@ void DrumGizmo::setFrameSize(size_t framesize)
 
 		this->framesize = framesize;
 
-		// Remove all active events as they are cached using the old framesize.
-		for(std::size_t ch = 0; ch < MAX_NUM_CHANNELS; ++ch)
-		{
-			activeevents[ch].clear();
-		}
-
 		// Update framesize in drumkitloader and cachemanager:
 		loader.setFrameSize(framesize);
 		audio_cache.setFrameSize(framesize);
@@ -240,11 +234,69 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	return true;
 }
 
-#undef SSE // SSE broken for now ... so disable it.
-#ifdef SSE
-#define N 8
-typedef float vNsf __attribute__ ((vector_size(sizeof(sample_t)*N)));
-#endif/*SSE*/
+void DrumGizmo::renderSampleEvent(EventSample& evt, int pos, sample_t *s, std::size_t sz)
+{
+	size_t n = 0; // default start point is 0.
+
+	// If we are not at offset 0 in current buffer:
+	if(evt.offset > (size_t)pos)
+	{
+		n = evt.offset - pos;
+	}
+
+	size_t end = sz; // default end point is the end of the buffer.
+
+	// Find the end point intra-buffer
+	if((evt.t + end - n) > evt.sample_size)
+	{
+		end = evt.sample_size - evt.t + n;
+	}
+
+	// This should not be necessary but make absolutely sure that we do
+	// not write over the end of the buffer.
+	if(end > sz)
+	{
+		end = sz;
+	}
+
+	size_t t = 0; // Internal buffer counter
+
+repeat:
+	float scale = 1.0f;
+	for(; (n < end) && (t < (evt.buffer_size - evt.buffer_ptr)); ++n)
+	{
+		assert(n >= 0);
+		assert(n < sz);
+
+		assert(t >= 0);
+		assert(t < evt.buffer_size - evt.buffer_ptr);
+
+		if(evt.rampdownInProgress() && evt.rampdown_count > 0)
+		{
+			scale = std::min((float)evt.rampdown_count/evt.ramp_length, 1.f);
+			evt.rampdown_count--;
+		}
+
+		s[n] += evt.buffer[evt.buffer_ptr + t] * evt.scale * scale;
+		++t;
+	}
+
+	// Add internal buffer counter to "global" event counter.
+	evt.t += t;//evt.buffer_size;
+	evt.buffer_ptr += t;
+
+	if(n != sz && evt.t < evt.sample_size)
+	{
+		evt.buffer_size = sz - n;// Hint new size
+
+		// More samples needed for current buffer
+		evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
+
+		evt.buffer_ptr = 0;
+		t = 0;
+		goto repeat;
+	}
+}
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 {
@@ -260,7 +312,8 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 		Event* event = *i;
 		Event::type_t type = event->getType();
-		switch(type) {
+		switch(type)
+		{
 		case Event::sample:
 			{
 				EventSample& evt = *static_cast<EventSample*>(event);
@@ -272,9 +325,9 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					break;
 				}
 
-				// Don't handle event now is is scheduled for a future iteration?
 				if(evt.offset > (pos + sz))
 				{
+					// Don't handle event now. It is scheduled for a future iteration.
 					continue;
 				}
 
@@ -290,86 +343,24 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					}
 
 					evt.buffer_size = initial_chunksize;
+					evt.sample_size = af.size;
 				}
 
 				{
 					std::lock_guard<std::mutex> guard(af.mutex);
 
-					size_t n = 0; // default start point is 0.
+					renderSampleEvent(evt, pos, s, sz);
 
-					// If we are not at offset 0 in current buffer:
-					if(evt.offset > (size_t)pos)
-					{
-						n = evt.offset - pos;
-					}
-
-					size_t end = sz; // default end point is the end of the buffer.
-
-					// Find the end point intra-buffer
-					if((evt.t + end - n) > af.size)
-					{
-						end = af.size - evt.t + n;
-					}
-
-					// This should not be necessary but make absolutely sure that we do
-					// not write over the end of the buffer.
-					if(end > sz)
-					{
-						end = sz;
-					}
-
-					size_t t = 0; // Internal buffer counter
-					if(!evt.rampdownInProgress())
-					{
-#ifdef SSE
-						size_t optend = ((end - n) / N) * N + n;
-
-						// Force source addr to be 16 byte aligned...
-						// (might skip 1 or 2 samples)
-						while((size_t)&evt.buffer[t] % 16)
-						{
-							++t;
-						}
-
-						for(; (n < optend) && (t < evt.buffer_size); n += N)
-						{
-							*(vNsf*)&(s[n]) += *(vNsf*)&(evt.buffer[t]) * evt.scale;
-							t += N;
-						}
-#endif
-						for(; (n < end) && (t < evt.buffer_size); ++n)
-						{
-							assert(n >= 0);
-							assert(n < sz);
-
-							assert(t >= 0);
-							assert(t < evt.buffer_size);
-
-							s[n] += evt.buffer[t] * evt.scale;
-							++t;
-						}
-					}
-					else
-					{ // Ramp down in progress.
-						for(; (n < end) && (t < evt.buffer_size) && evt.rampdown_count; ++n)
-						{
-							float scale = std::min((float)evt.rampdown_count/evt.ramp_length, 1.f);
-							s[n] += evt.buffer[t] * evt.scale * scale;
-							++t;
-							evt.rampdown_count--;
-						}
-					}
-
-					// Add internal buffer counter to "global" event counter.
-					evt.t += evt.buffer_size;
-
-					if((evt.t < af.size) && (evt.rampdown_count != 0))
-					{
-						evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
-					}
-					else
+					if((evt.t >= evt.sample_size) || (evt.rampdown_count == 0))
 					{
 						removeevent = true;
+					}
+
+					if(evt.buffer_ptr >= evt.buffer_size && removeevent == false)
+					{
+						evt.buffer_size = sz;
+						evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
+						evt.buffer_ptr = 0;
 					}
 
 					if(removeevent)

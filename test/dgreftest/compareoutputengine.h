@@ -53,4 +53,6 @@ private:
 	std::string file;
 	sample_t buffer[4096 * 16];
 	std::size_t diff_samples{0};
+	sample_t ref_buffer[sizeof(buffer) / sizeof(sample_t)];
+	size_t pos{0};
 };

@@ -135,14 +135,32 @@ int main(int argc, char* argv[])
 	size_t nsamples = oe->getBufferSize();
 	sample_t *samples = (sample_t *)malloc(nsamples * sizeof(sample_t));
 
-	drumgizmo.setFrameSize(oe->getBufferSize());
+	drumgizmo.setFrameSize(nsamples);
 
 	ie.start();
 	oe->start();
 
-	while(drumgizmo.run(pos, samples, nsamples) == true)
+	size_t framesize = nsamples;
+	int dir = -1;
+	while(drumgizmo.run(pos, samples, framesize) == true)
 	{
-		pos += nsamples;
+		pos += framesize;
+
+		framesize += dir;
+
+		if(framesize < 1)
+		{
+			framesize = 1;
+			dir = 1;
+		}
+
+		if(framesize >= nsamples)
+		{
+			framesize = nsamples;
+			dir = -1;
+		}
+
+		drumgizmo.setFrameSize(framesize);
 	}
 
 	ie.stop();

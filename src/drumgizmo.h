@@ -56,6 +56,7 @@ public:
 	bool run(size_t pos, sample_t *samples, size_t nsamples);
 	void stop();
 
+	void renderSampleEvent(EventSample& evt, int pos, sample_t *s, std::size_t sz);
 	void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
 	//! Get the current engine latency in samples.

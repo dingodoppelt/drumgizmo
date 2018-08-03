@@ -152,8 +152,6 @@ sample_t* AudioCache::open(const AudioFile& file,
 
 sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 {
-	size = framesize;
-
 	if(id == CACHE_DUMMYID)
 	{
 		settings.number_of_underruns.fetch_add(1);
@@ -165,19 +163,14 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 
 	if(c.preloaded_samples)
 	{
-
 		// We are playing from memory:
 		if(c.localpos < c.preloaded_samples_size)
 		{
 			sample_t* s = c.preloaded_samples + c.localpos;
+			// If only a partial frame is returned. Reflect this in the size
+			size = std::min(size, c.preloaded_samples_size - c.localpos);
 
-			if((c.localpos + framesize) > c.preloaded_samples_size)
-			{
-				// Only a partial frame is returned. Reflect this in the size
-				size = c.preloaded_samples_size - c.localpos;
-			}
-
-			c.localpos += framesize;
+			c.localpos += size;
 			return s;
 		}
 
@@ -186,7 +179,6 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	}
 	else
 	{
-
 		// We are playing from cache:
 		if(c.localpos < chunk_size)
 		{
@@ -194,13 +186,15 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 			{
 				// Just return silence.
 				settings.number_of_underruns.fetch_add(1);
-				c.localpos += framesize; // Skip these samples so we don't loose sync.
+				c.localpos += size; // Skip these samples so we don't loose sync.
 				assert(nodata);
 				return nodata;
 			}
 
 			sample_t* s = c.front + c.localpos;
-			c.localpos += framesize;
+			// If only a partial frame is returned. Reflect this in the size
+			size = std::min(size, chunk_size - c.localpos);
+			c.localpos += size;
 			return s;
 		}
 	}
@@ -210,7 +204,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	{
 		// Just return silence.
 		settings.number_of_underruns.fetch_add(1);
-		c.localpos += framesize; // Skip these samples so we don't loose sync.
+		c.localpos += size; // Skip these samples so we don't loose sync.
 		assert(nodata);
 		return nodata;
 	}
@@ -219,7 +213,7 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 	std::swap(c.front, c.back);
 
 	// Next time we go here we have already read the first frame.
-	c.localpos = framesize;
+	c.localpos = size;
 
 	c.pos += chunk_size;
 
@@ -239,7 +233,6 @@ sample_t* AudioCache::next(cacheid_t id, std::size_t& size)
 
 	// We should always have a front buffer at this point.
 	assert(c.front);
-
 	return c.front;
 }
 
@@ -266,8 +259,6 @@ void AudioCache::close(cacheid_t id)
 
 void AudioCache::setFrameSize(std::size_t framesize)
 {
-	DEBUG(cache, "%s\n", __PRETTY_FUNCTION__);
-
 	// Make sure the event handler thread is stalled while we set the framesize
 	// state.
 	std::lock_guard<AudioCacheEventHandler> event_handler_lock(event_handler);
