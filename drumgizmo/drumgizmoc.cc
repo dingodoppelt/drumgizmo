@@ -75,6 +75,11 @@ static std::string usage(std::string name)
 {
 	std::ostringstream output;
 	output <<
+		"==============================================================================\n"
+		"This is the command line version of DrumGizmo. The graphical user interface is\n"
+		"only available in the plugins.\n"
+		"==============================================================================\n"
+		"\n"
 		"Usage: " << name << " [options] drumkitfile\n"
 		"Options:\n"
 		"  -a, --async-load       Load drumkit in the background and start the"
@@ -217,6 +222,14 @@ int main(int argc, char* argv[])
 #ifndef DISABLE_HUGIN
 	hugin_flags = HUG_FLAG_DEFAULT;
 #endif /*DISABLE_HUGIN*/
+
+	// if no arguments are passed, just print usage and exit
+	if (argc == 1)
+	{
+		std::cout << version();
+		std::cout << usage(argv[0]);
+		exit(0);
+	}
 
 	opt.add("async-load", no_argument, 'a', [&]() {
 		async = true;
