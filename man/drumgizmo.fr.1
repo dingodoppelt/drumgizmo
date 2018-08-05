@@ -1,4 +1,4 @@
-.TH "DRUMGIZMO" "1" "23 April 2017" "drumgizmo" ""
+.TH "DRUMGIZMO" "1" "05 Août 2018" "drumgizmo" ""
 
 .SH NOM
 drumgizmo \- application de batterie
@@ -18,6 +18,11 @@ DrumGizmo utilise un format de fichier de kit de batterie ouvert, permettant à 
 \fB-a, --async_load\fR
 .RS 7
 Charger le kit en arrière-plan.
+
+.RE
+\fB-b, --bleed\fR
+.RS 7
+Paramètre et charge la repisse- maître.
 
 .RE
 \fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
@@ -123,6 +128,27 @@ Paramètres pour le contrôle des tampons de streaming.
 \" \fBchunk_size\fR=<taille> (taille de la quantité en k,M,G)
 
 .RE
+\fB-t, --timing-humanizer\fR
+.RS 7
+Active la possibilité de déplacer les notes dans le temps.
+.P
+\fINote : \fIajoute \fIde \fIla \fIlatence \fIdans \fIla \fIsortie - \fIne
+\fIpas \fIutiliser \fIavec \fIun \fIkit \fImidi \fItemps-réel.
+
+.RE
+\fB-T, --timing-humanizerparms parmlist\fR
+.RS 7
+Options du timing de l'humaniseur.
+
+.P
+\fBlaidback\fR=<val> (Déplace les notes avant ou après le temps en ms
+[+/-100].)
+.P
+\fBtightness\fR=<val> (Contrôle la précision du batteur. [0; 1].)
+.P
+\fBregain\fR=<val> (Contrôle la rapidité avec laquelle le batteur se rattrape au tempo. [0; 1])
+
+.RE
 \fB-v, --version\fR
 .RS 7
 Affiche la version de drumgizmo puis quitte.
@@ -150,5 +176,5 @@ drumgizmo -i jackmidi -I midimap=midimap.xml -o jackaudio drumkit.xml
 .SH "BOGUES"
 Rapporter les bogues à http://www.drumgizmo.org/wiki/doku.php?id=bugs (en anglais).
 
-.SH "INFORMATION ADDITIONELLE"
+.SH "INFORMATIONS ADDITIONELLES"
 Pour davantage d'informations, visitez le site internet http://www.drumgizmo.org.
