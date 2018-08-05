@@ -116,6 +116,7 @@ public:
 					}
 				}
 
+				size = framesize;
 				samples = audio_cache.next(id, size);
 
 				DGUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
