@@ -101,6 +101,7 @@ public:
 	void* instrument;
 	int rampdown_count;
 	int ramp_length;
+	std::size_t rampdown_offset{0};
 	float scale{1.0f};
 };
 

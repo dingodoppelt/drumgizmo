@@ -271,9 +271,10 @@ repeat:
 		assert(t >= 0);
 		assert(t < evt.buffer_size - evt.buffer_ptr);
 
-		if(evt.rampdownInProgress() && evt.rampdown_count > 0)
+		if(evt.rampdownInProgress() && evt.rampdown_offset < (evt.t + t) &&
+		   evt.rampdown_count > 0)
 		{
-			scale = std::min((float)evt.rampdown_count/evt.ramp_length, 1.f);
+			scale = std::min((float)evt.rampdown_count / evt.ramp_length, 1.f);
 			evt.rampdown_count--;
 		}
 

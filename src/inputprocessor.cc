@@ -138,7 +138,8 @@ bool InputProcessor::processOnset(event_t& event,
 						// TODO: This must be configurable at some point...
 						// ... perhaps even by instrument (ie. in the xml file)
 						std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
-						event_sample.rampdown_count = event.offset + ramp_length;
+						event_sample.rampdown_count = ramp_length;
+						event_sample.rampdown_offset = event.offset;
 						event_sample.ramp_length = ramp_length;
 					}
 				}
