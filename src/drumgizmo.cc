@@ -43,7 +43,7 @@
 
 DrumGizmo::DrumGizmo(Settings& settings,
                      AudioOutputEngine& o, AudioInputEngine& i)
-	: loader(settings, kit, i, resamplers, rand, audio_cache)
+	: loader(settings, kit, i, rand, audio_cache)
 	, oe(o)
 	, ie(i)
 	, audio_cache(settings)
@@ -54,6 +54,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	audio_cache.init(10000); // start thread
 	events.reserve(1000);
 	loader.init();
+	setSamplerate(44100.0f);
 }
 
 DrumGizmo::~DrumGizmo()
@@ -80,12 +81,6 @@ bool DrumGizmo::init()
 void DrumGizmo::setFrameSize(size_t framesize)
 {
 	settings.buffer_size.store(framesize);
-
-	// If we are resampling override the frame size.
-	if(resamplers.isActive() && enable_resampling)
-	{
-		framesize = RESAMPLER_INPUT_BUFFER;
-	}
 
 	if(this->framesize != framesize)
 	{
@@ -119,6 +114,12 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		enable_resampling = settings_getter.enable_resampling.getValue();
 	}
 
+	if(settings_getter.drumkit_samplerate.hasChanged())
+	{
+		settings_getter.drumkit_samplerate.getValue(); // stage new value
+		setSamplerate(settings.samplerate.load());
+	}
+
 	setFrameSize(nsamples);
 	setFreeWheel(ie.isFreewheeling() && oe.isFreewheeling());
 
@@ -132,7 +133,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 	ie.run(pos, nsamples, events);
 
-	double resample_ratio = resamplers.getRatio();
+	double resample_ratio = ratio;
 	if(enable_resampling == false)
 	{
 		resample_ratio = 1.0;
@@ -150,10 +151,10 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	//
 	// Write audio
 	//
-#ifdef WITH_RESAMPLER
-	if(!enable_resampling || !resamplers.isActive()) // No resampling needed
+	if(!enable_resampling || ratio == 1.0)
 	{
-#endif
+		// No resampling needed
+
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
 			sample_t *buf = samples;
@@ -176,55 +177,46 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				}
 			}
 		}
-#ifdef WITH_RESAMPLER
 	}
 	else
 	{
 		// Resampling needed
-
-		//
-		// NOTE: Channels must be processed one buffer at a time on all channels in
-		// parallel - NOT all buffers on one channel and then all buffer on the next
-		// one since this would mess up the event queue (it would jump back and
-		// forth in time)
-		//
-
-		// Prepare output buffer
+		size_t kitpos = pos * ratio;
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
-			resamplers[c].setOutputSamples(resampler_output_buffer[c], nsamples);
-		}
-
-		// Process channel data
-		size_t kitpos = pos * resamplers.getRatio();
-		size_t insize = sizeof(resampler_input_buffer[0]) / sizeof(sample_t);
-
-		while(resamplers.getOutputSampleCount() > 0)
-		{
-			for(size_t c = 0; c < kit.channels.size(); ++c)
+			sample_t *buf = samples;
+			bool internal = false;
+			if(oe.getBuffer(c))
 			{
-				if(resamplers[c].getInputSampleCount() == 0)
-				{
-					sample_t *sin = resampler_input_buffer[c];
-					memset(resampler_input_buffer[c], 0,
-					       sizeof(resampler_input_buffer[c]));
-					getSamples(c, kitpos, sin, insize);
-
-					resamplers[c].setInputSamples(sin, insize);
-				}
-				resamplers[c].process();
+				buf = oe.getBuffer(c);
+				internal = true;
 			}
-			kitpos += insize;
-		}
 
-		// Write output data to output engine.
-		for(size_t c = 0; c < kit.channels.size(); ++c)
-		{
-			oe.run(c, resampler_output_buffer[c], nsamples);
-		}
+			zita[c].out_data = buf;
+			zita[c].out_count = nsamples;
 
+			if(zita[c].inp_count > 0)
+			{
+				// Samples left from last iteration, process that one first
+				zita[c].process();
+			}
+
+			std::memset(_resampler_input_buffer[c], 0,
+			            sizeof(_resampler_input_buffer[c]));
+
+			zita[c].inp_data = _resampler_input_buffer[c];
+			std::size_t sample_count =
+				std::ceil((nsamples - (nsamples - zita[c].out_count)) * ratio);
+			getSamples(c, kitpos, zita[c].inp_data, sample_count);
+
+			zita[c].inp_count = sample_count;
+			zita[c].process();
+			if(!internal)
+			{
+				oe.run(c, samples, nsamples);
+			}
+		}
 	}
-#endif/*WITH_RESAMPLER*/
 
 	ie.post();
 	oe.post(nsamples);
@@ -395,28 +387,50 @@ void DrumGizmo::stop()
 std::size_t DrumGizmo::getLatency() const
 {
 	auto latency = input_processor.getLatency();
-	if(enable_resampling)
+	if(enable_resampling && ratio != 0.0)
 	{
-		latency += resamplers.getLatency();
+		// TODO:
+		latency += zita[0].inpsize(); // resampler latency
 	}
 
 	return latency;
 }
 
-int DrumGizmo::samplerate()
+float DrumGizmo::samplerate()
 {
 	return settings.samplerate.load();
 }
 
-void DrumGizmo::setSamplerate(int samplerate)
+void DrumGizmo::setSamplerate(float samplerate)
 {
-	DEBUG(dgeditor, "%s samplerate: %d\n", __PRETTY_FUNCTION__, samplerate);
+	DEBUG(dgeditor, "%s samplerate: %f\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
 
 	// Notify input engine of the samplerate change.
 	ie.setSampleRate(samplerate);
 
-#ifdef WITH_RESAMPLER
-	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
-#endif/*WITH_RESAMPLER*/
+	auto input_fs = kit.getSamplerate();
+	auto output_fs = samplerate;
+	ratio = input_fs / output_fs;
+	settings.resamplig_recommended.store(ratio != 1.0);
+
+	for(int c = 0; c < MAX_NUM_CHANNELS; ++c)
+	{
+		zita[c].reset();
+		auto nchan = 1u; // mono
+		auto hlen = 72u; // 16 ≤ hlen ≤ 96
+		zita[c].setup(input_fs, output_fs, nchan, hlen);
+
+		// Prefill
+		auto null_size = zita[c].inpsize() - 1;// / 2 - 1;
+		zita[c].inp_data = nullptr;
+		zita[c].inp_count = null_size;
+
+		constexpr auto sz = 4096 * 16;
+		sample_t s[sz];
+		zita[c].out_data = s;
+		zita[c].out_count = sz;
+
+		zita[c].process();
+	}
 }

@@ -30,6 +30,8 @@
 #include <list>
 #include <array>
 
+#include <zita-resampler/resampler.h>
+
 #include "audiooutputengine.h"
 #include "audioinputengine.h"
 #include "events.h"
@@ -37,7 +39,6 @@
 #include "drumkit.h"
 #include "drumkitloader.h"
 #include "audiocache.h"
-#include "chresampler.h"
 #include "settings.h"
 #include "inputprocessor.h"
 
@@ -62,8 +63,8 @@ public:
 	//! Get the current engine latency in samples.
 	std::size_t getLatency() const;
 
-	int samplerate();
-	void setSamplerate(int samplerate);
+	float samplerate();
+	void setSamplerate(float samplerate);
 
 	void setFrameSize(size_t framesize);
 
@@ -74,7 +75,7 @@ public:
 private:
 	static constexpr int MAX_NUM_CHANNELS = 64;
 	static constexpr int RESAMPLER_OUTPUT_BUFFER = 4096;
-	static constexpr int RESAMPLER_INPUT_BUFFER = 64;
+	static constexpr int RESAMPLER_INPUT_BUFFER = 2048;//64;
 
 protected:
 	DrumKitLoader loader;
@@ -84,9 +85,6 @@ protected:
 
 	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
 
-	Resamplers resamplers;
-	sample_t resampler_output_buffer[MAX_NUM_CHANNELS][RESAMPLER_OUTPUT_BUFFER];
-	sample_t resampler_input_buffer[MAX_NUM_CHANNELS][RESAMPLER_INPUT_BUFFER];
 	bool enable_resampling{true};
 
 	std::map<std::string, AudioFile *> audiofiles;
@@ -103,4 +101,8 @@ protected:
 	SettingsGetter settings_getter;
 
 	Random rand;
+	Resampler zita[MAX_NUM_CHANNELS];
+	sample_t _resampler_input_buffer[MAX_NUM_CHANNELS][4096 * 8];
+	double ratio = 1.0;
+
 };

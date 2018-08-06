@@ -50,7 +50,7 @@ class DrumKitLoader
 {
 public:
 	DrumKitLoader(Settings& settings, DrumKit& kit, AudioInputEngine& ie,
-	              Resamplers& resamplers, Random& rand, AudioCache& audio_cache);
+	              Random& rand, AudioCache& audio_cache);
 
 	~DrumKitLoader();
 
@@ -89,7 +89,6 @@ protected:
 	SettingsGetter getter;
 	DrumKit& kit;
 	AudioInputEngine& ie;
-	Resamplers& resamplers;
 	//MemChecker memchecker;
 	Random& rand;
 	AudioCache& audio_cache;

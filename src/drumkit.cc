@@ -45,7 +45,7 @@ void DrumKit::clear()
 
 	_name = "";
 	_description = "";
-	_samplerate = 44100;
+	_samplerate = 44100.0f;
 }
 
 bool DrumKit::isValid() const
@@ -73,7 +73,7 @@ VersionStr DrumKit::getVersion() const
 	return _version;
 }
 
-std::size_t DrumKit::getSamplerate() const
+float DrumKit::getSamplerate() const
 {
 	return _samplerate;
 }

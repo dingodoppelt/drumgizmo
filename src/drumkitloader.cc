@@ -36,14 +36,12 @@
 
 DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
                              AudioInputEngine& ie,
-                             Resamplers& resamplers,
                              Random& rand,
                              AudioCache& audio_cache)
 	: settings(settings)
 	, getter(settings)
 	, kit(kit)
 	, ie(ie)
-	, resamplers(resamplers)
 	, rand(rand)
 	, audio_cache(audio_cache)
 {
@@ -135,11 +133,6 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	settings.drumkit_samplerate = kit.getSamplerate();
 
 	loadKit(&kit);
-
-#ifdef WITH_RESAMPLER
-	resamplers.setup(kit.getSamplerate(), settings.samplerate.load());
-#endif/*WITH_RESAMPLER*/
-	settings.resamplig_recommended.store(resamplers.isActive());
 
 	DEBUG(loadkit, "loadkit: Success\n");
 

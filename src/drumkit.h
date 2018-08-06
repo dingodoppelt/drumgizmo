@@ -53,7 +53,7 @@ public:
 
 	bool isValid() const;
 
-	std::size_t getSamplerate() const;
+	float getSamplerate() const;
 
 	//! Get the number of audio files (as in single channel) in this drumkit.
 	std::size_t getNumberOfFiles() const;
@@ -67,7 +67,7 @@ private:
 
 	std::string _name;
 	std::string _description;
-	std::size_t _samplerate{0};
+	float _samplerate{44100.0f};
 
 	VersionStr _version;
 };
