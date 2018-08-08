@@ -3,11 +3,11 @@ noinst_LTLIBRARIES = libdg.la
 libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/include -I$(top_srcdir)/hugin \
 	$(SSEFLAGS) \
-	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) $(SAMPLERATE_CFLAGS) \
+	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(EXPAT_CFLAGS) \
 	$(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
-	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) $(SAMPLERATE_LIBS) \
+	$(ZITA_LIBS) $(SNDFILE_LIBS) $(EXPAT_LIBS) \
 	$(PTHREAD_LIBS)
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
@@ -21,7 +21,6 @@ nodist_libdg_la_SOURCES = \
 	bytesizeparser.cc \
 	channel.cc \
 	channelmixer.cc \
-	chresampler.cc \
 	configfile.cc \
 	configparser.cc \
 	drumgizmo.cc \
@@ -61,7 +60,6 @@ EXTRA_DIST = \
 	bytesizeparser.h \
 	channel.h \
 	channelmixer.h \
-	chresampler.h \
 	configfile.h \
 	configparser.h \
 	cpp11fix.h \

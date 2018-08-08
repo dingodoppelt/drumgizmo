@@ -17,7 +17,6 @@ DG_SRC = \
 	@top_srcdir@/src/audiofile.cc \
 	@top_srcdir@/src/channel.cc \
 	@top_srcdir@/src/channelmixer.cc \
-	@top_srcdir@/src/chresampler.cc \
 	@top_srcdir@/src/configfile.cc \
 	@top_srcdir@/src/configparser.cc \
 	@top_srcdir@/src/drumgizmo.cc \
@@ -121,9 +120,6 @@ EXPAT_LIBS=@EXPAT_LIBS@
 SNDFILE_CFLAGS=@SNDFILE_CFLAGS@
 SNDFILE_LIBS=@SNDFILE_LIBS@
 
-SRC_CFLAGS=@SAMPLERATE_CFLAGS@
-SRC_LIBS=@SAMPLERATE_LIBS@
-
 ZITA_CXXFLAGS=@ZITA_CPPFLAGS@
 ZITA_LIBS=@ZITA_LIBS@
 
@@ -171,7 +167,7 @@ all:
 	g++ $(CXXFLAGS) @top_srcdir@/plugingui/resource_data.cc -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
-	g++ $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o resource_data.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(SRC_CFLAGS) $(ZITA_CXXFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(SRC_LIBS) $(ZITA_LIBS) -latomic -shared -Wl,-retain-symbols-file -Wl,drumgizmo_vst.sym -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o resource_data.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(EXPAT_CFLAGS) $(ZITA_CXXFLAGS) $(EXPAT_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(ZITA_LIBS) -latomic -shared -Wl,-retain-symbols-file -Wl,drumgizmo_vst.sym -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
 
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a

@@ -3,7 +3,7 @@ SUBDIRS = dgreftest uitests
 
 if ENABLE_TESTS
 
-TESTS = resource enginetest paintertest resampler configfile audiocache \
+TESTS = resource enginetest paintertest configfile audiocache \
 	audiocachefile audiocacheidmanager audiocacheeventhandler \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
@@ -108,15 +108,6 @@ paintertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	dgtest.cc \
 	paintertest.cc
-
-resampler_CXXFLAGS = -DOUTPUT=\"resampler\" \
-	$(ZITA_CXXFLAGS) $(SAMPLERATE_CFLAGS) \
-	-I$(top_srcdir)/hugin -DDISABLE_HUGIN
-resampler_LDFLAGS = $(ZITA_LIBS) $(SAMPLERATE_LIBS)
-resampler_SOURCES = \
-	$(top_srcdir)/src/chresampler.cc \
-	dgtest.cc \
-	resampler.cc
 
 lv2_CXXFLAGS = -DOUTPUT=\"lv2\" \
 	-I$(top_srcdir)/src \

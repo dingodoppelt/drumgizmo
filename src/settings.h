@@ -51,7 +51,7 @@ struct Settings
 	Atomic<std::string> drumkit_name{""};
 	Atomic<std::string> drumkit_description{""};
 	Atomic<std::string> drumkit_version{""};
-	Atomic<std::size_t> drumkit_samplerate{0};
+	Atomic<std::size_t> drumkit_samplerate{44100};
 
 	//! The maximum amount of memory in bytes that the AudioCache
 	//! is allowed to use for preloading. Default is 1GB.

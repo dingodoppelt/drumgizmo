@@ -201,10 +201,9 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				zita[c].process();
 			}
 
-			std::memset(_resampler_input_buffer[c], 0,
-			            sizeof(_resampler_input_buffer[c]));
+			std::memset(resampler_input_buffer[c].get(), 0, MAX_RESAMPLER_BUFFER_SIZE);
 
-			zita[c].inp_data = _resampler_input_buffer[c];
+			zita[c].inp_data = resampler_input_buffer[c].get();
 			std::size_t sample_count =
 				std::ceil((nsamples - (nsamples - zita[c].out_count)) * ratio);
 			getSamples(c, kitpos, zita[c].inp_data, sample_count);
@@ -409,10 +408,17 @@ void DrumGizmo::setSamplerate(float samplerate)
 	// Notify input engine of the samplerate change.
 	ie.setSampleRate(samplerate);
 
-	auto input_fs = kit.getSamplerate();
+	auto input_fs = settings.drumkit_samplerate.load();
 	auto output_fs = samplerate;
 	ratio = input_fs / output_fs;
 	settings.resamplig_recommended.store(ratio != 1.0);
+
+	// TODO: Only reallocate the actual amount of samples needed based on the
+	// ratio and the framesize.
+	for(auto& buf : resampler_input_buffer)
+	{
+		buf.reset(new sample_t[MAX_RESAMPLER_BUFFER_SIZE]);
+	}
 
 	for(int c = 0; c < MAX_NUM_CHANNELS; ++c)
 	{

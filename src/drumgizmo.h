@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <array>
+#include <memory>
 
 #include <zita-resampler/resampler.h>
 
@@ -74,8 +75,7 @@ public:
 
 private:
 	static constexpr int MAX_NUM_CHANNELS = 64;
-	static constexpr int RESAMPLER_OUTPUT_BUFFER = 4096;
-	static constexpr int RESAMPLER_INPUT_BUFFER = 2048;//64;
+	static constexpr int MAX_RESAMPLER_BUFFER_SIZE = 4096 * 8;
 
 protected:
 	DrumKitLoader loader;
@@ -101,8 +101,8 @@ protected:
 	SettingsGetter settings_getter;
 
 	Random rand;
-	Resampler zita[MAX_NUM_CHANNELS];
-	sample_t _resampler_input_buffer[MAX_NUM_CHANNELS][4096 * 8];
+	std::array<Resampler, MAX_NUM_CHANNELS> zita;
+	std::array<std::unique_ptr<sample_t>, MAX_NUM_CHANNELS> resampler_input_buffer;
 	double ratio = 1.0;
 
 };

@@ -36,8 +36,6 @@
 #include "drumkit.h"
 #include "settings.h"
 #include "audioinputengine.h"
-#include "chresampler.h"
-//#include "memchecker.h"
 #include "audiocache.h"
 
 //! This class is responsible for loading the drumkits in its own thread.
