@@ -1,5 +1,26 @@
 Version 0.9.15
 ==============
+Release date: August 12th 2018
+Contributors: deva, chaot4, suhr, trebmuh
+
+Resampler has been refactored.
+It now depends strictly on zita-resampler and is no longer optional.
+
+Bugfixes:
+ - Fix latency reporting in VST.
+ - Fix timing humanizer stops normal cymbal samples too early.
+ - Samples are cut off when looping.
+ - LV2: Don't export any symbols except the plugin entry point to avoid clashes with the DAW or other plugins.
+ - VST: Don't export any symbols except the plugin entry point to avoid clashes with the DAW or other plugins.
+ - Report latency from resampling.
+ - Fix LV2 Buffer overflow.
+ - Add message to execution of CLI without arguments that mentions that the GUI is only supported in the plugins.
+ - Update French translation of manpage.
+ - Fix crash or noise when changing jack buffersize while running.
+ - Stuttering when resampling is active.
+
+Version 0.9.15
+==============
 Release date: July 24th 2018
 Contributors: deva, chaot4, meka, suhr, Muldjord, cglocke, Roman Garifullin, James Cowgill
 
