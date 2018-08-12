@@ -80,6 +80,8 @@ EXTRA_DIST = \
 	$(lv2plugin_DATA) \
 	$(vstplugin_DATA) \
 	drumgizmo_plugin.h \
+	drumgizmo_lv2.sym \
+	drumgizmo_vst.sym \
 	$(top_srcdir)/plugin/plugingizmo/plugin.h \
 	$(top_srcdir)/plugin/plugingizmo/midievent.h \
 	$(top_srcdir)/plugin/plugingizmo/pluginlv2.h \
