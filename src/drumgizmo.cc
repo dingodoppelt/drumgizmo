@@ -54,6 +54,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	events.reserve(1000);
 	loader.init();
 	setSamplerate(44100.0f);
+	settings_getter.audition_counter.hasChanged(); // Reset audition_counter
 }
 
 DrumGizmo::~DrumGizmo()
