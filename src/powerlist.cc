@@ -215,7 +215,7 @@ Sample* PowerList::get(level_t level)
 		return nullptr; // No samples to choose from.
 	}
 
-	int retry = 3; // TODO: This must be user controllable via the UI.
+	int retry = settings.sample_selection_retry_count.load();
 
 	Sample* sample{nullptr};
 

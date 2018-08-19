@@ -79,6 +79,12 @@ struct Settings
 	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
 	Atomic<float> velocity_stddev{velocity_stddev_default}; // [0.5; 3.0]
 
+	//! Control number of times to retry sample selection as long as the sample
+	//! is the same one as the last one.
+	//! 0: will do no retries, ie. just use the first sample found.
+	static std::size_t constexpr sample_selection_retry_count_default = 3;
+	Atomic<std::size_t> sample_selection_retry_count{sample_selection_retry_count_default};
+
 	// Current velocity offset - for UI
 	Atomic<float> velocity_modifier_current{1.0f};
 
@@ -157,6 +163,9 @@ struct SettingsGetter
 	SettingRef<float> velocity_modifier_falloff;
 	SettingRef<float> velocity_modifier_weight;
 	SettingRef<float> velocity_stddev;
+
+	SettingRef<std::size_t> sample_selection_retry_count;
+
 	SettingRef<float> velocity_modifier_current;
 
 	SettingRef<bool> enable_velocity_randomiser;
@@ -205,6 +214,7 @@ struct SettingsGetter
 		, velocity_modifier_falloff{settings.velocity_modifier_falloff}
 		, velocity_modifier_weight{settings.velocity_modifier_weight}
 		, velocity_stddev{settings.velocity_stddev}
+		, sample_selection_retry_count(settings.sample_selection_retry_count)
 		, velocity_modifier_current{settings.velocity_modifier_current}
 		, enable_velocity_randomiser{settings.enable_velocity_randomiser}
 		, velocity_randomiser_weight{settings.velocity_randomiser_weight}
@@ -255,6 +265,7 @@ public:
 	Notifier<float> velocity_modifier_falloff;
 	Notifier<float> velocity_modifier_weight;
 	Notifier<float> velocity_stddev;
+	Notifier<std::size_t> sample_selection_retry_count;
 	Notifier<float> velocity_modifier_current;
 
 	Notifier<bool> enable_velocity_randomiser;
@@ -309,6 +320,7 @@ public:
 		EVAL(velocity_modifier_falloff);
 		EVAL(velocity_modifier_weight);
 		EVAL(velocity_stddev);
+		EVAL(sample_selection_retry_count);
 		EVAL(velocity_modifier_current);
 
 		EVAL(enable_velocity_randomiser);
