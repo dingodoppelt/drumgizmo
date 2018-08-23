@@ -232,7 +232,7 @@ Sample* PowerList::get(level_t level)
 	// Cut off mean value with stddev/2 in both ends in order to make room for
 	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
 	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
-	float stddev = velocity_stddev * mean_stepwidth;
+	float stddev = settings.enable_velocity_modifier.load() ? velocity_stddev * mean_stepwidth : 0.;
 
 	float power{0.f};
 
