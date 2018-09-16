@@ -116,7 +116,8 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 
 	pugi::xml_node drumkit = doc.child("drumkit");
 	res &= attrcpy(dom.name, drumkit, "name");
-	res &= attrcpy(dom.version, drumkit, "version");
+	dom.version = "1.0";
+	res &= attrcpy(dom.version, drumkit, "version", true);
 	res &= attrcpy(dom.description, drumkit, "description");
 	dom.samplerate = 44100.0;
 	res &= attrcpy(dom.samplerate, drumkit, "samplerate", true);
@@ -165,7 +166,8 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 
 	pugi::xml_node instrument = doc.child("instrument");
 	res &= attrcpy(dom.name, instrument, "name");
-	res &= attrcpy(dom.version, instrument, "version");
+	dom.version = "1.0";
+	res &= attrcpy(dom.version, instrument, "version", true);
 	res &= attrcpy(dom.description, instrument, "description", true);
 
 	pugi::xml_node channels = instrument.child("channels");
