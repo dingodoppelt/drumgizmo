@@ -4,7 +4,7 @@ DG_SRC = \
 	../src/semaphore.cc \
 	../src/mutex.cc
 
-DG_CFLAGS = -I.. -I../include -I../src -DSSE -msse -msse2
+DG_CFLAGS = -I.. -I../src -DSSE -msse -msse2
 
 GUI_SRC = \
 	testmain.cc \

@@ -14,7 +14,6 @@ drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
 	-fvisibility=hidden \
 	$(LV2_CFLAGS) \
 	$(SNDFILE_CFLAGS) \
-	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/plugin/plugingizmo \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -48,7 +47,6 @@ endif
 drumgizmo_vst_la_CXXFLAGS = -DVST \
 	-fvisibility=hidden \
 	$(SNDFILE_CFLAGS) \
-	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/plugin/plugingizmo \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \

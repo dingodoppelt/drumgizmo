@@ -9,7 +9,7 @@ dgreftest_LDADD = $(PTHREAD_LIBS) $(JACK_LIBS) \
 dgreftest_LDFLAGS =
 
 dgreftest_CXXFLAGS = $(SNDFILE_CXXFLAGS) $(PTHREAD_CFLAGS) \
-	-I$(top_srcdir)/include -I$(top_srcdir)/src \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(JACK_CFLAGS) $(SSEFLAGS) $(SMF_CFLAGS) $(FLOAT_STORE)
 

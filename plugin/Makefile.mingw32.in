@@ -39,7 +39,7 @@ DG_SRC = \
 	@top_srcdir@/src/staminafilter.cc \
 	@top_srcdir@/src/thread.cc \
 	@top_srcdir@/src/versionstr.cc
-DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/include -I@top_srcdir@/src \
+DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/src \
 	-I@top_srcdir@/pugixml/src \
 	-I@top_srcdir@/plugin/plugingizmo -DVST -DSSE -msse -msse2
 # -DDISABLE_HUGIN

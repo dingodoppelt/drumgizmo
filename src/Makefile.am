@@ -1,7 +1,6 @@
 noinst_LTLIBRARIES = libdg.la
 
 libdg_la_CPPFLAGS = \
-	-I$(top_srcdir)/include -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) \
 	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
@@ -47,6 +46,7 @@ EXTRA_DIST = \
 	$(nodist_libdg_la_SOURCES) \
 	atomic.h \
 	audio.h \
+	audiotypes.h \
 	audiocache.h \
 	audiocacheeventhandler.h \
 	audiocachefile.h \
@@ -67,6 +67,7 @@ EXTRA_DIST = \
 	drumgizmo.h \
 	drumkit.h \
 	drumkitloader.h \
+	event.h \
 	events.h \
 	inputfilter.h \
 	inputprocessor.h \

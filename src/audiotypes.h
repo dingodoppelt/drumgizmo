@@ -1,8 +1,8 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.h
+ *            sample.h
  *
- *  Fri Jun  3 12:10:50 CEST 2011
+ *  Fri Jun  3 12:12:17 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
@@ -26,18 +26,10 @@
  */
 #pragma once
 
-#include <cstddef>
+//typedef signed short int sample_t;
+typedef float sample_t;
 
-// TODO: Make enum class
-//! Event types
-#define TYPE_ONSET 0
-#define TYPE_STOP  1
+typedef unsigned int channels_t;
+typedef unsigned int channel_t;
 
-//! POD datatype for input event transport.
-struct event_t
-{
-	std::size_t type; //!< The type of the event.
-	std::size_t instrument; //!< The instrument number.
-	std::size_t offset; //!< The offset position in the input buffer
-	float velocity; //!< The velocity if the type is a note on [0; 1]
-};
+typedef float level_t;

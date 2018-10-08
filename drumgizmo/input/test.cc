@@ -86,15 +86,15 @@ void TestInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 
 	events.emplace_back();
 	auto& event = events.back();
-	event.type = TYPE_ONSET;
+	event.type = EventType::OnSet;
 
 	if((length != -1) && (pos > (size_t)(length * sample_rate)))
 	{
-		event.type = TYPE_STOP;
+		event.type = EventType::Stop;
 	}
 	else
 	{
-		event.type = TYPE_ONSET;
+		event.type = EventType::OnSet;
 	}
 
 	if(instrument != -1)

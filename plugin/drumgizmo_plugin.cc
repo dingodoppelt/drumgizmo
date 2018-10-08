@@ -380,7 +380,7 @@ void DrumGizmoPlugin::Input::run(size_t pos, size_t len, std::vector<event_t>& e
 		int i = mmap.lookup(event.key);
 		if(event.velocity && (i != -1))
 		{
-			events.push_back({TYPE_ONSET, (size_t)i, (size_t)event.getTime(), event.velocity / 127.0f});
+			events.push_back({EventType::OnSet, (size_t)i, (size_t)event.getTime(), event.velocity / 127.0f});
 		}
 	}
 }

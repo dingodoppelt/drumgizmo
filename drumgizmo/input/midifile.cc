@@ -157,7 +157,7 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 
 				events.emplace_back();
 				auto& event = events.back();
-				event.type = TYPE_ONSET;
+				event.type = EventType::OnSet;
 				size_t evpos = current_event->time_seconds * (samplerate / speed);
 				event.offset = evpos - pos;
 
@@ -183,7 +183,7 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 		else
 		{
 			assert(len >= 1);
-			events.push_back({TYPE_STOP, 0, len-1, 0.f});
+			events.push_back({EventType::Stop, 0, len-1, 0.f});
 		}
 	}
 }

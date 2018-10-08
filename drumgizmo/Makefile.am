@@ -9,7 +9,7 @@ drumgizmo_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
 drumgizmo_LDFLAGS =
 
 drumgizmo_CXXFLAGS = \
-	-I$(top_srcdir)/include -I$(top_srcdir)/src -I$(top_srcdir)/getoptpp \
+	-I$(top_srcdir)/src -I$(top_srcdir)/getoptpp \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(JACK_CFLAGS) $(SSEFLAGS)
 

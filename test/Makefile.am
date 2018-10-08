@@ -35,7 +35,7 @@ resource_SOURCES = \
 	resource_test.cc
 
 audiocache_CXXFLAGS = -DOUTPUT=\"audiocache\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 audiocache_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocache_SOURCES = \
@@ -52,7 +52,7 @@ audiocache_SOURCES = \
 	audiocachetest.cc
 
 audiocachefile_CXXFLAGS = -DOUTPUT=\"audiocachefile\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocachefile_SOURCES = \
@@ -67,7 +67,7 @@ audiocachefile_SOURCES = \
 
 audiocacheidmanager_CXXFLAGS = -DOUTPUT=\"audiocacheidmanager\" \
 	\
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(SNDFILE_CFLAGS)
 audiocacheidmanager_LDFLAGS = $(SNDFILE_LIBS)
 audiocacheidmanager_SOURCES = \
@@ -77,7 +77,7 @@ audiocacheidmanager_SOURCES = \
 
 audiocacheeventhandler_CXXFLAGS = -DOUTPUT=\"audiocacheeventhandler\" \
 	\
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 audiocacheeventhandler_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocacheeventhandler_SOURCES = \
@@ -90,7 +90,7 @@ audiocacheeventhandler_SOURCES = \
 	audiocacheeventhandlertest.cc
 
 enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 enginetest_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
 	 $(top_srcdir)/src/libdg.la
@@ -101,7 +101,7 @@ enginetest_SOURCES = \
 	enginetest.cc
 
 paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
 paintertest_LDFLAGS = $(top_srcdir)/plugingui/libdggui.la
 paintertest_SOURCES = \
@@ -196,7 +196,7 @@ notifiertest_SOURCES = \
 	dgtest.cc
 
 dgxmlparsertest_CXXFLAGS = -DOUTPUT=\"dgxmlparsertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/pugixml/src
 dgxmlparsertest_LDFLAGS =
 dgxmlparsertest_SOURCES = \
@@ -208,7 +208,7 @@ dgxmlparsertest_SOURCES = \
 	dgtest.cc
 
 domloadertest_CXXFLAGS = -DOUTPUT=\"domloadertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include
+	-I$(top_srcdir)/src
 domloadertest_LDFLAGS = \
 	 $(top_srcdir)/src/libdg.la
 domloadertest_SOURCES = \
@@ -218,7 +218,7 @@ domloadertest_SOURCES = \
 	dgtest.cc
 
 configparsertest_CXXFLAGS = -DOUTPUT=\"configparsertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/pugixml/src
 configparsertest_LDFLAGS =
 configparsertest_SOURCES = \
@@ -229,7 +229,7 @@ configparsertest_SOURCES = \
 	dgtest.cc
 
 midimapparsertest_CXXFLAGS = -DOUTPUT=\"midimapparsertest\" \
-	-I$(top_srcdir)/src -I$(top_srcdir)/include -I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/src -I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/pugixml/src
 midimapparsertest_LDFLAGS =
 midimapparsertest_SOURCES = \

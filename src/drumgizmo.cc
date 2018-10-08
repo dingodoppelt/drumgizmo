@@ -139,7 +139,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		resample_ratio = 1.0;
 	}
 
-	if (settings_getter.audition_counter.hasChanged())
+	if(settings_getter.audition_counter.hasChanged())
 	{
 		settings_getter.audition_counter.getValue();
 		auto instrument_name = settings.audition_instrument.load();
@@ -154,7 +154,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 			}
 		}
 
-		events.emplace_back(event_t{TYPE_ONSET, instrument_index, 0, velocity});
+		events.push_back({EventType::OnSet, instrument_index, 0, velocity});
 	}
 
 	bool active_events_left =

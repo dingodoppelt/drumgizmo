@@ -133,7 +133,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		int k = mmap.lookup(key);
 		if(k != -1 && velocity)
 		{
-			events.push_back({TYPE_ONSET, (size_t)k, event.time, velocity / 127.f});
+			events.push_back({EventType::OnSet, (size_t)k, event.time, velocity / 127.f});
 		}
 	}
 	jack_midi_clear_buffer(buffer);

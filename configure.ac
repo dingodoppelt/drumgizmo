@@ -679,7 +679,6 @@ AC_CONFIG_FILES(
 	plugin/Makefile
 	plugin/vst/Makefile
 	plugingui/Makefile
-	include/Makefile
 	man/Makefile
 	test/Makefile
 	test/dgreftest/Makefile

@@ -57,7 +57,7 @@ bool InputProcessor::process(std::vector<event_t>& events,
 {
 	for(auto& event: events)
 	{
-		if(event.type == TYPE_ONSET)
+		if(event.type == EventType::OnSet)
 		{
 			if(!processOnset(event, pos, resample_ratio))
 			{
@@ -181,7 +181,7 @@ bool InputProcessor::processOnset(event_t& event,
 
 bool InputProcessor::processStop(event_t& event)
 {
-	if(event.type == TYPE_STOP)
+	if(event.type == EventType::Stop)
 	{
 		is_stopping = true;
 	}

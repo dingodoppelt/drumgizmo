@@ -39,7 +39,6 @@ libdggui_la_CPPFLAGS = \
 	$(GUI_CPPFLAGS) \
 	-I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/src \
-	-I$(top_srcdir)/include \
 	-DWITH_HUG_MUTEX $(PTHREAD_CFLAGS) \
 	-DLODEPNG_NO_COMPILE_ENCODER \
 	-DLODEPNG_NO_COMPILE_DISK \
@@ -164,7 +163,6 @@ plugingui_CXXFLAGS = \
 	$(GUI_CPPFLAGS) \
 	$(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) \
-	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
 
