@@ -538,6 +538,18 @@ int str2int(std::string a)
 	}
 }
 
+long long str2ll(std::string a)
+{
+	try
+	{
+		return std::stoll(a);
+	}
+	catch(...)
+	{
+		return 0;
+	}
+}
+
 } // end anonymous namespace
 
 DrumGizmoPlugin::ConfigStringIO::ConfigStringIO(Settings& settings)
@@ -638,7 +650,7 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 
 	if(p.value("disk_cache_upper_limit") != "")
 	{
-		settings.disk_cache_upper_limit.store(str2int(p.value("disk_cache_upper_limit")));
+		settings.disk_cache_upper_limit.store(str2ll(p.value("disk_cache_upper_limit")));
 	}
 
 	if(p.value("disk_cache_chunk_size") != "")
