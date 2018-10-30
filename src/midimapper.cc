@@ -51,3 +51,8 @@ void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap)
 	std::swap(this->instrmap, instrmap);
 	std::swap(this->midimap, midimap);
 }
+
+const midimap_t& MidiMapper::getMap()
+{
+	return midimap;
+}

@@ -43,6 +43,8 @@ public:
 	//! Set new map sets.
 	void swap(instrmap_t& instrmap, midimap_t& midimap);
 
+	const midimap_t& getMap();
+
 private:
 	instrmap_t instrmap;
 	midimap_t midimap;

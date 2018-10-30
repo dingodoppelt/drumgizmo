@@ -128,6 +128,8 @@ private:
 
 		bool isFreewheeling() const override;
 
+		bool loadMidiMap(const std::string& file, const Instruments& i) override;
+
 	protected:
 		DrumGizmoPlugin& plugin;
 		const Instruments* instruments{nullptr};

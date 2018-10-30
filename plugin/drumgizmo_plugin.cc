@@ -394,6 +394,25 @@ bool DrumGizmoPlugin::Input::isFreewheeling() const
 	return plugin.getFreeWheel();
 }
 
+bool DrumGizmoPlugin::Input::loadMidiMap(const std::string& file,
+                                         const Instruments& i)
+{
+	bool result = AudioInputEngineMidi::loadMidiMap(file, i);
+	std::vector<std::pair<int, std::string>> midnam;
+
+	const auto& map = mmap.getMap();
+	midnam.reserve(map.size());
+	for(const auto& m : map)
+	{
+		midnam.push_back(std::make_pair(m.first, m.second));
+	}
+
+	if(midnam.size() > 0)
+	{
+		plugin.setMidnamData(midnam);
+	}
+	return result;
+}
 
 //
 // Output Engine
