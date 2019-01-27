@@ -31,6 +31,21 @@
 
 #include "channel.h"
 
+// v1.0 velocity groups
+
+struct SampleRefDOM
+{
+	double probability;
+	std::string name;
+};
+
+struct VelocityDOM
+{
+	double upper;
+	double lower;
+	std::vector<SampleRefDOM> samplerefs;
+};
+
 // Instrument DOM:
 
 struct AudioFileDOM
@@ -43,7 +58,7 @@ struct AudioFileDOM
 struct SampleDOM
 {
 	std::string name;
-	double power;
+	double power; // >= v2.0 only
 	std::vector<AudioFileDOM> audiofiles;
 };
 
@@ -60,6 +75,9 @@ struct InstrumentDOM
 	std::string description;
 	std::vector<SampleDOM> samples;
 	std::vector<InstrumentChannelDOM> instrument_channels;
+
+	// v1.0 only
+	std::vector<VelocityDOM> velocities;
 };
 
 

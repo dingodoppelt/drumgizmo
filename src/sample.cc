@@ -28,7 +28,7 @@
 
 #include <sndfile.h>
 
-Sample::Sample(const std::string& name, float power)
+Sample::Sample(const std::string& name, double power)
 	: name{name}
 	, power{power}
 	, audiofiles{}
@@ -44,7 +44,7 @@ void Sample::addAudioFile(InstrumentChannel* c, AudioFile* a)
 	audiofiles[c] = a;
 }
 
-AudioFile* Sample::getAudioFile(const Channel& channel)
+AudioFile* Sample::getAudioFile(const Channel& channel) const
 {
 	/*
 	if(audiofiles.find(c) == audiofiles.end()) return nullptr;
@@ -63,7 +63,7 @@ AudioFile* Sample::getAudioFile(const Channel& channel)
 	return nullptr;
 }
 
-float Sample::getPower() const
+double Sample::getPower() const
 {
 	return power;
 }

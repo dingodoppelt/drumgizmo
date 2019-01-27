@@ -2,7 +2,7 @@ DISTDIRS = input output
 
 if ENABLE_CLI
 
-bin_PROGRAMS = drumgizmo
+bin_PROGRAMS = drumgizmo dgvalidator
 
 drumgizmo_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
 
@@ -100,5 +100,21 @@ EXTRA_DIST = \
 	output/outputdummy.h \
 	output/oss.h \
 	output/wavfile.h
+
+dgvalidator_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
+
+dgvalidator_LDFLAGS =
+
+dgvalidator_CXXFLAGS = \
+	-I$(top_srcdir)/src -I$(top_srcdir)/getoptpp \
+	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
+	$(SSEFLAGS)
+
+dgvalidator_CFLAGS = -DWITH_HUG_MUTEX -DWITH_HUG_FILTER
+
+dgvalidator_SOURCES = \
+	dgvalidator.cc \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/hugin/hugin_filter.c
 
 endif # ENABLE_CLI

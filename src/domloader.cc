@@ -165,6 +165,35 @@ bool DOMLoader::loadDom(const std::string& basepath,
 				}
 			}
 
+			if(instrument->version == VersionStr(1,0,0))
+			{
+				// Version 1.0 use velocity groups
+				for(auto& velocity : instrumentdom.velocities)
+				{
+					for(const auto& sampleref : velocity.samplerefs)
+					{
+						bool found_sample{false};
+						for(const auto& sample : instrument->samplelist)
+						{
+							// TODO: What should be done with the probability??
+							if(sample->name == sampleref.name)
+							{
+								instrument->addSample(velocity.lower, velocity.upper, sample);
+								found_sample = true;
+								break;
+							}
+						}
+						if(!found_sample)
+						{
+							ERR(kitparser,
+							    "Missing sample '%s' from sampleref in instrument '%s'\n",
+							    sampleref.name.data(), instrument->getName().data());
+							return false;
+						}
+					}
+				}
+			}
+
 			instrument->finalise();
 
 			// Transfer ownership to the DrumKit object.

@@ -147,7 +147,7 @@ bool InputProcessor::processOnset(event_t& event,
 		}
 	}
 
-	Sample* sample = instr->sample(event.velocity, event.offset + pos);
+	const auto sample = instr->sample(event.velocity, event.offset + pos);
 
 	if(sample == nullptr)
 	{
@@ -162,7 +162,7 @@ bool InputProcessor::processOnset(event_t& event,
 
 	for(Channel& ch: kit.channels)
 	{
-		AudioFile* af = sample->getAudioFile(ch);
+		const auto af = sample->getAudioFile(ch);
 		if(af == nullptr || !af->isValid())
 		{
 			//DEBUG(inputprocessor, "Missing AudioFile.\n");

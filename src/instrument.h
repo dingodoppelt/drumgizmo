@@ -31,6 +31,7 @@
 #include <memory>
 #include <deque>
 
+#include "rangemap.h" // for v1.0 kits
 #include "powerlist.h"
 
 #include "sample.h"
@@ -45,7 +46,7 @@ public:
 	Instrument(Settings& settings, Random& rand);
 	~Instrument();
 
-	Sample* sample(level_t level, size_t pos);
+	const Sample* sample(level_t level, size_t pos);
 
 	const std::string& getName() const;
 	const std::string& getDescription() const;
@@ -84,7 +85,9 @@ private:
 
 	VersionStr version;
 
-	void addSample(level_t a, level_t b, Sample* s);
+	RangeMap<level_t, const Sample*> samples;
+
+	void addSample(level_t a, level_t b, const Sample* s);
 	void finalise(); ///< Signal instrument that no more samples will be added.
 
 	std::vector<Sample*> samplelist;

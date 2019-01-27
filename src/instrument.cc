@@ -54,21 +54,44 @@ bool Instrument::isValid() const
 	return this == magic;
 }
 
-Sample* Instrument::sample(level_t level, size_t pos)
+const Sample* Instrument::sample(level_t level, size_t pos)
 {
-	return powerlist.get(level * mod);
+	if(version >= VersionStr("2.0"))
+	{
+		// Version 2.0
+		return powerlist.get(level * mod);
+	}
+	else
+	{
+		// Version 1.0
+		auto s = samples.get(level * mod);
+		if(s.size() == 0)
+		{
+			return nullptr;
+		}
+
+		return rand.choose(s);
+	}
+}
+
+void Instrument::addSample(level_t a, level_t b, const Sample* s)
+{
+	samples.insert(a, b, s);
 }
 
 void Instrument::finalise()
 {
-	std::vector<Sample*>::iterator s = samplelist.begin();
-	while(s != samplelist.end())
+	if(version >= VersionStr("2.0"))
 	{
-		powerlist.add(*s);
-		s++;
-	}
+		std::vector<Sample*>::iterator s = samplelist.begin();
+		while(s != samplelist.end())
+		{
+			powerlist.add(*s);
+			s++;
+		}
 
-	powerlist.finalise();
+		powerlist.finalise();
+	}
 }
 
 const std::string& Instrument::getName() const

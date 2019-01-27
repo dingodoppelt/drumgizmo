@@ -179,20 +179,56 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 		res &= attrcpy(dom.instrument_channels.back().main, channel, "main", true);
 	}
 
+	INFO(dgxmlparser, "XML version: %s\n", dom.version.data());
+
 	pugi::xml_node samples = instrument.child("samples");
 	for(pugi::xml_node sample: samples.children("sample"))
 	{
 		dom.samples.emplace_back();
 		res &= attrcpy(dom.samples.back().name, sample, "name");
-		res &= attrcpy(dom.samples.back().power, sample, "power");
+
+		// Power only part of >= v2.0 instruments.
+		if(dom.version == "1.0")
+		{
+			dom.samples.back().power = 0.0;
+		}
+		else
+		{
+			res &= attrcpy(dom.samples.back().power, sample, "power");
+		}
 
 		for(pugi::xml_node audiofile: sample.children("audiofile"))
 		{
 			dom.samples.back().audiofiles.emplace_back();
-			res &= attrcpy(dom.samples.back().audiofiles.back().instrument_channel, audiofile, "channel");
-			res &= attrcpy(dom.samples.back().audiofiles.back().file, audiofile, "file");
-			dom.samples.back().audiofiles.back().filechannel = 1; // Defaults to channel 1 in mono (1-based)
-			res &= attrcpy(dom.samples.back().audiofiles.back().filechannel, audiofile, "filechannel", true);
+			res &= attrcpy(dom.samples.back().audiofiles.back().instrument_channel,
+			               audiofile, "channel");
+			res &= attrcpy(dom.samples.back().audiofiles.back().file,
+				               audiofile, "file");
+			// Defaults to channel 1 in mono (1-based)
+			dom.samples.back().audiofiles.back().filechannel = 1;
+			res &= attrcpy(dom.samples.back().audiofiles.back().filechannel,
+			               audiofile, "filechannel", true);
+		}
+	}
+
+	// Velocity groups are only part of v1.0 instruments.
+	if(dom.version == "1.0")
+	{
+		pugi::xml_node velocities = instrument.child("velocities");
+		for(pugi::xml_node velocity: velocities.children("velocity"))
+		{
+			dom.velocities.emplace_back();
+
+			res &= attrcpy(dom.velocities.back().lower, velocity, "lower");
+			res &= attrcpy(dom.velocities.back().upper, velocity, "upper");
+			for(pugi::xml_node sampleref: velocity.children("sampleref"))
+			{
+				dom.velocities.back().samplerefs.emplace_back();
+				res &= attrcpy(dom.velocities.back().samplerefs.back().probability,
+				               sampleref, "probability");
+				res &= attrcpy(dom.velocities.back().samplerefs.back().name,
+				               sampleref, "name");
+			}
 		}
 	}
 
