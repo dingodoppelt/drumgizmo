@@ -356,12 +356,15 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		{
 			if((xevent.xbutton.button == 4) || (xevent.xbutton.button == 5))
 			{
-				int scroll = 1;
-				auto scrollEvent = std::make_shared<ScrollEvent>();
-				scrollEvent->x = xevent.xbutton.x;
-				scrollEvent->y = xevent.xbutton.y;
-				scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
-				event_queue.push_back(scrollEvent);
+				if(xevent.type == ButtonPress)
+				{
+					int scroll = 1;
+					auto scrollEvent = std::make_shared<ScrollEvent>();
+					scrollEvent->x = xevent.xbutton.x;
+					scrollEvent->y = xevent.xbutton.y;
+					scrollEvent->delta = scroll * ((xevent.xbutton.button == 4) ? -1 : 1);
+					event_queue.push_back(scrollEvent);
+				}
 			}
 			else if ((xevent.xbutton.button == 6) || (xevent.xbutton.button == 7))
 			{
