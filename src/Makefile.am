@@ -55,7 +55,6 @@ EXTRA_DIST = \
 	audioinputengine.h \
 	audioinputenginemidi.h \
 	audiooutputengine.h \
-	beatmapper.h \
 	bytesizeparser.h \
 	channel.h \
 	channelmixer.h \
