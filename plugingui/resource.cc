@@ -42,6 +42,8 @@ static bool nameIsInternal(const std::string& name)
 
 Resource::Resource(const std::string& name)
 {
+	isValid = false;
+
 	if(nameIsInternal(name))
 	{
 		// Use internal resource:
@@ -78,7 +80,11 @@ Resource::Resource(const std::string& name)
 		}
 
 		// Get the file size
-		std::fseek(fp, 0, SEEK_END);
+		if(std::fseek(fp, 0, SEEK_END) == -1)
+		{
+			std::fclose(fp);
+			return;
+		}
 		size_t filesize = ftell(fp);
 
 		// Reserve space in the string for the data.
@@ -97,7 +103,7 @@ Resource::Resource(const std::string& name)
 		std::fclose(fp);
 
 		isInternal = false;
- }
+	}
 
 	isValid = true;
 }

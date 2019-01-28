@@ -92,7 +92,7 @@ auto Grid<T>::width() const -> Index
 {
 	return _width;
 }
-	
+
 template <typename T>
 auto Grid<T>::height() const -> Index
 {

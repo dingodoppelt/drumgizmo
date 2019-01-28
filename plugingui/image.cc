@@ -48,6 +48,11 @@ Image::Image(const std::string& filename)
 	: filename(filename)
 {
 	Resource rc(filename);
+	if(!rc.valid())
+	{
+		setError();
+		return;
+	}
 	load(rc.data(), rc.size());
 }
 

@@ -49,8 +49,8 @@ class DrumkitTab
 {
 public:
 	DrumkitTab(Widget* parent,
-	           Settings& settings/*,
-	           SettingsNotifier& settings_notifier,
+	           Settings& settings,
+	           SettingsNotifier& settings_notifier/*,
 	           Config& config*/);
 
 	// From Widget:
@@ -101,13 +101,15 @@ private:
 	Label instrument_name_label{this};
 
 	Settings& settings;
-	// SettingsNotifier& settings_notifier;
+	SettingsNotifier& settings_notifier;
 	// Config& config;
 
 	void triggerAudition(int x, int y);
 	void highlightInstrument(int index);
 	void updateVelocityLabel();
 	void updateInstrumentLabel(int index);
+
+	void drumkitFileChanged(const std::string& drumkit_file);
 };
 
 } // GUI::
