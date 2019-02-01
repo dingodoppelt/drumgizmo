@@ -50,6 +50,7 @@ public:
 
 	Notifier<const std::string&> fileSelectNotifier; // (const std::string& path)
 	Notifier<> fileSelectCancelNotifier;
+	Notifier<const std::string&> defaultPathChangedNotifier; // (const std::string& path)
 
 	// From Widget:
 	bool isFocusable() override { return true; }
@@ -66,6 +67,7 @@ public:
 private:
 	void listSelectionChanged();
 	void selectButtonClicked();
+	void setDefaultPath();
 	void cancelButtonClicked();
 	void handleKeyEvent();
 
@@ -85,6 +87,7 @@ private:
 	ListBox listbox;
 
 	Button btn_sel;
+	Button btn_def;
 	Button btn_esc;
 
 	Image back;

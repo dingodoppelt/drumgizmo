@@ -82,6 +82,8 @@ public:
 	void midimapBrowseClick();
 
 private:
+	void defaultPathChanged(const std::string& path);
+
 	void selectKitFile(const std::string& filename);
 	void selectMapFile(const std::string& filename);
 

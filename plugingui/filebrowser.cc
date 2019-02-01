@@ -55,6 +55,7 @@ FileBrowser::FileBrowser(Widget* parent)
 	, lineedit(this)
 	, listbox(this)
 	, btn_sel(this)
+	, btn_def(this)
 	, btn_esc(this)
 	, back(":resources/bg.png")
 {
@@ -70,13 +71,14 @@ FileBrowser::FileBrowser(Widget* parent)
 	CONNECT(&lineedit, enterPressedNotifier, this, &FileBrowser::handleKeyEvent);
 	CONNECT(&listbox, selectionNotifier,
 	        this, &FileBrowser::listSelectionChanged);
-	CONNECT(this, fileSelectNotifier,
-	        this, &FileBrowser::select);
-	CONNECT(eventHandler(), closeNotifier,
-	        this, &FileBrowser::cancel);
+	CONNECT(this, fileSelectNotifier, this, &FileBrowser::select);
+	CONNECT(eventHandler(), closeNotifier, this, &FileBrowser::cancel);
 
 	btn_sel.setText("Select");
 	CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
+
+	btn_def.setText("Set default path");
+	CONNECT(&btn_def, clickNotifier, this, &FileBrowser::setDefaultPath);
 
 	btn_esc.setText("Cancel");
 	CONNECT(&btn_esc, clickNotifier, this, &FileBrowser::cancelButtonClicked);
@@ -109,6 +111,7 @@ void FileBrowser::resize(std::size_t width, std::size_t height)
 	int offset = 0;
 	int brd = 5; // border
 	int btn_h = 30;
+	int btn_w = std::max(width * 2 / 7, std::size_t(0));
 
 	offset += brd;
 
@@ -126,11 +129,14 @@ void FileBrowser::resize(std::size_t width, std::size_t height)
 	listbox.resize(std::max((int)width - 1 - 2*brd, 0),
 	               std::max((int)height - btn_h - 2*brd - offset, 0));
 
-	btn_esc.move(brd, height - btn_h - brd);
-	btn_esc.resize(std::max(((int)width - 1 - 2*brd) / 2 - brd / 2, 0), btn_h);
+	btn_def.move(brd, height - btn_h - brd);
+	btn_def.resize(btn_w, btn_h);
 
-	btn_sel.move(brd + width / 2 - brd / 2, height - btn_h - brd);
-	btn_sel.resize(std::max((int)((int)width - 1 - 2*brd) / 2, 0), btn_h);
+	btn_esc.move(width - (brd + btn_w + brd + btn_w), height - btn_h - brd);
+	btn_esc.resize(btn_w, btn_h);
+
+	btn_sel.move(width - (brd + btn_w), height - btn_h - brd);
+	btn_sel.resize(btn_w, btn_h);
 }
 
 void FileBrowser::repaintEvent(RepaintEvent* repaintEvent)
@@ -147,6 +153,11 @@ void FileBrowser::listSelectionChanged()
 void FileBrowser::selectButtonClicked()
 {
 	changeDir();
+}
+
+void FileBrowser::setDefaultPath()
+{
+	defaultPathChangedNotifier(dir.path());
 }
 
 void FileBrowser::cancelButtonClicked()

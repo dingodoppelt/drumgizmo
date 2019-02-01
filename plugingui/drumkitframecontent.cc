@@ -124,6 +124,9 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
 	CONNECT(this, settings_notifier.number_of_files_loaded,
 	        &drumkit_file_progress, &ProgressBar::setValue);
 
+	CONNECT(this, file_browser. defaultPathChangedNotifier,
+	        this, &DrumkitframeContent::defaultPathChanged);
+
 	midimap_file_progress.setTotal(2);
 
 	file_browser.resize(450, 350);
@@ -148,14 +151,15 @@ void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 void DrumkitframeContent::kitBrowseClick()
 {
 	std::string path = drumkit_file.getLineEdit().getText();
-	if(path == "")
-	{
-		path = config.lastkit;
-	}
 
 	if(path == "")
 	{
 		path = midimap_file.getLineEdit().getText();
+	}
+
+	if(path == "")
+	{
+		path = config.defaultKitPath;
 	}
 
 	file_browser.setPath(path);
@@ -169,14 +173,15 @@ void DrumkitframeContent::kitBrowseClick()
 void DrumkitframeContent::midimapBrowseClick()
 {
 	std::string path = midimap_file.getLineEdit().getText();
-	if(path == "")
-	{
-		path = config.lastmidimap;
-	}
 
 	if(path == "")
 	{
 		path = drumkit_file.getLineEdit().getText();
+	}
+
+	if(path == "")
+	{
+		path = config.defaultKitPath;
 	}
 
 	file_browser.setPath(path);
@@ -186,9 +191,14 @@ void DrumkitframeContent::midimapBrowseClick()
 	file_browser.show();
 }
 
+void DrumkitframeContent::defaultPathChanged(const std::string& path)
+{
+	config.defaultKitPath = path;
+	config.save();
+}
+
 void DrumkitframeContent::selectKitFile(const std::string& filename)
 {
-	config.lastkit = filename;
 	config.save();
 
 	settings.drumkit_file.store(filename);
@@ -197,7 +207,6 @@ void DrumkitframeContent::selectKitFile(const std::string& filename)
 
 void DrumkitframeContent::selectMapFile(const std::string& filename)
 {
-	config.lastmidimap = filename;
 	config.save();
 
 	settings.midimap_file.store(filename);

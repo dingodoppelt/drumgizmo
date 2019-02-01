@@ -28,9 +28,12 @@
 
 #include <configfile.h>
 
-namespace GUI {
+namespace GUI
+{
 
-class Config : public ConfigFile {
+class Config
+	: public ConfigFile
+{
 public:
 	Config();
 	~Config();
@@ -38,8 +41,7 @@ public:
 	bool load();
 	bool save();
 
-	std::string lastkit;
-	std::string lastmidimap;
+	std::string defaultKitPath;
 };
 
 } // GUI::

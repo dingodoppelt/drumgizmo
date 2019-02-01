@@ -30,37 +30,37 @@
 
 #define CONFIGFILENAME "plugingui.conf"
 
-namespace GUI {
+namespace GUI
+{
 
 Config::Config()
 	: ConfigFile(CONFIGFILENAME)
 {
+	load();
 }
 
 Config::~Config()
 {
+	save();
 }
 
 bool Config::load()
 {
-	lastkit.clear();
-	lastmidimap.clear();
+	defaultKitPath.clear();
 
 	if(!ConfigFile::load())
 	{
 		return false;
 	}
 
-	lastkit = getValue("lastkit");
-	lastmidimap = getValue("lastmidimap");
+	defaultKitPath = getValue("defaultKitPath");
 
 	return true;
 }
 
 bool Config::save()
 {
-	setValue("lastkit", lastkit);
-	setValue("lastmidimap", lastmidimap);
+	setValue("defaultKitPath", defaultKitPath);
 
 	return ConfigFile::save();
 }
