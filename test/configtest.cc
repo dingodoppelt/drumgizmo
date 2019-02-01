@@ -69,6 +69,7 @@ public:
 		DGUNIT_TEST(test_configtest::loading_error_no_value);
 		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_single);
 		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_double);
+		DGUNIT_TEST(test_configtest::empty_value);
 	}
 
 	void teardown() override
@@ -212,6 +213,15 @@ public:
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(false, cf.load());
+	}
+
+	void empty_value()
+	{
+		writeFile("a:\n");
+
+		TestConfigFile cf;
+		DGUNIT_ASSERT_EQUAL(true, cf.load());
+		DGUNIT_ASSERT_EQUAL(std::string(""), cf.getValue("a"));
 	}
 };
 

@@ -84,10 +84,10 @@ static bool createConfigPath()
 	std::string configpath = getConfigPath();
 
 	struct stat st;
-	if(stat(configpath.c_str(), &st) == 0)
+	if(stat(configpath.c_str(), &st) != 0)
 	{
 		DEBUG(configfile, "No configuration exists, creating directory '%s'\n",
-		    configpath.c_str());
+		      configpath.c_str());
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		if(mkdir(configpath.c_str()) < 0)
 		{
@@ -221,7 +221,7 @@ std::string ConfigFile::readLine()
 	{
 		return "";
 	}
-	
+
 	std::string line;
 
 	char buf[1024];
@@ -383,7 +383,8 @@ bool ConfigFile::parseLine(const std::string& line)
 	}
 
 	// If state == in_value_XXX_quoted here, the string was not terminated.
-	if(state != after_value && state != in_value)
+	// If state == before_value it means that the value is empty.
+	if(state != after_value && state != in_value && state != before_value)
 	{
 		ERR(configfile, "Malformed line: '%s'", line.c_str());
 		return false;
