@@ -215,8 +215,6 @@ Sample* PowerList::get(level_t level)
 		return nullptr; // No samples to choose from.
 	}
 
-	int retry = settings.sample_selection_retry_count.load();
-
 	Sample* sample{nullptr};
 
 	float power_span = power_max - power_min;
@@ -234,40 +232,49 @@ Sample* PowerList::get(level_t level)
 	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
 	float stddev = settings.enable_velocity_modifier.load() ? velocity_stddev * mean_stepwidth : 0.;
 
+	std::size_t index;
 	float power{0.f};
+	float obj_function_value{std::numeric_limits<float>::max()};
 
-	// note: loop is executed once + #retry
-	do
+	// Select normal distributed value between
+	//  (stddev/2) and (power_span-stddev/2)
+	float lvl = rand.normalDistribution(mean, stddev);
+
+	// Adjust this value to be in range
+	//  (power_min+stddev/2) and (power_max-stddev/2)
+	lvl += power_min;
+
+	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f,
+		power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
+		power_min, power_max);
+
+	float alpha = 10.0;
+	float beta = 1000.0;
+	float gamma = 0.0;
+
+	for (std::size_t i = 0; i < samples.size(); ++i)
 	{
-		--retry;
+		auto const& item = samples[i];
 
-		// Select normal distributed value between
-		//  (stddev/2) and (power_span-stddev/2)
-		float lvl = rand.normalDistribution(mean, stddev);
+		// compute objective function value
+		auto r = rand.floatInRange(0.,1.);
+		auto value =
+			alpha*pow2(item.power - power) + beta*pow2(1./(current - last[index])) + gamma*r;
 
-		// Adjust this value to be in range
-		//  (power_min+stddev/2) and (power_max-stddev/2)
-		lvl += power_min;
-
-		DEBUG(rand,
-		      "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f, power_min: %f, power_max: %f)\n",
-		      level, lvl, mean, stddev, mean_stepwidth, power_min, power_max);
-
-		for (auto& item: samples)
+		if (value < obj_function_value)
 		{
-			if (sample == nullptr || std::fabs(item.power - lvl) < std::fabs(power - lvl))
-			{
-				sample = item.sample;
-				power = item.power;
-			}
+			index = i;
+			power = item.power;
+			obj_function_value = value;
 		}
-	} while (lastsample == sample && retry >= 0);
+	}
 
 	DEBUG(rand, "Found sample with power %f\n", power);
 
-	lastsample = sample;
+	// FIXME
+	lastsample = samples[index].sample;
 
-	return sample;
+	return samples[index].sample;
 }
 
 float PowerList::getMaxPower() const
