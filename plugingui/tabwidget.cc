@@ -50,6 +50,16 @@ void TabWidget::addTab(const std::string& title, Widget* widget)
 	sizeChanged(width(), height());
 }
 
+void TabWidget::setTabWidth(std::size_t width)
+{
+	tab_width = width;
+}
+
+std::size_t TabWidget::getTabWidth() const
+{
+	return tab_width;
+}
+
 std::size_t TabWidget::getBarHeight() const
 {
 	return topbar.height();
@@ -94,7 +104,7 @@ void TabWidget::sizeChanged(int width, int height)
 {
 	std::size_t pos = 0;
 
-	int button_width = 1;
+	int button_width = tab_width;
 	int bar_height = 25;
 	int button_border_width = 10;
 

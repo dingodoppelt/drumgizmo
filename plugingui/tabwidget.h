@@ -47,6 +47,9 @@ public:
 
 	std::size_t getBarHeight() const;
 
+	void setTabWidth(std::size_t width);
+	std::size_t getTabWidth() const;
+
 private:
 	//! Callback for Widget::sizeChangeNotifier
 	void sizeChanged(int width, int height);
@@ -68,6 +71,8 @@ private:
 	Texture toplogo{getImageCache(), ":resources/toplogo.png",
 			0, 0, // atlas offset (x, y)
 			95, 17}; // width, height
+
+	std::size_t tab_width{64};
 };
 
 } // GUI::

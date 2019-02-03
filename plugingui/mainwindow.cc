@@ -48,6 +48,7 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 
 	setCaption("DrumGizmo v" VERSION);
 
+	tabs.setTabWidth(100);
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 	tabs.addTab("Main", &main_tab);
 	tabs.addTab("Drumkit", &drumkit_tab);
