@@ -47,9 +47,7 @@ public:
 private:
 	friend class DOMLoader;
 	friend class DOMLoaderTest;
-	friend class InstrumentParser;
 	friend class PowerList;
-	friend class InstrumentParserTest;
 
 	void addAudioFile(InstrumentChannel* instrument_channel,
 	                  AudioFile* audio_file);

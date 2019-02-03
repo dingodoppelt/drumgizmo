@@ -80,7 +80,8 @@ template<typename T>
 static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr, bool opt = false)
 {
 	const char* val = src.attribute(attr.c_str()).as_string(nullptr);
-	if(!val) {
+	if(!val)
+	{
 		if(!opt)
 		{
 			ERR(dgxmlparser, "Attribute %s not found in %s, offset %d\n",
@@ -89,9 +90,34 @@ static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr,
 		return opt;
 	}
 
-	if(!assign(dest, std::string(val))) {
+	if(!assign(dest, std::string(val)))
+	{
 		ERR(dgxmlparser, "Attribute %s could not be assigned, offset %d\n",
 		    attr.data(), (int)src.offset_debug());
+		return false;
+	}
+
+	return true;
+}
+
+template<typename T>
+static bool nodecpy(T& dest, const pugi::xml_node& src, const std::string& node, bool opt = false)
+{
+	auto val = src.child(node.c_str());
+	if(val == pugi::xml_node())
+	{
+		if(!opt)
+		{
+			ERR(dgxmlparser, "Node %s not found in %s, offset %d\n",
+			    node.data(), src.path().data(), (int)src.offset_debug());
+		}
+		return opt;
+	}
+
+	if(!assign(dest, val.text().as_string()))
+	{
+		ERR(dgxmlparser, "Attribute %s could not be assigned, offset %d\n",
+		    node.data(), (int)src.offset_debug());
 		return false;
 	}
 
@@ -112,15 +138,49 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 		return false;
 	}
 
-	//TODO: handle xml version
-
 	pugi::xml_node drumkit = doc.child("drumkit");
-	res &= attrcpy(dom.name, drumkit, "name");
+
 	dom.version = "1.0";
 	res &= attrcpy(dom.version, drumkit, "version", true);
-	res &= attrcpy(dom.description, drumkit, "description");
 	dom.samplerate = 44100.0;
 	res &= attrcpy(dom.samplerate, drumkit, "samplerate", true);
+
+	// Use the old name and description attributes on the drumkit node as fallback
+	res &= attrcpy(dom.metadata.title, drumkit, "name", true);
+	res &= attrcpy(dom.metadata.description, drumkit, "description", true);
+
+	pugi::xml_node metadata = drumkit.child("metadata");
+	if(metadata != pugi::xml_node())
+	{
+		auto& meta = dom.metadata;
+		res &= nodecpy(meta.version, metadata, "version", true);
+		res &= nodecpy(meta.title, metadata, "title", true);
+		pugi::xml_node logo = metadata.child("logo");
+		if(logo != pugi::xml_node())
+		{
+			res &= attrcpy(meta.logo, logo, "src", true);
+		}
+		res &= nodecpy(meta.description, metadata, "description", true);
+		res &= nodecpy(meta.license, metadata, "license", true);
+		res &= nodecpy(meta.notes, metadata, "notes", true);
+		res &= nodecpy(meta.author, metadata, "author", true);
+		res &= nodecpy(meta.email, metadata, "email", true);
+		res &= nodecpy(meta.website, metadata, "website", true);
+		pugi::xml_node image = metadata.child("image");
+		if(image != pugi::xml_node())
+		{
+			res &= attrcpy(meta.image, image, "src", true);
+			res &= attrcpy(meta.image_map, image, "map", true);
+			for(auto clickmap : image.children("clickmap"))
+			{
+				meta.clickmaps.emplace_back();
+				res &= attrcpy(meta.clickmaps.back().instrument,
+				               clickmap, "instrument", true);
+				res &= attrcpy(meta.clickmaps.back().colour,
+				               clickmap, "colour", true);
+			}
+		}
+	}
 
 	pugi::xml_node channels = doc.child("drumkit").child("channels");
 	for(pugi::xml_node channel: channels.children("channel"))
@@ -212,7 +272,7 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 	}
 
 	// Velocity groups are only part of v1.0 instruments.
-	if(dom.version == "1.0")
+	if(dom.version == "1" || dom.version == "1.0" || dom.version == "1.0.0")
 	{
 		pugi::xml_node velocities = instrument.child("velocities");
 		for(pugi::xml_node velocity: velocities.children("velocity"))
@@ -221,13 +281,12 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom)
 
 			res &= attrcpy(dom.velocities.back().lower, velocity, "lower");
 			res &= attrcpy(dom.velocities.back().upper, velocity, "upper");
-			for(pugi::xml_node sampleref: velocity.children("sampleref"))
+			for(auto sampleref : velocity.children("sampleref"))
 			{
 				dom.velocities.back().samplerefs.emplace_back();
-				res &= attrcpy(dom.velocities.back().samplerefs.back().probability,
-				               sampleref, "probability");
-				res &= attrcpy(dom.velocities.back().samplerefs.back().name,
-				               sampleref, "name");
+				auto& sref = dom.velocities.back().samplerefs.back();
+				res &= attrcpy(sref.probability, sampleref, "probability");
+				res &= attrcpy(sref.name, sampleref, "name");
 			}
 		}
 	}

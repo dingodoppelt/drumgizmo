@@ -103,12 +103,34 @@ struct InstrumentRefDOM
 	std::vector<ChannelMapDOM> channel_map;
 };
 
+struct ClickMapDOM
+{
+	std::string instrument;
+	std::string colour;
+};
+
+struct MetadataDOM
+{
+	std::string version;
+	std::string title;
+	std::string description;
+	std::string license;
+	std::string notes;
+	std::string author;
+	std::string email;
+	std::string website;
+	std::string logo;
+	std::string image;
+	std::string image_map;
+	std::vector<ClickMapDOM> clickmaps;
+};
+
 struct DrumkitDOM
 {
-	std::string name;
 	std::string version;
-	std::string description;
 	double samplerate;
+
+	MetadataDOM metadata;
 
 	std::vector<InstrumentRefDOM> instruments;
 	std::vector<ChannelDOM> channels;

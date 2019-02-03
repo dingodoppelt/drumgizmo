@@ -67,15 +67,11 @@ public:
 	float getMinPower() const;
 
 private:
-	friend class DOMLoader;
+	// For unit-tests:
 	friend class DOMLoaderTest;
 
 	// For parser:
-	friend class InstrumentParser;
-	friend class DrumKitParser;
-
-	// For unit-tests:
-	friend class InstrumentParserTest;
+	friend class DOMLoader;
 
 	void* magic;
 
