@@ -207,9 +207,9 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	DEBUG(loader, "cache_enable: %s\n", cache_enable?"true":"false");
 
-	if(cache_enable)
+	auto number_of_files = kit->getNumberOfFiles();
+	if(cache_enable && number_of_files > 0)
 	{
-		auto number_of_files = kit->getNumberOfFiles();
 		auto cache_limit_per_file = cache_limit / number_of_files;
 
 		assert(framesize != 0);
