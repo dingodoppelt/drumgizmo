@@ -76,15 +76,17 @@ Image& Image::operator=(Image&& other)
 	image_data = std::move(other.image_data);
 	_width = other._width;
 	_height = other._height;
+	valid = other.valid;
 
 	other._width = 0;
 	other._height = 0;
-
+	other.valid = false;
 	return *this;
 }
 
 void Image::setError()
 {
+	valid = false;
 	Resource rc(":resources/png_error");
 
 	const unsigned char* ptr = (const unsigned char*)rc.data();
@@ -155,6 +157,7 @@ void Image::load(const char* data, size_t size)
 	assert(image_data.size() == (_width * _height));
 
 	std::free(char_image_data);
+	valid = true;
 }
 
 size_t Image::width() const
@@ -175,6 +178,11 @@ const Colour& Image::getPixel(size_t x, size_t y) const
 	}
 
 	return image_data[x + y * _width];
+}
+
+bool Image::isValid() const
+{
+	return valid;
 }
 
 } // GUI::

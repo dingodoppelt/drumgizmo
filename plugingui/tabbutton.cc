@@ -31,10 +31,18 @@
 namespace GUI
 {
 
+static TabID getNextTabID()
+{
+	static TabID next{0};
+	next++;
+	return next;
+}
+
 TabButton::TabButton(Widget* parent, Widget* tab_widget)
 	: ButtonBase(parent)
 	, tab_widget(tab_widget)
 {
+	tab_id = getNextTabID();
 	CONNECT(this, clickNotifier, this, &TabButton::clickHandler);
 }
 
@@ -75,6 +83,11 @@ void TabButton::setActive(bool active)
 	}
 
 	redraw();
+}
+
+TabID TabButton::getID() const
+{
+	return tab_id;
 }
 
 void TabButton::repaintEvent(RepaintEvent* e)

@@ -51,8 +51,11 @@ public:
 
 	const Colour& getPixel(size_t x, size_t y) const override;
 
+	bool isValid() const;
+
 private:
 	void setError();
+	bool valid{false};
 
 	void load(const char* data, size_t size);
 

@@ -50,8 +50,7 @@ class DrumkitTab
 public:
 	DrumkitTab(Widget* parent,
 	           Settings& settings,
-	           SettingsNotifier& settings_notifier/*,
-	           Config& config*/);
+	           SettingsNotifier& settings_notifier);
 
 	// From Widget:
 	void resize(std::size_t width, std::size_t height) override;
@@ -61,6 +60,8 @@ public:
 	void mouseLeaveEvent() override;
 
 	void init(std::string const& image_file, std::string const& map_file);
+
+	Notifier<bool> imageChangeNotifier; // bool has_valid_image
 
 private:
 	float current_velocity{.5};

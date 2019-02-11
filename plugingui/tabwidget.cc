@@ -39,7 +39,7 @@ TabWidget::TabWidget(Widget *parent)
 	CONNECT(&stack, currentChanged, this, &TabWidget::setActiveButtons);
 }
 
-void TabWidget::addTab(const std::string& title, Widget* widget)
+TabID TabWidget::addTab(const std::string& title, Widget* widget)
 {
 	buttons.emplace_back(this, widget);
 	auto& button = buttons.back();
@@ -48,16 +48,31 @@ void TabWidget::addTab(const std::string& title, Widget* widget)
 	CONNECT(&button, switchTabNotifier, this, &TabWidget::switchTab);
 	CONNECT(&button, scrollNotifier, this, &TabWidget::rotateTab);
 	sizeChanged(width(), height());
+	return button.getID();
 }
 
 void TabWidget::setTabWidth(std::size_t width)
 {
 	tab_width = width;
+	relayout();
 }
 
 std::size_t TabWidget::getTabWidth() const
 {
 	return tab_width;
+}
+
+void TabWidget::setVisible(TabID tab_id, bool visible)
+{
+	for (auto& button : buttons)
+	{
+		if(button.getID() == tab_id)
+		{
+			button.setVisible(visible);
+			relayout();
+			return;
+		}
+	}
 }
 
 std::size_t TabWidget::getBarHeight() const
@@ -116,8 +131,12 @@ void TabWidget::sizeChanged(int width, int height)
 
 	if(buttons.size() > 0)
 	{
-		for (auto& button : buttons)
+		for(auto& button : buttons)
 		{
+			if(!button.visible())
+			{
+				continue;
+			}
 			int min_width = button.getMinimalWidth();
 			button_width = std::max(button_width, min_width + button_border_width);
 		}
@@ -136,6 +155,10 @@ void TabWidget::sizeChanged(int width, int height)
 	pos = button_padding_left;
 	for(auto& button : buttons)
 	{
+		if(!button.visible())
+		{
+			continue;
+		}
 		button.resize(button_width, bar_height);
 		button.move(pos, 0);
 		pos += button_width + button_padding_inner;
@@ -143,6 +166,11 @@ void TabWidget::sizeChanged(int width, int height)
 
 	stack.move(0, bar_height);
 	stack.resize(width, std::max((int)height - bar_height, 0));
+}
+
+void TabWidget::relayout()
+{
+	sizeChanged(TabWidget::width(), TabWidget::height()); // Force re-layout
 }
 
 } // GUI::

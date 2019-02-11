@@ -51,8 +51,12 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	tabs.setTabWidth(100);
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
 	tabs.addTab("Main", &main_tab);
-	tabs.addTab("Drumkit", &drumkit_tab);
+	drumkit_tab_id = tabs.addTab("Drumkit", &drumkit_tab);
+	changeDrumkitTabVisibility(false); // Hide while no kit is loaded
 	tabs.addTab("About", &about_tab);
+
+	CONNECT(&drumkit_tab, imageChangeNotifier,
+	        this, &MainWindow::changeDrumkitTabVisibility);
 }
 
 MainWindow::~MainWindow()
@@ -103,6 +107,16 @@ void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
 void MainWindow::sizeChanged(std::size_t width, std::size_t height)
 {
 	tabs.resize(std::max((int)width - 2 * 16, 0), height);
+}
+
+void MainWindow::changeDrumkitTabVisibility(bool visible)
+{
+	// TODO: Check if the currently active tab is the drumkit tab and switch to
+	// the main tab if it is.
+
+	// TODO: Add disabled state to the TabButtons and make it disabled instead of
+	// hidden here.
+	tabs.setVisible(drumkit_tab_id, visible);
 }
 
 void MainWindow::closeEventHandler()

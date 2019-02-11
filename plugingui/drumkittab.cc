@@ -42,12 +42,10 @@ namespace GUI
 
 DrumkitTab::DrumkitTab(Widget* parent,
                        Settings& settings,
-                       SettingsNotifier& settings_notifier/*,
-                       Config& config*/)
+                       SettingsNotifier& settings_notifier)
 	: Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
-	  /*, config(config)*/
 {
 	velocity_label.move(10, height()-velocity_label.height()-5);
 	updateVelocityLabel();
@@ -293,6 +291,8 @@ void DrumkitTab::init(std::string const& image_file,
 			}
 		}
 	}
+
+	imageChangeNotifier(drumkit_image->isValid());
 }
 
 void DrumkitTab::drumkitFileChanged(const std::string& drumkit_file)

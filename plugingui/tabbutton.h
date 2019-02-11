@@ -37,6 +37,8 @@ namespace GUI
 
 class ScrollEvent;
 
+using TabID = int;
+
 class TabButton
 	: public ButtonBase
 {
@@ -49,6 +51,8 @@ public:
 	std::size_t getMinimalHeight() const;
 	void setActive(bool active);
 
+	TabID getID() const;
+
 	Notifier<Widget*> switchTabNotifier;
 	Notifier<float> scrollNotifier; // float delta
 
@@ -58,6 +62,8 @@ protected:
 	virtual void scrollEvent(ScrollEvent* scroll_event) override;
 
 private:
+	TabID tab_id;
+
 	void clickHandler();
 
 	Widget* tab_widget;

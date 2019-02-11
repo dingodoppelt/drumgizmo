@@ -43,18 +43,22 @@ public:
 	//! Add new tab to the tab widget.
 	//! \param title The title to display on the tab button.
 	//! \param widget The widget to show in the tab.
-	void addTab(const std::string& title, Widget* widget);
+	//! \returns The TabID of the newly added tab.
+	TabID addTab(const std::string& title, Widget* widget);
 
 	std::size_t getBarHeight() const;
 
 	void setTabWidth(std::size_t width);
 	std::size_t getTabWidth() const;
 
+	void setVisible(TabID tab_id, bool visible);
+
 private:
 	//! Callback for Widget::sizeChangeNotifier
 	void sizeChanged(int width, int height);
 
 private:
+	void relayout();
 	//! Switch to the next tab if delta is > 0 or previous tab if delta is <= 0.
 	void rotateTab(float delta);
 	void switchTab(Widget* tabWidget);

@@ -57,6 +57,7 @@ public:
 
 private:
 	void sizeChanged(std::size_t width, std::size_t height);
+	void changeDrumkitTabVisibility(bool visible);
 
 	// From Widget
 	void repaintEvent(RepaintEvent* repaintEvent) override final;
@@ -82,6 +83,8 @@ private:
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
+
+	TabID drumkit_tab_id;
 };
 
 } // GUI::
