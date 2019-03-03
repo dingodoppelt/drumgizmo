@@ -115,21 +115,37 @@ void TextEdit::preprocessText()
 	} while(pos != std::string::npos);
 
 	// Wrap long lines
-	for(auto it = lines.begin(); it != lines.end(); ++it)
+	auto const max_width = width() - 2*x_border - 10 - scroll.width();
+	for(auto const& line: lines)
 	{
-		auto line = *it;
-
-		for(std::size_t i = 0; i < line.length(); ++i)
+		std::string valid;
+		std::string current;
+		for(auto c: line)
 		{
-			auto linewidth = font.textWidth(line.substr(0, i));
-			if(linewidth >= width() - 2*x_border - 10 - scroll.width())
+			current += c;
+			if(c == ' ')
 			{
-				preprocessed_text.push_back(line.substr(0, i));
-				line = line.substr(i);
-				i = 0;
+				valid.append(current.substr(valid.size()));
+			}
+
+			if(font.textWidth(current) >= max_width)
+			{
+				if(valid.empty())
+				{
+					current.pop_back();
+					preprocessed_text.push_back(current);
+					current = c;
+				}
+				else
+				{
+					current = current.substr(valid.size());
+					valid.pop_back();
+					preprocessed_text.push_back(valid);
+					valid.clear();
+				}
 			}
 		}
-		preprocessed_text.push_back(line);
+		preprocessed_text.push_back(current);
 	}
 }
 
