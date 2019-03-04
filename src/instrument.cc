@@ -59,7 +59,7 @@ const Sample* Instrument::sample(level_t level, size_t pos)
 	if(version >= VersionStr("2.0"))
 	{
 		// Version 2.0
-		return powerlist.get(level * mod);
+		return powerlist.get(level * mod, pos);
 	}
 	else
 	{

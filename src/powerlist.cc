@@ -53,6 +53,16 @@ std::size_t const MIN_SAMPLE_SET_SIZE = 26u;
 //#define AUTO_CALCULATE_POWER
 unsigned int const LOAD_SIZE = 500u;
 
+namespace
+{
+
+float pow2(float f)
+{
+	return f*f;
+}
+
+} // end anonymous namespace
+
 PowerList::PowerList(Random& rand, Settings& settings)
 	: rand(rand)
 	, settings(settings)
@@ -204,9 +214,11 @@ void PowerList::finalise()
 
 		DEBUG(rand, " - power: %f\n", item.power);
 	}
+
+	last.resize(samples.size(), 0);
 }
 
-Sample* PowerList::get(level_t level)
+Sample* PowerList::get(level_t level, std::size_t pos)
 {
 	auto velocity_stddev = settings.velocity_stddev.load();
 
@@ -215,12 +227,10 @@ Sample* PowerList::get(level_t level)
 		return nullptr; // No samples to choose from.
 	}
 
-	Sample* sample{nullptr};
-
 	float power_span = power_max - power_min;
 
 	// Width is limited to at least 10. Fixes problem with instrument with a
-	//  sample set smaller than MIN_SAMPLE_SET_SIZE.
+	// sample set smaller than MIN_SAMPLE_SET_SIZE.
 	float width = std::max(samples.size(), MIN_SAMPLE_SET_SIZE);
 
 	// Spread out at most ~2 samples away from center if all samples have a
@@ -228,53 +238,64 @@ Sample* PowerList::get(level_t level)
 	float mean_stepwidth = power_span / width;
 
 	// Cut off mean value with stddev/2 in both ends in order to make room for
-	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
+	// downwards expansion on velocity 0 and upwards expansion on velocity 1.
 	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
 	float stddev = settings.enable_velocity_modifier.load() ? velocity_stddev * mean_stepwidth : 0.;
 
-	std::size_t index;
-	float power{0.f};
-	float obj_function_value{std::numeric_limits<float>::max()};
+	std::size_t index_opt = 0;
+	float power_opt{0.f};
+	float value_opt{std::numeric_limits<float>::max()};
+	// TODO: those are mostly for debugging at the moment
+	float random_opt = 0.;
+	float distance_opt = 0.;
+	float recent_opt = 0.;
 
 	// Select normal distributed value between
-	//  (stddev/2) and (power_span-stddev/2)
+	// (stddev/2) and (power_span-stddev/2)
 	float lvl = rand.normalDistribution(mean, stddev);
 
 	// Adjust this value to be in range
-	//  (power_min+stddev/2) and (power_max-stddev/2)
+	// (power_min+stddev/2) and (power_max-stddev/2)
 	lvl += power_min;
 
-	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f,
-		power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
+	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f,"
+		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
 		power_min, power_max);
 
-	float alpha = 10.0;
-	float beta = 1000.0;
-	float gamma = 0.0;
+	// TODO: expose parameters to GUI
+	float alpha = 1.0;
+	float beta = 1.0;
+	float gamma = .5;
 
+	// TODO: start with most promising power value and then stop when reaching far values
+	// which cannot become opt anymore
 	for (std::size_t i = 0; i < samples.size(); ++i)
 	{
 		auto const& item = samples[i];
 
 		// compute objective function value
-		auto r = rand.floatInRange(0.,1.);
-		auto value =
-			alpha*pow2(item.power - power) + beta*pow2(1./(current - last[index])) + gamma*r;
+		auto random = rand.floatInRange(0.,1.);
+		auto distance = item.power - lvl;
+		auto recent = (float)settings.samplerate/std::max<std::size_t>(pos - last[i], 1);
+		auto value = alpha*pow2(distance) + beta*pow2(recent) + gamma*random;
 
-		if (value < obj_function_value)
+		if (value < value_opt)
 		{
-			index = i;
-			power = item.power;
-			obj_function_value = value;
+			index_opt = i;
+			power_opt = item.power;
+			value_opt = value;
+			random_opt = random;
+			distance_opt = distance;
+			recent_opt = recent;
 		}
 	}
 
-	DEBUG(rand, "Found sample with power %f\n", power);
+	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt);
 
-	// FIXME
-	lastsample = samples[index].sample;
+	lastsample = samples[index_opt].sample;
+	last[index_opt] = pos;
 
-	return samples[index].sample;
+	return samples[index_opt].sample;
 }
 
 float PowerList::getMaxPower() const

@@ -41,7 +41,7 @@ public:
 	void add(Sample* s);
 	void finalise(); ///< Call this when no more samples will be added.
 
-	Sample* get(level_t velocity);
+	Sample* get(level_t velocity, std::size_t pos);
 
 	float getMaxPower() const;
 	float getMinPower() const;
@@ -62,4 +62,6 @@ private:
 
 	const Channel* getMasterChannel();
 	Sample* lastsample;
+
+	std::vector<std::size_t> last;
 };
