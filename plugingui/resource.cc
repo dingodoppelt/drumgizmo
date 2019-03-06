@@ -28,11 +28,13 @@
 
 #include <hugin.hpp>
 #include <cstdio>
+#include <climits>
 
 // rcgen generated file containing rc_data declaration.
 #include "resource_data.h"
 
-namespace GUI {
+namespace GUI
+{
 
 // Internal resources start with a colon.
 static bool nameIsInternal(const std::string& name)
@@ -85,7 +87,17 @@ Resource::Resource(const std::string& name)
 			std::fclose(fp);
 			return;
 		}
-		size_t filesize = ftell(fp);
+
+		long filesize = std::ftell(fp);
+
+		// Apparently fseek doesn't fail if fp points to a directory that has been
+		// opened (which doesn't fail either!!) and ftell will then fail by either
+		// returning -1 or LONG_MAX
+		if(filesize == -1L || filesize == LONG_MAX)
+		{
+			std::fclose(fp);
+			return;
+		}
 
 		// Reserve space in the string for the data.
 		externalData.reserve(filesize);

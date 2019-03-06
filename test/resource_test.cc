@@ -30,10 +30,12 @@
 
 #include "drumkit_creator.h"
 
-class ResourceTester : public GUI::Resource {
+class ResourceTester
+	: public GUI::Resource
+{
 public:
 	ResourceTester(const std::string& name)
-		: Resource(name)
+		: GUI::Resource(name)
 	{}
 
 	bool probeIsInternal()
@@ -42,13 +44,15 @@ public:
 	}
 };
 
-class ResourceTest : public DGUnit
+class ResourceTest
+	: public DGUnit
 {
 public:
 	ResourceTest()
 	{
 		DGUNIT_TEST(ResourceTest::externalReadTest);
 		DGUNIT_TEST(ResourceTest::internalReadTest);
+		DGUNIT_TEST(ResourceTest::failTest);
 	}
 
 	DrumkitCreator drumkit_creator;
@@ -69,6 +73,19 @@ public:
 		DGUNIT_ASSERT(rc.probeIsInternal());
 		DGUNIT_ASSERT(rc.valid());
 		DGUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
+	}
+
+	void failTest()
+	{
+		{
+			ResourceTester rc("/tmp/");
+			DGUNIT_ASSERT(!rc.valid());
+		}
+
+		{
+			ResourceTester rc("no_such_file");
+			DGUNIT_ASSERT(!rc.valid());
+		}
 	}
 };
 
