@@ -27,7 +27,6 @@
 #include "powerlist.h"
 
 #include <stdlib.h>
-
 #include <string.h>
 
 #include <hugin.hpp>
@@ -41,35 +40,19 @@
 #include "random.h"
 #include "settings.h"
 
-/**
- * Minimum sample set size.
- * Smaller means wider 'velocity groups'.
- * Limited by sample set size, ie. only kicks in if sample set size is smaller
- * than this number.
- */
-std::size_t const MIN_SAMPLE_SET_SIZE = 26u;
+namespace
+{
 
 // Enable to calculate power on old samples without power attribute
 //#define AUTO_CALCULATE_POWER
 unsigned int const LOAD_SIZE = 500u;
 
-namespace
-{
-
-float pow2(float f)
-{
-	return f*f;
-}
-
 } // end anonymous namespace
 
-PowerList::PowerList(Random& rand, Settings& settings)
-	: rand(rand)
-	, settings(settings)
+PowerList::PowerList()
 {
 	power_max = 0;
 	power_min = 100000000;
-	lastsample = nullptr;
 }
 
 void PowerList::add(Sample* sample)
@@ -214,88 +197,11 @@ void PowerList::finalise()
 
 		DEBUG(rand, " - power: %f\n", item.power);
 	}
-
-	last.resize(samples.size(), 0);
 }
 
-Sample* PowerList::get(level_t level, std::size_t pos)
+const PowerListItems& PowerList::getPowerListItems() const
 {
-	auto velocity_stddev = settings.velocity_stddev.load();
-
-	if(!samples.size())
-	{
-		return nullptr; // No samples to choose from.
-	}
-
-	float power_span = power_max - power_min;
-
-	// Width is limited to at least 10. Fixes problem with instrument with a
-	// sample set smaller than MIN_SAMPLE_SET_SIZE.
-	float width = std::max(samples.size(), MIN_SAMPLE_SET_SIZE);
-
-	// Spread out at most ~2 samples away from center if all samples have a
-	// uniform distribution over the power spectrum (which they probably don't).
-	float mean_stepwidth = power_span / width;
-
-	// Cut off mean value with stddev/2 in both ends in order to make room for
-	// downwards expansion on velocity 0 and upwards expansion on velocity 1.
-	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
-	float stddev = settings.enable_velocity_modifier.load() ? velocity_stddev * mean_stepwidth : 0.;
-
-	std::size_t index_opt = 0;
-	float power_opt{0.f};
-	float value_opt{std::numeric_limits<float>::max()};
-	// TODO: those are mostly for debugging at the moment
-	float random_opt = 0.;
-	float distance_opt = 0.;
-	float recent_opt = 0.;
-
-	// Select normal distributed value between
-	// (stddev/2) and (power_span-stddev/2)
-	float lvl = rand.normalDistribution(mean, stddev);
-
-	// Adjust this value to be in range
-	// (power_min+stddev/2) and (power_max-stddev/2)
-	lvl += power_min;
-
-	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f,"
-		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
-		power_min, power_max);
-
-	// TODO: expose parameters to GUI
-	float alpha = 1.0;
-	float beta = 1.0;
-	float gamma = .5;
-
-	// TODO: start with most promising power value and then stop when reaching far values
-	// which cannot become opt anymore
-	for (std::size_t i = 0; i < samples.size(); ++i)
-	{
-		auto const& item = samples[i];
-
-		// compute objective function value
-		auto random = rand.floatInRange(0.,1.);
-		auto distance = item.power - lvl;
-		auto recent = (float)settings.samplerate/std::max<std::size_t>(pos - last[i], 1);
-		auto value = alpha*pow2(distance) + beta*pow2(recent) + gamma*random;
-
-		if (value < value_opt)
-		{
-			index_opt = i;
-			power_opt = item.power;
-			value_opt = value;
-			random_opt = random;
-			distance_opt = distance;
-			recent_opt = recent;
-		}
-	}
-
-	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt);
-
-	lastsample = samples[index_opt].sample;
-	last[index_opt] = pos;
-
-	return samples[index_opt].sample;
+	return samples;
 }
 
 float PowerList::getMaxPower() const

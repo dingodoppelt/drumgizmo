@@ -1,10 +1,10 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            powerlist.h
+ *            sample_selection.h
  *
- *  Sun Jul 28 19:45:47 CEST 2013
- *  Copyright 2013 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Mon Mar  4 23:58:12 CET 2019
+ *  Copyright 2019 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -30,30 +30,34 @@
 
 #include "sample.h"
 
-struct PowerListItem
+class PowerList;
+class Random;
+struct Settings;
+
+enum class SelectionAlg
 {
-	Sample* sample;
-	float power;
+	Old,
+	Objective,
 };
-using PowerListItems = std::vector<PowerListItem>;
 
-class PowerList
+class SampleSelection
 {
-public:
-	PowerList();
-
-	void add(Sample* s);
-	void finalise(); ///< Call this when no more samples will be added.
-
-	const PowerListItems& getPowerListItems() const;
-
-	float getMaxPower() const;
-	float getMinPower() const;
-
 private:
-	PowerListItems samples;
-	float power_max;
-	float power_min;
+	Settings& settings;
+	Random& rand;
+	const PowerList& powerlist;
 
-	const Channel* getMasterChannel();
+	Sample* lastsample;
+	std::vector<std::size_t> last;
+
+	SelectionAlg alg = SelectionAlg::Old;
+	const Sample* getOld(level_t level, std::size_t pos);
+	const Sample* getObjective(level_t level, std::size_t pos);
+
+public:
+	SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist);
+
+	void setSelectionAlg(SelectionAlg alg);
+	void finalise();
+	const Sample* get(level_t level, std::size_t pos);
 };

@@ -33,6 +33,7 @@
 
 #include "rangemap.h" // for v1.0 kits
 #include "powerlist.h"
+#include "sample_selection.h"
 
 #include "sample.h"
 #include "versionstr.h"
@@ -104,8 +105,8 @@ private:
 	Settings& settings;
 	Random& rand;
 	PowerList powerlist;
-
 	std::vector<Choke> chokes;
+	SampleSelection sample_selection;
 };
 
 // typedef std::map< std::string, Instrument > Instruments;

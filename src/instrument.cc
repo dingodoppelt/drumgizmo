@@ -33,7 +33,7 @@
 Instrument::Instrument(Settings& settings, Random& rand)
 	: settings(settings)
 	, rand(rand)
-	, powerlist(rand, settings)
+	, sample_selection(settings, rand, powerlist)
 {
 	DEBUG(instrument, "new %p\n", this);
 	mod = 1.0;
@@ -59,7 +59,7 @@ const Sample* Instrument::sample(level_t level, size_t pos)
 	if(version >= VersionStr("2.0"))
 	{
 		// Version 2.0
-		return powerlist.get(level * mod, pos);
+		return sample_selection.get(level * mod, pos);
 	}
 	else
 	{
@@ -91,6 +91,7 @@ void Instrument::finalise()
 		}
 
 		powerlist.finalise();
+		sample_selection.finalise();
 	}
 }
 

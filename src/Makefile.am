@@ -37,6 +37,7 @@ nodist_libdg_la_SOURCES = \
 	powerlist.cc \
 	random.cc \
 	sample.cc \
+	sample_selection.cc \
 	semaphore.cc \
 	staminafilter.cc \
 	thread.cc \
