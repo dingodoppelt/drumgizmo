@@ -49,7 +49,7 @@ float pow2(float f)
 } // end anonymous namespace
 
 SampleSelection::SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist)
-	: settings(settings), rand(rand), powerlist(powerlist)
+	: settings(settings), rand(rand), powerlist(powerlist), alg(SelectionAlg::Old)
 {
 }
 
@@ -108,6 +108,7 @@ const Sample* SampleSelection::getOld(level_t level, std::size_t pos)
 	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
 	float stddev = velocity_stddev * mean_stepwidth;
 
+	std::size_t index{0};
 	float power{0.f};
 
 	// note: loop is executed once + #retry
@@ -127,20 +128,21 @@ const Sample* SampleSelection::getOld(level_t level, std::size_t pos)
 			  "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f, power_min: %f, power_max: %f)\n",
 			  level, lvl, mean, stddev, mean_stepwidth, power_min, power_max);
 
-		for (auto& item: samples)
+		for (std::size_t i = 0; i < samples.size(); ++i)
 		{
+			auto const& item = samples[i];
 			if (sample == nullptr || std::fabs(item.power - lvl) < std::fabs(power - lvl))
 			{
 				sample = item.sample;
+				index = i;
 				power = item.power;
 			}
 		}
 	} while (lastsample == sample && retry >= 0);
 
-	DEBUG(rand, "Found sample with power %f\n", power);
+	DEBUG(rand, "Chose sample with index: %d, power %f", (int)index, power);
 
 	lastsample = sample;
-
 	return sample;
 }
 
@@ -192,7 +194,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 		power_min, power_max);
 
 	// TODO: expose parameters to GUI
-	float alpha = 1.0;
+	float alpha = 2.0;
 	float beta = 1.0;
 	float gamma = .5;
 

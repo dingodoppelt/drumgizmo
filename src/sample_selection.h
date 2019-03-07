@@ -50,7 +50,7 @@ private:
 	Sample* lastsample;
 	std::vector<std::size_t> last;
 
-	SelectionAlg alg = SelectionAlg::Old;
+	SelectionAlg alg;
 	const Sample* getOld(level_t level, std::size_t pos);
 	const Sample* getObjective(level_t level, std::size_t pos);
 
