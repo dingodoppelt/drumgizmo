@@ -34,6 +34,15 @@ struct PowerListItem
 {
 	Sample* sample;
 	float power;
+
+	bool operator<(const PowerListItem& other) const
+	{
+		return power < other.power;
+	}
+	bool operator<(level_t power) const
+	{
+		return this->power < power;
+	}
 };
 using PowerListItems = std::vector<PowerListItem>;
 

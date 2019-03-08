@@ -32,6 +32,8 @@
 #include "random.h"
 #include "settings.h"
 
+#include <algorithm>
+
 namespace
 {
 
@@ -181,6 +183,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	float distance_opt = 0.;
 	float recent_opt = 0.;
 
+	// TODO: check how much sense all of this actually makes
 	// Select normal distributed value between
 	// (stddev/2) and (power_span-stddev/2)
 	float lvl = rand.normalDistribution(mean, stddev);
@@ -200,26 +203,60 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 
 	// TODO: start with most promising power value and then stop when reaching far values
 	// which cannot become opt anymore
-	for (std::size_t i = 0; i < samples.size(); ++i)
+	// TODO: can we expect the powerlist to be sorted? If not, add to finalise of powerlist.
+	// TODO: clean up this mess
+	auto closest_it = std::lower_bound(samples.begin(), samples.end(), level);
+	std::size_t up_index = std::distance(samples.begin(), closest_it);
+	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
+	float up_value_lb = (up_index < samples.size() ? alpha*pow2(samples[up_index].power-lvl) : std::numeric_limits<float>::max());
+	float down_value_lb = (up_index != 0 ? alpha*pow2(samples[down_index].power-lvl) : std::numeric_limits<float>::max());
+	do
 	{
-		auto const& item = samples[i];
+		std::size_t current_index;
+		if (up_value_lb < down_value_lb)
+		{
+			current_index = up_index;
+			if (up_index != samples.size()-1)
+			{
+				++up_index;
+				up_value_lb = alpha*pow2(samples[up_index].power-lvl);
+			}
+			else
+			{
+				up_value_lb = std::numeric_limits<float>::max();
+			}
+		}
+		else
+		{
+			current_index = down_index;
+			if (down_index != 0)
+			{
+				--down_index;
+				down_value_lb = alpha*pow2(samples[down_index].power-lvl);
+			}
+			else
+			{
+				down_value_lb = std::numeric_limits<float>::max();
+			}
+		}
 
-		// compute objective function value
 		auto random = rand.floatInRange(0.,1.);
-		auto distance = item.power - lvl;
-		auto recent = (float)settings.samplerate/std::max<std::size_t>(pos - last[i], 1);
+		auto distance = samples[current_index].power - lvl;
+		auto recent = (float)settings.samplerate/std::max<std::size_t>(pos - last[current_index], 1);
 		auto value = alpha*pow2(distance) + beta*pow2(recent) + gamma*random;
 
 		if (value < value_opt)
 		{
-			index_opt = i;
-			power_opt = item.power;
+			index_opt = current_index;
+			power_opt = samples[current_index].power;
 			value_opt = value;
 			random_opt = random;
 			distance_opt = distance;
 			recent_opt = recent;
 		}
+		--current_index;
 	}
+	while (up_value_lb <= value_opt || down_value_lb <= value_opt);
 
 	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt);
 
