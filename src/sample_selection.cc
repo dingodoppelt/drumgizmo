@@ -51,7 +51,7 @@ float pow2(float f)
 } // end anonymous namespace
 
 SampleSelection::SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist)
-	: settings(settings), rand(rand), powerlist(powerlist), alg(SelectionAlg::Old)
+	: settings(settings), rand(rand), powerlist(powerlist), alg(SelectionAlg::Objective)
 {
 }
 
@@ -178,7 +178,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	std::size_t index_opt = 0;
 	float power_opt{0.f};
 	float value_opt{std::numeric_limits<float>::max()};
-	// TODO: those are mostly for debugging at the moment
+	// the following three values are mostly for debugging
 	float random_opt = 0.;
 	float distance_opt = 0.;
 	float recent_opt = 0.;
@@ -196,20 +196,19 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
 		power_min, power_max);
 
-	// TODO: expose parameters to GUI
 	float alpha = 2.0;
 	float beta = 1.0;
-	float gamma = .5;
+	float gamma = .05;
 
-	// TODO: start with most promising power value and then stop when reaching far values
+	// start with most promising power value and then stop when reaching far values
 	// which cannot become opt anymore
-	// TODO: can we expect the powerlist to be sorted? If not, add to finalise of powerlist.
-	// TODO: clean up this mess
-	auto closest_it = std::lower_bound(samples.begin(), samples.end(), level);
+	auto closest_it = std::lower_bound(samples.begin(), samples.end(), lvl);
 	std::size_t up_index = std::distance(samples.begin(), closest_it);
 	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
 	float up_value_lb = (up_index < samples.size() ? alpha*pow2(samples[up_index].power-lvl) : std::numeric_limits<float>::max());
 	float down_value_lb = (up_index != 0 ? alpha*pow2(samples[down_index].power-lvl) : std::numeric_limits<float>::max());
+
+	std::size_t count = 0;
 	do
 	{
 		std::size_t current_index;
@@ -254,11 +253,11 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 			distance_opt = distance;
 			recent_opt = recent;
 		}
-		--current_index;
+		++count;
 	}
 	while (up_value_lb <= value_opt || down_value_lb <= value_opt);
 
-	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt);
+	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f, count: %d", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt, (int)count);
 
 	last[index_opt] = pos;
 	return samples[index_opt].sample;

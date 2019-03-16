@@ -26,6 +26,7 @@
  */
 #include "powerlist.h"
 
+#include <algorithm>
 #include <stdlib.h>
 #include <string.h>
 
@@ -197,6 +198,8 @@ void PowerList::finalise()
 
 		DEBUG(rand, " - power: %f\n", item.power);
 	}
+
+	std::sort(samples.begin(), samples.end());
 }
 
 const PowerListItems& PowerList::getPowerListItems() const
