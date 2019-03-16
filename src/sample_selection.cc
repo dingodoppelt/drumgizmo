@@ -160,7 +160,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	auto power_min = powerlist.getMinPower();
 	float power_span = power_max - power_min;
 
-	float mean = level;
+	float mean = level - .5f/127.f; // XXX: this should actually be done when reading the events
 	float stddev = settings.enable_velocity_modifier.load() ?
 		settings.velocity_stddev.load()/127.0f : 0.;
 	float lvl = power_min + rand.normalDistribution(mean, stddev)*power_span;
