@@ -150,8 +150,6 @@ const Sample* SampleSelection::getOld(level_t level, std::size_t pos)
 
 const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 {
-	auto velocity_stddev = settings.velocity_stddev.load();
-
 	const auto& samples = powerlist.getPowerListItems();
 	if(!samples.size())
 	{
@@ -162,18 +160,10 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	auto power_min = powerlist.getMinPower();
 	float power_span = power_max - power_min;
 
-	// Width is limited to at least 10. Fixes problem with instrument with a
-	// sample set smaller than MIN_SAMPLE_SET_SIZE.
-	float width = std::max(samples.size(), MIN_SAMPLE_SET_SIZE);
-
-	// Spread out at most ~2 samples away from center if all samples have a
-	// uniform distribution over the power spectrum (which they probably don't).
-	float mean_stepwidth = power_span / width;
-
-	// Cut off mean value with stddev/2 in both ends in order to make room for
-	// downwards expansion on velocity 0 and upwards expansion on velocity 1.
-	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
-	float stddev = settings.enable_velocity_modifier.load() ? velocity_stddev * mean_stepwidth : 0.;
+	float mean = level;
+	float stddev = settings.enable_velocity_modifier.load() ?
+		settings.velocity_stddev.load()/127.0f : 0.;
+	float lvl = power_min + rand.normalDistribution(mean, stddev)*power_span;
 
 	std::size_t index_opt = 0;
 	float power_opt{0.f};
@@ -183,18 +173,8 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	float distance_opt = 0.;
 	float recent_opt = 0.;
 
-	// TODO: check how much sense all of this actually makes
-	// Select normal distributed value between
-	// (stddev/2) and (power_span-stddev/2)
-	float lvl = rand.normalDistribution(mean, stddev);
-
-	// Adjust this value to be in range
-	// (power_min+stddev/2) and (power_max-stddev/2)
-	lvl += power_min;
-
-	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f,"
-		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, mean_stepwidth,
-		power_min, power_max);
+	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f,"
+		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, power_min, power_max);
 
 	float alpha = 2.0;
 	float beta = 1.0;
