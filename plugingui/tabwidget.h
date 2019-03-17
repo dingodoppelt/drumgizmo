@@ -64,6 +64,8 @@ private:
 	void switchTab(Widget* tabWidget);
 	void setActiveButtons(Widget* current_widget);
 
+	const TabButton* getButtonFromWidget(const Widget* tab_widget);
+
 	std::list<TabButton> buttons;
 	StackedWidget stack;
 

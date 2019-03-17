@@ -83,13 +83,32 @@ std::size_t TabWidget::getBarHeight() const
 void TabWidget::rotateTab(float delta)
 {
 	Widget* widget{nullptr};
+	Widget* current = stack.getCurrentWidget();
 	if(delta > 0.0f)
 	{
-		widget = stack.getWidgetAfter(stack.getCurrentWidget());
+		while((widget = stack.getWidgetAfter(current)) != nullptr)
+		{
+			auto button = getButtonFromWidget(widget);
+			if(!button || !button->visible())
+			{
+				current = widget;
+				continue;
+			}
+			break;
+		}
 	}
 	else
 	{
-		widget = stack.getWidgetBefore(stack.getCurrentWidget());
+		while((widget = stack.getWidgetBefore(current)) != nullptr)
+		{
+			auto button = getButtonFromWidget(widget);
+			if(!button || !button->visible())
+			{
+				current = widget;
+				continue;
+			}
+			break;
+		}
 	}
 
 	if(widget)
@@ -98,9 +117,9 @@ void TabWidget::rotateTab(float delta)
 	}
 }
 
-void TabWidget::switchTab(Widget* tabWidget)
+void TabWidget::switchTab(Widget* tab_widget)
 {
-	stack.setCurrentWidget(tabWidget);
+	stack.setCurrentWidget(tab_widget);
 }
 
 void TabWidget::setActiveButtons(Widget* current_widget)
@@ -109,7 +128,8 @@ void TabWidget::setActiveButtons(Widget* current_widget)
 		if (button.getTabWidget() == current_widget) {
 			button.setActive(true);
 		}
-		else {
+		else
+		{
 			button.setActive(false);
 		}
 	}
@@ -171,6 +191,24 @@ void TabWidget::sizeChanged(int width, int height)
 void TabWidget::relayout()
 {
 	sizeChanged(TabWidget::width(), TabWidget::height()); // Force re-layout
+}
+
+const TabButton* TabWidget::getButtonFromWidget(const Widget* tab_widget)
+{
+	if(tab_widget == nullptr)
+	{
+		return nullptr;
+	}
+
+	for(auto& button : buttons)
+	{
+		if(button.getTabWidget() == tab_widget)
+		{
+			return &button;
+		}
+	}
+
+	return nullptr;
 }
 
 } // GUI::
