@@ -580,7 +580,7 @@ DrumGizmoPlugin::ConfigStringIO::ConfigStringIO(Settings& settings)
 std::string DrumGizmoPlugin::ConfigStringIO::get()
 {
 	return
-		"<config>\n"
+		"<config version=\"1.0\">\n"
 		"  <value name=\"drumkitfile\">" + settings.drumkit_file.load() + "</value>\n"
 		"  <value name=\"midimapfile\">" + settings.midimap_file.load() + "</value>\n"
 		"  <value name=\"enable_velocity_modifier\">" +

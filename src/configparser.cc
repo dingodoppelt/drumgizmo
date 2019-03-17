@@ -29,6 +29,36 @@
 #include <hugin.hpp>
 #include <pugixml.hpp>
 
+static bool assign(std::string& dest, const std::string& val)
+{
+	dest = val;
+	return true;
+}
+
+template<typename T>
+static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr, bool opt = false)
+{
+	const char* val = src.attribute(attr.c_str()).as_string(nullptr);
+	if(!val)
+	{
+		if(!opt)
+		{
+			ERR(configparser, "Attribute %s not found in %s, offset %d\n",
+			    attr.data(), src.path().data(), (int)src.offset_debug());
+		}
+		return opt;
+	}
+
+	if(!assign(dest, std::string(val)))
+	{
+		ERR(configparser, "Attribute %s could not be assigned, offset %d\n",
+		    attr.data(), (int)src.offset_debug());
+		return false;
+	}
+
+	return true;
+}
+
 bool ConfigParser::parseString(const std::string& xml)
 {
 	pugi::xml_document doc;
@@ -40,6 +70,16 @@ bool ConfigParser::parseString(const std::string& xml)
 	}
 
 	pugi::xml_node config_node = doc.child("config");
+
+	// Config xml without the version tag defaults to 1.0
+	std::string version = "1.0";
+	attrcpy(version, config_node, "version", true);
+	if(version != "1.0")
+	{
+		ERR(configparser, "Only config v1.0 XML supported.");
+		return false;
+	}
+
 	for(pugi::xml_node value_node : config_node.children("value"))
 	{
 		auto name = value_node.attribute("name").as_string();
