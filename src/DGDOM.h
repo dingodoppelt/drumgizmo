@@ -95,12 +95,19 @@ struct ChannelMapDOM
 	main_state_t main;
 };
 
+struct ChokeDOM
+{
+	std::string instrument;
+	double choketime;
+};
+
 struct InstrumentRefDOM
 {
 	std::string name;
 	std::string file; // Probably shouldn't be there
 	std::string group;
 	std::vector<ChannelMapDOM> channel_map;
+	std::vector<ChokeDOM> chokes;
 };
 
 struct ClickMapDOM

@@ -68,6 +68,9 @@ bool DOMLoader::loadDom(const std::string& basepath,
 		drumkit.channels.back().num = drumkit.channels.size() - 1;
 	}
 
+	// Pass 1 - handling everything that is instrument name based and ultimately
+	// inserts the instrument into the drumkit instrument list which results in
+	// it getting an instrument id (ie. the index in the list).
 	for(const auto& instrumentref : dom.instruments)
 	{
 		bool found{false};
@@ -198,6 +201,7 @@ bool DOMLoader::loadDom(const std::string& basepath,
 
 			// Transfer ownership to the DrumKit object.
 			drumkit.instruments.emplace_back(std::move(instrument));
+			drumkit.instruments.back()->id = drumkit.instruments.size() - 1;
 
 			found = true;
 		}
@@ -206,6 +210,56 @@ bool DOMLoader::loadDom(const std::string& basepath,
 		{
 			ERR(domloader, "No instrument with name '%s'", instrumentref.name.data());
 			return false;
+		}
+	}
+
+	// Pass 2 - handle nodes that require instrument name to instrument id
+	// mappings
+	for(const auto& instrumentref : dom.instruments)
+	{
+		std::size_t instr_id{0};
+		{
+			bool found{false};
+			for(std::size_t idx = 0; idx < drumkit.instruments.size(); ++idx)
+			{
+				if(drumkit.instruments[idx]->getName() == instrumentref.name)
+				{
+					instr_id = idx;
+					found = true;
+					break;
+				}
+			}
+
+			if(!found)
+			{
+				// Missing instrument - skip
+				continue;
+			}
+		}
+
+		for(const auto& choke : instrumentref.chokes)
+		{
+			std::size_t choke_instr_id{0};
+			bool choke_found{false};
+			for(std::size_t idx = 0; idx < drumkit.instruments.size(); ++idx)
+			{
+				if(drumkit.instruments[idx]->getName() == choke.instrument)
+				{
+					choke_instr_id = idx;
+					choke_found = true;
+					break;
+				}
+			}
+
+			if(!choke_found)
+			{
+				// Missing choke target instrument - skip
+				continue;
+			}
+
+			drumkit.instruments[instr_id]->chokes.emplace_back();
+			drumkit.instruments[instr_id]->chokes.back().instrument_id = choke_instr_id;
+			drumkit.instruments[instr_id]->chokes.back().choketime = choke.choketime;
 		}
 	}
 

@@ -94,6 +94,11 @@ void Instrument::finalise()
 	}
 }
 
+std::size_t Instrument::getID() const
+{
+	return id;
+}
+
 const std::string& Instrument::getName() const
 {
 	return _name;
@@ -145,4 +150,9 @@ float Instrument::getMinPower() const
 	{
 		return 0.0f;
 	}
+}
+
+const std::vector<Choke>& Instrument::getChokes()
+{
+	return chokes;
 }

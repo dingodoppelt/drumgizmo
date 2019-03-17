@@ -40,6 +40,12 @@
 
 #include "settings.h"
 
+struct Choke
+{
+	std::size_t instrument_id;
+	double choketime;
+};
+
 class Instrument
 {
 public:
@@ -48,6 +54,7 @@ public:
 
 	const Sample* sample(level_t level, size_t pos);
 
+	std::size_t getID() const;
 	const std::string& getName() const;
 	const std::string& getDescription() const;
 	const std::string& getGroup() const;
@@ -66,6 +73,8 @@ public:
 	float getMaxPower() const;
 	float getMinPower() const;
 
+	const std::vector<Choke>& getChokes();
+
 private:
 	// For unit-tests:
 	friend class DOMLoaderTest;
@@ -75,6 +84,7 @@ private:
 
 	void* magic;
 
+	std::size_t id;
 	std::string _group;
 	std::string _name;
 	std::string _description;
@@ -94,6 +104,8 @@ private:
 	Settings& settings;
 	Random& rand;
 	PowerList powerlist;
+
+	std::vector<Choke> chokes;
 };
 
 // typedef std::map< std::string, Instrument > Instruments;

@@ -193,18 +193,40 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom)
 	for(pugi::xml_node instrument : instruments.children("instrument"))
 	{
 		dom.instruments.emplace_back();
-
-		res &= attrcpy(dom.instruments.back().name, instrument, "name");
-		res &= attrcpy(dom.instruments.back().file, instrument, "file");
-		res &= attrcpy(dom.instruments.back().group, instrument, "group", true);
+		auto& instrument_ref = dom.instruments.back();
+		res &= attrcpy(instrument_ref.name, instrument, "name");
+		res &= attrcpy(instrument_ref.file, instrument, "file");
+		res &= attrcpy(instrument_ref.group, instrument, "group", true);
 
 		for(pugi::xml_node cmap: instrument.children("channelmap"))
 		{
-			dom.instruments.back().channel_map.emplace_back();
-			res &= attrcpy(dom.instruments.back().channel_map.back().in, cmap, "in");
-			res &= attrcpy(dom.instruments.back().channel_map.back().out, cmap, "out");
-			dom.instruments.back().channel_map.back().main = main_state_t::unset;
-			res &= attrcpy(dom.instruments.back().channel_map.back().main, cmap, "main", true);
+			instrument_ref.channel_map.emplace_back();
+			auto& channel_map_ref = instrument_ref.channel_map.back();
+			res &= attrcpy(channel_map_ref.in, cmap, "in");
+			res &= attrcpy(channel_map_ref.out, cmap, "out");
+			channel_map_ref.main = main_state_t::unset;
+			res &= attrcpy(channel_map_ref.main, cmap, "main", true);
+		}
+
+		auto num_chokes = std::distance(instrument.children("chokes").begin(),
+		                                instrument.children("chokes").end());
+		if(num_chokes > 1)
+		{
+			// error
+			ERR(dgxmlparser, "At most one 'chokes' node allowed pr. instrument.");
+			res = false;
+		}
+
+		if(num_chokes == 1)
+		{
+			for(pugi::xml_node choke : instrument.child("chokes").children("choke"))
+			{
+				instrument_ref.chokes.emplace_back();
+				auto& choke_ref = instrument_ref.chokes.back();
+				res &= attrcpy(choke_ref.instrument, choke, "instrument");
+				choke_ref.choketime = 68; // default to 68 ms
+				res &= attrcpy(choke_ref.choketime, choke, "choketime", true);
+			}
 		}
 	}
 

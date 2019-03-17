@@ -95,17 +95,17 @@ bool InputProcessor::processOnset(event_t& event,
 		return false;
 	}
 
-	std::size_t ev_instr = event.instrument;
+	std::size_t instrument_id = event.instrument;
 	Instrument* instr = nullptr;
 
-	if(ev_instr < kit.instruments.size())
+	if(instrument_id < kit.instruments.size())
 	{
-		instr = kit.instruments[ev_instr].get();
+		instr = kit.instruments[instrument_id].get();
 	}
 
 	if(instr == nullptr || !instr->isValid())
 	{
-		ERR(inputprocessor, "Missing Instrument %d.\n", (int)ev_instr);
+		ERR(inputprocessor, "Missing Instrument %d.\n", (int)instrument_id);
 		return false;
 	}
 
@@ -124,19 +124,18 @@ bool InputProcessor::processOnset(event_t& event,
 	if(instr->getGroup() != "")
 	{
 		// Add event to ramp down all existing events with the same groupname.
-		for(Channel& ch: kit.channels)
+		for(const auto& ch : kit.channels)
 		{
-			for(Event* active_event: activeevents[ch.num])
+			for(auto active_event : activeevents[ch.num])
 			{
 				if(active_event->getType() == Event::sample)
 				{
 					auto& event_sample = *static_cast<EventSample*>(active_event);
 					if(event_sample.group == instr->getGroup() &&
-					   event_sample.instrument != instr)
+					   event_sample.instrument_id != instrument_id &&
+					   event_sample.rampdown_count == -1) // Only if not already ramping.
 					{
-						// Fixed ramp of 68ms, independent of samplerate
-						// TODO: This must be configurable at some point...
-						// ... perhaps even by instrument (ie. in the xml file)
+						// Fixed group rampdown time of 68ms, independent of samplerate
 						std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
 						event_sample.rampdown_count = ramp_length;
 						event_sample.rampdown_offset = event.offset;
@@ -145,6 +144,32 @@ bool InputProcessor::processOnset(event_t& event,
 				}
 			}
 		}
+	}
+
+	for(const auto& choke : instr->getChokes())
+	{
+		// Add event to ramp down all existing events with the same groupname.
+		for(const auto& ch : kit.channels)
+		{
+			for(auto active_event : activeevents[ch.num])
+			{
+				if(active_event->getType() == Event::sample)
+				{
+					auto& event_sample = *static_cast<EventSample*>(active_event);
+					if(choke.instrument_id == event_sample.instrument_id &&
+					   event_sample.rampdown_count == -1) // Only if not already ramping.
+					{
+						// Choketime is in ms
+						std::size_t ramp_length =
+							(choke.choketime / 1000.0) * settings.samplerate.load();
+						event_sample.rampdown_count = ramp_length;
+						event_sample.rampdown_offset = event.offset;
+						event_sample.ramp_length = ramp_length;
+					}
+				}
+			}
+		}
+
 	}
 
 	const auto sample = instr->sample(event.velocity, event.offset + pos);
@@ -170,7 +195,8 @@ bool InputProcessor::processOnset(event_t& event,
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			Event* evt = new EventSample(ch.num, 1.0, af, instr->getGroup(), instr);
+			Event* evt = new EventSample(ch.num, 1.0, af, instr->getGroup(),
+			                             instrument_id);
 			evt->offset = (event.offset + pos) * resample_ratio;
 			activeevents[ch.num].push_back(evt);
 		}

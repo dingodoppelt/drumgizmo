@@ -65,16 +65,16 @@ class EventSample
 {
 public:
 	EventSample(channel_t c, float g, AudioFile* af,
-	            const std::string& grp, void* instr)
+	            const std::string& grp, std::size_t instrument_id)
 		: Event(c)
 		, cache_id(CACHE_NOID)
 		, gain(g)
 		, t(0)
 		, file(af)
 		, group(grp)
-		, instrument(instr)
 		, rampdown_count(-1)
 		, ramp_length(0)
+		, instrument_id(instrument_id)
 	{
 	}
 
@@ -98,11 +98,11 @@ public:
 	unsigned int t; //< Internal sample position.
 	AudioFile* file;
 	std::string group;
-	void* instrument;
 	int rampdown_count;
 	int ramp_length;
 	std::size_t rampdown_offset{0};
 	float scale{1.0f};
+	std::size_t instrument_id;
 };
 
 class EventQueue
