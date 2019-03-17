@@ -30,11 +30,36 @@
 #include <cstdio>
 #include <climits>
 
+#include <platform.h>
+
+#if DG_PLATFORM != DG_PLATFORM_WINDOWS
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
 // rcgen generated file containing rc_data declaration.
 #include "resource_data.h"
 
 namespace GUI
 {
+
+// TODO: Replace with std::filesystem::is_regular_file once we update the
+// compiler to require C++17
+static bool pathIsFile(const std::string& path)
+{
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+	return (GetFileAttributesA(path.data()) & FILE_ATTRIBUTE_DIRECTORY) == 0;
+#else
+	struct stat s;
+	if(stat(path.data(), &s) != 0)
+	{
+		return false; // error
+	}
+
+	return (s.st_mode & S_IFREG) != 0; // s.st_mode & S_IFDIR => dir
+#endif
+}
 
 // Internal resources start with a colon.
 static bool nameIsInternal(const std::string& name)
@@ -74,8 +99,13 @@ Resource::Resource(const std::string& name)
 	}
 	else
 	{
+		if(!pathIsFile(name))
+		{
+			return;
+		}
+
 		// Read from file:
-		std::FILE *fp = std::fopen(name.c_str(), "rb");
+		std::FILE *fp = std::fopen(name.data(), "rb");
 		if(!fp)
 		{
 			return;
