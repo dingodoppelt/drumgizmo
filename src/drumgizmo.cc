@@ -284,7 +284,14 @@ repeat:
 		if(evt.rampdownInProgress() && evt.rampdown_offset < (evt.t + t) &&
 		   evt.rampdown_count > 0)
 		{
-			scale = std::min((float)evt.rampdown_count / evt.ramp_length, 1.f);
+			if(evt.ramp_length > 0)
+			{
+				scale = std::min((float)evt.rampdown_count / evt.ramp_length, 1.f);
+			}
+			else
+			{
+				scale = 0.0f;
+			}
 			evt.rampdown_count--;
 		}
 
