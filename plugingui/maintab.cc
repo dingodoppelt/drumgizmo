@@ -52,7 +52,7 @@ MainTab::MainTab(Widget* parent,
 	add("Status", status_frame, statusframe_content, 24, 0);
 	add("Resampling", resampling_frame, resamplingframe_content, 10, 0);
 
-	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
+	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 20, 1);
 	humanizer_frame.setHelpText("Hello World\nThis is a nice World\n... I think");
 	add("Timing Humanizer", timing_frame, timingframe_content, 10, 1);
 	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);

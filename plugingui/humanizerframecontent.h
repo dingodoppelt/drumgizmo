@@ -46,23 +46,38 @@ public:
 	                      SettingsNotifier& settings_notifier);
 
 private:
-	float stddevSettingsToKnob(float value) const;
-	float stddevKnobToSettings(float value) const;
+	static float constexpr stddev_factor = 4.5f;
+	static float constexpr f_distance_factor = 4.f;
+	static float constexpr f_recent_factor = 1.f;
+	static float constexpr f_random_factor = .5f;
 
 	void attackValueChanged(float value);
 	void falloffValueChanged(float value);
 	void stddevKnobValueChanged(float value);
-	void stddevSettingsValueChanged(float value);
+	void fDistanceKnobValueChanged(float value);
+	void fRecentKnobValueChanged(float value);
+	void fRandomKnobValueChanged(float value);
 
-	GridLayout layout{this, 3, 1};
+	void stddevSettingsValueChanged(float value);
+	void fDistanceSettingsValueChanged(float value);
+	void fRecentSettingsValueChanged(float value);
+	void fRandomSettingsValueChanged(float value);
+
+	GridLayout layout{this, 3, 2};
 
 	LabeledControl attack{this, "Attack"}; // drummer strength
 	LabeledControl falloff{this, "Release"}; // regain
 	LabeledControl stddev{this, "StdDev"};
+	LabeledControl f_distance{this, "fDistance"};
+	LabeledControl f_recent{this, "fRecent"};
+	LabeledControl f_random{this, "fRandom"};
 
 	Knob attack_knob{&attack};
 	Knob falloff_knob{&falloff};
 	Knob stddev_knob{&stddev};
+	Knob f_distance_knob{&f_distance};
+	Knob f_recent_knob{&f_recent};
+	Knob f_random_knob{&f_random};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

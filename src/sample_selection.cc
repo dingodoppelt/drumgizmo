@@ -79,6 +79,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	}
 }
 
+// FIXME: remove before release and adapt everything
 const Sample* SampleSelection::getOld(level_t level, std::size_t pos)
 {
 	auto velocity_stddev = settings.velocity_stddev.load();
@@ -176,9 +177,9 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f,"
 		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, power_min, power_max);
 
-	const float f_distance = 2.0;
-	const float f_recent = 1.0;
-	const float f_random = .05;
+	const float f_distance = settings.sample_selection_f_distance.load();
+	const float f_recent = settings.sample_selection_f_recent.load();
+	const float f_random = settings.sample_selection_f_random.load();
 
 	// start with most promising power value and then stop when reaching far values
 	// which cannot become opt anymore

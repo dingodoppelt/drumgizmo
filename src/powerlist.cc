@@ -65,6 +65,7 @@ void PowerList::add(Sample* sample)
 	samples.push_back(item);
 }
 
+// FIXME: remove all?
 const Channel* PowerList::getMasterChannel()
 {
 	std::map<const Channel*, int> count;
@@ -129,6 +130,7 @@ const Channel* PowerList::getMasterChannel()
 	return master;
 }
 
+// FIXME: clean up significantly!
 void PowerList::finalise()
 {
 #ifdef AUTO_CALCULATE_POWER
