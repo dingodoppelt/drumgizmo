@@ -32,6 +32,7 @@
 enum class EventType
 {
 	OnSet,
+	Choke,
 	Stop,
 };
 

@@ -59,6 +59,7 @@ private:
 	bool is_stopping; ///< Is set to true when a EventType::Stop event has been seen.
 
 	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
+	bool processChoke(event_t& event, std::size_t pos, double resample_ratio);
 	bool processStop(event_t& event);
 
 	std::vector<std::unique_ptr<InputFilter>> filters;

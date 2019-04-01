@@ -372,15 +372,33 @@ void DrumGizmoPlugin::Input::run(size_t pos, size_t len, std::vector<event_t>& e
 
 	for(auto& event : *plugin.input_events)
 	{
-		if(event.type !=  MidiEventType::NoteOn)
+		switch(event.type)
 		{
-			continue;
-		}
+		case MidiEventType::NoteOn:
+			{
+				int i = mmap.lookup(event.key);
+				if(event.velocity != 0 && (i != -1))
+				{
+					events.push_back({EventType::OnSet, (size_t)i,
+					                  (size_t)event.getTime(), event.velocity / 127.0f});
+				}
+			}
+			break;
 
-		int i = mmap.lookup(event.key);
-		if(event.velocity && (i != -1))
-		{
-			events.push_back({EventType::OnSet, (size_t)i, (size_t)event.getTime(), event.velocity / 127.0f});
+		case MidiEventType::Aftertouch:
+			{
+				int i = mmap.lookup(event.key);
+				if(event.velocity == 0 && i != -1)
+				{
+					events.push_back({EventType::Choke, (size_t)i,
+					                  (size_t)event.getTime(), .0f});
+				}
+			}
+			break;
+
+		case MidiEventType::NoteOff:
+		case MidiEventType::Unknown:
+			break;
 		}
 	}
 }

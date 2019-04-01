@@ -65,6 +65,14 @@ bool InputProcessor::process(std::vector<event_t>& events,
 			}
 		}
 
+		if(event.type == EventType::Choke)
+		{
+			if(!processChoke(event, pos, resample_ratio))
+			{
+				continue;
+			}
+		}
+
 		if(!processStop(event))
 		{
 			return false;
@@ -199,6 +207,64 @@ bool InputProcessor::processOnset(event_t& event,
 			                             instrument_id);
 			evt->offset = (event.offset + pos) * resample_ratio;
 			activeevents[ch.num].push_back(evt);
+		}
+	}
+
+	return true;
+}
+
+bool InputProcessor::processChoke(event_t& event,
+                                  std::size_t pos,
+                                  double resample_ratio)
+{
+	if(!kit.isValid())
+	{
+		return false;
+	}
+
+	std::size_t instrument_id = event.instrument;
+	Instrument* instr = nullptr;
+
+	if(instrument_id < kit.instruments.size())
+	{
+		instr = kit.instruments[instrument_id].get();
+	}
+
+	if(instr == nullptr || !instr->isValid())
+	{
+		ERR(inputprocessor, "Missing Instrument %d.\n", (int)instrument_id);
+		return false;
+	}
+
+	for(auto& filter : filters)
+	{
+		// This line might change the 'event' variable
+		bool keep = filter->filter(event, event.offset + pos);
+
+		if(!keep)
+		{
+			return false; // Skip event completely
+		}
+	}
+
+	// Add event to ramp down all existing events with the same groupname.
+	for(const auto& ch : kit.channels)
+	{
+		for(auto active_event : activeevents[ch.num])
+		{
+			if(active_event->getType() == Event::sample)
+			{
+				auto& event_sample = *static_cast<EventSample*>(active_event);
+				if(event_sample.instrument_id != instrument_id &&
+				   event_sample.rampdown_count == -1) // Only if not already ramping.
+				{
+					// Fixed group rampdown time of 68ms, independent of samplerate
+					std::size_t ramp_length = (68./1000.)*settings.samplerate.load();
+					event_sample.rampdown_count = ramp_length;
+					event_sample.rampdown_offset = event.offset;
+					event_sample.ramp_length = ramp_length;
+				}
+			}
 		}
 	}
 
