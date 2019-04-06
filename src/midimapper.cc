@@ -30,18 +30,19 @@ int MidiMapper::lookup(int note)
 {
 	std::lock_guard<std::mutex> guard(mutex);
 
-	if(midimap.find(note) == midimap.end())
+	auto midimap_it = midimap.find(note);
+	if(midimap_it == midimap.end())
 	{
 		return -1;
 	}
 
-	const std::string& instr = midimap[note];
-	if(instrmap.find(instr) == instrmap.end())
+	auto instrmap_it = instrmap.find(midimap_it->second);
+	if(instrmap_it == instrmap.end())
 	{
 		return -1;
 	}
 
-	return instrmap[instr];
+	return instrmap_it->second;
 }
 
 void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap)
