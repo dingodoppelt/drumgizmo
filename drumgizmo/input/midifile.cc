@@ -29,9 +29,6 @@
 
 #include "midifile.h"
 
-static int const NOTE_ON = 0x90;
-static int const NOTE_MASK = 0xF0;
-
 MidifileInputEngine::MidifileInputEngine()
 	: AudioInputEngineMidi{}
 	, smf{nullptr}
@@ -147,26 +144,12 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 	{
 		if(!smf_event_is_metadata(current_event))
 		{
-			if((current_event->midi_buffer_length == 3) &&
-			    ((current_event->midi_buffer[0] & NOTE_MASK) == NOTE_ON) &&
-			    (track == -1 || current_event->track_number == track) &&
-			    current_event->midi_buffer[2] > 0)
+			if(track == -1 || current_event->track_number == track)
 			{
-				int key = current_event->midi_buffer[1];
-				int velocity = current_event->midi_buffer[2];
-
-				events.emplace_back();
-				auto& event = events.back();
-				event.type = EventType::OnSet;
-				size_t evpos = current_event->time_seconds * (samplerate / speed);
-				event.offset = evpos - pos;
-
-				int i = mmap.lookup(key);
-				if(i != -1)
-				{
-					event.instrument = i;
-					event.velocity = velocity / 127.0;
-				}
+				processNote(current_event->midi_buffer,
+				            current_event->midi_buffer_length,
+				            current_event->time_seconds * (samplerate / speed),
+				            events);
 			}
 		}
 

@@ -32,10 +32,6 @@
 #include <iostream>
 
 
-static int const NOTE_ON = 0x90;
-static int const NOTE_MASK = 0xF0;
-
-
 OSSInputEngine::OSSInputEngine()
 	: AudioInputEngineMidi{}
 	, dev{"/dev/midi"}
@@ -100,21 +96,12 @@ void OSSInputEngine::run(size_t pos, size_t len, std::vector<event_t>& events)
 	unsigned char buf[128];
 	if ((l = read (fd, buf, sizeof (buf))) != -1)
 	{
-		int masked_note = buf[0] & NOTE_MASK;
-		if (masked_note == NOTE_ON) {
-			int note = buf[1];
-			int velocity = buf[2];
-			event_t event;
-			event.instrument = mmap.lookup(note);
-			if(event.instrument != -1)
-			{
-				event.velocity = velocity / 127.0;
-				event.type = 0;
-				event.offset = 0;
-				events.push_back(event);
-			}
-		}
-	} else if (errno != EAGAIN) {
+		processNote(buf, l,
+		            0, // No time information available? play as soon as possible
+		            events);
+	}
+	else if (errno != EAGAIN)
+	{
 		std::cerr << "Error code: " << errno << std::endl;
 		std::cerr << std::strerror(errno) << std::endl;
 	}

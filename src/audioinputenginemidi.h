@@ -57,6 +57,11 @@ public:
 
 	bool isValid() const;
 
+	void processNote(const std::uint8_t* note_data,
+	                 std::size_t note_data_size,
+	                 std::size_t offset,
+	                 std::vector<event_t>& events);
+
 protected:
 	MidiMapper mmap;
 

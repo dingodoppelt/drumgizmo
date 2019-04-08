@@ -30,9 +30,6 @@
 #include "cpp11fix.h" // required for c++11
 #include "jackmidi.h"
 
-static int const NOTE_ON = 0x90;
-static int const NOTE_MASK = 0xF0;
-
 JackMidiInputEngine::JackMidiInputEngine(JackClient& client)
 	: AudioInputEngineMidi{}
 	, JackProcess{}
@@ -119,22 +116,7 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 	{
 		jack_midi_event_t event;
 		jack_midi_event_get(&event, buffer, i);
-		if(event.size != 3)
-		{
-			continue;
-		}
-		if((event.buffer[0] & NOTE_MASK) != NOTE_ON)
-		{
-			continue;
-		}
-		int key = event.buffer[1];
-		int velocity = event.buffer[2];
-		printf("Event key:%d vel:%d\n", key, velocity);
-		int k = mmap.lookup(key);
-		if(k != -1 && velocity)
-		{
-			events.push_back({EventType::OnSet, (size_t)k, event.time, velocity / 127.f});
-		}
+		processNote(event.buffer, event.size, event.time, events);
 	}
 	jack_midi_clear_buffer(buffer);
 	pos += num_frames;

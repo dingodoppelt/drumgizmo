@@ -95,3 +95,52 @@ bool AudioInputEngineMidi::isValid() const
 {
 	return is_valid;
 }
+
+// Note types:
+static const std::uint8_t NoteOff = 0x80;
+static const std::uint8_t NoteOn = 0x90;
+static const std::uint8_t NoteAftertouch = 0xA0;
+
+// Note type mask:
+static int const NoteMask = 0xF0;
+
+void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
+                                       std::size_t midi_buffer_length,
+                                       std::size_t offset,
+                                       std::vector<event_t>& events)
+{
+	if(midi_buffer_length != 3)
+	{
+		return;
+	}
+
+	auto key = midi_buffer[1];
+	auto velocity = midi_buffer[2];
+	auto instrument_idx = mmap.lookup(key);
+
+	switch(midi_buffer[0] & NoteMask)
+	{
+	case NoteOff:
+		// Ignore for now
+		break;
+
+	case NoteOn:
+		if(instrument_idx != -1)
+		{
+			events.push_back({EventType::OnSet, (std::size_t)instrument_idx,
+			                  offset, velocity / 127.0f});
+		}
+		break;
+
+	case NoteAftertouch:
+		if(velocity == 0 && instrument_idx != -1)
+		{
+			events.push_back({EventType::Choke, (std::size_t)instrument_idx,
+			                  offset, .0f});
+		}
+		break;
+
+	default:
+		break;
+	}
+}
