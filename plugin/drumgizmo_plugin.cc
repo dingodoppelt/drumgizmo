@@ -39,7 +39,7 @@
 
 #ifdef LV2
 // Entry point for lv2 plugin instantiation.
-PluginLV2* createEffectInstance()
+PG_EXPORT PluginLV2* createEffectInstance()
 {
 	return new DrumGizmoPlugin();
 }
@@ -118,6 +118,11 @@ std::string DrumGizmoPlugin::getId()
 	return "DrumGizmo";
 }
 
+std::string DrumGizmoPlugin::getURI()
+{
+	return "http://drumgizmo.org";
+}
+
 std::string DrumGizmoPlugin::getEffectName()
 {
 	return "DrumGizmo";
@@ -131,6 +136,11 @@ std::string DrumGizmoPlugin::getVendorString()
 std::string DrumGizmoPlugin::getProductString()
 {
 	return "DrumGizmo";
+}
+
+std::string DrumGizmoPlugin::getHomepage()
+{
+	return "https://www.drumgizmo.org";
 }
 
 PluginCategory DrumGizmoPlugin::getPluginCategory()

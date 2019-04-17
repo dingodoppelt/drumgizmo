@@ -1,4 +1,5 @@
 SUBDIRS = vst
+noinst_PROGRAMS =
 
 
 #######
@@ -7,7 +8,8 @@ SUBDIRS = vst
 if ENABLE_LV2
 lv2plugindir = @LV2DIR@/drumgizmo.lv2
 lv2plugin_LTLIBRARIES = drumgizmo.la
-lv2plugin_DATA = manifest.ttl drumgizmo.ttl
+noinst_PROGRAMS += ttlgen
+lv2plugin_DATA = manifest.ttl
 endif
 
 drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
@@ -33,6 +35,14 @@ drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
 	$(top_srcdir)/plugingui/libdggui.la \
 	$(top_srcdir)/src/libdg.la
+
+ttlgen_CPPFLAGS = $(DL_CFLAGS) -I$(top_srcdir)/plugin/plugingizmo
+ttlgen_LDFLAGS = $(DL_LIBS)
+ttlgen_SOURCES = \
+	$(top_srcdir)/plugin/plugingizmo/ttlgen.cc
+
+manifest.ttl : ttlgen drumgizmo.la
+	./ttlgen .libs/drumgizmo.so manifest.ttl
 
 
 #######

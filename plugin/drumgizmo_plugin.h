@@ -77,9 +77,11 @@ public:
 	// Functions used to set VST plugin information
 
 	std::string getId() override;
+	std::string getURI() override;
 	std::string getEffectName() override;
 	std::string getVendorString() override;
 	std::string getProductString() override;
+	std::string getHomepage() override;
 	PluginCategory getPluginCategory() override;
 
 	void process(size_t pos,

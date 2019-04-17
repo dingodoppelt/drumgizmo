@@ -219,10 +219,37 @@ AC_ARG_ENABLE([lv2],
 AS_IF(
   [test "x$enable_lv2" = "xyes"],
   [enable_lv2=yes
-   dnl ======================
-   dnl Check for lv2core
-   dnl ======================
-   PKG_CHECK_MODULES(LV2, lv2 >= 1.0)
+	 dnl ======================
+	 dnl Check for lv2core
+	 dnl ======================
+	 PKG_CHECK_MODULES(LV2, lv2 >= 1.0)
+
+	 dnl ======================
+	 dnl Check for dl library
+	 dnl ======================
+	 tmp_CXXFLAGS="$CXXFLAGS"
+	 tmp_CPPFLAGS="$CPPFLAGS"
+	 tmp_CFLAGS="$CFLAGS"
+	 tmp_LDFLAGS="$LDFLAGS"
+	 tmp_LIBS="$LIBS"
+	 CXXFLAGS=""
+	 CPPFLAGS=""
+	 CFLAGS=""
+	 LDFLAGS=""
+	 LIBS=""
+	 AC_CHECK_HEADER(dlfcn.h, , AC_MSG_ERROR([*** dlfcn.h header file not found!]))
+	 AC_CHECK_LIB(c,  dlopen, ,
+		AC_CHECK_LIB(dl, dlopen, , AC_MSG_ERROR([*** library conaining dlopen not found!])))
+	 DL_CFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
+	 DL_LIBS="$LDFLAGS $LIBS"
+	 CXXFLAGS="$tmp_CXXFLAGS"
+	 CPPFLAGS="$tmp_CPPFLAGS"
+	 CFLAGS="$tmp_CFLAGS"
+	 LDFLAGS="$tmp_LDFLAGS"
+	 LIBS="$tmp_LIBS"
+	 AC_SUBST(DL_CFLAGS)
+	 AC_SUBST(DL_LIBS)
+
 	 AC_ARG_WITH([lv2dir],
 		AS_HELP_STRING([--with-lv2dir=DIR],
 		               [Use DIR as the lv2 plugin directory [default=LIBDIR/lv2]]),
