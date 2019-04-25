@@ -109,7 +109,7 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
                                        std::size_t offset,
                                        std::vector<event_t>& events)
 {
-	if(midi_buffer_length != 3)
+	if(midi_buffer_length < 3)
 	{
 		return;
 	}
