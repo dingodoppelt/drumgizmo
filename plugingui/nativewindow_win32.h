@@ -66,6 +66,8 @@ private:
 	HWND parent_window;
 	Window& window;
 	WNDID m_hwnd = 0;
+	bool mouse_in_window{false};
+	std::pair<int, int> last_mouse_position{0, 0};
 	char* m_className = nullptr;
 	EventQueue event_queue;
 };

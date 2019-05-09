@@ -31,7 +31,7 @@
 namespace GUI
 {
 
-FrameWidget::FrameWidget(Widget* parent, bool has_switch)
+FrameWidget::FrameWidget(Widget* parent, bool has_switch, bool has_help_text)
 	: Widget(parent)
 	, is_switched_on(!has_switch)
 	, bar_height(24)
@@ -44,9 +44,18 @@ FrameWidget::FrameWidget(Widget* parent, bool has_switch)
 
 		power_button.setChecked(is_switched_on);
 		CONNECT(&power_button, stateChangedNotifier, this,
-		    &FrameWidget::powerButtonStateChanged);
+		        &FrameWidget::powerButtonStateChanged);
 	}
 	power_button.setVisible(has_switch);
+
+	if(has_help_text)
+	{
+		// We only have to set this once as nothing happens on a resize
+		help_button.resize(16, 16);
+		help_button.move(width() - 4 - 16, 4);
+		help_button.setText("?");
+	}
+	help_button.setVisible(has_help_text);
 
 	CONNECT(this, sizeChangeNotifier, this, &FrameWidget::sizeChanged);
 }
@@ -93,6 +102,11 @@ void FrameWidget::setTitle(std::string const& title)
 	label_width = font.textWidth(title.c_str()) / 2 + 1;
 }
 
+void FrameWidget::setHelpText(const std::string& help_text)
+{
+	help_button.setHelpText(help_text);
+}
+
 void FrameWidget::setContent(Widget* content)
 {
 	this->content = content;
@@ -125,6 +139,8 @@ void FrameWidget::sizeChanged(int width, int height)
 		content->move(content_start_x, content_start_y);
 		content->resize(content_width, content_height);
 	}
+
+	help_button.move(width - 4 - 16, help_button.y());
 }
 
 } // GUI::

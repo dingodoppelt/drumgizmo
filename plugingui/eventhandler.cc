@@ -254,10 +254,31 @@ void EventHandler::processEvents()
 
 			closeNotifier();
 			break;
+
+		case EventType::mouseEnter:
+			{
+				auto enterEvent = static_cast<MouseEnterEvent*>(event.get());
+				auto widget = window.find(enterEvent->x, enterEvent->y);
+				if(widget)
+				{
+					widget->mouseEnterEvent();
+				}
+			}
+			break;
+
+		case EventType::mouseLeave:
+			{
+				auto widget = window.mouseFocus();
+				if(widget)
+				{
+					widget->mouseLeaveEvent();
+				}
+			}
+			break;
 		}
 	}
 
-	// Probe window and children to readrw as needed.
+	// Probe window and children to redraw as needed.
 	// NOTE: This method will invoke native->redraw() if a redraw is needed.
 	window.updateBuffer();
 }

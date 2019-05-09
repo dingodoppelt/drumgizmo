@@ -42,7 +42,9 @@ enum class EventType
 	key,
 	close,
 	resize,
-	move
+	move,
+	mouseEnter,
+	mouseLeave,
 };
 
 class Event
@@ -167,6 +169,26 @@ class MoveEvent
 {
 public:
 	EventType type() { return EventType::move; }
+
+	int x;
+	int y;
+};
+
+class MouseEnterEvent
+	: public Event
+{
+public:
+	EventType type() { return EventType::mouseEnter; }
+
+	int x;
+	int y;
+};
+
+class MouseLeaveEvent
+	: public Event
+{
+public:
+	EventType type() { return EventType::mouseLeave; }
 
 	int x;
 	int y;

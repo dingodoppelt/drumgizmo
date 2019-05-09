@@ -30,6 +30,7 @@
 
 #include "font.h"
 #include "powerbutton.h"
+#include "helpbutton.h"
 #include "widget.h"
 
 namespace GUI
@@ -39,7 +40,7 @@ class FrameWidget
 	: public Widget
 {
 public:
-	FrameWidget(Widget* parent, bool has_switch = false);
+	FrameWidget(Widget* parent, bool has_switch = false, bool has_help_text = false);
 	virtual ~FrameWidget() = default;
 
 	// From Widget:
@@ -48,7 +49,8 @@ public:
 
 	bool isSwitchedOn() { return is_switched_on; }
 
-	void setTitle(std::string const& title);
+	void setTitle(const std::string& title);
+	void setHelpText(const std::string& help_text);
 	void setContent(Widget* content);
 
 	void setOnSwitch(bool on);
@@ -81,6 +83,7 @@ private:
 	// switch
 	bool is_switched_on;
 	PowerButton power_button{this};
+	HelpButton help_button{this};
 
 	void powerButtonStateChanged(bool clicked);
 

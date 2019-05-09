@@ -7,6 +7,7 @@ RES = \
 	resources/bypass_button.png \
 	resources/font.png \
 	resources/fontemboss.png \
+	resources/help_button.png \
 	resources/knob.png \
 	resources/logo.png \
 	resources/png_error \
@@ -71,6 +72,7 @@ nodist_libdggui_la_SOURCES = \
 	filebrowser.cc \
 	font.cc \
 	frame.cc \
+	helpbutton.cc \
 	humanizerframecontent.cc \
 	humaniservisualiser.cc \
 	image.cc \
@@ -104,6 +106,7 @@ nodist_libdggui_la_SOURCES = \
 	texturedbox.cc \
 	timingframecontent.cc \
 	toggle.cc \
+	tooltip.cc \
 	utf8.cc \
 	verticalline.cc \
 	visualizerframecontent.cc \

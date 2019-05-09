@@ -61,6 +61,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/filebrowser.cc \
 	@top_srcdir@/plugingui/font.cc \
 	@top_srcdir@/plugingui/frame.cc \
+	@top_srcdir@/plugingui/helpbutton.cc \
 	@top_srcdir@/plugingui/humanizerframecontent.cc \
 	@top_srcdir@/plugingui/humaniservisualiser.cc \
 	@top_srcdir@/plugingui/image.cc \
@@ -94,6 +95,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/texturedbox.cc \
 	@top_srcdir@/plugingui/timingframecontent.cc \
 	@top_srcdir@/plugingui/toggle.cc \
+	@top_srcdir@/plugingui/tooltip.cc \
 	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/visualizerframecontent.cc \
@@ -135,6 +137,7 @@ RES = \
 	resources/bypass_button.png \
 	resources/font.png \
 	resources/fontemboss.png \
+	resources/help_button.png \
 	resources/knob.png \
 	resources/logo.png \
 	resources/png_error \

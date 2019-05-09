@@ -35,6 +35,16 @@
 namespace GUI
 {
 
+static BOOL trackMouse(HWND hwnd)
+{
+	TRACKMOUSEEVENT ev{};
+	ev.cbSize = sizeof(ev);
+	ev.dwFlags = TME_HOVER | TME_LEAVE;
+	ev.hwndTrack = hwnd;
+	ev.dwHoverTime = 1;
+	return TrackMouseEvent(&ev);
+}
+
 LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
                                                WPARAM wp, LPARAM lp)
 {
@@ -89,9 +99,20 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 //		return 0;
 	case WM_MOUSEMOVE:
 		{
+			trackMouse(native->m_hwnd);
 			auto mouseMoveEvent = std::make_shared<MouseMoveEvent>();
 			mouseMoveEvent->x = (short)LOWORD(lp);
 			mouseMoveEvent->y = (short)HIWORD(lp);
+			native->last_mouse_position = { mouseMoveEvent->x, mouseMoveEvent->y };
+
+			if(!native->mouse_in_window)
+			{
+				auto enterEvent = std::make_shared<MouseEnterEvent>();
+				enterEvent->x = native->last_mouse_position.first;
+				enterEvent->y = native->last_mouse_position.second;
+				native->event_queue.push_back(enterEvent);
+				native->mouse_in_window = true;
+			}
 			native->event_queue.push_back(mouseMoveEvent);
 		}
 		break;
@@ -295,8 +316,17 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 				DeleteObject(ourbitmap);
 			}
 		}
+		break;
 
-		return DefWindowProc(hwnd, msg, wp, lp);
+	case WM_MOUSELEAVE:
+		{
+			auto leaveEvent = std::make_shared<MouseLeaveEvent>();
+			leaveEvent->x = native->last_mouse_position.first;
+			leaveEvent->y = native->last_mouse_position.second;
+			native->event_queue.push_back(leaveEvent);
+			native->mouse_in_window = false;
+		}
+		break;
 	}
 
 	return DefWindowProc(hwnd, msg, wp, lp);
@@ -391,6 +421,9 @@ NativeWindowWin32::NativeWindowWin32(void* native_window, Window& window)
 	                        GetModuleHandle(nullptr), nullptr);
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+
+	// Set up initial tracking of the mouse leave events
+	trackMouse(m_hwnd);
 }
 
 NativeWindowWin32::~NativeWindowWin32()

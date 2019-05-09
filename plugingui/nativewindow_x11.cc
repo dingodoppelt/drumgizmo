@@ -92,7 +92,9 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	             KeyReleaseMask|
 	             ExposureMask |
 	             StructureNotifyMask |
-	             SubstructureNotifyMask);
+	             SubstructureNotifyMask |
+	             EnterWindowMask |
+	             LeaveWindowMask);
 	XSelectInput(display, xwindow, mask);
 
 	// Register the delete window message:
@@ -467,7 +469,25 @@ void NativeWindowX11::translateXMessage(XEvent& xevent)
 		break;
 
 	case EnterNotify:
+		//DEBUG(x11, "EnterNotify");
+		{
+			auto enterEvent = std::make_shared<MouseEnterEvent>();
+			enterEvent->x = xevent.xcrossing.x;
+			enterEvent->y = xevent.xcrossing.y;
+			event_queue.push_back(enterEvent);
+		}
+		break;
+
 	case LeaveNotify:
+		//DEBUG(x11, "LeaveNotify");
+		{
+			auto leaveEvent = std::make_shared<MouseLeaveEvent>();
+			leaveEvent->x = xevent.xcrossing.x;
+			leaveEvent->y = xevent.xcrossing.y;
+			event_queue.push_back(leaveEvent);
+		}
+		break;
+
 	case MapNotify:
 	case MappingNotify:
 		//DEBUG(x11, "EnterNotify");
