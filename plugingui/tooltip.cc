@@ -179,6 +179,10 @@ void Tooltip::show()
 
 	move(x, y);
 	Widget::show();
+
+	// TODO: This should be handled differently
+	// Hack to notify the window that the mouse is now inside the tooltip.
+	window()->setMouseFocus(this);
 }
 
 } // GUI::
