@@ -85,6 +85,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/progressbar.cc \
 	@top_srcdir@/plugingui/resamplingframecontent.cc \
 	@top_srcdir@/plugingui/resource.cc \
+	@top_srcdir@/plugingui/sampleselectionframecontent.cc \
 	@top_srcdir@/plugingui/scrollbar.cc \
 	@top_srcdir@/plugingui/slider.cc \
 	@top_srcdir@/plugingui/stackedwidget.cc \
