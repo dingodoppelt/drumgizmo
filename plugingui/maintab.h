@@ -36,6 +36,7 @@
 #include "bleedcontrolframecontent.h"
 #include "resamplingframecontent.h"
 #include "timingframecontent.h"
+#include "sampleselectionframecontent.h"
 #include "visualizerframecontent.h"
 
 struct Settings;
@@ -74,6 +75,7 @@ private:
 	FrameWidget bleedcontrol_frame{this, true};
 	FrameWidget resampling_frame{this, true};
 	FrameWidget timing_frame{this, true};
+	FrameWidget sampleselection_frame{this, false};
 	FrameWidget visualizer_frame{this, false};
 
 	DrumkitframeContent drumkitframe_content;
@@ -83,6 +85,7 @@ private:
 	BleedcontrolframeContent bleedcontrolframe_content;
 	ResamplingframeContent resamplingframe_content;
 	TimingframeContent timingframe_content;
+	SampleselectionframeContent sampleselectionframe_content;
 	VisualizerframeContent visualizerframe_content;
 
 	void add(std::string const& title, FrameWidget& frame, Widget& content,

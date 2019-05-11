@@ -95,6 +95,7 @@ nodist_libdggui_la_SOURCES = \
 	resamplingframecontent.cc \
 	resource.cc \
 	resource_data.cc \
+	sampleselectionframecontent.cc \
 	scrollbar.cc \
 	slider.cc \
 	stackedwidget.cc \
