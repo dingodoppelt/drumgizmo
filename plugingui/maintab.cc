@@ -51,7 +51,7 @@ MainTab::MainTab(Widget* parent,
 
 	add("Drumkit", drumkit_frame, drumkitframe_content, 15, 0);
 	add("Status", status_frame, statusframe_content, 24, 0);
-	add("Resampling", resampling_frame, resamplingframe_content, 10, 0);
+	add("Resampling", resampling_frame, resamplingframe_content, 20, 0);
 
 	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
 	humanizer_frame.setHelpText("Hello World\nThis is a nice World\n... I think");

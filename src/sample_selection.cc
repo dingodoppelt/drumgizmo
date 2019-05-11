@@ -171,14 +171,14 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	float value_opt{std::numeric_limits<float>::max()};
 	// the following three values are mostly for debugging
 	float random_opt = 0.;
-	float distance_opt = 0.;
-	float recent_opt = 0.;
+	float close_opt = 0.;
+	float diverse_opt = 0.;
 
 	DEBUG(rand, "level: %f, lvl: %f (mean: %.2f, stddev: %.2f,"
 		"power_min: %f, power_max: %f)\n", level, lvl, mean, stddev, power_min, power_max);
 
-	const float f_distance = settings.sample_selection_f_distance.load();
-	const float f_recent = settings.sample_selection_f_recent.load();
+	const float f_close = settings.sample_selection_f_close.load();
+	const float f_diverse = settings.sample_selection_f_diverse.load();
 	const float f_random = settings.sample_selection_f_random.load();
 
 	// start with most promising power value and then stop when reaching far values
@@ -186,8 +186,8 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	auto closest_it = std::lower_bound(samples.begin(), samples.end(), lvl);
 	std::size_t up_index = std::distance(samples.begin(), closest_it);
 	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
-	float up_value_lb = (up_index < samples.size() ? f_distance*pow2(samples[up_index].power-lvl) : std::numeric_limits<float>::max());
-	float down_value_lb = (up_index != 0 ? f_distance*pow2(samples[down_index].power-lvl) : std::numeric_limits<float>::max());
+	float up_value_lb = (up_index < samples.size() ? f_close*pow2(samples[up_index].power-lvl) : std::numeric_limits<float>::max());
+	float down_value_lb = (up_index != 0 ? f_close*pow2(samples[down_index].power-lvl) : std::numeric_limits<float>::max());
 
 	std::size_t count = 0;
 	do
@@ -199,7 +199,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 			if (up_index != samples.size()-1)
 			{
 				++up_index;
-				up_value_lb = f_distance*pow2(samples[up_index].power-lvl);
+				up_value_lb = f_close*pow2(samples[up_index].power-lvl);
 			}
 			else
 			{
@@ -212,7 +212,7 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 			if (down_index != 0)
 			{
 				--down_index;
-				down_value_lb = f_distance*pow2(samples[down_index].power-lvl);
+				down_value_lb = f_close*pow2(samples[down_index].power-lvl);
 			}
 			else
 			{
@@ -221,9 +221,9 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 		}
 
 		auto random = rand.floatInRange(0.,1.);
-		auto distance = samples[current_index].power - lvl;
-		auto recent = (float)settings.samplerate/std::max<std::size_t>(pos - last[current_index], 1);
-		auto value = f_distance*pow2(distance) + f_recent*pow2(recent) + f_random*random;
+		auto close = samples[current_index].power - lvl;
+		auto diverse = (float)settings.samplerate/std::max<std::size_t>(pos - last[current_index], 1);
+		auto value = f_close*pow2(close) + f_diverse*pow2(diverse) + f_random*random;
 
 		if (value < value_opt)
 		{
@@ -231,14 +231,14 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 			power_opt = samples[current_index].power;
 			value_opt = value;
 			random_opt = random;
-			distance_opt = distance;
-			recent_opt = recent;
+			close_opt = close;
+			diverse_opt = diverse;
 		}
 		++count;
 	}
 	while (up_value_lb <= value_opt || down_value_lb <= value_opt);
 
-	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, distance: %f, recent: %f, count: %d", (int)index_opt, value_opt, power_opt, random_opt, distance_opt, recent_opt, (int)count);
+	DEBUG(rand, "Chose sample with index: %d, value: %f, power %f, random: %f, close: %f, diverse: %f, count: %d", (int)index_opt, value_opt, power_opt, random_opt, close_opt, diverse_opt, (int)count);
 
 	last[index_opt] = pos;
 	return samples[index_opt].sample;

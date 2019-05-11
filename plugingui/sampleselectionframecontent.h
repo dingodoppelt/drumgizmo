@@ -46,26 +46,26 @@ public:
 	                            SettingsNotifier& settings_notifier);
 
 private:
-	static float constexpr f_distance_factor = 4.f;
-	static float constexpr f_recent_factor = 1.f;
+	static float constexpr f_close_factor = 4.f;
+	static float constexpr f_diverse_factor = 1.f;
 	static float constexpr f_random_factor = .5f;
 
-	void fDistanceKnobValueChanged(float value);
-	void fRecentKnobValueChanged(float value);
+	void fCloseKnobValueChanged(float value);
+	void fDiverseKnobValueChanged(float value);
 	void fRandomKnobValueChanged(float value);
 
-	void fDistanceSettingsValueChanged(float value);
-	void fRecentSettingsValueChanged(float value);
+	void fCloseSettingsValueChanged(float value);
+	void fDiverseSettingsValueChanged(float value);
 	void fRandomSettingsValueChanged(float value);
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl f_distance{this, "fDistance"};
-	LabeledControl f_recent{this, "fRecent"};
-	LabeledControl f_random{this, "fRandom"};
+	LabeledControl f_close{this, "Close"};
+	LabeledControl f_diverse{this, "Diverse"};
+	LabeledControl f_random{this, "Random"};
 
-	Knob f_distance_knob{&f_distance};
-	Knob f_recent_knob{&f_recent};
+	Knob f_close_knob{&f_close};
+	Knob f_diverse_knob{&f_diverse};
 	Knob f_random_knob{&f_random};
 
 	Settings& settings;

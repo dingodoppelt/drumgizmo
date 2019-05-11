@@ -75,14 +75,14 @@ struct Settings
 	static float constexpr velocity_modifier_falloff_default = 0.5f;
 	static float constexpr velocity_modifier_weight_default = 0.25f;
 	static float constexpr velocity_stddev_default = 1.0f;
-	static float constexpr sample_selection_f_distance_default = 2.f;
-	static float constexpr sample_selection_f_recent_default = .3f;
+	static float constexpr sample_selection_f_close_default = 2.f;
+	static float constexpr sample_selection_f_diverse_default = .3f;
 	static float constexpr sample_selection_f_random_default = 0.05f;
 	Atomic<float> velocity_modifier_falloff{velocity_modifier_falloff_default};
 	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
 	Atomic<float> velocity_stddev{velocity_stddev_default};
-	Atomic<float> sample_selection_f_distance{sample_selection_f_distance_default};
-	Atomic<float> sample_selection_f_recent{sample_selection_f_recent_default};
+	Atomic<float> sample_selection_f_close{sample_selection_f_close_default};
+	Atomic<float> sample_selection_f_diverse{sample_selection_f_diverse_default};
 	Atomic<float> sample_selection_f_random{sample_selection_f_random_default};
 
 	//! Control number of times to retry sample selection as long as the sample
@@ -170,8 +170,8 @@ struct SettingsGetter
 	SettingRef<float> velocity_modifier_falloff;
 	SettingRef<float> velocity_modifier_weight;
 	SettingRef<float> velocity_stddev;
-	SettingRef<float> sample_selection_f_distance;
-	SettingRef<float> sample_selection_f_recent;
+	SettingRef<float> sample_selection_f_close;
+	SettingRef<float> sample_selection_f_diverse;
 	SettingRef<float> sample_selection_f_random;
 
 	SettingRef<std::size_t> sample_selection_retry_count;
@@ -224,8 +224,8 @@ struct SettingsGetter
 		, velocity_modifier_falloff{settings.velocity_modifier_falloff}
 		, velocity_modifier_weight{settings.velocity_modifier_weight}
 		, velocity_stddev{settings.velocity_stddev}
-		, sample_selection_f_distance{settings.sample_selection_f_distance}
-		, sample_selection_f_recent{settings.sample_selection_f_recent}
+		, sample_selection_f_close{settings.sample_selection_f_close}
+		, sample_selection_f_diverse{settings.sample_selection_f_diverse}
 		, sample_selection_f_random{settings.sample_selection_f_random}
 		, sample_selection_retry_count(settings.sample_selection_retry_count)
 		, velocity_modifier_current{settings.velocity_modifier_current}
@@ -278,8 +278,8 @@ public:
 	Notifier<float> velocity_modifier_falloff;
 	Notifier<float> velocity_modifier_weight;
 	Notifier<float> velocity_stddev;
-	Notifier<float> sample_selection_f_distance;
-	Notifier<float> sample_selection_f_recent;
+	Notifier<float> sample_selection_f_close;
+	Notifier<float> sample_selection_f_diverse;
 	Notifier<float> sample_selection_f_random;
 	Notifier<std::size_t> sample_selection_retry_count;
 	Notifier<float> velocity_modifier_current;
@@ -336,8 +336,8 @@ public:
 		EVAL(velocity_modifier_falloff);
 		EVAL(velocity_modifier_weight);
 		EVAL(velocity_stddev);
-		EVAL(sample_selection_f_distance);
-		EVAL(sample_selection_f_recent);
+		EVAL(sample_selection_f_close);
+		EVAL(sample_selection_f_diverse);
 		EVAL(sample_selection_f_random);
 		EVAL(sample_selection_retry_count);
 		EVAL(velocity_modifier_current);

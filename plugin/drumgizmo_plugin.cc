@@ -593,10 +593,10 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		float2str(settings.velocity_modifier_weight.load()) + "</value>\n"
 		"  <value name=\"velocity_stddev\">" +
 		float2str(settings.velocity_stddev.load()) + "</value>\n"
-		"  <value name=\"sample_selection_f_distance\">" +
-		float2str(settings.sample_selection_f_distance.load()) + "</value>\n"
-		"  <value name=\"sample_selection_f_recent\">" +
-		float2str(settings.sample_selection_f_recent.load()) + "</value>\n"
+		"  <value name=\"sample_selection_f_close\">" +
+		float2str(settings.sample_selection_f_close.load()) + "</value>\n"
+		"  <value name=\"sample_selection_f_diverse\">" +
+		float2str(settings.sample_selection_f_diverse.load()) + "</value>\n"
 		"  <value name=\"sample_selection_f_random\">" +
 		float2str(settings.sample_selection_f_random.load()) + "</value>\n"
 		"  <value name=\"enable_velocity_randomiser\">" +
@@ -660,14 +660,14 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 		settings.velocity_stddev.store(str2float(p.value("velocity_stddev")));
 	}
 
-	if(p.value("sample_selection_f_distance") != "")
+	if(p.value("sample_selection_f_close") != "")
 	{
-		settings.sample_selection_f_distance.store(str2float(p.value("sample_selection_f_distance")));
+		settings.sample_selection_f_close.store(str2float(p.value("sample_selection_f_close")));
 	}
 
-	if(p.value("sample_selection_f_recent") != "")
+	if(p.value("sample_selection_f_diverse") != "")
 	{
-		settings.sample_selection_f_recent.store(str2float(p.value("sample_selection_f_recent")));
+		settings.sample_selection_f_diverse.store(str2float(p.value("sample_selection_f_diverse")));
 	}
 
 	if(p.value("sample_selection_f_random") != "")
