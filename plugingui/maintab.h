@@ -75,7 +75,7 @@ private:
 	FrameWidget bleedcontrol_frame{this, true};
 	FrameWidget resampling_frame{this, true};
 	FrameWidget timing_frame{this, true};
-	FrameWidget sampleselection_frame{this, false};
+	FrameWidget sampleselection_frame{this, false, true};
 	FrameWidget visualizer_frame{this, false};
 
 	DrumkitframeContent drumkitframe_content;

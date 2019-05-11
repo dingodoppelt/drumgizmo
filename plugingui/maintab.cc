@@ -57,6 +57,12 @@ MainTab::MainTab(Widget* parent,
 	humanizer_frame.setHelpText("Hello World\nThis is a nice World\n... I think");
 	add("Timing Humanizer", timing_frame, timingframe_content, 10, 1);
 	add("Sample Selection", sampleselection_frame, sampleselectionframe_content, 10, 1);
+	sampleselection_frame.setHelpText(
+		"These three knobs influence how DrumGizmo selects its samples in the following way:\n"
+		"    * Close: importance given to choosing a sample close to the actual MIDI value (after humanization)\n"
+		"    * Diversity: importance given to choosing samples which haven't been played recently\n"
+		"    * Random: amount of randomness added"
+		);
 	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
 	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 9, 1);
 	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 1);
