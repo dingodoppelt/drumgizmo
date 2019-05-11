@@ -75,8 +75,8 @@ struct Settings
 	static float constexpr velocity_modifier_falloff_default = 0.5f;
 	static float constexpr velocity_modifier_weight_default = 0.25f;
 	static float constexpr velocity_stddev_default = 1.0f;
-	static float constexpr sample_selection_f_close_default = 2.f;
-	static float constexpr sample_selection_f_diverse_default = .3f;
+	static float constexpr sample_selection_f_close_default = 4.f;
+	static float constexpr sample_selection_f_diverse_default = .1f;
 	static float constexpr sample_selection_f_random_default = 0.05f;
 	Atomic<float> velocity_modifier_falloff{velocity_modifier_falloff_default};
 	Atomic<float> velocity_modifier_weight{velocity_modifier_weight_default};
