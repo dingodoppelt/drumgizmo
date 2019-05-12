@@ -26,7 +26,7 @@
  */
 #include "maintab.h"
 
-namespace GUI
+namespace
 {
 
 constexpr char humanizer_tip[] = "\
@@ -80,6 +80,11 @@ The green lines indicate the ideal time and velocity positions.\n\
 The pink areas indicate the spread of the position and velocity of the\n\
 next note in line. The wider the area the more the note can move in time\n\
 and velocity.";
+
+} // end anonymous namespace
+
+namespace GUI
+{
 
 MainTab::MainTab(Widget* parent,
                  Settings& settings,
