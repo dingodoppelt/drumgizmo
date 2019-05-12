@@ -41,6 +41,7 @@ nodist_libdg_la_SOURCES = \
 	semaphore.cc \
 	staminafilter.cc \
 	thread.cc \
+	velocityfilter.cc \
 	versionstr.cc
 
 EXTRA_DIST = \
@@ -88,4 +89,5 @@ EXTRA_DIST = \
 	staminafilter.h \
 	syncedsettings.h \
 	thread.h \
+	velocityfilter.cc \
 	versionstr.h
