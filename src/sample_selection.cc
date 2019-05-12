@@ -37,12 +37,6 @@
 namespace
 {
 
-// Minimum sample set size.
-// Smaller means wider 'velocity groups'.
-// Limited by sample set size, ie. only kicks in if sample set size is smaller
-// than this number.
-std::size_t const MIN_SAMPLE_SET_SIZE = 26u;
-
 float pow2(float f)
 {
 	return f*f;
@@ -51,13 +45,8 @@ float pow2(float f)
 } // end anonymous namespace
 
 SampleSelection::SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist)
-	: settings(settings), rand(rand), powerlist(powerlist), alg(SelectionAlg::Objective)
+	: settings(settings), rand(rand), powerlist(powerlist)
 {
-}
-
-void SampleSelection::setSelectionAlg(SelectionAlg alg)
-{
-	this->alg = alg;
 }
 
 void SampleSelection::finalise()
@@ -66,90 +55,6 @@ void SampleSelection::finalise()
 }
 
 const Sample* SampleSelection::get(level_t level, std::size_t pos)
-{
-	// TODO: switch objective to default at some point
-	switch (alg)
-	{
-		case SelectionAlg::Objective:
-			return getObjective(level, pos);
-			break;
-		case SelectionAlg::Old:
-		default:
-			return getOld(level, pos);
-	}
-}
-
-// FIXME: remove before release and adapt everything
-const Sample* SampleSelection::getOld(level_t level, std::size_t pos)
-{
-	auto velocity_stddev = settings.velocity_stddev.load();
-
-	const auto& samples = powerlist.getPowerListItems();
-	if(!samples.size())
-	{
-		return nullptr; // No samples to choose from.
-	}
-
-	int retry = settings.sample_selection_retry_count.load();
-
-	Sample* sample{nullptr};
-
-	auto power_max = powerlist.getMaxPower();
-	auto power_min = powerlist.getMinPower();
-	float power_span = power_max - power_min;
-
-	// Width is limited to at least 10. Fixes problem with instrument with a
-	//  sample set smaller than MIN_SAMPLE_SET_SIZE.
-	float width = std::max(samples.size(), MIN_SAMPLE_SET_SIZE);
-
-	// Spread out at most ~2 samples away from center if all samples have a
-	// uniform distribution over the power spectrum (which they probably don't).
-	float mean_stepwidth = power_span / width;
-
-	// Cut off mean value with stddev/2 in both ends in order to make room for
-	//  downwards expansion on velocity 0 and upwards expansion on velocity 1.
-	float mean = level * (power_span - mean_stepwidth) + (mean_stepwidth / 2.0);
-	float stddev = velocity_stddev * mean_stepwidth;
-
-	std::size_t index{0};
-	float power{0.f};
-
-	// note: loop is executed once + #retry
-	do
-	{
-		--retry;
-
-		// Select normal distributed value between
-		//  (stddev/2) and (power_span-stddev/2)
-		float lvl = rand.normalDistribution(mean, stddev);
-
-		// Adjust this value to be in range
-		//  (power_min+stddev/2) and (power_max-stddev/2)
-		lvl += power_min;
-
-		DEBUG(rand,
-			  "level: %f, lvl: %f (mean: %.2f, stddev: %.2f, mean_stepwidth: %f, power_min: %f, power_max: %f)\n",
-			  level, lvl, mean, stddev, mean_stepwidth, power_min, power_max);
-
-		for (std::size_t i = 0; i < samples.size(); ++i)
-		{
-			auto const& item = samples[i];
-			if (sample == nullptr || std::fabs(item.power - lvl) < std::fabs(power - lvl))
-			{
-				sample = item.sample;
-				index = i;
-				power = item.power;
-			}
-		}
-	} while (lastsample == sample && retry >= 0);
-
-	DEBUG(rand, "Chose sample with index: %d, power %f", (int)index, power);
-
-	lastsample = sample;
-	return sample;
-}
-
-const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 {
 	const auto& samples = powerlist.getPowerListItems();
 	if(!samples.size())
@@ -162,9 +67,9 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 	float power_span = power_max - power_min;
 
 	float mean = level - .5f/127.f; // XXX: this should actually be done when reading the events
-	float stddev = settings.enable_velocity_modifier.load() ?
-		settings.velocity_stddev.load()/127.0f : 0.;
-	float lvl = power_min + rand.normalDistribution(mean, stddev)*power_span;
+	float stddev = settings.velocity_stddev.load();
+	// the 20.0f we determined empirically
+	float lvl = power_min + rand.normalDistribution(mean, stddev / 20.0f) * power_span;
 
 	std::size_t index_opt = 0;
 	float power_opt{0.f};
@@ -242,4 +147,5 @@ const Sample* SampleSelection::getObjective(level_t level, std::size_t pos)
 
 	last[index_opt] = pos;
 	return samples[index_opt].sample;
+
 }

@@ -34,30 +34,18 @@ class PowerList;
 class Random;
 struct Settings;
 
-enum class SelectionAlg
-{
-	Old,
-	Objective,
-};
-
 class SampleSelection
 {
+public:
+	SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist);
+
+	void finalise();
+	const Sample* get(level_t level, std::size_t pos);
+
 private:
 	Settings& settings;
 	Random& rand;
 	const PowerList& powerlist;
 
-	Sample* lastsample;
 	std::vector<std::size_t> last;
-
-	SelectionAlg alg;
-	const Sample* getOld(level_t level, std::size_t pos);
-	const Sample* getObjective(level_t level, std::size_t pos);
-
-public:
-	SampleSelection(Settings& settings, Random& rand, const PowerList& powerlist);
-
-	void setSelectionAlg(SelectionAlg alg);
-	void finalise();
-	const Sample* get(level_t level, std::size_t pos);
 };
