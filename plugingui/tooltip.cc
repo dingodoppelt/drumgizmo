@@ -185,4 +185,12 @@ void Tooltip::show()
 	window()->setMouseFocus(this);
 }
 
+void Tooltip::buttonEvent(ButtonEvent* buttonEvent)
+{
+	if(buttonEvent->direction == Direction::down)
+	{
+		hide();
+	}
+}
+
 } // GUI::

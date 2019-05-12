@@ -53,6 +53,7 @@ public:
 	virtual void resize(std::size_t height, std::size_t width) override;
 	virtual void mouseLeaveEvent() override;
 	virtual void show() override;
+	virtual void buttonEvent(ButtonEvent* buttonEvent) override;
 
 private:
 	void preprocessText();
