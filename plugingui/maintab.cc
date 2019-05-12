@@ -35,10 +35,10 @@ stamina of a physical drummers, ie. the fact that they\n\
 loose power in their strokes when playing fast notes:\n\
   * pAttack: How quickly the velocity gets reduced when\n\
      playing fast notes.\n\
-     Higher value results in faster velocity reduction.\n\
+     Lower values result in faster velocity reduction.\n\
   * pRelease: How quickly the drummer regains the velocity\n\
      when there are spaces between the notes.\n\
-     Higher value results in faster regain.\n\
+     Lower values result in faster regain.\n\
 \n\
 The last knob controls the randomization of the sample selection:\n\
   * pStdDev: The standard-deviation for the sample selection.\n\
