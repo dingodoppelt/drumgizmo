@@ -57,9 +57,9 @@ int main()
 
 	// TODO: automatically use drumgizmo_plugin.h size here
 #ifndef UI_PUGL
-	parent.resize(750, 733);
+	parent.resize(750, 613);
 #else
-	main_window.resize(750, 733);
+	main_window.resize(750, 613);
 #endif
 
 	while(true)

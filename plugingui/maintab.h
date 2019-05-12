@@ -66,7 +66,7 @@ private:
 
 	Image logo{":resources/logo.png"};
 
-	GridLayout layout{this, 2, 59};
+	GridLayout layout{this, 2, 49};
 
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};

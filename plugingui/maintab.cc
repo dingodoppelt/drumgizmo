@@ -107,8 +107,9 @@ MainTab::MainTab(Widget* parent,
 	layout.setResizeChildren(true);
 
 	add("Drumkit", drumkit_frame, drumkitframe_content, 15, 0);
-	add("Status", status_frame, statusframe_content, 24, 0);
-	add("Resampling", resampling_frame, resamplingframe_content, 20, 0);
+	add("Status", status_frame, statusframe_content, 15, 0);
+	add("Resampling", resampling_frame, resamplingframe_content, 10, 0);
+	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 9, 0);
 
 	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
 	humanizer_frame.setHelpText(humanizer_tip);
@@ -120,7 +121,6 @@ MainTab::MainTab(Widget* parent,
 	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
 	visualizer_frame.setHelpText(visualizer_tip);
 	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 9, 1);
-	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 1);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
 	bleedcontrol_frame.setOnSwitch(settings.enable_bleed_control);
