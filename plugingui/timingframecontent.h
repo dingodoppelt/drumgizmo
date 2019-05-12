@@ -68,9 +68,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl tightness{this, "Tightness"};
-	LabeledControl regain{this, "Timing Regain"};
-	LabeledControl laidback{this, "Laid Back-ness"};
+	LabeledControl tightness{this, "pTightness"};
+	LabeledControl regain{this, "pTimingRegain"};
+	LabeledControl laidback{this, "pLaidback"};
 
 	Knob tightness_knob{&tightness};
 	Knob regain_knob{&regain};

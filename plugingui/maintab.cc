@@ -29,6 +29,58 @@
 namespace GUI
 {
 
+constexpr char humanizer_tip[] = "\
+The first two knobs influence how DrumGizmo simulates the\n\
+stamina of a physical drummers, ie. the fact that they\n\
+loose power in their strokes when playing fast notes:\n\
+  * pAttack: How quickly the velocity gets reduced when\n\
+     playing fast notes.\n\
+     Higher value results in faster velocity reduction.\n\
+  * pRelease: How quickly the drummer regains the velocity\n\
+     when there are spaces between the notes.\n\
+     Higher value results in faster regain.\n\
+\n\
+The last knob controls the randomization of the sample selection:\n\
+  * pStdDev: The standard-deviation for the sample selection.\n\
+     Higher value makes it more likely that a sample further\n\
+     away from the input velocity will be played.";
+
+constexpr char timing_tip[] = "\
+These three knobs influence how DrumGizmo simulates the tightness\n\
+of the drummer. The drifting is defined as the difference between\n\
+the perfect metronome (defined by the note positions) and the 'internal'\n\
+metronome of the drummer which can then drift back and forth in a\n\
+controlled fashion:\n\
+  * pTightness: For each note how much is the drummer aloowed to drift.\n\
+     Higher value make the drummer more tight, ie. drift less.\n\
+  * pTimingRegain: Once the drifted, how fast does the drummer's 'internal'\n\
+     metronome get back in sync with the perfect metronome.\n\
+     Higher values moves the timng back towards perfect faster.\n\
+  * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n\
+     alter the feel of a beat.\n\
+     Positive values are up-beat, negative values are back on the beat.\n\
+\n\
+NOTE: Enabling timing humanization will introduce a fixed delay into the\n\
+audio stream. So this feature should be disabled when using DrumGizmo in\n\
+a real-time schenario such as live with a MIDI drumkit.";
+
+constexpr char sampleselection_tip[] = "\
+These three knobs influence how DrumGizmo selects\n\
+its samples in the following way:\n\
+  * pClose: The importance given to choosing a sample close\n\
+     to the actual MIDI value (after humanization)\n\
+  * pDiversity: The importance given to choosing samples\n\
+     which haven't been played recently.\n\
+  * pRandom: The amount of randomness added.";
+
+constexpr char visualizer_tip[] = "\
+This graph visualizes the time and velocity offsets of last note played\n\
+according to it's ideal input time and velocity.\n\
+The green lines indicate the ideal time and velocity positions.\n\
+The pink areas indicate the spread of the position and velocity of the\n\
+next note in line. The wider the area the more the note can move in time\n\
+and velocity.";
+
 MainTab::MainTab(Widget* parent,
                  Settings& settings,
                  SettingsNotifier& settings_notifier,
@@ -54,16 +106,14 @@ MainTab::MainTab(Widget* parent,
 	add("Resampling", resampling_frame, resamplingframe_content, 20, 0);
 
 	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 10, 1);
-	humanizer_frame.setHelpText("Hello World\nThis is a nice World\n... I think");
+	humanizer_frame.setHelpText(humanizer_tip);
 	add("Timing Humanizer", timing_frame, timingframe_content, 10, 1);
-	add("Sample Selection", sampleselection_frame, sampleselectionframe_content, 10, 1);
-	sampleselection_frame.setHelpText(
-		"These three knobs influence how DrumGizmo selects its samples in the following way:\n"
-		"    * Close: importance given to choosing a sample close to the actual MIDI value (after humanization)\n"
-		"    * Diversity: importance given to choosing samples which haven't been played recently\n"
-		"    * Random: amount of randomness added"
-		);
+	timing_frame.setHelpText(timing_tip);
+	add("Sample Selection", sampleselection_frame,
+	    sampleselectionframe_content, 10, 1);
+	sampleselection_frame.setHelpText(sampleselection_tip);
 	add("Visualizer", visualizer_frame, visualizerframe_content, 10, 1);
+	visualizer_frame.setHelpText(visualizer_tip);
 	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 9, 1);
 	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 10, 1);
 

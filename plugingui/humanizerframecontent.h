@@ -56,9 +56,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl attack{this, "Attack"}; // drummer strength
-	LabeledControl falloff{this, "Release"}; // regain
-	LabeledControl stddev{this, "StdDev"};
+	LabeledControl attack{this, "pAttack"}; // drummer strength
+	LabeledControl falloff{this, "pRelease"}; // regain
+	LabeledControl stddev{this, "pStdDev"};
 
 	Knob attack_knob{&attack};
 	Knob falloff_knob{&falloff};

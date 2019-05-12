@@ -60,9 +60,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl f_close{this, "Close"};
-	LabeledControl f_diverse{this, "Diverse"};
-	LabeledControl f_random{this, "Random"};
+	LabeledControl f_close{this, "pClose"};
+	LabeledControl f_diverse{this, "pDiverse"};
+	LabeledControl f_random{this, "pRandom"};
 
 	Knob f_close_knob{&f_close};
 	Knob f_diverse_knob{&f_diverse};

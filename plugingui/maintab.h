@@ -70,13 +70,13 @@ private:
 
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};
-	FrameWidget humanizer_frame{this, true, true};
 	FrameWidget diskstreaming_frame{this, false};
 	FrameWidget bleedcontrol_frame{this, true};
 	FrameWidget resampling_frame{this, true};
-	FrameWidget timing_frame{this, true};
+	FrameWidget humanizer_frame{this, true, true};
+	FrameWidget timing_frame{this, true, true};
 	FrameWidget sampleselection_frame{this, false, true};
-	FrameWidget visualizer_frame{this, false};
+	FrameWidget visualizer_frame{this, false, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
