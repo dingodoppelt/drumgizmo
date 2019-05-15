@@ -43,7 +43,7 @@ bool VelocityFilter::filter(event_t& event, size_t pos)
 	float mean = event.velocity - .5f/127.f; // XXX: this should actually be done when reading the events
 	float stddev = settings.velocity_stddev.load();
 	// the 20.0f we determined empirically
-	float lvl = power_min + random.normalDistribution(mean, stddev / 20.0f) * power_span;
+	float lvl = power_min + random.normalDistribution(mean, stddev / 30.0f) * power_span;
 
 	event.velocity = lvl;
 	return true;
