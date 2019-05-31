@@ -103,7 +103,7 @@ public:
 	int x;
 	int y;
 
-	int delta;
+	float delta;
 };
 
 class RepaintEvent

@@ -48,9 +48,9 @@ libdggui_la_CPPFLAGS = \
 	-DLODEPNG_NO_COMPILE_CPP
 
 libdggui_la_CFLAGS =
-if ENABLE_PUGL_COCOA
+
 libdggui_la_LIBTOOLFLAGS=--tag=CC
-endif
+
 libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
@@ -125,11 +125,13 @@ nodist_libdggui_la_SOURCES += \
 	nativewindow_win32.cc
 endif
 
-#if ENABLE_COCOA
-#nodist_libdggui_la_SOURCES += \
-#	nativewindow_cocoa.m \
-#	nativewindow_cocoa.cc
-#endif
+if ENABLE_COCOA
+nodist_libdggui_la_SOURCES += \
+	nativewindow_cocoa.mm
+
+libdggui_la_OBJCXXFLAGS = \
+	-fblocks
+endif
 
 if ENABLE_PUGL_X11
 nodist_libdggui_la_SOURCES += \

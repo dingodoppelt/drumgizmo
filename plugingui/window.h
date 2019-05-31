@@ -90,10 +90,11 @@ protected:
 	// For the Painter
 	friend class Widget;
 
-	// For the NativeWindow
+	// For the NativeWindow implementations:
 	friend class NativeWindowX11;
 	friend class NativeWindowWin32;
 	friend class NativeWindowPugl;
+	friend class NativeWindowCocoa;
 	PixelBuffer wpixbuf;
 
 	size_t refcount{0};

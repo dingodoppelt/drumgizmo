@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "nativewindow.h"
 
 namespace GUI
@@ -40,21 +42,34 @@ public:
 	~NativeWindowCocoa();
 
 	// From NativeWindow:
-	void setFixedSize(int width, int height) override;
-	void resize(int width, int height) override;
-	void move(int x, int y) override;
-	void show() override;
-	void hide() override;
-	void setCaption(const std::string &caption) override;
-	void handleBuffer() override;
-	void redraw() override;
-	void grabMouse(bool grab) override;
-	bool hasEvent() override;
-	std::shared_ptr<Event> getNextEvent() override;
-	std::shared_ptr<Event> peekNextEvent() override;
+	virtual void setFixedSize(std::size_t width, std::size_t height) override;
+	virtual void resize(std::size_t width, std::size_t height) override;
+	virtual std::pair<std::size_t, std::size_t> getSize() const override;
+	virtual void move(int x, int y) override;
+	virtual std::pair<int, int> getPosition() const override;
+	virtual void show() override;
+	virtual void hide() override;
+	virtual bool visible() const override;
+	virtual void setCaption(const std::string &caption) override;
+	virtual void redraw(const Rect& dirty_rect) override;
+	virtual void grabMouse(bool grab) override;
+	virtual EventQueue getEvents() override;
+	virtual void* getNativeWindowHandle() const override;
+
+	// Expose friend members of Window to ObjC++ implementation.
+	class Window& getWindow();
+	class PixelBuffer& getWindowPixbuf();
+	void resized();
+	void pushBackEvent(std::shared_ptr<Event> event);
 
 private:
+	void updateLayerOffset();
+
 	Window& window;
+	std::unique_ptr<struct priv> priv;
+	EventQueue event_queue;
+	void* native_window{nullptr};
+	bool first{true};
 };
 
 } // GUI::

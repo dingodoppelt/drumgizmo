@@ -129,7 +129,7 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 			scrollEvent->x = p.x;
 			scrollEvent->y = p.y;
-			scrollEvent->delta = -1 * (short)HIWORD(wp) / 60;
+			scrollEvent->delta = -1 * (short)HIWORD(wp) / 60.0f;
 			native->event_queue.push_back(scrollEvent);
 		}
 		break;

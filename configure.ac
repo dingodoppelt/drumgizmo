@@ -5,6 +5,7 @@ AM_INIT_AUTOMAKE
 
 AC_PROG_CXX
 AC_PROG_OBJC
+AC_PROG_OBJCXX
 AM_PROG_CC_C_O
 AC_PROG_MKDIR_P
 
@@ -39,6 +40,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 ]
 )
 CXXFLAGS="$TMP_CXXFLAGS $CXXFLAGS"
+OBJCXXFLAGS="$OBJCXXFLAGS $CXXFLAGS"
 AC_LANG_POP([C++])
 
 dnl ===========================
@@ -144,7 +146,7 @@ AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
 AS_IF([test "x$enable_gui" = "xauto"],
       [AC_MSG_RESULT([Auto setting gui based on host: $host_os])
 	     AS_CASE([$host_os],
-		      [darwin*], [enable_gui="pugl-cocoa"],
+		      [darwin*], [enable_gui="cocoa"],
 		      [linux*|*bsd*], [enable_gui="x11"],
 		      [msys|mingw*|windows*|winnt|cygwin], [enable_gui="win32"],
 
@@ -168,7 +170,7 @@ AS_IF(
   [test "x$enable_gui" = "xcocoa"],
   [AC_MSG_RESULT([Setting gui backend to Cocoa])
   GUI_CPPFLAGS="-DUI_COCOA"
-  GUI_LIBS="-framework OpenGL -framework Cocoa"
+  GUI_LIBS="-framework Cocoa"
 	],
 
   [test "x$enable_gui" = "xpugl-x11"],
