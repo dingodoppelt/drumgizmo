@@ -72,7 +72,7 @@ static std::string copyright()
 	return output.str();
 }
 
-static std::string usage(std::string name)
+static std::string usage(const std::string& name)
 {
 	std::ostringstream output;
 	output <<
@@ -96,7 +96,8 @@ static std::string usage(std::string name)
 
 		"  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event "
 		"input engine.\n"
-		"  -I, --inputparms       parmlist  Set input engine parameters.\n"
+		"  -I, --inputparms parmlist\n"
+		"                         Set input engine parameters.\n"
 		"  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio "
 		"output engine.\n"
 		"  -O, --outputparms      parmlist  Set output engine parameters.\n"
@@ -114,6 +115,8 @@ static std::string usage(std::string name)
 		"                         use this with a real-time drumkit.\n"
 		"  -T, --timing-humanizerparms parmlist\n"
 		"                         Timing humanizer options.\n"
+		"  -p, --parameters parmlist\n"
+		"                         Parameters for sample selection algoritm."
 		"  -v, --version          Print version information and exit.\n"
 		"  -h, --help             Print this message and exit.\n"
 		"\n"
@@ -148,6 +151,16 @@ static std::string usage(std::string name)
 		"  laidback:      Move notes ahead or behind in time in ms [+/-100].\n"
 		"  tightness:     Control the tightness of the drummer. [0; 1].\n"
 		"  regain:        Control how fast the drummer catches up the timing. [0; 1]\n"
+		"\n"
+		"Sample selection parameters:\n"
+		"  close:         The importance given to choosing a sample close to\n"
+		"                 the actual velocity value (after humanization) [0; 16].\n"
+		"  diverse:       The importance given to choosing samples\n"
+		"                 which haven't been played recently [0; 0.5].\n"
+		"  random:        The amount of randomness added [0; 0.5].\n"
+		"  stddev:        The standard-deviation for the sample selection.\n"
+		"                 Higher value makes it more likely that a sample further\n"
+		"                 away from the input velocity will be played [0; 4.5].\n"
 		"\n";
 	return output.str();
 }
@@ -413,6 +426,62 @@ int main(int argc, char* argv[])
 					exit(1);
 				}
 				settings.latency_regain.store(val);
+			}
+			else
+			{
+				std::cerr << "Unknown timing-humanizerparms argument " << token.key <<
+					std::endl;
+				exit(1);
+			}
+		}
+	});
+
+	opt.add("parameters", required_argument, 'p', [&]() {
+		std::string parms = optarg;
+		auto tokens = parseParameters(parms);
+		for(auto &token : tokens)
+		{
+			if(token.key == "close")
+			{
+				// Input range [0; 16]
+				auto val = atof_nol(token.value.data());
+				if(val < 0 || val > 16)
+				{
+					std::cerr << "close range is [0; 16].\n";
+					exit(1);
+				}
+				settings.sample_selection_f_close.store(val);
+			}
+			else if(token.key == "diverse")
+			{
+				// Input range [0; 0.5]
+				auto val = atof_nol(token.value.data());
+				if(val < 0.0 || val > 0.5)
+				{
+					std::cerr << "diverse range is [0; 0.5].\n";
+					exit(1);
+				}
+				settings.sample_selection_f_diverse.store(val);
+			}
+			else if(token.key == "random")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0.0 || val > 0.5)
+				{
+					std::cerr << "random range is [0; 0.5].\n";
+					exit(1);
+				}
+				settings.sample_selection_f_random.store(val);
+			}
+			else if(token.key == "stddev")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0.0 || val > 4.5)
+				{
+					std::cerr << "stddev range is [0; 4.5].\n";
+					exit(1);
+				}
+				settings.velocity_stddev.store(val);
 			}
 			else
 			{
