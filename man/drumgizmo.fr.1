@@ -1,4 +1,4 @@
-.TH "DRUMGIZMO" "1" "05 Août 2018" "drumgizmo" ""
+.TH "DRUMGIZMO" "1" "21 juillet 2018" "drumgizmo" ""
 
 .SH NOM
 drumgizmo \- application de batterie
@@ -10,7 +10,7 @@ drumgizmo \- application de batterie
 .PP
 \fBDrumGizmo\fR est un greffon ainsi qu'une application autonome de batterie multi-plateforme et à source ouverte. Il est comparable à plusieurs produits commerciaux de greffon de batterie.
 .PP
-DrumGizmo utilise un format de fichier de kit de batterie ouvert, permettant à la communauté de créer ses propres kits de batterie. Il possède une sortie multi-canaux, rendant possible de mixer exactement de même la manière que vous le feriez avec un kit de batterie réel. L'humaniseur optionnel inclu analyse les notes MIDI, en ajustant leurs vélocités à-la-volée. Ce client peut être utilisé comme un logiciel autonome effectuant un rendu MIDI, générant des fichiers .wav, 1 pour chaque canal. Ou bien, vous pouvez utilisez DrumGizmo comme un échantillonneur logiciel pour un kit de batterie électronique. Une version en greffon est également disponible.
+DrumGizmo utilise un format de fichier de kit de batterie ouvert, permettant à la communauté de créer ses propres kits de batterie. Il possède une sortie multi-canaux, rendant possible de mixer exactement de même la manière que vous le feriez avec un kit de batterie réel. L'humaniseur optionnel inclu analyse les notes MIDI, en ajustant leurs vélocités à-la-volée. Ce client peut être utilisé comme un logiciel autonome effectuant un rendu MIDI, générant des fichiers .wav, 1 pour chaque canal. Ou bien, vous pouvez utilisez DrumGizmo comme un échantillonneur logiciel pour un kit de batterie électronique. Des versions en greffon sont également disponibles.
 
 .SH "OPTIONS"
 .PD 0
@@ -22,7 +22,7 @@ Charger le kit en arrière-plan.
 .RE
 \fB-b, --bleed\fR
 .RS 7
-Paramètre et charge la repisse- maître.
+Paramètre et charge la repisse-maître.
 
 .RE
 \fB-i, --inputengine \fR{dummy|test|jackmidi|midifile}
@@ -49,6 +49,12 @@ track=<piste_midi> (-1 par défaut, toutes les pistes)
 midimap=<fichier_midimap>
 .P
 loop=<true|false>
+
+\fBossmidi:\fR
+.P
+midimap=<fichier_midimap>
+.P
+dev=<périphérique> (défaut '/dev/midi')
 
 \fBtest:\fR
 .P
@@ -149,6 +155,23 @@ Options du timing de l'humaniseur.
 \fBregain\fR=<val> (Contrôle la rapidité avec laquelle le batteur se rattrape au tempo. [0; 1])
 
 .RE
+\fB-p, --parameters parmlist\fR
+.RS 7
+Paramètres de l'algorithme de sélection des échantillons.
+.P
+\fBclose\fR=<val> (L'importance accordée au choix d'un échantillon proche de 
+la valeur réelle de la vitesse (après humanisation) [0; 16])
+.P
+\fBdiverse\fR=<val> (L'importance accordée au choix d'échantillons qui
+n'ont pas été joués récemment [0; 0.5])
+.P
+\fBrandom\fR=<val> (La quantité d'aléatoire ajoutée [0; 0.5])
+.P
+\fBstddev\fR=<val> (L'écart type pour la sélection de l'échantillon.
+Plus la valeur est élevée, plus il est probable qu'un échantillon
+plus éloigné de la vitesse d'entrée sera joué [0; 4.5])
+
+.RE
 \fB-v, --version\fR
 .RS 7
 Affiche la version de drumgizmo puis quitte.
@@ -178,3 +201,4 @@ Rapporter les bogues à http://www.drumgizmo.org/wiki/doku.php?id=bugs (en angla
 
 .SH "INFORMATIONS ADDITIONELLES"
 Pour davantage d'informations, visitez le site internet http://www.drumgizmo.org.
+
