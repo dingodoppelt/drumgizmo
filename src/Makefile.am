@@ -46,9 +46,9 @@ nodist_libdg_la_SOURCES = \
 
 EXTRA_DIST = \
 	$(nodist_libdg_la_SOURCES) \
+	DGDOM.h \
 	atomic.h \
 	audio.h \
-	audiotypes.h \
 	audiocache.h \
 	audiocacheeventhandler.h \
 	audiocachefile.h \
@@ -57,19 +57,21 @@ EXTRA_DIST = \
 	audioinputengine.h \
 	audioinputenginemidi.h \
 	audiooutputengine.h \
+	audiotypes.h \
 	bytesizeparser.h \
 	channel.h \
 	channelmixer.h \
 	configfile.h \
 	configparser.h \
 	cpp11fix.h \
-	domloader.h \
 	dgxmlparser.h \
+	domloader.h \
 	drumgizmo.h \
 	drumkit.h \
 	drumkitloader.h \
 	event.h \
 	events.h \
+	grid.h \
 	inputfilter.h \
 	inputprocessor.h \
 	instrument.h \
@@ -84,10 +86,11 @@ EXTRA_DIST = \
 	random.h \
 	rangemap.h \
 	sample.h \
+	sample_selection.h \
 	semaphore.h \
 	settings.h \
 	staminafilter.h \
 	syncedsettings.h \
 	thread.h \
-	velocityfilter.cc \
+	velocityfilter.h \
 	versionstr.h

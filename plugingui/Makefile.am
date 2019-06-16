@@ -196,12 +196,13 @@ EXTRA_DIST = \
 	diskstreamingframecontent.h \
 	drawable.h \
 	drumkitframecontent.h \
+	drumkittab.h \
 	eventhandler.h \
 	filebrowser.h \
 	font.h \
 	frame.h \
 	guievent.h \
-	humanisertab.h \
+	helpbutton.h \
 	humaniservisualiser.h \
 	humanizerframecontent.h \
 	image.h \
@@ -230,6 +231,7 @@ EXTRA_DIST = \
 	resamplingframecontent.h \
 	resource.h \
 	resource_data.h \
+	sampleselectionframecontent.h \
 	scrollbar.h \
 	slider.h \
 	stackedwidget.h \
@@ -241,6 +243,7 @@ EXTRA_DIST = \
 	texturedbox.h \
 	timingframecontent.h \
 	toggle.h \
+	tooltip.h \
 	utf8.h \
 	verticalline.h \
 	visualizerframecontent.h \

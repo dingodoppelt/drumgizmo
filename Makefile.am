@@ -16,4 +16,8 @@ EXTRA_DIST = \
 \
 	getoptpp/getoptpp.hpp \
 \
-	plugingui/lodepng/lodepng.h
+	plugingui/lodepng/lodepng.h \
+\
+	pugixml/src/pugixml.hpp \
+	pugixml/src/pugiconfig.hpp \
+	pugixml/src/pugixml.cpp

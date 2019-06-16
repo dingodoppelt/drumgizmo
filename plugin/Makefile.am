@@ -92,6 +92,7 @@ EXTRA_DIST = \
 	drumgizmo_vst.sym \
 	$(top_srcdir)/plugin/plugingizmo/plugin.h \
 	$(top_srcdir)/plugin/plugingizmo/midievent.h \
+	$(top_srcdir)/plugin/plugingizmo/midnam_lv2.h \
 	$(top_srcdir)/plugin/plugingizmo/pluginlv2.h \
 	$(top_srcdir)/plugin/plugingizmo/pluginvst.h \
 	$(top_srcdir)/plugin/plugingizmo/inline-display.h
