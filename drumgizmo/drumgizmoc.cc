@@ -116,7 +116,7 @@ static std::string usage(const std::string& name)
 		"  -T, --timing-humanizerparms parmlist\n"
 		"                         Timing humanizer options.\n"
 		"  -p, --parameters parmlist\n"
-		"                         Parameters for sample selection algoritm."
+		"                         Parameters for sample selection algorithm."
 		"  -v, --version          Print version information and exit.\n"
 		"  -h, --help             Print this message and exit.\n"
 		"\n"

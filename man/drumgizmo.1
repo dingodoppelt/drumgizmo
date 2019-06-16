@@ -155,6 +155,23 @@ Timing humanizer options.
 \fBregain\fR=<val> (Control how fast the drummer catches up the timing. [0; 1])
 
 .RE
+\fB-p, --parameters parmlist\fR
+.RS 7
+Parameters for the sample selection algorithm.
+.P
+\fBclose\fR=<val> (The importance given to choosing a sample close to
+the actual velocity value (after humanization) [0; 16])
+.P
+\fBdiverse\fR=<val> (The importance given to choosing samples which
+haven't been played recently [0; 0.5])
+.P
+\fBrandom\fR=<val> (The amount of randomness added [0; 0.5])
+.P
+\fBstddev\fR=<val> (The standard-deviation for the sample
+selection. Higher value makes it more likely that a sample further
+away from the input velocity will be played [0; 4.5])
+
+.RE
 \fB-v, --version\fR
 .RS 7
 Print drumgizmo version and exit.
