@@ -446,7 +446,7 @@ void DrumGizmo::setSamplerate(float samplerate)
 		buf.reset(new sample_t[MAX_RESAMPLER_BUFFER_SIZE]);
 	}
 
-	for(int c = 0; c < MAX_NUM_CHANNELS; ++c)
+	for(int c = 0; c < NUM_CHANNELS; ++c)
 	{
 		zita[c].reset();
 		auto nchan = 1u; // mono

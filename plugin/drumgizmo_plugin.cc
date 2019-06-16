@@ -26,6 +26,8 @@
  */
 #include "drumgizmo_plugin.h"
 
+#include <config.h>
+
 #include <cstring>
 #include <algorithm>
 #include <string>
@@ -110,7 +112,7 @@ size_t DrumGizmoPlugin::getNumberOfAudioInputs()
 
 size_t DrumGizmoPlugin::getNumberOfAudioOutputs()
 {
-	return 16;
+	return NUM_CHANNELS;
 }
 
 std::string DrumGizmoPlugin::getId()
@@ -148,7 +150,7 @@ PluginCategory DrumGizmoPlugin::getPluginCategory()
 	return PluginCategory::Synth;
 }
 
-static float g_samples[16*  4096];
+static float g_samples[NUM_CHANNELS *  4096];
 
 void DrumGizmoPlugin::process(size_t pos,
                               const std::vector<MidiEvent>& input_events,

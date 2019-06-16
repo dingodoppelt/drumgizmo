@@ -203,6 +203,14 @@ AM_CONDITIONAL([ENABLE_PUGL_X11], [test "x$enable_gui" = "xpugl-x11"])
 AM_CONDITIONAL([ENABLE_PUGL_WIN32], [test "x$enable_gui" = "xpugl-win32"])
 AM_CONDITIONAL([ENABLE_PUGL_COCOA], [test "x$enable_gui" = "xpugl-cocoa"])
 
+dnl ===========================
+dnl Custom number of outputs?
+dnl ===========================
+AC_ARG_ENABLE([custom-channel-count],
+	AS_HELP_STRING([--enable-custom-channel-count[=count]], [Compile with specified number of output channels [default=16]]),,
+        [enable_custom_channel_count="16"])
+AC_DEFINE_UNQUOTED([NUM_CHANNELS], [$enable_custom_channel_count], [Number of output channels])
+
 dnl ======================
 dnl Compile unit tests
 dnl ======================

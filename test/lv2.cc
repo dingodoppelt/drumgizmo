@@ -26,6 +26,8 @@
  */
 #include "dgunit.h"
 
+#include <config.h>
+
 #include <thread>
 #include <chrono>
 #include <memory.h>
@@ -379,7 +381,7 @@ public:
 
 		// Port buffers:
 		char sequence_buffer[4096];
-		float pcm_buffer[16][10];
+		float pcm_buffer[NUM_CHANNELS][10];
 		bool freeWheel = true;
 
 		// Free wheel port
@@ -389,7 +391,7 @@ public:
 		res = h.connectPort((int)Ports::MidiPort, seq.data());
 		DGUNIT_ASSERT_EQUAL(0, res);
 
-		for(int i = 0; i < 16; ++i)
+		for(int i = 0; i < NUM_CHANNELS; ++i)
 		{
 			for(int j = 0; j < 10; ++j)
 			{

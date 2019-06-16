@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <config.h>
+
 #include <string>
 #include <list>
 #include <array>
@@ -74,7 +76,6 @@ public:
 	void setRandomSeed(unsigned int seed);
 
 private:
-	static constexpr int MAX_NUM_CHANNELS = 64;
 	static constexpr int MAX_RESAMPLER_BUFFER_SIZE = 4096 * 8;
 
 protected:
@@ -83,7 +84,7 @@ protected:
 	AudioOutputEngine& oe;
 	AudioInputEngine& ie;
 
-	std::list< Event* > activeevents[MAX_NUM_CHANNELS];
+	std::list< Event* > activeevents[NUM_CHANNELS];
 
 	bool enable_resampling{true};
 
@@ -101,8 +102,8 @@ protected:
 	SettingsGetter settings_getter;
 
 	Random rand;
-	std::array<Resampler, MAX_NUM_CHANNELS> zita;
-	std::array<std::unique_ptr<sample_t>, MAX_NUM_CHANNELS> resampler_input_buffer;
+	std::array<Resampler, NUM_CHANNELS> zita;
+	std::array<std::unique_ptr<sample_t>, NUM_CHANNELS> resampler_input_buffer;
 	double ratio = 1.0;
 
 };

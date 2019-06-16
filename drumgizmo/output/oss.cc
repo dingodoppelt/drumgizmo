@@ -31,10 +31,11 @@
 #include <unistd.h>
 #include <iostream>
 
+#include <config.h>
 
 OSSOutputEngine::OSSOutputEngine()
 	: dev{"/dev/dsp"}
-	, num_channels{16}
+	, num_channels{NUM_CHANNELS}
 	, srate{44100}
 	, format{AFMT_S32_NE}
 	, data{}
