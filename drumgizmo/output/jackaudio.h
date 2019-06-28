@@ -26,7 +26,7 @@
  */
 #pragma once
 #include <vector>
-#include <semaphore.h>
+#include <sem.h>
 
 #include "audiooutputengine.h"
 #include "../jackclient.h"

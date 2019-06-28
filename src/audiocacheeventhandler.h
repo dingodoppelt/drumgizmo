@@ -31,7 +31,7 @@
 #include <atomic>
 
 #include "thread.h"
-#include "semaphore.h"
+#include "sem.h"
 
 #include "audiocachefile.h"
 #include "audiocacheidmanager.h"

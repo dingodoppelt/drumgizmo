@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            semaphore.h
+ *            sem.h
  *
  *  Sat Oct  8 17:44:13 CEST 2005
  *  Copyright  2005 Bent Bisballe Nyeng

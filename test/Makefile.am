@@ -44,7 +44,7 @@ audiocache_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/sem.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
 	dgtest.cc \
@@ -58,7 +58,7 @@ audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocachefile_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/sem.cc \
 	$(top_srcdir)/src/audiofile.cc \
 	$(top_srcdir)/src/random.cc \
 	dgtest.cc \
@@ -85,7 +85,7 @@ audiocacheeventhandler_SOURCES = \
 	$(top_srcdir)/src/audiocacheidmanager.cc \
 	$(top_srcdir)/src/audiocachefile.cc \
 	$(top_srcdir)/src/thread.cc \
-	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/sem.cc \
 	dgtest.cc \
 	audiocacheeventhandlertest.cc
 
@@ -165,7 +165,7 @@ semaphoretest_CXXFLAGS = -DOUTPUT=\"semaphoretest\" \
 semaphoretest_LDFLAGS = $(PTHREAD_LIBS)
 semaphoretest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
-	$(top_srcdir)/src/semaphore.cc \
+	$(top_srcdir)/src/sem.cc \
 	semaphoretest.cc \
 	dgtest.cc
 

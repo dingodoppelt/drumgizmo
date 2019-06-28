@@ -31,7 +31,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "../src/semaphore.h"
+#include "../src/sem.h"
 
 std::chrono::nanoseconds dist(const std::chrono::duration<float>& a,
                               const std::chrono::duration<float>& b)

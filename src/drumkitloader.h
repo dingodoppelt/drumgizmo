@@ -32,7 +32,7 @@
 #include <vector>
 
 #include "thread.h"
-#include "semaphore.h"
+#include "sem.h"
 
 #include "drumkit.h"
 #include "settings.h"

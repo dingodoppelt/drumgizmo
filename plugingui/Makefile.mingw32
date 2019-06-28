@@ -1,7 +1,7 @@
 DG_SRC = \
 	../src/configfile.cc \
 	../src/thread.cc \
-	../src/semaphore.cc \
+	../src/sem.cc \
 	../src/mutex.cc
 
 DG_CFLAGS = -I.. -I../src -DSSE -msse -msse2

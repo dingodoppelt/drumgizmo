@@ -38,7 +38,7 @@ nodist_libdg_la_SOURCES = \
 	random.cc \
 	sample.cc \
 	sample_selection.cc \
-	semaphore.cc \
+	sem.cc \
 	staminafilter.cc \
 	thread.cc \
 	velocityfilter.cc \
@@ -87,7 +87,7 @@ EXTRA_DIST = \
 	rangemap.h \
 	sample.h \
 	sample_selection.h \
-	semaphore.h \
+	sem.h \
 	settings.h \
 	staminafilter.h \
 	syncedsettings.h \

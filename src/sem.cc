@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            semaphore.cc
+ *            sem.cc
  *
  *  Sat Oct  8 17:44:13 CEST 2005
  *  Copyright  2005 Bent Bisballe Nyeng
@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "semaphore.h"
+#include "sem.h"
 
 #include <hugin.hpp>
 #include <limits>
@@ -36,8 +36,7 @@
 #include "platform.h"
 
 #if DG_PLATFORM != DG_PLATFORM_WINDOWS
-// Make sure we don't include /this/ file's header...
-#include <../include/semaphore.h>
+#include <semaphore.h>
 #include <errno.h>
 #include <stdio.h>
 #include <sys/time.h>
