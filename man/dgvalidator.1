@@ -1,0 +1,36 @@
+.TH "DGVALIDATOR" "1" "29 June 2019" "dgvalidator" ""
+
+.SH NAME
+dgvalidator \- drumgizmo drumkit validator
+
+.SH SYNOPSIS
+\fBdgvalidator\fR <drumkitfile>|-h|--help
+
+.SH "DESCRIPTION"
+.PP
+\fBDgvalidator\fR is a simple validator tool for drumgizmo drumkit files.
+.PP
+Dgvalidator will try to load the drumkit pointed to by drumkitfile and
+validate it. It validates both the xml in the drumkit and all instrument files
+referred in it as well as the the semantics of the contents -
+including checking for the existance and validity of all audiofiles
+referred by the instruments.
+
+.SH "OPTIONS"
+.PD 0
+.RE
+\fB-h, --help\fR
+.RS 7
+Print command line help and exit.
+
+.RE
+\fBdrumkitfile\fR
+.RS 7
+The drumkitfile to verify.
+
+.RE
+.SH "BUGS"
+Report bugs to http://www.drumgizmo.org/wiki/doku.php?id=bugs.
+
+.SH "ADDITIONAL INFORMATION"
+For further information, visit the website http://www.drumgizmo.org.

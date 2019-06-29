@@ -34,8 +34,32 @@
 #include <string>
 #include <hugin.hpp>
 
+void printUsage(const char* prog, bool full = true)
+{
+	printf("Usage: %s <drumkit>|-h|--help\n", prog);
+	if(!full)
+	{
+		return;
+	}
+	printf("Validates the xml and semantics of the drumkit file and prints "
+	       "any found errors to the console.\n");
+	printf("Returns 0 on success or 1 if errors were found.\n");
+}
+
 int main(int argc, char* argv[])
 {
+	if(argc != 2)
+	{
+		printUsage(argv[0], false);
+		return 1;
+	}
+
+	if(std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
+	{
+		printUsage(argv[0]);
+		return 1;
+	}
+
 	std::string edited_filename = argv[1];
 	DrumkitDOM drumkitdom;
 	std::vector<InstrumentDOM> instrumentdoms;
@@ -86,5 +110,20 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	return 0;
+	// Verify all referred audiofiles
+	for(const auto& instrument: kit.instruments)
+	{
+		for(auto& audiofile: instrument->audiofiles)
+		{
+			audiofile->load(1);
+			if(!audiofile->isLoaded())
+			{
+				WARN(drumkitloader, "Instrument file load error: '%s'",
+				     audiofile->filename.data());
+				parseerror = true;
+			}
+		}
+	}
+
+	return parseerror ? 1 : 0;
 }
