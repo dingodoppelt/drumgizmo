@@ -68,7 +68,7 @@ public:
 	//! Signal the loader to start loading all audio files contained in the kit.
 	//! All other AudioFiles in queue will be removed before the new ones are
 	//! scheduled.
-	void loadKit(DrumKit *kit);
+	void loadKitAudio(const DrumKit& kit);
 
 	//! Skip all queued AudioFiles.
 	void skip();

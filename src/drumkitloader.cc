@@ -189,14 +189,14 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	settings.drumkit_version = kit.getVersion();
 	settings.drumkit_samplerate = kit.getSamplerate();
 
-	loadKit(&kit);
+	loadKitAudio(kit);
 
 	DEBUG(loadkit, "loadkit: Success\n");
 
 	return true;
 }
 
-void DrumKitLoader::loadKit(DrumKit *kit)
+void DrumKitLoader::loadKitAudio(const DrumKit& kit)
 {
 //	std::lock_guard<std::mutex> guard(mutex);
 
@@ -207,7 +207,7 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	DEBUG(loader, "cache_enable: %s\n", cache_enable?"true":"false");
 
-	auto number_of_files = kit->getNumberOfFiles();
+	auto number_of_files = kit.getNumberOfFiles();
 	if(cache_enable && number_of_files > 0)
 	{
 		auto cache_limit_per_file = cache_limit / number_of_files;
@@ -237,13 +237,13 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 
 	// Count total number of files that need loading:
 	settings.number_of_files.store(0);
-	for(auto& instr_ptr: kit->instruments)
+	for(const auto& instr_ptr: kit.instruments)
 	{
 		settings.number_of_files.fetch_add(instr_ptr->audiofiles.size());
 	}
 
 	// Now actually queue them for loading:
-	for(auto& instr_ptr: kit->instruments)
+	for(const auto& instr_ptr: kit.instruments)
 	{
 		for(auto& audiofile: instr_ptr->audiofiles)
 		{
@@ -254,7 +254,7 @@ void DrumKitLoader::loadKit(DrumKit *kit)
 	DEBUG(loader, "Queued %d (size: %d) AudioFiles for loading.\n",
 	      (int)settings.number_of_files.load(), (int)load_queue.size());
 
-	audio_cache.updateChunkSize(kit->channels.size());
+	audio_cache.updateChunkSize(kit.channels.size());
 
 	semaphore.post(); // Start loader loop.
 }
