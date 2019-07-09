@@ -1,4 +1,30 @@
-Version 0.9.15
+Version 0.9.17
+==============
+Release date: July 15th 2019
+Contributors: deva, chaot4, suhr, trebmuh
+
+In this release we tried to jam in as many of our planned changes to the
+xml as possible. There are still a few more to go but this release has
+brought us a large step closer to our feature-complete xml format. Quite a
+few other major features has also found their way into this release, which
+will be much more visible (and audible) to the users.
+
+Highlights:
+ - Improved sample selection algorithm.
+ - Clicky-kit feature.
+ - Midnam support.
+ - Directed choke functionality.
+ - Drumkit metadata support.
+ - Experimental Cocoa UI support for MacOSX.
+
+Also some bug fixes and a lot of code refactoring (replaced eXpat with
+pugixml for one).
+
+For a detailed description of all the new shiny features, including
+audio samples and lots of screenshots, see the changelog for 0.9.17:
+ https://drumgizmo.org/wiki/doku.php?id=changelog:drumgizmo-0.9.17
+
+Version 0.9.16
 ==============
 Release date: August 12th 2018
 Contributors: deva, chaot4, suhr, trebmuh
