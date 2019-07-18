@@ -46,9 +46,9 @@ public:
 	                            SettingsNotifier& settings_notifier);
 
 private:
-	static float constexpr f_close_factor = 16.f;
-	static float constexpr f_diverse_factor = .5f;
-	static float constexpr f_random_factor = .5f;
+	static float constexpr f_close_factor = 4.f;
+	static float constexpr f_diverse_factor = 1.f;
+	static float constexpr f_random_factor = 1.f;
 
 	void fCloseKnobValueChanged(float value);
 	void fDiverseKnobValueChanged(float value);

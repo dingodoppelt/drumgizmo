@@ -74,19 +74,26 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	const float f_diverse = settings.sample_selection_f_diverse.load();
 	const float f_random = settings.sample_selection_f_random.load();
 
+	float const power_range = powerlist.getMaxPower() - powerlist.getMinPower();
+
 	// start with most promising power value and then stop when reaching far values
 	// which cannot become opt anymore
 	auto closest_it = std::lower_bound(samples.begin(), samples.end(), level);
 	std::size_t up_index = std::distance(samples.begin(), closest_it);
 	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
-	float up_value_lb = (up_index < samples.size() ? f_close*pow2(samples[up_index].power-level) : std::numeric_limits<float>::max());
-	float down_value_lb = (up_index != 0 ? f_close*pow2(samples[down_index].power-level) : std::numeric_limits<float>::max());
+
+	auto const close_up = (samples[up_index].power-level)/power_range;
+	auto const close_down = samples[down_index].power-level/power_range;
+	float up_value_lb = (up_index < samples.size() ? f_close*pow2(close_up) : std::numeric_limits<float>::max());
+	float down_value_lb = (up_index != 0 ? f_close*pow2(close_down) : std::numeric_limits<float>::max());
 
 	std::size_t count = 0;
 	do
 	{
+		DEBUG(rand, "%d %d", (int)up_index, (int)down_index);
+
 		// at least avoid infinite loops in case of a bug...
-		if (count > samples.size()) { break; }
+		if (up_index == samples.size()-1 && down_index == 0) { break; }
 
 		std::size_t current_index;
 		if (up_value_lb < down_value_lb)
@@ -95,7 +102,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 			if (up_index != samples.size()-1)
 			{
 				++up_index;
-				up_value_lb = f_close*pow2(samples[up_index].power-level);
+				up_value_lb = f_close*pow2((samples[up_index].power-level)/power_range);
 			}
 			else
 			{
@@ -108,7 +115,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 			if (down_index != 0)
 			{
 				--down_index;
-				down_value_lb = f_close*pow2(samples[down_index].power-level);
+				down_value_lb = f_close*pow2((samples[down_index].power-level)/power_range);
 			}
 			else
 			{
@@ -117,7 +124,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 		}
 
 		auto random = rand.floatInRange(0.,1.);
-		auto close = samples[current_index].power - level;
+		auto close = (samples[current_index].power - level)/power_range;
 		auto diverse = 1./(1. + (float)(pos - last[current_index])/settings.samplerate);
 		auto value = f_close*pow2(close) + f_diverse*pow2(diverse) + f_random*random;
 
