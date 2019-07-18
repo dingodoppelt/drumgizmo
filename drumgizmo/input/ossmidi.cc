@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <iostream>
+#include <cstring>
 
 
 OSSInputEngine::OSSInputEngine()
