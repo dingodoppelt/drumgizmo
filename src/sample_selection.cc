@@ -126,7 +126,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 		auto random = rand.floatInRange(0.,1.);
 		auto close = (samples[current_index].power - level)/power_range;
 		auto diverse = 1./(1. + (float)(pos - last[current_index])/settings.samplerate);
-		auto value = f_close*pow2(close) + f_diverse*pow2(diverse) + f_random*random;
+		auto value = f_close*pow2(close) + f_diverse*diverse + f_random*random;
 
 		if (value < value_opt)
 		{
