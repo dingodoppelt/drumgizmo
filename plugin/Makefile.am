@@ -41,8 +41,32 @@ ttlgen_LDFLAGS = $(DL_LIBS)
 ttlgen_SOURCES = \
 	$(top_srcdir)/plugin/plugingizmo/ttlgen.cc
 
+if ENABLE_X11
+UITYPE=X11UI
+endif
+
+if ENABLE_WIN32
+UITYPE=WindowsUI
+endif
+
+if ENABLE_COCOA
+UITYPE=CocoaUI
+endif
+
+if ENABLE_PUGL_X11
+UITYPE=X11UI
+endif
+
+if ENABLE_PUGL_WIN32
+UITYPE=WindowsUI
+endif
+
+if ENABLE_PUGL_COCOA
+UITYPE=CocoaUI
+endif
+
 manifest.ttl : ttlgen drumgizmo.la
-	./ttlgen .libs/drumgizmo.so manifest.ttl
+	./ttlgen .libs/drumgizmo.so manifest.ttl $(UITYPE)
 
 
 #######
