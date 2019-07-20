@@ -83,7 +83,7 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
 
 	auto const close_up = (samples[up_index].power-level)/power_range;
-	auto const close_down = samples[down_index].power-level/power_range;
+	auto const close_down = (samples[down_index].power-level)/power_range;
 	float up_value_lb = (up_index < samples.size() ? f_close*pow2(close_up) : std::numeric_limits<float>::max());
 	float down_value_lb = (up_index != 0 ? f_close*pow2(close_down) : std::numeric_limits<float>::max());
 
