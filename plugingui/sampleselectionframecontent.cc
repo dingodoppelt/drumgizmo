@@ -45,21 +45,21 @@ SampleselectionframeContent::SampleselectionframeContent(Widget* parent,
 	f_close.resize(80, 80);
 	f_close_knob.resize(30, 30);
 	f_close_knob.showValue(false);
-	f_close_knob.setDefaultValue(Settings::sample_selection_f_close_default/f_close_factor);
+	f_close_knob.setDefaultValue(Settings::sample_selection_f_close_default);
 	f_close.setControl(&f_close_knob);
 	layout.addItem(&f_close);
 
 	f_diverse.resize(80, 80);
 	f_diverse_knob.resize(30, 30);
 	f_diverse_knob.showValue(false);
-	f_diverse_knob.setDefaultValue(Settings::sample_selection_f_diverse_default/f_diverse_factor);
+	f_diverse_knob.setDefaultValue(Settings::sample_selection_f_diverse_default);
 	f_diverse.setControl(&f_diverse_knob);
 	layout.addItem(&f_diverse);
 
 	f_random.resize(80, 80);
 	f_random_knob.resize(30, 30);
 	f_random_knob.showValue(false);
-	f_random_knob.setDefaultValue(Settings::sample_selection_f_random_default/f_random_factor);
+	f_random_knob.setDefaultValue(Settings::sample_selection_f_random_default);
 	f_random.setControl(&f_random_knob);
 	layout.addItem(&f_random);
 
@@ -84,32 +84,32 @@ SampleselectionframeContent::SampleselectionframeContent(Widget* parent,
 
 void SampleselectionframeContent::fCloseKnobValueChanged(float value)
 {
-	settings.sample_selection_f_close.store(value*f_close_factor);
+	settings.sample_selection_f_close.store(value);
 }
 
 void SampleselectionframeContent::fDiverseKnobValueChanged(float value)
 {
-	settings.sample_selection_f_diverse.store(value*f_diverse_factor);
+	settings.sample_selection_f_diverse.store(value);
 }
 
 void SampleselectionframeContent::fRandomKnobValueChanged(float value)
 {
-	settings.sample_selection_f_random.store(value*f_random_factor);
+	settings.sample_selection_f_random.store(value);
 }
 
 void SampleselectionframeContent::fCloseSettingsValueChanged(float value)
 {
-	f_close_knob.setValue(value/f_close_factor);
+	f_close_knob.setValue(value);
 }
 
 void SampleselectionframeContent::fDiverseSettingsValueChanged(float value)
 {
-	f_diverse_knob.setValue(value/f_diverse_factor);
+	f_diverse_knob.setValue(value);
 }
 
 void SampleselectionframeContent::fRandomSettingsValueChanged(float value)
 {
-	f_random_knob.setValue(value/f_random_factor);
+	f_random_knob.setValue(value);
 }
 
 } // GUI::

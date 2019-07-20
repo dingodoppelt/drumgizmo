@@ -70,7 +70,8 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	float close_opt = 0.;
 	float diverse_opt = 0.;
 
-	const float f_close = settings.sample_selection_f_close.load();
+	// Note the magic value of "4" in front of f_close
+	const float f_close = 4.*settings.sample_selection_f_close.load();
 	const float f_diverse = settings.sample_selection_f_diverse.load();
 	const float f_random = settings.sample_selection_f_random.load();
 
