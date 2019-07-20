@@ -70,10 +70,10 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	float close_opt = 0.;
 	float diverse_opt = 0.;
 
-	// Note the magic value of "4" in front of f_close
+	// Note the magic values in front of the settings factors.
 	const float f_close = 4.*settings.sample_selection_f_close.load();
-	const float f_diverse = settings.sample_selection_f_diverse.load();
-	const float f_random = settings.sample_selection_f_random.load();
+	const float f_diverse = (1./2.)*settings.sample_selection_f_diverse.load();
+	const float f_random = (1./3.)*settings.sample_selection_f_random.load();
 
 	float const power_range = powerlist.getMaxPower() - powerlist.getMinPower();
 
