@@ -149,18 +149,18 @@ static std::string usage(const std::string& name)
 		"\n"
 		"Timing humanizer parameters:\n"
 		"  laidback:      Move notes ahead or behind in time in ms [+/-100].\n"
-		"  tightness:     Control the tightness of the drummer. [0; 1].\n"
-		"  regain:        Control how fast the drummer catches up the timing. [0; 1]\n"
+		"  tightness:     Control the tightness of the drummer. [0,1].\n"
+		"  regain:        Control how fast the drummer catches up the timing. [0,1]\n"
 		"\n"
 		"Sample selection parameters:\n"
 		"  close:         The importance given to choosing a sample close to\n"
-		"                 the actual velocity value (after humanization) [0; 16].\n"
+		"                 the actual velocity value (after humanization) [0,1].\n"
 		"  diverse:       The importance given to choosing samples\n"
-		"                 which haven't been played recently [0; 0.5].\n"
-		"  random:        The amount of randomness added [0; 0.5].\n"
+		"                 which haven't been played recently [0,1].\n"
+		"  random:        The amount of randomness added [0,1].\n"
 		"  stddev:        The standard-deviation for the sample selection.\n"
 		"                 Higher value makes it more likely that a sample further\n"
-		"                 away from the input velocity will be played [0; 4.5].\n"
+		"                 away from the input velocity will be played [0, 4.5].\n"
 		"\n";
 	return output.str();
 }
@@ -408,11 +408,11 @@ int main(int argc, char* argv[])
 			}
 			else if(token.key == "tightness")
 			{
-				// Input range [0; 1]
+				// Input range [0, 1]
 				auto val = atof_nol(token.value.data());
 				if(val < 0.0 || val > 1.0)
 				{
-					std::cerr << "tightness range is [0; 1].\n";
+					std::cerr << "tightness range is [0, 1].\n";
 					exit(1);
 				}
 				settings.latency_stddev.store((-1.0 * val + 1.0) * 20.0);
@@ -422,7 +422,7 @@ int main(int argc, char* argv[])
 				auto val = atof_nol(token.value.data());
 				if(val < 0.0 || val > 1.0)
 				{
-					std::cerr << "regain range is [0; 1].\n";
+					std::cerr << "regain range is [0, 1].\n";
 					exit(1);
 				}
 				settings.latency_regain.store(val);
@@ -443,22 +443,20 @@ int main(int argc, char* argv[])
 		{
 			if(token.key == "close")
 			{
-				// Input range [0; 16]
 				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 16)
+				if(val < 0 || val > 1)
 				{
-					std::cerr << "close range is [0; 16].\n";
+					std::cerr << "close range is [0, 1].\n";
 					exit(1);
 				}
 				settings.sample_selection_f_close.store(val);
 			}
 			else if(token.key == "diverse")
 			{
-				// Input range [0; 0.5]
 				auto val = atof_nol(token.value.data());
-				if(val < 0.0 || val > 0.5)
+				if(val < 0 || val > 1)
 				{
-					std::cerr << "diverse range is [0; 0.5].\n";
+					std::cerr << "diverse range is [0, 1].\n";
 					exit(1);
 				}
 				settings.sample_selection_f_diverse.store(val);
@@ -466,9 +464,9 @@ int main(int argc, char* argv[])
 			else if(token.key == "random")
 			{
 				auto val = atof_nol(token.value.data());
-				if(val < 0.0 || val > 0.5)
+				if(val < 0 || val > 1)
 				{
-					std::cerr << "random range is [0; 0.5].\n";
+					std::cerr << "random range is [0, 1].\n";
 					exit(1);
 				}
 				settings.sample_selection_f_random.store(val);
@@ -476,9 +474,9 @@ int main(int argc, char* argv[])
 			else if(token.key == "stddev")
 			{
 				auto val = atof_nol(token.value.data());
-				if(val < 0.0 || val > 4.5)
+				if(val < 0 || val > 4.5)
 				{
-					std::cerr << "stddev range is [0; 4.5].\n";
+					std::cerr << "stddev range is [0, 4.5].\n";
 					exit(1);
 				}
 				settings.velocity_stddev.store(val);
