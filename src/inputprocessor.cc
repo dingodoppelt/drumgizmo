@@ -194,8 +194,8 @@ bool InputProcessor::processOnset(event_t& event,
 		return false;
 	}
 
-	auto const selected_level = (sample->getPower() - instr->getMinPower())/power_span;
-	settings.velocity_modifier_current.store(selected_level / orig_level);
+	auto const selected_level = (sample->getPower() - power_min)/power_span;
+	settings.velocity_modifier_current.store(selected_level/event.velocity);
 
 	for(Channel& ch: kit.channels)
 	{
