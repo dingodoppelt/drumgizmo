@@ -182,7 +182,11 @@ bool InputProcessor::processOnset(event_t& event,
 
 	}
 
-	const auto sample = instr->sample(event.velocity, event.offset + pos);
+	auto const power_max = instr->getMaxPower();
+	auto const power_min = instr->getMinPower();
+	float const power_span = power_max - power_min;
+	float const instrument_level = power_min + event.velocity*power_span;
+	const auto sample = instr->sample(instrument_level, event.offset + pos);
 
 	if(sample == nullptr)
 	{
@@ -190,9 +194,7 @@ bool InputProcessor::processOnset(event_t& event,
 		return false;
 	}
 
-	auto selected_level =
-		(sample->getPower() - instr->getMinPower()) /
-		(instr->getMaxPower() - instr->getMinPower());
+	auto const selected_level = (sample->getPower() - instr->getMinPower())/power_span;
 	settings.velocity_modifier_current.store(selected_level / orig_level);
 
 	for(Channel& ch: kit.channels)

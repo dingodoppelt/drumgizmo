@@ -36,15 +36,13 @@ VelocityFilter::VelocityFilter(Settings& settings, Random& random, Instruments c
 
 bool VelocityFilter::filter(event_t& event, size_t pos)
 {
-	auto power_max = instruments[event.instrument]->getMaxPower();
-	auto power_min = instruments[event.instrument]->getMinPower();
-	float power_span = power_max - power_min;
+	if (settings.enable_velocity_modifier.load())
+	{
+		float mean = event.velocity;
+		float stddev = settings.velocity_stddev.load();
+		// the 30.0f were determined empirically
+		event.velocity += random.normalDistribution(mean, stddev / 30.0f);
+	}
 
-	float mean = event.velocity - .5f/127.f; // XXX: this should actually be done when reading the events
-	float stddev = settings.velocity_stddev.load();
-	// the 20.0f we determined empirically
-	float lvl = power_min + random.normalDistribution(mean, stddev / 30.0f) * power_span;
-
-	event.velocity = lvl;
 	return true;
 }

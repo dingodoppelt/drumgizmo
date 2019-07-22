@@ -127,8 +127,10 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
 	case NoteOn:
 		if(instrument_idx != -1)
 		{
+			// maps velocities to [.5/127, 126.5/127]
+			auto centered_velocity = (velocity-.5f)/127.0f;
 			events.push_back({EventType::OnSet, (std::size_t)instrument_idx,
-			                  offset, velocity / 127.0f});
+			                  offset, centered_velocity});
 		}
 		break;
 
