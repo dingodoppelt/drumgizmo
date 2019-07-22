@@ -41,7 +41,7 @@ bool VelocityFilter::filter(event_t& event, size_t pos)
 		float mean = event.velocity;
 		float stddev = settings.velocity_stddev.load();
 		// the 30.0f were determined empirically
-		event.velocity += random.normalDistribution(mean, stddev / 30.0f);
+		event.velocity = random.normalDistribution(mean, stddev / 30.0f);
 	}
 
 	return true;

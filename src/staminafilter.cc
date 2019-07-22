@@ -41,31 +41,26 @@ bool StaminaFilter::filter(event_t& event, size_t pos)
 	auto enable_velocity_modifier = settings.enable_velocity_modifier.load();
 	auto velocity_modifier_weight = settings.velocity_modifier_weight.load();
 
+	auto& pair = modifiers[event.instrument];
+
 	if(modifiers.find(event.instrument) == modifiers.end())
 	{
 		// On first lookup make sure we have sane values.
-		auto& pair = modifiers[event.instrument];
 		pair.first = 1.0f;
 		pair.second = 0;
 	}
-
-	auto& pair = modifiers[event.instrument];
 	auto& mod = pair.first;
 	auto& lastpos = pair.second;
-
-	if(enable_velocity_modifier == false)
-	{
-		mod = 1.0f;
-		lastpos = 0;
-	}
 
 	if(enable_velocity_modifier)
 	{
 		mod += (pos - lastpos) / (samplerate * velocity_modifier_falloff);
-		if(mod > 1.0f)
-		{
-			mod = 1.0f;
-		}
+		mod = std::min(mod, 1.0f);
+	}
+	else
+	{
+		mod = 1.0f;
+		lastpos = 0;
 	}
 
 	event.velocity *= mod;
