@@ -29,8 +29,8 @@
 #include "random.h"
 #include "settings.h"
 
-VelocityFilter::VelocityFilter(Settings& settings, Random& random, Instruments const& instruments)
-	: settings(settings), random(random), instruments(instruments)
+VelocityFilter::VelocityFilter(Settings& settings, Random& random)
+	: settings(settings), random(random)
 {
 }
 

@@ -40,7 +40,7 @@ class VelocityFilter
 	: public InputFilter
 {
 public:
-	VelocityFilter(Settings& settings, Random& random, Instruments const& instruments);
+	VelocityFilter(Settings& settings, Random& random);
 
 	bool filter(event_t& event, std::size_t pos) override;
 
@@ -49,5 +49,4 @@ public:
 private:
 	Settings& settings;
 	Random& random;
-	Instruments const& instruments;
 };
