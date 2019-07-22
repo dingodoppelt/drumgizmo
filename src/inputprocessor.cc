@@ -119,7 +119,7 @@ bool InputProcessor::processOnset(event_t& event,
 		return false;
 	}
 
-	auto orig_level = event.velocity;
+	auto const original_level = event.velocity;
 	for(auto& filter : filters)
 	{
 		// This line might change the 'event' variable
@@ -195,7 +195,7 @@ bool InputProcessor::processOnset(event_t& event,
 	}
 
 	auto const selected_level = (sample->getPower() - power_min)/power_span;
-	settings.velocity_modifier_current.store(selected_level/event.velocity);
+	settings.velocity_modifier_current.store(selected_level/original_level);
 
 	for(Channel& ch: kit.channels)
 	{
