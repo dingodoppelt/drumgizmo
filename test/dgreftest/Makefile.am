@@ -1,7 +1,7 @@
 if ENABLE_CLI
 if HAVE_INPUT_MIDIFILE
 
-bin_PROGRAMS = dgreftest
+noinst_PROGRAMS = dgreftest
 
 dgreftest_LDADD = $(PTHREAD_LIBS) $(JACK_LIBS) \
 	$(SMF_LIBS) $(top_srcdir)/src/libdg.la
