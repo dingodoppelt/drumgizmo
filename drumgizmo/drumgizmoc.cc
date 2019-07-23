@@ -115,6 +115,10 @@ static std::string usage(const std::string& name)
 		"                         use this with a real-time drumkit.\n"
 		"  -T, --timing-humanizerparms parmlist\n"
 		"                         Timing humanizer options.\n"
+		"  -x, --velocity-humanizer\n"
+		"                         Enables adapting input velocities to make it sound more realistic.\n"
+		"  -X, --velocity-humanizerparms parmlist\n"
+		"                         Velocity humanizer options.\n"
 		"  -p, --parameters parmlist\n"
 		"                         Parameters for sample selection algorithm."
 		"  -v, --version          Print version information and exit.\n"
@@ -149,18 +153,25 @@ static std::string usage(const std::string& name)
 		"\n"
 		"Timing humanizer parameters:\n"
 		"  laidback:      Move notes ahead or behind in time in ms [+/-100].\n"
-		"  tightness:     Control the tightness of the drummer. [0,1].\n"
+		"  tightness:     Control the tightness of the drummer. [0,1]\n"
 		"  regain:        Control how fast the drummer catches up the timing. [0,1]\n"
+		"\n"
+		"Velocity humanizer parameters:\n"
+		"  attack:        How quickly the velocity gets reduced when playing fast notes.\n"
+		"                 Lower values result in faster velocity reduction.\n"
+		"  release:       How quickly the drummer regains the velocity\n"
+		"                 when there are spaces between the notes.\n"
+		"                 Lower values result in faster regain. [0,1]\n"
+		"  stddev:        The standard-deviation of the velocity humanization.\n"
+		"                 Higher value makes it more likely that a sample further\n"
+		"                 away from the input velocity will be played. [0,4.5]\n"
 		"\n"
 		"Sample selection parameters:\n"
 		"  close:         The importance given to choosing a sample close to\n"
-		"                 the actual velocity value (after humanization) [0,1].\n"
+		"                 the actual velocity value (after humanization). [0,1]\n"
 		"  diverse:       The importance given to choosing samples\n"
-		"                 which haven't been played recently [0,1].\n"
-		"  random:        The amount of randomness added [0,1].\n"
-		"  stddev:        The standard-deviation for the sample selection.\n"
-		"                 Higher value makes it more likely that a sample further\n"
-		"                 away from the input velocity will be played [0, 4.5].\n"
+		"                 which haven't been played recently. [0,1]\n"
+		"  random:        The amount of randomness added. [0,1]\n"
 		"\n";
 	return output.str();
 }
@@ -283,7 +294,7 @@ int main(int argc, char* argv[])
 	opt.add("inputparms", required_argument, 'I', [&]() {
 		std::string parms = optarg;
 		auto tokens = parseParameters(parms);
-		for(auto &token : tokens)
+		for(auto& token : tokens)
 		{
 			ie->setParm(token.key, token.value);
 		}
@@ -317,7 +328,7 @@ int main(int argc, char* argv[])
 	opt.add("outputparms", required_argument, 'O', [&]() {
 		std::string parms = optarg;
 		auto tokens = parseParameters(parms);
-		for(auto &token : tokens)
+		for(auto& token : tokens)
 		{
 			oe->setParm(token.key, token.value);
 		}
@@ -352,7 +363,7 @@ int main(int argc, char* argv[])
 	opt.add("streamingparms", required_argument, 'S', [&]() {
 		std::string parms = optarg;
 		auto tokens = parseParameters(parms);
-		for(auto &token : tokens)
+		for(auto& token : tokens)
 		{
 			if(token.key == "limit")
 			{
@@ -393,7 +404,7 @@ int main(int argc, char* argv[])
 	opt.add("timing-humanizerparms", required_argument, 'T', [&]() {
 		std::string parms = optarg;
 		auto tokens = parseParameters(parms);
-		for(auto &token : tokens)
+		for(auto& token : tokens)
 		{
 			if(token.key == "laidback")
 			{
@@ -429,8 +440,54 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				std::cerr << "Unknown timing-humanizerparms argument " << token.key <<
-					std::endl;
+				std::cerr << "Unknown timing-humanizerparms argument " << token.key << std::endl;
+				exit(1);
+			}
+		}
+	});
+
+	opt.add("velocity-humanizer", no_argument, 'x', [&]() {
+		settings.enable_velocity_modifier.store(true);
+	});
+
+	opt.add("velocity-humanizerparms", required_argument, 'X', [&]() {
+		std::string parms = optarg;
+		auto tokens = parseParameters(parms);
+		for(auto& token : tokens)
+		{
+			if (token.key == "attack")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0 || val > 1.0)
+				{
+					std::cerr << "attack range is [0, 1].\n";
+					exit(1);
+				}
+				settings.velocity_modifier_weight.store(val);
+			}
+			else if (token.key == "release")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0 || val > 1.0)
+				{
+					std::cerr << "release range is [0, 1].\n";
+					exit(1);
+				}
+				settings.velocity_modifier_falloff.store(val);
+			}
+			else if(token.key == "stddev")
+			{
+				auto val = atof_nol(token.value.data());
+				if(val < 0 || val > 4.5)
+				{
+					std::cerr << "stddev range is [0, 4.5].\n";
+					exit(1);
+				}
+				settings.velocity_stddev.store(val);
+			}
+			else
+			{
+				std::cerr << "Unknown velocity-humanizerparms argument " << token.key << std::endl;
 				exit(1);
 			}
 		}
@@ -439,7 +496,7 @@ int main(int argc, char* argv[])
 	opt.add("parameters", required_argument, 'p', [&]() {
 		std::string parms = optarg;
 		auto tokens = parseParameters(parms);
-		for(auto &token : tokens)
+		for(auto& token : tokens)
 		{
 			if(token.key == "close")
 			{
@@ -471,20 +528,9 @@ int main(int argc, char* argv[])
 				}
 				settings.sample_selection_f_random.store(val);
 			}
-			else if(token.key == "stddev")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 4.5)
-				{
-					std::cerr << "stddev range is [0, 4.5].\n";
-					exit(1);
-				}
-				settings.velocity_stddev.store(val);
-			}
 			else
 			{
-				std::cerr << "Unknown timing-humanizerparms argument " << token.key <<
-					std::endl;
+				std::cerr << "Unknown parameters argument " << token.key << std::endl;
 				exit(1);
 			}
 		}

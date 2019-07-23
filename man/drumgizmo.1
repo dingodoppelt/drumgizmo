@@ -155,6 +155,27 @@ Timing humanizer options.
 \fBregain\fR=<val> (Control how fast the drummer catches up the timing. [0,1])
 
 .RE
+\fB-t, --velocity-humanizer\fR
+.RS 7
+Enables adapting input velocities to make it sound more realistic.
+
+.RE
+\fB-T, --velocity-humanizerparms parmlist\fR
+.RS 7
+Velocity humanizer options.
+
+.P
+\fBattack\fR=<val> (How quickly the velocity gets reduced when playing fast notes.
+Lower values result in faster velocity reduction. [0,1])
+.P
+\fBrelease\fR=<val> (How quickly the drummer regains the velocity
+when there are spaces between the notes. Lower values result in faster regain. [0,1])
+.P
+\fBstddev\fR=<val> (The standard-deviation for the velocity humanizer.
+Higher value makes it more likely that a sample further
+away from the input velocity will be played. [0,4.5])
+
+.RE
 \fB-p, --parameters parmlist\fR
 .RS 7
 Parameters for the sample selection algorithm.
@@ -166,10 +187,6 @@ the actual velocity value (after humanization) [0,1])
 haven't been played recently [0,1])
 .P
 \fBrandom\fR=<val> (The amount of randomness added [0,1])
-.P
-\fBstddev\fR=<val> (The standard-deviation for the sample
-selection. Higher value makes it more likely that a sample further
-away from the input velocity will be played [0, 4.5])
 
 .RE
 \fB-v, --version\fR
