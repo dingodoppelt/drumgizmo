@@ -446,6 +446,9 @@ int main(int argc, char* argv[])
 		}
 	});
 
+	// Default is to disable the velocity humanizer
+	settings.enable_velocity_modifier.store(false);
+
 	opt.add("velocity-humanizer", no_argument, 'x', [&]() {
 		settings.enable_velocity_modifier.store(true);
 	});
