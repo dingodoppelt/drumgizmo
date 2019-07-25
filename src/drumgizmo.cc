@@ -357,7 +357,7 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 					if((af.mainState() == main_state_t::is_not_main) &&
 					   enable_bleed_control)
 					{
-						evt.scale = master_bleed;
+						evt.scale *= master_bleed;
 					}
 
 					evt.buffer_size = initial_chunksize;

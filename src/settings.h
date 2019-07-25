@@ -112,6 +112,8 @@ struct Settings
 	Atomic<float> master_bleed{1.0f};
 	Atomic<bool> has_bleed_control{false};
 
+	Atomic<bool> normalized_samples{false};
+
 	Atomic<bool> enable_latency_modifier{false};
 
 	//! Maximum "early hits" introduces latency in milliseconds.
@@ -198,6 +200,8 @@ struct SettingsGetter
 	SettingRef<float> master_bleed;
 	SettingRef<bool> has_bleed_control;
 
+	SettingRef<bool> normalized_samples;
+
 	SettingRef<bool> enable_latency_modifier;
 	SettingRef<float> latency_max_ms;
 	SettingRef<float> latency_laid_back_ms;
@@ -246,6 +250,7 @@ struct SettingsGetter
 		, enable_bleed_control{settings.enable_bleed_control}
 		, master_bleed{settings.master_bleed}
 		, has_bleed_control{settings.has_bleed_control}
+		, normalized_samples{settings.normalized_samples}
 		, enable_latency_modifier{settings.enable_latency_modifier}
 		, latency_max_ms{settings.latency_max_ms}
 		, latency_laid_back_ms{settings.latency_laid_back_ms}
@@ -307,6 +312,8 @@ public:
 	Notifier<float> master_bleed;
 	Notifier<bool> has_bleed_control;
 
+	Notifier<bool> normalized_samples;
+
 	Notifier<bool> enable_latency_modifier;
 	Notifier<float> latency_max_ms;
 	Notifier<float> latency_laid_back_ms;
@@ -366,6 +373,8 @@ public:
 		EVAL(enable_bleed_control);
 		EVAL(master_bleed);
 		EVAL(has_bleed_control);
+
+		EVAL(normalized_samples);
 
 		EVAL(enable_latency_modifier);
 		EVAL(latency_max_ms);

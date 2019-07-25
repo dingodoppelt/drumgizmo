@@ -207,9 +207,14 @@ bool InputProcessor::processOnset(event_t& event,
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			Event* evt = new EventSample(ch.num, 1.0, af, instr->getGroup(),
+			auto evt = new EventSample(ch.num, 1.0, af, instr->getGroup(),
 			                             instrument_id);
 			evt->offset = (event.offset + pos) * resample_ratio;
+			if(settings.normalized_samples.load())
+			{
+				evt->scale *= event.velocity;
+			}
+
 			activeevents[ch.num].push_back(evt);
 		}
 	}
