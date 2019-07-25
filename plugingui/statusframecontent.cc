@@ -29,9 +29,9 @@
 namespace GUI
 {
 
-StatusframeContent::StatusframeContent(
-    Widget* parent, SettingsNotifier& settings_notifier)
-    : Widget(parent), settings_notifier(settings_notifier)
+StatusframeContent::StatusframeContent(Widget* parent,
+                                       SettingsNotifier& settings_notifier)
+	: Widget(parent), settings_notifier(settings_notifier)
 {
 	CONNECT(this, settings_notifier.drumkit_load_status,
 	        this, &StatusframeContent::updateDrumkitLoadStatus);
@@ -47,6 +47,9 @@ StatusframeContent::StatusframeContent(
 	        this, &StatusframeContent::updateBufferSize);
 	CONNECT(this, settings_notifier.number_of_underruns,
 	        this, &StatusframeContent::updateNumberOfUnderruns);
+
+	CONNECT(this, settings_notifier.load_status_text,
+	        this, &StatusframeContent::loadStatusTextChanged);
 
 	text_field.move(0, 0);
 	text_field.setReadOnly(true);
@@ -95,21 +98,21 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 	updateContent();
 }
 
-void StatusframeContent::updateDrumkitName(std::string const& drumkit_name)
+void StatusframeContent::updateDrumkitName(const std::string& drumkit_name)
 {
 	this->drumkit_name = drumkit_name;
 
 	updateContent();
 }
 
-void StatusframeContent::updateDrumkitDescription(std::string const& drumkit_description)
+void StatusframeContent::updateDrumkitDescription(const std::string& drumkit_description)
 {
 	this->drumkit_description = drumkit_description;
 
 	updateContent();
 }
 
-void StatusframeContent::updateDrumkitVersion(std::string const& drumkit_version)
+void StatusframeContent::updateDrumkitVersion(const std::string& drumkit_version)
 {
 	this->drumkit_version = drumkit_version;
 
@@ -149,6 +152,11 @@ void StatusframeContent::updateNumberOfUnderruns(std::size_t number_of_underruns
 	this->number_of_underruns = std::to_string(number_of_underruns);
 
 	updateContent();
+}
+
+void StatusframeContent::loadStatusTextChanged(const std::string& text)
+{
+	text_field.setText(text);
 }
 
 } // GUI::

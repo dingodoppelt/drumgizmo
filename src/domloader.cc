@@ -52,7 +52,7 @@ DOMLoader::DOMLoader(Settings& settings, Random& random)
 bool DOMLoader::loadDom(const std::string& basepath,
                         const DrumkitDOM& dom,
                         const std::vector<InstrumentDOM>& instrumentdoms,
-                        DrumKit& drumkit)
+                        DrumKit& drumkit, LogFunction logger)
 {
 	settings.has_bleed_control.store(false);
 
@@ -165,6 +165,9 @@ bool DOMLoader::loadDom(const std::string& basepath,
 				{
 					ERR(kitparser, "Missing channel '%s' in instrument '%s'\n",
 					    instrument_channel.name.c_str(), instrument->getName().c_str());
+					logger(LogLevel::Warning, "Missing channel '" +
+					       instrument_channel.name + "' in the '" +
+					       instrument->getName() + "' instrument.");
 				}
 			}
 
@@ -191,6 +194,9 @@ bool DOMLoader::loadDom(const std::string& basepath,
 							ERR(kitparser,
 							    "Missing sample '%s' from sampleref in instrument '%s'\n",
 							    sampleref.name.data(), instrument->getName().data());
+							logger(LogLevel::Warning, "Missing sample '" +
+							       sampleref.name + "' in the '" +
+							       instrument->getName() + "' instrument.");
 							return false;
 						}
 					}
@@ -209,6 +215,8 @@ bool DOMLoader::loadDom(const std::string& basepath,
 		if(!found)
 		{
 			ERR(domloader, "No instrument with name '%s'", instrumentref.name.data());
+			logger(LogLevel::Warning, "No instrument with name '" +
+			       instrumentref.name + "'.");
 			return false;
 		}
 	}

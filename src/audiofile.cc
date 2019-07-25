@@ -73,7 +73,7 @@ void AudioFile::unload()
 
 #define BUFFER_SIZE 4096
 
-void AudioFile::load(std::size_t sample_limit)
+void AudioFile::load(LogFunction logger, std::size_t sample_limit)
 {
 	// Make sure we don't unload the object while loading it...
 	std::lock_guard<std::mutex> guard(mutex);
@@ -89,12 +89,22 @@ void AudioFile::load(std::size_t sample_limit)
 	{
 		ERR(audiofile,"SNDFILE Error (%s): %s\n",
 		    filename.c_str(), sf_strerror(fh));
+		if(logger)
+		{
+			logger(LogLevel::Warning, "Could not load '" + filename +
+			       "': " + sf_strerror(fh));
+		}
 		return;
 	}
 
 	if(sf_info.channels < 1)
 	{
 		// This should never happen but lets check just in case.
+		if(logger)
+		{
+			logger(LogLevel::Warning, "Could not load '" + filename +
+			       "': no audio channels available.");
+		}
 		return;
 	}
 
@@ -116,6 +126,11 @@ void AudioFile::load(std::size_t sample_limit)
 		// check filechannel exists
 		if(filechannel >= (std::size_t)sf_info.channels)
 		{
+			if(logger)
+			{
+				logger(LogLevel::Warning, "Audio file '" + filename +
+				       "' does no have " + std::to_string(filechannel + 1) + " channels.");
+			}
 			filechannel = sf_info.channels - 1;
 		}
 

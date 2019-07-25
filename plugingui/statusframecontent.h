@@ -46,12 +46,13 @@ public:
 	void updateContent();
 
 	void updateDrumkitLoadStatus(LoadStatus load_status);
-	void updateDrumkitName(std::string const& drumkit_name);
-	void updateDrumkitDescription(std::string const& drumkit_description);
-	void updateDrumkitVersion(std::string const& drumkit_version);
+	void updateDrumkitName(const std::string& drumkit_name);
+	void updateDrumkitDescription(const std::string& drumkit_description);
+	void updateDrumkitVersion(const std::string& drumkit_version);
 	void updateMidimapLoadStatus(LoadStatus load_status);
 	void updateBufferSize(std::size_t buffer_size);
 	void updateNumberOfUnderruns(std::size_t number_of_underruns);
+	void loadStatusTextChanged(const std::string& text);
 
 private:
 	TextEdit text_field{this};

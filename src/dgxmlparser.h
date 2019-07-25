@@ -27,11 +27,13 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 #include "DGDOM.h"
+#include "logger.h"
 
-bool probeDrumkitFile(const std::string& filename);
-bool probeInstrumentFile(const std::string& filename);
+bool probeDrumkitFile(const std::string& filename, LogFunction logger = nullptr);
+bool probeInstrumentFile(const std::string& filename, LogFunction logger = nullptr);
 
-bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom);
-bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom);
+bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom, LogFunction logger = nullptr);
+bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom, LogFunction logger = nullptr);

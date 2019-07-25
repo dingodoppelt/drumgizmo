@@ -36,6 +36,7 @@
 
 #include "audio.h"
 #include "channel.h"
+#include "logger.h"
 
 class InstrumentChannel;
 
@@ -46,7 +47,7 @@ public:
 	          InstrumentChannel* instrument_channel = nullptr);
 	~AudioFile();
 
-	void load(std::size_t sample_limit = std::numeric_limits<std::size_t>::max());
+	void load(LogFunction logger, std::size_t sample_limit = std::numeric_limits<std::size_t>::max());
 	void unload();
 
 	bool isLoaded() const;

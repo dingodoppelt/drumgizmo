@@ -76,6 +76,7 @@ EXTRA_DIST = \
 	inputprocessor.h \
 	instrument.h \
 	latencyfilter.h \
+	logger.h \
 	midimapparser.h \
 	midimapper.h \
 	nolocale.h \

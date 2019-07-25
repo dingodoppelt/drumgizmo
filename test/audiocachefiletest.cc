@@ -99,7 +99,7 @@ public:
 		for(size_t c = 0; c < 13; ++c)
 		{
 			ref_file[c] = new AudioFile(filename, c);
-			ref_file[c]->load();
+			ref_file[c]->load(nullptr);
 		}
 
 		std::vector<sample_t> read_buffer;

@@ -1,9 +1,9 @@
 /* -*- Mode: c++ -*- */
 /***************************************************************************
- *            domloader.h
+ *            logger.h
  *
- *  Sun Jun 10 17:39:01 CEST 2018
- *  Copyright 2018 Bent Bisballe Nyeng
+ *  Wed Jul 24 19:42:25 CEST 2019
+ *  Copyright 2019 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -26,33 +26,13 @@
  */
 #pragma once
 
-#include <vector>
-#include <string>
+#include <functional>
 
-#include "logger.h"
-
-struct DrumkitDOM;
-struct InstrumentDOM;
-class DrumKit;
-struct Settings;
-class Random;
-class InstrumentChannel;
-class Instrument;
-
-class DOMLoader
+enum class LogLevel
 {
-public:
-	DOMLoader(Settings& settings, Random& random);
-
-	bool loadDom(const std::string& basepath,
-	             const DrumkitDOM& dom,
-	             const std::vector<InstrumentDOM>& instrumentdoms,
-	             DrumKit& drumkit, LogFunction logger = nullptr);
-
-private:
-	static InstrumentChannel* addOrGetChannel(Instrument& instrument,
-	                                          const std::string& name);
-
-	Settings& settings;
-	Random& random;
+	Info,
+	Warning,
+	Error,
 };
+
+using LogFunction = std::function<void (LogLevel, const std::string&)>;

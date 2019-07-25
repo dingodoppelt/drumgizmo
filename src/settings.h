@@ -145,6 +145,9 @@ struct Settings
 	Atomic<std::size_t> audition_counter{0};
 	Atomic<std::string> audition_instrument;
 	Atomic<float> audition_velocity;
+
+	// Notify UI about load errors
+	Atomic<std::string> load_status_text;
 };
 
 //! Settings getter class.
@@ -206,6 +209,8 @@ struct SettingsGetter
 	SettingRef<std::string> audition_instrument;
 	SettingRef<float> audition_velocity;
 
+	SettingRef<std::string> load_status_text;
+
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
@@ -250,6 +255,7 @@ struct SettingsGetter
 		, audition_counter{settings.audition_counter}
 		, audition_instrument{settings.audition_instrument}
 		, audition_velocity{settings.audition_velocity}
+		, load_status_text{settings.load_status_text}
 	{
 	}
 };
@@ -312,6 +318,8 @@ public:
 	Notifier<std::string> audition_instrument;
 	Notifier<int> audition_velocity;
 
+	Notifier<std::string> load_status_text;
+
 	void evaluate()
 	{
 #define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
@@ -369,6 +377,8 @@ public:
 		EVAL(audition_counter);
 		EVAL(audition_instrument);
 		EVAL(audition_velocity);
+
+		EVAL(load_status_text);
 	}
 
 	SettingsNotifier(Settings& settings)

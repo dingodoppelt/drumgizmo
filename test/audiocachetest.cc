@@ -62,12 +62,12 @@ public:
 		// Reference file:
 		AudioFile audio_file_ref(filename, channel);
 		printf("audio_file_ref.load\n");
-		audio_file_ref.load();
+		audio_file_ref.load(nullptr);
 
 		// Input file:
 		AudioFile audio_file(filename, channel);
 		printf("audio_file.load\n");
-		audio_file.load(4096);
+		audio_file.load(nullptr, 4096);
 
 		Settings settings;
 		AudioCache audio_cache(settings);

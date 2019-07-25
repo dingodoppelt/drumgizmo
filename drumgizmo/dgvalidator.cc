@@ -30,9 +30,26 @@
 #include <random.h>
 #include <settings.h>
 #include <drumkit.h>
-
+#include <iostream>
 #include <string>
 #include <hugin.hpp>
+
+void logger(LogLevel level, const std::string& message)
+{
+	switch(level)
+	{
+	case LogLevel::Info:
+		std::cout << "[Info]";
+		break;
+	case LogLevel::Warning:
+		std::cout << "[Warning]";
+		break;
+	case LogLevel::Error:
+		std::cout << "[Error]";
+		break;
+	}
+	std::cout << " " << message << std::endl;
+}
 
 void printUsage(const char* prog, bool full = true)
 {
@@ -65,7 +82,7 @@ int main(int argc, char* argv[])
 	std::vector<InstrumentDOM> instrumentdoms;
 	std::string path = getPath(edited_filename);
 	bool parseerror = false;
-	bool ret = parseDrumkitFile(edited_filename, drumkitdom);
+	bool ret = parseDrumkitFile(edited_filename, drumkitdom, logger);
 	if(!ret)
 	{
 		WARN(drumkitloader, "Drumkit file parser error: '%s'",
@@ -77,7 +94,8 @@ int main(int argc, char* argv[])
 	for(const auto& ref : drumkitdom.instruments)
 	{
 		instrumentdoms.emplace_back();
-		bool ret = parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
+		bool ret = parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back(),
+		                               logger);
 		if(!ret)
 		{
 			WARN(drumkitloader, "Instrument file parser error: '%s'",
@@ -97,16 +115,18 @@ int main(int argc, char* argv[])
 	DrumKit kit;
 
 	DOMLoader domloader(settings, rand);
-	ret = domloader.loadDom(path, drumkitdom, instrumentdoms, kit);
+	ret = domloader.loadDom(path, drumkitdom, instrumentdoms, kit, logger);
 	if(!ret)
 	{
 		WARN(drumkitloader, "DOMLoader error");
+		logger(LogLevel::Error, "Validator found errors.");
 		return 1;
 	}
 	parseerror |= !ret;
 	if(parseerror)
 	{
 		ERR(drumgizmo, "Drumkit parser failed: %s\n", edited_filename.c_str());
+		logger(LogLevel::Error, "Validator found errors.");
 		return 1;
 	}
 
@@ -115,14 +135,26 @@ int main(int argc, char* argv[])
 	{
 		for(auto& audiofile: instrument->audiofiles)
 		{
-			audiofile->load(1);
+			audiofile->load(logger, 1);
 			if(!audiofile->isLoaded())
 			{
 				WARN(drumkitloader, "Instrument file load error: '%s'",
 				     audiofile->filename.data());
+				logger(LogLevel::Warning, "Error loading audio file '" +
+				       audiofile->filename + "' in the '" + instrument->getName() +
+				       "' instrument");
 				parseerror = true;
 			}
 		}
+	}
+
+	if(parseerror)
+	{
+		logger(LogLevel::Warning, "Validator found errors.");
+	}
+	else
+	{
+		logger(LogLevel::Info, "Validator finished without errors.");
 	}
 
 	return parseerror ? 1 : 0;

@@ -95,4 +95,6 @@ protected:
 	Random& rand;
 	AudioCache& audio_cache;
 	std::size_t preload_samples{std::numeric_limits<std::size_t>::max()};
+
+	LogFunction logger;
 };

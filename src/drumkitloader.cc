@@ -50,6 +50,28 @@ DrumKitLoader::DrumKitLoader(Settings& settings, DrumKit& kit,
 	, rand(rand)
 	, audio_cache(audio_cache)
 {
+	logger =
+		[&](LogLevel level, const std::string& msg)
+		{
+			std::string message;
+			switch(level)
+			{
+			case LogLevel::Info:
+				//message = "[Info]";
+				//break;
+				return; // Ignore info level messages
+			case LogLevel::Warning:
+				message = "[Warning]";
+				break;
+			case LogLevel::Error:
+				message = "[Error]";
+				break;
+			}
+			message += " " + msg + "\n";
+			std::string status = settings.load_status_text.load();
+			status += message;
+			settings.load_status_text.store(status);
+		};
 }
 
 DrumKitLoader::~DrumKitLoader()
@@ -108,6 +130,8 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	// Delete all Channels, Instruments, Samples and AudioFiles.
 	kit.clear();
 
+	settings.load_status_text.store("");
+
 	settings.drumkit_load_status.store(LoadStatus::Loading);
 
 	// Parse drumkit and instrument xml
@@ -134,7 +158,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	std::vector<InstrumentDOM> instrumentdoms;
 	std::string path = getPath(edited_filename);
 	bool parseerror = false;
-	bool ret = parseDrumkitFile(edited_filename, drumkitdom);
+	bool ret = parseDrumkitFile(edited_filename, drumkitdom, logger);
 	if(!ret)
 	{
 		WARN(drumkitloader, "Drumkit file parser error: '%s'",
@@ -146,7 +170,8 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	for(const auto& ref : drumkitdom.instruments)
 	{
 		instrumentdoms.emplace_back();
-		bool ret = parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back());
+		bool ret = parseInstrumentFile(path + "/" + ref.file, instrumentdoms.back(),
+		                               logger);
 		if(!ret)
 		{
 			WARN(drumkitloader, "Instrument file parser error: '%s'",
@@ -157,7 +182,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	}
 
 	DOMLoader domloader(settings, rand);
-	ret = domloader.loadDom(path, drumkitdom, instrumentdoms, kit);
+	ret = domloader.loadDom(path, drumkitdom, instrumentdoms, kit, logger);
 	if(!ret)
 	{
 		WARN(drumkitloader, "DOMLoader error");
@@ -339,7 +364,7 @@ void DrumKitLoader::thread_main()
 			filename = audiofile->filename;
 			try
 			{
-				audiofile->load(preload_samples);
+				audiofile->load(logger, preload_samples);
 			}
 			catch(std::bad_alloc&)
 			{

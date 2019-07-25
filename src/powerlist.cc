@@ -81,7 +81,7 @@ const Channel* PowerList::getMasterChannel()
 			const Channel* c = pair.first;
 			AudioFile* af = pair.second;
 
-			af->load(LOAD_SIZE);
+			af->load(nullptr, LOAD_SIZE);
 
 			float silence{0.f};
 			std::size_t silence_length{4u};

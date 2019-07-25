@@ -24,7 +24,7 @@ make dist && (
 		./configure --enable-lv2 --enable-cli --enable-vst \
 		            --with-vst-sources="$VST_BASE" --prefix=/usr \
 		            --with-test --with-lv2dir=$PWD/tst/install/lv2
-		make
+		V=0 make -j12
 		DESTDIR=$PWD/tst/install make install
 		(cd plugin; make install)
 		make check
