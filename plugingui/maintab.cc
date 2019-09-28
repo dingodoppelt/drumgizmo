@@ -51,18 +51,18 @@ of the drummer. The drifting is defined as the difference between\n\
 the perfect metronome (defined by the note positions) and the 'internal'\n\
 metronome of the drummer which can then drift back and forth in a\n\
 controlled fashion:\n\
-  * pTightness: For each note how much is the drummer aloowed to drift.\n\
+  * pTightness: For each note how much is the drummer allowed to drift.\n\
      Higher value make the drummer more tight, ie. drift less.\n\
   * pTimingRegain: Once the drifted, how fast does the drummer's 'internal'\n\
      metronome get back in sync with the perfect metronome.\n\
-     Higher values moves the timng back towards perfect faster.\n\
+     Higher values moves the timing back towards perfect faster.\n\
   * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n\
      alter the feel of a beat.\n\
      Positive values are up-beat, negative values are back on the beat.\n\
 \n\
 NOTE: Enabling timing humanization will introduce a fixed delay into the\n\
 audio stream. So this feature should be disabled when using DrumGizmo in\n\
-a real-time schenario such as live with a MIDI drumkit.";
+a real-time scenario such as live with a MIDI drumkit.";
 
 constexpr char sampleselection_tip[] = "\
 These three knobs influence how DrumGizmo selects\n\
