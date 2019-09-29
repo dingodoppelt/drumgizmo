@@ -74,7 +74,7 @@ void StatusframeContent::updateContent()
 		// "Drumkit version:   " + drumkit_version + "\n"
 		"Session buffer size:   " + buffer_size + "\n"
 		"Number of underruns: " + number_of_underruns + "\n" +
-		messages
+		"Messages:\n" + messages
 	);
 }
 
