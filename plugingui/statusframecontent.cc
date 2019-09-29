@@ -73,7 +73,8 @@ void StatusframeContent::updateContent()
 		"Drumkit description:   " + drumkit_description + "\n"
 		// "Drumkit version:   " + drumkit_version + "\n"
 		"Session buffer size:   " + buffer_size + "\n"
-		"Number of underruns: " + number_of_underruns + "\n"
+		"Number of underruns: " + number_of_underruns + "\n" +
+		messages
 	);
 }
 
@@ -156,7 +157,8 @@ void StatusframeContent::updateNumberOfUnderruns(std::size_t number_of_underruns
 
 void StatusframeContent::loadStatusTextChanged(const std::string& text)
 {
-	text_field.setText(text);
+	messages = text;
+	updateContent();
 }
 
 } // GUI::

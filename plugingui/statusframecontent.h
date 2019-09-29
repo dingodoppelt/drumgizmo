@@ -66,6 +66,7 @@ private:
 	std::string midimap_load_status;
 	std::string buffer_size;
 	std::string number_of_underruns;
+	std::string messages;
 };
 
 } // GUI::
