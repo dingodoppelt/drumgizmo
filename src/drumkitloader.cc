@@ -130,6 +130,11 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	// Delete all Channels, Instruments, Samples and AudioFiles.
 	kit.clear();
 
+	// Clear metadata from previously loaded drumkit
+	settings.drumkit_name.store("");
+	settings.drumkit_description.store("");
+	settings.drumkit_version.store("");
+	settings.drumkit_samplerate.store(44100);
 	settings.load_status_text.store("");
 
 	settings.drumkit_load_status.store(LoadStatus::Loading);
