@@ -432,6 +432,7 @@ NativeWindowWin32::~NativeWindowWin32()
 	{
 		RemoveWindowSubclass(parent_window, subClassProc, 42);
 	}
+	DestroyWindow(m_hwnd);
 	UnregisterClass(m_className, GetModuleHandle(nullptr));
 	free(m_className);
 }
