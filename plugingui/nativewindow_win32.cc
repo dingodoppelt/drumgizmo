@@ -59,8 +59,14 @@ LRESULT CALLBACK NativeWindowWin32::dialogProc(HWND hwnd, UINT msg,
 
 	Window& window = native->window;
 
-	switch(msg) {
+	switch(msg)
+	{
 	case WM_SIZE:
+		if(wp > 4)
+		{
+			// Bogus value - ignore
+			break;
+		}
 		{
 			auto resizeEvent = std::make_shared<ResizeEvent>();
 			resizeEvent->width = LOWORD(lp);
@@ -344,18 +350,19 @@ LRESULT CALLBACK NativeWindowWin32::subClassProc(HWND hwnd, UINT msg,
 		return DefWindowProc(hwnd, msg, wp, lp);
 	}
 
-	switch(msg) {
+	switch(msg)
+	{
 	case WM_SIZE:
+		if(wp > 4)
 		{
+			// Bogus value - ignore
+			break;
+		}
+		{
+			// Parent window size changed, replicate this size in inner window.
 			int width = LOWORD(lp);
 			int height = HIWORD(lp);
 			SetWindowPos(native->m_hwnd, nullptr, -1, -1, width, height, SWP_NOMOVE);
-			RECT rect;
-			GetClientRect(native->m_hwnd, &rect);
-			int w = width - rect.right;
-			int h = height - rect.bottom;
-			SetWindowPos(native->m_hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
-			native->window.resized(w, h);
 		}
 		break;
 	}
