@@ -452,6 +452,13 @@ void NativeWindowWin32::setFixedSize(std::size_t width, std::size_t height)
 	SetWindowLong(m_hwnd, GWL_STYLE, style);
 }
 
+void NativeWindowWin32::setAlwaysOnTop(bool always_on_top)
+{
+	this->always_on_top = always_on_top;
+	SetWindowPos(m_hwnd, always_on_top ? HWND_TOPMOST : nullptr,
+	             0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}
+
 void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 {
 	auto hwnd = m_hwnd;
@@ -461,7 +468,8 @@ void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 	//}
 
 	// Set requested size on the window (or parent)
-	SetWindowPos(hwnd, nullptr, -1, -1, (int)width, (int)height, SWP_NOMOVE);
+	SetWindowPos(hwnd, always_on_top ? HWND_TOPMOST : nullptr,
+	             -1, -1, (int)width, (int)height, SWP_NOMOVE);
 
 	// Ask the client window what size it actually got
 	RECT rect;
@@ -470,7 +478,8 @@ void NativeWindowWin32::resize(std::size_t width, std::size_t height)
 	int h = height - rect.bottom;
 
 	// Set the compensated size on the window (or parent)
-	SetWindowPos(hwnd, nullptr, -1, -1, width + w, height + h, SWP_NOMOVE);
+	SetWindowPos(hwnd, always_on_top ? HWND_TOPMOST : nullptr,
+	             -1, -1, width + w, height + h, SWP_NOMOVE);
 }
 
 std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize() const
@@ -482,7 +491,8 @@ std::pair<std::size_t, std::size_t> NativeWindowWin32::getSize() const
 
 void NativeWindowWin32::move(int x, int y)
 {
-	SetWindowPos(m_hwnd, nullptr, (int)x, (int)y, -1, -1, SWP_NOSIZE);
+	SetWindowPos(m_hwnd, always_on_top ? HWND_TOPMOST : nullptr,
+	             (int)x, (int)y, -1, -1, SWP_NOSIZE);
 }
 
 std::pair<int, int> NativeWindowWin32::getPosition() const
@@ -562,6 +572,13 @@ EventQueue NativeWindowWin32::getEvents()
 void* NativeWindowWin32::getNativeWindowHandle() const
 {
 	return (void*)m_hwnd;
+}
+
+Point NativeWindowWin32::translateToScreen(const Point& point)
+{
+	POINT p{ point.x, point.y };
+	ClientToScreen(m_hwnd, &p);
+	return { p.x, p.y };
 }
 
 } // GUI::

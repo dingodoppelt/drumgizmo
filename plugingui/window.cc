@@ -86,6 +86,11 @@ void Window::setFixedSize(int w, int h)
 	native->setFixedSize(w, h);
 }
 
+void Window::setAlwaysOnTop(bool always_on_top)
+{
+	native->setAlwaysOnTop(always_on_top);
+}
+
 void Window::setCaption(const std::string& caption)
 {
 	native->setCaption(caption);
@@ -123,6 +128,12 @@ void Window::hide()
 Window* Window::window()
 {
 	return this;
+}
+
+Size Window::getNativeSize()
+{
+	auto sz = native->getSize();
+	return {sz.first, sz.second};
 }
 
 ImageCache& Window::getImageCache()
@@ -186,6 +197,11 @@ void Window::needsRedraw()
 void* Window::getNativeWindowHandle() const
 {
 	return native->getNativeWindowHandle();
+}
+
+Point Window::translateToScreen(const Point& point)
+{
+	return native->translateToScreen(point);
 }
 
 std::size_t Window::translateToWindowX()

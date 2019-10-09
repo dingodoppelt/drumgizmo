@@ -37,6 +37,18 @@
 namespace GUI
 {
 
+struct Point
+{
+	int x;
+	int y;
+};
+
+struct Size
+{
+	std::size_t width;
+	std::size_t height;
+};
+
 class ImageCache;
 class Window;
 
@@ -65,6 +77,8 @@ public:
 	virtual int y() const override;
 	virtual std::size_t width() const override;
 	virtual std::size_t height() const override;
+
+	Point position() const;
 
 	// From Canvas
 	PixelBufferAlpha& GetPixelBuffer() override;

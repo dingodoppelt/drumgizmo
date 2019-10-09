@@ -43,6 +43,7 @@ public:
 
 	// From NativeWindow:
 	virtual void setFixedSize(std::size_t width, std::size_t height) override;
+	virtual void setAlwaysOnTop(bool always_on_top) override;
 	virtual void resize(std::size_t width, std::size_t height) override;
 	virtual std::pair<std::size_t, std::size_t> getSize() const override;
 	virtual void move(int x, int y) override;
@@ -55,6 +56,7 @@ public:
 	virtual void grabMouse(bool grab) override;
 	virtual EventQueue getEvents() override;
 	virtual void* getNativeWindowHandle() const override;
+	virtual Point translateToScreen(const Point& point) override;
 
 	// Expose friend members of Window to ObjC++ implementation.
 	class Window& getWindow();

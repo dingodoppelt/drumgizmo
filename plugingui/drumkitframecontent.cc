@@ -168,6 +168,13 @@ void DrumkitframeContent::kitBrowseClick()
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectKitFile);
 	file_browser.show();
+	Point p{ window()->x() + (int)window()->width() / 2,
+	         window()->y() + (int)window()->height() / 2 };
+	auto p0 = window()->translateToScreen(p);
+	auto sz = file_browser.window()->getNativeSize();
+	file_browser.move(p0.x - sz.width / 2,
+	                  p0.y - sz.height / 2);
+	file_browser.setAlwaysOnTop(true);
 }
 
 void DrumkitframeContent::midimapBrowseClick()
@@ -189,6 +196,13 @@ void DrumkitframeContent::midimapBrowseClick()
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectMapFile);
 	file_browser.show();
+	Point p{ window()->x() + (int)window()->width() / 2,
+	         window()->y() + (int)window()->height() / 2 };
+	auto p0 = window()->translateToScreen(p);
+	auto sz = file_browser.window()->getNativeSize();
+	file_browser.move(p0.x - sz.width / 2,
+	                  p0.y - sz.height / 2);
+	file_browser.setAlwaysOnTop(true);
 }
 
 void DrumkitframeContent::defaultPathChanged(const std::string& path)

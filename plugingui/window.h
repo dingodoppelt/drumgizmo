@@ -45,6 +45,7 @@ public:
 	~Window();
 
 	void setFixedSize(int width, int height);
+	void setAlwaysOnTop(bool always_on_top);
 	void setCaption(const std::string& caption);
 
 	// From Widget:
@@ -53,7 +54,7 @@ public:
 	void show() override;
 	void hide() override;
 	Window* window() override;
-
+	Size getNativeSize();
 	ImageCache& getImageCache() override;
 
 	EventHandler* eventHandler();
@@ -72,6 +73,9 @@ public:
 
 	// \returns the native window handle, it HWND on Win32 or Window id on X11
 	void* getNativeWindowHandle() const;
+
+	//! Translate a local window coordinate to a global screen coordinate.
+	Point translateToScreen(const Point& point);
 
 protected:
 	// For the EventHandler

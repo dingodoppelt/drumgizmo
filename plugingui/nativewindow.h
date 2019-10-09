@@ -37,6 +37,8 @@
 namespace GUI
 {
 
+struct Point;
+
 //! Interface class for native window implementations.
 class NativeWindow
 {
@@ -47,6 +49,9 @@ public:
 	//! Set a fixed size to the window.
 	//! It resizes the window and disallows user resizing.
 	virtual void setFixedSize(std::size_t width, std::size_t height) = 0;
+
+	//! Force window to stay on top of other windows
+	virtual void setAlwaysOnTop(bool always_on_top) = 0;
 
 	//! Set a new size of the window.
 	virtual void resize(std::size_t width, std::size_t height) = 0;
@@ -84,8 +89,12 @@ public:
 	//! \return A queue of shared pointers to events.
 	virtual EventQueue getEvents() = 0;
 
-	// \returns the native window handle, it HWND on Win32 or Window id on X11
+	//! \returns the native window handle, it HWND on Win32 or Window id on X11
 	virtual void* getNativeWindowHandle() const = 0;
+
+	//! Translate a the local native window coordinate to a global screen
+	//! coordinate.
+	virtual Point translateToScreen(const Point& point) = 0;
 };
 
 } // GUI::

@@ -196,6 +196,11 @@ std::size_t Widget::height() const
 	return _height;
 }
 
+Point Widget::position() const
+{
+	return { _x, _y };
+}
+
 PixelBufferAlpha& Widget::GetPixelBuffer()
 {
 	return pixbuf;

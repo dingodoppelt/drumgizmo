@@ -576,6 +576,18 @@ void NativeWindowCocoa::setFixedSize(std::size_t width, std::size_t height)
 	[priv->window setMaxSize:NSMakeSize(width, height + 22)];
 }
 
+void NativeWindowCocoa::setAlwaysOnTop(bool always_on_top)
+{
+	if(always_on_top)
+	{
+		[priv->window setLevel: NSStatusWindowLevel];
+	}
+	else
+	{
+		[priv->window setLevel: NSNormalWindowLevel];
+	}
+}
+
 void NativeWindowCocoa::resize(std::size_t width, std::size_t height)
 {
 	[priv->window setContentSize:NSMakeSize(width, height)];
@@ -597,13 +609,15 @@ std::pair<std::size_t, std::size_t> NativeWindowCocoa::getSize() const
 
 void NativeWindowCocoa::move(int x, int y)
 {
-	[priv->window setFrameTopLeftPoint:NSMakePoint(x, y)];
+	NSRect screen = [[NSScreen mainScreen] frame];
+	[priv->window setFrameTopLeftPoint:NSMakePoint(x, screen.size.height - y)];
 }
 
 std::pair<int, int> NativeWindowCocoa::getPosition() const
 {
+	NSRect screen = [[NSScreen mainScreen] frame];
 	NSPoint pos = [[priv->window contentView] frame].origin;
-	return {pos.x, pos.y};
+	return {pos.x, screen.size.height - pos.y};
 }
 
 void NativeWindowCocoa::show()
@@ -755,6 +769,27 @@ void* NativeWindowCocoa::getNativeWindowHandle() const
 	{
 		return [priv->window contentView];
 	}
+}
+
+Point NativeWindowCocoa::translateToScreen(const Point& point)
+{
+	NSRect e = [[NSScreen mainScreen] frame];
+	NSRect frame;
+	if(native_window)
+	{
+		frame = [priv->parent_view frame];
+	}
+	else
+	{
+		frame = [priv->view frame];
+	}
+
+	NSRect rect { { point.x + frame.origin.x,
+	                frame.size.height - point.y + frame.origin.y},
+	              {0.0, 0.0} };
+	rect = [priv->window convertRectToScreen:rect];
+
+	return { (int)rect.origin.x, (int)(e.size.height - rect.origin.y) };
 }
 
 Window& NativeWindowCocoa::getWindow()

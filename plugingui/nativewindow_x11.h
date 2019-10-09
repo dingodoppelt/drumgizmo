@@ -47,6 +47,7 @@ public:
 
 	// From NativeWindow:
 	void setFixedSize(std::size_t width, std::size_t height) override;
+	void setAlwaysOnTop(bool always_on_top) override;
 	void resize(std::size_t width, std::size_t height) override;
 	std::pair<std::size_t, std::size_t> getSize() const override;
 	void move(int x, int y) override;
@@ -59,6 +60,7 @@ public:
 	void grabMouse(bool grab) override;
 	EventQueue getEvents() override;
 	void* getNativeWindowHandle() const override;
+	Point translateToScreen(const Point& point) override;
 
 private:
 	void translateXMessage(XEvent& xevent);

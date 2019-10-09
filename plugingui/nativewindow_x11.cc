@@ -44,6 +44,72 @@
 namespace GUI
 {
 
+#define _NET_WM_STATE_REMOVE        0    // remove/unset property
+#define _NET_WM_STATE_ADD           1    // add/set property
+
+void setWindowFront(Display *disp, ::Window wind, bool enable)
+{
+	Atom wm_state, wm_state_above;
+	XEvent event;
+
+	if((wm_state = XInternAtom(disp, "_NET_WM_STATE", False)) == None)
+	{
+		return;
+	}
+
+	if((wm_state_above = XInternAtom(disp, "_NET_WM_STATE_ABOVE", False)) == None)
+	{
+		return;
+	}
+	//
+	//window  = the respective client window
+	//message_type = _NET_WM_STATE
+	//format = 32
+	//data.l[0] = the action, as listed below
+	//data.l[1] = first property to alter
+	//data.l[2] = second property to alter
+	//data.l[3] = source indication (0-unk,1-normal app,2-pager)
+	//other data.l[] elements = 0
+	//
+
+	// sending a ClientMessage
+	event.xclient.type = ClientMessage;
+
+	// value unimportant in this case
+	event.xclient.serial = 0;
+
+	// coming from a SendEvent request, so True
+	event.xclient.send_event = True;
+
+	// the event originates from disp
+	event.xclient.display = disp;
+
+	// the window whose state will be modified
+	event.xclient.window = wind;
+
+	// the component Atom being modified in the window
+	event.xclient.message_type = wm_state;
+
+	// specifies that data.l will be used
+	event.xclient.format = 32;
+
+	// 0 is _NET_WM_STATE_REMOVE, 1 is _NET_WM_STATE_ADD
+	event.xclient.data.l[0] =
+		enable ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE;
+
+	// the atom being added
+	event.xclient.data.l[1] = wm_state_above;
+
+	// unused
+	event.xclient.data.l[2] = 0;
+	event.xclient.data.l[3] = 0;
+	event.xclient.data.l[4] = 0;
+
+	// actually send the event
+	XSendEvent(disp, DefaultRootWindow(disp), False,
+	           SubstructureRedirectMask | SubstructureNotifyMask, &event);
+}
+
 NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	: window(window)
 {
@@ -101,8 +167,8 @@ NativeWindowX11::NativeWindowX11(void* native_window, Window& window)
 	wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", false);
 
 	Atom protocols[] = { wmDeleteMessage };
-	int count = sizeof(protocols)/sizeof(Atom);
-	XSetWMProtocols(display, xwindow, protocols, count);
+	XSetWMProtocols(display, xwindow, protocols,
+	                sizeof(protocols) / sizeof(*protocols));
 
 	// Create a "Graphics Context"
 	gc = XCreateGC(display, xwindow, 0, nullptr);
@@ -140,6 +206,11 @@ void NativeWindowX11::setFixedSize(std::size_t width, std::size_t height)
 	size_hints.min_height = size_hints.max_height = (int)height;
 
 	XSetNormalHints(display, xwindow, &size_hints);
+}
+
+void NativeWindowX11::setAlwaysOnTop(bool always_on_top)
+{
+	setWindowFront(display, xwindow, always_on_top);
 }
 
 void NativeWindowX11::resize(std::size_t width, std::size_t height)
@@ -285,6 +356,15 @@ EventQueue NativeWindowX11::getEvents()
 void* NativeWindowX11::getNativeWindowHandle() const
 {
 	return (void*)xwindow;
+}
+
+Point NativeWindowX11::translateToScreen(const Point& point)
+{
+	::Window child_window;
+	Point p;
+	XTranslateCoordinates(display, xwindow, DefaultRootWindow(display),
+	                      point.x, point.y, &p.x, &p.y, &child_window);
+	return p;
 }
 
 void NativeWindowX11::translateXMessage(XEvent& xevent)
