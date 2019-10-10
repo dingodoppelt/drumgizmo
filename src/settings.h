@@ -112,7 +112,7 @@ struct Settings
 	Atomic<float> master_bleed{1.0f};
 	Atomic<bool> has_bleed_control{false};
 
-	Atomic<bool> normalized_samples{false};
+	Atomic<bool> normalized_samples{true};
 
 	Atomic<bool> enable_latency_modifier{false};
 
