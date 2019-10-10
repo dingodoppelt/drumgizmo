@@ -37,12 +37,13 @@ using AudioFiles = std::map<const InstrumentChannel*, AudioFile*>;
 class Sample
 {
 public:
-	Sample(const std::string& name, double power);
+	Sample(const std::string& name, double power, bool normalized = false);
 	~Sample();
 
 	AudioFile* getAudioFile(const Channel& channel) const;
 
 	double getPower() const;
+	bool getNormalized() const;
 
 private:
 	friend class DOMLoader;
@@ -54,5 +55,6 @@ private:
 
 	std::string name;
 	double power;
+	bool normalized;
 	AudioFiles audiofiles;
 };

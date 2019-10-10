@@ -59,6 +59,7 @@ struct SampleDOM
 {
 	std::string name;
 	double power; // >= v2.0 only
+	bool normalized; // >= v2.0 only
 	std::vector<AudioFileDOM> audiofiles;
 };
 

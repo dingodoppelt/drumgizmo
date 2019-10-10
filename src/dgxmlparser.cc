@@ -94,6 +94,17 @@ static bool assign(main_state_t& dest, const std::string& val)
 	return true;
 }
 
+static bool assign(bool& dest, const std::string& val)
+{
+	if(val == "true" || val == "false")
+	{
+		dest = val == "true";
+		return true;
+	}
+
+	return false;
+}
+
 template<typename T>
 static bool attrcpy(T& dest, const pugi::xml_node& src, const std::string& attr, LogFunction logger, const std::string& filename, bool opt = false)
 {
@@ -343,6 +354,8 @@ bool parseInstrumentFile(const std::string& filename, InstrumentDOM& dom, LogFun
 		else
 		{
 			res &= attrcpy(dom.samples.back().power, sample, "power", logger, filename);
+			dom.samples.back().normalized = false;
+			res &= attrcpy(dom.samples.back().normalized, sample, "normalized", logger, filename, true);
 		}
 
 		for(pugi::xml_node audiofile: sample.children("audiofile"))

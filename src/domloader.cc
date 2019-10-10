@@ -98,7 +98,8 @@ bool DOMLoader::loadDom(const std::string& basepath,
 			auto path = getPath(basepath + "/" + instrumentref.file);
 			for(const auto& sampledom : instrumentdom.samples)
 			{
-				auto sample = new Sample(sampledom.name, sampledom.power);
+				auto sample = new Sample(sampledom.name, sampledom.power,
+				                         sampledom.normalized);
 				for(const auto& audiofiledom : sampledom.audiofiles)
 				{
 					InstrumentChannel *instrument_channel =
