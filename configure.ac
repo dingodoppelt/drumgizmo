@@ -589,7 +589,7 @@ LDFLAGS="$ZITA_LDFLAGS"
 LIBS="-lzita-resampler -lpthread"
 AC_LINK_IFELSE(
   [AC_LANG_PROGRAM([#include <zita-resampler/resampler.h>],
-    [Resampler r] ) ], has_zita=yes, has_zita=no)
+    [Resampler r] ) ], , AC_MSG_ERROR([*** zita-resampler library not found!]))
 ZITA_CPPFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
 ZITA_LIBS="$LDFLAGS $LIBS"
 CXXFLAGS="$tmp_CXXFLAGS"
