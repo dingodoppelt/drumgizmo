@@ -1,3 +1,23 @@
+Version 0.9.18
+==============
+Release date: October 15th 2019
+Contributors: chaot4, meka, deva
+
+This release is primarily a bugfix release but a few new features also
+managed to sneak in.
+
+Highlights:
+ - Sample selection algorithm now behaves a lot better when using a small
+   sample set.
+ - Error reporting has been drastically improved when loading drum-kits.
+ - Sample normalization option has been added.
+
+Also some bug fixes, mainly for the UI.
+
+For a more in depth description of the changes and fixes, see the
+changelog for 0.9.18:
+ https://drumgizmo.org/wiki/doku.php?id=changelog:drumgizmo-0.9.18
+
 Version 0.9.17
 ==============
 Release date: July 15th 2019
