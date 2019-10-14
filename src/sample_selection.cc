@@ -75,7 +75,10 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	const float f_diverse = (1./2.)*settings.sample_selection_f_diverse.load();
 	const float f_random = (1./3.)*settings.sample_selection_f_random.load();
 
-	float const power_range = powerlist.getMaxPower() - powerlist.getMinPower();
+	float power_range = powerlist.getMaxPower() - powerlist.getMinPower();
+	// If all power values are the same then power_range is invalid but we want
+	// to avoid division by zero.
+	if (power_range == 0.) { power_range = 1.0; }
 
 	// start with most promising power value and then stop when reaching far values
 	// which cannot become opt anymore
@@ -83,9 +86,16 @@ const Sample* SampleSelection::get(level_t level, std::size_t pos)
 	std::size_t up_index = std::distance(samples.begin(), closest_it);
 	std::size_t down_index = (up_index == 0 ? 0 : up_index - 1);
 
-	auto const close_up = (samples[up_index].power-level)/power_range;
+	float up_value_lb;
+	if (up_index < samples.size()) {
+		auto const close_up = (samples[up_index].power-level)/power_range;
+		up_value_lb = f_close*pow2(close_up);
+	}
+	else {
+		--up_index;
+		up_value_lb = std::numeric_limits<float>::max();
+	}
 	auto const close_down = (samples[down_index].power-level)/power_range;
-	float up_value_lb = (up_index < samples.size() ? f_close*pow2(close_up) : std::numeric_limits<float>::max());
 	float down_value_lb = (up_index != 0 ? f_close*pow2(close_down) : std::numeric_limits<float>::max());
 
 	std::size_t count = 0;
