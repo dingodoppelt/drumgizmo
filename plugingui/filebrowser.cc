@@ -90,7 +90,7 @@ void FileBrowser::setPath(const std::string& path)
 {
 	INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
 
-	if(!path.empty())
+	if(!path.empty() && Directory::exists(path))
 	{
 		dir.setPath(Directory::pathDirectory(path));
 	}
