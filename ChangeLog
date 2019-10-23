@@ -1,3 +1,14 @@
+Version 0.9.18.1-hotfix
+======================
+Release date: October 23rd 2019
+Contributors: deva
+
+- Fixed bug in the file browser which could not be navigated if the
+  default kit path were not set or pointing to an invalid path.
+
+Special thanks to 2Late and Jason N. for reporting and helping debugging
+the problem.
+
 Version 0.9.18
 ==============
 Release date: October 15th 2019
