@@ -437,7 +437,7 @@ void DrumGizmo::setSamplerate(float samplerate)
 	auto input_fs = settings.drumkit_samplerate.load();
 	auto output_fs = samplerate;
 	ratio = input_fs / output_fs;
-	settings.resamplig_recommended.store(ratio != 1.0);
+	settings.resampling_recommended.store(ratio != 1.0);
 
 	// TODO: Only reallocate the actual amount of samples needed based on the
 	// ratio and the framesize.

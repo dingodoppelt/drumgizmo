@@ -47,7 +47,7 @@ public:
 
 	void updateDrumkitSamplerate(std::size_t drumkit_samplerate);
 	void updateSessionSamplerate(double samplerate);
-	void updateResamplingRecommended(bool resamplig_recommended);
+	void updateResamplingRecommended(bool resampling_recommended);
 
 private:
 	TextEdit text_field{this};
@@ -56,7 +56,7 @@ private:
 
 	std::string drumkit_samplerate;
 	std::string session_samplerate;
-	std::string resamplig_recommended;
+	std::string resampling_recommended;
 };
 
 } // GUI::

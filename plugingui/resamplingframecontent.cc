@@ -40,7 +40,7 @@ ResamplingframeContent::ResamplingframeContent(
 	        this, &ResamplingframeContent::updateDrumkitSamplerate);
 	CONNECT(this, settings_notifier.samplerate,
 	        this, &ResamplingframeContent::updateSessionSamplerate);
-	CONNECT(this, settings_notifier.resamplig_recommended,
+	CONNECT(this, settings_notifier.resampling_recommended,
 	        this, &ResamplingframeContent::updateResamplingRecommended);
 
 	text_field.move(0, 0);
@@ -61,7 +61,7 @@ void ResamplingframeContent::updateContent()
 	text_field.setText(
 		"Session samplerate:   " + session_samplerate + "\n"
 		"Drumkit samplerate:   " + drumkit_samplerate + "\n"
-		"Resampling recommended:   " + resamplig_recommended + "\n"
+		"Resampling recommended:   " + resampling_recommended + "\n"
 	);
 }
 
@@ -81,9 +81,9 @@ void ResamplingframeContent::updateSessionSamplerate(double samplerate)
 	updateContent();
 }
 
-void ResamplingframeContent::updateResamplingRecommended(bool resamplig_recommended)
+void ResamplingframeContent::updateResamplingRecommended(bool resampling_recommended)
 {
-	this->resamplig_recommended = resamplig_recommended ? "Yes" : "No";
+	this->resampling_recommended = resampling_recommended ? "Yes" : "No";
 
 	updateContent();
 }
