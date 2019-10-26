@@ -21,6 +21,7 @@ DG_SRC = \
 	@top_srcdir@/src/configfile.cc \
 	@top_srcdir@/src/configparser.cc \
 	@top_srcdir@/src/dgxmlparser.cc \
+	@top_srcdir@/src/directory.cc \
 	@top_srcdir@/src/domloader.cc \
 	@top_srcdir@/src/drumgizmo.cc \
 	@top_srcdir@/src/drumkit.cc \
@@ -55,7 +56,6 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/colour.cc \
 	@top_srcdir@/plugingui/combobox.cc \
 	@top_srcdir@/plugingui/dialog.cc \
-	@top_srcdir@/plugingui/directory.cc \
 	@top_srcdir@/plugingui/diskstreamingframecontent.cc \
 	@top_srcdir@/plugingui/drumkitframecontent.cc \
 	@top_srcdir@/plugingui/drumkittab.cc \

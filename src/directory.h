@@ -36,8 +36,6 @@
 
 #define DIRECTORY_HIDDEN 1
 
-namespace GUI {
-
 class Directory {
 public:
 	typedef struct drive {
@@ -88,5 +86,3 @@ private:
 	static Path parsePath(std::string path);
 	static std::string pathToStr(Path &path);
 };
-
-} // GUI::

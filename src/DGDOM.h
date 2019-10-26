@@ -131,6 +131,7 @@ struct MetadataDOM
 	std::string image;
 	std::string image_map;
 	std::vector<ClickMapDOM> clickmaps;
+	std::string default_midimap_file;
 };
 
 struct DrumkitDOM

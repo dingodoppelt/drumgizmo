@@ -64,7 +64,6 @@ nodist_libdggui_la_SOURCES = \
 	colour.cc \
 	combobox.cc \
 	dialog.cc \
-	directory.cc \
 	diskstreamingframecontent.cc \
 	drumkitframecontent.cc \
 	drumkittab.cc \
@@ -192,7 +191,6 @@ EXTRA_DIST = \
 	colour.h \
 	combobox.h \
 	dialog.h \
-	directory.h \
 	diskstreamingframecontent.h \
 	drawable.h \
 	drumkitframecontent.h \

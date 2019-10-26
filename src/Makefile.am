@@ -22,6 +22,7 @@ nodist_libdg_la_SOURCES = \
 	channelmixer.cc \
 	configfile.cc \
 	configparser.cc \
+	directory.cc \
 	domloader.cc \
 	dgxmlparser.cc \
 	drumgizmo.cc \
@@ -63,6 +64,7 @@ EXTRA_DIST = \
 	channelmixer.h \
 	configfile.h \
 	configparser.h \
+	directory.h \
 	cpp11fix.h \
 	dgxmlparser.h \
 	domloader.h \

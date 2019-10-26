@@ -28,6 +28,7 @@
 
 #include <notifier.h>
 #include <platform.h>
+#include <directory.h>
 
 #include "dialog.h"
 #include "button.h"
@@ -35,7 +36,6 @@
 #include "lineedit.h"
 #include "label.h"
 #include "image.h"
-#include "directory.h"
 
 namespace GUI
 {

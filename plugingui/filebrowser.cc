@@ -29,8 +29,6 @@
 #include "painter.h"
 #include "button.h"
 
-#include "directory.h"
-
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>

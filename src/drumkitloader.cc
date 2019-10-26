@@ -36,6 +36,7 @@
 #include "dgxmlparser.h"
 #include "path.h"
 #include "domloader.h"
+#include "directory.h"
 
 #define REFSFILE "refs.conf"
 
@@ -218,6 +219,12 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	settings.drumkit_description = kit.getDescription();
 	settings.drumkit_version = kit.getVersion();
 	settings.drumkit_samplerate = kit.getSamplerate();
+	// only load the default midi map if there is one and no midimap is selected yet
+	if (drumkitdom.metadata.default_midimap_file != "" && settings.midimap_file == "")
+	{
+		const std::string drumkit_path = Directory::pathDirectory(settings.drumkit_file);
+		settings.midimap_file = drumkit_path + "/" + drumkitdom.metadata.default_midimap_file;
+	}
 
 	loadKitAudio(kit);
 

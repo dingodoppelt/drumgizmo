@@ -52,9 +52,6 @@
 #define SEP "/"
 #endif
 
-namespace GUI
-{
-
 Directory::Directory(std::string path)
 {
 	setPath(path);
@@ -568,5 +565,3 @@ std::string Directory::pathDirectory(std::string filepath)
 
 	return Directory::pathToStr(path);
 }
-
-} // GUI::

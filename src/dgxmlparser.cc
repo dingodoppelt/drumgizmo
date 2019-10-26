@@ -245,6 +245,11 @@ bool parseDrumkitFile(const std::string& filename, DrumkitDOM& dom, LogFunction 
 				               clickmap, "colour", logger, filename, true);
 			}
 		}
+		pugi::xml_node default_midimap = metadata.child("defaultmidimap");
+		if(default_midimap != pugi::xml_node())
+		{
+			res &= attrcpy(meta.default_midimap_file, default_midimap, "src", logger, filename, true);
+		}
 	}
 
 	pugi::xml_node channels = doc.child("drumkit").child("channels");
