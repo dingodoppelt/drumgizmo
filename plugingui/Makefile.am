@@ -218,6 +218,7 @@ EXTRA_DIST = \
 	mainwindow.h \
 	nativewindow.h \
 	nativewindow_cocoa.h \
+	nativewindow_cocoa.mm \
 	nativewindow_pugl.h \
 	nativewindow_win32.h \
 	nativewindow_x11.h \

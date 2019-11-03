@@ -40,7 +40,8 @@ public.sdk/source/vst2.x/vstplugmain.cpp: public.sdk/source/vst2.x @VST_SOURCE_P
 	cp @VST_SOURCE_PATH@/public.sdk/source/vst2.x/vstplugmain.cpp $@
 
 # Hack to compile vst sources without -Wall -Werror
-libvstsdk_la_CXXFLAGS = -w $(VST_CPPFLAGS) -Ipublic.sdk/source/vst2.x -I.
+libvstsdk_la_CXXFLAGS = -Wno-c++11-narrowing -w $(VST_CPPFLAGS) \
+	-Ipublic.sdk/source/vst2.x -I.
 
 nodist_libvstsdk_la_SOURCES = \
 	public.sdk/source/vst2.x/audioeffectx.cpp \
