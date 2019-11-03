@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libdg.la
 
 libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
-	$(SSEFLAGS) \
+	$(SSEFLAGS) -D_USE_MATH_DEFINES -Wno-unused-private-field \
 	-I$(top_srcdir)/libs $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
