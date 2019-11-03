@@ -572,35 +572,6 @@ dnl Check for sndfile
 dnl ======================
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.20)
 
-
-dnl ======================
-dnl Check for the zitaresampler library
-dnl ======================
-AC_LANG_PUSH([C++])
-tmp_CXXFLAGS="$CXXFLAGS"
-tmp_CPPFLAGS="$CPPFLAGS"
-tmp_CFLAGS="$CFLAGS"
-tmp_LDFLAGS="$LDFLAGS"
-tmp_LIBS="$LIBS"
-CXXFLAGS=""
-CPPFLAGS="$ZITA_CPPFLAGS"
-CFLAGS=""
-LDFLAGS="$ZITA_LDFLAGS"
-LIBS="-lzita-resampler -lpthread"
-AC_LINK_IFELSE(
-  [AC_LANG_PROGRAM([#include <zita-resampler/resampler.h>],
-    [Resampler r] ) ], , AC_MSG_ERROR([*** zita-resampler library not found!]))
-ZITA_CPPFLAGS="$CXXFLAGS $CPPFLAGS $CFLAGS"
-ZITA_LIBS="$LDFLAGS $LIBS"
-CXXFLAGS="$tmp_CXXFLAGS"
-CPPFLAGS="$tmp_CPPFLAGS"
-CFLAGS="$tmp_CFLAGS"
-LDFLAGS="$tmp_LDFLAGS"
-LIBS="$tmp_LIBS"
-AC_SUBST(ZITA_CPPFLAGS)
-AC_SUBST(ZITA_LIBS)
-AC_LANG_POP([C++])
-
 dnl ======================
 dnl Check for the rt library
 dnl ======================

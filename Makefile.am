@@ -20,4 +20,9 @@ EXTRA_DIST = \
 \
 	pugixml/src/pugixml.hpp \
 	pugixml/src/pugiconfig.hpp \
-	pugixml/src/pugixml.cpp
+	pugixml/src/pugixml.cpp \
+\
+	zita-resampler/libs/resampler.cc \
+	zita-resampler/libs/resampler-table.cc \
+	zita-resampler/libs/zita-resampler/resampler-table.h \
+	zita-resampler/libs/zita-resampler/resampler.h

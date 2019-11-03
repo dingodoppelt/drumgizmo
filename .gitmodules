@@ -17,3 +17,6 @@
 [submodule "pugixml"]
 	path = pugixml
 	url = http://git.drumgizmo.org/pugixml.git
+[submodule "zita-resampler"]
+	path = zita-resampler
+	url = git://git.drumgizmo.org/zita-resampler.git

@@ -3,14 +3,16 @@ noinst_LTLIBRARIES = libdg.la
 libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) \
-	$(ZITA_CPPFLAGS) $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
+	-I$(top_srcdir)/libs $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
-	$(ZITA_LIBS) $(SNDFILE_LIBS) $(PTHREAD_LIBS)
+	$(SNDFILE_LIBS) $(PTHREAD_LIBS)
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 nodist_libdg_la_SOURCES = \
 	$(top_srcdir)/pugixml/src/pugixml.cpp \
+	$(top_srcdir)/zita-resampler/libs/resampler.cc \
+	$(top_srcdir)/zita-resampler/libs/resampler-table.cc \
 	audiocachefile.cc \
 	audiocache.cc \
 	audiocacheeventhandler.cc \
