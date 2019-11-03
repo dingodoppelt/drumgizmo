@@ -10,6 +10,8 @@ VST_CFLAGS=-I$(VST_BASE)
 
 DG_SRC = \
 	@top_srcdir@/pugixml/src/pugixml.cpp \
+	@top_srcdir@/zita-resampler/libs/resampler.cc \
+	@top_srcdir@/zita-resampler/libs/resampler-table.cc \
 	@top_srcdir@/src/audiocachefile.cc \
 	@top_srcdir@/src/audiocache.cc \
 	@top_srcdir@/src/audiocacheeventhandler.cc \
@@ -43,7 +45,7 @@ DG_SRC = \
 	@top_srcdir@/src/velocityfilter.cc \
 	@top_srcdir@/src/versionstr.cc
 DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/src \
-	-I@top_srcdir@/pugixml/src \
+	-I@top_srcdir@/pugixml/src -D_USE_MATH_DEFINES \
 	-I@top_srcdir@/plugin/plugingizmo -DVST -DSSE -msse -msse2
 # -DDISABLE_HUGIN
 
@@ -124,11 +126,9 @@ DBG_CFLAGS=-I../hugin -DWITH_HUG_SYSLOG -DWITH_HUG_MUTEX
 SNDFILE_CFLAGS=@SNDFILE_CFLAGS@
 SNDFILE_LIBS=@SNDFILE_LIBS@
 
-ZITA_CXXFLAGS=@ZITA_CPPFLAGS@
-ZITA_LIBS=@ZITA_LIBS@
-
-CXXFLAGS += -fvisibility=hidden
-CFLAGS += -fvisibility=hidden
+CXXFLAGS += @CXXFLAGS@ -fvisibility=hidden
+CFLAGS += @CFLAGS@ -fvisibility=hidden
+LDFLAGS += @LDFLAGS@
 
 SRC = \
 	@top_srcdir@/plugin/plugingizmo/midievent.cc \
@@ -172,7 +172,7 @@ all:
 	g++ $(CXXFLAGS) @top_srcdir@/plugingui/resource_data.cc -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
-	g++ $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o resource_data.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(ZITA_CXXFLAGS)  $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) $(ZITA_LIBS) -latomic -shared -Wl,-retain-symbols-file -Wl,drumgizmo_vst.sym -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
+	g++ $(LDFLAGS) $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o resource_data.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -latomic -shared -Wl,-retain-symbols-file -Wl,drumgizmo_vst.sym -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a
 
 clean:
 	del -f drumgizmo_vst.dll libdrumgizmo_vst.a
