@@ -719,7 +719,7 @@ void NativeWindowCocoa::updateLayerOffset()
 	if(native_window)
 	{
 		auto r1 = [priv->parent_view frame];
-		auto r2 = [priv->view frame];
+		//auto r2 = [priv->view frame];
 
 		CATransform3D t = [[priv->view layer] transform];
 		if(t.m42 != -r1.origin.y)
