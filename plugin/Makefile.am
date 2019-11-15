@@ -13,6 +13,7 @@ lv2plugin_DATA = manifest.ttl
 endif
 
 drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
+	$(DEBUG_FLAGS) \
 	-fvisibility=hidden \
 	-I$(top_srcdir)/zita-resampler/libs \
 	$(LV2_CFLAGS) \
@@ -37,7 +38,9 @@ drumgizmo_la_LIBADD = $(LV2_LIBS) \
 	$(top_srcdir)/plugingui/libdggui.la \
 	$(top_srcdir)/src/libdg.la
 
-ttlgen_CPPFLAGS = $(DL_CFLAGS) -I$(top_srcdir)/plugin/plugingizmo
+ttlgen_CPPFLAGS = \
+	$(DEBUG_FLAGS) \
+	$(DL_CFLAGS) -I$(top_srcdir)/plugin/plugingizmo
 ttlgen_LDFLAGS = $(DL_LIBS)
 ttlgen_SOURCES = \
 	$(top_srcdir)/plugin/plugingizmo/ttlgen.cc
@@ -80,6 +83,7 @@ vstplugin_DATA =
 endif
 
 drumgizmo_vst_la_CXXFLAGS = -DVST \
+	$(DEBUG_FLAGS) \
 	-fvisibility=hidden \
 	-I$(top_srcdir)/zita-resampler/libs \
 	$(SNDFILE_CFLAGS) \

@@ -37,6 +37,7 @@ resource_data.cc : rcgen $(RES)
 	./rcgen $(RES) > resource_data.cc
 
 libdggui_la_CPPFLAGS = \
+	$(DEBUG_FLAGS) \
 	$(GUI_CPPFLAGS) \
 	-I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/src \
@@ -165,6 +166,7 @@ endif
 plugingui_LDADD = libdggui.la $(top_srcdir)/src/libdg.la
 
 plugingui_CXXFLAGS = \
+	$(DEBUG_FLAGS) \
 	$(GUI_CPPFLAGS) \
 	$(SNDFILE_CXXFLAGS) \
 	$(PTHREAD_CFLAGS) \

@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libdg.la libzr.la libpugi.la
 # libzita-resampler
 
 libzr_la_CPPFLAGS = \
-	-ffast-math -D_USE_MATH_DEFINES -Wno-unused-private-field $(PTHREAD_CFLAGS) \
+	-ffast-math -D_USE_MATH_DEFINES $(PTHREAD_CFLAGS) \
 	-I$(top_srcdir)/zita-resampler/libs
 
 libzr_la_LIBADD = \
@@ -23,6 +23,7 @@ libpugi_la_SOURCES = \
 
 # libdg
 libdg_la_CPPFLAGS = \
+	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) -I$(top_srcdir)/zita-resampler/libs
 	$(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
