@@ -1,18 +1,35 @@
-noinst_LTLIBRARIES = libdg.la
+noinst_LTLIBRARIES = libdg.la libzr.la libpugi.la
 
+# libzita-resampler
+
+libzr_la_CPPFLAGS = \
+	-ffast-math -D_USE_MATH_DEFINES -Wno-unused-private-field $(PTHREAD_CFLAGS)
+
+libzr_la_LIBADD = \
+	$(PTHREAD_LIBS)
+
+libzr_la_SOURCES = \
+	zrwrapper.cc \
+	$(top_srcdir)/zita-resampler/libs/resampler.cc \
+	$(top_srcdir)/zita-resampler/libs/resampler-table.cc
+
+# pugixml
+
+libpugi_la_CPPFLAGS =
+libpugi_la_LIBADD =
+libpugi_la_SOURCES = \
+	$(top_srcdir)/pugixml/src/pugixml.cpp
+
+# libdg
 libdg_la_CPPFLAGS = \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
-	$(SSEFLAGS) -D_USE_MATH_DEFINES -Wno-unused-private-field \
-	-I$(top_srcdir)/zita-resampler/libs $(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
+	$(SSEFLAGS) -I$(top_srcdir)/zita-resampler/libs
+	$(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
-	$(SNDFILE_LIBS) $(PTHREAD_LIBS)
+	$(SNDFILE_LIBS) $(PTHREAD_LIBS) libzr.la libpugi.la
 
-# If you add a file here, remember to add it to plugin/Makefile.mingw32.in
-nodist_libdg_la_SOURCES = \
-	$(top_srcdir)/pugixml/src/pugixml.cpp \
-	$(top_srcdir)/zita-resampler/libs/resampler.cc \
-	$(top_srcdir)/zita-resampler/libs/resampler-table.cc \
+libdg_la_SOURCES = \
 	audiocachefile.cc \
 	audiocache.cc \
 	audiocacheeventhandler.cc \
@@ -48,7 +65,9 @@ nodist_libdg_la_SOURCES = \
 	versionstr.cc
 
 EXTRA_DIST = \
-	$(nodist_libdg_la_SOURCES) \
+	$(libzr_la_SOURCES) \
+	$(libpugi_la_SOURCES) \
+	$(libdg_la_SOURCES) \
 	DGDOM.h \
 	atomic.h \
 	audio.h \
@@ -98,4 +117,5 @@ EXTRA_DIST = \
 	syncedsettings.h \
 	thread.h \
 	velocityfilter.h \
-	versionstr.h
+	versionstr.h \
+	zrwrapper.h

@@ -33,8 +33,6 @@
 #include <array>
 #include <memory>
 
-#include <zita-resampler/resampler.h>
-
 #include "audiooutputengine.h"
 #include "audioinputengine.h"
 #include "events.h"
@@ -44,6 +42,7 @@
 #include "audiocache.h"
 #include "settings.h"
 #include "inputprocessor.h"
+#include "zrwrapper.h"
 
 #define REFSFILE "refs.conf"
 
@@ -102,7 +101,7 @@ protected:
 	SettingsGetter settings_getter;
 
 	Random rand;
-	std::array<Resampler, NUM_CHANNELS> zita;
+	std::array<ZRWrapper, NUM_CHANNELS> zita;
 	std::array<std::unique_ptr<sample_t>, NUM_CHANNELS> resampler_input_buffer;
 	double ratio = 1.0;
 

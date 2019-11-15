@@ -211,10 +211,10 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 				internal = true;
 			}
 
-			zita[c].out_data = buf;
-			zita[c].out_count = nsamples;
+			zita[c].set_out_data(buf);
+			zita[c].set_out_count(nsamples);
 
-			if(zita[c].inp_count > 0)
+			if(zita[c].get_inp_count() > 0)
 			{
 				// Samples left from last iteration, process that one first
 				zita[c].process();
@@ -222,12 +222,12 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 			std::memset(resampler_input_buffer[c].get(), 0, MAX_RESAMPLER_BUFFER_SIZE);
 
-			zita[c].inp_data = resampler_input_buffer[c].get();
+			zita[c].set_inp_data(resampler_input_buffer[c].get());
 			std::size_t sample_count =
-				std::ceil((nsamples - (nsamples - zita[c].out_count)) * ratio);
-			getSamples(c, kitpos, zita[c].inp_data, sample_count);
+				std::ceil((nsamples - (nsamples - zita[c].get_out_count())) * ratio);
+			getSamples(c, kitpos, zita[c].get_inp_data(), sample_count);
 
-			zita[c].inp_count = sample_count;
+			zita[c].set_inp_count(sample_count);
 			zita[c].process();
 			if(!internal)
 			{
@@ -455,13 +455,13 @@ void DrumGizmo::setSamplerate(float samplerate)
 
 		// Prefill
 		auto null_size = zita[c].inpsize() - 1;// / 2 - 1;
-		zita[c].inp_data = nullptr;
-		zita[c].inp_count = null_size;
+		zita[c].set_inp_data(nullptr);
+		zita[c].set_inp_count(null_size);
 
 		constexpr auto sz = 4096 * 16;
 		sample_t s[sz];
-		zita[c].out_data = s;
-		zita[c].out_count = sz;
+		zita[c].set_out_data(s);
+		zita[c].set_out_count(sz);
 
 		zita[c].process();
 	}
