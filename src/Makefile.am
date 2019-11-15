@@ -3,7 +3,8 @@ noinst_LTLIBRARIES = libdg.la libzr.la libpugi.la
 # libzita-resampler
 
 libzr_la_CPPFLAGS = \
-	-ffast-math -D_USE_MATH_DEFINES -Wno-unused-private-field $(PTHREAD_CFLAGS)
+	-ffast-math -D_USE_MATH_DEFINES -Wno-unused-private-field $(PTHREAD_CFLAGS) \
+	-I$(top_srcdir)/zita-resampler/libs
 
 libzr_la_LIBADD = \
 	$(PTHREAD_LIBS)
