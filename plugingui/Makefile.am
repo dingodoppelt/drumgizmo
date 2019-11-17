@@ -222,8 +222,11 @@ EXTRA_DIST = \
 	nativewindow_cocoa.h \
 	nativewindow_cocoa.mm \
 	nativewindow_pugl.h \
+	nativewindow_pugl.cc \
 	nativewindow_win32.h \
+	nativewindow_win32.cc \
 	nativewindow_x11.h \
+	nativewindow_x11.cc \
 	painter.h \
 	pixelbuffer.h \
 	pluginconfig.h \
