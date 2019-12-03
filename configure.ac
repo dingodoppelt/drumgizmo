@@ -627,7 +627,7 @@ AS_IF([test "x$enable_sse" = "xyes"], [enable_sse="auto"])
 
 AS_IF([test "x$enable_sse" = "x3"],
       [AC_MSG_RESULT([Setting sse level 3])
-       SSEFLAGS="-DSSE -msse -msse2 -mss3"],
+       SSEFLAGS="-DSSE -msse -msse2 -msse3"],
 
       [test "x$enable_sse" = "x2"],
       [AC_MSG_RESULT([Setting sse level 2])
