@@ -1,9 +1,9 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            range.h
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
+ *  Sun 16 Feb 2020 04:17:19 PM CET
+ *  Copyright 2020 AndrÃ© Nusser
  *  andre.nusser@googlemail.com
  ****************************************************************************/
 
@@ -26,45 +26,18 @@
  */
 #pragma once
 
-#include <vector>
-#include <list>
-#include <memory>
-
-#include <event.h>
-
-#include "drumkit.h"
-#include "events.h"
-#include "events_ds.h"
-#include "id.h"
-#include "inputfilter.h"
-
-struct Settings;
-class Random;
-
-class InputProcessor
+// Having the iterator as template parameter enables us to also
+// define ContainerRanges with const_iterators.
+template <typename T, typename iterator = typename T::iterator>
+struct ContainerRange
 {
-public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               EventsDS& events_ds,
-	               Random& random);
+	ContainerRange(iterator begin, iterator end)
+		: _begin(begin), _end(end) {};
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
-
-	std::size_t getLatency() const;
+	iterator begin() const { return _begin; };
+	iterator end() const { return _end; };
 
 private:
-	DrumKit& kit;
-	EventsDS& events_ds;
-	bool is_stopping; ///< Is set to true when a EventType::Stop event has been seen.
-
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processChoke(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
-
-	Settings& settings;
+	iterator const _begin;
+	iterator const _end;
 };

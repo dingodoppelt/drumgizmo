@@ -31,21 +31,17 @@
 #include <memory>
 #include <deque>
 
-#include "rangemap.h" // for v1.0 kits
+#include "id.h"
 #include "powerlist.h"
+#include "rangemap.h" // for v1.0 kits
+#include "random.h"
 #include "sample_selection.h"
-
 #include "sample.h"
 #include "versionstr.h"
-#include "random.h"
 
 #include "settings.h"
 
-struct Choke
-{
-	std::size_t instrument_id;
-	double choketime;
-};
+struct Choke;
 
 class Instrument
 {
@@ -109,5 +105,12 @@ private:
 	SampleSelection sample_selection;
 };
 
-// typedef std::map< std::string, Instrument > Instruments;
 using Instruments = std::vector<std::unique_ptr<Instrument>>;
+using InstrumentID = ID<Instrument>;
+using InstrumentIDs = std::vector<InstrumentID>;
+
+struct Choke
+{
+	std::size_t instrument_id;
+	double choketime;
+};

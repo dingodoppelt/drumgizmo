@@ -50,6 +50,7 @@ libdg_la_SOURCES = \
 	drumkit.cc \
 	drumkitloader.cc \
 	events.cc \
+	events_ds.cc \
 	inputprocessor.cc \
 	instrument.cc \
 	latencyfilter.cc \
@@ -96,6 +97,7 @@ EXTRA_DIST = \
 	drumkitloader.h \
 	event.h \
 	events.h \
+	events_ds.h \
 	grid.h \
 	inputfilter.h \
 	inputprocessor.h \

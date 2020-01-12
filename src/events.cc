@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.cc
+ *            events.cc
  *
  *  Sat Sep 18 22:02:16 CEST 2010
  *  Copyright 2010 Bent Bisballe Nyeng
@@ -26,26 +26,4 @@
  */
 #include "events.h"
 
-void EventQueue::post(Event* event, timepos_t time)
-{
-	std::lock_guard<std::mutex> guard(mutex);
-	event->offset = time;
-	queue.insert(std::pair<timepos_t, Event*>(time, event));
-}
-
-Event* EventQueue::take(timepos_t time)
-{
-	std::lock_guard<std::mutex> guard(mutex);
-	std::multimap<timepos_t, Event*>::iterator i = queue.find(time);
-	if(i == queue.end())
-		return NULL;
-	Event* event = i->second;
-	queue.erase(i);
-	return event;
-}
-
-bool EventQueue::hasEvent(timepos_t time)
-{
-	std::lock_guard<std::mutex> guard(mutex);
-	return queue.find(time) != queue.end();
-}
+// TODO: remove this file if it isn't needed anymore

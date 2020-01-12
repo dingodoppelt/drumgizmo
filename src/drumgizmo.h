@@ -36,6 +36,7 @@
 #include "audiooutputengine.h"
 #include "audioinputengine.h"
 #include "events.h"
+#include "events_ds.h"
 #include "audiofile.h"
 #include "drumkit.h"
 #include "drumkitloader.h"
@@ -59,7 +60,7 @@ public:
 	bool run(size_t pos, sample_t *samples, size_t nsamples);
 	void stop();
 
-	void renderSampleEvent(EventSample& evt, int pos, sample_t *s, std::size_t sz);
+	void renderSampleEvent(SampleEvent& evt, int pos, sample_t *s, std::size_t sz);
 	void getSamples(int ch, int pos, sample_t *s, size_t sz);
 
 	//! Get the current engine latency in samples.
@@ -83,7 +84,7 @@ protected:
 	AudioOutputEngine& oe;
 	AudioInputEngine& ie;
 
-	std::list< Event* > activeevents[NUM_CHANNELS];
+	EventsDS events_ds;
 
 	bool enable_resampling{true};
 

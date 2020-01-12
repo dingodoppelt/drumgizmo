@@ -40,10 +40,10 @@
 
 InputProcessor::InputProcessor(Settings& settings,
                                DrumKit& kit,
-                               std::list<Event*>* activeevents,
+                               EventsDS& events_ds,
                                Random& random)
 	: kit(kit)
-	, activeevents(activeevents)
+	, events_ds(events_ds)
 	, is_stopping(false)
 	, settings(settings)
 {
@@ -97,7 +97,7 @@ std::size_t InputProcessor::getLatency() const
 }
 
 //! Applies choke with rampdown time in ms to event starting at offset.
-static void applyChoke(Settings& settings, EventSample& event,
+static void applyChoke(Settings& settings, SampleEvent& event,
                        double length_ms, timepos_t offset)
 {
 	std::size_t ramp_length = (length_ms / 1000.) * settings.samplerate.load();
@@ -109,7 +109,7 @@ static void applyChoke(Settings& settings, EventSample& event,
 //! Applies choke group actions to active events based on the input event
 static void applyChokeGroup(Settings& settings, DrumKit& kit,
                             Instrument& instr, event_t& event,
-                            std::list<Event*>* activeevents)
+                            EventsDS& events_ds)
 {
 	std::size_t instrument_id = event.instrument;
 	if(instr.getGroup() == "")
@@ -120,18 +120,14 @@ static void applyChokeGroup(Settings& settings, DrumKit& kit,
 	// Add event to ramp down all existing events with the same groupname.
 	for(const auto& ch : kit.channels)
 	{
-		for(auto active_event : activeevents[ch.num])
+		for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 		{
-			if(active_event->getType() == Event::sample)
+			if(event_sample.group == instr.getGroup() &&
+			   event_sample.instrument_id != instrument_id &&
+			   event_sample.rampdown_count == -1) // Only if not already ramping.
 			{
-				auto& event_sample = *static_cast<EventSample*>(active_event);
-				if(event_sample.group == instr.getGroup() &&
-				   event_sample.instrument_id != instrument_id &&
-				   event_sample.rampdown_count == -1) // Only if not already ramping.
-				{
-					// Fixed group rampdown time of 68ms, independent of samplerate
-					applyChoke(settings, event_sample, 68, event.offset);
-				}
+				// Fixed group rampdown time of 68ms, independent of samplerate
+				applyChoke(settings, event_sample, 68, event.offset);
 			}
 		}
 	}
@@ -140,24 +136,20 @@ static void applyChokeGroup(Settings& settings, DrumKit& kit,
 //! Applies directed choke actions to active events based on the input event
 static void applyDirectedChoke(Settings& settings, DrumKit& kit,
                                Instrument& instr, event_t& event,
-                               std::list<Event*>* activeevents)
+                               EventsDS& events_ds)
 {
 	for(const auto& choke : instr.getChokes())
 	{
 		// Add event to ramp down all existing events with the same groupname.
 		for(const auto& ch : kit.channels)
 		{
-			for(auto active_event : activeevents[ch.num])
+			for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 			{
-				if(active_event->getType() == Event::sample)
+				if(choke.instrument_id == event_sample.instrument_id &&
+				   event_sample.rampdown_count == -1) // Only if not already ramping.
 				{
-					auto& event_sample = *static_cast<EventSample*>(active_event);
-					if(choke.instrument_id == event_sample.instrument_id &&
-					   event_sample.rampdown_count == -1) // Only if not already ramping.
-					{
-						// choke.choketime is in ms
-						applyChoke(settings, event_sample, choke.choketime, event.offset);
-					}
+					// choke.choketime is in ms
+					applyChoke(settings, event_sample, choke.choketime, event_sample.offset);
 				}
 			}
 		}
@@ -200,10 +192,10 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 	}
 
 	// Mute other instruments in the same group
-	applyChokeGroup(settings, kit, *instr, event, activeevents);
+	applyChokeGroup(settings, kit, *instr, event, events_ds);
 
 	// Apply directed chokes to mute other instruments if needed
-	applyDirectedChoke(settings, kit, *instr, event, activeevents);
+	applyDirectedChoke(settings, kit, *instr, event, events_ds);
 
 	auto const power_max = instr->getMaxPower();
 	auto const power_min = instr->getMinPower();
@@ -220,6 +212,7 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 	auto const selected_level = (sample->getPower() - power_min)/power_span;
 	settings.velocity_modifier_current.store(selected_level/original_level);
 
+	events_ds.startAddingNewGroup(instrument_id);
 	for(Channel& ch: kit.channels)
 	{
 		const auto af = sample->getAudioFile(ch);
@@ -230,15 +223,14 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			auto evt = new EventSample(ch.num, 1.0, af, instr->getGroup(),
-			                           instrument_id);
-			evt->offset = (event.offset + pos) * resample_ratio;
+			auto& event_sample = events_ds.emplace<SampleEvent>(ch.num, ch.num, 1.0, af,
+				                                                instr->getGroup(), instrument_id);
+
+			event_sample.offset = (event.offset + pos) * resample_ratio;
 			if(settings.normalized_samples.load() && sample->getNormalized())
 			{
-				evt->scale *= event.velocity;
+				event_sample.scale *= event.velocity;
 			}
-
-			activeevents[ch.num].push_back(evt);
 		}
 	}
 
@@ -282,17 +274,13 @@ bool InputProcessor::processChoke(event_t& event,
 	// Add event to ramp down all existing events with the same groupname.
 	for(const auto& ch : kit.channels)
 	{
-		for(auto active_event : activeevents[ch.num])
+		for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 		{
-			if(active_event->getType() == Event::sample)
+			if(event_sample.instrument_id == instrument_id &&
+			   event_sample.rampdown_count == -1) // Only if not already ramping.
 			{
-				auto& event_sample = *static_cast<EventSample*>(active_event);
-				if(event_sample.instrument_id == instrument_id &&
-				   event_sample.rampdown_count == -1) // Only if not already ramping.
-				{
-					// Fixed group rampdown time of 68ms, independent of samplerate
-					applyChoke(settings, event_sample, 68, event.offset);
-				}
+				// Fixed group rampdown time of 68ms, independent of samplerate
+				applyChoke(settings, event_sample, 68, event_sample.offset);
 			}
 		}
 	}
@@ -313,7 +301,7 @@ bool InputProcessor::processStop(event_t& event)
 		int num_active_events = 0;
 		for(auto& ch: kit.channels)
 		{
-			num_active_events += activeevents[ch.num].size();
+			num_active_events += events_ds.numberOfEvents(ch.num);
 		}
 
 		if(num_active_events == 0)

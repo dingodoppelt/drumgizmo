@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.h
+ *            events.h
  *
  *  Sat Sep 18 22:02:16 CEST 2010
  *  Copyright 2010 Bent Bisballe Nyeng
@@ -34,39 +34,48 @@
 #include "audiofile.h"
 #include "audio.h"
 #include "audiocache.h"
+#include "id.h"
 
-typedef unsigned int timepos_t;
+using timepos_t = unsigned int;
+
+class InputEvent; // just used as template argument for the ID
+using InputEventID = ID<InputEvent>;
+using InputEventIDs = std::vector<InputEventID>;
+
+class EventGroup; // just used as template argument for the ID
+using EventGroupID = ID<EventGroup>;
+using EventGroupIDs = std::vector<EventGroupID>;
+
+class Event;
+using EventID = ID<Event>;
+using EventIDs = std::vector<EventID>;
 
 class Event
 {
 public:
-	Event(channel_t channel, timepos_t offset = 0)
-		: channel(channel), offset(offset)
-	{
-	}
+	enum class Type {
+		SampleEvent,
+	};
 
-	virtual ~Event()
-	{
-	}
+	Event(Type type, channel_t channel, timepos_t offset = 0)
+		: type(type), channel(channel), offset(offset) {}
 
-	typedef enum
-	{
-		sample
-	} type_t;
+	virtual ~Event() {}
 
-	virtual type_t getType() const = 0;
-
+	EventID id;
+	EventGroupID group_id;
+	Type type;
 	channel_t channel;
 	timepos_t offset; //< Global position (ie. not relative to buffer)
 };
 
-class EventSample
+class SampleEvent
 	: public Event
 {
 public:
-	EventSample(channel_t c, float g, AudioFile* af,
-	            const std::string& grp, std::size_t instrument_id)
-		: Event(c)
+	SampleEvent(channel_t ch, float g, AudioFile* af, const std::string& grp,
+	            std::size_t instrument_id)
+		: Event(Event::Type::SampleEvent, ch)
 		, cache_id(CACHE_NOID)
 		, gain(g)
 		, t(0)
@@ -76,11 +85,6 @@ public:
 		, ramp_length(0)
 		, instrument_id(instrument_id)
 	{
-	}
-
-	Event::type_t getType() const
-	{
-		return Event::sample;
 	}
 
 	bool rampdownInProgress() const
@@ -103,20 +107,4 @@ public:
 	std::size_t rampdown_offset{0};
 	float scale{1.0f};
 	std::size_t instrument_id;
-};
-
-class EventQueue
-{
-public:
-	void post(Event* event, timepos_t time);
-	Event* take(timepos_t time);
-	bool hasEvent(timepos_t time);
-	size_t getSize() const
-	{
-		return queue.size();
-	}
-
-private:
-	std::multimap<timepos_t, Event*> queue;
-	std::mutex mutex;
 };

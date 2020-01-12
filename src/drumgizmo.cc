@@ -46,7 +46,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	, oe(o)
 	, ie(i)
 	, audio_cache(settings)
-	, input_processor(settings, kit, activeevents, rand)
+	, input_processor(settings, kit, events_ds, rand)
 	, settings(settings)
 	, settings_getter(settings)
 {
@@ -244,7 +244,7 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 	return true;
 }
 
-void DrumGizmo::renderSampleEvent(EventSample& evt, int pos, sample_t *s, std::size_t sz)
+void DrumGizmo::renderSampleEvent(SampleEvent& evt, int pos, sample_t *s, std::size_t sz)
 {
 	size_t n = 0; // default start point is 0.
 
@@ -322,85 +322,72 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 	const auto enable_bleed_control = settings.enable_bleed_control.load();
 	const auto master_bleed = settings.master_bleed.load();
 
-	std::vector< Event* > erase_list;
-	std::list< Event* >::iterator i = activeevents[ch].begin();
-	for(; i != activeevents[ch].end(); ++i)
+	EventIDs to_remove;
+	for(auto& sample_event : events_ds.iterateOver<SampleEvent>(ch))
 	{
 		bool removeevent = false;
 
-		Event* event = *i;
-		Event::type_t type = event->getType();
-		switch(type)
+		AudioFile& af = *sample_event.file;
+
+		if(!af.isLoaded() || !af.isValid() || (s == nullptr))
 		{
-		case Event::sample:
-			{
-				EventSample& evt = *static_cast<EventSample*>(event);
-				AudioFile& af = *evt.file;
-
-				if(!af.isLoaded() || !af.isValid() || (s == nullptr))
-				{
-					removeevent = true;
-					break;
-				}
-
-				if(evt.offset > (pos + sz))
-				{
-					// Don't handle event now. It is scheduled for a future iteration.
-					continue;
-				}
-
-				if(evt.cache_id == CACHE_NOID)
-				{
-					size_t initial_chunksize = (pos + sz) - evt.offset;
-					evt.buffer = audio_cache.open(af, initial_chunksize,
-					                              af.filechannel, evt.cache_id);
-					if((af.mainState() == main_state_t::is_not_main) &&
-					   enable_bleed_control)
-					{
-						evt.scale *= master_bleed;
-					}
-
-					evt.buffer_size = initial_chunksize;
-					evt.sample_size = af.size;
-				}
-
-				{
-					std::lock_guard<std::mutex> guard(af.mutex);
-
-					renderSampleEvent(evt, pos, s, sz);
-
-					if((evt.t >= evt.sample_size) || (evt.rampdown_count == 0))
-					{
-						removeevent = true;
-					}
-
-					if(evt.buffer_ptr >= evt.buffer_size && removeevent == false)
-					{
-						evt.buffer_size = sz;
-						evt.buffer = audio_cache.next(evt.cache_id, evt.buffer_size);
-						evt.buffer_ptr = 0;
-					}
-
-					if(removeevent)
-					{
-						audio_cache.close(evt.cache_id);
-					}
-				}
-			}
+			removeevent = true;
 			break;
+		}
+
+		if(sample_event.offset > (pos + sz))
+		{
+			// Don't handle event now. It is scheduled for a future iteration.
+			continue;
+		}
+
+		if(sample_event.cache_id == CACHE_NOID)
+		{
+			size_t initial_chunksize = (pos + sz) - sample_event.offset;
+			sample_event.buffer = audio_cache.open(af, initial_chunksize,
+										  af.filechannel, sample_event.cache_id);
+			if((af.mainState() == main_state_t::is_not_main) &&
+			   enable_bleed_control)
+			{
+				sample_event.scale *= master_bleed;
+			}
+
+			sample_event.buffer_size = initial_chunksize;
+			sample_event.sample_size = af.size;
+		}
+
+		{
+			std::lock_guard<std::mutex> guard(af.mutex);
+
+			renderSampleEvent(sample_event, pos, s, sz);
+
+			if((sample_event.t >= sample_event.sample_size) || (sample_event.rampdown_count == 0))
+			{
+				removeevent = true;
+			}
+
+			if(sample_event.buffer_ptr >= sample_event.buffer_size && !removeevent)
+			{
+				sample_event.buffer_size = sz;
+				sample_event.buffer = audio_cache.next(sample_event.cache_id, sample_event.buffer_size);
+				sample_event.buffer_ptr = 0;
+			}
+
+			if(removeevent)
+			{
+				audio_cache.close(sample_event.cache_id);
+			}
 		}
 
 		if(removeevent)
 		{
-			erase_list.push_back(event); // don't delete until we are out of the loop.
-			continue;
+			to_remove.push_back(sample_event.id); // don't delete until we are out of the loop.
 		}
 	}
 
-	for(auto& event : erase_list)
+	for(auto event_id : to_remove)
 	{
-		activeevents[ch].remove(event);
-		delete event;
+		events_ds.remove(event_id);
 	}
 }
 
