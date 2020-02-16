@@ -38,38 +38,47 @@
 #include "range.h"
 #include "instrument.h"
 
+//! TODO: document class as a whole
+//! TODO: What s does DS stand for?
 // TODO: make it possible to choose sizes
-
-struct EventsDS
+class EventsDS
 {
-	//
-	// member functions
-	//
-	EventsDS() = default;
+public:
+	EventsDS() = default; // TODO: Is this needed?
 
+	//! TODO: document all the (public) things!
 	template <typename T, typename... Args>
 	T& emplace(int ch, Args&&... args);
 
+	//! TODO: document all the (public) things!
 	void remove(EventID event_id);
 
+	//! TODO: document all the (public) things!
 	std::size_t numberOfEvents(int ch) const;
 
+	//! TODO: document all the (public) things!
 	template <typename T>
 	ContainerRange<std::vector<T>> iterateOver(int ch);
 
-	EventGroupIDs const& getSampleEventGroupIDsOf(InstrumentID instrument_id) const;
-	EventIDs const& getEventIDsOf(EventGroupID event_group_id) const;
+	//! TODO: document all the (public) things!
+	const EventGroupIDs& getSampleEventGroupIDsOf(InstrumentID instrument_id) const;
 
+	//! TODO: document all the (public) things!
+	const EventIDs& getEventIDsOf(EventGroupID event_group_id) const;
+
+	//! TODO: document all the (public) things!
 	void startAddingNewGroup(InstrumentID instrument_id = InstrumentID());
 
 private:
-	struct ChannelData {
+	struct ChannelData
+	{
 		std::vector<SampleEvent> sample_events;
 	};
 
 	using ChannelEventIndex = std::size_t;
 
-	struct EventInfo {
+	struct EventInfo
+	{
 		Event::Type type;
 		int ch;
 		ChannelEventIndex channel_event_index;
@@ -77,7 +86,9 @@ private:
 		EventInfo(Event::Type type, int ch, ChannelEventIndex channel_event_index)
 			: type(type), ch(ch), channel_event_index(channel_event_index) {}
 	};
-	struct GroupData {
+
+	struct GroupData
+	{
 		EventIDs event_ids;
 		Event::Type type;
 
@@ -121,7 +132,7 @@ T& EventsDS::emplace(int ch, Args&&... args)
 		return sample_event;
 	}
 
-	assert(false);
+	assert(false); // TODO: This should probably be a static_assert instead?
 }
 
 template <typename T>

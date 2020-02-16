@@ -53,14 +53,15 @@ using EventIDs = std::vector<EventID>;
 class Event
 {
 public:
-	enum class Type {
+	enum class Type
+	{
 		SampleEvent,
 	};
 
 	Event(Type type, channel_t channel, timepos_t offset = 0)
 		: type(type), channel(channel), offset(offset) {}
 
-	virtual ~Event() {}
+	virtual ~Event() = default;
 
 	EventID id;
 	EventGroupID group_id;

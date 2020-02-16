@@ -32,7 +32,7 @@
 
 void EventsDS::remove(EventID event_id)
 {
-	auto const& event_info = id_to_info.get(event_id);
+	const auto& event_info = id_to_info.get(event_id);
 
 	if (event_info.type == Event::Type::SampleEvent)
 	{
@@ -64,12 +64,12 @@ std::size_t EventsDS::numberOfEvents(int ch) const
 	return channel_data.sample_events.size();
 }
 
-EventGroupIDs const& EventsDS::getSampleEventGroupIDsOf(InstrumentID instrument_id) const
+const EventGroupIDs& EventsDS::getSampleEventGroupIDsOf(InstrumentID instrument_id) const
 {
 	return instruments_sample_event_group_ids[instrument_id];
 }
 
-EventIDs const& EventsDS::getEventIDsOf(EventGroupID event_group_id) const
+const EventIDs& EventsDS::getEventIDsOf(EventGroupID event_group_id) const
 {
 	return id_to_group_data.get(event_group_id).event_ids;
 }
@@ -90,7 +90,8 @@ void EventsDS::startAddingNewGroup(InstrumentID instrument_id)
 		group_ids.push_back(current_group_id);
 		id_to_group_data.get(current_group_id).instrument_index = group_ids.size() - 1;
 	}
-	else {
+	else
+	{
 		current_groups_instrument_id.invalidate();
 	}
 }
@@ -106,11 +107,11 @@ void EventsDS::removeGroup(EventGroupID group_id, InstrumentID instrument_id)
 
 	if (instrument_id.valid())
 	{
-		auto index = id_to_group_data.get(group_id).instrument_index;
+		auto instrument_index = id_to_group_data.get(group_id).instrument_index;
 		auto& ids = instruments_sample_event_group_ids[instrument_id];
 
-		id_to_group_data.get(ids.back()).instrument_index = index;
-		ids[index] = ids.back();
+		id_to_group_data.get(ids.back()).instrument_index = instrument_index;
+		ids[instrument_index] = ids.back();
 		ids.pop_back();
 	}
 

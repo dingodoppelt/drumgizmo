@@ -44,7 +44,6 @@ InputProcessor::InputProcessor(Settings& settings,
                                Random& random)
 	: kit(kit)
 	, events_ds(events_ds)
-	, is_stopping(false)
 	, settings(settings)
 {
 	// Build filter list
@@ -191,7 +190,7 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 		}
 	}
 
-	// Mute other instruments in the same group
+	// Mute other instruments in the same instrument/choke group
 	applyChokeGroup(settings, kit, *instr, event, events_ds);
 
 	// Apply directed chokes to mute other instruments if needed

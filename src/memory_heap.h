@@ -51,9 +51,9 @@ public:
 	template <typename... Args>
 	Index emplace(Args&&... args);
 
-	Index add(T const& element);
+	Index add(const T& element);
 	T& get(Index index);
-	T const& get(Index index) const;
+	const T& get(Index index) const;
 	void remove(Index index);
 
 private:
@@ -62,7 +62,7 @@ private:
 };
 
 template <typename T>
-auto MemoryHeap<T>::add(T const& element) -> Index
+auto MemoryHeap<T>::add(const T& element) -> Index
 {
 	if (free_indices.empty())
 	{
@@ -92,6 +92,8 @@ auto MemoryHeap<T>::emplace(Args&&... args) -> Index
 	return free_index;
 }
 
+// Note: MemoryHeap never really deletes anything -- it just overwrites, so
+// old indices will always return a valid item wrt. memory.
 template <typename T>
 T& MemoryHeap<T>::get(Index index)
 {
@@ -100,7 +102,7 @@ T& MemoryHeap<T>::get(Index index)
 }
 
 template <typename T>
-T const& MemoryHeap<T>::get(Index index) const
+const T& MemoryHeap<T>::get(Index index) const
 {
 	assert(index < memory.size());
 	return memory[index];
