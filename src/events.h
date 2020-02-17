@@ -38,10 +38,6 @@
 
 using timepos_t = unsigned int;
 
-class InputEvent; // just used as template argument for the ID
-using InputEventID = ID<InputEvent>;
-using InputEventIDs = std::vector<InputEventID>;
-
 class EventGroup; // just used as template argument for the ID
 using EventGroupID = ID<EventGroup>;
 using EventGroupIDs = std::vector<EventGroupID>;
