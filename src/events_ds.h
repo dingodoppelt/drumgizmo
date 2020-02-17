@@ -62,18 +62,18 @@ class EventsDS
 public:
 	//! Adds a new event of type T (via emplace syntax) to the data structure.
 	template <typename T, typename... Args>
-	T& emplace(int ch, Args&&... args);
+	T& emplace(channel_t ch, Args&&... args);
 
 	//! Removes the event with id being event_id.
 	void remove(EventID event_id);
 
 	//! Returns the number of all events of a certain channel.
-	std::size_t numberOfEvents(int ch) const;
+	std::size_t numberOfEvents(channel_t ch) const;
 
 	//! Gives a range that can be used in a range based for loop to iterate over
 	//! all events in channel ch of type T.
 	template <typename T>
-	ContainerRange<std::vector<T>> iterateOver(int ch);
+	ContainerRange<std::vector<T>> iterateOver(channel_t ch);
 
 	//! Returns all the group ids of sample events associated with instrument_id.
 	const EventGroupIDs& getSampleEventGroupIDsOf(InstrumentID instrument_id) const;
@@ -98,10 +98,10 @@ private:
 	struct EventInfo
 	{
 		Event::Type type;
-		int ch;
+		channel_t ch;
 		ChannelEventIndex channel_event_index;
 
-		EventInfo(Event::Type type, int ch, ChannelEventIndex channel_event_index)
+		EventInfo(Event::Type type, channel_t ch, ChannelEventIndex channel_event_index)
 			: type(type), ch(ch), channel_event_index(channel_event_index) {}
 	};
 
@@ -132,7 +132,7 @@ private:
 };
 
 template <typename T, typename... Args>
-T& EventsDS::emplace(int ch, Args&&... args)
+T& EventsDS::emplace(channel_t ch, Args&&... args)
 {
 	// add new event types here
 	static_assert(std::is_same<T, SampleEvent>::value);
@@ -149,14 +149,15 @@ T& EventsDS::emplace(int ch, Args&&... args)
 		auto& sample_event = sample_events.back();
 		sample_event.id = event_id;
 		sample_event.group_id = current_group_id;
-		assert(sample_event.instrument_id == current_groups_instrument_id);
 
+		assert(sample_event.instrument_id == current_groups_instrument_id);
+		assert(sample_event.channel == ch);
 		return sample_event;
 	}
 }
 
 template <typename T>
-ContainerRange<std::vector<T>> EventsDS::iterateOver(int ch)
+ContainerRange<std::vector<T>> EventsDS::iterateOver(channel_t ch)
 {
 	// add new event types here
 	static_assert(std::is_same<T, SampleEvent>::value);

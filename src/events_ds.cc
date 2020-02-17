@@ -56,7 +56,7 @@ void EventsDS::remove(EventID event_id)
 	id_to_info.remove(event_id);
 }
 
-std::size_t EventsDS::numberOfEvents(int ch) const
+std::size_t EventsDS::numberOfEvents(channel_t ch) const
 {
 	auto& channel_data = channel_data_array[ch];
 	return channel_data.sample_events.size();
