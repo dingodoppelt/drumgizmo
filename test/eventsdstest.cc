@@ -34,14 +34,60 @@ class EventsDSTest
 public:
 	EventsDSTest()
 	{
-		DGUNIT_TEST(EventsDSTest::todo);
+		DGUNIT_TEST(EventsDSTest::test_all);
 	}
 
 public:
-	void todo()
+	void test_all()
 	{
-		// TODO: Add some tests here
-		DGUNIT_ASSERT(false);
+		EventsDS events_ds;
+
+		// group 1
+		events_ds.startAddingNewGroup(42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "a", 42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "b", 42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "c", 42);
+
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(13).empty());
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		auto group_id = events_ds.getSampleEventGroupIDsOf(42).back();
+
+		auto const& event_ids = events_ds.getEventIDsOf(group_id);
+		DGUNIT_ASSERT(event_ids.size() == 3);
+
+		// group 2
+		events_ds.startAddingNewGroup(42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "d", 42);
+
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+
+		// group 3
+		events_ds.startAddingNewGroup(23);
+		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "foo", 23);
+		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "bar", 23);
+
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+		DGUNIT_ASSERT(events_ds.numberOfEvents(13) == 4);
+		DGUNIT_ASSERT(events_ds.numberOfEvents(7) == 2);
+
+		// iterate over
+		std::string group_concat = "";
+		for (auto const& sample_event: events_ds.iterateOver<SampleEvent>(13)) {
+			group_concat.append(sample_event.group);
+		}
+		DGUNIT_ASSERT(group_concat == "abcd");
+
+		// remove
+		auto event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(42).back()).back();
+		events_ds.remove(event_id);
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+
+		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
+		events_ds.remove(event_id);
+		DGUNIT_ASSERT(!events_ds.getSampleEventGroupIDsOf(23).empty());
+		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
+		events_ds.remove(event_id);
+		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(23).empty());
 	}
 };
 
