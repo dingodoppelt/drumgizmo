@@ -34,6 +34,12 @@
 // is a vector to handle the case when for some reason we need more memory
 // than initially anticipated. Instead of throwing errors and giving up, we can
 // then at least allocate new memory and just hope for the best.
+//
+// The members add, get, remove correspond to new, dereference, delete. Thus, we
+// first add an object and this gives us and index. With this index we can then
+// retrieve the object until we remove it. As soon as it is removed, you shouldn't
+// use the index anymore to retrieve it (similarly, as you shouldn't use a pointer
+// after calling delete on it).
 template <typename T>
 class MemoryHeap
 {
