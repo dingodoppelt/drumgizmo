@@ -28,8 +28,6 @@
 
 #include <type_traits>
 
-// TODO: we assume that we add a group in one batch without deleting anything in-between!!!
-
 void EventsDS::remove(EventID event_id)
 {
 	const auto& event_info = id_to_info.get(event_id);

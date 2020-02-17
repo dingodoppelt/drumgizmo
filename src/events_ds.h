@@ -38,35 +38,53 @@
 #include "range.h"
 #include "instrument.h"
 
-//! TODO: document class as a whole
-//! TODO: What s does DS stand for?
-// TODO: make it possible to choose sizes
+//! EventsDS (events data structure) is the central engine events data structure.
+//! It enables the following fast operations:
+//! * Add a new event
+//! * Remove an event
+//! * Iterate over all events of a channel
+//! * Get all events of a certain group
+//! * ...
+//!
+//! All operations are constant time (assuming bounded group sizes). Also, it
+//! assignes the event ids and group ids. Certain functions may be specific to certain event types.
+//!
+//! This data structure makes several assumptions about its usage:
+//! * we assume that we add a group in one batch without deleting anything in-between
+//! * we assume that an event_id isn't used after remove(event_id) was called
+//! * we assume that before starting to emplace a new group, startAddingNewGroup is called
+
+// TODO: make it possible to choose sizes of all the containers on initialization
+// such that we avoid allocations all together as long as we stay in these bounds.
+
 class EventsDS
 {
 public:
-	EventsDS() = default; // TODO: Is this needed?
-
-	//! TODO: document all the (public) things!
+	//! Adds a new event of type T (via emplace syntax) to the data structure.
 	template <typename T, typename... Args>
 	T& emplace(int ch, Args&&... args);
 
-	//! TODO: document all the (public) things!
+	//! Removes the event with id being event_id.
 	void remove(EventID event_id);
 
-	//! TODO: document all the (public) things!
+	//! Returns the number of all events of a certain channel.
 	std::size_t numberOfEvents(int ch) const;
 
-	//! TODO: document all the (public) things!
+	//! Gives a range that can be used in a range based for loop to iterate over
+	//! all events in channel ch of type T.
 	template <typename T>
 	ContainerRange<std::vector<T>> iterateOver(int ch);
 
-	//! TODO: document all the (public) things!
+	//! Returns all the group ids of sample events associated with instrument_id.
 	const EventGroupIDs& getSampleEventGroupIDsOf(InstrumentID instrument_id) const;
 
-	//! TODO: document all the (public) things!
+	//! Get all the event ids of events that are in the group with event_group_id.
 	const EventIDs& getEventIDsOf(EventGroupID event_group_id) const;
 
-	//! TODO: document all the (public) things!
+	//! This function should always be called before we emplace a new batch of
+	//! events. This internally creates a new group id and then assigns this group
+	//! id to all the events that are emplaced afterwards. The group id changes,
+	//! when startAddingNewGroup is again called.
 	void startAddingNewGroup(InstrumentID instrument_id = InstrumentID());
 
 private:
@@ -90,7 +108,9 @@ private:
 	struct GroupData
 	{
 		EventIDs event_ids;
-		Event::Type type;
+		// Note: In the future, we could make groups just consist of events of one type.
+		// Currently that is not necessary, but untested.
+		// Event::Type type;
 
 		// SampleEvent specific data
 		std::size_t instrument_index;
@@ -102,8 +122,7 @@ private:
 	MemoryHeap<GroupData> id_to_group_data;
 
 	// SampleEvent specific data
-	// TODO: maybe use something that actually has the size of the number of instruments
-	// Also, can we guarantee that there are at most 128 instrument ids?
+	// TODO: Make this into a vector and always have the size be the number of instruments.
 	std::array<EventGroupIDs, 128> instruments_sample_event_group_ids;
 
 	EventGroupID current_group_id;
@@ -115,6 +134,9 @@ private:
 template <typename T, typename... Args>
 T& EventsDS::emplace(int ch, Args&&... args)
 {
+	// add new event types here
+	static_assert(std::is_same<T, SampleEvent>::value);
+
 	if (std::is_same<T, SampleEvent>::value)
 	{
 		auto& sample_events = channel_data_array[ch].sample_events;
@@ -131,13 +153,14 @@ T& EventsDS::emplace(int ch, Args&&... args)
 
 		return sample_event;
 	}
-
-	assert(false); // TODO: This should probably be a static_assert instead?
 }
 
 template <typename T>
 ContainerRange<std::vector<T>> EventsDS::iterateOver(int ch)
 {
+	// add new event types here
+	static_assert(std::is_same<T, SampleEvent>::value);
+
 	if (std::is_same<T, SampleEvent>::value)
 	{
 		auto& sample_events = channel_data_array[ch].sample_events;
