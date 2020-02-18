@@ -147,7 +147,7 @@ template <typename T, typename... Args>
 T& EventsDS::emplace(channel_t ch, Args&&... args)
 {
 	// add new event types here
-	static_assert(std::is_same<T, SampleEvent>::value);
+	static_assert(std::is_same<T, SampleEvent>::value, "Check event type");
 
 	if (std::is_same<T, SampleEvent>::value)
 	{
@@ -178,7 +178,7 @@ template <typename T>
 ContainerRange<std::vector<T>> EventsDS::iterateOver(channel_t ch)
 {
 	// add new event types here
-	static_assert(std::is_same<T, SampleEvent>::value);
+	static_assert(std::is_same<T, SampleEvent>::value, "Check event type");
 
 	if (std::is_same<T, SampleEvent>::value)
 	{
@@ -191,7 +191,7 @@ template <typename T>
 T& EventsDS::getSample(EventInfo const& info)
 {
 	// add new event types here
-	static_assert(std::is_same<T, SampleEvent>::value);
+	static_assert(std::is_same<T, SampleEvent>::value, "Check event type");
 
 	if (std::is_same<T, SampleEvent>::value)
 	{
