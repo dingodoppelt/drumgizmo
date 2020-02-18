@@ -26,10 +26,13 @@
  */
 #pragma once
 
-//typedef signed short int sample_t;
-typedef float sample_t;
+#include <cstdint>
 
-typedef unsigned int channels_t;
-typedef unsigned int channel_t;
+//! Type used for storing a single audio sample
+using sample_t = float;
 
-typedef float level_t;
+//! Type used for representing a channel (index)
+using channel_t = std::uint16_t;
+
+//! Type for storing a engine-level (ie. midi velocity in engine land)
+using level_t = float;
