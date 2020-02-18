@@ -67,6 +67,15 @@ public:
 	//! Removes the event with id being event_id.
 	void remove(EventID event_id);
 
+	//! Returns a reference to the element with id begin event_id. Note that to
+	//! get an event with this function, one has to know its type!
+	template <typename T>
+	T& get(EventID event_id);
+
+	//! Returns a pointer to the event with id begin event_id. As Event has a
+	//! member variable that carries the type, it can be then casted appropriately.
+	Event* get(EventID event_id);
+
 	//! Returns the number of all events of a certain channel.
 	std::size_t numberOfEvents(channel_t ch) const;
 
@@ -129,6 +138,9 @@ private:
 	InstrumentID current_groups_instrument_id;
 
 	void removeGroup(EventGroupID group_id, InstrumentID instrument_id = InstrumentID());
+
+	template <typename T>
+	T& getSample(EventInfo const& info);
 };
 
 template <typename T, typename... Args>
@@ -157,6 +169,12 @@ T& EventsDS::emplace(channel_t ch, Args&&... args)
 }
 
 template <typename T>
+T& EventsDS::get(EventID event_id)
+{
+	return getSample<T>(id_to_info.get(event_id));
+}
+
+template <typename T>
 ContainerRange<std::vector<T>> EventsDS::iterateOver(channel_t ch)
 {
 	// add new event types here
@@ -166,5 +184,17 @@ ContainerRange<std::vector<T>> EventsDS::iterateOver(channel_t ch)
 	{
 		auto& sample_events = channel_data_array[ch].sample_events;
 		return ContainerRange<std::vector<T>>(sample_events.begin(), sample_events.end());
+	}
+}
+
+template <typename T>
+T& EventsDS::getSample(EventInfo const& info)
+{
+	// add new event types here
+	static_assert(std::is_same<T, SampleEvent>::value);
+
+	if (std::is_same<T, SampleEvent>::value)
+	{
+		return channel_data_array[info.ch].sample_events[info.channel_event_index];
 	}
 }

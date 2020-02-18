@@ -56,6 +56,20 @@ void EventsDS::remove(EventID event_id)
 	id_to_info.remove(event_id);
 }
 
+Event* EventsDS::get(EventID event_id)
+{
+	auto const& info = id_to_info.get(event_id);
+
+	// add new event types here
+	switch (info.type)
+	{
+	case Event::Type::SampleEvent:
+		return &getSample<SampleEvent>(info);
+	default:
+		assert(false);
+	}
+}
+
 std::size_t EventsDS::numberOfEvents(channel_t ch) const
 {
 	auto& channel_data = channel_data_array[ch];
