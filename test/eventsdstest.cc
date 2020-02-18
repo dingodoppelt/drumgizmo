@@ -77,6 +77,14 @@ public:
 		}
 		DGUNIT_ASSERT(group_concat == "abcd");
 
+		// get
+		for (auto const& sample_event: events_ds.iterateOver<SampleEvent>(13)) {
+			DGUNIT_ASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
+			Event* event_ptr = events_ds.get(sample_event.id);
+			DGUNIT_ASSERT(event_ptr->type == Event::Type::SampleEvent);
+			DGUNIT_ASSERT(static_cast<SampleEvent*>(event_ptr)->channel == 13);
+		}
+
 		// remove
 		auto event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(42).back()).back();
 		events_ds.remove(event_id);
