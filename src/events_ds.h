@@ -72,9 +72,9 @@ public:
 	template <typename T>
 	T& get(EventID event_id);
 
-	//! Returns a pointer to the event with id begin event_id. As Event has a
-	//! member variable that carries the type, it can be then casted appropriately.
-	Event* get(EventID event_id);
+	//! In case we don't know the type of an event, we can use this function to
+	//! retrieve it and then use get<Type>(...) to get the event.
+	Event::Type getType(EventID event_id) const;
 
 	//! Returns the number of all events of a certain channel.
 	std::size_t numberOfEvents(channel_t ch) const;
