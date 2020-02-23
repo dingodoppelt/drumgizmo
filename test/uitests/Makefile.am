@@ -1,5 +1,5 @@
 noinst_PROGRAMS = resizetest tabwidgettest framewidgettest \
-	filebrowsertest
+	filebrowsertest benchmarktest
 
 resizetest_LDADD = $(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
 resizetest_CXXFLAGS = \
@@ -35,4 +35,14 @@ framewidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/hugin
 framewidgettest_SOURCES = \
 	framewidgettest.cc \
+	$(top_srcdir)/hugin/hugin.c
+
+benchmarktest_LDADD = \
+	$(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+benchmarktest_CXXFLAGS = \
+	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin
+benchmarktest_SOURCES = \
+	benchmarktest.cc \
 	$(top_srcdir)/hugin/hugin.c
