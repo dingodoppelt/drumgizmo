@@ -3,8 +3,8 @@
  *            eventsdstest.cc
  *
  *  Sun Feb 16 21:38:59 CET 2020
- *  Copyright 2020 Bent Bisballe Nyeng
- *  deva@aasimon.org
+ *  Copyright 2020 André Nusser
+ *  andre.nusser@googlemail.com
  ****************************************************************************/
 
 /*
@@ -52,7 +52,7 @@ public:
 		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
 		auto group_id = events_ds.getSampleEventGroupIDsOf(42).back();
 
-		auto const& event_ids = events_ds.getEventIDsOf(group_id);
+		const auto& event_ids = events_ds.getEventIDsOf(group_id);
 		DGUNIT_ASSERT(event_ids.size() == 3);
 
 		// group 2
@@ -72,13 +72,15 @@ public:
 
 		// iterate over
 		std::string group_concat = "";
-		for (auto const& sample_event: events_ds.iterateOver<SampleEvent>(13)) {
+		for (const auto& sample_event: events_ds.iterateOver<SampleEvent>(13))
+		{
 			group_concat.append(sample_event.group);
 		}
 		DGUNIT_ASSERT(group_concat == "abcd");
 
 		// get and getType
-		for (auto const& sample_event: events_ds.iterateOver<SampleEvent>(13)) {
+		for (const auto& sample_event: events_ds.iterateOver<SampleEvent>(13))
+		{
 			DGUNIT_ASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
 			DGUNIT_ASSERT(events_ds.getType(sample_event.id) == Event::Type::SampleEvent);
 		}
