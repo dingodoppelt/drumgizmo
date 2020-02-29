@@ -60,6 +60,7 @@ Image::Image(Image&& other)
 	: _width(other._width)
 	, _height(other._height)
 	, image_data(std::move(other.image_data))
+	, image_data_raw(std::move(other.image_data_raw))
 	, filename(other.filename)
 {
 	other._width = 0;
@@ -74,6 +75,8 @@ Image& Image::operator=(Image&& other)
 {
 	image_data.clear();
 	image_data = std::move(other.image_data);
+	image_data_raw.clear();
+	image_data_raw = std::move(other.image_data_raw);
 	_width = other._width;
 	_height = other._height;
 	valid = other.valid;
@@ -111,6 +114,10 @@ void Image::setError()
 	image_data.clear();
 	image_data.reserve(_width * _height);
 
+	image_data_raw.clear();
+	image_data_raw.reserve(_width * _height * 4);
+	memcpy(image_data_raw.data(), ptr, _height * _width);
+
 	for(std::size_t y = 0; y < _height; ++y)
 	{
 		for(std::size_t x = 0; x < _width; ++x)
@@ -125,6 +132,7 @@ void Image::setError()
 
 void Image::load(const char* data, size_t size)
 {
+	has_alpha = false;
 	unsigned int iw{0}, ih{0};
 	std::uint8_t* char_image_data{nullptr};
 	unsigned int res = lodepng_decode32((std::uint8_t**)&char_image_data,
@@ -145,12 +153,17 @@ void Image::load(const char* data, size_t size)
 	image_data.clear();
 	image_data.reserve(_width * _height);
 
+	image_data_raw.clear();
+	image_data_raw.reserve(_width * _height * 4);
+	memcpy(image_data_raw.data(), char_image_data, _height * _width * 4);
+
 	for(std::size_t y = 0; y < _height; ++y)
 	{
 		for(std::size_t x = 0; x < _width; ++x)
 		{
 			std::uint8_t* ptr = &char_image_data[(x + y * _width) * 4];
 			image_data.emplace_back(Colour{ptr[0], ptr[1], ptr[2], ptr[3]});
+			has_alpha |= ptr[3] != 0xff;
 		}
 	}
 
@@ -178,6 +191,16 @@ const Colour& Image::getPixel(size_t x, size_t y) const
 	}
 
 	return image_data[x + y * _width];
+}
+
+const std::uint8_t* Image::line(std::size_t y) const
+{
+	return image_data_raw.data() + y * _width * 4;
+}
+
+bool Image::hasAlpha() const
+{
+	return has_alpha;
 }
 
 bool Image::isValid() const

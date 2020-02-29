@@ -349,8 +349,6 @@ bool Window::updateBuffer()
 			update_height = ((int)wpixbuf.height - pixel_buffer->y);
 		}
 
-		std::uint8_t r, g, b, a;
-
 		auto from_x  = (int)dirty_rect.x1 - pixel_buffer->x;
 		from_x = std::max(0, from_x);
 		auto from_y  = (int)dirty_rect.y1 - pixel_buffer->y;
@@ -361,13 +359,17 @@ bool Window::updateBuffer()
 		auto to_y = (int)dirty_rect.y2 - pixel_buffer->y;
 		to_y = std::min(to_y, (int)update_height);
 
+		if(to_x < from_x)
+		{
+			continue;
+		}
+
 		for(int y = from_y; y < to_y; y++)
 		{
-			for(int x = from_x; x < to_x; x++)
-			{
-				pixel_buffer->pixel(x, y, &r, &g, &b, &a);
-				wpixbuf.setPixel(x + pixel_buffer->x, y + pixel_buffer->y, r, g, b, a);
-			}
+			wpixbuf.writeLine(pixel_buffer->x + from_x,
+			                  pixel_buffer->y + y,
+			                  pixel_buffer->getLine(from_x, y),
+			                  to_x - from_x);
 		}
 	}
 

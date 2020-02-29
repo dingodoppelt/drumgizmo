@@ -50,6 +50,9 @@ public:
 	size_t height() const override;
 
 	const Colour& getPixel(size_t x, size_t y) const override;
+	const std::uint8_t* line(std::size_t y) const override;
+
+	bool hasAlpha() const override;
 
 	bool isValid() const;
 
@@ -62,8 +65,10 @@ private:
 	std::size_t _width{0};
 	std::size_t _height{0};
 	std::vector<Colour> image_data;
+	std::vector<std::uint8_t> image_data_raw;
 	Colour out_of_range{0.0f, 0.0f, 0.0f, 0.0f};
 	std::string filename;
+	bool has_alpha{false};
 };
 
 } // GUI::

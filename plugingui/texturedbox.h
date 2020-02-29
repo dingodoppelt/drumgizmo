@@ -89,6 +89,8 @@ public:
 	void setSize(std::size_t width, std::size_t height);
 
 	const Colour& getPixel(std::size_t x, std::size_t y) const override;
+	const std::uint8_t* line(std::size_t y) const override;
+	bool hasAlpha() const override;
 
 private:
 	Texture seg_a;

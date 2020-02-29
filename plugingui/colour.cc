@@ -28,43 +28,50 @@
 
 #include <cstring>
 
-namespace GUI {
+namespace GUI
+{
 
 Colour::Colour()
 {
-	data = {{1.0f, 1.0f, 1.0f, 1.0f}};
 }
 
 Colour::Colour(float grey, float a)
+	: pixel({{(std::uint8_t)(grey * 255),
+	          (std::uint8_t)(grey * 255),
+	          (std::uint8_t)(grey * 255),
+	          (std::uint8_t)(a * 255)}})
 {
-	data = {{grey, grey, grey, a}};
 }
 
 Colour::Colour(float r, float g, float b, float a)
+	: pixel({{(std::uint8_t)(r * 255),
+	          (std::uint8_t)(g * 255),
+	          (std::uint8_t)(b * 255),
+	          (std::uint8_t)(a * 255)}})
 {
-	data = {{r, g, b, a}};
 }
 
 Colour::Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
-	: Colour(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)
-{}
+	: pixel({{r, g, b, a}})
+{
+}
 
 Colour::Colour(const Colour& other)
+	: pixel(other.pixel)
 {
-	data = other.data;
 }
 
 Colour& Colour::operator=(const Colour& other)
 {
-	data = other.data;
+	pixel = other.pixel;
 	return *this;
 }
 
 bool Colour::operator==(const Colour& other) const
 {
-	return data[0] == other.data[0] &&
-	       data[1] == other.data[1] &&
-	       data[2] == other.data[2];
+	return pixel[0] == other.pixel[0] &&
+	       pixel[1] == other.pixel[1] &&
+	       pixel[2] == other.pixel[2];
 }
 
 bool Colour::operator!=(const Colour& other) const

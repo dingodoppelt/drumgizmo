@@ -41,13 +41,12 @@ public:
 
 	void realloc(std::size_t width, std::size_t height);
 
-	void setPixel(std::size_t x, std::size_t y,
-	              unsigned char red,
-	              unsigned char green,
-	              unsigned char blue,
-	              unsigned char alpha);
+	void setPixel(std::size_t x, std::size_t y, const Colour& c);
 
-	unsigned char* buf{nullptr};
+	void writeLine(std::size_t x, std::size_t y,
+	               const std::uint8_t* line, std::size_t len);
+
+	std::uint8_t* buf{nullptr};
 	std::size_t width{0};
 	std::size_t height{0};
 };
@@ -61,28 +60,35 @@ public:
 
 	void realloc(std::size_t width, std::size_t height);
 
-	void setPixel(std::size_t x, std::size_t y,
-	              unsigned char red,
-	              unsigned char green,
-	              unsigned char blue,
-	              unsigned char alpha);
+	void clear();
+
+	void setPixel(std::size_t x, std::size_t y, const Colour& c);
+
+	void writeLine(std::size_t x, std::size_t y,
+	               const std::uint8_t* line, std::size_t len);
+	void blendLine(std::size_t x, std::size_t y,
+	               const std::uint8_t* line, std::size_t len);
 
 	void addPixel(std::size_t x, std::size_t y,
-	              unsigned char red,
-	              unsigned char green,
-	              unsigned char blue,
-	              unsigned char alpha);
+	              std::uint8_t red,
+	              std::uint8_t green,
+	              std::uint8_t blue,
+	              std::uint8_t alpha);
 
 	void addPixel(std::size_t x, std::size_t y, const Colour& c);
 
 	void pixel(std::size_t x, std::size_t y,
-	           unsigned char* red,
-	           unsigned char* green,
-	           unsigned char* blue,
-	           unsigned char* alpha) const;
+	           std::uint8_t* red,
+	           std::uint8_t* green,
+	           std::uint8_t* blue,
+	           std::uint8_t* alpha) const;
+
+	const Colour& pixel(std::size_t x, std::size_t y) const;
+
+	const std::uint8_t* getLine(std::size_t x, std::size_t y) const;
 
 	bool managed{false};
-	unsigned char* buf{nullptr};
+	std::uint8_t* buf{nullptr};
 	std::size_t width{0};
 	std::size_t height{0};
 	int x{0};

@@ -59,8 +59,8 @@ Font::Font(const std::string& fontfile)
 			auto& pixel = img_font.getPixel(px, 0);
 
 			// Find next purple pixel in top row:
-			if((pixel.red() == 1.0f) && (pixel.green() == 0.0f) &&
-			   (pixel.blue() == 1.0f) && (pixel.alpha() == 1.0f))
+			if((pixel.red() == 255) && (pixel.green() == 0) &&
+			   (pixel.blue() == 255) && (pixel.alpha() == 255))
 			{
 				break;
 			}
@@ -124,9 +124,7 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 			for(size_t y = 0; y < img_font.height(); ++y)
 			{
 				auto& c = img_font.getPixel(x + character.offset, y);
-				pb->setPixel(x + x_offset + character.pre_bias, y,
-				             c.red() * 255, c.green() * 255,
-				             c.blue() * 255, c.alpha() * 255);
+				pb->setPixel(x + x_offset + character.pre_bias, y, c);
 			}
 		}
 		x_offset += character.width + spacing + character.post_bias;

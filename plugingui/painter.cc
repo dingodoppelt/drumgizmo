@@ -65,12 +65,7 @@ static void plot(PixelBufferAlpha& pixbuf, const Colour& colour,
 	}
 
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
-	pixbuf.addPixel(x, y,
-	                (unsigned char)(colour.red() * 255.0),
-	                (unsigned char)(colour.green() * 255.0),
-	                (unsigned char)(colour.blue() * 255.0),
-	                (unsigned char)(colour.alpha() * 255 * c));
-
+	pixbuf.addPixel(x, y, colour.red(), colour.green(), colour.blue(), colour.alpha() * c);
 }
 
 static inline double fpart(double x)
@@ -171,13 +166,7 @@ void Painter::drawFilledRectangle(int x1, int y1, int x2, int y2)
 
 void Painter::clear()
 {
-	for(int x = 0; x < (int)pixbuf.width; ++x)
-	{
-		for(int y = 0; y < (int)pixbuf.height; ++y)
-		{
-			pixbuf.setPixel(x, y, 0, 0, 0, 0);
-		}
-	}
+	pixbuf.clear();
 }
 
 void Painter::drawText(int x0, int y0, const Font& font,
@@ -251,11 +240,8 @@ void Painter::drawText(int x0, int y0, const Font& font,
 				assert(x + x0 < (int)pixbuf.width);
 				assert(y + y0 < (int)pixbuf.height);
 
-				pixbuf.addPixel(x + x0, y + y0,
-				                colour.red() * 255,
-				                colour.green() * 255,
-				                colour.blue() * 255,
-				                colour.alpha() * a);
+				pixbuf.addPixel(x + x0, y + y0, colour.red(), colour.green(),
+				                colour.blue(), (int)(colour.alpha() * a) / 255);
 			}
 		}
 	}
@@ -265,11 +251,7 @@ void Painter::drawText(int x0, int y0, const Font& font,
 
 void Painter::drawPoint(int x, int y)
 {
-	pixbuf.setPixel(x, y,
-	                (unsigned char)(colour.red() * 255.0),
-	                (unsigned char)(colour.green() * 255.0),
-	                (unsigned char)(colour.blue() * 255.0),
-	                (unsigned char)(colour.alpha() * 255.0));
+	pixbuf.setPixel(x, y, colour);
 }
 
 static void plot4points(Painter *p, int cx, int cy, int x, int y)
@@ -387,28 +369,123 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 		return;
 	}
 
-	for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+	if(image.hasAlpha())
 	{
-		for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
+		if(true || !image.line(0))
 		{
-			assert(x >= 0);
-			assert(y >= 0);
-			assert(x < image.width());
-			assert(y < image.height());
-			auto& c = image.getPixel(x, y);
-
-			assert(x0 + x >= 0);
-			assert(y0 + y >= 0);
-			assert(x0 + x < pixbuf.width);
-			assert(y0 + y < pixbuf.height);
-
-			if (!has_restriction || c == restriction_colour)
+			for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 			{
-				pixbuf.addPixel(x0 + x, y0 + y, c);
+				for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
+				{
+					assert(x >= 0);
+					assert(y >= 0);
+					assert(x < image.width());
+					assert(y < image.height());
+					auto& c = image.getPixel(x, y);
+
+					assert(x0 + x >= 0);
+					assert(y0 + y >= 0);
+					assert(x0 + x < pixbuf.width);
+					assert(y0 + y < pixbuf.height);
+
+					if (!has_restriction || c == restriction_colour)
+					{
+						pixbuf.addPixel(x0 + x, y0 + y, c);
+					}
+				}
+			}
+		}
+		else
+		{
+			std::size_t x = -1 * std::min(0, x0);
+			for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+			{
+				pixbuf.blendLine(x + x0, y + y0, image.line(y), image.width());
+			}
+		}
+	}
+	else
+	{
+		std::size_t x = -1 * std::min(0, x0);
+		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+		{
+			pixbuf.writeLine(x + x0, y + y0, image.line(y), image.width());
+		}
+	}
+}
+
+#if 0
+void Painter::drawImage(int x0, int y0, const Drawable& image)
+{
+	int fw = image.width();
+	int fh = image.height();
+
+	// Make sure we don't try to draw outside the pixbuf.
+	if(fw > (int)(pixbuf.width - x0))
+	{
+		fw = (int)(pixbuf.width - x0);
+	}
+
+	if(fh > (int)(pixbuf.height - y0))
+	{
+		fh = (int)(pixbuf.height - y0);
+	}
+
+	if((fw < 1) || (fh < 1))
+	{
+		return;
+	}
+
+	if(image.hasAlpha())
+	{
+		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+		{
+			for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
+			{
+				assert(x >= 0);
+				assert(y >= 0);
+				assert(x < image.width());
+				assert(y < image.height());
+				auto& c = image.getPixel(x, y);
+
+				assert(x0 + x >= 0);
+				assert(y0 + y >= 0);
+				assert(x0 + x < pixbuf.width);
+				assert(y0 + y < pixbuf.height);
+
+				if (!has_restriction || c == restriction_colour)
+				{
+					pixbuf.addPixel(x0 + x, y0 + y, c);
+				}
+			}
+		}
+	}
+	else
+	{
+		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+		{
+			for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
+			{
+				assert(x >= 0);
+				assert(y >= 0);
+				assert(x < image.width());
+				assert(y < image.height());
+				auto& c = image.getPixel(x, y);
+
+				assert(x0 + x >= 0);
+				assert(y0 + y >= 0);
+				assert(x0 + x < pixbuf.width);
+				assert(y0 + y < pixbuf.height);
+
+				if (!has_restriction || c == restriction_colour)
+				{
+					pixbuf.setPixel(x0 + x, y0 + y, c);
+				}
 			}
 		}
 	}
 }
+#endif
 
 void Painter::drawRestrictedImage(int x0, int y0, Colour const& colour, const Drawable& image)
 {

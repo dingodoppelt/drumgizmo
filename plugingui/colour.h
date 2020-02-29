@@ -32,7 +32,8 @@
 namespace GUI
 {
 
-class Colour {
+class Colour
+{
 public:
 	Colour();
 	Colour(float grey, float alpha = 1.0f);
@@ -45,13 +46,16 @@ public:
 	bool operator==(const Colour& other) const;
 	bool operator!=(const Colour& other) const;
 
-	inline float red() const { return data[0]; }
-	inline float green() const { return data[1]; }
-	inline float blue() const { return data[2]; }
-	inline float alpha() const { return data[3]; }
+	inline std::uint8_t red() const { return pixel[0]; }
+	inline std::uint8_t green() const { return pixel[1]; }
+	inline std::uint8_t blue() const { return pixel[2]; }
+	inline std::uint8_t alpha() const { return pixel[3]; }
+
+	std::uint8_t* data() { return pixel.data(); }
+	const std::uint8_t* data() const { return pixel.data(); }
 
 private:
-	std::array<float, 4> data;
+	std::array<std::uint8_t, 4> pixel{{255, 255, 255, 255}};
 };
 
 } // GUI::

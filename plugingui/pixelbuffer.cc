@@ -29,6 +29,7 @@
 #include <cassert>
 
 #include <cstdlib>
+#include <cstring>
 
 namespace GUI
 {
@@ -47,42 +48,62 @@ PixelBuffer::~PixelBuffer()
 void PixelBuffer::realloc(std::size_t width, std::size_t height)
 {
 	free(buf);
-	buf = (unsigned char *)calloc(width * height, 3);
+	buf = (std::uint8_t *)calloc(width * height, 3);
 	this->width = width;
 	this->height = height;
 }
 
 #define PX(k) ((x + y * width) * 3 + k)
-void PixelBuffer::setPixel(std::size_t x, std::size_t y,
-                           unsigned char red,
-                           unsigned char green,
-                           unsigned char blue,
-                           unsigned char alpha)
+void PixelBuffer::setPixel(std::size_t x, std::size_t y, const Colour& c)
 {
-	assert(x < width);
-	assert(y < height);
-
-	if(alpha == 0)
+	if(c.alpha() == 0)
 	{
 		return;
 	}
 
-	if(alpha < 255)
+	if(c.alpha() < 255)
 	{
-		unsigned int a = alpha;
-		unsigned int b = 255 - alpha;
+		unsigned int a = c.alpha();
+		unsigned int b = 255 - a;
 
-		buf[PX(0)] = (unsigned char)(((int)red   * a + (int)buf[PX(0)] * b) / 255);
-		buf[PX(1)] = (unsigned char)(((int)green * a + (int)buf[PX(1)] * b) / 255);
-		buf[PX(2)] = (unsigned char)(((int)blue  * a + (int)buf[PX(2)] * b) / 255);
+		std::uint8_t* pixel = &buf[PX(0)];
+		*pixel = (std::uint8_t)(((int)c.red()   * a + (int)*pixel * b) / 255);
+		++pixel;
+		*pixel = (std::uint8_t)(((int)c.green() * a + (int)*pixel * b) / 255);
+		++pixel;
+		*pixel = (std::uint8_t)(((int)c.blue()  * a + (int)*pixel * b) / 255);
 	}
 	else
 	{
-		buf[PX(0)] = red;
-		buf[PX(1)] = green;
-		buf[PX(2)] = blue;
+		memcpy(&buf[PX(0)], c.data(), 3);
 	}
 }
+
+void PixelBuffer::writeLine(std::size_t x, std::size_t y,
+                            const std::uint8_t* line, std::size_t len)
+{
+	std::uint8_t* target = &buf[PX(0)];
+	while(len)
+	{
+		if(line[3] == 0xff)
+		{
+			memcpy(target, line, 3);
+		}
+		else
+		{
+			unsigned int a = line[3];
+			unsigned int b = 255 - a;
+
+			target[0] = (std::uint8_t)(((int)line[0] * a + (int)target[0] * b) / 255);
+			target[1] = (std::uint8_t)(((int)line[1] * a + (int)target[1] * b) / 255);
+			target[2] = (std::uint8_t)(((int)line[2] * a + (int)target[2] * b) / 255);
+		}
+		target += 3;
+		line += 4;
+		--len;
+	}
+}
+
 
 PixelBufferAlpha::PixelBufferAlpha(std::size_t width, std::size_t height)
 	: managed(true)
@@ -104,30 +125,110 @@ PixelBufferAlpha::~PixelBufferAlpha()
 void PixelBufferAlpha::realloc(std::size_t width, std::size_t height)
 {
 	free(buf);
-	buf = (unsigned char *)calloc(width * height, 4);
+	buf = (std::uint8_t *)calloc(width * height, 4);
 	this->width = width;
 	this->height = height;
 }
 
-#undef PX
-#define PX(k) ((x + y * width) * 4 + k)
-void PixelBufferAlpha::setPixel(std::size_t x, std::size_t y,
-                                unsigned char red,
-                                unsigned char green,
-                                unsigned char blue,
-                                unsigned char alpha)
+void PixelBufferAlpha::clear()
 {
-	assert(x < width);
-	assert(y < height);
-
-	buf[PX(0)] = red;
-	buf[PX(1)] = green;
-	buf[PX(2)] = blue;
-	buf[PX(3)] = alpha;
+	memset(buf, 0, width * height * 4);
 }
 
+#undef PX
+#define PX(k) ((x + y * width) * 4 + k)
+//void PixelBufferAlpha::setPixel(std::size_t x, std::size_t y,
+//                                std::uint8_t red,
+//                                std::uint8_t green,
+//                                std::uint8_t blue,
+//                                std::uint8_t alpha)
+//{
+//	//assert(x < width);
+//	//assert(y < height);
+//
+//	std::uint8_t* pixel = &buf[PX(0)];
+//	*pixel = red;
+//	++pixel;
+//	*pixel = green;
+//	++pixel;
+//	*pixel = blue;
+//	++pixel;
+//	*pixel = alpha;
+//}
+
+void PixelBufferAlpha::setPixel(std::size_t x, std::size_t y, const Colour& c)
+{
+	std::uint8_t* pixel = &buf[PX(0)];
+	*pixel = c.red();
+	++pixel;
+	*pixel = c.green();
+	++pixel;
+	*pixel = c.blue();
+	++pixel;
+	*pixel = c.alpha();
+}
+
+void PixelBufferAlpha::writeLine(std::size_t x, std::size_t y,
+                                 const std::uint8_t* line, std::size_t len)
+{
+	auto offset = &buf[PX(0)];
+	if(x + y * width + len > width * height)
+	{
+		return; // out of bounds
+	}
+	std::memcpy(offset, line, len * 4);
+}
+
+// SIMD: https://github.com/WojciechMula/toys/blob/master/blend_32bpp/blend_32bpp.c
+
+void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
+                                 const std::uint8_t* line, std::size_t len)
+{
+	auto offset = &buf[PX(0)];
+	if(x + y * width + len > width * height)
+	{
+		return; // out of bounds
+	}
+
+	std::uint32_t* foreground = (std::uint32_t*)line;
+	std::uint32_t* background = (std::uint32_t*)offset;
+	for(std::size_t x = 0; x < len; ++x)
+	{
+		auto Rf =  *foreground & 0xff;
+		auto Gf = (*foreground >>  8) & 0xff;
+		auto Bf = (*foreground >> 16) & 0xff;
+		auto Af = (*foreground >> 24) & 0xff;
+
+		auto Rb =  *background & 0xff;
+		auto Gb = (*background >>  8) & 0xff;
+		auto Bb = (*background >> 16) & 0xff;
+		auto Ab = (*background >> 24) & 0xff;
+
+		auto R = (Rf * Af)/256 + Rb;
+		auto G = (Gf * Af)/256 + Gb;
+		auto B = (Bf * Af)/256 + Bb;
+
+		if (R > 255) R = 255;
+		if (G > 255) G = 255;
+		if (B > 255) B = 255;
+
+//		auto a = Ab / 255.0;
+//		auto b = Af / 255.0;
+//		b *= (1 - a);
+
+//		(Af / 255.0 * (1 - Ab / 255.0)) * 255
+		auto b = Ab * (255 - Af);
+
+		*background = R | (G << 8) | (B << 16) | b << 24;
+
+		++foreground;
+		++background;
+	}
+}
+
+
 // http://en.wikipedia.org/wiki/Alpha_compositing
-static inline void getAlpha(unsigned char _a, unsigned char _b,
+static inline void getAlpha(std::uint8_t _a, std::uint8_t _b,
                             float &a, float &b)
 {
 	a = _a / 255.0;
@@ -136,61 +237,80 @@ static inline void getAlpha(unsigned char _a, unsigned char _b,
 }
 
 void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y,
-                                unsigned char red,
-                                unsigned char green,
-                                unsigned char blue,
-                                unsigned char alpha)
+                                std::uint8_t red,
+                                std::uint8_t green,
+                                std::uint8_t blue,
+                                std::uint8_t alpha)
 {
-	assert(x < width);
-	assert(y < height);
+	//assert(x < width);
+	//assert(y < height);
 
 	if(alpha == 0)
 	{
 		return;
 	}
 
+	std::uint8_t* pixel = &buf[PX(0)];
+
 	if(alpha < 255)
 	{
 		float a, b;
 		getAlpha(alpha, buf[PX(3)], a, b);
 
-		buf[PX(0)] = (unsigned char)((float)red   * a + (float)buf[PX(0)] * b);
-		buf[PX(0)] /= (a + b);
-		buf[PX(1)] = (unsigned char)((float)green * a + (float)buf[PX(1)] * b);
-		buf[PX(1)] /= (a + b);
-		buf[PX(2)] = (unsigned char)((float)blue  * a + (float)buf[PX(2)] * b);
-		buf[PX(2)] /= (a + b);
-
-		buf[PX(3)] = (a + b) * 255;
+		*pixel = (std::uint8_t)((red   * a + *pixel * b) / (a + b));
+		++pixel;
+		*pixel = (std::uint8_t)((green * a + *pixel * b) / (a + b));
+		++pixel;
+		*pixel = (std::uint8_t)((blue  * a + *pixel * b) / (a + b));
+		++pixel;
+		*pixel = (a + b) * 255;
 	}
 	else
 	{
-		buf[PX(0)] = red;
-		buf[PX(1)] = green;
-		buf[PX(2)] = blue;
-		buf[PX(3)] = alpha;
+		*pixel = red;
+		++pixel;
+		*pixel = green;
+		++pixel;
+		*pixel = blue;
+		++pixel;
+		*pixel = alpha;
 	}
 }
 
 void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 {
-	addPixel(x, y,
-	         c.red() * 255, c.green() * 255, c.blue() * 255, c.alpha() * 255);
+	addPixel(x, y, c.red(), c.green(), c.blue(), c.alpha());
 }
 
 void PixelBufferAlpha::pixel(std::size_t x, std::size_t y,
-                             unsigned char* red,
-                             unsigned char* green,
-                             unsigned char* blue,
-                             unsigned char* alpha) const
+                             std::uint8_t* red,
+                             std::uint8_t* green,
+                             std::uint8_t* blue,
+                             std::uint8_t* alpha) const
 {
-	assert(x < width);
-	assert(y < height);
+	//assert(x < width);
+	//assert(y < height);
 
-	*red = buf[PX(0)];
-	*green = buf[PX(1)];
-	*blue = buf[PX(2)];
-	*alpha = buf[PX(3)];
+	std::uint8_t* pixel = &buf[PX(0)];
+	*red = *pixel;
+	++pixel;
+	*green = *pixel;
+	++pixel;
+	*blue = *pixel;
+	++pixel;
+	*alpha = *pixel;
+}
+
+const Colour& PixelBufferAlpha::pixel(std::size_t x, std::size_t y) const
+{
+	static Colour c;
+	c = Colour(buf[PX(0)],  buf[PX(1)], buf[PX(2)], buf[PX(3)]);
+	return c;
+}
+
+const std::uint8_t* PixelBufferAlpha::getLine(std::size_t x, std::size_t y) const
+{
+	return &buf[PX(0)];
 }
 
 } // GUI::
