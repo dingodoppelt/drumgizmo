@@ -37,6 +37,15 @@ framewidgettest_SOURCES = \
 	framewidgettest.cc \
 	$(top_srcdir)/hugin/hugin.c
 
+RES = \
+	benchmarktest_resources/image_no_alpha.png \
+	benchmarktest_resources/image_full_alpha.png \
+	benchmarktest_resources/image_edge_alpha.png \
+	benchmarktest_resources/image_inner_alpha.png
+
+benchmarktest_resource_data.cc : $(top_srcdir)/plugingui/rcgen $(RES)
+	$(top_srcdir)/plugingui/rcgen $(RES) > benchmarktest_resource_data.cc
+
 benchmarktest_LDADD = \
 	$(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
 benchmarktest_CXXFLAGS = \
@@ -45,4 +54,5 @@ benchmarktest_CXXFLAGS = \
 	-I$(top_srcdir)/hugin
 benchmarktest_SOURCES = \
 	benchmarktest.cc \
+	benchmarktest_resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c

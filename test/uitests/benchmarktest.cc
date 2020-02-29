@@ -78,29 +78,104 @@ int main()
 {
 	TimedCanvas canvas;
 	GUI::Painter painter(canvas);
-	GUI::Image image(":resources/bg.png");
+	GUI::Image image_no_alpha(":benchmarktest_resources/image_no_alpha.png");
+	GUI::Image image_full_alpha(":benchmarktest_resources/image_full_alpha.png");
+	GUI::Image image_edge_alpha(":benchmarktest_resources/image_edge_alpha.png");
+	GUI::Image image_inner_alpha(":benchmarktest_resources/image_inner_alpha.png");
 
 	{
-		TimedScope timed("No scale", 10000);
-		for(int i = 0; i < 10000; ++i)
+		TimedScope timed("No scale, no alpha", 100000);
+		for(int i = 0; i < 100000; ++i)
 		{
-			painter.drawImage(0, 0, image);
+			painter.drawImage(0, 0, image_no_alpha);
 		}
 	}
 
 	{
-		TimedScope timed("Scaled 1:1", 2000);
-		for(int i = 0; i < 2000; ++i)
-		{
-			painter.drawImageStretched(0, 0, image, 370, 330);
-		}
-	}
-
-	{
-		TimedScope timed("Scaled to window", 1000);
+		TimedScope timed("No scale, full alpha", 1000);
 		for(int i = 0; i < 1000; ++i)
 		{
-			painter.drawImageStretched(0, 0, image, 800, 6000);
+			painter.drawImage(0, 0, image_full_alpha);
+		}
+	}
+
+	{
+		TimedScope timed("No scale, edge alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImage(0, 0, image_edge_alpha);
+		}
+	}
+
+	{
+		TimedScope timed("No scale, inner alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImage(0, 0, image_inner_alpha);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled 1:1 no alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_no_alpha, 370, 330);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled 1:1 full alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_full_alpha, 370, 330);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled 1:1 edge alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_edge_alpha, 370, 330);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled 1:1 inner alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_inner_alpha, 370, 330);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled to window, no alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_no_alpha, 800, 600);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled to window, full alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_full_alpha, 800, 600);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled to window, edge alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_edge_alpha, 800, 600);
+		}
+	}
+
+	{
+		TimedScope timed("Scaled to window, inner alpha", 1000);
+		for(int i = 0; i < 1000; ++i)
+		{
+			painter.drawImageStretched(0, 0, image_inner_alpha, 800, 600);
 		}
 	}
 
