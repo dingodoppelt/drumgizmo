@@ -202,6 +202,11 @@ struct Rect
 	std::size_t y1;
 	std::size_t x2;
 	std::size_t y2;
+
+	bool empty() const
+	{
+		return x1 == x2 && y1 == y2;
+	}
 };
 
 } // GUI::

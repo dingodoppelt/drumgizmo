@@ -29,6 +29,9 @@
 #include "colour.h"
 
 #include <cstddef>
+#include <vector>
+
+#include "guievent.h"
 
 namespace GUI
 {
@@ -45,6 +48,8 @@ public:
 
 	void writeLine(std::size_t x, std::size_t y,
 	               const std::uint8_t* line, std::size_t len);
+
+	Rect updateBuffer(std::vector<class PixelBufferAlpha*>& pixel_buffers);
 
 	std::uint8_t* buf{nullptr};
 	std::size_t width{0};

@@ -116,6 +116,34 @@ int main()
 	}
 
 	{
+		GUI::PixelBuffer wpixbuf(800, 600);
+		std::vector<GUI::PixelBufferAlpha*> children;
+		for(int i = 0; i < 100; ++i)
+		{
+			auto child = new GUI::PixelBufferAlpha(300, 300);
+			child->x = i * 2;
+			child->y = i * 2;
+			children.push_back(child);
+		}
+
+		TimedScope timed("Buffer flattening", 100);
+		for(int i = 0; i < 100; ++i)
+		{
+			for(auto child : children)
+			{
+				child->dirty = true;
+			}
+
+			wpixbuf.updateBuffer(children);
+		}
+
+		for(auto child : children)
+		{
+			delete child;
+		}
+	}
+
+	{
 		TimedScope timed("Scaled 1:1 no alpha", 1000);
 		for(int i = 0; i < 1000; ++i)
 		{

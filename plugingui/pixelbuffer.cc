@@ -104,6 +104,147 @@ void PixelBuffer::writeLine(std::size_t x, std::size_t y,
 	}
 }
 
+Rect PixelBuffer::updateBuffer(std::vector<PixelBufferAlpha*>& pixel_buffers)
+{
+	bool has_dirty_rect{false};
+	Rect dirty_rect;
+
+	for(const auto& pixel_buffer : pixel_buffers)
+	{
+		if(pixel_buffer->dirty)
+		{
+			auto x1 = (std::size_t)pixel_buffer->x;
+			auto x2 = (std::size_t)(pixel_buffer->x + pixel_buffer->width);
+			auto y1 = (std::size_t)pixel_buffer->y;
+			auto y2 = (std::size_t)(pixel_buffer->y + pixel_buffer->height);
+
+			pixel_buffer->dirty = false;
+			if(!has_dirty_rect)
+			{
+				// Insert this area:
+				dirty_rect = {x1, y1, x2, y2};
+				has_dirty_rect = true;
+			}
+			else
+			{
+				// Expand existing area:
+				auto x1_0 = dirty_rect.x1;
+				auto y1_0 = dirty_rect.y1;
+				auto x2_0 = dirty_rect.x2;
+				auto y2_0 = dirty_rect.y2;
+				dirty_rect = {
+					(x1_0 < x1) ? x1_0 : x1,
+					(y1_0 < y1) ? y1_0 : y1,
+					(x2_0 > x2) ? x2_0 : x2,
+					(y2_0 > y2) ? y2_0 : y2
+				};
+			}
+		}
+
+		if(pixel_buffer->has_last)
+		{
+			auto x1 = (std::size_t)pixel_buffer->last_x;
+			auto x2 = (std::size_t)(pixel_buffer->last_x + pixel_buffer->last_width);
+			auto y1 = (std::size_t)pixel_buffer->last_y;
+			auto y2 = (std::size_t)(pixel_buffer->last_y + pixel_buffer->last_height);
+
+			pixel_buffer->has_last = false;
+			if(!has_dirty_rect)
+			{
+				// Insert this area:
+				dirty_rect = {x1, y1, x2, y2};
+				has_dirty_rect = true;
+			}
+			else
+			{
+				// Expand existing area:
+				auto x1_0 = dirty_rect.x1;
+				auto y1_0 = dirty_rect.y1;
+				auto x2_0 = dirty_rect.x2;
+				auto y2_0 = dirty_rect.y2;
+				dirty_rect = {
+					(x1_0 < x1) ? x1_0 : x1,
+					(y1_0 < y1) ? y1_0 : y1,
+					(x2_0 > x2) ? x2_0 : x2,
+					(y2_0 > y2) ? y2_0 : y2
+				};
+			}
+		}
+	}
+
+	if(!has_dirty_rect)
+	{
+		return {};
+	}
+
+	for(const auto& pixel_buffer : pixel_buffers)
+	{
+		if(!pixel_buffer->visible)
+		{
+			continue;
+		}
+
+		int update_width = pixel_buffer->width;
+		int update_height = pixel_buffer->height;
+
+		// Skip buffer if not inside window.
+		if(((int)width < pixel_buffer->x) ||
+		   ((int)height < pixel_buffer->y))
+		{
+			continue;
+		}
+
+		if(update_width > ((int)width - pixel_buffer->x))
+		{
+			update_width = ((int)width - pixel_buffer->x);
+		}
+
+		if(update_height > ((int)height - pixel_buffer->y))
+		{
+			update_height = ((int)height - pixel_buffer->y);
+		}
+
+		auto from_x  = (int)dirty_rect.x1 - pixel_buffer->x;
+		from_x = std::max(0, from_x);
+		auto from_y  = (int)dirty_rect.y1 - pixel_buffer->y;
+		from_y = std::max(0, from_y);
+
+		auto to_x = (int)dirty_rect.x2 - pixel_buffer->x;
+		to_x = std::min(to_x, (int)update_width);
+		auto to_y = (int)dirty_rect.y2 - pixel_buffer->y;
+		to_y = std::min(to_y, (int)update_height);
+
+		if(to_x < from_x)
+		{
+			continue;
+		}
+
+		for(int y = from_y; y < to_y; y++)
+		{
+			writeLine(pixel_buffer->x + from_x,
+			          pixel_buffer->y + y,
+			          pixel_buffer->getLine(from_x, y),
+			          to_x - from_x);
+		}
+	}
+
+	dirty_rect.x2 = std::min(width, dirty_rect.x2);
+	dirty_rect.y2 = std::min(height, dirty_rect.y2);
+
+	// Make sure we don't try to paint a rect backwards.
+	if(dirty_rect.x1 > dirty_rect.x2)
+	{
+		std::swap(dirty_rect.x1, dirty_rect.x2);
+	}
+
+	if(dirty_rect.y1 > dirty_rect.y2)
+	{
+		std::swap(dirty_rect.y1, dirty_rect.y2);
+	}
+
+	return dirty_rect;
+}
+
 
 PixelBufferAlpha::PixelBufferAlpha(std::size_t width, std::size_t height)
 	: managed(true)
