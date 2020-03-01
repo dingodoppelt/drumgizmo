@@ -65,7 +65,8 @@ static void plot(PixelBufferAlpha& pixbuf, const Colour& colour,
 	}
 
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
-	pixbuf.addPixel(x, y, colour.red(), colour.green(), colour.blue(), colour.alpha() * c);
+	Colour col(colour.red(), colour.green(), colour.blue(), (std::uint8_t)(colour.alpha() * c));
+	pixbuf.addPixel(x, y, col);
 }
 
 static inline double fpart(double x)
@@ -202,21 +203,19 @@ void Painter::drawText(int x0, int y0, const Font& font,
 		{
 			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
 			{
-				unsigned char r, g, b, a;
-
 				assert(x >= 0);
 				assert(y >= 0);
 				assert(x < (int)textbuf->width);
 				assert(y < (int)textbuf->height);
 
-				textbuf->pixel(x, y, &r, &g, &b, &a);
+				auto c = textbuf->pixel(x, y);
 
 				assert(x + x0 >= 0);
 				assert(y + y0 >= 0);
 				assert(x + x0 < (int)pixbuf.width);
 				assert(y + y0 < (int)pixbuf.height);
 
-				pixbuf.addPixel(x + x0, y + y0, r, g, b, a);
+				pixbuf.addPixel(x + x0, y + y0, c);
 			}
 		}
 	}
@@ -226,22 +225,21 @@ void Painter::drawText(int x0, int y0, const Font& font,
 		{
 			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
 			{
-				unsigned char r,g,b,a;
-
 				assert(x >= 0);
 				assert(y >= 0);
 				assert(x < (int)textbuf->width);
 				assert(y < (int)textbuf->height);
 
-				textbuf->pixel(x, y, &r, &g, &b, &a);
+				auto c = textbuf->pixel(x, y);
 
 				assert(x + x0 >= 0);
 				assert(y + y0 >= 0);
 				assert(x + x0 < (int)pixbuf.width);
 				assert(y + y0 < (int)pixbuf.height);
 
-				pixbuf.addPixel(x + x0, y + y0, colour.red(), colour.green(),
-				                colour.blue(), (int)(colour.alpha() * a) / 255);
+				Colour col(colour.red(), colour.green(),
+				           colour.blue(), (int)(colour.alpha() * c.alpha()) / 255);
+				pixbuf.addPixel(x + x0, y + y0, col);
 			}
 		}
 	}

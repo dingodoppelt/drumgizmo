@@ -44,9 +44,7 @@ public:
 
 	void realloc(std::size_t width, std::size_t height);
 
-	void setPixel(std::size_t x, std::size_t y, const Colour& c);
-
-	void writeLine(std::size_t x, std::size_t y,
+	void blendLine(std::size_t x, std::size_t y,
 	               const std::uint8_t* line, std::size_t len);
 
 	Rect updateBuffer(std::vector<class PixelBufferAlpha*>& pixel_buffers);
@@ -74,19 +72,7 @@ public:
 	void blendLine(std::size_t x, std::size_t y,
 	               const std::uint8_t* line, std::size_t len);
 
-	void addPixel(std::size_t x, std::size_t y,
-	              std::uint8_t red,
-	              std::uint8_t green,
-	              std::uint8_t blue,
-	              std::uint8_t alpha);
-
 	void addPixel(std::size_t x, std::size_t y, const Colour& c);
-
-	void pixel(std::size_t x, std::size_t y,
-	           std::uint8_t* red,
-	           std::uint8_t* green,
-	           std::uint8_t* blue,
-	           std::uint8_t* alpha) const;
 
 	const Colour& pixel(std::size_t x, std::size_t y) const;
 
