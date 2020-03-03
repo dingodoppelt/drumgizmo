@@ -65,7 +65,11 @@ static void plot(PixelBufferAlpha& pixbuf, const Colour& colour,
 	}
 
 	// plot the pixel at (x, y) with brightness c (where 0 ≤ c ≤ 1)
-	Colour col(colour.red(), colour.green(), colour.blue(), (std::uint8_t)(colour.alpha() * c));
+	Colour col(colour);
+	if(c != 1)
+	{
+		col.data()[3] *= c;
+	}
 	pixbuf.addPixel(x, y, col);
 }
 
@@ -369,7 +373,7 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 
 	if(image.hasAlpha())
 	{
-		if(true || !image.line(0))
+		if(!image.line(0))
 		{
 			for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 			{
@@ -398,7 +402,8 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 			std::size_t x = -1 * std::min(0, x0);
 			for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 			{
-				pixbuf.blendLine(x + x0, y + y0, image.line(y), image.width());
+				pixbuf.blendLine(x + x0, y + y0, image.line(y),
+				                 std::min((int)image.width(), fw - (int)x));
 			}
 		}
 	}
@@ -407,7 +412,8 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 		std::size_t x = -1 * std::min(0, x0);
 		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 		{
-			pixbuf.writeLine(x + x0, y + y0, image.line(y), image.width());
+			pixbuf.writeLine(x + x0, y + y0, image.line(y),
+			                 std::min((int)image.width(), fw - (int)x));
 		}
 	}
 }

@@ -269,7 +269,9 @@ void PixelBufferAlpha::writeLine(std::size_t x, std::size_t y,
 	std::memcpy(offset, line, len * 4);
 }
 
+
 // SIMD: https://github.com/WojciechMula/toys/blob/master/blend_32bpp/blend_32bpp.c
+// Alpha blending: http://en.wikipedia.org/wiki/Alpha_compositing
 
 void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
                                  const std::uint8_t* line, std::size_t len)
@@ -279,56 +281,70 @@ void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
 		return; // out of bounds
 	}
 
+	int a, b;
 	std::uint8_t* target = &buf[PX(0)];
-	for(std::size_t x = 0; x < len; ++x)
+	while(len)
 	{
-		unsigned int a = line[3];
-		unsigned int b = 255 - a;
+		if(line[3] == 0xff)
+		{
+			const std::uint8_t* end = line;
+			while(end[3] == 0xff && end < line + len * 4)
+			{
+				end += 4;
+			}
+			auto chunk_len = end - line;
+			memcpy(target, line, chunk_len);
+			line += chunk_len;
+			target += chunk_len;
+			len -= chunk_len / 4;
+			continue;
+		}
+		else if(line[3] == 0)
+		{
+			// Do nothing
+		}
+		else
+		{
+			a = line[3];
+			b = target[3] * (255 - a) / 255;
 
-		target[0] = (std::uint8_t)((line[0] * a + target[0] * b) / 255);
-		target[1] = (std::uint8_t)((line[1] * a + target[1] * b) / 255);
-		target[2] = (std::uint8_t)((line[2] * a + target[2] * b) / 255);
-		target[3] = a * b / 255;
+			target[0] = (line[0] * a + target[0] * b) / (a + b);
+			target[1] = (line[1] * a + target[1] * b) / (a + b);
+			target[2] = (line[2] * a + target[2] * b) / (a + b);
+			target[3] = (int)target[3] + line[3] * (255 - target[3]) / 255;
+		}
+
 		line += 4;
 		target += 4;
+		--len;
 	}
-}
-
-
-// http://en.wikipedia.org/wiki/Alpha_compositing
-static inline void getAlpha(std::uint8_t _a, std::uint8_t _b,
-                            float &a, float &b)
-{
-	a = _a / 255.0;
-	b = _b / 255.0;
-	b *= (1 - a);
 }
 
 void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 {
-	if(c.alpha() == 0)
+	const std::uint8_t* colour = c.data();
+
+	if(colour[3] == 0)
 	{
 		return;
 	}
 
-	std::uint8_t* pixel = &buf[PX(0)];
+	int a, b;
+	std::uint8_t* target = &buf[PX(0)];
 
-	if(c.alpha() < 255)
+	if(colour[3] == 0xff)
 	{
-		float a, b;
-		getAlpha(c.alpha(), buf[PX(3)], a, b);
-
-		*pixel = (std::uint8_t)((c.red()   * a + *pixel * b) / (a + b));
-		++pixel;
-		*pixel = (std::uint8_t)((c.green() * a + *pixel * b) / (a + b));
-		++pixel;
-		*pixel = (std::uint8_t)((c.blue()  * a + *pixel * b) / (a + b));
-		++pixel;
-		*pixel = (a + b) * 255;
+		memcpy(target, colour, 4);
 	}
 	else
 	{
-		memcpy(pixel, c.data(), 4);
+		a = colour[3];
+		b = target[3] * (255 - a) / 255;
+
+		target[0] = (colour[0] * a + target[0] * b) / (a + b);
+		target[1] = (colour[1] * a + target[1] * b) / (a + b);
+		target[2] = (colour[2] * a + target[2] * b) / (a + b);
+		target[3] = (int)target[3] + colour[3] * (255 - target[3]) / 255;
 	}
 }
 

@@ -680,7 +680,6 @@ void NativeWindowX11::updateImageFromBuffer(std::size_t x1, std::size_t y1,
 	if(depth >= 24) // RGB 888 format
 	{
 		std::uint32_t* shm_addr = (std::uint32_t*)shm_info.shmaddr;
-
 		for(std::size_t y = y1; y < y2; ++y)
 		{
 			for(std::size_t x = x1; x < x2; ++x)
