@@ -235,10 +235,15 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 	bool nofl_changed = settingsGetter.number_of_files_loaded.hasChanged();
 	bool dls_changed = settingsGetter.drumkit_load_status.hasChanged();
 
+	bool in_progress =
+		settingsGetter.number_of_files_loaded.getValue() <
+		settingsGetter.number_of_files.getValue();
+
 	bool context_needs_update =
 	    !context.data || context.width != width || context.height != height;
 	bool bar_needs_update =
-		nof_changed || nofl_changed || dls_changed || context_needs_update;
+		nof_changed || nofl_changed || dls_changed || context_needs_update |
+		in_progress; // Always update while loading to prevent flickering.
 	bool image_needs_update = inline_image_first_draw || context_needs_update;
 	// TODO: settingsGetter.inline_image_filename.hasChanged();
 	bool something_needs_update =
@@ -254,14 +259,14 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 		InlineCanvas canvas(context);
 		GUI::Painter painter(canvas);
 
+		double progress =
+			(double)settingsGetter.number_of_files_loaded.getValue() /
+			(double)settingsGetter.number_of_files.getValue();
+
 		if(show_bar && bar_needs_update)
 		{
 			box.setSize(context.width, bar_height);
 			painter.drawImage(0, height - bar_height, box);
-
-			double progress =
-				(double)settingsGetter.number_of_files_loaded.getValue() /
-				(double)settingsGetter.number_of_files.getValue();
 
 			int brd = 4;
 			int val = (width - (2 * brd)) * progress;
