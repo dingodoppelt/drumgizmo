@@ -201,7 +201,7 @@ Point Widget::position() const
 	return { _x, _y };
 }
 
-PixelBufferAlpha& Widget::GetPixelBuffer()
+PixelBufferAlpha& Widget::getPixelBuffer()
 {
 	return pixbuf;
 }

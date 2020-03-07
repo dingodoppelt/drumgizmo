@@ -31,14 +31,14 @@
 namespace GUI
 {
 
-//! Abstract class that can be used by the Paiter to draw on.
+//! Abstract class that can be used by the Painter to draw on.
 class Canvas
 {
 public:
 	virtual ~Canvas() = default;
 
 	//! @returns a reference to the pixel buffer.
-	virtual PixelBufferAlpha& GetPixelBuffer() = 0;
+	virtual PixelBufferAlpha& getPixelBuffer() = 0;
 };
 
 } // GUI::

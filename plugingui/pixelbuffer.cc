@@ -35,20 +35,18 @@ namespace GUI
 {
 
 PixelBuffer::PixelBuffer(std::size_t width, std::size_t height)
-	: buf(nullptr)
 {
 	realloc(width, height);
 }
 
 PixelBuffer::~PixelBuffer()
 {
-	free(buf);
 }
 
 void PixelBuffer::realloc(std::size_t width, std::size_t height)
 {
-	free(buf);
-	buf = (std::uint8_t *)calloc(width * height, 3);
+	buf_data.resize(width * height * 3);
+	buf = buf_data.data();
 	this->width = width;
 	this->height = height;
 }
@@ -61,7 +59,7 @@ void PixelBuffer::blendLine(std::size_t x, std::size_t y,
 	{
 		if(line[3] == 0xff)
 		{
-			memcpy(target, line, 3);
+			std::memcpy(target, line, 3);
 		}
 		else
 		{
@@ -219,53 +217,50 @@ Rect PixelBuffer::updateBuffer(std::vector<PixelBufferAlpha*>& pixel_buffers)
 	return dirty_rect;
 }
 
-
 PixelBufferAlpha::PixelBufferAlpha(std::size_t width, std::size_t height)
-	: managed(true)
-	, buf(nullptr)
-	, x(0)
-	, y(0)
 {
 	realloc(width, height);
 }
 
 PixelBufferAlpha::~PixelBufferAlpha()
 {
-	if(managed)
-	{
-		free(buf);
-	}
 }
 
 void PixelBufferAlpha::realloc(std::size_t width, std::size_t height)
 {
-	free(buf);
-	buf = (std::uint8_t *)calloc(width * height, 4);
+	buf_data.resize(width * height * 4);
+	buf = buf_data.data();
 	this->width = width;
 	this->height = height;
+	clear();
 }
 
 void PixelBufferAlpha::clear()
 {
-	memset(buf, 0, width * height * 4);
+	std::memset(buf, 0, width * height * 4);
 }
 
-#undef PX
-#define PX(k) ((x + y * width) * 4 + k)
 void PixelBufferAlpha::setPixel(std::size_t x, std::size_t y, const Colour& c)
 {
-	std::uint8_t* pixel = &buf[PX(0)];
-	memcpy(pixel, c.data(), 4);
+	std::uint8_t* pixel = buf + (x + y * width) * 4;
+	std::memcpy(pixel, c.data(), 4);
 }
 
 void PixelBufferAlpha::writeLine(std::size_t x, std::size_t y,
                                  const std::uint8_t* line, std::size_t len)
 {
-	auto offset = &buf[PX(0)];
-	if(x + y * width + len > width * height)
+	if(x >= width || y >= height)
 	{
-		return; // out of bounds
+		return;
 	}
+
+	if(x + len > width)
+	{
+		len = width - x;
+	}
+
+	auto offset = buf + (x + y * width) * 4;
+
 	std::memcpy(offset, line, len * 4);
 }
 
@@ -276,13 +271,18 @@ void PixelBufferAlpha::writeLine(std::size_t x, std::size_t y,
 void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
                                  const std::uint8_t* line, std::size_t len)
 {
-	if(x + y * width + len > width * height)
+	if(x >= width || y >= height)
 	{
-		return; // out of bounds
+		return;
+	}
+
+	if(x + len > width)
+	{
+		len = width - x;
 	}
 
 	int a, b;
-	std::uint8_t* target = &buf[PX(0)];
+	std::uint8_t* target = buf + (x + y * width) * 4;
 	while(len)
 	{
 		if(line[3] == 0xff)
@@ -293,7 +293,7 @@ void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
 				end += 4;
 			}
 			auto chunk_len = end - line;
-			memcpy(target, line, chunk_len);
+			std::memcpy(target, line, chunk_len);
 			line += chunk_len;
 			target += chunk_len;
 			len -= chunk_len / 4;
@@ -322,6 +322,11 @@ void PixelBufferAlpha::blendLine(std::size_t x, std::size_t y,
 
 void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 {
+	if(x >= width || y >= height)
+	{
+		return; // out of bounds
+	}
+
 	const std::uint8_t* colour = c.data();
 
 	if(colour[3] == 0)
@@ -330,11 +335,11 @@ void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 	}
 
 	int a, b;
-	std::uint8_t* target = &buf[PX(0)];
+	std::uint8_t* target = buf + (x + y * width) * 4;
 
 	if(colour[3] == 0xff)
 	{
-		memcpy(target, colour, 4);
+		std::memcpy(target, colour, 4);
 	}
 	else
 	{
@@ -351,13 +356,13 @@ void PixelBufferAlpha::addPixel(std::size_t x, std::size_t y, const Colour& c)
 const Colour& PixelBufferAlpha::pixel(std::size_t x, std::size_t y) const
 {
 	static Colour c;
-	memcpy(c.data(), &buf[PX(0)], 4);
+	std::memcpy(c.data(), buf + (x + y * width) * 4, 4);
 	return c;
 }
 
 const std::uint8_t* PixelBufferAlpha::getLine(std::size_t x, std::size_t y) const
 {
-	return &buf[PX(0)];
+	return buf + (x + y * width) * 4;
 }
 
 } // GUI::

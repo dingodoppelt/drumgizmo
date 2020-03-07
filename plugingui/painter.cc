@@ -39,7 +39,7 @@ namespace GUI
 {
 
 Painter::Painter(Canvas& canvas)
-	: pixbuf(canvas.GetPixelBuffer())
+	: pixbuf(canvas.getPixelBuffer())
 {
 	colour = Colour(0.0f, 0.0f, 0.0f, 0.5f);
 }
@@ -111,11 +111,11 @@ void Painter::drawLine(int x0, int y0, int x1, int y1)
 
 	if(steep)
 	{
-		plot(pixbuf, colour, ypxl1, xpxl1, 1);
+		pixbuf.addPixel(ypxl1, xpxl1, colour);
 	}
 	else
 	{
-		plot(pixbuf, colour, xpxl1, ypxl1, 1);
+		pixbuf.addPixel(xpxl1, ypxl1, colour);
 	}
 
 	double intery = yend + gradient; // first y-intersection for the main loop
@@ -129,11 +129,11 @@ void Painter::drawLine(int x0, int y0, int x1, int y1)
 
 	if(steep)
 	{
-		plot(pixbuf, colour, ypxl2, xpxl2, 1);
+		pixbuf.addPixel(ypxl2, xpxl2, colour);
 	}
 	else
 	{
-		plot(pixbuf, colour, xpxl2, ypxl2, 1);
+		pixbuf.addPixel(xpxl2, ypxl2, colour);
 	}
 
 	// main loop
@@ -205,22 +205,21 @@ void Painter::drawText(int x0, int y0, const Font& font,
 	{
 		for(int y = -1 * std::min(0, y0); y < renderHeight; ++y)
 		{
-			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
-			{
-				assert(x >= 0);
-				assert(y >= 0);
-				assert(x < (int)textbuf->width);
-				assert(y < (int)textbuf->height);
+			int x = -1 * std::min(0, x0);
 
-				auto c = textbuf->pixel(x, y);
+			assert(x >= 0);
+			assert(y >= 0);
+			assert(x < (int)textbuf->width);
+			assert(y < (int)textbuf->height);
 
-				assert(x + x0 >= 0);
-				assert(y + y0 >= 0);
-				assert(x + x0 < (int)pixbuf.width);
-				assert(y + y0 < (int)pixbuf.height);
+			auto c = textbuf->getLine(x, y);
 
-				pixbuf.addPixel(x + x0, y + y0, c);
-			}
+			assert(x + x0 >= 0);
+			assert(y + y0 >= 0);
+			assert(x + x0 < (int)pixbuf.width);
+			assert(y + y0 < (int)pixbuf.height);
+
+			pixbuf.blendLine(x + x0, y + y0, c, renderWidth - x);
 		}
 	}
 	else

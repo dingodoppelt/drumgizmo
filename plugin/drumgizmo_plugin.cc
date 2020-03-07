@@ -199,7 +199,7 @@ public:
 	}
 
 	// From Canvas:
-	GUI::PixelBufferAlpha& GetPixelBuffer() override
+	GUI::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
 	}

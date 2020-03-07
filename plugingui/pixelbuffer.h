@@ -29,6 +29,7 @@
 #include "colour.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "guievent.h"
@@ -49,6 +50,7 @@ public:
 
 	Rect updateBuffer(std::vector<class PixelBufferAlpha*>& pixel_buffers);
 
+	std::vector<std::uint8_t> buf_data;
 	std::uint8_t* buf{nullptr};
 	std::size_t width{0};
 	std::size_t height{0};
@@ -78,7 +80,7 @@ public:
 
 	const std::uint8_t* getLine(std::size_t x, std::size_t y) const;
 
-	bool managed{false};
+	std::vector<std::uint8_t> buf_data;
 	std::uint8_t* buf{nullptr};
 	std::size_t width{0};
 	std::size_t height{0};

@@ -39,7 +39,7 @@ public:
 		: pixbuf(width, height)
 	{}
 
-	GUI::PixelBufferAlpha& GetPixelBuffer() override
+	GUI::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
 	}

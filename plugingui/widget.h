@@ -81,7 +81,7 @@ public:
 	Point position() const;
 
 	// From Canvas
-	PixelBufferAlpha& GetPixelBuffer() override;
+	PixelBufferAlpha& getPixelBuffer() override;
 
 	virtual bool isFocusable() { return false; }
 	virtual bool catchMouse() { return false; }

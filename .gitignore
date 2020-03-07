@@ -24,6 +24,8 @@ compile
 config.h.in~
 test-driver
 INSTALL
+*.mo
+*.pot
 *.o
 *.a
 *.la
@@ -50,19 +52,7 @@ test/audiocachefile
 test/audiocacheidmanager
 test/configfile
 test/memchecker
-test/randomtest
-test/atomictest
-test/syncedsettingstest
-test/imagecachetest
-test/semaphoretest
-test/enginetest
-test/paintertest
-test/drumkitcreatortest
-test/dgxmlparsertest
-test/bytesizeparsertest
-test/notifiertest
-test/drumkitparsertest
-test/instrumentparsertest
+test/*test
 test/dgreftest/dgreftest
 test/dgreftest/*.mid
 test/dgreftest/*.wav
@@ -70,6 +60,8 @@ test/uitests/filebrowsertest
 test/uitests/framewidgettest
 test/uitests/resizetest
 test/uitests/tabwidgettest
+test/uitests/benchmarktest
+test/uitests/benchmarktest_resource_data.cc
 drumgizmo-*.tar.gz
 tst
 vst/Makefile.mingw32
@@ -94,3 +86,6 @@ plugin/vst/public.sdk/
 *.pch
 *.gch
 cov-int/
+ttlgen
+manifest.ttl
+dgvalidator

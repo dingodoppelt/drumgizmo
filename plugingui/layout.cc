@@ -33,7 +33,8 @@
 namespace GUI
 {
 
-LayoutItem::LayoutItem() : parent(nullptr)
+LayoutItem::LayoutItem()
+	: parent(nullptr)
 {
 }
 
@@ -170,7 +171,8 @@ void VBoxLayout::setHAlignment(HAlignment alignment)
 //
 
 HBoxLayout::HBoxLayout(LayoutItem* parent)
-    : BoxLayout(parent), align(VAlignment::center)
+	: BoxLayout(parent)
+	, align(VAlignment::center)
 {
 }
 
@@ -242,10 +244,10 @@ void HBoxLayout::setVAlignment(VAlignment alignment)
 //
 
 GridLayout::GridLayout(LayoutItem* parent, std::size_t number_of_columns,
-    std::size_t number_of_rows)
-    : BoxLayout(parent)
-    , number_of_columns(number_of_columns)
-    , number_of_rows(number_of_rows)
+                       std::size_t number_of_rows)
+	: BoxLayout(parent)
+	, number_of_columns(number_of_columns)
+	, number_of_rows(number_of_rows)
 {
 }
 
@@ -297,9 +299,11 @@ int GridLayout::lastUsedRow(int column) const
 {
 	int last_row = -1;
 
-	for (auto const& grid_range : grid_ranges) {
+	for (auto const& grid_range : grid_ranges)
+	{
 		auto const& range = grid_range.second;
-		if (column >= range.column_begin && column < range.column_end) {
+		if (column >= range.column_begin && column < range.column_end)
+		{
 			last_row = std::max(last_row, range.row_end - 1);
 		}
 	}
@@ -311,9 +315,11 @@ int GridLayout::lastUsedColumn(int row) const
 {
 	int last_column = -1;
 
-	for (auto const& grid_range : grid_ranges) {
+	for (auto const& grid_range : grid_ranges)
+	{
 		auto const& range = grid_range.second;
-		if (row >= range.row_begin && row < range.row_end) {
+		if (row >= range.row_begin && row < range.row_end)
+		{
 			last_column = std::max(last_column, range.column_end - 1);
 		}
 	}

@@ -37,9 +37,14 @@ class TimedCanvas
 	: public GUI::Canvas
 {
 public:
-	GUI::PixelBufferAlpha& GetPixelBuffer() override
+	GUI::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
+	}
+
+	void resize(std::size_t width, std::size_t height)
+	{
+		pixbuf.realloc(width, height);
 	}
 
 private:
@@ -82,6 +87,33 @@ int main()
 	GUI::Image image_full_alpha(":benchmarktest_resources/image_full_alpha.png");
 	GUI::Image image_edge_alpha(":benchmarktest_resources/image_edge_alpha.png");
 	GUI::Image image_inner_alpha(":benchmarktest_resources/image_inner_alpha.png");
+
+	{
+		TimedCanvas canvas;
+		TimedScope timed("Pixelbuffer resize", 100000);
+		painter.setColour(GUI::Colour(1.f, 1.f, 1.f, 1.f));
+		for(int i = 0; i < 100000; ++i)
+		{
+			canvas.resize(i % 1000 + 100, i % 1000 + 100);
+		}
+	}
+
+	{
+		TimedScope timed("Filled rect, no alpha", 100000);
+		for(int i = 0; i < 100000; ++i)
+		{
+			painter.drawRectangle(0, 0, 800, 600);
+		}
+	}
+
+	{
+		TimedScope timed("Filled rect, with alpha", 100000);
+		painter.setColour(GUI::Colour(1.f, 1.f, 1.f, 0.5f));
+		for(int i = 0; i < 100000; ++i)
+		{
+			painter.drawRectangle(0, 0, 800, 600);
+		}
+	}
 
 	{
 		TimedScope timed("No scale, no alpha", 100000);
