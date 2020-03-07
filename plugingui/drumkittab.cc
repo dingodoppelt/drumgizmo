@@ -270,7 +270,7 @@ void DrumkitTab::init(std::string const& image_file,
 			if(it == colours.end())
 			{
 				// XXX: avoids low alpha values due to feathering of edges
-				colours.emplace_back(colour.red(), colour.green(), colour.blue(), 0.7);
+				colours.emplace_back(colour.red(), colour.green(), colour.blue(), 178);
 				colour_index_to_positions.emplace_back();
 			}
 

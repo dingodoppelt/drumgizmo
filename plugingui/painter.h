@@ -56,7 +56,8 @@ public:
 	void drawCircle(int x, int y, double r);
 	void drawFilledCircle(int x, int y, int r);
 	void drawImage(int x, int y, const Drawable& image);
-	void drawRestrictedImage(int x0, int y0, Colour const& colour, const Drawable& image);
+	void drawRestrictedImage(int x0, int y0, const Colour& restriction_colour,
+	                         const Drawable& image);
 	void drawImageStretched(int x, int y, const Drawable& image,
 	                        int width, int height);
 

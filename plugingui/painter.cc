@@ -389,10 +389,7 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 					assert(x0 + x < pixbuf.width);
 					assert(y0 + y < pixbuf.height);
 
-					if (!has_restriction || c == restriction_colour)
-					{
-						pixbuf.addPixel(x0 + x, y0 + y, c);
-					}
+					pixbuf.addPixel(x0 + x, y0 + y, c);
 				}
 			}
 		}
@@ -417,8 +414,9 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 	}
 }
 
-#if 0
-void Painter::drawImage(int x0, int y0, const Drawable& image)
+void Painter::drawRestrictedImage(int x0, int y0,
+                                  const Colour& restriction_colour,
+                                  const Drawable& image)
 {
 	int fw = image.width();
 	int fh = image.height();
@@ -439,63 +437,27 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 		return;
 	}
 
-	if(image.hasAlpha())
+	for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 	{
-		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
+		for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
 		{
-			for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
+			assert(x >= 0);
+			assert(y >= 0);
+			assert(x < image.width());
+			assert(y < image.height());
+			auto& c = image.getPixel(x, y);
+
+			assert(x0 + x >= 0);
+			assert(y0 + y >= 0);
+			assert(x0 + x < pixbuf.width);
+			assert(y0 + y < pixbuf.height);
+
+			if(c == restriction_colour)
 			{
-				assert(x >= 0);
-				assert(y >= 0);
-				assert(x < image.width());
-				assert(y < image.height());
-				auto& c = image.getPixel(x, y);
-
-				assert(x0 + x >= 0);
-				assert(y0 + y >= 0);
-				assert(x0 + x < pixbuf.width);
-				assert(y0 + y < pixbuf.height);
-
-				if (!has_restriction || c == restriction_colour)
-				{
-					pixbuf.addPixel(x0 + x, y0 + y, c);
-				}
+				pixbuf.setPixel(x0 + x, y0 + y, c);
 			}
 		}
 	}
-	else
-	{
-		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
-		{
-			for(std::size_t x = -1 * std::min(0, x0); x < (std::size_t)fw; ++x)
-			{
-				assert(x >= 0);
-				assert(y >= 0);
-				assert(x < image.width());
-				assert(y < image.height());
-				auto& c = image.getPixel(x, y);
-
-				assert(x0 + x >= 0);
-				assert(y0 + y >= 0);
-				assert(x0 + x < pixbuf.width);
-				assert(y0 + y < pixbuf.height);
-
-				if (!has_restriction || c == restriction_colour)
-				{
-					pixbuf.setPixel(x0 + x, y0 + y, c);
-				}
-			}
-		}
-	}
-}
-#endif
-
-void Painter::drawRestrictedImage(int x0, int y0, Colour const& colour, const Drawable& image)
-{
-	has_restriction = true;
-	restriction_colour = colour;
-	drawImage(x0, y0, image);
-	has_restriction = false;
 }
 
 void Painter::drawImageStretched(int x0, int y0, const Drawable& image,
