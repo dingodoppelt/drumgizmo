@@ -29,13 +29,12 @@
 #include "painter.h"
 
 #include <hugin.hpp>
-#include <stdio.h>
+#include <cmath>
 
-// M_PI is not defined in math.h if __STRICT_ANSI__ is defined.
-#ifdef __STRICT_ANSI__
-#undef __STRICT_ANSI__
-#endif
-#include <math.h>
+namespace
+{
+const double pi = std::atan(1.0) * 4.0;
+}
 
 namespace GUI
 {
@@ -211,11 +210,11 @@ void Knob::repaintEvent(RepaintEvent* repaintEvent)
 	// Make it start from 20% and stop at 80%
 	double padval = current_value * 0.8 + 0.1;
 
-	double from_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
-	double from_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.6;
+	double from_x = sin((-1 * padval + 1) * 2 * pi) * radius * 0.6;
+	double from_y = cos((-1 * padval + 1) * 2 * pi) * radius * 0.6;
 
-	double to_x = sin((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
-	double to_y = cos((-1 * padval + 1) * 2 * M_PI) * radius * 0.8;
+	double to_x = sin((-1 * padval + 1) * 2 * pi) * radius * 0.8;
+	double to_y = cos((-1 * padval + 1) * 2 * pi) * radius * 0.8;
 
 	// Draw "fat" line by drawing 9 lines with moved start/ending points.
 	p.setColour(Colour(1.0f, 0.0f, 0.0f, 1.0f));
