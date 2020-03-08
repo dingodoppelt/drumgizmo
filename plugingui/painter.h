@@ -87,9 +87,6 @@ public:
 	void clear();
 
 private:
-	bool has_restriction{false};
-	Colour restriction_colour;
-
 	PixelBufferAlpha& pixbuf;
 	Colour colour;
 };
