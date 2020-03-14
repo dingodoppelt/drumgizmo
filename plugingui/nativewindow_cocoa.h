@@ -72,6 +72,7 @@ private:
 	EventQueue event_queue;
 	void* native_window{nullptr};
 	bool first{true};
+	float scale{1.0};
 };
 
 } // GUI::

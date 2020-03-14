@@ -528,6 +528,8 @@ NativeWindowCocoa::NativeWindowCocoa(void* native_window, Window& window)
 		[priv->window setContentView:priv->view];
 	}
 
+	scale = [[NSScreen mainScreen] backingScaleFactor];
+
 	[priv->view setWantsLayer:YES];
 	[priv->view setLayerContentsPlacement:NSViewLayerContentsPlacementTopLeft];
 	[priv->view updateTrackingAreas];
@@ -697,9 +699,12 @@ void NativeWindowCocoa::redraw(const Rect& dirty_rect)
 	CGImageRef image = CGBitmapContextCreateImage(gc);
 	CGContextRelease(gc);
 
-	[[priv->view layer] setContents:(__bridge id)image];
+	auto nsImage = [[NSImage alloc] initWithCGImage:image size:NSZeroSize];
 
+	id layerContents = [nsImage layerContentsForContentsScale:scale];
+	[[priv->view layer] setContents:layerContents];
 	updateLayerOffset();
+	[[priv->view layer] setContentsScale:scale];
 }
 
 void NativeWindowCocoa::setCaption(const std::string &caption)
