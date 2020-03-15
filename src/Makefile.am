@@ -99,11 +99,13 @@ EXTRA_DIST = \
 	events.h \
 	events_ds.h \
 	grid.h \
+	id.h \
 	inputfilter.h \
 	inputprocessor.h \
 	instrument.h \
 	latencyfilter.h \
 	logger.h \
+	memory_heap.h \
 	midimapparser.h \
 	midimapper.h \
 	nolocale.h \
@@ -112,6 +114,7 @@ EXTRA_DIST = \
 	platform.h \
 	powerlist.h \
 	random.h \
+	range.h \
 	rangemap.h \
 	sample.h \
 	sample_selection.h \

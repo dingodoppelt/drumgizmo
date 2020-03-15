@@ -56,3 +56,5 @@ benchmarktest_SOURCES = \
 	benchmarktest.cc \
 	benchmarktest_resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c
+
+EXTRA_DIST = $(RES)
