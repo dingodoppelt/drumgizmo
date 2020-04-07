@@ -28,7 +28,7 @@
 
 #include <string>
 #include <map>
-#include <stdio.h>
+#include <fstream>
 
 class ConfigFile
 {
@@ -45,11 +45,9 @@ public:
 protected:
 	std::map<std::string, std::string> values;
 	std::string filename;
+	std::fstream current_file;
 
-	virtual bool open(std::string mode);
-	void close();
+	virtual bool open(std::ios_base::openmode mode);
 	std::string readLine();
 	bool parseLine(const std::string& line);
-
-	FILE* fp;
 };

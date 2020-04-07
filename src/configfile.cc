@@ -26,13 +26,7 @@
  */
 #include "configfile.h"
 
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include "platform.h"
 
@@ -47,28 +41,34 @@
 #include <hugin.hpp>
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
-#define SEP "\\"
+static const std::string SEP = "\\";
 #else
-#define SEP "/"
+static const std::string SEP = "/";
 #endif
 
-#define CONFIGDIRNAME ".drumgizmo"
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+static const std::string CONFIGDIRNAME = "DrumGizmo";
+#else
+static const std::string CONFIGDIRNAME = ".drumgizmo";
+#endif
+
+namespace
+{
 
 /**
  * Return the path containing the config files.
  */
-static std::string getConfigPath()
+std::string getConfigPath()
 {
-#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	std::string configpath;
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	TCHAR szPath[256];
-	if(SUCCEEDED(SHGetFolderPath(
-	       NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, szPath)))
+	if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, szPath)))
 	{
 		configpath = szPath;
 	}
 #else
-	std::string configpath = getenv("HOME");
+	configpath = getenv("HOME");
 #endif
 	configpath += SEP;
 	configpath += CONFIGDIRNAME;
@@ -79,9 +79,9 @@ static std::string getConfigPath()
 /**
  * Calling this makes sure that the config path exists
  */
-static bool createConfigPath()
+bool createConfigPath()
 {
-	std::string configpath = getConfigPath();
+	std::string const configpath = getConfigPath();
 
 	struct stat st;
 	if(stat(configpath.c_str(), &st) != 0)
@@ -90,11 +90,10 @@ static bool createConfigPath()
 		      configpath.c_str());
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 		if(mkdir(configpath.c_str()) < 0)
-		{
 #else
 		if(mkdir(configpath.c_str(), 0755) < 0)
-		{
 #endif
+		{
 			DEBUG(configfile, "Could not create config directory\n");
 		}
 
@@ -104,24 +103,26 @@ static bool createConfigPath()
 	return true;
 }
 
+} // end anonymous namespace
+
 ConfigFile::ConfigFile(std::string const& filename)
 	: filename(filename)
-	, fp(nullptr)
 {
 }
 
 ConfigFile::~ConfigFile()
 {
-	if (fp != nullptr)
+	if (current_file.is_open())
 	{
 		DEBUG(configfile, "File has not been closed by the client...\n");
+		current_file.close();
 	}
 }
 
 bool ConfigFile::load()
 {
 	DEBUG(configfile, "Loading config file...\n");
-	if(!open("r"))
+	if(!open(std::ios_base::in))
 	{
 		return false;
 	}
@@ -129,20 +130,15 @@ bool ConfigFile::load()
 	values.clear();
 
 	std::string line;
-	while(true)
+	while(std::getline(current_file, line) && line != "")
 	{
-		line = readLine();
-
-		if(line == "")
-			break;
-
 		if(!parseLine(line))
 		{
 			return false;
 		}
 	}
 
-	close();
+	current_file.close();
 
 	return true;
 }
@@ -153,18 +149,16 @@ bool ConfigFile::save()
 
 	createConfigPath();
 
-	if(!open("w"))
+	if(!open(std::ios_base::out))
 	{
 		return false;
 	}
 
-	std::map<std::string, std::string>::iterator v = values.begin();
-	for(; v != values.end(); ++v)
+	for(auto const& value: values)
 	{
-		fprintf(fp, "%s:%s\n", v->first.c_str(), v->second.c_str());
+		current_file << value.first << ":" << value.second << std::endl;
 	}
-
-	close();
+	current_file.close();
 
 	return true;
 }
@@ -185,65 +179,26 @@ void ConfigFile::setValue(const std::string& key, const std::string& value)
 	values[key] = value;
 }
 
-bool ConfigFile::open(std::string mode)
+bool ConfigFile::open(std::ios_base::openmode mode)
 {
-	if(fp)
+	if(current_file.is_open())
 	{
-		close();
+		current_file.close();
 	}
 
-	std::string configpath = getConfigPath();
+	std::string filename = getConfigPath();
+	filename += SEP;
+	filename += filename;
 
-	std::string configfile = configpath;
-	configfile += SEP;
-	configfile += filename;
+	DEBUG(configfile, "Opening config file '%s'\n", filename.c_str());
+	current_file.open(filename, mode);
 
-	DEBUG(configfile, "Opening config file '%s'\n", configfile.c_str());
-	fp = fopen(configfile.c_str(), mode.c_str());
-
-	if(!fp)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void ConfigFile::close()
-{
-	fclose(fp);
-	fp = nullptr;
-}
-
-std::string ConfigFile::readLine()
-{
-	if(!fp)
-	{
-		return "";
-	}
-
-	std::string line;
-
-	char buf[1024];
-	while(!feof(fp))
-	{
-		char* s = fgets(buf, sizeof(buf), fp);
-		if(s)
-		{
-			line += buf;
-			if(buf[strlen(buf) - 1] == '\n')
-				break;
-		}
-	}
-
-	return line;
+	return current_file.is_open();
 }
 
 bool ConfigFile::parseLine(const std::string& line)
 {
-	std::string key;
-	std::string value;
-	enum
+	enum State
 	{
 		before_key,
 		in_key,
@@ -253,47 +208,52 @@ bool ConfigFile::parseLine(const std::string& line)
 		in_value_single_quoted,
 		in_value_double_quoted,
 		after_value,
-	} state = before_key;
+	};
 
-	for(std::size_t p = 0; p < line.size(); ++p)
+	std::string key;
+	std::string value;
+	State state = before_key;
+
+	for(std::size_t pos = 0; pos < line.size(); ++pos)
 	{
+		auto c = line[pos];
 		switch(state)
 		{
 		case before_key:
-			if(line[p] == '#')
+			if(c == '#')
 			{
 				// Comment: Ignore line.
-				p = line.size();
+				pos = line.size();
 				continue;
 			}
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				continue;
 			}
-			key += line[p];
+			key += c;
 			state = in_key;
 			break;
 
 		case in_key:
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				state = after_key;
 				continue;
 			}
-			if(line[p] == ':' || line[p] == '=')
+			if(c == ':' || c == '=')
 			{
 				state = before_value;
 				continue;
 			}
-			key += line[p];
+			key += c;
 			break;
 
 		case after_key:
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				continue;
 			}
-			if(line[p] == ':' || line[p] == '=')
+			if(c == ':' || c == '=')
 			{
 				state = before_value;
 				continue;
@@ -305,67 +265,67 @@ bool ConfigFile::parseLine(const std::string& line)
 			return false;
 
 		case before_value:
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				continue;
 			}
-			if(line[p] == '\'')
+			if(c == '\'')
 			{
 				state = in_value_single_quoted;
 				continue;
 			}
-			if(line[p] == '"')
+			if(c == '"')
 			{
 				state = in_value_double_quoted;
 				continue;
 			}
-			value += line[p];
+			value += c;
 			state = in_value;
 			break;
 
 		case in_value:
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				state = after_value;
 				continue;
 			}
-			if(line[p] == '#')
+			if(c == '#')
 			{
 				// Comment: Ignore the rest of the line.
-				p = line.size();
+				pos = line.size();
 				state = after_value;
 				continue;
 			}
-			value += line[p];
+			value += c;
 			break;
 
 		case in_value_single_quoted:
-			if(line[p] == '\'')
+			if(c == '\'')
 			{
 				state = after_value;
 				continue;
 			}
-			value += line[p];
+			value += c;
 			break;
 
 		case in_value_double_quoted:
-			if(line[p] == '"')
+			if(c == '"')
 			{
 				state = after_value;
 				continue;
 			}
-			value += line[p];
+			value += c;
 			break;
 
 		case after_value:
-			if(std::isspace(line[p]))
+			if(std::isspace(c))
 			{
 				continue;
 			}
-			if(line[p] == '#')
+			if(c == '#')
 			{
 				// Comment: Ignore the rest of the line.
-				p = line.size();
+				pos = line.size();
 				continue;
 			}
 			ERR(configfile,

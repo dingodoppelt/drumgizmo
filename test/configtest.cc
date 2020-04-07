@@ -41,10 +41,10 @@ public:
 
 protected:
 	// Overload the built-in open method to use local file instead of homedir.
-	virtual bool open(std::string mode)
+	virtual bool open(std::ios_base::openmode mode)
 	{
-		fp = fopen("test.conf", mode.c_str());
-		return fp != NULL;
+		current_file.open("test.conf", mode);
+		return current_file.is_open();
 	}
 };
 
@@ -77,16 +77,20 @@ public:
 		unlink("test.conf");
 	}
 
-	void writeFile(const char* str)
+	void writeFile(const std::string& content, bool newline = true)
 	{
-		FILE* fp = fopen("test.conf", "w");
-		fprintf(fp, "%s", str);
-		fclose(fp);
+		std::fstream file("test.conf", std::ios_base::out);
+		file << content;
+		if (newline)
+		{
+			file << std::endl;
+		}
+		file.close();
 	}
 
 	void loading_no_newline()
 	{
-		writeFile("a:b");
+		writeFile("a:b", false);
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -95,7 +99,7 @@ public:
 
 	void loading_equal_sign()
 	{
-		writeFile(" a =\tb\t\n");
+		writeFile(" a =\tb\t");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -104,7 +108,7 @@ public:
 
 	void loading_newline()
 	{
-		writeFile("a:b\n");
+		writeFile("a:b");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -113,7 +117,7 @@ public:
 
 	void loading_padding_space()
 	{
-		writeFile(" a : b ");
+		writeFile(" a : b ", false);
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -122,7 +126,7 @@ public:
 
 	void loading_padding_tab()
 	{
-		writeFile("\ta\t:\tb\t");
+		writeFile("\ta\t:\tb\t", false);
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -131,7 +135,7 @@ public:
 
 	void loading_padding_space_newline()
 	{
-		writeFile(" a : b \n");
+		writeFile(" a : b ");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -140,7 +144,7 @@ public:
 
 	void loading_padding_tab_newline()
 	{
-		writeFile("\ta\t:\tb\t\n");
+		writeFile("\ta\t:\tb\t");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -149,7 +153,7 @@ public:
 
 	void loading_comment()
 	{
-		writeFile("# comment\na:b\n");
+		writeFile("# comment\na:b");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -158,7 +162,7 @@ public:
 
 	void loading_inline_comment()
 	{
-		writeFile("a:b #comment\n");
+		writeFile("a:b #comment");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -167,7 +171,7 @@ public:
 
 	void loading_single_quoted_string()
 	{
-		writeFile("a: '#\"b\" ' \n");
+		writeFile("a: '#\"b\" ' ");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT(cf.load());
@@ -176,7 +180,7 @@ public:
 
 	void loading_double_quoted_string()
 	{
-		writeFile("a: \"#'b' \" \n");
+		writeFile("a: \"#'b' \" ");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
@@ -201,7 +205,7 @@ public:
 
 	void loading_error_string_not_terminated_single()
 	{
-		writeFile("a:'b\n");
+		writeFile("a:'b");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(false, cf.load());
@@ -209,7 +213,7 @@ public:
 
 	void loading_error_string_not_terminated_double()
 	{
-		writeFile("a:\"b\n");
+		writeFile("a:\"b");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(false, cf.load());
@@ -217,7 +221,7 @@ public:
 
 	void empty_value()
 	{
-		writeFile("a:\n");
+		writeFile("a:");
 
 		TestConfigFile cf;
 		DGUNIT_ASSERT_EQUAL(true, cf.load());
