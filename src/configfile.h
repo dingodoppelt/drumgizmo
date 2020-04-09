@@ -33,6 +33,7 @@
 class ConfigFile
 {
 public:
+	// TODO: west-const
 	ConfigFile(std::string const& filename);
 	virtual ~ConfigFile();
 
@@ -47,6 +48,7 @@ protected:
 	std::string filename;
 	std::fstream current_file;
 
+	// TODO: Does this have to be virtual?
 	virtual bool open(std::ios_base::openmode mode);
 	std::string readLine();
 	bool parseLine(const std::string& line);

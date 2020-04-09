@@ -41,28 +41,37 @@
 #include <hugin.hpp>
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
+// TODO: lowercase name for non-defines, 'sep'?
 static const std::string SEP = "\\";
 #else
 static const std::string SEP = "/";
 #endif
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
+// TODO: lowercase name for non-defines, 'config_dir_name'?
 static const std::string CONFIGDIRNAME = "DrumGizmo";
 #else
+// TODO: Should we use this on OSX or is there another standard naming?
 static const std::string CONFIGDIRNAME = ".drumgizmo";
 #endif
 
 namespace
 {
+// TODO: Put sep and configdirname into anonymous namespace as well instead of
+//       being static?
 
+// TODO: c++ style comments
 /**
  * Return the path containing the config files.
  */
 std::string getConfigPath()
 {
+	// TODO: Move this utility function as a static function into directory.cc/h?
+	//       This seems like something we could use in other places as well.
 	std::string configpath;
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	TCHAR szPath[256];
+	// TODO: Compare return value to S_OK instead of using SUCCEEDED macro.
 	if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, szPath)))
 	{
 		configpath = szPath;
@@ -81,6 +90,7 @@ std::string getConfigPath()
  */
 bool createConfigPath()
 {
+	// TODO: West-const ;)
 	std::string const configpath = getConfigPath();
 
 	struct stat st;
@@ -105,6 +115,7 @@ bool createConfigPath()
 
 } // end anonymous namespace
 
+// TODO: West-const ;)
 ConfigFile::ConfigFile(std::string const& filename)
 	: filename(filename)
 {
@@ -119,6 +130,9 @@ ConfigFile::~ConfigFile()
 	}
 }
 
+// TODO: Perhaps return a (homemade) optional carrying an error description on
+//       failure? We might want to show the error in the UI and not just in the
+//       terminal.
 bool ConfigFile::load()
 {
 	DEBUG(configfile, "Loading config file...\n");
@@ -130,6 +144,14 @@ bool ConfigFile::load()
 	values.clear();
 
 	std::string line;
+	// TODO: What happens if the parser encounters a windows newline on linux, or
+	//       the other way round?
+	//       Perhaps a unit-test for this would be in order?
+	// TODO: What does line != "" do here? If the newline is part of the string,
+	//       I think it is redundant with getline returning false (end-of-file)
+	//       but if the newline character is stripped from the line, then this
+	//       will make the parser stop if an empty line is encountered in the
+	//       config file.
 	while(std::getline(current_file, line) && line != "")
 	{
 		if(!parseLine(line))
@@ -147,6 +169,8 @@ bool ConfigFile::save()
 {
 	DEBUG(configfile, "Saving configuration...\n");
 
+	// TODO: Check for failure? It wouldn't make sense to write the file if the
+	//       folder couldn't be created.
 	createConfigPath();
 
 	if(!open(std::ios_base::out))
@@ -154,6 +178,7 @@ bool ConfigFile::save()
 		return false;
 	}
 
+	// TODO: West-const ;)
 	for(auto const& value: values)
 	{
 		current_file << value.first << ":" << value.second << std::endl;
@@ -198,6 +223,7 @@ bool ConfigFile::open(std::ios_base::openmode mode)
 
 bool ConfigFile::parseLine(const std::string& line)
 {
+	// TODO: enum class?
 	enum State
 	{
 		before_key,
