@@ -33,8 +33,7 @@
 class ConfigFile
 {
 public:
-	// TODO: west-const
-	ConfigFile(std::string const& filename);
+	ConfigFile(const std::string& filename);
 	virtual ~ConfigFile();
 
 	virtual bool load();
@@ -49,6 +48,10 @@ protected:
 	std::fstream current_file;
 
 	// TODO: Does this have to be virtual?
+	// Response: This is actually the only member function that has to be virtual.
+	// I find it very ugly that we have any virtual functions in here, but it
+	// seems that they were made virtual such that we can test this class properly.
+	// What do you think? Test differently and make it all non-virtual?
 	virtual bool open(std::ios_base::openmode mode);
 	std::string readLine();
 	bool parseLine(const std::string& line);

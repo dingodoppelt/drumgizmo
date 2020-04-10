@@ -40,30 +40,26 @@
 
 #include <hugin.hpp>
 
-#if DG_PLATFORM == DG_PLATFORM_WINDOWS
-// TODO: lowercase name for non-defines, 'sep'?
-static const std::string SEP = "\\";
-#else
-static const std::string SEP = "/";
-#endif
-
-#if DG_PLATFORM == DG_PLATFORM_WINDOWS
-// TODO: lowercase name for non-defines, 'config_dir_name'?
-static const std::string CONFIGDIRNAME = "DrumGizmo";
-#else
-// TODO: Should we use this on OSX or is there another standard naming?
-static const std::string CONFIGDIRNAME = ".drumgizmo";
-#endif
-
 namespace
 {
-// TODO: Put sep and configdirname into anonymous namespace as well instead of
-//       being static?
 
-// TODO: c++ style comments
-/**
- * Return the path containing the config files.
- */
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+const std::string sep = "\\";
+#else
+const std::string sep = "/";
+#endif
+
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+const std::string config_dir_name = "DrumGizmo";
+#else
+// TODO: Should we use this on OSX or is there another standard naming?
+// Response: Apparently this is also fine under OSX. There are also other conventions, but
+// one of the is dot files. However, feel free to check this, I am not sure about best practices.
+const std::string config_dir_name = ".drumgizmo";
+#endif
+
+
+// Return the path containing the config files.
 std::string getConfigPath()
 {
 	// TODO: Move this utility function as a static function into directory.cc/h?
@@ -71,27 +67,23 @@ std::string getConfigPath()
 	std::string configpath;
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	TCHAR szPath[256];
-	// TODO: Compare return value to S_OK instead of using SUCCEEDED macro.
-	if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, szPath)))
+	if(SHGetFolderPath(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, szPath) == S_OK)
 	{
 		configpath = szPath;
 	}
 #else
 	configpath = getenv("HOME");
 #endif
-	configpath += SEP;
-	configpath += CONFIGDIRNAME;
+	configpath += sep;
+	configpath += config_dir_name;
 
 	return configpath;
 }
 
-/**
- * Calling this makes sure that the config path exists
- */
+// Calling this makes sure that the config path exists
 bool createConfigPath()
 {
-	// TODO: West-const ;)
-	std::string const configpath = getConfigPath();
+	const std::string configpath = getConfigPath();
 
 	struct stat st;
 	if(stat(configpath.c_str(), &st) != 0)
@@ -115,8 +107,7 @@ bool createConfigPath()
 
 } // end anonymous namespace
 
-// TODO: West-const ;)
-ConfigFile::ConfigFile(std::string const& filename)
+ConfigFile::ConfigFile(const std::string& filename)
 	: filename(filename)
 {
 }
@@ -147,12 +138,11 @@ bool ConfigFile::load()
 	// TODO: What happens if the parser encounters a windows newline on linux, or
 	//       the other way round?
 	//       Perhaps a unit-test for this would be in order?
-	// TODO: What does line != "" do here? If the newline is part of the string,
-	//       I think it is redundant with getline returning false (end-of-file)
-	//       but if the newline character is stripped from the line, then this
-	//       will make the parser stop if an empty line is encountered in the
-	//       config file.
-	while(std::getline(current_file, line) && line != "")
+	// Response: Why? Windows will probably not recognize the newline and Linux will
+	// read the \r into the end of the line (which was the bug we had). What's the
+	// point of testing undefined behavior? Do you want to catch it somehow and
+	// warn the user in this case or what's the idea?
+	while(std::getline(current_file, line))
 	{
 		if(!parseLine(line))
 		{
@@ -169,17 +159,17 @@ bool ConfigFile::save()
 {
 	DEBUG(configfile, "Saving configuration...\n");
 
-	// TODO: Check for failure? It wouldn't make sense to write the file if the
-	//       folder couldn't be created.
-	createConfigPath();
+	if(!createConfigPath())
+	{
+		return false;
+	}
 
 	if(!open(std::ios_base::out))
 	{
 		return false;
 	}
 
-	// TODO: West-const ;)
-	for(auto const& value: values)
+	for(const auto& value: values)
 	{
 		current_file << value.first << ":" << value.second << std::endl;
 	}
@@ -212,7 +202,7 @@ bool ConfigFile::open(std::ios_base::openmode mode)
 	}
 
 	std::string filename = getConfigPath();
-	filename += SEP;
+	filename += sep;
 	filename += filename;
 
 	DEBUG(configfile, "Opening config file '%s'\n", filename.c_str());
@@ -223,8 +213,7 @@ bool ConfigFile::open(std::ios_base::openmode mode)
 
 bool ConfigFile::parseLine(const std::string& line)
 {
-	// TODO: enum class?
-	enum State
+	enum class State
 	{
 		before_key,
 		in_key,
@@ -236,16 +225,22 @@ bool ConfigFile::parseLine(const std::string& line)
 		after_value,
 	};
 
+	// For empty lines, we parse them fine but don't do anything.
+	if(line == "")
+	{
+		return true;
+	}
+
 	std::string key;
 	std::string value;
-	State state = before_key;
+	State state = State::before_key;
 
 	for(std::size_t pos = 0; pos < line.size(); ++pos)
 	{
 		auto c = line[pos];
 		switch(state)
 		{
-		case before_key:
+		case State::before_key:
 			if(c == '#')
 			{
 				// Comment: Ignore line.
@@ -257,31 +252,31 @@ bool ConfigFile::parseLine(const std::string& line)
 				continue;
 			}
 			key += c;
-			state = in_key;
+			state = State::in_key;
 			break;
 
-		case in_key:
+		case State::in_key:
 			if(std::isspace(c))
 			{
-				state = after_key;
+				state = State::after_key;
 				continue;
 			}
 			if(c == ':' || c == '=')
 			{
-				state = before_value;
+				state = State::before_value;
 				continue;
 			}
 			key += c;
 			break;
 
-		case after_key:
+		case State::after_key:
 			if(std::isspace(c))
 			{
 				continue;
 			}
 			if(c == ':' || c == '=')
 			{
-				state = before_value;
+				state = State::before_value;
 				continue;
 			}
 			ERR(configfile,
@@ -290,60 +285,60 @@ bool ConfigFile::parseLine(const std::string& line)
 			    line.c_str());
 			return false;
 
-		case before_value:
+		case State::before_value:
 			if(std::isspace(c))
 			{
 				continue;
 			}
 			if(c == '\'')
 			{
-				state = in_value_single_quoted;
+				state = State::in_value_single_quoted;
 				continue;
 			}
 			if(c == '"')
 			{
-				state = in_value_double_quoted;
+				state = State::in_value_double_quoted;
 				continue;
 			}
 			value += c;
-			state = in_value;
+			state = State::in_value;
 			break;
 
-		case in_value:
+		case State::in_value:
 			if(std::isspace(c))
 			{
-				state = after_value;
+				state = State::after_value;
 				continue;
 			}
 			if(c == '#')
 			{
 				// Comment: Ignore the rest of the line.
 				pos = line.size();
-				state = after_value;
+				state = State::after_value;
 				continue;
 			}
 			value += c;
 			break;
 
-		case in_value_single_quoted:
+		case State::in_value_single_quoted:
 			if(c == '\'')
 			{
-				state = after_value;
+				state = State::after_value;
 				continue;
 			}
 			value += c;
 			break;
 
-		case in_value_double_quoted:
+		case State::in_value_double_quoted:
 			if(c == '"')
 			{
-				state = after_value;
+				state = State::after_value;
 				continue;
 			}
 			value += c;
 			break;
 
-		case after_value:
+		case State::after_value:
 			if(std::isspace(c))
 			{
 				continue;
@@ -362,7 +357,7 @@ bool ConfigFile::parseLine(const std::string& line)
 		}
 	}
 
-	if(state == before_key)
+	if(state == State::before_key)
 	{
 		// Line did not contain any data (empty or comment)
 		return true;
@@ -370,7 +365,7 @@ bool ConfigFile::parseLine(const std::string& line)
 
 	// If state == in_value_XXX_quoted here, the string was not terminated.
 	// If state == before_value it means that the value is empty.
-	if(state != after_value && state != in_value && state != before_value)
+	if(state != State::after_value && state != State::in_value && state != State::before_value)
 	{
 		ERR(configfile, "Malformed line: '%s'", line.c_str());
 		return false;
