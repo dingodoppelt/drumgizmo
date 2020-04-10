@@ -188,12 +188,10 @@ bool ConfigFile::open(std::ios_base::openmode mode)
 		current_file.close();
 	}
 
-	std::string filename = getConfigPath();
-	filename += sep;
-	filename += filename;
+	std::string const full_filename = getConfigPath() + sep + filename;
 
-	DEBUG(configfile, "Opening config file '%s'\n", filename.c_str());
-	current_file.open(filename, mode);
+	DEBUG(configfile, "Opening config file '%s'\n", full_filename.c_str());
+	current_file.open(full_filename, mode);
 
 	return current_file.is_open();
 }
