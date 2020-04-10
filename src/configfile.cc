@@ -28,6 +28,7 @@
 
 #include <sys/stat.h>
 
+#include "directory.h"
 #include "platform.h"
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
@@ -52,9 +53,6 @@ const std::string sep = "/";
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 const std::string config_dir_name = "DrumGizmo";
 #else
-// TODO: Should we use this on OSX or is there another standard naming?
-// Response: Apparently this is also fine under OSX. There are also other conventions, but
-// one of the is dot files. However, feel free to check this, I am not sure about best practices.
 const std::string config_dir_name = ".drumgizmo";
 #endif
 
@@ -62,8 +60,7 @@ const std::string config_dir_name = ".drumgizmo";
 // Return the path containing the config files.
 std::string getConfigPath()
 {
-	// TODO: Move this utility function as a static function into directory.cc/h?
-	//       This seems like something we could use in other places as well.
+	// TODO: Move this utility function as a static function into directory.cc/h at some point?
 	std::string configpath;
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	TCHAR szPath[256];
@@ -85,8 +82,7 @@ bool createConfigPath()
 {
 	const std::string configpath = getConfigPath();
 
-	struct stat st;
-	if(stat(configpath.c_str(), &st) != 0)
+	if(!Directory::exists(configpath))
 	{
 		DEBUG(configfile, "No configuration exists, creating directory '%s'\n",
 		      configpath.c_str());
@@ -121,9 +117,7 @@ ConfigFile::~ConfigFile()
 	}
 }
 
-// TODO: Perhaps return a (homemade) optional carrying an error description on
-//       failure? We might want to show the error in the UI and not just in the
-//       terminal.
+// TODO: Make this return a homemade error variant when we have this project-wide.
 bool ConfigFile::load()
 {
 	DEBUG(configfile, "Loading config file...\n");
@@ -135,13 +129,6 @@ bool ConfigFile::load()
 	values.clear();
 
 	std::string line;
-	// TODO: What happens if the parser encounters a windows newline on linux, or
-	//       the other way round?
-	//       Perhaps a unit-test for this would be in order?
-	// Response: Why? Windows will probably not recognize the newline and Linux will
-	// read the \r into the end of the line (which was the bug we had). What's the
-	// point of testing undefined behavior? Do you want to catch it somehow and
-	// warn the user in this case or what's the idea?
 	while(std::getline(current_file, line))
 	{
 		if(!parseLine(line))

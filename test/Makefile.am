@@ -132,10 +132,11 @@ lv2_SOURCES = \
 
 configfile_CXXFLAGS = -DOUTPUT=\"configfile\" \
 	$(DEBUG_FLAGS) \
-	-I$(top_srcdir)/hugin
+	-I$(top_srcdir)/hugin -I$(top_srcdir)/src
 configfile_LDFLAGS =
 configfile_SOURCES = \
 	$(top_srcdir)/src/configfile.cc \
+	$(top_srcdir)/src/directory.cc \
 	$(top_srcdir)/hugin/hugin.c \
 	dgtest.cc \
 	configtest.cc

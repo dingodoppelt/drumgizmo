@@ -38,8 +38,8 @@ public:
 	Config();
 	~Config();
 
-	bool load();
-	bool save();
+	bool load() override;
+	bool save() override;
 
 	std::string defaultKitPath;
 };

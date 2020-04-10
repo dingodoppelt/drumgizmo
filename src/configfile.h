@@ -39,19 +39,14 @@ public:
 	virtual bool load();
 	virtual bool save();
 
-	virtual std::string getValue(const std::string& key) const;
-	virtual void setValue(const std::string& key, const std::string& value);
+	std::string getValue(const std::string& key) const;
+	void setValue(const std::string& key, const std::string& value);
 
 protected:
 	std::map<std::string, std::string> values;
 	std::string filename;
 	std::fstream current_file;
 
-	// TODO: Does this have to be virtual?
-	// Response: This is actually the only member function that has to be virtual.
-	// I find it very ugly that we have any virtual functions in here, but it
-	// seems that they were made virtual such that we can test this class properly.
-	// What do you think? Test differently and make it all non-virtual?
 	virtual bool open(std::ios_base::openmode mode);
 	std::string readLine();
 	bool parseLine(const std::string& line);
