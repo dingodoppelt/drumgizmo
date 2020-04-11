@@ -10,6 +10,7 @@ VST_CFLAGS=-I$(VST_BASE)
 
 DG_SRC = \
 	@top_srcdir@/pugixml/src/pugixml.cpp \
+	@top_srcdir@/src/zrwrapper.cc \
 	@top_srcdir@/zita-resampler/libs/resampler.cc \
 	@top_srcdir@/zita-resampler/libs/resampler-table.cc \
 	@top_srcdir@/src/audiocachefile.cc \
