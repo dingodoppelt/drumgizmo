@@ -158,7 +158,7 @@ bool ConfigFile::save()
 
 	for(const auto& value: values)
 	{
-		current_file << value.first << ":" << value.second << std::endl;
+		current_file << value.first << " = " << "\"" << value.second << "\"" << std::endl;
 	}
 	current_file.close();
 
