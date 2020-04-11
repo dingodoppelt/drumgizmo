@@ -47,6 +47,7 @@ DG_SRC = \
 	@top_srcdir@/src/velocityfilter.cc \
 	@top_srcdir@/src/versionstr.cc
 DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/src \
+	-I@top_srcdir@/zita-resampler/libs \
 	-I@top_srcdir@/pugixml/src -D_USE_MATH_DEFINES \
 	-I@top_srcdir@/plugin/plugingizmo -DVST -DSSE -msse -msse2
 # -DDISABLE_HUGIN
