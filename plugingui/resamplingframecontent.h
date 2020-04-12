@@ -28,8 +28,11 @@
 
 #include "widget.h"
 #include "textedit.h"
+#include "knob.h"
+#include "label.h"
 
 class SettingsNotifier;
+struct Settings;
 
 namespace GUI
 {
@@ -38,20 +41,28 @@ class ResamplingframeContent
 	: public Widget
 {
 public:
-	ResamplingframeContent(Widget* parent, SettingsNotifier& settings_notifier);
+	ResamplingframeContent(Widget* parent,
+	                       Settings& settings,
+	                       SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
 
+private:
 	void updateContent();
 
 	void updateDrumkitSamplerate(std::size_t drumkit_samplerate);
 	void updateSessionSamplerate(double samplerate);
 	void updateResamplingRecommended(bool resampling_recommended);
+	void updateResamplingQuality(float resampling_quality);
+	void valueChangedNotifier(float value);
 
 private:
 	TextEdit text_field{this};
+	Knob quality_knob{this};
+	Label quality_label{this};
 
+	Settings& settings;
 	SettingsNotifier& settings_notifier;
 
 	std::string drumkit_samplerate;

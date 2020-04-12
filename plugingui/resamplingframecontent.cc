@@ -31,9 +31,11 @@
 namespace GUI
 {
 
-ResamplingframeContent::ResamplingframeContent(
-    Widget* parent, SettingsNotifier& settings_notifier)
-    : Widget(parent)
+ResamplingframeContent::ResamplingframeContent(Widget* parent,
+                                               Settings& settings,
+                                               SettingsNotifier& settings_notifier)
+	: Widget(parent)
+	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	CONNECT(this, settings_notifier.drumkit_samplerate,
@@ -42,9 +44,22 @@ ResamplingframeContent::ResamplingframeContent(
 	        this, &ResamplingframeContent::updateSessionSamplerate);
 	CONNECT(this, settings_notifier.resampling_recommended,
 	        this, &ResamplingframeContent::updateResamplingRecommended);
+	CONNECT(this, settings_notifier.resampling_quality,
+	        this, &ResamplingframeContent::updateResamplingQuality);
 
 	text_field.move(0, 0);
 	text_field.setReadOnly(true);
+
+	quality_knob.resize(30, 30);
+	quality_knob.setDefaultValue(0.7f);
+	quality_knob.showValue(false);
+
+	quality_label.setText("Quality");
+	quality_label.setAlignment(TextAlignment::center);
+	quality_label.resize(40, 16);
+
+	CONNECT(&quality_knob, valueChangedNotifier,
+	        this, &ResamplingframeContent::valueChangedNotifier);
 
 	updateContent();
 	text_field.show();
@@ -53,7 +68,9 @@ ResamplingframeContent::ResamplingframeContent(
 void ResamplingframeContent::resize(std::size_t width, std::size_t height)
 {
 	Widget::resize(width, height);
-	text_field.resize(width, height);
+	text_field.resize(width - 50, height);
+	quality_knob.move(width - 36, 20);
+	quality_label.move(width - 40, 0);
 }
 
 void ResamplingframeContent::updateContent()
@@ -86,6 +103,16 @@ void ResamplingframeContent::updateResamplingRecommended(bool resampling_recomme
 	this->resampling_recommended = resampling_recommended ? "Yes" : "No";
 
 	updateContent();
+}
+
+void ResamplingframeContent::updateResamplingQuality(float resampling_quality)
+{
+	quality_knob.setValue(resampling_quality);
+}
+
+void ResamplingframeContent::valueChangedNotifier(float value)
+{
+	settings.resampling_quality.store(value);
 }
 
 } // GUI::

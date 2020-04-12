@@ -105,7 +105,7 @@ MainTab::MainTab(Widget* parent,
 	, humanizerframe_content{this, settings, settings_notifier}
 	, diskstreamingframe_content{this, settings, settings_notifier}
 	, bleedcontrolframe_content{this, settings, settings_notifier}
-	, resamplingframe_content{this, settings_notifier}
+	, resamplingframe_content{this, settings, settings_notifier}
 	, timingframe_content{this, settings, settings_notifier}
 	, sampleselectionframe_content{this, settings, settings_notifier}
 	, visualizerframe_content{this, settings, settings_notifier}

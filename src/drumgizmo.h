@@ -67,7 +67,7 @@ public:
 	std::size_t getLatency() const;
 
 	float samplerate();
-	void setSamplerate(float samplerate);
+	void setSamplerate(float samplerate, float resample_quality = 0.7f);
 
 	void setFrameSize(size_t framesize);
 

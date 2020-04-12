@@ -53,7 +53,7 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	audio_cache.init(10000); // start thread
 	events.reserve(1000);
 	loader.init();
-	setSamplerate(44100.0f);
+	setSamplerate(44100.0f, settings.resampling_quality.load());
 	settings_getter.audition_counter.hasChanged(); // Reset audition_counter
 }
 
@@ -114,10 +114,15 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		enable_resampling = settings_getter.enable_resampling.getValue();
 	}
 
-	if(settings_getter.drumkit_samplerate.hasChanged())
 	{
-		settings_getter.drumkit_samplerate.getValue(); // stage new value
-		setSamplerate(settings.samplerate.load());
+		auto sample_rate_changed = settings_getter.drumkit_samplerate.hasChanged();
+		auto resampling_quality_changed = settings_getter.resampling_quality.hasChanged();
+		if(sample_rate_changed || resampling_quality_changed)
+		{
+			settings_getter.drumkit_samplerate.getValue(); // stage new value
+			setSamplerate(settings.samplerate.load(),
+			              settings_getter.resampling_quality.getValue());
+		}
 	}
 
 	setFrameSize(nsamples);
@@ -414,7 +419,7 @@ float DrumGizmo::samplerate()
 	return settings.samplerate.load();
 }
 
-void DrumGizmo::setSamplerate(float samplerate)
+void DrumGizmo::setSamplerate(float samplerate, float resampling_quality)
 {
 	DEBUG(dgeditor, "%s samplerate: %f\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
@@ -438,7 +443,9 @@ void DrumGizmo::setSamplerate(float samplerate)
 	{
 		zita[c].reset();
 		auto nchan = 1u; // mono
-		auto hlen = 72u; // 16 ≤ hlen ≤ 96
+		// 16 ≤ hlen ≤ 96 - default is 72, q: 0.7f
+		resampling_quality = std::max(0.0f, std::min(1.0f, resampling_quality));
+		std::size_t hlen = 16 + (96 - 16) * resampling_quality;
 		zita[c].setup(input_fs, output_fs, nchan, hlen);
 
 		// Prefill

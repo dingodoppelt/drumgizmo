@@ -103,6 +103,7 @@ struct Settings
 
 	Atomic<bool> enable_resampling{true};
 	Atomic<bool> resampling_recommended{false};
+	Atomic<float> resampling_quality{0.7f}; // [0.0f; 1.0f]
 
 	Atomic<std::size_t> number_of_files{0};
 	Atomic<std::size_t> number_of_files_loaded{0};
@@ -205,6 +206,7 @@ struct SettingsGetter
 
 	SettingRef<bool> enable_resampling;
 	SettingRef<bool> resampling_recommended;
+	SettingRef<float> resampling_quality;
 
 	SettingRef<std::size_t> number_of_files;
 	SettingRef<std::size_t> number_of_files_loaded;
@@ -270,6 +272,7 @@ struct SettingsGetter
 		, buffer_size(settings.buffer_size)
 		, enable_resampling{settings.enable_resampling}
 		, resampling_recommended{settings.resampling_recommended}
+		, resampling_quality{settings.resampling_quality}
 		, number_of_files{settings.number_of_files}
 		, number_of_files_loaded{settings.number_of_files_loaded}
 		, current_file{settings.current_file}
@@ -339,6 +342,7 @@ public:
 
 	Notifier<bool> enable_resampling;
 	Notifier<bool> resampling_recommended;
+	Notifier<float> resampling_quality;
 
 	Notifier<std::size_t> number_of_files;
 	Notifier<std::size_t> number_of_files_loaded;
@@ -413,6 +417,7 @@ public:
 
 		EVAL(enable_resampling);
 		EVAL(resampling_recommended);
+		EVAL(resampling_quality);
 
 		EVAL(number_of_files);
 		EVAL(number_of_files_loaded);

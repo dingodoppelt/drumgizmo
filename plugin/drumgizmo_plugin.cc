@@ -612,6 +612,8 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		float2str(settings.velocity_randomiser_weight.load()) + "</value>\n"
 		"  <value name=\"enable_resampling\">" +
 		bool2str(settings.enable_resampling.load()) + "</value>\n"
+		"  <value name=\"resampling_quality\">" +
+		float2str(settings.resampling_quality.load()) + "</value>\n"
 		"  <value name=\"disk_cache_upper_limit\">" +
 		int2str(settings.disk_cache_upper_limit.load()) + "</value>\n"
 		"  <value name=\"disk_cache_chunk_size\">" +
@@ -711,6 +713,11 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("enable_resampling") != "")
 	{
 		settings.enable_resampling.store(p.value("enable_resampling") == "true");
+	}
+
+	if(p.value("resampling_quality") != "")
+	{
+		settings.resampling_quality.store(str2float(p.value("resampling_quality")));
 	}
 
 	if(p.value("disk_cache_upper_limit") != "")
