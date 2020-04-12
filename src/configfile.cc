@@ -82,7 +82,7 @@ bool createConfigPath()
 {
 	const std::string configpath = getConfigPath();
 
-	if(!Directory::exists(configpath))
+	if(!Directory::isDir(configpath))
 	{
 		DEBUG(configfile, "No configuration exists, creating directory '%s'\n",
 		      configpath.c_str());
