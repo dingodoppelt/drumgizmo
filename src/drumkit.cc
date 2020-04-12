@@ -43,9 +43,11 @@ void DrumKit::clear()
 
 	channels.clear();
 
-	_name = "";
-	_description = "";
-	_samplerate = 44100.0f;
+	// Set all metadata fields to empty values.
+	metadata = {};
+
+	// Explicitly set the samplerate default value, since this cannot be 0
+	metadata._samplerate = 44100.0f;
 }
 
 bool DrumKit::isValid() const
@@ -60,22 +62,22 @@ std::string DrumKit::getFile() const
 
 std::string DrumKit::getName() const
 {
-	return _name;
+	return metadata._name;
 }
 
 std::string DrumKit::getDescription() const
 {
-	return _description;
+	return metadata._description;
 }
 
 VersionStr DrumKit::getVersion() const
 {
-	return _version;
+	return metadata._version;
 }
 
 float DrumKit::getSamplerate() const
 {
-	return _samplerate;
+	return metadata._samplerate;
 }
 
 std::size_t DrumKit::getNumberOfFiles() const

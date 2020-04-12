@@ -153,9 +153,9 @@ public:
 		DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), drumkit.channels[2].name);
 		DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), drumkit.channels[3].name);
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(48000), drumkit._samplerate);
+		DGUNIT_ASSERT_EQUAL(48000.0f, drumkit.metadata._samplerate);
 
-		DGUNIT_ASSERT(VersionStr("2.0.0") == drumkit._version);
+		DGUNIT_ASSERT(VersionStr("2.0.0") == drumkit.metadata._version);
 
 		//
 		// Instrument1 'Snare1':

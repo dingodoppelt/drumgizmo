@@ -56,10 +56,10 @@ bool DOMLoader::loadDom(const std::string& basepath,
 {
 	settings.has_bleed_control.store(false);
 
-	drumkit._name = dom.metadata.title;
-	drumkit._version = dom.version;
-	drumkit._description = dom.metadata.description;
-	drumkit._samplerate = dom.samplerate;
+	drumkit.metadata._name = dom.metadata.title;
+	drumkit.metadata._version = dom.version;
+	drumkit.metadata._description = dom.metadata.description;
+	drumkit.metadata._samplerate = dom.samplerate;
 
 	for(const auto& channel: dom.channels)
 	{
