@@ -26,6 +26,7 @@
  */
 #include <stdio.h>
 #include <string>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
@@ -36,6 +37,16 @@ int main(int argc, char *argv[])
 	printf("{\n");
 
 	int i = 1;
+
+	if(argc > 2 && std::string(argv[1]) == "-d")
+	{
+		if(chdir(argv[2]))
+		{
+			return 1;
+		}
+		i += 2;
+	}
+
 	while(i < argc)
 	{
 		printf("	{\n		\":%s\", ", argv[i]);

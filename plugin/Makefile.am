@@ -32,11 +32,11 @@ drumgizmo_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
-	-no-undefined -export-symbols drumgizmo_lv2.sym
+	-no-undefined -export-symbols $(top_srcdir)/plugin/drumgizmo_lv2.sym
 
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
-	$(top_srcdir)/plugingui/libdggui.la \
-	$(top_srcdir)/src/libdg.la
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 
 ttlgen_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
@@ -102,11 +102,11 @@ drumgizmo_vst_la_SOURCES = \
 	drumgizmo_plugin.cc
 
 drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version \
-	-no-undefined -export-symbols drumgizmo_vst.sym
+	-no-undefined -export-symbols $(top_srcdir)/plugin/drumgizmo_vst.sym
 
 drumgizmo_vst_la_LIBADD = vst/libvstsdk.la \
-	$(top_srcdir)/plugingui/libdggui.la \
-	$(top_srcdir)/src/libdg.la
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 
 
 install-data-hook:

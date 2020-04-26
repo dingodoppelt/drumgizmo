@@ -1,7 +1,9 @@
 noinst_PROGRAMS = resizetest tabwidgettest framewidgettest \
 	filebrowsertest benchmarktest
 
-resizetest_LDADD = $(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+resizetest_LDADD = \
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 resizetest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -10,7 +12,9 @@ resizetest_SOURCES = \
 	resizetest.cc \
 	$(top_srcdir)/hugin/hugin.c
 
-tabwidgettest_LDADD = $(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+tabwidgettest_LDADD = \
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 tabwidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -19,7 +23,9 @@ tabwidgettest_SOURCES = \
 	tabwidgettest.cc \
 	$(top_srcdir)/hugin/hugin.c
 
-filebrowsertest_LDADD = $(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+filebrowsertest_LDADD = \
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 filebrowsertest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -28,7 +34,9 @@ filebrowsertest_SOURCES = \
 	filebrowsertest.cc \
 	$(top_srcdir)/hugin/hugin.c
 
-framewidgettest_LDADD = $(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+framewidgettest_LDADD = \
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 framewidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -43,11 +51,12 @@ RES = \
 	benchmarktest_resources/image_edge_alpha.png \
 	benchmarktest_resources/image_inner_alpha.png
 
-benchmarktest_resource_data.cc : $(top_srcdir)/plugingui/rcgen $(RES)
-	$(top_srcdir)/plugingui/rcgen $(RES) > benchmarktest_resource_data.cc
+benchmarktest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
+	$(top_builddir)/plugingui/rcgen -d $(top_srcdir)/test/uitests $(RES) > $(top_srcdir)/test/uitests/benchmarktest_resource_data.cc
 
 benchmarktest_LDADD = \
-	$(top_srcdir)/plugingui/libdggui.la $(top_srcdir)/src/libdg.la
+	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/src/libdg.la
 benchmarktest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \

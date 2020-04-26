@@ -4,7 +4,7 @@ if ENABLE_CLI
 
 bin_PROGRAMS = drumgizmo dgvalidator
 
-drumgizmo_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
+drumgizmo_LDADD = $(JACK_LIBS) $(top_builddir)/src/libdg.la
 
 drumgizmo_LDFLAGS =
 
@@ -101,7 +101,7 @@ EXTRA_DIST = \
 	output/oss.h \
 	output/wavfile.h
 
-dgvalidator_LDADD = $(JACK_LIBS) $(top_srcdir)/src/libdg.la
+dgvalidator_LDADD = $(JACK_LIBS) $(top_builddir)/src/libdg.la
 
 dgvalidator_LDFLAGS =
 

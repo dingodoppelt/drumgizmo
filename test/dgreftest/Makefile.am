@@ -4,7 +4,7 @@ if HAVE_INPUT_MIDIFILE
 noinst_PROGRAMS = dgreftest
 
 dgreftest_LDADD = $(PTHREAD_LIBS) $(JACK_LIBS) \
-	$(SMF_LIBS) $(top_srcdir)/src/libdg.la
+	$(SMF_LIBS) $(top_builddir)/src/libdg.la
 
 dgreftest_LDFLAGS =
 

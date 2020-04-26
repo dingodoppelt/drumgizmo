@@ -33,11 +33,12 @@ RES = \
 	../BUGS \
 	../COPYING
 
-resource_data.cc : rcgen $(RES)
-	./rcgen $(RES) > resource_data.cc
+resource_data.cc: rcgen $(RES)
+	./rcgen -d $(top_srcdir)/plugingui $(RES) > $(top_srcdir)/plugingui/resource_data.cc
 
 libdggui_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
+	-I$(top_srcdir) \
 	$(GUI_CPPFLAGS) \
 	-I$(top_srcdir)/hugin \
 	-I$(top_srcdir)/src \
@@ -163,7 +164,7 @@ libdggui_la_CPPFLAGS += \
 	-I$(top_srcdir)/pugl
 endif
 
-plugingui_LDADD = libdggui.la $(top_srcdir)/src/libdg.la
+plugingui_LDADD = libdggui.la $(top_builddir)/src/libdg.la
 
 plugingui_CXXFLAGS = \
 	$(DEBUG_FLAGS) \

@@ -98,7 +98,7 @@ enginetest_CXXFLAGS = -DOUTPUT=\"enginetest\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS) $(SNDFILE_CFLAGS)
 enginetest_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS) \
-	 $(top_srcdir)/src/libdg.la
+	 $(top_builddir)/src/libdg.la
 enginetest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	dgtest.cc \
@@ -229,7 +229,7 @@ domloadertest_CXXFLAGS = -DOUTPUT=\"domloadertest\" \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src
 domloadertest_LDFLAGS = \
-	 $(top_srcdir)/src/libdg.la
+	 $(top_builddir)/src/libdg.la
 domloadertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	domloadertest.cc \
