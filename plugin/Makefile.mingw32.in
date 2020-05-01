@@ -27,6 +27,7 @@ DG_SRC = \
 	@top_srcdir@/src/directory.cc \
 	@top_srcdir@/src/domloader.cc \
 	@top_srcdir@/src/drumgizmo.cc \
+	@top_srcdir@/src/drumgizmoconf.cc \
 	@top_srcdir@/src/drumkit.cc \
 	@top_srcdir@/src/drumkitloader.cc \
 	@top_srcdir@/src/events.cc \

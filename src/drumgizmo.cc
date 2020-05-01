@@ -55,6 +55,16 @@ DrumGizmo::DrumGizmo(Settings& settings,
 	loader.init();
 	setSamplerate(44100.0f, settings.resampling_quality.load());
 	settings_getter.audition_counter.hasChanged(); // Reset audition_counter
+
+	config.load();
+	if(config.defaultMidimap != "" && settings.midimap_file.load() == "")
+	{
+		settings.midimap_file.store(config.defaultMidimap);
+	}
+	if(config.defaultKit != "" && settings.drumkit_file.load() == "")
+	{
+		settings.drumkit_file.store(config.defaultKit);
+	}
 }
 
 DrumGizmo::~DrumGizmo()

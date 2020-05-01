@@ -47,6 +47,7 @@ libdg_la_SOURCES = \
 	domloader.cc \
 	dgxmlparser.cc \
 	drumgizmo.cc \
+	drumgizmoconf.cc \
 	drumkit.cc \
 	drumkitloader.cc \
 	events.cc \
@@ -95,6 +96,7 @@ EXTRA_DIST = \
 	dgxmlparser.h \
 	domloader.h \
 	drumgizmo.h \
+	drumgizmoconf.h \
 	drumkit.h \
 	drumkitloader.h \
 	event.h \

@@ -38,6 +38,7 @@
 #include "events.h"
 #include "events_ds.h"
 #include "audiofile.h"
+#include "drumgizmoconf.h"
 #include "drumkit.h"
 #include "drumkitloader.h"
 #include "audiocache.h"
@@ -80,6 +81,7 @@ private:
 
 protected:
 	DrumKitLoader loader;
+	DrumgizmoConfig config;
 
 	AudioOutputEngine& oe;
 	AudioInputEngine& ie;
