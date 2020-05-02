@@ -38,6 +38,7 @@ DG_SRC = \
 	@top_srcdir@/src/midimapper.cc \
 	@top_srcdir@/src/path.cc \
 	@top_srcdir@/src/powerlist.cc \
+	@top_srcdir@/src/powermap.cc \
 	@top_srcdir@/src/random.cc \
 	@top_srcdir@/src/sample.cc \
 	@top_srcdir@/src/sample_selection.cc \

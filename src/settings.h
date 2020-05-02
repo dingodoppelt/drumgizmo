@@ -144,6 +144,20 @@ struct Settings
 	// Current latency offset in ms - for UI
 	Atomic<float> latency_current{0};
 
+	// Powermap parameters
+	Atomic<bool> enable_powermap;
+	Atomic<float> powermap_fixed0_x{0.};
+	Atomic<float> powermap_fixed0_y{0.};
+	Atomic<float> powermap_fixed1_x{.5};
+	Atomic<float> powermap_fixed1_y{.5};
+	Atomic<float> powermap_fixed2_x{1.};
+	Atomic<float> powermap_fixed2_y{1.};
+	Atomic<bool> powermap_shelf{true};
+
+	// Powermap visualizer; -1 is "none"
+	Atomic<float> powermap_input{-1.};
+	Atomic<float> powermap_output{-1.};
+
 	Atomic<std::size_t> audition_counter{0};
 	Atomic<std::string> audition_instrument;
 	Atomic<float> audition_velocity;
@@ -209,6 +223,18 @@ struct SettingsGetter
 	SettingRef<float> latency_regain;
 	SettingRef<float> latency_current;
 
+	SettingRef<bool> enable_powermap;
+	SettingRef<float> powermap_fixed0_x;
+	SettingRef<float> powermap_fixed0_y;
+	SettingRef<float> powermap_fixed1_x;
+	SettingRef<float> powermap_fixed1_y;
+	SettingRef<float> powermap_fixed2_x;
+	SettingRef<float> powermap_fixed2_y;
+	SettingRef<bool> powermap_shelf;
+
+	SettingRef<float> powermap_input;
+	SettingRef<float> powermap_output;
+
 	SettingRef<std::size_t> audition_counter;
 	SettingRef<std::string> audition_instrument;
 	SettingRef<float> audition_velocity;
@@ -257,6 +283,16 @@ struct SettingsGetter
 		, latency_stddev{settings.latency_stddev}
 		, latency_regain{settings.latency_regain}
 		, latency_current{settings.latency_current}
+		, enable_powermap{settings.enable_powermap}
+		, powermap_fixed0_x{settings.powermap_fixed0_x}
+		, powermap_fixed0_y{settings.powermap_fixed0_y}
+		, powermap_fixed1_x{settings.powermap_fixed1_x}
+		, powermap_fixed1_y{settings.powermap_fixed1_y}
+		, powermap_fixed2_x{settings.powermap_fixed2_x}
+		, powermap_fixed2_y{settings.powermap_fixed2_y}
+		, powermap_shelf{settings.powermap_shelf}
+		, powermap_input{settings.powermap_input}
+		, powermap_output{settings.powermap_output}
 		, audition_counter{settings.audition_counter}
 		, audition_instrument{settings.audition_instrument}
 		, audition_velocity{settings.audition_velocity}
@@ -321,6 +357,18 @@ public:
 	Notifier<float> latency_regain;
 	Notifier<float> latency_current;
 
+	Notifier<bool> enable_powermap;
+	Notifier<float> powermap_fixed0_x;
+	Notifier<float> powermap_fixed0_y;
+	Notifier<float> powermap_fixed1_x;
+	Notifier<float> powermap_fixed1_y;
+	Notifier<float> powermap_fixed2_x;
+	Notifier<float> powermap_fixed2_y;
+	Notifier<bool> powermap_shelf;
+
+	Notifier<float> powermap_input;
+	Notifier<float> powermap_output;
+
 	Notifier<std::size_t> audition_counter;
 	Notifier<std::string> audition_instrument;
 	Notifier<int> audition_velocity;
@@ -382,6 +430,18 @@ public:
 		EVAL(latency_stddev);
 		EVAL(latency_regain);
 		EVAL(latency_current);
+
+		EVAL(enable_powermap);
+		EVAL(powermap_fixed0_x);
+		EVAL(powermap_fixed0_y);
+		EVAL(powermap_fixed1_x);
+		EVAL(powermap_fixed1_y);
+		EVAL(powermap_fixed2_x);
+		EVAL(powermap_fixed2_y);
+		EVAL(powermap_shelf);
+
+		EVAL(powermap_input);
+		EVAL(powermap_output);
 
 		EVAL(audition_counter);
 		EVAL(audition_instrument);

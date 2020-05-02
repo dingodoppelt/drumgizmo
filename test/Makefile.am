@@ -8,7 +8,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
 	dgxmlparsertest domloadertest configparsertest midimapparsertest \
-	eventsdstest
+	eventsdstest powermaptest
 
 EXTRA_DIST = \
 	dgunit.h \
@@ -109,7 +109,7 @@ paintertest_CXXFLAGS = -DOUTPUT=\"paintertest\" \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/hugin $(PTHREAD_CFLAGS)
-paintertest_LDFLAGS = $(top_srcdir)/plugingui/libdggui.la
+paintertest_LDFLAGS = $(top_builddir)/plugingui/libdggui.la
 paintertest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	dgtest.cc \
@@ -167,7 +167,7 @@ syncedsettingstest_SOURCES = syncedsettings.cc dgtest.cc
 imagecachetest_CXXFLAGS = -DOUTPUT=\"imagecachetest\" \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src -I$(top_srcdir)/plugingui  -I$(top_srcdir)/hugin
-imagecachetest_LDFLAGS = $(top_srcdir)/plugingui/libdggui.la
+imagecachetest_LDFLAGS = $(top_builddir)/plugingui/libdggui.la
 imagecachetest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \
 	imagecachetest.cc \
@@ -268,6 +268,15 @@ eventsdstest_LDFLAGS =
 eventsdstest_SOURCES = \
 	$(top_srcdir)/src/events_ds.cc \
 	eventsdstest.cc \
+	dgtest.cc
+
+powermaptest_CXXFLAGS = -DOUTPUT=\"powermaptest\" \
+	$(DEBUG_FLAGS) \
+	-I$(top_srcdir)/src
+powermaptest_LDFLAGS =
+powermaptest_SOURCES = \
+	$(top_srcdir)/src/powermap.cc \
+	powermaptest.cc \
 	dgtest.cc
 
 endif

@@ -58,6 +58,7 @@ libdg_la_SOURCES = \
 	midimapper.cc \
 	path.cc \
 	powerlist.cc \
+	powermap.cc \
 	random.cc \
 	sample.cc \
 	sample_selection.cc \
@@ -113,6 +114,7 @@ EXTRA_DIST = \
 	path.h \
 	platform.h \
 	powerlist.h \
+	powermap.h \
 	random.h \
 	range.h \
 	rangemap.h \
