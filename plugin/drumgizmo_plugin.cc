@@ -633,6 +633,22 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		float2str(settings.latency_stddev.load()) + "</value>\n"
 		"  <value name=\"latency_regain\">" +
 		float2str(settings.latency_regain.load()) + "</value>\n"
+		"  <value name=\"enable_powermap\">" +
+		bool2str(settings.enable_powermap.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed0_x\">" +
+		float2str(settings.powermap_fixed0_x.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed0_y\">" +
+		float2str(settings.powermap_fixed0_y.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed1_x\">" +
+		float2str(settings.powermap_fixed1_x.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed1_y\">" +
+		float2str(settings.powermap_fixed1_y.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed2_x\">" +
+		float2str(settings.powermap_fixed2_x.load()) + "</value>\n"
+		"  <value name=\"powermap_fixed2_y\">" +
+		float2str(settings.powermap_fixed2_y.load()) + "</value>\n"
+		"  <value name=\"powermap_shelf\">" +
+		bool2str(settings.powermap_shelf.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -746,6 +762,46 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("latency_regain") != "")
 	{
 		settings.latency_regain.store(str2float(p.value("latency_regain")));
+	}
+
+	if(p.value("enable_powermap") != "")
+	{
+		settings.enable_powermap.store(p.value("enable_powermap") == "true");
+	}
+
+	if(p.value("powermap_fixed0_x") != "")
+	{
+		settings.powermap_fixed0_x.store(str2float(p.value("powermap_fixed0_x")));
+	}
+
+	if(p.value("powermap_fixed0_y") != "")
+	{
+		settings.powermap_fixed0_y.store(str2float(p.value("powermap_fixed0_y")));
+	}
+
+	if(p.value("powermap_fixed1_x") != "")
+	{
+		settings.powermap_fixed1_x.store(str2float(p.value("powermap_fixed1_x")));
+	}
+
+	if(p.value("powermap_fixed1_y") != "")
+	{
+		settings.powermap_fixed1_y.store(str2float(p.value("powermap_fixed1_y")));
+	}
+
+	if(p.value("powermap_fixed2_x") != "")
+	{
+		settings.powermap_fixed2_x.store(str2float(p.value("powermap_fixed2_x")));
+	}
+
+	if(p.value("powermap_fixed2_y") != "")
+	{
+		settings.powermap_fixed2_y.store(str2float(p.value("powermap_fixed2_y")));
+	}
+
+	if(p.value("powermap_shelf") != "")
+	{
+		settings.powermap_shelf.store(p.value("powermap_shelf") == "true");
 	}
 
 	std::string newkit = p.value("drumkitfile");
