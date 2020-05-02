@@ -175,11 +175,14 @@ void Painter::clear()
 }
 
 void Painter::drawText(int x0, int y0, const Font& font,
-                       const std::string& text, bool nocolour)
+                       const std::string& text, bool nocolour, bool rotate)
 {
 	PixelBufferAlpha* textbuf = font.render(text);
 
-	y0 -= textbuf->height; // The y0 offset (baseline) is the bottom of the text.
+	if(!rotate)
+	{
+		y0 -= textbuf->height; // The y0 offset (baseline) is the bottom of the text.
+	}
 
 	// If the text offset is outside the buffer; skip it.
 	if((x0 > (int)pixbuf.width) || (y0 > (int)pixbuf.height))
@@ -222,6 +225,42 @@ void Painter::drawText(int x0, int y0, const Font& font,
 			pixbuf.blendLine(x + x0, y + y0, c, renderWidth - x);
 		}
 	}
+	else if(rotate)
+	{
+		int renderWidth = textbuf->height;
+		if(renderWidth > (int)(pixbuf.width - x0))
+		{
+			renderWidth = pixbuf.width - x0;
+		}
+
+		int renderHeight = textbuf->width;
+		if(renderHeight > ((int)pixbuf.height - y0))
+		{
+			renderHeight = ((int)pixbuf.height - y0);
+		}
+
+		for(int y = -1 * std::min(0, y0); y < renderHeight; ++y)
+		{
+			for(int x = -1 * std::min(0, x0); x < renderWidth; ++x)
+			{
+				assert(x >= 0);
+				assert(y >= 0);
+				assert(x < (int)textbuf->height);
+				assert(y < (int)textbuf->width);
+
+				auto c = textbuf->pixel(textbuf->width - y - 1, x);
+
+				assert(x + x0 >= 0);
+				assert(y + y0 >= 0);
+				assert(x + x0 < (int)pixbuf.width);
+				assert(y + y0 < (int)pixbuf.height);
+
+				Colour col(colour.red(), colour.green(),
+				           colour.blue(), (int)(colour.alpha() * c.alpha()) / 255);
+				pixbuf.addPixel(x + x0, y + y0, col);
+			}
+		}
+	}
 	else
 	{
 		for(int y = -1 * std::min(0, y0); y < renderHeight; ++y)
@@ -252,7 +291,10 @@ void Painter::drawText(int x0, int y0, const Font& font,
 
 void Painter::drawPoint(int x, int y)
 {
-	pixbuf.setPixel(x, y, colour);
+	if(x >= 0 && y >= 0 && (std::size_t)x < pixbuf.width && (std::size_t)y < pixbuf.height)
+	{
+		pixbuf.setPixel(x, y, colour);
+	}
 }
 
 static void plot4points(Painter *p, int cx, int cy, int x, int y)

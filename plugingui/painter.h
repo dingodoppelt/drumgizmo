@@ -49,7 +49,7 @@ public:
 
 	void drawLine(int x1, int y1, int x2, int y2);
 	void drawText(int x, int y, const Font& font, const std::string& text,
-	              bool nocolour = false);
+	              bool nocolour = false, bool rotate = false);
 	void drawRectangle(int x1, int y1, int x2, int y2);
 	void drawFilledRectangle(int x1, int y1, int x2, int y2);
 	void drawPoint(int x, int y);
