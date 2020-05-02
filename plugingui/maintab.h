@@ -38,6 +38,7 @@
 #include "timingframecontent.h"
 #include "sampleselectionframecontent.h"
 #include "visualizerframecontent.h"
+#include "powerwidget.h"
 
 struct Settings;
 class SettingsNotifier;
@@ -63,6 +64,7 @@ private:
 	void bleedcontrolOnChange(bool on);
 	void resamplingOnChange(bool on);
 	void timingOnChange(bool on);
+	void powerOnChange(bool on);
 
 	Image logo{":resources/logo.png"};
 
@@ -77,6 +79,7 @@ private:
 	FrameWidget timing_frame{this, true, true};
 	FrameWidget sampleselection_frame{this, false, true};
 	FrameWidget visualizer_frame{this, false, true};
+	FrameWidget power_frame{this, true, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
@@ -87,6 +90,7 @@ private:
 	TimingframeContent timingframe_content;
 	SampleselectionframeContent sampleselectionframe_content;
 	VisualizerframeContent visualizerframe_content;
+	PowerWidget powerframe_content;
 
 	void add(std::string const& title, FrameWidget& frame, Widget& content,
 	         std::size_t height, int column);
