@@ -32,19 +32,18 @@ namespace GUI
 {
 
 CheckBox::CheckBox(Widget* parent)
-    : Toggle(parent)
-    , bg_on(getImageCache(), ":resources/switch_back_on.png")
-    , bg_off(getImageCache(), ":resources/switch_back_off.png")
-    , knob(getImageCache(), ":resources/switch_front.png")
+	: Toggle(parent)
+	, bg_on(getImageCache(), ":resources/switch_back_on.png")
+	, bg_off(getImageCache(), ":resources/switch_back_off.png")
+	, knob(getImageCache(), ":resources/switch_front.png")
 {
 }
 
 void CheckBox::repaintEvent(RepaintEvent* repaintEvent)
 {
 	Painter p(*this);
-
-	p.drawImage(
-	    0, (knob.height() - bg_on.height()) / 2, state ? bg_on : bg_off);
+	p.clear();
+	p.drawImage(0, (knob.height() - bg_on.height()) / 2, state ? bg_on : bg_off);
 
 	if(clicked)
 	{
