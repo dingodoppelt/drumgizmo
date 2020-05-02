@@ -39,6 +39,7 @@ DG_SRC = \
 	@top_srcdir@/src/path.cc \
 	@top_srcdir@/src/powerlist.cc \
 	@top_srcdir@/src/powermap.cc \
+	@top_srcdir@/src/powermapfilter.cc \
 	@top_srcdir@/src/random.cc \
 	@top_srcdir@/src/sample.cc \
 	@top_srcdir@/src/sample_selection.cc \

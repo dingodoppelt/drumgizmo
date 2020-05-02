@@ -59,6 +59,7 @@ libdg_la_SOURCES = \
 	path.cc \
 	powerlist.cc \
 	powermap.cc \
+	powermapfilter.cc \
 	random.cc \
 	sample.cc \
 	sample_selection.cc \
@@ -115,6 +116,7 @@ EXTRA_DIST = \
 	platform.h \
 	powerlist.h \
 	powermap.h \
+	powermapfilter.h \
 	random.h \
 	range.h \
 	rangemap.h \

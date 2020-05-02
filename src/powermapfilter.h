@@ -1,9 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            inputprocessor.h
+ *            powermapfilter.h
  *
- *  Sat Apr 23 20:39:30 CEST 2016
- *  Copyright 2016 André Nusser
+ *  Mon Apr 20 23:28:12 CEST 2020
+ *  Copyright 2020 AndrÃ© Nusser
  *  andre.nusser@googlemail.com
  ****************************************************************************/
 
@@ -26,46 +26,22 @@
  */
 #pragma once
 
-#include <vector>
-#include <list>
-#include <memory>
-
-#include <event.h>
-
-#include "drumkit.h"
-#include "events.h"
-#include "events_ds.h"
-#include "id.h"
 #include "inputfilter.h"
+#include "powermap.h"
 
 struct Settings;
-class Random;
 
-class InputProcessor
+class PowermapFilter
+	: public InputFilter
 {
 public:
-	InputProcessor(Settings& settings,
-	               DrumKit& kit,
-	               EventsDS& events_ds,
-	               Random& random);
+	PowermapFilter(Settings& settings);
 
-	bool process(std::vector<event_t>& events,
-	             std::size_t pos,
-	             double resample_ratio);
+	bool filter(event_t& event, std::size_t pos) override;
 
-	std::size_t getLatency() const;
+	// Note getLatency not overloaded because this filter doesn't add latency.
 
 private:
-	DrumKit& kit;
-	EventsDS& events_ds;
-	bool is_stopping{false}; ///< Is set to true when a EventType::Stop event has been seen.
-
-	bool processOnset(event_t& event, std::size_t pos, double resample_ratio);
-	bool processChoke(event_t& event, std::size_t pos, double resample_ratio);
-	bool processStop(event_t& event);
-
-	std::vector<std::unique_ptr<InputFilter>> filters;
-
 	Settings& settings;
-	float original_velocity{0.0f};
+	Powermap powermap;
 };
