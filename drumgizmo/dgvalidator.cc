@@ -33,9 +33,40 @@
 #include <iostream>
 #include <string>
 #include <hugin.hpp>
+#include <getoptpp.hpp>
+#include <sstream>
+
+#include <config.h>
+
+namespace
+{
+
+int verbosity{1};
 
 void logger(LogLevel level, const std::string& message)
 {
+	switch(level)
+	{
+	case LogLevel::Info:
+		if(verbosity < 3)
+		{
+			return;
+		}
+		break;
+	case LogLevel::Warning:
+		if(verbosity < 2)
+		{
+			return;
+		}
+		break;
+	case LogLevel::Error:
+		if(verbosity < 1)
+		{
+			return;
+		}
+		break;
+	}
+
 	switch(level)
 	{
 	case LogLevel::Info:
@@ -51,33 +82,133 @@ void logger(LogLevel level, const std::string& message)
 	std::cout << " " << message << std::endl;
 }
 
-void printUsage(const char* prog, bool full = true)
+std::string version()
 {
-	printf("Usage: %s <drumkit>|-h|--help\n", prog);
-	if(!full)
+	std::ostringstream output;
+	output << "DGValidator v" << VERSION << std::endl;
+	return output.str();
+}
+
+std::string copyright()
+{
+	std::ostringstream output;
+	output << "Copyright (C) 2008-2020 DrumGizmo team - DrumGizmo.org.\n";
+	output << "This is free software.  You may redistribute copies of it under the terms ";
+	output << "of\n";
+	output << "the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n";
+	output << "There is NO WARRANTY, to the extent permitted by law.\n";
+	output << "\n";
+	return output.str();
+}
+
+std::string usage(const std::string& name, bool brief = false)
+{
+	std::ostringstream output;
+	output <<
+		"Usage: " << name << " [options] <drumkitfile>\n";
+	if(!brief)
 	{
-		return;
+		output <<
+			"\n"
+			"Validates the xml and semantics of the drumkit file and prints any found"
+			" errors to the console.\n"
+			"Returns 0 on success or 1 if errors were found.\n"
+			"\n";
 	}
-	printf("Validates the xml and semantics of the drumkit file and prints "
-	       "any found errors to the console.\n");
-	printf("Returns 0 on success or 1 if errors were found.\n");
+	return output.str();
+}
+
 }
 
 int main(int argc, char* argv[])
 {
-	if(argc != 2)
+	bool no_audio{false};
+
+	std::string hugin_filter;
+	unsigned int hugin_flags = 0;
+#ifndef DISABLE_HUGIN
+	hugin_flags = HUG_FLAG_DEFAULT;
+#endif /*DISABLE_HUGIN*/
+
+	dg::Options opt;
+
+	opt.add("no-audio", no_argument, 'n',
+	        "Skip checking audio file existence and samplerate.",
+	        [&]()
+	        {
+		        no_audio = true;
+		        return 0;
+	        });
+
+	opt.add("verbose", no_argument, 'v',
+	        "Print more info during validation. Can be added multiple times to"
+	        " increase output verbosity.",
+	        [&]()
+	        {
+		        ++verbosity;
+		        return 0;
+	        });
+
+	opt.add("quiet", no_argument, 'q',
+	        "Don't print any output, even on errors.",
+	        [&]()
+	        {
+		        verbosity = 0;
+		        return 0;
+	        });
+
+	opt.add("version", no_argument, 'V',
+	        "Print version and exit.",
+	        [&]()
+	        {
+		        std::cout << version();
+		        exit(0);
+		        return 0;
+	        });
+
+	opt.add("help", no_argument, 'h',
+	        "Print this message and exit.",
+	        [&]()
+	        {
+		        std::cout << usage(argv[0]);
+		        std::cout << "Options:\n";
+		        opt.help();
+		        exit(0);
+		        return 0;
+	        });
+
+#ifndef DISABLE_HUGIN
+	opt.add("debug", required_argument, 'D',
+	        "Enable debug messages on 'ddd' see hugin documentation for details.",
+	        [&]()
+	        {
+		        hugin_flags |= HUG_FLAG_USE_FILTER;
+		        hugin_filter = optarg;
+		        return 0;
+	        });
+#endif /*DISABLE_HUGIN*/
+
+	if(opt.process(argc, argv) != 0)
 	{
-		printUsage(argv[0], false);
 		return 1;
 	}
 
-	if(std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
+	if(opt.arguments().empty())
 	{
-		printUsage(argv[0]);
+		std::cerr << "Missing kitfile." << std::endl;
+		std::cerr << usage(argv[0], true) << std::endl;
 		return 1;
 	}
 
-	std::string edited_filename = argv[1];
+	hug_status_t status = hug_init(hugin_flags, HUG_OPTION_FILTER,
+	                               hugin_filter.data(), HUG_OPTION_END);
+	if(status != HUG_STATUS_OK)
+	{
+		std::cerr << "Error: " << status << std::endl;
+		return 1;
+	}
+
+	std::string edited_filename = opt.arguments()[0];
 	DrumkitDOM drumkitdom;
 	std::vector<InstrumentDOM> instrumentdoms;
 	std::string path = getPath(edited_filename);
@@ -130,20 +261,23 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// Verify all referred audiofiles
-	for(const auto& instrument: kit.instruments)
+	if(no_audio == false)
 	{
-		for(auto& audiofile: instrument->audiofiles)
+		// Verify all referred audiofiles
+		for(const auto& instrument: kit.instruments)
 		{
-			audiofile->load(logger, 1);
-			if(!audiofile->isLoaded())
+			for(auto& audiofile: instrument->audiofiles)
 			{
-				WARN(drumkitloader, "Instrument file load error: '%s'",
-				     audiofile->filename.data());
-				logger(LogLevel::Warning, "Error loading audio file '" +
-				       audiofile->filename + "' in the '" + instrument->getName() +
-				       "' instrument");
-				parseerror = true;
+				audiofile->load(logger, 1);
+				if(!audiofile->isLoaded())
+				{
+					WARN(drumkitloader, "Instrument file load error: '%s'",
+					     audiofile->filename.data());
+					logger(LogLevel::Warning, "Error loading audio file '" +
+					       audiofile->filename + "' in the '" + instrument->getName() +
+					       "' instrument");
+					parseerror = true;
+				}
 			}
 		}
 	}
