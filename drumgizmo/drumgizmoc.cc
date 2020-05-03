@@ -62,13 +62,12 @@ static std::string version()
 static std::string copyright()
 {
 	std::ostringstream output;
-	output << "Copyright (C) 2008-2018 Bent Bisballe Nyeng - Aasimon.org.\n";
+	output << "Copyright (C) 2008-2020 DrumGizmo team - DrumGizmo.org.\n";
 	output << "This is free software.  You may redistribute copies of it under the terms ";
 	output << "of\n";
 	output << "the GNU Lesser General Public License <http://www.gnu.org/licenses/gpl.html>.\n";
 	output << "There is NO WARRANTY, to the extent permitted by law.\n";
 	output << "\n";
-	output << "Written by Bent Bisballe Nyeng (deva@aasimon.org)\n";
 	return output.str();
 }
 
@@ -81,49 +80,14 @@ static std::string usage(const std::string& name)
 		"only available in the plugins.\n"
 		"==============================================================================\n"
 		"\n"
-		"Usage: " << name << " [options] drumkitfile\n"
-		"Options:\n"
-		"  -a, --async-load       Load drumkit in the background and start the"
-		" engine immediately.\n"
-		"  -b  --bleed            Set and enable master bleed\n"
+		"Usage: " << name << " [options] drumkitfile\n";
+	return output.str();
+}
 
-//	stddev
-//	velocity-attack
-//	velocity-release
-//	tightness
-//	timing-regain
-//	laidback
-
-		"  -i, --inputengine      dummy|test|jackmidi|midifile  Use said event "
-		"input engine.\n"
-		"  -I, --inputparms parmlist\n"
-		"                         Set input engine parameters.\n"
-		"  -o, --outputengine     dummy|alsa|jackaudio|wavfile  Use said audio "
-		"output engine.\n"
-		"  -O, --outputparms      parmlist  Set output engine parameters.\n"
-		"  -e, --endpos           Number of samples to process, -1: infinite.\n"
-#ifndef DISABLE_HUGIN
-		"  -D, --debug ddd        Enable debug messages on 'ddd' see hugin "
-		"documentation for details\n"
-#endif /*DISABLE_HUGIN*/
-		"  -r, --no-resampling    Disable resampling.\n"
-		"  -s, --streaming        Enable streaming.\n"
-		"  -S, --streamingparms parmlist\n"
-		"                         Streaming options.\n"
-		"  -t, --timing-humanizer\n"
-		"                         Enable moving of notes in time. Note adds latency to the output so do not\n"
-		"                         use this with a real-time drumkit.\n"
-		"  -T, --timing-humanizerparms parmlist\n"
-		"                         Timing humanizer options.\n"
-		"  -x, --velocity-humanizer\n"
-		"                         Enables adapting input velocities to make it sound more realistic.\n"
-		"  -X, --velocity-humanizerparms parmlist\n"
-		"                         Velocity humanizer options.\n"
-		"  -p, --parameters parmlist\n"
-		"                         Parameters for sample selection algorithm."
-		"  -v, --version          Print version information and exit.\n"
-		"  -h, --help             Print this message and exit.\n"
-		"\n"
+static std::string arguments()
+{
+	std::ostringstream output;
+	output <<
 		"Input engine parameters:\n"
 		"  jackmidi:  midimap=<midimapfile>\n"
 		"  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n"
@@ -175,7 +139,6 @@ static std::string usage(const std::string& name)
 		"\n";
 	return output.str();
 }
-
 
 std::vector<ParmToken> parseParameters(std::string &parms)
 {
@@ -231,7 +194,6 @@ std::vector<ParmToken> parseParameters(std::string &parms)
 	return result;
 }
 
-
 int main(int argc, char* argv[])
 {
 	EngineFactory factory;
@@ -253,305 +215,381 @@ int main(int argc, char* argv[])
 	{
 		std::cout << version();
 		std::cout << usage(argv[0]);
-		exit(0);
+		return 0;
 	}
 
-	opt.add("async-load", no_argument, 'a', [&]() {
-		async = true;
-	});
+	opt.add("async-load", no_argument, 'a',
+	        "Load drumkit in the background and start the engine immediately.",
+	        [&]()
+	        {
+		        async = true;
+		        return 0;
+	        });
 
-	opt.add("bleed", required_argument, 'B', [&]() {
-			float bleed = atof_nol(optarg);
-			settings.enable_bleed_control = true;
-			settings.master_bleed = bleed;
-		});
+	opt.add("bleed", required_argument, 'b',
+	        "Set and enable master bleed.",
+	        [&]()
+	        {
+		        float bleed = atof_nol(optarg);
+		        settings.enable_bleed_control = true;
+		        settings.master_bleed = bleed;
+		        return 0;
+	        });
 
-	opt.add("inputengine", required_argument, 'i', [&]() {
-		std::string engine = optarg;
-		if(engine == "help")
-		{
-			std::cout << "Available Input Engines = { ";
-			for(auto const& name : factory.getInputEngines())
-			{
-				std::cout << name << " ";
-			}
-			std::cout << "}\n";
-			exit(0);
-		}
-		if(engine == "")
-		{
-			std::cerr << "Missing input engine" << std::endl;;
-			exit(1);
-		}
-		ie = factory.createInput(engine);
-		if(ie == NULL)
-		{
-			std::cerr << "Invalid input engine: " << engine << std::endl;
-			exit(1);
-		}
-	});
+	opt.add("inputengine", required_argument, 'i',
+	        "dummy|test|jackmidi|midifile  Use said event input engine.",
+	        [&]()
+	        {
+		        std::string engine = optarg;
+		        if(engine == "help")
+		        {
+			        std::cout << "Available Input Engines = { ";
+			        for(auto const& name : factory.getInputEngines())
+			        {
+				        std::cout << name << " ";
+			        }
+			        std::cout << "}\n";
+			        exit(0);
+		        }
+		        if(engine == "")
+		        {
+			        std::cerr << "Missing input engine" << std::endl;
+			        return 1;
+		        }
+		        ie = factory.createInput(engine);
+		        if(ie == NULL)
+		        {
+			        std::cerr << "Invalid input engine: " << engine << std::endl;
+			        return 1;
+		        }
+		        return 0;
+	        });
 
-	opt.add("inputparms", required_argument, 'I', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			ie->setParm(token.key, token.value);
-		}
-	});
+	opt.add("inputparms", required_argument, 'I',
+	        "Set input engine parameters.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        ie->setParm(token.key, token.value);
+		        }
+		        return 0;
+	        });
 
-	opt.add("outputengine", required_argument, 'o', [&]() {
-		std::string engine = optarg;
-		if(engine == "help")
-		{
-			std::cout << "Available Output Engines = { ";
-			for(auto const& name : factory.getOutputEngines())
-			{
-				std::cout << name << " ";
-			}
-			std::cout << " }\n";
-			exit(0);
-		}
-		if(engine == "")
-		{
-			std::cerr << "Missing output engine" << std::endl;
-			exit(1);
-		}
-		oe = factory.createOutput(engine);
-		if(ie == NULL)
-		{
-			std::cerr << "Invalid output engine: " << engine << std::endl;;
-			exit(1);
-		}
-	});
+	opt.add("outputengine", required_argument, 'o',
+	        "dummy|alsa|jackaudio|wavfile  Use said audio output engine.",
+	        [&]()
+	        {
+		        std::string engine = optarg;
+		        if(engine == "help")
+		        {
+			        std::cout << "Available Output Engines = { ";
+			        for(auto const& name : factory.getOutputEngines())
+			        {
+				        std::cout << name << " ";
+			        }
+			        std::cout << " }\n";
+			        exit(0);
+		        }
+		        if(engine == "")
+		        {
+			        std::cerr << "Missing output engine" << std::endl;
+			        return 1;
+		        }
+		        oe = factory.createOutput(engine);
+		        if(ie == NULL)
+		        {
+			        std::cerr << "Invalid output engine: " << engine << std::endl;
+			        return 1;
+		        }
+		        return 0;
+	        });
 
-	opt.add("outputparms", required_argument, 'O', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			oe->setParm(token.key, token.value);
-		}
-	});
+	opt.add("outputparms", required_argument, 'O',
+	        "Set output engine parameters.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        oe->setParm(token.key, token.value);
+		        }
+		        return 0;
+	        });
 
-	opt.add("endpos", required_argument, 'e', [&]() {
-			try
-			{
-				endpos = std::stoi(optarg);
-			}
-			catch(...)
-			{
-				std::cerr << "Invalid endpos size " << optarg << std::endl;
-			}
-	});
+	opt.add("endpos", required_argument, 'e',
+	        "Number of samples to process, -1: infinite.",
+	        [&]()
+	        {
+		        try
+		        {
+			        endpos = std::stoi(optarg);
+		        }
+		        catch(...)
+		        {
+			        std::cerr << "Invalid endpos size " << optarg << std::endl;
+		        }
+		        return 0;
+	        });
 
 #ifndef DISABLE_HUGIN
-	opt.add("debug", required_argument, 'D', [&]() {
-		hugin_flags |= HUG_FLAG_USE_FILTER;
-		hugin_filter = optarg;
-	});
+	opt.add("debug", required_argument, 'D',
+	        "Enable debug messages on 'ddd' see hugin documentation for details.",
+	        [&]()
+	        {
+		        hugin_flags |= HUG_FLAG_USE_FILTER;
+		        hugin_filter = optarg;
+		        return 0;
+	        });
 #endif /*DISABLE_HUGIN*/
 
-	opt.add("no-resampling", no_argument, 'r', [&]() {
-		settings.enable_resampling = false;
-	});
+	opt.add("no-resampling", no_argument, 'r',
+	        "Disable resampling.",
+	        [&]()
+	        {
+		        settings.enable_resampling = false;
+		        return 0;
+	        });
 
-	opt.add("streaming", no_argument, 's', [&]() {
-		settings.disk_cache_enable = true;
-	});
+	opt.add("streaming", no_argument, 's',
+	        "Enable streaming.",
+	        [&]()
+	        {
+		        settings.disk_cache_enable = true;
+		        return 0;
+	        });
 
-	opt.add("streamingparms", required_argument, 'S', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			if(token.key == "limit")
-			{
-				settings.disk_cache_upper_limit = byteSizeParser(token.value);
-				if(settings.disk_cache_upper_limit == 0)
-				{
-					std::cerr << "Invalid argument for streamparms limit: " <<
-						token.value << std::endl;
-					exit(1);
-				}
-			}
-			//else if(token.key == "chunk_size")
-			//{
-			//	settings.disk_cache_chunk_size = byteSizeParser(token.value);
-			//	if(settings.disk_cache_chunk_size == 0)
-			//	{
-			//		std::cerr << "Invalid argument for streamparms chunk_size: " <<
-			//			token.value << std::endl;
-			//		exit(1);
-			//	}
-			// }
-			else
-			{
-				std::cerr << "Unknown streamingparms argument " << token.key <<
-					std::endl;
-				exit(1);
-			}
-		}
-	});
+	opt.add("streamingparms", required_argument, 'S',
+	        "Streaming options.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        if(token.key == "limit")
+			        {
+				        settings.disk_cache_upper_limit = byteSizeParser(token.value);
+				        if(settings.disk_cache_upper_limit == 0)
+				        {
+					        std::cerr << "Invalid argument for streamparms limit: " <<
+						        token.value << std::endl;
+					        return 1;
+				        }
+			        }
+			        //else if(token.key == "chunk_size")
+			        //{
+			        //	settings.disk_cache_chunk_size = byteSizeParser(token.value);
+			        //	if(settings.disk_cache_chunk_size == 0)
+			        //	{
+			        //		std::cerr << "Invalid argument for streamparms chunk_size: " <<
+			        //			token.value << std::endl;
+			        //		return 1;
+			        //	}
+			        // }
+			        else
+			        {
+				        std::cerr << "Unknown streamingparms argument " << token.key <<
+					        std::endl;
+				        return 1;
+			        }
+		        }
+		        return 0;
+	        });
 
 	// Default is to disable timing humanizer
 	settings.enable_latency_modifier.store(false);
 
-	opt.add("timing-humanizer", no_argument, 't', [&]() {
-		settings.enable_latency_modifier.store(true);
-	});
+	opt.add("timing-humanizer", no_argument, 't',
+	        "Enable moving of notes in time.\nNOTE: Adds latency to the output so do not use this with a real-time drumkit.",
+	        [&]()
+	        {
+		        settings.enable_latency_modifier.store(true);
+		        return 0;
+	        });
 
-	opt.add("timing-humanizerparms", required_argument, 'T', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			if(token.key == "laidback")
-			{
-				// Input range [+/- 100] ms
-				auto val = atof_nol(token.value.data());
-				if(val < -100.0 || val > 100.0)
-				{
-					std::cerr << "laidback range is +/- 100 and is in ms.\n";
-					exit(1);
-				}
-				settings.latency_laid_back_ms.store(val);
-			}
-			else if(token.key == "tightness")
-			{
-				// Input range [0, 1]
-				auto val = atof_nol(token.value.data());
-				if(val < 0.0 || val > 1.0)
-				{
-					std::cerr << "tightness range is [0, 1].\n";
-					exit(1);
-				}
-				settings.latency_stddev.store((-1.0 * val + 1.0) * 20.0);
-			}
-			else if(token.key == "regain")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0.0 || val > 1.0)
-				{
-					std::cerr << "regain range is [0, 1].\n";
-					exit(1);
-				}
-				settings.latency_regain.store(val);
-			}
-			else
-			{
-				std::cerr << "Unknown timing-humanizerparms argument " << token.key << std::endl;
-				exit(1);
-			}
-		}
-	});
+	opt.add("timing-humanizerparms", required_argument, 'T',
+	        "Timing humanizer options.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        if(token.key == "laidback")
+			        {
+				        // Input range [+/- 100] ms
+				        auto val = atof_nol(token.value.data());
+				        if(val < -100.0 || val > 100.0)
+				        {
+					        std::cerr << "laidback range is +/- 100 and is in ms.\n";
+					        return 1;
+				        }
+				        settings.latency_laid_back_ms.store(val);
+			        }
+			        else if(token.key == "tightness")
+			        {
+				        // Input range [0, 1]
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0.0 || val > 1.0)
+				        {
+					        std::cerr << "tightness range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.latency_stddev.store((-1.0 * val + 1.0) * 20.0);
+			        }
+			        else if(token.key == "regain")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0.0 || val > 1.0)
+				        {
+					        std::cerr << "regain range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.latency_regain.store(val);
+			        }
+			        else
+			        {
+				        std::cerr << "Unknown timing-humanizerparms argument " << token.key << std::endl;
+				        return 1;
+			        }
+		        }
+		        return 0;
+	        });
 
 	// Default is to disable the velocity humanizer
 	settings.enable_velocity_modifier.store(false);
 
-	opt.add("velocity-humanizer", no_argument, 'x', [&]() {
-		settings.enable_velocity_modifier.store(true);
-	});
+	opt.add("velocity-humanizer", no_argument, 'x',
+	        "Enables adapting input velocities to make it sound more realistic.",
+	        [&]()
+	        {
+		        settings.enable_velocity_modifier.store(true);
+		        return 0;
+	        });
 
-	opt.add("velocity-humanizerparms", required_argument, 'X', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			if (token.key == "attack")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 1.0)
-				{
-					std::cerr << "attack range is [0, 1].\n";
-					exit(1);
-				}
-				settings.velocity_modifier_weight.store(val);
-			}
-			else if (token.key == "release")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 1.0)
-				{
-					std::cerr << "release range is [0, 1].\n";
-					exit(1);
-				}
-				settings.velocity_modifier_falloff.store(val);
-			}
-			else if(token.key == "stddev")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 4.5)
-				{
-					std::cerr << "stddev range is [0, 4.5].\n";
-					exit(1);
-				}
-				settings.velocity_stddev.store(val);
-			}
-			else
-			{
-				std::cerr << "Unknown velocity-humanizerparms argument " << token.key << std::endl;
-				exit(1);
-			}
-		}
-	});
+	opt.add("velocity-humanizerparms", required_argument, 'X',
+	        "Velocity humanizer options.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        if (token.key == "attack")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 1.0)
+				        {
+					        std::cerr << "attack range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.velocity_modifier_weight.store(val);
+			        }
+			        else if (token.key == "release")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 1.0)
+				        {
+					        std::cerr << "release range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.velocity_modifier_falloff.store(val);
+			        }
+			        else if(token.key == "stddev")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 4.5)
+				        {
+					        std::cerr << "stddev range is [0, 4.5].\n";
+					        return 1;
+				        }
+				        settings.velocity_stddev.store(val);
+			        }
+			        else
+			        {
+				        std::cerr << "Unknown velocity-humanizerparms argument " << token.key << std::endl;
+				        return 1;
+			        }
+		        }
+		        return 0;
+	        });
 
-	opt.add("parameters", required_argument, 'p', [&]() {
-		std::string parms = optarg;
-		auto tokens = parseParameters(parms);
-		for(auto& token : tokens)
-		{
-			if(token.key == "close")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 1)
-				{
-					std::cerr << "close range is [0, 1].\n";
-					exit(1);
-				}
-				settings.sample_selection_f_close.store(val);
-			}
-			else if(token.key == "diverse")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 1)
-				{
-					std::cerr << "diverse range is [0, 1].\n";
-					exit(1);
-				}
-				settings.sample_selection_f_diverse.store(val);
-			}
-			else if(token.key == "random")
-			{
-				auto val = atof_nol(token.value.data());
-				if(val < 0 || val > 1)
-				{
-					std::cerr << "random range is [0, 1].\n";
-					exit(1);
-				}
-				settings.sample_selection_f_random.store(val);
-			}
-			else
-			{
-				std::cerr << "Unknown parameters argument " << token.key << std::endl;
-				exit(1);
-			}
-		}
-	});
+	opt.add("parameters", required_argument, 'p',
+	        "Parameters for sample selection algorithm.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        if(token.key == "close")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 1)
+				        {
+					        std::cerr << "close range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.sample_selection_f_close.store(val);
+			        }
+			        else if(token.key == "diverse")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 1)
+				        {
+					        std::cerr << "diverse range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.sample_selection_f_diverse.store(val);
+			        }
+			        else if(token.key == "random")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0 || val > 1)
+				        {
+					        std::cerr << "random range is [0, 1].\n";
+					        return 1;
+				        }
+				        settings.sample_selection_f_random.store(val);
+			        }
+			        else
+			        {
+				        std::cerr << "Unknown parameters argument " << token.key << std::endl;
+				        return 1;
+			        }
+		        }
+		        return 0;
+	        });
 
-	opt.add("version", no_argument, 'v', [&]() {
-			std::cout << version();
-			std::cout << copyright();
-			exit(0);
-		});
+	opt.add("version", no_argument, 'v',
+	        "Print version information and exit.",
+	        [&]()
+	        {
+		        std::cout << version();
+		        std::cout << copyright();
+		        exit(0);
+		        return 0;
+	        });
 
-	opt.add("help", no_argument, 'h', [&]() {
-			std::cout << version();
-			std::cout << usage(argv[0]);
-			exit(0);
-		});
+	opt.add("help", no_argument, 'h',
+	        "Print this message and exit.",
+	        [&]()
+	        {
+		        std::cout << version();
+		        std::cout << usage(argv[0]);
+		        std::cout << "Options:\n";
+		        opt.help();
+		        std::cout << "\nParameters:\n";
+		        std::cout << arguments();
+		        exit(0);
+		        return 0;
+	        });
 
-	if(!opt.process(argc, argv))
+	if(opt.process(argc, argv) != 0)
 	{
 		return 1;
 	}
