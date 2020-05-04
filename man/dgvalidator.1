@@ -1,10 +1,10 @@
-.TH "DGVALIDATOR" "1" "29 June 2019" "dgvalidator" ""
+.TH "DGVALIDATOR" "1" "4 May 2020" "dgvalidator" ""
 
 .SH NAME
 dgvalidator \- drumgizmo drumkit validator
 
 .SH SYNOPSIS
-\fBdgvalidator\fR <drumkitfile>|-h|--help
+\fBdgvalidator\fR [\fIOPTIONS\fR] <\fIFILE\fR>
 
 .SH "DESCRIPTION"
 .PP
@@ -18,15 +18,45 @@ referred by the instruments.
 
 .SH "OPTIONS"
 .PD 0
+
+.RE
+\fB-n, --no-audio\fR
+.RS 7
+Skip checking audio file existence and samplerate.
+
+.RE
+\fB-v, --verbose\fR
+.RS 7
+Print more info during validation. Can be added multiple times to increase output verbosity.
+
+.RE
+\fB-q, --quiet\fR
+.RS 7
+Don't print any output, even on errors.
+
+.RE
+\fB-V, --version\fR
+.RS 7
+Print version and exit.
+
 .RE
 \fB-h, --help\fR
 .RS 7
-Print command line help and exit.
+Print this message and exit.
+
+.RE
+\fB-D, --debug \fIDDD\fR
+.RS 7
+Enable debug messages on \fIDDD\fR see hugin documentation for details.
 
 .RE
 \fBdrumkitfile\fR
 .RS 7
 The drumkitfile to verify.
+
+.RE
+.SH "EXIT STATUS"
+Exit status is 0 if no error are found and 1 if validation fails.
 
 .RE
 .SH "BUGS"
