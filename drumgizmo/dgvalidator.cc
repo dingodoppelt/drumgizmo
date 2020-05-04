@@ -35,8 +35,24 @@
 #include <hugin.hpp>
 #include <getoptpp.hpp>
 #include <sstream>
+#include <climits>
+
+#include <lodepng/lodepng.h>
 
 #include <config.h>
+#include <platform.h>
+
+#if DG_PLATFORM != DG_PLATFORM_WINDOWS
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
+#include <image.h>
+
+// Needed for Resource class
+#include <resource_data.h>
+const rc_data_t rc_data[] = {};
 
 namespace
 {
@@ -116,6 +132,21 @@ std::string usage(const std::string& name, bool brief = false)
 			"\n";
 	}
 	return output.str();
+}
+
+bool pathIsFile(const std::string& path)
+{
+#if DG_PLATFORM == DG_PLATFORM_WINDOWS
+	return (GetFileAttributesA(path.data()) & FILE_ATTRIBUTE_DIRECTORY) == 0;
+#else
+	struct stat s;
+	if(stat(path.data(), &s) != 0)
+	{
+		return false; // error
+	}
+
+	return (s.st_mode & S_IFREG) != 0; // s.st_mode & S_IFDIR => dir
+#endif
 }
 
 }
@@ -282,14 +313,162 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if(parseerror)
+	bool image_error{false};
+	// Check drumkit images
 	{
-		logger(LogLevel::Warning, "Validator found errors.");
-	}
-	else
-	{
-		logger(LogLevel::Info, "Validator finished without errors.");
+		if(!drumkitdom.metadata.image_map.empty() &&
+		   drumkitdom.metadata.image.empty())
+		{
+			logger(LogLevel::Warning, "Found drumkit image_map but no image,"
+			       " so image_map will not be usable.");
+			image_error = true;
+		}
+
+		std::pair<std::size_t, std::size_t> image_size;
+		if(!drumkitdom.metadata.image.empty())
+		{
+			// Check if the image file exists
+			auto image = path + "/" + drumkitdom.metadata.image;
+			logger(LogLevel::Info, "Found drumkit image '" + image + "'");
+			if(!pathIsFile(image))
+			{
+				logger(LogLevel::Warning, "Image file does not exist.");
+				image_error = true;
+			}
+			else
+			{
+				// Check if the image_map can be loaded (is a valid png file)
+				GUI::Image img(image);
+				if(!img.isValid())
+				{
+					logger(LogLevel::Warning, "Drumkit image, '" + image +
+					       "', could not be loaded. Not a valid PNG image?");
+					image_error = true;
+				}
+				else
+				{
+					image_size = { img.width(), img.height() };
+					logger(LogLevel::Info, "Loaded image in resolution " +
+					       std::to_string(image_size.first) + " x " +
+					       std::to_string(image_size.second));
+				}
+			}
+		}
+
+		std::pair<std::size_t, std::size_t> image_map_size;
+		if(!drumkitdom.metadata.image_map.empty())
+		{
+			// Check if the image_map file exists
+			auto image_map = path + "/" + drumkitdom.metadata.image_map;
+			logger(LogLevel::Info, "Found drumkit image_map '" + image_map + "'");
+			if(!pathIsFile(image_map))
+			{
+				logger(LogLevel::Warning, "Image map file does not exist.");
+				image_error = true;
+			}
+			else
+			{
+				// Check if the image_map can be loaded (is a valid png file)
+				GUI::Image image(image_map);
+				if(!image.isValid())
+				{
+					logger(LogLevel::Warning, "Drumkit image_map, '" + image_map +
+					       "', could not be loaded. Not a valid PNG image?");
+					image_error = true;
+				}
+				else
+				{
+					image_map_size = { image.width(), image.height() };
+					logger(LogLevel::Info, "Loaded image_map in resolution " +
+					       std::to_string(image_map_size.first) + " x " +
+					       std::to_string(image_map_size.second));
+
+					// Check if the click map colours can be found in the image_map image.
+					for(const auto& clickmap : drumkitdom.metadata.clickmaps)
+					{
+						if(clickmap.colour.size() != 6)
+						{
+							logger(LogLevel::Warning,
+							       "Clickmap colour field not the right length (should be 6).");
+							image_error = true;
+							continue;
+						}
+
+						try
+						{
+							auto hex_colour = std::stoul(clickmap.colour, nullptr, 16);
+							float red   = (hex_colour >> 16 & 0xff) / 255.0f;
+							float green = (hex_colour >>  8 & 0xff) / 255.0f;
+							float blue  = (hex_colour >>  0 & 0xff) / 255.0f;
+							GUI::Colour colour(red, green, blue);
+
+							bool found{false};
+							for(int y = 0; y < image.height() && !found; ++y)
+							{
+								for(int x = 0; x < image.width() && !found; ++x)
+								{
+									if(image.getPixel(x, y) == colour)
+									{
+										found = true;
+									}
+								}
+							}
+
+							if(!found)
+							{
+								logger(LogLevel::Warning,
+								       "Clickmap colour '" + clickmap.colour +
+								       "' not found in image_map.");
+								image_error = true;
+							}
+						}
+						catch(...)
+						{
+							// Not valid hex number
+							logger(LogLevel::Warning,
+							       "Clickmap colour not a valid hex colour.");
+							image_error = true;
+							continue;
+						}
+
+						// Check if the click map instruments exist.
+						bool found{false};
+						for(const auto& instrument: kit.instruments)
+						{
+							if(instrument->getName() == clickmap.instrument)
+							{
+								found = true;
+							}
+						}
+						if(!found)
+						{
+							logger(LogLevel::Warning,
+							       "Clickmap instrument '" + clickmap.instrument +
+							       "' not found in drumkit.");
+							image_error = true;
+						}
+
+					}
+				}
+			}
+		}
+
+		// Check if the image and the image_map have same resolutions
+		if(image_size != image_map_size)
+		{
+			logger(LogLevel::Warning,
+			       "Drumkit image and image_map does not have same resolution.");
+			image_error = true;
+		}
+
 	}
 
-	return parseerror ? 1 : 0;
+	if(parseerror || image_error)
+	{
+		logger(LogLevel::Warning, "Validator found errors.");
+		return 1;
+	}
+
+	logger(LogLevel::Info, "Validator finished without errors.");
+	return 0;
 }
