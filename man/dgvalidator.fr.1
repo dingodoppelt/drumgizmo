@@ -1,10 +1,10 @@
-.TH "DGVALIDATOR" "1" "29 juin 2019" "dgvalidator" ""
+.TH "DGVALIDATOR" "1" "4 mai 2019" "dgvalidator" ""
 
 .SH NOM
 dgvalidator \- validateur de kit de batterie drumgizmo
 
 .SH SYNOPSIS
-\fBdgvalidator\fR <fichier_de_kit_de_batterie>|-h|--help
+\fBdgvalidator\fR [\fIOPTIONS\fR] <\fIFICHIER\fR>
 
 .SH "DESCRIPTION"
 .PP
@@ -19,6 +19,32 @@ les fichiers audio référencés par ces instruments.
 
 .SH "OPTIONS"
 .PD 0
+
+.RE
+\fB-n, --no-audio\fR
+.RS 7
+Ne pas vérifier l'existence des fichiers audio et de la fréquence d'échantillonnage.
+
+.RE
+\fB-v, --verbose\fR
+.RS 7
+Imprimer plus d'informations lors de la validation. Peut être ajouté plusieurs fois pour augmenter la verbosité de sortie.
+
+.RE
+\fB-q, --quiet\fR
+.RS 7
+N'afficher aucune sortie, même sur les erreurs.
+
+.RE
+\fB-V, --version\fR
+.RS 7
+Afficher ce message et quitter.
+
+.RE
+\fB-D, --debug \fIDDD\fR
+.RS 7
+Activer les messages de débogage sur \fIDDD\fR voir la documentation hugin pour plus de détails.
+
 .RE
 \fB-h, --help\fR
 .RS 7
@@ -28,6 +54,10 @@ Imprimer l'aide en ligne de commande et quitter.
 \fBfichier_de_kit_de_batterie\fR
 .RS 7
 Le fichier de kit de batterie à vérifier.
+
+.RE
+.SH "STATUT DE SORTIE"
+L'état de sortie est 0 si aucune erreur n'est trouvée et 1 si la validation échoue.
 
 .RE
 .SH "BOGUES"
