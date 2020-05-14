@@ -33,8 +33,12 @@ RES = \
 	../BUGS \
 	../COPYING
 
+rcgen_verbose = $(rcgen_verbose_@AM_V@)
+rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
+rcgen_verbose_0 = @echo "  RCGEN    "$@;
+
 resource_data.cc: rcgen $(RES)
-	./rcgen -d $(top_srcdir)/plugingui $(RES) > $(top_srcdir)/plugingui/resource_data.cc
+	$(rcgen_verbose)./rcgen -d $(top_srcdir)/plugingui $(RES) > $(top_srcdir)/plugingui/resource_data.cc
 
 libdggui_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \

@@ -69,8 +69,12 @@ if ENABLE_PUGL_COCOA
 UITYPE=CocoaUI
 endif
 
+ttlgen_verbose = $(ttlgen_verbose_@AM_V@)
+ttlgen_verbose_ = $(ttlgen_verbose_@AM_DEFAULT_V@)
+ttlgen_verbose_0 = @echo "  TTLGEN   "$@;
+
 manifest.ttl : ttlgen drumgizmo.la
-	./ttlgen .libs/drumgizmo.so manifest.ttl $(UITYPE)
+	$(ttlgen_verbose)./ttlgen .libs/drumgizmo.so manifest.ttl $(UITYPE) > /dev/null
 
 
 #######

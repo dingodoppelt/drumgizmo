@@ -15,6 +15,8 @@ AC_CONFIG_HEADERS(config.h)
 
 AC_SYS_LARGEFILE
 
+AM_SILENT_RULES([yes])
+
 need_jack=no
 
 dnl ===========================

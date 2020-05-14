@@ -51,8 +51,12 @@ RES = \
 	benchmarktest_resources/image_edge_alpha.png \
 	benchmarktest_resources/image_inner_alpha.png
 
+rcgen_verbose = $(rcgen_verbose_@AM_V@)
+rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
+rcgen_verbose_0 = @echo "  RCGEN    "$@;
+
 benchmarktest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
-	$(top_builddir)/plugingui/rcgen -d $(top_srcdir)/test/uitests $(RES) > $(top_srcdir)/test/uitests/benchmarktest_resource_data.cc
+	$(rcgen_verbose)$(top_builddir)/plugingui/rcgen -d $(top_srcdir)/test/uitests $(RES) > $(top_srcdir)/test/uitests/benchmarktest_resource_data.cc
 
 benchmarktest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
