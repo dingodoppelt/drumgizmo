@@ -154,6 +154,7 @@ bool pathIsFile(const std::string& path)
 int main(int argc, char* argv[])
 {
 	bool no_audio{false};
+	bool no_metadata{false};
 
 	std::string hugin_filter;
 	unsigned int hugin_flags = 0;
@@ -304,7 +305,7 @@ int main(int argc, char* argv[])
 				{
 					WARN(drumkitloader, "Instrument file load error: '%s'",
 					     audiofile->filename.data());
-					logger(LogLevel::Warning, "Error loading audio file '" +
+					logger(LogLevel::Error, "Error loading audio file '" +
 					       audiofile->filename + "' in the '" + instrument->getName() +
 					       "' instrument");
 					parseerror = true;
@@ -319,7 +320,7 @@ int main(int argc, char* argv[])
 		if(!drumkitdom.metadata.image_map.empty() &&
 		   drumkitdom.metadata.image.empty())
 		{
-			logger(LogLevel::Warning, "Found drumkit image_map but no image,"
+			logger(LogLevel::Error, "Found drumkit image_map but no image,"
 			       " so image_map will not be usable.");
 			image_error = true;
 		}
@@ -332,7 +333,7 @@ int main(int argc, char* argv[])
 			logger(LogLevel::Info, "Found drumkit image '" + image + "'");
 			if(!pathIsFile(image))
 			{
-				logger(LogLevel::Warning, "Image file does not exist.");
+				logger(LogLevel::Error, "Image file does not exist.");
 				image_error = true;
 			}
 			else
@@ -341,7 +342,7 @@ int main(int argc, char* argv[])
 				GUI::Image img(image);
 				if(!img.isValid())
 				{
-					logger(LogLevel::Warning, "Drumkit image, '" + image +
+					logger(LogLevel::Error, "Drumkit image, '" + image +
 					       "', could not be loaded. Not a valid PNG image?");
 					image_error = true;
 				}
@@ -363,7 +364,7 @@ int main(int argc, char* argv[])
 			logger(LogLevel::Info, "Found drumkit image_map '" + image_map + "'");
 			if(!pathIsFile(image_map))
 			{
-				logger(LogLevel::Warning, "Image map file does not exist.");
+				logger(LogLevel::Error, "Image map file does not exist.");
 				image_error = true;
 			}
 			else
@@ -372,7 +373,7 @@ int main(int argc, char* argv[])
 				GUI::Image image(image_map);
 				if(!image.isValid())
 				{
-					logger(LogLevel::Warning, "Drumkit image_map, '" + image_map +
+					logger(LogLevel::Error, "Drumkit image_map, '" + image_map +
 					       "', could not be loaded. Not a valid PNG image?");
 					image_error = true;
 				}
@@ -388,7 +389,7 @@ int main(int argc, char* argv[])
 					{
 						if(clickmap.colour.size() != 6)
 						{
-							logger(LogLevel::Warning,
+							logger(LogLevel::Error,
 							       "Clickmap colour field not the right length (should be 6).");
 							image_error = true;
 							continue;
@@ -416,7 +417,7 @@ int main(int argc, char* argv[])
 
 							if(!found)
 							{
-								logger(LogLevel::Warning,
+								logger(LogLevel::Error,
 								       "Clickmap colour '" + clickmap.colour +
 								       "' not found in image_map.");
 								image_error = true;
@@ -425,7 +426,7 @@ int main(int argc, char* argv[])
 						catch(...)
 						{
 							// Not valid hex number
-							logger(LogLevel::Warning,
+							logger(LogLevel::Error,
 							       "Clickmap colour not a valid hex colour.");
 							image_error = true;
 							continue;
@@ -442,7 +443,7 @@ int main(int argc, char* argv[])
 						}
 						if(!found)
 						{
-							logger(LogLevel::Warning,
+							logger(LogLevel::Error,
 							       "Clickmap instrument '" + clickmap.instrument +
 							       "' not found in drumkit.");
 							image_error = true;
@@ -456,16 +457,73 @@ int main(int argc, char* argv[])
 		// Check if the image and the image_map have same resolutions
 		if(image_size != image_map_size)
 		{
-			logger(LogLevel::Warning,
+			logger(LogLevel::Error,
 			       "Drumkit image and image_map does not have same resolution.");
 			image_error = true;
 		}
 
 	}
 
-	if(parseerror || image_error)
+	// Check sanity of metadata values
+	bool metadata_error{false};
 	{
-		logger(LogLevel::Warning, "Validator found errors.");
+		if(drumkitdom.metadata.version.empty())
+		{
+			logger(LogLevel::Error, "Missing version field.");
+			metadata_error = true;
+		}
+
+		if(drumkitdom.metadata.title.empty())
+		{
+			logger(LogLevel::Error, "Missing title field.");
+			metadata_error = true;
+		}
+
+		if(drumkitdom.metadata.license.empty())
+		{
+			logger(LogLevel::Error, "Missing license field.");
+			metadata_error = true;
+		}
+
+		if(drumkitdom.metadata.author.empty())
+		{
+			logger(LogLevel::Error, "Missing author field.");
+			metadata_error = true;
+		}
+
+		if(drumkitdom.metadata.email.empty())
+		{
+			logger(LogLevel::Error, "Missing email field.");
+			metadata_error = true;
+		}
+
+		if(!drumkitdom.metadata.logo.empty())
+		{
+			// Check if the image file exists
+			auto image = path + "/" + drumkitdom.metadata.logo;
+			logger(LogLevel::Info, "Found drumkit logo field '" + image + "'");
+			if(!pathIsFile(image))
+			{
+				logger(LogLevel::Error, "Image file does not exist.");
+				metadata_error = true;
+			}
+			else
+			{
+				// Check if the image_map can be loaded (is a valid png file)
+				GUI::Image img(image);
+				if(!img.isValid())
+				{
+					logger(LogLevel::Error, "Drumkit logo, '" + image +
+					       "', could not be loaded. Not a valid PNG image?");
+					metadata_error = true;
+				}
+			}
+		}
+	}
+
+	if(parseerror || image_error || image_error)
+	{
+		logger(LogLevel::Error, "Validator found errors.");
 		return 1;
 	}
 
