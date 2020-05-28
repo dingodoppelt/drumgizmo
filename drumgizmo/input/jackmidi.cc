@@ -110,8 +110,12 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 	void* buffer = jack_port_get_buffer(port->port, num_frames);
 	jack_nframes_t num_events = jack_midi_get_event_count(buffer);
 
-	assert(events.empty());
-	events.reserve(num_events);
+	// The event list is assumed to be empty here.
+	// It might not be though in case the system is under heavy load.
+	// Make room for both the new and old events to make sure we don't throw
+	// anything away.
+	events.reserve(events.size() + num_events);
+
 	for(jack_nframes_t i = 0; i < num_events; ++i)
 	{
 		jack_midi_event_t event;
