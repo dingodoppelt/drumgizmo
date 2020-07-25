@@ -91,6 +91,11 @@ void Image::setError()
 {
 	valid = false;
 	Resource rc(":resources/png_error");
+	if(!rc.valid())
+	{
+		_width = _height = 0u;
+		return;
+	}
 
 	const unsigned char* ptr = (const unsigned char*)rc.data();
 
