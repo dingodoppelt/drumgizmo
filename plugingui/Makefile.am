@@ -37,8 +37,8 @@ rcgen_verbose = $(rcgen_verbose_@AM_V@)
 rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
 rcgen_verbose_0 = @echo "  RCGEN    "$@;
 
-resource_data.cc: rcgen $(RES)
-	$(rcgen_verbose)./rcgen -d $(top_srcdir)/plugingui $(RES) > $(top_srcdir)/plugingui/resource_data.cc
+$(top_builddir)/plugingui/resource_data.cc: rcgen$(EXEEXT) $(RES)
+	$(rcgen_verbose)./rcgen$(EXEEXT) -d $(top_srcdir)/plugingui -o $@ $(RES)
 
 libdggui_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
@@ -100,7 +100,6 @@ nodist_libdggui_la_SOURCES = \
 	progressbar.cc \
 	resamplingframecontent.cc \
 	resource.cc \
-	resource_data.cc \
 	sampleselectionframecontent.cc \
 	scrollbar.cc \
 	slider.cc \
@@ -119,7 +118,8 @@ nodist_libdggui_la_SOURCES = \
 	visualizerframecontent.cc \
 	widget.cc \
 	window.cc \
-	lodepng/lodepng.cpp
+	lodepng/lodepng.cpp \
+	$(top_builddir)/plugingui/resource_data.cc
 
 if ENABLE_X11
 nodist_libdggui_la_SOURCES += \
@@ -185,7 +185,9 @@ plugingui_SOURCES = \
 	testmain.cc \
 	$(top_srcdir)/hugin/hugin.c
 
-rcgen_SOURCES = rcgen.cc
+rcgen_CXXFLAGS = -I$(top_srcdir)/getoptpp
+rcgen_SOURCES = \
+	rcgen.cc
 
 EXTRA_DIST = \
 	$(nodist_libdggui_la_SOURCES) \
