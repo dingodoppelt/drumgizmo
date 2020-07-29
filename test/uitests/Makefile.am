@@ -55,7 +55,7 @@ rcgen_verbose = $(rcgen_verbose_@AM_V@)
 rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
 rcgen_verbose_0 = @echo "  RCGEN    "$@;
 
-$(top_builddir)/test/uitests/benchmarktest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
+benchmarktest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
 	$(rcgen_verbose)$(top_builddir)/plugingui/rcgen$(EXEEXT) -d $(top_srcdir)/test/uitests -o $@ $(RES)
 
 benchmarktest_LDADD = \
@@ -65,10 +65,15 @@ benchmarktest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
+nodist_benchmarktest_SOURCES = \
+	benchmarktest_resource_data.cc
 benchmarktest_SOURCES = \
 	benchmarktest.cc \
-	$(top_builddir)/test/uitests/benchmarktest_resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c
+
+BUILT_SOURCES = benchmarktest_resource_data.cc
+CLEANFILES = benchmarktest_resource_data.cc
+
 
 powerwidgettest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \

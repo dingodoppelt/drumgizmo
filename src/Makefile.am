@@ -1,4 +1,11 @@
-noinst_LTLIBRARIES = libdg.la libzr.la libpugi.la
+noinst_LTLIBRARIES = libdg.la libzr.la libpugi.la libnls.la
+
+# shared nls component
+
+libnls_la_CPPFLAGS =
+libnls_la_LIBADD =
+libnls_la_SOURCES = \
+	translation.cc
 
 # libzita-resampler
 
@@ -129,6 +136,7 @@ EXTRA_DIST = \
 	staminafilter.h \
 	syncedsettings.h \
 	thread.h \
+	translation.h \
 	velocityfilter.h \
 	versionstr.h \
 	zrwrapper.h

@@ -77,7 +77,7 @@ Resource::Resource(const std::string& name)
 
 		// Find internal resource in rc_data.
 		const rc_data_t* p = rc_data;
-		while(p->name[0] != '\0') // last entry in rc_data has the name := ""
+		while(*p->name) // last entry in rc_data has the name := ""
 		{
 			if(name == p->name)
 			{

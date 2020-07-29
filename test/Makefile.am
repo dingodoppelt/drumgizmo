@@ -10,11 +10,16 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	dgxmlparsertest domloadertest configparsertest midimapparsertest \
 	eventsdstest powermaptest
 
+if WITH_NLS
+TESTS += translationtest
+endif
+
 EXTRA_DIST = \
 	dgunit.h \
 	drumkit_creator.h \
 	lv2_test_host.h \
-	scopedfile.h
+	scopedfile.h \
+	locale/da.mo
 
 if ENABLE_LV2
 TESTS += lv2
@@ -25,11 +30,13 @@ check_PROGRAMS = $(TESTS)
 resource_CXXFLAGS = -DOUTPUT=\"resource\" $(SNDFILE_CFLAGS) \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/hugin
 resource_LDFLAGS = $(SNDFILE_LIBS)
+nodist_resource_SOURCES = \
+	$(top_builddir)/plugingui/resource_data.cc
 resource_SOURCES = \
 	$(top_srcdir)/plugingui/resource.cc \
-	$(top_srcdir)/plugingui/resource_data.cc \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/src/random.cc \
 	dgtest.cc \
@@ -278,5 +285,36 @@ powermaptest_SOURCES = \
 	$(top_srcdir)/src/powermap.cc \
 	powermaptest.cc \
 	dgtest.cc
+
+RES = \
+	$(top_srcdir)/test/locale/da.mo
+
+rcgen_verbose = $(rcgen_verbose_@AM_V@)
+rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
+rcgen_verbose_0 = @echo "  RCGEN    "$@;
+
+translationtest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
+	$(rcgen_verbose)$(top_builddir)/plugingui/rcgen$(EXEEXT) -s $(top_srcdir)/test/ -o $@ $(RES)
+
+translationtest_CXXFLAGS = \
+	-DOUTPUT=\"translationtest\" \
+	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin \
+	-DMO_SRC=\"$(top_srcdir)/test/locale/da.mo\" \
+	-Wno-invalid-source-encoding
+translationtest_LDFLAGS =
+nodist_translationtest_SOURCES = \
+	$(top_builddir)/test/translationtest_resource_data.cc
+translationtest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/plugingui/resource.cc \
+	$(top_srcdir)/src/translation.cc \
+	$(top_srcdir)/plugingui/uitranslation.cc \
+	translationtest.cc \
+	dgtest.cc
+
+BUILT_SOURCES = translationtest_resource_data.cc
+CLEANFILES = translationtest_resource_data.cc
 
 endif

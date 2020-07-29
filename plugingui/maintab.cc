@@ -26,6 +26,8 @@
  */
 #include "maintab.h"
 
+#include <translation.h>
+
 namespace
 {
 
@@ -116,22 +118,22 @@ MainTab::MainTab(Widget* parent,
 	layout.setSpacing(0);
 	layout.setResizeChildren(true);
 
-	add("Drumkit", drumkit_frame, drumkitframe_content, 12, 0);
-	add("Status", status_frame, statusframe_content, 14, 0);
-	add("Resampling", resampling_frame, resamplingframe_content, 9, 0);
-	add("Disk Streaming", diskstreaming_frame, diskstreamingframe_content, 7, 0);
-	add("Bleed Control", bleedcontrol_frame, bleedcontrolframe_content, 7, 0);
+	add(_("Drumkit"), drumkit_frame, drumkitframe_content, 12, 0);
+	add(_("Status"), status_frame, statusframe_content, 14, 0);
+	add(_("Resampling"), resampling_frame, resamplingframe_content, 9, 0);
+	add(_("Disk Streaming"), diskstreaming_frame, diskstreamingframe_content, 7, 0);
+	add(_("Bleed Control"), bleedcontrol_frame, bleedcontrolframe_content, 7, 0);
 
-	add("Velocity Humanizer", humanizer_frame, humanizerframe_content, 8, 1);
+	add(_("Velocity Humanizer"), humanizer_frame, humanizerframe_content, 8, 1);
 	humanizer_frame.setHelpText(humanizer_tip);
-	add("Timing Humanizer", timing_frame, timingframe_content, 8, 1);
+	add(_("Timing Humanizer"), timing_frame, timingframe_content, 8, 1);
 	timing_frame.setHelpText(timing_tip);
-	add("Sample Selection", sampleselection_frame,
+	add(_("Sample Selection"), sampleselection_frame,
 	    sampleselectionframe_content, 8, 1);
 	sampleselection_frame.setHelpText(sampleselection_tip);
-	add("Visualizer", visualizer_frame, visualizerframe_content, 8, 1);
+	add(_("Visualizer"), visualizer_frame, visualizerframe_content, 8, 1);
 	visualizer_frame.setHelpText(visualizer_tip);
-	add("Velocity Curve", power_frame, powerframe_content, 17, 1);
+	add(_("Velocity Curve"), power_frame, powerframe_content, 17, 1);
 	power_frame.setHelpText(power_tip);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);

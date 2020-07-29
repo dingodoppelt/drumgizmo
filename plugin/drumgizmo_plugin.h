@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <config.h>
+
 #include <memory>
 
 #ifdef LV2
@@ -37,6 +39,7 @@
 #endif
 
 #include <drumgizmo.h>
+#include <uitranslation.h>
 #include <audioinputenginemidi.h>
 #include <audiooutputengine.h>
 #include <mainwindow.h>
@@ -214,4 +217,8 @@ private:
 
 	static constexpr std::size_t width{750};
 	static constexpr std::size_t height{713};
+
+#ifdef WITH_NLS
+	UITranslation translation;
+#endif // WITH_NLS
 };

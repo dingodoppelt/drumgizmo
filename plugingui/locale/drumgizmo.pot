@@ -1,0 +1,69 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2020 DrumGizmo Team
+# This file is distributed under the same license as the drumgizmo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: drumgizmo 0.9.19\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: maintab.cc:121 mainwindow.cc:56
+msgid "Drumkit"
+msgstr ""
+
+#: maintab.cc:122
+msgid "Status"
+msgstr ""
+
+#: maintab.cc:123
+msgid "Resampling"
+msgstr ""
+
+#: maintab.cc:124
+msgid "Disk Streaming"
+msgstr ""
+
+#: maintab.cc:125
+msgid "Bleed Control"
+msgstr ""
+
+#: maintab.cc:127
+msgid "Velocity Humanizer"
+msgstr ""
+
+#: maintab.cc:129
+msgid "Timing Humanizer"
+msgstr ""
+
+#: maintab.cc:131
+msgid "Sample Selection"
+msgstr ""
+
+#: maintab.cc:134
+msgid "Visualizer"
+msgstr ""
+
+#: maintab.cc:136
+msgid "Velocity Curve"
+msgstr ""
+
+#: mainwindow.cc:51
+msgid "DrumGizmo v"
+msgstr ""
+
+#: mainwindow.cc:55
+msgid "Main"
+msgstr ""
+
+#: mainwindow.cc:58
+msgid "About"
+msgstr ""

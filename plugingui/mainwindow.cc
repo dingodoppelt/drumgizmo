@@ -26,11 +26,13 @@
  */
 #include "mainwindow.h"
 
+#include <string>
+
 #include <config.h>
 
-#include "painter.h"
+#include <translation.h>
 
-#include <string>
+#include "painter.h"
 
 namespace GUI
 {
@@ -46,14 +48,14 @@ MainWindow::MainWindow(Settings& settings, void* native_window)
 	CONNECT(this, sizeChangeNotifier, this, &MainWindow::sizeChanged);
 	CONNECT(eventHandler(), closeNotifier, this, &MainWindow::closeEventHandler);
 
-	setCaption("DrumGizmo v" VERSION);
+	setCaption(std::string(_("DrumGizmo v")) + VERSION);
 
 	tabs.setTabWidth(100);
 	tabs.move(16, 0); // x-offset to make room for the left side bar.
-	tabs.addTab("Main", &main_tab);
-	drumkit_tab_id = tabs.addTab("Drumkit", &drumkit_tab);
+	tabs.addTab(_("Main"), &main_tab);
+	drumkit_tab_id = tabs.addTab(_("Drumkit"), &drumkit_tab);
 	changeDrumkitTabVisibility(false); // Hide while no kit is loaded
-	tabs.addTab("About", &about_tab);
+	tabs.addTab(_("About"), &about_tab);
 
 	CONNECT(&drumkit_tab, imageChangeNotifier,
 	        this, &MainWindow::changeDrumkitTabVisibility);

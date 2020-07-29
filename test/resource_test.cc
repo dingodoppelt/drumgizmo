@@ -86,6 +86,11 @@ public:
 			ResourceTester rc("no_such_file");
 			DGUNIT_ASSERT(!rc.valid());
 		}
+
+		{
+			ResourceTester rc(":no_such_file");
+			DGUNIT_ASSERT(!rc.valid());
+		}
 	}
 };
 

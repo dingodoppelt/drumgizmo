@@ -29,12 +29,19 @@
 
 #include <hugin.hpp>
 #include <settings.h>
+#include <config.h>
 
 #include "mainwindow.h"
 #include "window.h"
+#include "resource.h"
+#include "uitranslation.h"
 
 int main()
 {
+#ifdef WITH_NLS
+	UITranslation translation;
+#endif // WITH_NLS
+
 	INFO(example, "We are up and running");
 
 	void* native_window_handle{nullptr};

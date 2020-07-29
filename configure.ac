@@ -127,7 +127,7 @@ AC_LANG_POP([C++])
 dnl ===========================
 dnl Set up debug compile args if the user requested it
 dnl ===========================
-AS_IF([test "x$with_debug" == "xyes"],
+AS_IF([test "x$with_debug" = "xyes"],
       [AC_MSG_WARN([*** Building with debug support!])
 	     DEBUG_FLAGS="-Wall -Werror -g $NO_UNDEFINED_PARAM"
 	     HUGIN_PARM=""]
@@ -135,6 +135,26 @@ AS_IF([test "x$with_debug" == "xyes"],
 AC_SUBST(DEBUG_FLAGS)
 
 CXXFLAGS="$CXXFLAGS $HUGIN_PARM"
+
+
+dnl ===========================
+dnl Enable/disable NLS support
+dnl ===========================
+AC_ARG_WITH([nls],
+            AS_HELP_STRING([--with-nls],
+                           [Build with nls support (default nls enabled)]),
+            [],
+            [with_nls=yes])
+            AS_IF([test "x$with_nls" == "xyes"],
+                  [AC_MSG_RESULT([*** Building with nls support!])
+                   AC_CHECK_PROGS([XGETTEXT], [xgettext])
+                   AC_CHECK_PROGS([MSGMERGE], [msgmerge])
+                   AC_CHECK_PROGS([MSGFMT], [msgfmt])
+                   AC_DEFINE_UNQUOTED([WITH_NLS], , [Build with nls support])],
+                  [AC_MSG_WARN([*** Building without nls support!])]
+)
+AM_CONDITIONAL([WITH_NLS], [test "x$with_nls" = "xyes"])
+
 
 dnl ===========================
 dnl Check for GUI backend
@@ -690,6 +710,7 @@ AC_CONFIG_FILES(
 	plugin/Makefile
 	plugin/vst/Makefile
 	plugingui/Makefile
+	plugingui/locale/Makefile
 	man/Makefile
 	test/Makefile
 	test/dgreftest/Makefile

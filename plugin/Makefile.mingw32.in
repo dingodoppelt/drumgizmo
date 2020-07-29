@@ -47,6 +47,7 @@ DG_SRC = \
 	@top_srcdir@/src/sem.cc \
 	@top_srcdir@/src/staminafilter.cc \
 	@top_srcdir@/src/thread.cc \
+	@top_srcdir@/src/translation.cc \
 	@top_srcdir@/src/velocityfilter.cc \
 	@top_srcdir@/src/versionstr.cc
 DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/src \
@@ -108,6 +109,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/timingframecontent.cc \
 	@top_srcdir@/plugingui/toggle.cc \
 	@top_srcdir@/plugingui/tooltip.cc \
+	@top_srcdir@/plugingui/uitranslation.cc \
 	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/visualizerframecontent.cc \
@@ -143,39 +145,45 @@ SRC = \
 	drumgizmo_plugin.cc
 
 RES = \
-	resources/bg.png \
-	resources/bypass_button.png \
-	resources/font.png \
-	resources/fontemboss.png \
-	resources/help_button.png \
-	resources/knob.png \
-	resources/logo.png \
-	resources/png_error \
-	resources/progress.png \
-	resources/pushbutton.png \
-	resources/sidebar.png \
-	resources/slider.png \
-	resources/stddev_horizontal.png \
-	resources/stddev_horizontal_disabled.png \
-	resources/stddev_vertical.png \
-	resources/stddev_vertical_disabled.png \
-	resources/switch_back_off.png \
-	resources/switch_back_on.png \
-	resources/switch_front.png \
-	resources/tab.png \
-	resources/thinlistbox.png \
-	resources/topbar.png \
-	resources/toplogo.png \
-	resources/vertline.png \
-	resources/widget.png \
-	../ABOUT \
-	../AUTHORS \
-	../BUGS \
-	../COPYING
+	@top_srcdir@/plugingui/resources/bg.png \
+	@top_srcdir@/plugingui/resources/bypass_button.png \
+	@top_srcdir@/plugingui/resources/font.png \
+	@top_srcdir@/plugingui/resources/fontemboss.png \
+	@top_srcdir@/plugingui/resources/help_button.png \
+	@top_srcdir@/plugingui/resources/knob.png \
+	@top_srcdir@/plugingui/resources/logo.png \
+	@top_srcdir@/plugingui/resources/png_error \
+	@top_srcdir@/plugingui/resources/progress.png \
+	@top_srcdir@/plugingui/resources/pushbutton.png \
+	@top_srcdir@/plugingui/resources/sidebar.png \
+	@top_srcdir@/plugingui/resources/slider.png \
+	@top_srcdir@/plugingui/resources/stddev_horizontal.png \
+	@top_srcdir@/plugingui/resources/stddev_horizontal_disabled.png \
+	@top_srcdir@/plugingui/resources/stddev_vertical.png \
+	@top_srcdir@/plugingui/resources/stddev_vertical_disabled.png \
+	@top_srcdir@/plugingui/resources/switch_back_off.png \
+	@top_srcdir@/plugingui/resources/switch_back_on.png \
+	@top_srcdir@/plugingui/resources/switch_front.png \
+	@top_srcdir@/plugingui/resources/tab.png \
+	@top_srcdir@/plugingui/resources/thinlistbox.png \
+	@top_srcdir@/plugingui/resources/topbar.png \
+	@top_srcdir@/plugingui/resources/toplogo.png \
+	@top_srcdir@/plugingui/resources/vertline.png \
+	@top_srcdir@/plugingui/resources/widget.png \
+	@top_srcdir@/plugingui/../ABOUT \
+	@top_srcdir@/plugingui/../AUTHORS \
+	@top_srcdir@/plugingui/../BUGS \
+	@top_srcdir@/plugingui/../COPYING
+
+NLS_RES = \
+	@top_builddir@/plugingui/locale/da.mo \
+	@top_builddir@/plugingui/locale/fr.mo
 
 all:
+	(cd @top_srcdir@/plugingui/locale; msgfmt -c -v -o da.mo da.po)
+	(cd @top_srcdir@/plugingui/locale; msgfmt -c -v -o fr.mo fr.po)
 	g++ -I@top_srcdir@/getoptpp @top_srcdir@/plugingui/rcgen.cc -o @top_srcdir@/plugingui/rcgen
-	(cd @top_srcdir@/plugingui; ./rcgen $(RES) > resource_data.cc)
+	@top_srcdir@/plugingui/rcgen -s @top_srcdir@/plugingui/ -s @top_builddir@/plugingui/ $(RES) $(NLS_RES) -o @top_srcdir@/plugingui/resource_data.cc
 	g++ $(CXXFLAGS) @top_srcdir@/plugingui/resource_data.cc -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c

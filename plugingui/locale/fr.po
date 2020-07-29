@@ -1,0 +1,71 @@
+# Danish translations for drumgizmo package
+# Danske oversættelser for pakke drumgizmo.
+# Copyright (C) 2019 THE drumgizmo'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the drumgizmo package.
+# Automatically generated, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: drumgizmo 0.9.17\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-13 21:07+0200\n"
+"PO-Revision-Date: 2019-09-09 16:21+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: maintab.cc:121 mainwindow.cc:56
+msgid "Drumkit"
+msgstr ""
+
+#: maintab.cc:122
+msgid "Status"
+msgstr ""
+
+#: maintab.cc:123
+msgid "Resampling"
+msgstr ""
+
+#: maintab.cc:124
+msgid "Disk Streaming"
+msgstr ""
+
+#: maintab.cc:125
+msgid "Bleed Control"
+msgstr ""
+
+#: maintab.cc:127
+msgid "Velocity Humanizer"
+msgstr ""
+
+#: maintab.cc:129
+msgid "Timing Humanizer"
+msgstr ""
+
+#: maintab.cc:131
+msgid "Sample Selection"
+msgstr ""
+
+#: maintab.cc:134
+msgid "Visualizer"
+msgstr ""
+
+#: maintab.cc:136
+msgid "Velocity Curve"
+msgstr ""
+
+#: mainwindow.cc:51
+msgid "DrumGizmo v"
+msgstr ""
+
+#: mainwindow.cc:55
+msgid "Main"
+msgstr ""
+
+#: mainwindow.cc:58
+msgid "About"
+msgstr ""

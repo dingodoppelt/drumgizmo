@@ -1,44 +1,78 @@
+SUBDIRS = locale
+DISTDIRS = locale
+
 noinst_PROGRAMS = plugingui rcgen
 noinst_LTLIBRARIES = libdggui.la
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
 RES = \
-	resources/bg.png \
-	resources/bypass_button.png \
-	resources/font.png \
-	resources/fontemboss.png \
-	resources/help_button.png \
-	resources/knob.png \
-	resources/logo.png \
-	resources/png_error \
-	resources/progress.png \
-	resources/pushbutton.png \
-	resources/sidebar.png \
-	resources/slider.png \
-	resources/stddev_horizontal.png \
-	resources/stddev_horizontal_disabled.png \
-	resources/stddev_vertical.png \
-	resources/stddev_vertical_disabled.png \
-	resources/switch_back_off.png \
-	resources/switch_back_on.png \
-	resources/switch_front.png \
-	resources/tab.png \
-	resources/thinlistbox.png \
-	resources/topbar.png \
-	resources/toplogo.png \
-	resources/vertline.png \
-	resources/widget.png \
-	../ABOUT \
-	../AUTHORS \
-	../BUGS \
-	../COPYING
+	$(top_srcdir)/plugingui/resources/bg.png \
+	$(top_srcdir)/plugingui/resources/bypass_button.png \
+	$(top_srcdir)/plugingui/resources/font.png \
+	$(top_srcdir)/plugingui/resources/fontemboss.png \
+	$(top_srcdir)/plugingui/resources/help_button.png \
+	$(top_srcdir)/plugingui/resources/knob.png \
+	$(top_srcdir)/plugingui/resources/logo.png \
+	$(top_srcdir)/plugingui/resources/png_error \
+	$(top_srcdir)/plugingui/resources/progress.png \
+	$(top_srcdir)/plugingui/resources/pushbutton.png \
+	$(top_srcdir)/plugingui/resources/sidebar.png \
+	$(top_srcdir)/plugingui/resources/slider.png \
+	$(top_srcdir)/plugingui/resources/stddev_horizontal.png \
+	$(top_srcdir)/plugingui/resources/stddev_horizontal_disabled.png \
+	$(top_srcdir)/plugingui/resources/stddev_vertical.png \
+	$(top_srcdir)/plugingui/resources/stddev_vertical_disabled.png \
+	$(top_srcdir)/plugingui/resources/switch_back_off.png \
+	$(top_srcdir)/plugingui/resources/switch_back_on.png \
+	$(top_srcdir)/plugingui/resources/switch_front.png \
+	$(top_srcdir)/plugingui/resources/tab.png \
+	$(top_srcdir)/plugingui/resources/thinlistbox.png \
+	$(top_srcdir)/plugingui/resources/topbar.png \
+	$(top_srcdir)/plugingui/resources/toplogo.png \
+	$(top_srcdir)/plugingui/resources/vertline.png \
+	$(top_srcdir)/plugingui/resources/widget.png \
+	$(top_srcdir)/plugingui/../ABOUT \
+	$(top_srcdir)/plugingui/../AUTHORS \
+	$(top_srcdir)/plugingui/../BUGS \
+	$(top_srcdir)/plugingui/../COPYING
+
+if WITH_NLS
+$(top_srcdir)/plugingui/locale/drumgizmo.pot: $(GUI_SRC)
+	(cd $(top_srcdir)/plugingui/; $(XGETTEXT) --package-name "$(PACKAGE)" --package-version "$(VERSION)" --copyright-holder="DrumGizmo Team" -k_ -o locale/drumgizmo.pot $(GUI_SRC) )
+	grep -v '"POT-Creation-Date:' $(top_srcdir)/plugingui/locale/drumgizmo.pot > $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp
+	mv $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp $(top_srcdir)/plugingui/locale/drumgizmo.pot
+
+NLS_RES = \
+	$(top_builddir)/plugingui/locale/da.mo \
+	$(top_builddir)/plugingui/locale/fr.mo
+
+# NOTE: Manually create initial (new) .po file with msginit
+$(top_srcdir)/plugingui/locale/da.po \
+$(top_srcdir)/plugingui/locale/fr.po: locale/drumgizmo.pot
+	$(MSGMERGE) --update $@ $(top_srcdir)/plugingui/locale/drumgizmo.pot
+
+$(top_builddir)/plugingui/locale/da.mo: $(top_srcdir)/plugingui/locale/da.po
+	$(MSGFMT) -c -v -o $@ $(top_srcdir)/plugingui/locale/da.po
+
+$(top_builddir)/plugingui/locale/fr.mo: $(top_srcdir)/plugingui/locale/fr.po
+	$(MSGFMT) -c -v -o $@ $(top_srcdir)/plugingui/locale/fr.po
+
+endif
 
 rcgen_verbose = $(rcgen_verbose_@AM_V@)
 rcgen_verbose_ = $(rcgen_verbose_@AM_DEFAULT_V@)
 rcgen_verbose_0 = @echo "  RCGEN    "$@;
 
-$(top_builddir)/plugingui/resource_data.cc: rcgen$(EXEEXT) $(RES)
-	$(rcgen_verbose)./rcgen$(EXEEXT) -d $(top_srcdir)/plugingui -o $@ $(RES)
+BUILT_SOURCES = \
+	resource_data.cc \
+	$(NLS_RES)
+
+resource_data.cc: rcgen$(EXEEXT) $(RES) $(NLS_RES)
+	$(rcgen_verbose)./rcgen$(EXEEXT) -s $(top_srcdir)/plugingui/ -s $(top_builddir)/plugingui/ -o $@ $(RES) $(NLS_RES)
+
+CLEANFILES = \
+	resource_data.cc \
+	$(NLS_RES)
 
 libdggui_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
@@ -61,7 +95,7 @@ libdggui_la_LIBADD = \
 	$(GUI_LIBS) $(PTHREAD_LIBS)
 
 # If you add a file here, remember to add it to plugin/Makefile.mingw32.in
-nodist_libdggui_la_SOURCES = \
+GUI_SRC = \
 	abouttab.cc \
 	bleedcontrolframecontent.cc \
 	button.cc \
@@ -113,12 +147,18 @@ nodist_libdggui_la_SOURCES = \
 	timingframecontent.cc \
 	toggle.cc \
 	tooltip.cc \
+	uitranslation.cc \
 	utf8.cc \
 	verticalline.cc \
 	visualizerframecontent.cc \
 	widget.cc \
-	window.cc \
-	lodepng/lodepng.cpp \
+	window.cc
+
+libdggui_la_SOURCES = \
+	$(GUI_SRC) \
+	lodepng/lodepng.cpp
+
+nodist_libdggui_la_SOURCES = \
 	$(top_builddir)/plugingui/resource_data.cc
 
 if ENABLE_X11
@@ -169,7 +209,10 @@ libdggui_la_CPPFLAGS += \
 	-I$(top_srcdir)/pugl
 endif
 
-plugingui_LDADD = libdggui.la $(top_builddir)/src/libdg.la
+plugingui_LDADD = \
+	libdggui.la \
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 
 plugingui_CXXFLAGS = \
 	$(DEBUG_FLAGS) \
@@ -190,7 +233,6 @@ rcgen_SOURCES = \
 	rcgen.cc
 
 EXTRA_DIST = \
-	$(nodist_libdggui_la_SOURCES) \
 	$(RES) \
 	abouttab.h \
 	bleedcontrolframecontent.h \
@@ -257,6 +299,7 @@ EXTRA_DIST = \
 	timingframecontent.h \
 	toggle.h \
 	tooltip.h \
+	uitranslation.h \
 	utf8.h \
 	verticalline.h \
 	visualizerframecontent.h \
