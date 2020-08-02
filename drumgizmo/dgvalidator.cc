@@ -155,6 +155,7 @@ int main(int argc, char* argv[])
 {
 	bool no_audio{false};
 	bool no_metadata{false};
+	bool pedantic{false};
 
 	std::string hugin_filter;
 	unsigned int hugin_flags = 0;
@@ -169,6 +170,14 @@ int main(int argc, char* argv[])
 	        [&]()
 	        {
 		        no_audio = true;
+		        return 0;
+	        });
+
+	opt.add("pedantic", no_argument, 'p',
+	        "Treat even warnings as errors.",
+	        [&]()
+	        {
+		        pedantic = true;
 		        return 0;
 	        });
 
@@ -218,6 +227,14 @@ int main(int argc, char* argv[])
 		        hugin_filter = optarg;
 		        return 0;
 	        });
+#else
+		opt.add("debug", required_argument, 'D',
+	        "Not compiled with hugin support - ignored",
+	        [&]()
+	        {
+		        return 0;
+	        });
+
 #endif /*DISABLE_HUGIN*/
 
 	if(opt.process(argc, argv) != 0)
@@ -320,9 +337,12 @@ int main(int argc, char* argv[])
 		if(!drumkitdom.metadata.image_map.empty() &&
 		   drumkitdom.metadata.image.empty())
 		{
-			logger(LogLevel::Error, "Found drumkit image_map but no image,"
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Found drumkit image_map but no image,"
 			       " so image_map will not be usable.");
-			image_error = true;
+			if(pedantic)
+			{
+				image_error = true;
+			}
 		}
 
 		std::pair<std::size_t, std::size_t> image_size;
@@ -469,32 +489,47 @@ int main(int argc, char* argv[])
 	{
 		if(drumkitdom.metadata.version.empty())
 		{
-			logger(LogLevel::Error, "Missing version field.");
-			metadata_error = true;
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Missing version field.");
+			if(pedantic)
+			{
+				metadata_error = true;
+			}
 		}
 
 		if(drumkitdom.metadata.title.empty())
 		{
-			logger(LogLevel::Error, "Missing title field.");
-			metadata_error = true;
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Missing title field.");
+			if(pedantic)
+			{
+				metadata_error = true;
+			}
 		}
 
 		if(drumkitdom.metadata.license.empty())
 		{
-			logger(LogLevel::Error, "Missing license field.");
-			metadata_error = true;
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Missing license field.");
+			if(pedantic)
+			{
+				metadata_error = true;
+			}
 		}
 
 		if(drumkitdom.metadata.author.empty())
 		{
-			logger(LogLevel::Error, "Missing author field.");
-			metadata_error = true;
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Missing author field.");
+			if(pedantic)
+			{
+				metadata_error = true;
+			}
 		}
 
 		if(drumkitdom.metadata.email.empty())
 		{
-			logger(LogLevel::Error, "Missing email field.");
-			metadata_error = true;
+			logger(pedantic ? LogLevel::Error : LogLevel::Warning, "Missing email field.");
+			if(pedantic)
+			{
+				metadata_error = true;
+			}
 		}
 
 		if(!drumkitdom.metadata.logo.empty())
@@ -509,7 +544,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				// Check if the image_map can be loaded (is a valid png file)
+				// Check if the logo can be loaded (is a valid png file)
 				GUI::Image img(image);
 				if(!img.isValid())
 				{
@@ -521,7 +556,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if(parseerror || image_error || image_error)
+	if(parseerror || image_error || image_error || metadata_error)
 	{
 		logger(LogLevel::Error, "Validator found errors.");
 		return 1;
