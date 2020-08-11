@@ -48,7 +48,7 @@ NLS_RES = \
 
 # NOTE: Manually create initial (new) .po file with msginit
 $(top_srcdir)/plugingui/locale/da.po \
-$(top_srcdir)/plugingui/locale/fr.po: locale/drumgizmo.pot
+$(top_srcdir)/plugingui/locale/fr.po: $(top_srcdir)/plugingui/locale/drumgizmo.pot
 	$(MSGMERGE) --update $@ $(top_srcdir)/plugingui/locale/drumgizmo.pot
 
 $(top_builddir)/plugingui/locale/da.mo: $(top_srcdir)/plugingui/locale/da.po
