@@ -18,6 +18,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: bleedcontrolframecontent.cc:46
+msgid "Master Bleed Volume:"
+msgstr ""
+
+#: bleedcontrolframecontent.cc:49
+msgid "0 %"
+msgstr ""
+
+#: diskstreamingframecontent.cc:46
+msgid "Cache limit (max memory usage):"
+msgstr ""
+
+#: diskstreamingframecontent.cc:49
+msgid "Apply"
+msgstr ""
+
+#: diskstreamingframecontent.cc:52
+msgid "0 MB"
+msgstr ""
+
+#: diskstreamingframecontent.cc:107
+msgid "Unlimited"
+msgstr ""
+
+#: drumkitframecontent.cc:49
+msgid "Browse..."
+msgstr ""
+
+#: drumkitframecontent.cc:96
+msgid "Drumkit file:"
+msgstr ""
+
+#: drumkitframecontent.cc:97
+msgid "Midimap file:"
+msgstr ""
+
+#: filebrowser.cc:91
+#, c-format
+msgid "Setting path to '%s'\n"
+msgstr ""
+
+#: filebrowser.cc:175
+#, c-format
+msgid "Selecting ref-file '%s'\n"
+msgstr ""
+
+#: filebrowser.cc:209
+#, c-format
+msgid "Changing path to '%s'\n"
+msgstr ""
+
+#: filebrowser.cc:223 filebrowser.cc:231
+#, c-format
+msgid "Selecting file '%s'\n"
+msgstr ""
+
+#: filebrowser.cc:241
+msgid "Showing partitions...\n"
+msgstr ""
+
+#: filebrowser.cc:256
+#, c-format
+msgid "Error changing to '%s'\n"
+msgstr ""
+
+#: filebrowser.cc:269
+#, c-format
+msgid "Setting path of lineedit to %s\n"
+msgstr ""
+
 #: maintab.cc:121 mainwindow.cc:56
 msgid "Drumkit"
 msgstr ""
@@ -55,7 +125,6 @@ msgid "Visualizer"
 msgstr ""
 
 #: maintab.cc:136
-#, fuzzy
 msgid "Velocity Curve"
 msgstr ""
 
@@ -69,4 +138,24 @@ msgstr ""
 
 #: mainwindow.cc:58
 msgid "About"
+msgstr ""
+
+#: statusframecontent.cc:88
+msgid "No Kit Loaded"
+msgstr ""
+
+#: statusframecontent.cc:91 statusframecontent.cc:133
+msgid "Loading..."
+msgstr ""
+
+#: statusframecontent.cc:94 statusframecontent.cc:136
+msgid "Ready"
+msgstr ""
+
+#: statusframecontent.cc:97 statusframecontent.cc:139
+msgid "Error"
+msgstr ""
+
+#: statusframecontent.cc:130
+msgid "No Midimap Loaded"
 msgstr ""

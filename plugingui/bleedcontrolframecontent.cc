@@ -30,6 +30,8 @@
 
 #include <limits>
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -41,10 +43,10 @@ BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
-	label_text.setText("Master Bleed Volume:");
+	label_text.setText(_("Master Bleed Volume:"));
 	label_text.setAlignment(TextAlignment::center);
 
-	label_value.setText("0 %");
+	label_value.setText(_("0 %"));
 	label_value.setAlignment(TextAlignment::center);
 
 	CONNECT(this, settings_notifier.master_bleed,

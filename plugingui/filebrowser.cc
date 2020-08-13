@@ -43,6 +43,8 @@
 #include <direct.h>
 #endif
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -86,7 +88,7 @@ FileBrowser::FileBrowser(Widget* parent)
 
 void FileBrowser::setPath(const std::string& path)
 {
-	INFO(filebrowser, "Setting path to '%s'\n", path.c_str());
+	INFO(filebrowser, _("Setting path to '%s'\n"), path.c_str());
 
 	if(!path.empty() && Directory::exists(path))
 	{
@@ -170,7 +172,7 @@ void FileBrowser::handleKeyEvent()
 	std::string value = lineedit.getText();
 	if((value.size() > 1) && (value[0] == '@'))
 	{
-		DEBUG(filebrowser, "Selecting ref-file '%s'\n", value.c_str());
+		DEBUG(filebrowser, _("Selecting ref-file '%s'\n"), value.c_str());
 		fileSelectNotifier(value);
 		return;
 	}
@@ -204,7 +206,7 @@ void FileBrowser::changeDir()
 
 	listbox.clear();
 
-	INFO(filebrowser, "Changing path to '%s'\n",
+	INFO(filebrowser, _("Changing path to '%s'\n"),
 	     (dir.path() + dir.seperator() + value).c_str());
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
@@ -218,7 +220,7 @@ void FileBrowser::changeDir()
 
 	if(value.empty() && !dir.isDir() && Directory::exists(dir.path()))
 	{
-		DEBUG(filebrowser, "Selecting file '%s'\n", dir.path().c_str());
+		DEBUG(filebrowser, _("Selecting file '%s'\n"), dir.path().c_str());
 		fileSelectNotifier(dir.path());
 		return;
 	}
@@ -226,7 +228,7 @@ void FileBrowser::changeDir()
 	if(!value.empty() && dir.fileExists(value))
 	{
 	  std::string file = dir.path() + dir.seperator() + value;
-	  DEBUG(filebrowser, "Selecting file '%s'\n", file.c_str());
+	  DEBUG(filebrowser, _("Selecting file '%s'\n"), file.c_str());
 	  fileSelectNotifier(file);
 	  return;
 	}
@@ -236,7 +238,7 @@ void FileBrowser::changeDir()
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(Directory::isRoot(dir.path()) && (value == ".."))
 	{
-		DEBUG(filebrowser, "Showing partitions...\n");
+		DEBUG(filebrowser, _("Showing partitions...\n"));
 		for(auto drive : dir.drives())
 		{
 			ListBoxBasic::Item item;
@@ -251,7 +253,7 @@ void FileBrowser::changeDir()
 	{
 		if(!value.empty() && !dir.cd(value))
 		{
-			DEBUG(filebrowser, "Error changing to '%s'\n",
+			DEBUG(filebrowser, _("Error changing to '%s'\n"),
 			      (dir.path() + dir.seperator() + value).c_str());
 			return;
 		}
@@ -264,7 +266,7 @@ void FileBrowser::changeDir()
 			entries = dir.entryList();
 		}
 
-		DEBUG(filebrowser, "Setting path of lineedit to %s\n", dir.path().c_str());
+		DEBUG(filebrowser, _("Setting path of lineedit to %s\n"), dir.path().c_str());
 		lineedit.setText(dir.path());
 
 		for(auto entry : entries)

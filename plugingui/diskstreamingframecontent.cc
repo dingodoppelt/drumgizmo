@@ -30,6 +30,8 @@
 
 #include <limits>
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -41,13 +43,13 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
-	label_text.setText("Cache limit (max memory usage):");
+	label_text.setText(_("Cache limit (max memory usage):"));
 	label_text.setAlignment(TextAlignment::center);
 
-	button.setText("Apply");
+	button.setText(_("Apply"));
 	button.setEnabled(false);
 
-	label_value.setText("0 MB");
+	label_value.setText(_("0 MB"));
 	label_value.setAlignment(TextAlignment::center);
 
 	CONNECT(this, settings_notifier.disk_cache_upper_limit,
@@ -102,7 +104,7 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 		slider.setColour(Slider::Colour::Blue);
 	}
 	else {
-		label_value.setText("Unlimited");
+		label_value.setText(_("Unlimited"));
 		slider.setColour(Slider::Colour::Grey);
 	}
 

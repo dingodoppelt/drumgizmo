@@ -26,6 +26,8 @@
  */
 #include "statusframecontent.h"
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -83,16 +85,16 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		drumkit_load_status = "No Kit Loaded";
+		drumkit_load_status = _("No Kit Loaded");
 		break;
 	case LoadStatus::Loading:
-		drumkit_load_status = "Loading...";
+		drumkit_load_status = _("Loading...");
 		break;
 	case LoadStatus::Done:
-		drumkit_load_status = "Ready";
+		drumkit_load_status = _("Ready");
 		break;
 	case LoadStatus::Error:
-		drumkit_load_status = "Error";
+		drumkit_load_status = _("Error");
 		break;
 	}
 
@@ -125,16 +127,16 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
-		midimap_load_status = "No Midimap Loaded";
+		midimap_load_status = _("No Midimap Loaded");
 		break;
 	case LoadStatus::Loading:
-		midimap_load_status = "Loading...";
+		midimap_load_status = _("Loading...");
 		break;
 	case LoadStatus::Done:
-		midimap_load_status = "Ready";
+		midimap_load_status = _("Ready");
 		break;
 	case LoadStatus::Error:
-		midimap_load_status = "Error";
+		midimap_load_status = _("Error");
 		break;
 	}
 

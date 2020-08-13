@@ -3,7 +3,8 @@ noinst_PROGRAMS = resizetest tabwidgettest framewidgettest \
 
 resizetest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 resizetest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -14,7 +15,8 @@ resizetest_SOURCES = \
 
 tabwidgettest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 tabwidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -25,7 +27,8 @@ tabwidgettest_SOURCES = \
 
 filebrowsertest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 filebrowsertest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -36,7 +39,8 @@ filebrowsertest_SOURCES = \
 
 framewidgettest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 framewidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -60,7 +64,8 @@ benchmarktest_resource_data.cc: $(top_builddir)/plugingui/rcgen $(RES)
 
 benchmarktest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 benchmarktest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
@@ -77,7 +82,8 @@ CLEANFILES = benchmarktest_resource_data.cc
 
 powerwidgettest_LDADD = \
 	$(top_builddir)/plugingui/libdggui.la \
-	$(top_builddir)/src/libdg.la
+	$(top_builddir)/src/libdg.la \
+	$(top_builddir)/src/libnls.la
 powerwidgettest_CXXFLAGS = \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \

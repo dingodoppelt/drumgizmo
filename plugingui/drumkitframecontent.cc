@@ -31,6 +31,8 @@
 #include "label.h"
 #include "pluginconfig.h"
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -44,7 +46,7 @@ BrowseFile::BrowseFile(Widget* parent)
 	layout.addItem(&lineedit);
 	layout.addItem(&browse_button);
 
-	browse_button.setText("Browse...");
+	browse_button.setText(_("Browse..."));
 }
 
 void BrowseFile::resize(std::size_t width, std::size_t height)
@@ -91,8 +93,8 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
 {
 	layout.setHAlignment(HAlignment::left);
 
-	drumkit_caption.setText("Drumkit file:");
-	midimap_caption.setText("Midimap file:");
+	drumkit_caption.setText(_("Drumkit file:"));
+	midimap_caption.setText(_("Midimap file:"));
 
 	layout.addItem(&drumkit_caption);
 	layout.addItem(&drumkit_file);

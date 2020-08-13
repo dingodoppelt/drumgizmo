@@ -1,62 +1,133 @@
-# Danish translations for drumgizmo package
-# Danske oversættelser for pakke drumgizmo.
-# Copyright (C) 2019 THE drumgizmo'S COPYRIGHT HOLDER
+# French translations for drumgizmo package
+# Traductions en français pour le paquet drumgizmo
+# Copyright (C) 2019-2020 THE drumgizmo'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the drumgizmo package.
 # Automatically generated, 2019.
+# Olivier Humbert <trebmuh@tuxfamily.org>, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: drumgizmo 0.9.17\n"
+"Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2019-09-09 16:21+0200\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2020-08-12 22:29+0200\n"
+"Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
-"Language: da\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: bleedcontrolframecontent.cc:46
+msgid "Master Bleed Volume:"
+msgstr "Volume principal de la repisse :"
+
+#: bleedcontrolframecontent.cc:49
+msgid "0 %"
+msgstr ""
+
+#: diskstreamingframecontent.cc:46
+msgid "Cache limit (max memory usage):"
+msgstr "Limite de cache (utilisation mémoire max) :"
+
+#: diskstreamingframecontent.cc:49
+msgid "Apply"
+msgstr "Appliquer"
+
+#: diskstreamingframecontent.cc:52
+msgid "0 MB"
+msgstr ""
+
+#: diskstreamingframecontent.cc:107
+msgid "Unlimited"
+msgstr "Illimité"
+
+#: drumkitframecontent.cc:49
+msgid "Browse..."
+msgstr "Naviguer..."
+
+#: drumkitframecontent.cc:96
+msgid "Drumkit file:"
+msgstr "Fichier de kit de batterie :"
+
+#: drumkitframecontent.cc:97
+msgid "Midimap file:"
+msgstr "Fichier midimap :"
+
+#: filebrowser.cc:91
+#, c-format
+msgid "Setting path to '%s'\n"
+msgstr "Paramétrer le chemin pour '%s'\n"
+
+#: filebrowser.cc:175
+#, c-format
+msgid "Selecting ref-file '%s'\n"
+msgstr "Sélection du fichier-référence '%s'\n"
+
+#: filebrowser.cc:209
+#, c-format
+msgid "Changing path to '%s'\n"
+msgstr "Modification du chemin pour '%s'\n"
+
+#: filebrowser.cc:223 filebrowser.cc:231
+#, c-format
+msgid "Selecting file '%s'\n"
+msgstr "Sélectionner le fichier '%s'\n"
+
+#: filebrowser.cc:241
+msgid "Showing partitions...\n"
+msgstr "Afficher les partitions...\n"
+
+#: filebrowser.cc:256
+#, c-format
+msgid "Error changing to '%s'\n"
+msgstr "Erreur lors de la modification pour '%s'\n"
+
+#: filebrowser.cc:269
+#, c-format
+msgid "Setting path of lineedit to %s\n"
+msgstr "Paramétrage du chemin de lineedit pour %s\n"
 
 #: maintab.cc:121 mainwindow.cc:56
 msgid "Drumkit"
-msgstr ""
+msgstr "Kit de batterie"
 
 #: maintab.cc:122
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: maintab.cc:123
 msgid "Resampling"
-msgstr ""
+msgstr "Rééchantillonnage"
 
 #: maintab.cc:124
 msgid "Disk Streaming"
-msgstr ""
+msgstr "Streaming de disque"
 
 #: maintab.cc:125
 msgid "Bleed Control"
-msgstr ""
+msgstr "Contrôle de la repisse"
 
 #: maintab.cc:127
 msgid "Velocity Humanizer"
-msgstr ""
+msgstr "Humanisateur de vélocité"
 
 #: maintab.cc:129
 msgid "Timing Humanizer"
-msgstr ""
+msgstr "Humanisateur de justesse"
 
 #: maintab.cc:131
 msgid "Sample Selection"
-msgstr ""
+msgstr "Sélection de l'échantillon"
 
 #: maintab.cc:134
 msgid "Visualizer"
-msgstr ""
+msgstr "Visualiseur"
 
 #: maintab.cc:136
 msgid "Velocity Curve"
-msgstr ""
+msgstr "Courbe de vélocité"
 
 #: mainwindow.cc:51
 msgid "DrumGizmo v"
@@ -64,8 +135,28 @@ msgstr ""
 
 #: mainwindow.cc:55
 msgid "Main"
-msgstr ""
+msgstr "Principal"
 
 #: mainwindow.cc:58
 msgid "About"
-msgstr ""
+msgstr "À propos"
+
+#: statusframecontent.cc:88
+msgid "No Kit Loaded"
+msgstr "Pas de kit chargé"
+
+#: statusframecontent.cc:91 statusframecontent.cc:133
+msgid "Loading..."
+msgstr "Chargement..."
+
+#: statusframecontent.cc:94 statusframecontent.cc:136
+msgid "Ready"
+msgstr "Prêt"
+
+#: statusframecontent.cc:97 statusframecontent.cc:139
+msgid "Error"
+msgstr "Erreur"
+
+#: statusframecontent.cc:130
+msgid "No Midimap Loaded"
+msgstr "Pas de midimap chargée"
