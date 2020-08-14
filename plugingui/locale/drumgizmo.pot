@@ -52,6 +52,26 @@ msgstr ""
 msgid "Midimap file:"
 msgstr ""
 
+#: filebrowser.cc:66
+msgid "Open file..."
+msgstr ""
+
+#: filebrowser.cc:68
+msgid "Path:"
+msgstr ""
+
+#: filebrowser.cc:77
+msgid "Select"
+msgstr ""
+
+#: filebrowser.cc:80
+msgid "Set default path"
+msgstr ""
+
+#: filebrowser.cc:83
+msgid "Cancel"
+msgstr ""
+
 #: filebrowser.cc:91
 #, c-format
 msgid "Setting path to '%s'\n"
@@ -136,6 +156,30 @@ msgstr ""
 
 #: mainwindow.cc:58
 msgid "About"
+msgstr ""
+
+#: powerwidget.cc:52
+msgid "Shelf"
+msgstr ""
+
+#: powerwidget.cc:210
+msgid "in"
+msgstr ""
+
+#: powerwidget.cc:211
+msgid "out"
+msgstr ""
+
+#: resamplingframecontent.cc:59
+msgid "Quality"
+msgstr ""
+
+#: resamplingframecontent.cc:105
+msgid "Yes"
+msgstr ""
+
+#: resamplingframecontent.cc:105
+msgid "No"
 msgstr ""
 
 #: statusframecontent.cc:88

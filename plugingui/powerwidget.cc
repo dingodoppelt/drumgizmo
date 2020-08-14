@@ -36,6 +36,8 @@
 #include <hugin.hpp>
 #include <cmath>
 
+#include <translation.h>
+
 PowerWidget::PowerWidget(GUI::Widget* parent,
                          Settings& settings,
                          SettingsNotifier& settings_notifier)
@@ -47,7 +49,7 @@ PowerWidget::PowerWidget(GUI::Widget* parent,
 
 	CONNECT(&shelf_checkbox, stateChangedNotifier, this, &PowerWidget::chk_shelf);
 
-	shelf_label.setText("Shelf");
+	shelf_label.setText(_("Shelf"));
 	shelf_label.setAlignment(GUI::TextAlignment::center);
 	shelf_label.resize(59, 16);
 	shelf_checkbox.resize(59, 40);
@@ -205,8 +207,8 @@ void PowerWidget::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	             y0 + height0 - std::round(power_map.getFixed2().out * height0), rad + 1);
 
 	p.setColour(GUI::Colour(1.0f, 1.0f, 1.0f, 0.2f));
-	p.drawText(width() / 2 - (font.textWidth("in") / 2), height() - 8, font, "in");
-	p.drawText(8, height() / 2 - (font.textWidth("out") / 2), font, "out", false, true);
+	p.drawText(width() / 2 - (font.textWidth(_("in")) / 2), height() - 8, font, _("in"));
+	p.drawText(8, height() / 2 - (font.textWidth(_("out")) / 2), font, _("out"), false, true);
 }
 
 void PowerWidget::Canvas::buttonEvent(GUI::ButtonEvent* buttonEvent)

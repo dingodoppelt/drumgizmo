@@ -63,9 +63,9 @@ FileBrowser::FileBrowser(Widget* parent)
 	above_root = false;
 #endif
 
-	setCaption("Open file...");
+	setCaption(_("Open file..."));
 
-	lbl_path.setText("Path:");
+	lbl_path.setText(_("Path:"));
 
 	//lineedit.setReadOnly(true);
 	CONNECT(&lineedit, enterPressedNotifier, this, &FileBrowser::handleKeyEvent);
@@ -74,13 +74,13 @@ FileBrowser::FileBrowser(Widget* parent)
 	CONNECT(this, fileSelectNotifier, this, &FileBrowser::select);
 	CONNECT(eventHandler(), closeNotifier, this, &FileBrowser::cancel);
 
-	btn_sel.setText("Select");
+	btn_sel.setText(_("Select"));
 	CONNECT(&btn_sel, clickNotifier, this, &FileBrowser::selectButtonClicked);
 
-	btn_def.setText("Set default path");
+	btn_def.setText(_("Set default path"));
 	CONNECT(&btn_def, clickNotifier, this, &FileBrowser::setDefaultPath);
 
-	btn_esc.setText("Cancel");
+	btn_esc.setText(_("Cancel"));
 	CONNECT(&btn_esc, clickNotifier, this, &FileBrowser::cancelButtonClicked);
 
 	changeDir();

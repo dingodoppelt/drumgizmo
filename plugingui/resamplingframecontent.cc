@@ -28,6 +28,8 @@
 
 #include <settings.h>
 
+#include <translation.h>
+
 namespace GUI
 {
 
@@ -54,7 +56,7 @@ ResamplingframeContent::ResamplingframeContent(Widget* parent,
 	quality_knob.setDefaultValue(0.7f);
 	quality_knob.showValue(false);
 
-	quality_label.setText("Quality");
+	quality_label.setText(_("Quality"));
 	quality_label.setAlignment(TextAlignment::center);
 	quality_label.resize(40, 16);
 
@@ -100,7 +102,7 @@ void ResamplingframeContent::updateSessionSamplerate(double samplerate)
 
 void ResamplingframeContent::updateResamplingRecommended(bool resampling_recommended)
 {
-	this->resampling_recommended = resampling_recommended ? "Yes" : "No";
+	this->resampling_recommended = resampling_recommended ? _("Yes") : _("No");
 
 	updateContent();
 }

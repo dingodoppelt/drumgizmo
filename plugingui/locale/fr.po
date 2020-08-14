@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2020-08-12 22:29+0200\n"
+"PO-Revision-Date: 2020-08-11 01:11+0200\n"
 "Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
 "Language: fr\n"
@@ -54,6 +54,26 @@ msgstr "Fichier de kit de batterie :"
 #: drumkitframecontent.cc:97
 msgid "Midimap file:"
 msgstr "Fichier midimap :"
+
+#: filebrowser.cc:66
+msgid "Open file..."
+msgstr "Ouvrir un fichier..."
+
+#: filebrowser.cc:68
+msgid "Path:"
+msgstr "Chemin :"
+
+#: filebrowser.cc:77
+msgid "Select"
+msgstr "Sélectionner"
+
+#: filebrowser.cc:80
+msgid "Set default path"
+msgstr "Chemin par défaut"
+
+#: filebrowser.cc:83
+msgid "Cancel"
+msgstr "Annuler"
 
 #: filebrowser.cc:91
 #, c-format
@@ -111,11 +131,11 @@ msgstr "Contrôle de la repisse"
 
 #: maintab.cc:127
 msgid "Velocity Humanizer"
-msgstr "Humanisateur de vélocité"
+msgstr "Humaniseur de vélocité"
 
 #: maintab.cc:129
 msgid "Timing Humanizer"
-msgstr "Humanisateur de justesse"
+msgstr "Humaniseur de justesse"
 
 #: maintab.cc:131
 msgid "Sample Selection"
@@ -140,6 +160,30 @@ msgstr "Principal"
 #: mainwindow.cc:58
 msgid "About"
 msgstr "À propos"
+
+#: powerwidget.cc:52
+msgid "Shelf"
+msgstr "Plateau"
+
+#: powerwidget.cc:210
+msgid "in"
+msgstr "entrée"
+
+#: powerwidget.cc:211
+msgid "out"
+msgstr "sortie"
+
+#: resamplingframecontent.cc:59
+msgid "Quality"
+msgstr "Qualité"
+
+#: resamplingframecontent.cc:105
+msgid "Yes"
+msgstr "Oui"
+
+#: resamplingframecontent.cc:105
+msgid "No"
+msgstr "Non"
 
 #: statusframecontent.cc:88
 msgid "No Kit Loaded"
