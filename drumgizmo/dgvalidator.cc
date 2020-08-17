@@ -353,7 +353,8 @@ int main(int argc, char* argv[])
 			logger(LogLevel::Info, "Found drumkit image '" + image + "'");
 			if(!pathIsFile(image))
 			{
-				logger(LogLevel::Error, "Image file does not exist.");
+				logger(LogLevel::Error, "Drumkit image file does not exist: '"
+				       + image + "'");
 				image_error = true;
 			}
 			else
@@ -384,7 +385,8 @@ int main(int argc, char* argv[])
 			logger(LogLevel::Info, "Found drumkit image_map '" + image_map + "'");
 			if(!pathIsFile(image_map))
 			{
-				logger(LogLevel::Error, "Image map file does not exist.");
+				logger(LogLevel::Error, "Drumkit image map file does not exist: '"
+				       + image_map + "'");
 				image_error = true;
 			}
 			else
@@ -539,7 +541,8 @@ int main(int argc, char* argv[])
 			logger(LogLevel::Info, "Found drumkit logo field '" + image + "'");
 			if(!pathIsFile(image))
 			{
-				logger(LogLevel::Error, "Image file does not exist.");
+				logger(LogLevel::Error, "Logo image file does not exist: '"
+				       + image + "'");
 				metadata_error = true;
 			}
 			else
