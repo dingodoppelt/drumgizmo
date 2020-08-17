@@ -37,7 +37,7 @@ RES = \
 	$(top_srcdir)/plugingui/../COPYING
 
 if WITH_NLS
-$(top_srcdir)/plugingui/locale/drumgizmo.pot: $(GUI_SRC)
+$(top_srcdir)/plugingui/locale/drumgizmo.pot: $(GUI_SRC) $(GUI_HDR)
 	(cd $(top_srcdir)/plugingui/; $(XGETTEXT) --package-name "$(PACKAGE)" --package-version "$(VERSION)" --copyright-holder="DrumGizmo Team" -k_ -o locale/drumgizmo.pot $(GUI_SRC) )
 	grep -v '"POT-Creation-Date:' $(top_srcdir)/plugingui/locale/drumgizmo.pot > $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp
 	mv $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp $(top_srcdir)/plugingui/locale/drumgizmo.pot
@@ -154,6 +154,79 @@ GUI_SRC = \
 	widget.cc \
 	window.cc
 
+GUI_HDR = \
+	abouttab.h \
+	bleedcontrolframecontent.h \
+	button.h \
+	button_base.h \
+	canvas.h \
+	checkbox.h \
+	colour.h \
+	combobox.h \
+	dialog.h \
+	diskstreamingframecontent.h \
+	drawable.h \
+	drumkitframecontent.h \
+	drumkittab.h \
+	eventhandler.h \
+	filebrowser.h \
+	font.h \
+	frame.h \
+	guievent.h \
+	helpbutton.h \
+	humaniservisualiser.h \
+	humanizerframecontent.h \
+	image.h \
+	imagecache.h \
+	knob.h \
+	label.h \
+	labeledcontrol.h \
+	layout.h \
+	led.h \
+	lineedit.h \
+	listbox.h \
+	listboxbasic.h \
+	listboxthin.h \
+	maintab.h \
+	mainwindow.h \
+	nativewindow.h \
+	nativewindow_cocoa.h \
+	nativewindow_cocoa.mm \
+	nativewindow_pugl.h \
+	nativewindow_pugl.cc \
+	nativewindow_win32.h \
+	nativewindow_win32.cc \
+	nativewindow_x11.h \
+	nativewindow_x11.cc \
+	painter.h \
+	pixelbuffer.h \
+	pluginconfig.h \
+	powerbutton.h \
+	powerwidget.h \
+	progressbar.h \
+	resamplingframecontent.h \
+	resource.h \
+	resource_data.h \
+	sampleselectionframecontent.h \
+	scrollbar.h \
+	slider.h \
+	stackedwidget.h \
+	statusframecontent.h \
+	tabbutton.h \
+	tabwidget.h \
+	textedit.h \
+	texture.h \
+	texturedbox.h \
+	timingframecontent.h \
+	toggle.h \
+	tooltip.h \
+	uitranslation.h \
+	utf8.h \
+	verticalline.h \
+	visualizerframecontent.h \
+	widget.h \
+	window.h
+
 libdggui_la_SOURCES = \
 	$(GUI_SRC) \
 	lodepng/lodepng.cpp
@@ -234,74 +307,4 @@ rcgen_SOURCES = \
 
 EXTRA_DIST = \
 	$(RES) \
-	abouttab.h \
-	bleedcontrolframecontent.h \
-	button.h \
-	button_base.h \
-	canvas.h \
-	checkbox.h \
-	colour.h \
-	combobox.h \
-	dialog.h \
-	diskstreamingframecontent.h \
-	drawable.h \
-	drumkitframecontent.h \
-	drumkittab.h \
-	eventhandler.h \
-	filebrowser.h \
-	font.h \
-	frame.h \
-	guievent.h \
-	helpbutton.h \
-	humaniservisualiser.h \
-	humanizerframecontent.h \
-	image.h \
-	imagecache.h \
-	knob.h \
-	label.h \
-	labeledcontrol.h \
-	layout.h \
-	led.h \
-	lineedit.h \
-	listbox.h \
-	listboxbasic.h \
-	listboxthin.h \
-	maintab.h \
-	mainwindow.h \
-	nativewindow.h \
-	nativewindow_cocoa.h \
-	nativewindow_cocoa.mm \
-	nativewindow_pugl.h \
-	nativewindow_pugl.cc \
-	nativewindow_win32.h \
-	nativewindow_win32.cc \
-	nativewindow_x11.h \
-	nativewindow_x11.cc \
-	painter.h \
-	pixelbuffer.h \
-	pluginconfig.h \
-	powerbutton.h \
-	powerwidget.h \
-	progressbar.h \
-	resamplingframecontent.h \
-	resource.h \
-	resource_data.h \
-	sampleselectionframecontent.h \
-	scrollbar.h \
-	slider.h \
-	stackedwidget.h \
-	statusframecontent.h \
-	tabbutton.h \
-	tabwidget.h \
-	textedit.h \
-	texture.h \
-	texturedbox.h \
-	timingframecontent.h \
-	toggle.h \
-	tooltip.h \
-	uitranslation.h \
-	utf8.h \
-	verticalline.h \
-	visualizerframecontent.h \
-	widget.h \
-	window.h
+	$(GUI_HDR)
