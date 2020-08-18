@@ -31,6 +31,8 @@
 #include "layout.h"
 #include "widget.h"
 
+#include <translation.h>
+
 struct Settings;
 class SettingsNotifier;
 
@@ -56,9 +58,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl f_close{this, "pClose"};
-	LabeledControl f_diverse{this, "pDiverse"};
-	LabeledControl f_random{this, "pRandom"};
+	LabeledControl f_close{this, _("pClose")};
+	LabeledControl f_diverse{this, _("pDiverse")};
+	LabeledControl f_random{this, _("pRandom")};
 
 	Knob f_close_knob{&f_close};
 	Knob f_diverse_knob{&f_diverse};

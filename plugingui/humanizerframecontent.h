@@ -31,6 +31,8 @@
 #include "layout.h"
 #include "widget.h"
 
+#include <translation.h>
+
 struct Settings;
 class SettingsNotifier;
 
@@ -56,9 +58,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl attack{this, "pAttack"}; // drummer strength
-	LabeledControl falloff{this, "pRelease"}; // regain
-	LabeledControl stddev{this, "pStdDev"};
+	LabeledControl attack{this, _("pAttack")}; // drummer strength
+	LabeledControl falloff{this, _("pRelease")}; // regain
+	LabeledControl stddev{this, _("pStdDev")};
 
 	Knob attack_knob{&attack};
 	Knob falloff_knob{&falloff};

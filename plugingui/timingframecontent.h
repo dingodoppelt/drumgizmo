@@ -37,6 +37,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include <translation.h>
+
 class SettingsNotifier;
 
 namespace GUI
@@ -68,9 +70,9 @@ private:
 
 	GridLayout layout{this, 3, 1};
 
-	LabeledControl tightness{this, "pTightness"};
-	LabeledControl regain{this, "pTimingRegain"};
-	LabeledControl laidback{this, "pLaidback"};
+	LabeledControl tightness{this, _("pTightness")};
+	LabeledControl regain{this, _("pTimingRegain")};
+	LabeledControl laidback{this, _("pLaidback")};
 
 	Knob tightness_knob{&tightness};
 	Knob regain_knob{&regain};
