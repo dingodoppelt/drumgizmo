@@ -38,7 +38,7 @@ RES = \
 
 if WITH_NLS
 $(top_srcdir)/plugingui/locale/drumgizmo.pot: $(GUI_SRC) $(GUI_HDR)
-	(cd $(top_srcdir)/plugingui/; $(XGETTEXT) --package-name "$(PACKAGE)" --package-version "$(VERSION)" --copyright-holder="DrumGizmo Team" -k_ -o locale/drumgizmo.pot $(GUI_SRC) )
+	(cd $(top_srcdir)/plugingui/; $(XGETTEXT) --package-name "$(PACKAGE)" --package-version "$(VERSION)" --copyright-holder="DrumGizmo Team" -k_ -o locale/drumgizmo.pot $(GUI_SRC) $(GUI_HDR) )
 	grep -v '"POT-Creation-Date:' $(top_srcdir)/plugingui/locale/drumgizmo.pot > $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp
 	mv $(top_srcdir)/plugingui/locale/drumgizmo.pot.tmp $(top_srcdir)/plugingui/locale/drumgizmo.pot
 
