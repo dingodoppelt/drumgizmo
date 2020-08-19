@@ -201,3 +201,39 @@ msgstr ""
 #: statusframecontent.cc:130
 msgid "No Midimap Loaded"
 msgstr ""
+
+#: humanizerframecontent.h:61
+msgid "pAttack"
+msgstr ""
+
+#: humanizerframecontent.h:62
+msgid "pRelease"
+msgstr ""
+
+#: humanizerframecontent.h:63
+msgid "pStdDev"
+msgstr ""
+
+#: sampleselectionframecontent.h:61
+msgid "pClose"
+msgstr ""
+
+#: sampleselectionframecontent.h:62
+msgid "pDiverse"
+msgstr ""
+
+#: sampleselectionframecontent.h:63
+msgid "pRandom"
+msgstr ""
+
+#: timingframecontent.h:73
+msgid "pTightness"
+msgstr ""
+
+#: timingframecontent.h:74
+msgid "pTimingRegain"
+msgstr ""
+
+#: timingframecontent.h:75
+msgid "pLaidback"
+msgstr ""

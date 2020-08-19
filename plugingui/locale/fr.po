@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2020-08-11 01:11+0200\n"
+"PO-Revision-Date: 2020-08-19 02:05+0200\n"
 "Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
 "Language: fr\n"
@@ -204,3 +204,39 @@ msgstr "Erreur"
 #: statusframecontent.cc:130
 msgid "No Midimap Loaded"
 msgstr "Pas de midimap chargée"
+
+#: humanizerframecontent.h:61
+msgid "pAttack"
+msgstr "pAttaque"
+
+#: humanizerframecontent.h:62
+msgid "pRelease"
+msgstr "pRelâche"
+
+#: humanizerframecontent.h:63
+msgid "pStdDev"
+msgstr "pDévStd"
+
+#: sampleselectionframecontent.h:61
+msgid "pClose"
+msgstr "pProche"
+
+#: sampleselectionframecontent.h:62
+msgid "pDiverse"
+msgstr "pDiversité"
+
+#: sampleselectionframecontent.h:63
+msgid "pRandom"
+msgstr "pAléatoire"
+
+#: timingframecontent.h:73
+msgid "pTightness"
+msgstr "pRaideur"
+
+#: timingframecontent.h:74
+msgid "pTimingRegain"
+msgstr "pRetourTiming"
+
+#: timingframecontent.h:75
+msgid "pLaidback"
+msgstr "pNonchalance"
