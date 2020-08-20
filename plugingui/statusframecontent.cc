@@ -69,14 +69,14 @@ void StatusframeContent::resize(std::size_t width, std::size_t height)
 void StatusframeContent::updateContent()
 {
 	text_field.setText(
-		"Drumkit status:   " + drumkit_load_status + "\n"
-		// "Midimap status: " + midimap_load_status + "\n"
-		"Drumkit name:   " + drumkit_name + "\n"
-		"Drumkit description:   " + drumkit_description + "\n"
-		// "Drumkit version:   " + drumkit_version + "\n"
-		"Session buffer size:   " + buffer_size + "\n"
-		"Number of underruns: " + number_of_underruns + "\n" +
-		"Messages:\n" + messages
+		 _("Drumkit status:   ") + drumkit_load_status + "\n" +
+		//  _("Midimap status: ") + midimap_load_status + "\n" +
+		 _("Drumkit name:   ") + drumkit_name + "\n" +
+		 _("Drumkit description:   ") + drumkit_description + "\n" +
+		//  _("Drumkit version:   ") + drumkit_version + "\n" +
+		 _("Session buffer size:   ") + buffer_size + "\n" +
+		 _("Number of underruns: ") + number_of_underruns + "\n" +
+		 _("Messages:\n") + messages
 	);
 }
 

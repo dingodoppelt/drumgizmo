@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2020-08-19 02:05+0200\n"
+"PO-Revision-Date: 2020-08-20 18:08+0200\n"
 "Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
 "Language: fr\n"
@@ -177,6 +177,18 @@ msgstr "sortie"
 msgid "Quality"
 msgstr "Qualité"
 
+#: resamplingframecontent.cc:81
+msgid "Session samplerate:   "
+msgstr "Taux de la session :   "
+
+#: resamplingframecontent.cc:82
+msgid "Drumkit samplerate:   "
+msgstr "Taux du kit de batterie :   "
+
+#: resamplingframecontent.cc:83
+msgid "Resampling recommended:   "
+msgstr "Ré-échantillonnage recommandé :   "
+
 #: resamplingframecontent.cc:105
 msgid "Yes"
 msgstr "Oui"
@@ -185,9 +197,33 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
+#: statusframecontent.cc:72
+msgid "Drumkit status:   "
+msgstr "Status du kit de batterie :   "
+
+#: statusframecontent.cc:74
+msgid "Drumkit name:   "
+msgstr "Nom du kit de batterie :   "
+
+#: statusframecontent.cc:75
+msgid "Drumkit description:   "
+msgstr "Description du kit de batterie :   "
+
+#: statusframecontent.cc:77
+msgid "Session buffer size:   "
+msgstr "Taille du tampon de session :   "
+
+#: statusframecontent.cc:78
+msgid "Number of underruns: "
+msgstr "Nombre de désynchros : "
+
+#: statusframecontent.cc:79
+msgid "Messages:\n"
+msgstr "Messages :\n"
+
 #: statusframecontent.cc:88
 msgid "No Kit Loaded"
-msgstr "Pas de kit chargé"
+msgstr "pas de kit chargé"
 
 #: statusframecontent.cc:91 statusframecontent.cc:133
 msgid "Loading..."

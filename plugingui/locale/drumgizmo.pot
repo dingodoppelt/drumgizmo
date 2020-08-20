@@ -174,12 +174,48 @@ msgstr ""
 msgid "Quality"
 msgstr ""
 
+#: resamplingframecontent.cc:81
+msgid "Session samplerate:   "
+msgstr ""
+
+#: resamplingframecontent.cc:82
+msgid "Drumkit samplerate:   "
+msgstr ""
+
+#: resamplingframecontent.cc:83
+msgid "Resampling recommended:   "
+msgstr ""
+
 #: resamplingframecontent.cc:105
 msgid "Yes"
 msgstr ""
 
 #: resamplingframecontent.cc:105
 msgid "No"
+msgstr ""
+
+#: statusframecontent.cc:72
+msgid "Drumkit status:   "
+msgstr ""
+
+#: statusframecontent.cc:74
+msgid "Drumkit name:   "
+msgstr ""
+
+#: statusframecontent.cc:75
+msgid "Drumkit description:   "
+msgstr ""
+
+#: statusframecontent.cc:77
+msgid "Session buffer size:   "
+msgstr ""
+
+#: statusframecontent.cc:78
+msgid "Number of underruns: "
+msgstr ""
+
+#: statusframecontent.cc:79
+msgid "Messages:\n"
 msgstr ""
 
 #: statusframecontent.cc:88

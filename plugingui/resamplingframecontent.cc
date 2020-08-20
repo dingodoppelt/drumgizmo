@@ -78,9 +78,9 @@ void ResamplingframeContent::resize(std::size_t width, std::size_t height)
 void ResamplingframeContent::updateContent()
 {
 	text_field.setText(
-		"Session samplerate:   " + session_samplerate + "\n"
-		"Drumkit samplerate:   " + drumkit_samplerate + "\n"
-		"Resampling recommended:   " + resampling_recommended + "\n"
+		 _("Session samplerate:   ") + session_samplerate + "\n" +
+		 _("Drumkit samplerate:   ") + drumkit_samplerate + "\n" +
+		 _("Resampling recommended:   ") + resampling_recommended + "\n"
 	);
 }
 
