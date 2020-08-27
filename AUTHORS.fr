@@ -16,6 +16,9 @@ Développeur, graphisme, conception de l'interface graphique et logo :
 Développeur :
  Goran Mekić [meka] (meka@tilda.center)
 
+Développeur :
+ The Marlboro Man [TheMarlboroMan]
+
 Rustines :
  John Hammen (support multicanal d'échantillons)
 
