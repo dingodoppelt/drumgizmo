@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2020-08-20 18:08+0200\n"
+"PO-Revision-Date: 2020-08-25 23:13+0200\n"
 "Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
 "Language: fr\n"
@@ -108,6 +108,257 @@ msgstr "Erreur lors de la modification pour '%s'\n"
 #, c-format
 msgid "Setting path of lineedit to %s\n"
 msgstr "Paramétrage du chemin de lineedit pour %s\n"
+
+#: maintab.cc:55
+msgid "The first two knobs influence how DrumGizmo simulates the\n"
+msgstr "Les deux premiers boutons influencent la façon dont DrumGizmo\n"
+
+#: maintab.cc:56
+msgid "stamina of a physical drummers, ie. the fact that they\n"
+msgstr "simule l'endurance d'un batteur physique, c'est à dire le fait qu'il\n"
+
+#: maintab.cc:57
+msgid "loose power in their strokes when playing fast notes:\n"
+msgstr "perde de la puissance dans ses coups quand il joue des notes rapides :\n"
+
+#: maintab.cc:58
+msgid "  * pAttack: How quickly the velocity gets reduced when\n"
+msgstr "  * pAttaque : la rapidité avec laquelle la vélocité est réduite\n"
+
+#: maintab.cc:59
+msgid "     playing fast notes.\n"
+msgstr "      lorsque vous jouez des notes rapides.\n"
+
+#: maintab.cc:60
+msgid "     Lower values result in faster velocity reduction.\n"
+msgstr ""
+"     Des valeurs plus faibles entraînent une réduction plus rapide\n"
+"     de la vitesse.\n"
+
+#: maintab.cc:61
+msgid "  * pRelease: How quickly the drummer regains the velocity\n"
+msgstr "  * pRelâche : la rapidité avec laquelle le batteur retrouve\n"
+
+#: maintab.cc:62
+msgid "     when there are spaces between the notes.\n"
+msgstr "     la vélocité lorsqu'il y a de l'espace entre les notes.\n"
+
+#: maintab.cc:63
+msgid "     Lower values result in faster regain.\n"
+msgstr "     Des valeurs plus faibles entraînent une récupération plus rapide.\n"
+
+#: maintab.cc:64 maintab.cc:85
+msgid "\n"
+msgstr ""
+
+#: maintab.cc:65
+msgid "The last knob controls the randomization of the sample selection:\n"
+msgstr ""
+"Le dernier bouton contrôle la randomisation de la sélection\n"
+"de l'échantillon :\n"
+
+#: maintab.cc:66
+msgid "  * pStdDev: The standard-deviation for the sample selection.\n"
+msgstr "  * pStdDev : l'écart-type pour la sélection de l'échantillon.\n"
+
+#: maintab.cc:67
+msgid "     Higher value makes it more likely that a sample further\n"
+msgstr "     Plus la valeur est élevée, plus il est probable qu'un échantillon\n"
+
+#: maintab.cc:68
+msgid "     away from the input velocity will be played."
+msgstr "     plus éloigné de la vitesse d'entrée sera joué."
+
+#: maintab.cc:71
+msgid "These three knobs influence how DrumGizmo simulates the tightness\n"
+msgstr "Ces trois boutons influencent la façon dont DrumGizmo simule\n"
+
+#: maintab.cc:72
+msgid "of the drummer.\n"
+msgstr "la raideur du batteur.\n"
+
+#: maintab.cc:73
+msgid "The drifting is defined as the difference between\n"
+msgstr "La dérive est définie comme la différence entre\n"
+
+#: maintab.cc:74
+msgid ""
+"the perfect metronome (defined by the note positions) and the 'internal'\n"
+msgstr ""
+"le métronome parfait (défini par les positions des notes) et le métronome\n"
+
+#: maintab.cc:75
+msgid "metronome of the drummer which can then drift back and forth in a\n"
+msgstr "'interne' du batteur qui peut alors dériver d'avant en arrière\n"
+
+#: maintab.cc:76
+msgid "controlled fashion:\n"
+msgstr "d'une manière contrôlée :\n"
+
+#: maintab.cc:77
+msgid ""
+"  * pTightness: For each note how much is the drummer allowed to drift.\n"
+msgstr ""
+"  * pRaideur : pour chaque note, combien le batteur est à la dérive.\n"
+
+#: maintab.cc:78
+msgid "     Higher value make the drummer more tight, ie. drift less.\n"
+msgstr ""
+"     Plus la valeur est élevée, plus le batteur est raide,\n"
+"     c'est-à-dire qu'il dérive moins.\n"
+
+#: maintab.cc:79
+msgid ""
+"  * pTimingRegain: Once the drifted, how fast does the drummer's 'internal'\n"
+msgstr ""
+"  * pRetourTiming : une fois qu'il a dérivé, à quelle vitesse le métronome\n"
+
+#: maintab.cc:80
+msgid "     metronome get back in sync with the perfect metronome.\n"
+msgstr "     'interne' du batteur se resynchronise avec le métronome parfait.\n"
+
+#: maintab.cc:81
+msgid "     Higher values moves the timing back towards perfect faster.\n"
+msgstr ""
+"     Des valeurs plus élevées ramènent plus rapidement le timing\n"
+"     vers la perfection.\n"
+
+#: maintab.cc:82
+msgid ""
+"  * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n"
+msgstr ""
+"  * pNonchalance : ajoute ou soustrait un délai fixe en ms à toutes les notes.\n"
+
+#: maintab.cc:83
+msgid "     alter the feel of a beat.\n"
+msgstr "     Cela modifiera la sensation d'un battement.\n"
+
+#: maintab.cc:84
+msgid ""
+"     Positive values are up-beat, negative values are back on the beat.\n"
+msgstr ""
+"     Les valeurs positives sont en avance sur le temps, les valeurs\n"
+"     négatives sont en retard.\n"
+
+#: maintab.cc:86
+msgid ""
+"NOTE: Enabling timing humanization will introduce a fixed delay into the\n"
+msgstr ""
+"REMARQUE : l'activation de l'humanisation du timing introduira un délai\n"
+
+#: maintab.cc:87
+msgid "audio stream.\n"
+msgstr "fixe dans le flux audio.\n"
+
+#: maintab.cc:88
+msgid "So this feature should be disabled when using DrumGizmo in\n"
+msgstr "Donc, cette fonction devrait être désactivée lors de l'utilisation de\n"
+
+#: maintab.cc:89
+msgid "a real-time scenario such as live with a MIDI drumkit."
+msgstr "DrumGizmo dans un scénario temps-réel tel qu'un live avec\n"
+"un kit de batterie MIDI."
+
+#: maintab.cc:92
+msgid "These three knobs influence how DrumGizmo selects\n"
+msgstr "Ces trois boutons influencent la façon dont DrumGizmo\n"
+
+#: maintab.cc:93
+msgid "its samples in the following way:\n"
+msgstr "sélectionne ses échantillons de la manière suivante :\n"
+
+#: maintab.cc:94
+msgid "  * pClose: The importance given to choosing a sample close\n"
+msgstr "  * pProche : l'importance accordée au choix d'un échantillon\n"
+
+#: maintab.cc:95
+msgid "     to the actual MIDI value (after humanization)\n"
+msgstr "     proche de la valeur MIDI réelle (après humanisation)\n"
+
+#: maintab.cc:96
+msgid "  * pDiversity: The importance given to choosing samples\n"
+msgstr "  * pDiversité : l'importance accordée au choix d'échantillons\n"
+
+#: maintab.cc:97
+msgid "     which haven't been played recently.\n"
+msgstr "     qui n'ont pas été joués récemment.\n"
+
+#: maintab.cc:98
+msgid "  * pRandom: The amount of randomness added."
+msgstr "  * pAléatoire : la quantité de hasard ajoutée."
+
+#: maintab.cc:101
+msgid "This graph visualizes the time and velocity offsets of last note\n"
+msgstr "Ce graphique affiche les décalages de temps et de vélocité de la\n"
+
+#: maintab.cc:102
+msgid "played according to it's ideal input time and velocity.\n"
+msgstr ""
+"dernière note jouée en fonction de son temps d'entrée idéal\n"
+"et de sa vélocité.\n"
+
+#: maintab.cc:103
+msgid "The green lines indicate the ideal time and velocity positions.\n"
+msgstr ""
+"Les lignes vertes indiquent la position idéale du temps et\n"
+"de la vitesse.\n"
+
+#: maintab.cc:104
+msgid "The pink areas indicate the spread of the position and velocity\n"
+msgstr "Les zones roses indiquent l'étalement de la position et la vitesse\n"
+
+#: maintab.cc:105
+msgid "of the next note in line.\n"
+msgstr "de la note suivante sur la ligne.\n"
+
+#: maintab.cc:106
+msgid "The wider the area the more the note can move in time and velocity."
+msgstr ""
+"Plus la zone est large, plus la note peut se déplacer dans le temps\n"
+"et la vélocité."
+
+#: maintab.cc:109
+msgid "This function controls how the input powers are mapped to the powers\n"
+msgstr ""
+"Cette fonction contrôle comment les puissances d'entrée sont mises en\n"
+"correspondance avec les puissances que DrumGizmo utilise pour\n"
+
+#: maintab.cc:110
+msgid "that DrumGizmo uses for selecting samples.\n"
+msgstr "sélectionner les échantillons.\n"
+
+#: maintab.cc:111
+msgid "You can control the function by dragging and dropping the\n"
+msgstr "Vous pouvez contrôler la fonction en glissant et déposant les trois\n"
+
+#: maintab.cc:112
+msgid "three colorful control points.\n"
+msgstr "points de contrôle colorés.\n"
+
+#: maintab.cc:113
+msgid ""
+"Additionally, you can either use a shelf, which draws a horizontal line\n"
+msgstr ""
+"En outre, vous pouvez utiliser un plateau qui trace une ligne horizontale\n"
+
+#: maintab.cc:114
+msgid "from the green and red control points to the left/right side.\n"
+msgstr "entre les points de contrôle vert et rouge, à gauche et à droite.\n"
+
+#: maintab.cc:115
+msgid "Or you can turn off the shelf, and then the function goes through\n"
+msgstr "Ou vous pouvez également désactiver le plateau, pour que la fonction\n"
+
+#: maintab.cc:116
+msgid "the lower left corner, then the three control points, and then\n"
+msgstr ""
+"passe par le coin inférieur gauche, puis les trois points de contrôle,\n"
+
+#: maintab.cc:117
+msgid "the upper right corner, enabling to draw more complicated functions."
+msgstr ""
+"et enfin le coin supérieur droit, ce qui permet de dessiner des fonctions\n"
+"plus complexes."
 
 #: maintab.cc:121 mainwindow.cc:56
 msgid "Drumkit"
