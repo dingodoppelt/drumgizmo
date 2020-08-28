@@ -27,8 +27,31 @@
 #include "abouttab.h"
 
 #include <version.h>
+#include <translation.h>
 
 #include "utf8.h"
+
+namespace
+{
+std::string getLocalizedFile(const std::string& file)
+{
+	auto language = Translation::getISO639LanguageName();
+	std::string file_localized = file + "." + language;
+	GUI::Resource resource_localized{file_localized};
+	if(resource_localized.valid())
+	{
+		return resource_localized.data();
+	}
+
+	GUI::Resource resource{file};
+	if(resource.valid())
+	{
+		return resource.data();
+	}
+
+	return "";
+}
+}
 
 namespace GUI
 {
@@ -60,7 +83,7 @@ std::string AboutTab::getAboutText()
 	"             About\n"
 	"=============\n"
 	"\n");
-	about_text.append(about.data());
+	about_text.append(getLocalizedFile(":../ABOUT"));
 
 	// Version
 	about_text.append(
@@ -78,7 +101,7 @@ std::string AboutTab::getAboutText()
 	"            Bugs\n"
 	"=============\n"
 	"\n");
-	about_text.append(bugs.data());
+	about_text.append(getLocalizedFile(":../BUGS"));
 
 	// Authors
 	about_text.append(
@@ -87,7 +110,7 @@ std::string AboutTab::getAboutText()
 	"            Authors\n"
 	"=============\n"
 	"\n");
-	about_text.append(UTF8().toLatin1(authors.data()));
+	about_text.append(UTF8().toLatin1(getLocalizedFile(":../AUTHORS")));
 
 	// GPL
 	about_text.append(
@@ -96,7 +119,7 @@ std::string AboutTab::getAboutText()
 	"            License\n"
 	"=============\n"
 	"\n");
-	about_text.append(gpl.data());
+	about_text.append(getLocalizedFile(":../COPYING"));
 
 	return about_text;
 }

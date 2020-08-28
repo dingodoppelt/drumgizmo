@@ -49,11 +49,6 @@ private:
 
 	TextEdit text_edit{this};
 	int margin{10};
-
-	Resource about{":../ABOUT"};
-	Resource bugs{":../BUGS"};
-	Resource authors{":../AUTHORS"};
-	Resource gpl{":../COPYING"};
 };
 
 } // GUI::
