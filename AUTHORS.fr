@@ -1,0 +1,20 @@
+Fondateur et développeur principal :
+ Bent Bisballe Nyeng [deva] (deva@aasimon.org)
+
+Développeur :
+ Jonas Suhr Christensen [suhr] (jsc@umbraculum.org)
+
+Développeur :
+ André Nusser [chaot4]
+
+Développeur :
+ Christian Glöckner [cglocke]
+
+Développeur, graphisme, conception de l'interface graphique et logo :
+ Lars Muldjord [muldjord] (muldjordlars@gmail.com)
+
+Développeur :
+ Goran Mekić [meka] (meka@tilda.center)
+
+Rustines :
+ John Hammen (support multicanal d'échantillons)

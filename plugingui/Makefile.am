@@ -32,8 +32,11 @@ RES = \
 	$(top_srcdir)/plugingui/resources/vertline.png \
 	$(top_srcdir)/plugingui/resources/widget.png \
 	$(top_srcdir)/plugingui/../ABOUT \
+	$(top_srcdir)/plugingui/../ABOUT.fr \
 	$(top_srcdir)/plugingui/../AUTHORS \
+	$(top_srcdir)/plugingui/../AUTHORS.fr \
 	$(top_srcdir)/plugingui/../BUGS \
+	$(top_srcdir)/plugingui/../BUGS.fr \
 	$(top_srcdir)/plugingui/../COPYING
 
 if WITH_NLS

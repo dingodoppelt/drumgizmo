@@ -1,0 +1,4 @@
+Si quelque chose ne fonctionne pas comme prévu, c'est probablement de notre
+faute et nous ne le savons pas encore. Donc, si vous trouvez un bogue, veuillez
+nous le signaler en écrivant un courriel (en anglais) ou en nous rejoignant sur
+IRC : https://webchat.freenode.net/?channels=drumgizmo (en anglais aussi)

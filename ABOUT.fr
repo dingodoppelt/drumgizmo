@@ -1,0 +1,5 @@
+DrumGizmo est un greffon et une application autonome à source ouverte de
+batterie, multicanal, multicouches, et multiplateforme. Il vous permet de
+composer des pistes de batterie en MIDI et de les mixer avec une approche
+multicanal. Il est comparable en cela au mixage d'une vraie batterie enregistrée
+avec plusieurs micros.

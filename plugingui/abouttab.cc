@@ -83,7 +83,7 @@ std::string AboutTab::getAboutText()
 	"             About\n"
 	"=============\n"
 	"\n");
-	about_text.append(getLocalizedFile(":../ABOUT"));
+	about_text.append(UTF8().toLatin1(getLocalizedFile(":../ABOUT")));
 
 	// Version
 	about_text.append(
@@ -101,7 +101,7 @@ std::string AboutTab::getAboutText()
 	"            Bugs\n"
 	"=============\n"
 	"\n");
-	about_text.append(getLocalizedFile(":../BUGS"));
+	about_text.append(UTF8().toLatin1(getLocalizedFile(":../BUGS")));
 
 	// Authors
 	about_text.append(
