@@ -19,6 +19,69 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: abouttab.cc:82
+msgid ""
+"=============\n"
+"             About\n"
+"=============\n"
+"\n"
+msgstr ""
+"=============\n"
+"             À propos\n"
+"=============\n"
+"\n"
+
+#: abouttab.cc:90
+msgid ""
+"\n"
+"=============\n"
+"            Version\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:99
+msgid ""
+"\n"
+"=============\n"
+"            Bugs\n"
+"=============\n"
+"\n"
+msgstr ""
+"\n"
+"=============\n"
+"            Bogues\n"
+"=============\n"
+"\n"
+
+#: abouttab.cc:108
+msgid ""
+"\n"
+"=============\n"
+"            Authors\n"
+"=============\n"
+"\n"
+msgstr ""
+"\n"
+"=============\n"
+"            Auteurs\n"
+"=============\n"
+"\n"
+
+#: abouttab.cc:117
+msgid ""
+"\n"
+"=============\n"
+"            License\n"
+"=============\n"
+"\n"
+msgstr ""
+"\n"
+"=============\n"
+"            Licence\n"
+"=============\n"
+"\n"
+
 #: bleedcontrolframecontent.cc:46
 msgid "Master Bleed Volume:"
 msgstr "Volume principal de la repisse :"
@@ -119,7 +182,8 @@ msgstr "simule l'endurance d'un batteur physique, c'est à dire le fait qu'il\n"
 
 #: maintab.cc:57
 msgid "loose power in their strokes when playing fast notes:\n"
-msgstr "perde de la puissance dans ses coups quand il joue des notes rapides :\n"
+msgstr ""
+"perde de la puissance dans ses coups quand il joue des notes rapides :\n"
 
 #: maintab.cc:58
 msgid "  * pAttack: How quickly the velocity gets reduced when\n"
@@ -145,7 +209,8 @@ msgstr "     la vélocité lorsqu'il y a de l'espace entre les notes.\n"
 
 #: maintab.cc:63
 msgid "     Lower values result in faster regain.\n"
-msgstr "     Des valeurs plus faibles entraînent une récupération plus rapide.\n"
+msgstr ""
+"     Des valeurs plus faibles entraînent une récupération plus rapide.\n"
 
 #: maintab.cc:64 maintab.cc:85
 msgid "\n"
@@ -163,7 +228,8 @@ msgstr "  * pStdDev : l'écart-type pour la sélection de l'échantillon.\n"
 
 #: maintab.cc:67
 msgid "     Higher value makes it more likely that a sample further\n"
-msgstr "     Plus la valeur est élevée, plus il est probable qu'un échantillon\n"
+msgstr ""
+"     Plus la valeur est élevée, plus il est probable qu'un échantillon\n"
 
 #: maintab.cc:68
 msgid "     away from the input velocity will be played."
@@ -198,8 +264,7 @@ msgstr "d'une manière contrôlée :\n"
 #: maintab.cc:77
 msgid ""
 "  * pTightness: For each note how much is the drummer allowed to drift.\n"
-msgstr ""
-"  * pRaideur : pour chaque note, combien le batteur est à la dérive.\n"
+msgstr "  * pRaideur : pour chaque note, combien le batteur est à la dérive.\n"
 
 #: maintab.cc:78
 msgid "     Higher value make the drummer more tight, ie. drift less.\n"
@@ -215,7 +280,8 @@ msgstr ""
 
 #: maintab.cc:80
 msgid "     metronome get back in sync with the perfect metronome.\n"
-msgstr "     'interne' du batteur se resynchronise avec le métronome parfait.\n"
+msgstr ""
+"     'interne' du batteur se resynchronise avec le métronome parfait.\n"
 
 #: maintab.cc:81
 msgid "     Higher values moves the timing back towards perfect faster.\n"
@@ -227,7 +293,8 @@ msgstr ""
 msgid ""
 "  * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n"
 msgstr ""
-"  * pNonchalance : ajoute ou soustrait un délai fixe en ms à toutes les notes.\n"
+"  * pNonchalance : ajoute ou soustrait un délai fixe en ms à toutes les "
+"notes.\n"
 
 #: maintab.cc:83
 msgid "     alter the feel of a beat.\n"
@@ -252,11 +319,13 @@ msgstr "fixe dans le flux audio.\n"
 
 #: maintab.cc:88
 msgid "So this feature should be disabled when using DrumGizmo in\n"
-msgstr "Donc, cette fonction devrait être désactivée lors de l'utilisation de\n"
+msgstr ""
+"Donc, cette fonction devrait être désactivée lors de l'utilisation de\n"
 
 #: maintab.cc:89
 msgid "a real-time scenario such as live with a MIDI drumkit."
-msgstr "DrumGizmo dans un scénario temps-réel tel qu'un live avec\n"
+msgstr ""
+"DrumGizmo dans un scénario temps-réel tel qu'un live avec\n"
 "un kit de batterie MIDI."
 
 #: maintab.cc:92

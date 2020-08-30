@@ -16,6 +16,50 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: abouttab.cc:82
+msgid ""
+"=============\n"
+"             About\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:90
+msgid ""
+"\n"
+"=============\n"
+"            Version\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:99
+msgid ""
+"\n"
+"=============\n"
+"            Bugs\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:108
+msgid ""
+"\n"
+"=============\n"
+"            Authors\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:117
+msgid ""
+"\n"
+"=============\n"
+"            License\n"
+"=============\n"
+"\n"
+msgstr ""
+
 #: bleedcontrolframecontent.cc:46
 msgid "Master Bleed Volume:"
 msgstr ""

@@ -78,48 +78,48 @@ std::string AboutTab::getAboutText()
 	std::string about_text;
 
 	// About
-	about_text.append(
+	about_text.append(_(
 	"=============\n"
 	"             About\n"
 	"=============\n"
-	"\n");
+	"\n"));
 	about_text.append(UTF8().toLatin1(getLocalizedFile(":../ABOUT")));
 
 	// Version
-	about_text.append(
+	about_text.append(_(
 	"\n"
 	"=============\n"
 	"            Version\n"
 	"=============\n"
-	"\n");
+	"\n"));
 	about_text.append(std::string(VERSION) + "\n");
 
 	// Bugs
-	about_text.append(
+	about_text.append(_(
 	"\n"
 	"=============\n"
 	"            Bugs\n"
 	"=============\n"
-	"\n");
+	"\n"));
 	about_text.append(UTF8().toLatin1(getLocalizedFile(":../BUGS")));
 
 	// Authors
-	about_text.append(
+	about_text.append(_(
 	"\n"
 	"=============\n"
 	"            Authors\n"
 	"=============\n"
-	"\n");
+	"\n"));
 	about_text.append(UTF8().toLatin1(getLocalizedFile(":../AUTHORS")));
 
 	// GPL
-	about_text.append(
+	about_text.append(_(
 	"\n"
 	"=============\n"
 	"            License\n"
 	"=============\n"
-	"\n");
-	about_text.append(getLocalizedFile(":../COPYING"));
+	"\n"));
+	about_text.append(UTF8().toLatin1(getLocalizedFile(":../COPYING")));
 
 	return about_text;
 }
