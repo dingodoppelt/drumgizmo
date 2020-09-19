@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <cassert>
 
@@ -45,12 +45,12 @@ std::chrono::nanoseconds dist(const std::chrono::duration<float>& a,
 }
 
 class SemaphoreTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	SemaphoreTest()
 	{
-		DGUNIT_TEST(SemaphoreTest::timeoutTest);
+		uUNIT_TEST(SemaphoreTest::timeoutTest);
 	}
 
 public:
@@ -61,22 +61,22 @@ public:
 		{ // 1000ms timeout
 			auto start = std::chrono::steady_clock::now();
 			bool res = sem.wait(std::chrono::milliseconds(1000));
-			DGUNIT_ASSERT(!res); // false means timeout
+			uUNIT_ASSERT(!res); // false means timeout
 			auto stop = std::chrono::steady_clock::now();
 
 			// Allow +/-1ms skew
-			DGUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
+			uUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(1000))
 			               < std::chrono::milliseconds(60));
 		}
 
 		{ // 100ms timeout
 			auto start = std::chrono::steady_clock::now();
 			bool res = sem.wait(std::chrono::milliseconds(100));
-			DGUNIT_ASSERT(!res); // false means timeout
+			uUNIT_ASSERT(!res); // false means timeout
 			auto stop = std::chrono::steady_clock::now();
 
 			// Allow +/-1ms skew
-			DGUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(100))
+			uUNIT_ASSERT(dist((stop - start), std::chrono::milliseconds(100))
 			               < std::chrono::milliseconds(60));
 		}
 	}

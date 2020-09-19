@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <audiocacheidmanager.h>
 
@@ -39,12 +39,12 @@ public:
 };
 
 class AudioCacheIDManagerTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	AudioCacheIDManagerTest()
 	{
-		DGUNIT_TEST(AudioCacheIDManagerTest::registerReleaseTest);
+		uUNIT_TEST(AudioCacheIDManagerTest::registerReleaseTest);
 	}
 
 	void registerReleaseTest()
@@ -54,44 +54,44 @@ public:
 
 		cache_t c1; c1.afile = (AudioCacheFile*)1;
 		auto id1 = manager.registerID(c1);
-		DGUNIT_ASSERT(id1 != CACHE_DUMMYID);
-		DGUNIT_ASSERT(id1 != CACHE_NOID);
-		DGUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
+		uUNIT_ASSERT(id1 != CACHE_DUMMYID);
+		uUNIT_ASSERT(id1 != CACHE_NOID);
+		uUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
 		cache_t c2; c2.afile = (AudioCacheFile*)2;
 		auto id2 = manager.registerID(c2);
-		DGUNIT_ASSERT(id2 != CACHE_DUMMYID);
-		DGUNIT_ASSERT(id2 != CACHE_NOID);
-		DGUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
+		uUNIT_ASSERT(id2 != CACHE_DUMMYID);
+		uUNIT_ASSERT(id2 != CACHE_NOID);
+		uUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t c3; c3.afile = (AudioCacheFile*)3;
 		auto id3 = manager.registerID(c3);
-		DGUNIT_ASSERT(id3 == CACHE_DUMMYID);
-		DGUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
+		uUNIT_ASSERT(id3 == CACHE_DUMMYID);
+		uUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t& tc1 = manager.getCache(id1);
-		DGUNIT_ASSERT_EQUAL(c1.afile, tc1.afile);
+		uUNIT_ASSERT_EQUAL(c1.afile, tc1.afile);
 
 		cache_t& tc2 = manager.getCache(id2);
-		DGUNIT_ASSERT_EQUAL(c2.afile, tc2.afile);
+		uUNIT_ASSERT_EQUAL(c2.afile, tc2.afile);
 
 		manager.releaseID(id1);
-		DGUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
+		uUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
 		cache_t c4; c4.afile = (AudioCacheFile*)4;
 		auto id4 = manager.registerID(c4);
-		DGUNIT_ASSERT(id4 != CACHE_DUMMYID);
-		DGUNIT_ASSERT(id4 != CACHE_NOID);
-		DGUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
+		uUNIT_ASSERT(id4 != CACHE_DUMMYID);
+		uUNIT_ASSERT(id4 != CACHE_NOID);
+		uUNIT_ASSERT_EQUAL(0, manager.getAvailableIDs());
 
 		cache_t& tc4 = manager.getCache(id4);
-		DGUNIT_ASSERT_EQUAL(c4.afile, tc4.afile);
+		uUNIT_ASSERT_EQUAL(c4.afile, tc4.afile);
 
 		manager.releaseID(id2);
-		DGUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
+		uUNIT_ASSERT_EQUAL(1, manager.getAvailableIDs());
 
 		manager.releaseID(id4);
-		DGUNIT_ASSERT_EQUAL(2, manager.getAvailableIDs());
+		uUNIT_ASSERT_EQUAL(2, manager.getAvailableIDs());
 	}
 };
 

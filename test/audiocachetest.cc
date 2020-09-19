@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <thread>
 #include <chrono>
@@ -38,15 +38,15 @@
 #define FRAMESIZE 64
 
 class AudioCacheTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	AudioCacheTest()
 	{
-		DGUNIT_TEST(AudioCacheTest::singleChannelNonThreaded);
-		DGUNIT_TEST(AudioCacheTest::singleChannelThreaded);
-		DGUNIT_TEST(AudioCacheTest::multiChannelNonThreaded);
-		DGUNIT_TEST(AudioCacheTest::multiChannelThreaded);
+		uUNIT_TEST(AudioCacheTest::singleChannelNonThreaded);
+		uUNIT_TEST(AudioCacheTest::singleChannelThreaded);
+		uUNIT_TEST(AudioCacheTest::multiChannelNonThreaded);
+		uUNIT_TEST(AudioCacheTest::multiChannelThreaded);
 	}
 
 	DrumkitCreator drumkit_creator;
@@ -95,7 +95,7 @@ public:
 			// Test pre cache:
 			for(size_t i = 0; i < size; ++i)
 			{
-				DGUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
+				uUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 				++offset;
 			}
 
@@ -111,7 +111,7 @@ public:
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 						if(--timeout == 0)
 						{
-							DGUNIT_ASSERT(false); // timeout
+							uUNIT_ASSERT(false); // timeout
 						}
 					}
 				}
@@ -119,7 +119,7 @@ public:
 				size = framesize;
 				samples = audio_cache.next(id, size);
 
-				DGUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
+				uUNIT_ASSERT_EQUAL(std::size_t(0), settings.number_of_underruns.load());
 
 				for(size_t i = 0; (i < size) && (offset < audio_file_ref.size); ++i)
 				{
@@ -131,7 +131,7 @@ public:
 						       (int)(audio_file_ref.size - offset),
 						       (int)i, (int)size, (int)(size - i));
 					}
-					DGUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
+					uUNIT_ASSERT_EQUAL(audio_file_ref.data[offset], samples[i]);
 					++offset;
 				}
 			}

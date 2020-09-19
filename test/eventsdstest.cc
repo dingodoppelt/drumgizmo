@@ -24,17 +24,17 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include "../src/events_ds.h"
 
 class EventsDSTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	EventsDSTest()
 	{
-		DGUNIT_TEST(EventsDSTest::test_all);
+		uUNIT_TEST(EventsDSTest::test_all);
 	}
 
 public:
@@ -48,27 +48,27 @@ public:
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "b", 42);
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "c", 42);
 
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(13).empty());
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(13).empty());
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
 		auto group_id = events_ds.getSampleEventGroupIDsOf(42).back();
 
 		const auto& event_ids = events_ds.getEventIDsOf(group_id);
-		DGUNIT_ASSERT(event_ids.size() == 3);
+		uUNIT_ASSERT(event_ids.size() == 3);
 
 		// group 2
 		events_ds.startAddingNewGroup(42);
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "d", 42);
 
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
 
 		// group 3
 		events_ds.startAddingNewGroup(23);
 		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "foo", 23);
 		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "bar", 23);
 
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
-		DGUNIT_ASSERT(events_ds.numberOfEvents(13) == 4);
-		DGUNIT_ASSERT(events_ds.numberOfEvents(7) == 2);
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+		uUNIT_ASSERT(events_ds.numberOfEvents(13) == 4);
+		uUNIT_ASSERT(events_ds.numberOfEvents(7) == 2);
 
 		// iterate over
 		std::string group_concat = "";
@@ -76,26 +76,26 @@ public:
 		{
 			group_concat.append(sample_event.group);
 		}
-		DGUNIT_ASSERT(group_concat == "abcd");
+		uUNIT_ASSERT(group_concat == "abcd");
 
 		// get and getType
 		for (const auto& sample_event: events_ds.iterateOver<SampleEvent>(13))
 		{
-			DGUNIT_ASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
-			DGUNIT_ASSERT(events_ds.getType(sample_event.id) == Event::Type::SampleEvent);
+			uUNIT_ASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
+			uUNIT_ASSERT(events_ds.getType(sample_event.id) == Event::Type::SampleEvent);
 		}
 
 		// remove
 		auto event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(42).back()).back();
 		events_ds.remove(event_id);
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
 
 		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
 		events_ds.remove(event_id);
-		DGUNIT_ASSERT(!events_ds.getSampleEventGroupIDsOf(23).empty());
+		uUNIT_ASSERT(!events_ds.getSampleEventGroupIDsOf(23).empty());
 		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
 		events_ds.remove(event_id);
-		DGUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(23).empty());
+		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(23).empty());
 	}
 };
 

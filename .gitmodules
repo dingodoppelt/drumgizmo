@@ -20,3 +20,6 @@
 [submodule "zita-resampler"]
 	path = zita-resampler
 	url = http://git.drumgizmo.org/zita-resampler.git
+[submodule "test/uunit"]
+	path = test/uunit
+	url = git://git.drumgizmo.org/uunit.git

@@ -24,20 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <dgxmlparser.h>
 #include "scopedfile.h"
 
 class DGXmlParserTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	DGXmlParserTest()
 	{
-		DGUNIT_TEST(DGXmlParserTest::instrumentParserTest_v1);
-		DGUNIT_TEST(DGXmlParserTest::instrumentParserTest_v2);
-		DGUNIT_TEST(DGXmlParserTest::drumkitParserTest);
+		uUNIT_TEST(DGXmlParserTest::instrumentParserTest_v1);
+		uUNIT_TEST(DGXmlParserTest::instrumentParserTest_v2);
+		uUNIT_TEST(DGXmlParserTest::drumkitParserTest);
 	}
 
 	void instrumentParserTest_v1()
@@ -72,80 +72,80 @@ public:
 			"</instrument>");
 
 		InstrumentDOM dom;
-		DGUNIT_ASSERT(probeInstrumentFile(scoped_file.filename()));
-		DGUNIT_ASSERT(parseInstrumentFile(scoped_file.filename(), dom));
+		uUNIT_ASSERT(probeInstrumentFile(scoped_file.filename()));
+		uUNIT_ASSERT(parseInstrumentFile(scoped_file.filename(), dom));
 
-		DGUNIT_ASSERT_EQUAL(std::string("Snare"), dom.name);
-		DGUNIT_ASSERT_EQUAL(std::string("1.0"), dom.version);
-		DGUNIT_ASSERT_EQUAL(std::string("A nice snare"), dom.description);
-		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.samples.size());
+		uUNIT_ASSERT_EQUAL(std::string("Snare"), dom.name);
+		uUNIT_ASSERT_EQUAL(std::string("1.0"), dom.version);
+		uUNIT_ASSERT_EQUAL(std::string("A nice snare"), dom.description);
+		uUNIT_ASSERT_EQUAL(std::size_t(2), dom.samples.size());
 
 		{
 			const auto& s = dom.samples[0];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), s.name);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare-1"), s.name);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare-1.wav"), s.audiofiles[0].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare-1.wav"), s.audiofiles[0].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare-2.wav"), s.audiofiles[1].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[1].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare-2.wav"), s.audiofiles[1].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[1].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare-3.wav"), s.audiofiles[2].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[2].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare-3.wav"), s.audiofiles[2].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[2].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare-4.wav"), s.audiofiles[3].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[3].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare-4.wav"), s.audiofiles[3].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[3].filechannel);
 		}
 
 		{
 			const auto& s = dom.samples[1];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), s.name);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare-1.wav"), s.audiofiles[0].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("Snare-2"), s.name);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare-1.wav"), s.audiofiles[0].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare-2.wav"), s.audiofiles[1].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[1].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare-2.wav"), s.audiofiles[1].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[1].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare-3.wav"), s.audiofiles[2].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[2].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare-3.wav"), s.audiofiles[2].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[2].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare-4.wav"), s.audiofiles[3].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[3].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare-4.wav"), s.audiofiles[3].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[3].filechannel);
 		}
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(0), dom.instrument_channels.size());
+		uUNIT_ASSERT_EQUAL(std::size_t(0), dom.instrument_channels.size());
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.velocities.size());
+		uUNIT_ASSERT_EQUAL(std::size_t(2), dom.velocities.size());
 		{
 			const auto& velocity = dom.velocities[0];
-			DGUNIT_ASSERT_EQUAL(0.0, velocity.lower);
-			DGUNIT_ASSERT_EQUAL(0.6, velocity.upper);
-			DGUNIT_ASSERT_EQUAL(std::size_t(2), velocity.samplerefs.size());
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), velocity.samplerefs[0].name);
-			DGUNIT_ASSERT_EQUAL(0.6, velocity.samplerefs[0].probability);
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), velocity.samplerefs[1].name);
-			DGUNIT_ASSERT_EQUAL(0.4, velocity.samplerefs[1].probability);
+			uUNIT_ASSERT_EQUAL(0.0, velocity.lower);
+			uUNIT_ASSERT_EQUAL(0.6, velocity.upper);
+			uUNIT_ASSERT_EQUAL(std::size_t(2), velocity.samplerefs.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare-1"), velocity.samplerefs[0].name);
+			uUNIT_ASSERT_EQUAL(0.6, velocity.samplerefs[0].probability);
+			uUNIT_ASSERT_EQUAL(std::string("Snare-2"), velocity.samplerefs[1].name);
+			uUNIT_ASSERT_EQUAL(0.4, velocity.samplerefs[1].probability);
 		}
 
 		{
 			const auto& velocity = dom.velocities[1];
-			DGUNIT_ASSERT_EQUAL(0.6, velocity.lower);
-			DGUNIT_ASSERT_EQUAL(1.0, velocity.upper);
-			DGUNIT_ASSERT_EQUAL(std::size_t(2), velocity.samplerefs.size());
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), velocity.samplerefs[0].name);
-			DGUNIT_ASSERT_EQUAL(0.4, velocity.samplerefs[0].probability);
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), velocity.samplerefs[1].name);
-			DGUNIT_ASSERT_EQUAL(0.6, velocity.samplerefs[1].probability);
+			uUNIT_ASSERT_EQUAL(0.6, velocity.lower);
+			uUNIT_ASSERT_EQUAL(1.0, velocity.upper);
+			uUNIT_ASSERT_EQUAL(std::size_t(2), velocity.samplerefs.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare-2"), velocity.samplerefs[0].name);
+			uUNIT_ASSERT_EQUAL(0.4, velocity.samplerefs[0].probability);
+			uUNIT_ASSERT_EQUAL(std::string("Snare-1"), velocity.samplerefs[1].name);
+			uUNIT_ASSERT_EQUAL(0.6, velocity.samplerefs[1].probability);
 		}
 }
 
@@ -176,68 +176,68 @@ public:
 			"</instrument>");
 
 		InstrumentDOM dom;
-		DGUNIT_ASSERT(probeInstrumentFile(scoped_file.filename()));
-		DGUNIT_ASSERT(parseInstrumentFile(scoped_file.filename(), dom));
+		uUNIT_ASSERT(probeInstrumentFile(scoped_file.filename()));
+		uUNIT_ASSERT(parseInstrumentFile(scoped_file.filename(), dom));
 
-		DGUNIT_ASSERT_EQUAL(std::string("Snare"), dom.name);
-		DGUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
-		DGUNIT_ASSERT_EQUAL(std::string("A nice snare"), dom.description);
-		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.samples.size());
+		uUNIT_ASSERT_EQUAL(std::string("Snare"), dom.name);
+		uUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
+		uUNIT_ASSERT_EQUAL(std::string("A nice snare"), dom.description);
+		uUNIT_ASSERT_EQUAL(std::size_t(2), dom.samples.size());
 
 		{
 			const auto& s = dom.samples[0];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-1"), s.name);
-			DGUNIT_ASSERT_EQUAL(0.00985718, s.power);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare-1"), s.name);
+			uUNIT_ASSERT_EQUAL(0.00985718, s.power);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[0].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[0].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[1].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(2), s.audiofiles[1].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[1].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(2), s.audiofiles[1].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[2].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[2].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[3].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("1-Snare.wav"), s.audiofiles[3].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
 		}
 
 		{
 			const auto& s = dom.samples[1];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare-2"), s.name);
-			DGUNIT_ASSERT_EQUAL(0.0124808, s.power);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[0].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("Snare-2"), s.name);
+			uUNIT_ASSERT_EQUAL(0.0124808, s.power);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), s.audiofiles.size());
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), s.audiofiles[0].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[0].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(1), s.audiofiles[0].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[1].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(2), s.audiofiles[1].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), s.audiofiles[1].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[1].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(2), s.audiofiles[1].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[2].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), s.audiofiles[2].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[2].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(12), s.audiofiles[2].filechannel);
 
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
-			DGUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[3].file);
-			DGUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), s.audiofiles[3].instrument_channel);
+			uUNIT_ASSERT_EQUAL(std::string("2-Snare.wav"), s.audiofiles[3].file);
+			uUNIT_ASSERT_EQUAL(std::size_t(13), s.audiofiles[3].filechannel);
 		}
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(3), dom.instrument_channels.size());
-		DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.instrument_channels[0].name);
-		DGUNIT_ASSERT(main_state_t::is_main == dom.instrument_channels[0].main);
-		DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.instrument_channels[1].name);
-		DGUNIT_ASSERT(main_state_t::is_not_main == dom.instrument_channels[1].main);
-		DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.instrument_channels[2].name);
-		DGUNIT_ASSERT(main_state_t::unset == dom.instrument_channels[2].main);
+		uUNIT_ASSERT_EQUAL(std::size_t(3), dom.instrument_channels.size());
+		uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.instrument_channels[0].name);
+		uUNIT_ASSERT(main_state_t::is_main == dom.instrument_channels[0].main);
+		uUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.instrument_channels[1].name);
+		uUNIT_ASSERT(main_state_t::is_not_main == dom.instrument_channels[1].main);
+		uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.instrument_channels[2].name);
+		uUNIT_ASSERT(main_state_t::unset == dom.instrument_channels[2].main);
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(0), dom.velocities.size());
+		uUNIT_ASSERT_EQUAL(std::size_t(0), dom.velocities.size());
 	}
 
 	void drumkitParserTest()
@@ -283,81 +283,81 @@ public:
 			"</drumkit>");
 
 		DrumkitDOM dom;
-		DGUNIT_ASSERT(probeDrumkitFile(scoped_file.filename()));
-		DGUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), dom));
+		uUNIT_ASSERT(probeDrumkitFile(scoped_file.filename()));
+		uUNIT_ASSERT(parseDrumkitFile(scoped_file.filename(), dom));
 
-		DGUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
-		DGUNIT_ASSERT_EQUAL(48000.0, dom.samplerate);
+		uUNIT_ASSERT_EQUAL(std::string("2.0"), dom.version);
+		uUNIT_ASSERT_EQUAL(48000.0, dom.samplerate);
 
-		DGUNIT_ASSERT_EQUAL(std::string("1.2.3"), dom.metadata.version);
-		DGUNIT_ASSERT_EQUAL(std::string("Test Kit"), dom.metadata.title);
-		DGUNIT_ASSERT_EQUAL(std::string("LogoFile.png"), dom.metadata.logo);
-		DGUNIT_ASSERT_EQUAL(std::string("This is the description of the drumkit"), dom.metadata.description);
-		DGUNIT_ASSERT_EQUAL(std::string("Creative Commons"), dom.metadata.license);
-		DGUNIT_ASSERT_EQUAL(std::string("These are general notes"), dom.metadata.notes);
-		DGUNIT_ASSERT_EQUAL(std::string("Author of the drumkit"), dom.metadata.author);
-		DGUNIT_ASSERT_EQUAL(std::string("author@email.org"), dom.metadata.email);
-		DGUNIT_ASSERT_EQUAL(std::string("http://www.drumgizmo.org"), dom.metadata.website);
-		DGUNIT_ASSERT_EQUAL(std::string("DrumkitImage.png"), dom.metadata.image);
-		DGUNIT_ASSERT_EQUAL(std::string("DrumkitImageClickMap.png"), dom.metadata.image_map);
+		uUNIT_ASSERT_EQUAL(std::string("1.2.3"), dom.metadata.version);
+		uUNIT_ASSERT_EQUAL(std::string("Test Kit"), dom.metadata.title);
+		uUNIT_ASSERT_EQUAL(std::string("LogoFile.png"), dom.metadata.logo);
+		uUNIT_ASSERT_EQUAL(std::string("This is the description of the drumkit"), dom.metadata.description);
+		uUNIT_ASSERT_EQUAL(std::string("Creative Commons"), dom.metadata.license);
+		uUNIT_ASSERT_EQUAL(std::string("These are general notes"), dom.metadata.notes);
+		uUNIT_ASSERT_EQUAL(std::string("Author of the drumkit"), dom.metadata.author);
+		uUNIT_ASSERT_EQUAL(std::string("author@email.org"), dom.metadata.email);
+		uUNIT_ASSERT_EQUAL(std::string("http://www.drumgizmo.org"), dom.metadata.website);
+		uUNIT_ASSERT_EQUAL(std::string("DrumkitImage.png"), dom.metadata.image);
+		uUNIT_ASSERT_EQUAL(std::string("DrumkitImageClickMap.png"), dom.metadata.image_map);
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.metadata.clickmaps.size());
-		DGUNIT_ASSERT_EQUAL(std::string("ff08a2"), dom.metadata.clickmaps[0].colour);
-		DGUNIT_ASSERT_EQUAL(std::string("China"), dom.metadata.clickmaps[0].instrument);
-		DGUNIT_ASSERT_EQUAL(std::string("a218d7"), dom.metadata.clickmaps[1].colour);
-		DGUNIT_ASSERT_EQUAL(std::string("HihatClosed"), dom.metadata.clickmaps[1].instrument);
+		uUNIT_ASSERT_EQUAL(std::size_t(2), dom.metadata.clickmaps.size());
+		uUNIT_ASSERT_EQUAL(std::string("ff08a2"), dom.metadata.clickmaps[0].colour);
+		uUNIT_ASSERT_EQUAL(std::string("China"), dom.metadata.clickmaps[0].instrument);
+		uUNIT_ASSERT_EQUAL(std::string("a218d7"), dom.metadata.clickmaps[1].colour);
+		uUNIT_ASSERT_EQUAL(std::string("HihatClosed"), dom.metadata.clickmaps[1].instrument);
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(2), dom.instruments.size());
+		uUNIT_ASSERT_EQUAL(std::size_t(2), dom.instruments.size());
 		{
 			const auto& instr = dom.instruments[0];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare1"), instr.name);
-			DGUNIT_ASSERT_EQUAL(std::string("foo.wav"), instr.file);
-			DGUNIT_ASSERT_EQUAL(std::string("somegroup"), instr.group);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare1"), instr.name);
+			uUNIT_ASSERT_EQUAL(std::string("foo.wav"), instr.file);
+			uUNIT_ASSERT_EQUAL(std::string("somegroup"), instr.group);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft-in"), instr.channel_map[0].in);
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight-in"), instr.channel_map[1].in);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop-in"), instr.channel_map[2].in);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom-in"), instr.channel_map[3].in);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft-in"), instr.channel_map[0].in);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight-in"), instr.channel_map[1].in);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop-in"), instr.channel_map[2].in);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom-in"), instr.channel_map[3].in);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
 
-			DGUNIT_ASSERT(main_state_t::is_main == instr.channel_map[0].main);
-			DGUNIT_ASSERT(main_state_t::is_main == instr.channel_map[1].main);
-			DGUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
-			DGUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
+			uUNIT_ASSERT(main_state_t::is_main == instr.channel_map[0].main);
+			uUNIT_ASSERT(main_state_t::is_main == instr.channel_map[1].main);
+			uUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
+			uUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
 		}
 		{
 			const auto& instr = dom.instruments[1];
-			DGUNIT_ASSERT_EQUAL(std::string("Snare2"), instr.name);
-			DGUNIT_ASSERT_EQUAL(std::string("bar.wav"), instr.file);
-			DGUNIT_ASSERT_EQUAL(std::string(""), instr.group);
-			DGUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
+			uUNIT_ASSERT_EQUAL(std::string("Snare2"), instr.name);
+			uUNIT_ASSERT_EQUAL(std::string("bar.wav"), instr.file);
+			uUNIT_ASSERT_EQUAL(std::string(""), instr.group);
+			uUNIT_ASSERT_EQUAL(std::size_t(4), instr.channel_map.size());
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft2-in"), instr.channel_map[0].in);
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight2-in"), instr.channel_map[1].in);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop2-in"), instr.channel_map[2].in);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom2-in"), instr.channel_map[3].in);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft2-in"), instr.channel_map[0].in);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight2-in"), instr.channel_map[1].in);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop2-in"), instr.channel_map[2].in);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom2-in"), instr.channel_map[3].in);
 
-			DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
-			DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
-			DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
+			uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), instr.channel_map[0].out);
+			uUNIT_ASSERT_EQUAL(std::string("AmbRight"), instr.channel_map[1].out);
+			uUNIT_ASSERT_EQUAL(std::string("SnareTop"), instr.channel_map[2].out);
+			uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), instr.channel_map[3].out);
 
-			DGUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[0].main);
-			DGUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[1].main);
-			DGUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
-			DGUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
+			uUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[0].main);
+			uUNIT_ASSERT(main_state_t::is_not_main == instr.channel_map[1].main);
+			uUNIT_ASSERT(main_state_t::unset == instr.channel_map[2].main);
+			uUNIT_ASSERT(main_state_t::unset == instr.channel_map[3].main);
 		}
 
-		DGUNIT_ASSERT_EQUAL(std::size_t(4), dom.channels.size());
-		DGUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.channels[0].name);
-		DGUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.channels[1].name);
-		DGUNIT_ASSERT_EQUAL(std::string("SnareTop"), dom.channels[2].name);
-		DGUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.channels[3].name);
+		uUNIT_ASSERT_EQUAL(std::size_t(4), dom.channels.size());
+		uUNIT_ASSERT_EQUAL(std::string("AmbLeft"), dom.channels[0].name);
+		uUNIT_ASSERT_EQUAL(std::string("AmbRight"), dom.channels[1].name);
+		uUNIT_ASSERT_EQUAL(std::string("SnareTop"), dom.channels[2].name);
+		uUNIT_ASSERT_EQUAL(std::string("SnareBottom"), dom.channels[3].name);
 	}
 };
 

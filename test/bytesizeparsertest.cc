@@ -24,21 +24,21 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include "bytesizeparser.h"
 
 
 class ByteSizeParserTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	ByteSizeParserTest()
 	{
-		DGUNIT_TEST(ByteSizeParserTest::suffixTest);
-		DGUNIT_TEST(ByteSizeParserTest::falseSuffixTest);
-		DGUNIT_TEST(ByteSizeParserTest::falseNumberTest);
-		DGUNIT_TEST(ByteSizeParserTest::tooBigNumberTest);
+		uUNIT_TEST(ByteSizeParserTest::suffixTest);
+		uUNIT_TEST(ByteSizeParserTest::falseSuffixTest);
+		uUNIT_TEST(ByteSizeParserTest::falseNumberTest);
+		uUNIT_TEST(ByteSizeParserTest::tooBigNumberTest);
 	}
 
 	void suffixTest()
@@ -47,76 +47,76 @@ public:
 		std::size_t kilo = 1024, mega = kilo * 1024, giga = mega * 1024;
 		computed_size = byteSizeParser("3");
 		expected_size = 3;
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3k");
 		expected_size = 3 * kilo;
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3M");
 		expected_size = 3 * mega;
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3G");
 		expected_size = 3 * giga;
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void falseSuffixTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("3K");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3m");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3g");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3ddDD");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void falseNumberTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("K3k");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3k");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3M");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("-3G");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-k");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("k-3");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("3-1");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 
 		computed_size = byteSizeParser("   -3");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 
 	void tooBigNumberTest()
 	{
 		std::size_t computed_size, expected_size = 0;
 		computed_size = byteSizeParser("999999999999999999999999999999999999G");
-		DGUNIT_ASSERT_EQUAL(expected_size, computed_size);
+		uUNIT_ASSERT_EQUAL(expected_size, computed_size);
 	}
 };
 

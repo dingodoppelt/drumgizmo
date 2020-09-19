@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include "../plugingui/resource.h"
 
@@ -45,14 +45,14 @@ public:
 };
 
 class ResourceTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	ResourceTest()
 	{
-		DGUNIT_TEST(ResourceTest::externalReadTest);
-		DGUNIT_TEST(ResourceTest::internalReadTest);
-		DGUNIT_TEST(ResourceTest::failTest);
+		uUNIT_TEST(ResourceTest::externalReadTest);
+		uUNIT_TEST(ResourceTest::internalReadTest);
+		uUNIT_TEST(ResourceTest::failTest);
 	}
 
 	DrumkitCreator drumkit_creator;
@@ -62,34 +62,34 @@ public:
 		auto filename = drumkit_creator.create0000Wav("0000.wav");
 
 		ResourceTester rc(filename);
-		DGUNIT_ASSERT(!rc.probeIsInternal());
-		DGUNIT_ASSERT(rc.valid());
-		DGUNIT_ASSERT_EQUAL((size_t)46, rc.size());
+		uUNIT_ASSERT(!rc.probeIsInternal());
+		uUNIT_ASSERT(rc.valid());
+		uUNIT_ASSERT_EQUAL((size_t)46, rc.size());
 	}
 
 	void internalReadTest()
 	{
 		ResourceTester rc(":resources/bg.png");
-		DGUNIT_ASSERT(rc.probeIsInternal());
-		DGUNIT_ASSERT(rc.valid());
-		DGUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
+		uUNIT_ASSERT(rc.probeIsInternal());
+		uUNIT_ASSERT(rc.valid());
+		uUNIT_ASSERT_EQUAL((size_t)1123, rc.size());
 	}
 
 	void failTest()
 	{
 		{
 			ResourceTester rc("/tmp/");
-			DGUNIT_ASSERT(!rc.valid());
+			uUNIT_ASSERT(!rc.valid());
 		}
 
 		{
 			ResourceTester rc("no_such_file");
-			DGUNIT_ASSERT(!rc.valid());
+			uUNIT_ASSERT(!rc.valid());
 		}
 
 		{
 			ResourceTester rc(":no_such_file");
-			DGUNIT_ASSERT(!rc.valid());
+			uUNIT_ASSERT(!rc.valid());
 		}
 	}
 };

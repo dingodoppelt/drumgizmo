@@ -24,18 +24,18 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <configparser.h>
 
 class ConfigParserTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	ConfigParserTest()
 	{
-		DGUNIT_TEST(ConfigParserTest::test);
-		DGUNIT_TEST(ConfigParserTest::invalid);
+		uUNIT_TEST(ConfigParserTest::test);
+		uUNIT_TEST(ConfigParserTest::invalid);
 	}
 
 	void test()
@@ -50,14 +50,14 @@ public:
 
 
 		ConfigParser parser;
-		DGUNIT_ASSERT(parser.parseString(xml));
+		uUNIT_ASSERT(parser.parseString(xml));
 
-		DGUNIT_ASSERT_EQUAL(std::string("42"), parser.value("foo", "-"));
-		DGUNIT_ASSERT_EQUAL(std::string("true"), parser.value("bar", "-"));
-		DGUNIT_ASSERT_EQUAL(std::string("\"<"), parser.value("bas", "-"));
+		uUNIT_ASSERT_EQUAL(std::string("42"), parser.value("foo", "-"));
+		uUNIT_ASSERT_EQUAL(std::string("true"), parser.value("bar", "-"));
+		uUNIT_ASSERT_EQUAL(std::string("\"<"), parser.value("bas", "-"));
 
 		// Non-existing value
-		DGUNIT_ASSERT_EQUAL(std::string("-"), parser.value("bas2", "-"));
+		uUNIT_ASSERT_EQUAL(std::string("-"), parser.value("bas2", "-"));
 	}
 
 	void invalid()
@@ -73,7 +73,7 @@ public:
 
 		ConfigParser parser;
 		// Epxect parser error (missing '>' in line 2)
-		DGUNIT_ASSERT(!parser.parseString(xml));
+		uUNIT_ASSERT(!parser.parseString(xml));
 	}
 };
 

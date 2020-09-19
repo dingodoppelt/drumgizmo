@@ -24,28 +24,28 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <syncedsettings.h>
 
 class SyncedSettingsTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	SyncedSettingsTest()
 	{
-		DGUNIT_TEST(SyncedSettingsTest::groupCanBeDefaultInitialized);
-		DGUNIT_TEST(SyncedSettingsTest::groupDataCanBeCopied);
+		uUNIT_TEST(SyncedSettingsTest::groupCanBeDefaultInitialized);
+		uUNIT_TEST(SyncedSettingsTest::groupDataCanBeCopied);
 
-		DGUNIT_TEST(SyncedSettingsTest::accessorCanGetFields);
-		DGUNIT_TEST(SyncedSettingsTest::accessorCanSetFields);
+		uUNIT_TEST(SyncedSettingsTest::accessorCanGetFields);
+		uUNIT_TEST(SyncedSettingsTest::accessorCanSetFields);
 
-		DGUNIT_TEST(SyncedSettingsTest::groupHasCopyCtor);
-		DGUNIT_TEST(SyncedSettingsTest::groupHasMoveCtor);
-		DGUNIT_TEST(SyncedSettingsTest::groupHasCopyAssignOp);
-		DGUNIT_TEST(SyncedSettingsTest::groupHasMoveAssignOp);
+		uUNIT_TEST(SyncedSettingsTest::groupHasCopyCtor);
+		uUNIT_TEST(SyncedSettingsTest::groupHasMoveCtor);
+		uUNIT_TEST(SyncedSettingsTest::groupHasCopyAssignOp);
+		uUNIT_TEST(SyncedSettingsTest::groupHasMoveAssignOp);
 
-		DGUNIT_TEST(SyncedSettingsTest::mimicRealUse);
+		uUNIT_TEST(SyncedSettingsTest::mimicRealUse);
 	}
 
 private:
@@ -78,9 +78,9 @@ public:
 			a.data.msg = "hello";
 		}
 		TestData copy = data;
-		DGUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-		DGUNIT_ASSERT_EQUAL(copy.bar, false);
-		DGUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
+		uUNIT_ASSERT_EQUAL(copy.foo, 3.f);
+		uUNIT_ASSERT_EQUAL(copy.bar, false);
+		uUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 	}
 
 	void accessorCanGetFields()
@@ -95,9 +95,9 @@ public:
 		// now read
 		{
 			Accessor<TestData> a{data};
-			DGUNIT_ASSERT_EQUAL(a.data.foo, 3.f);
-			DGUNIT_ASSERT_EQUAL(a.data.bar, false);
-			DGUNIT_ASSERT_EQUAL(a.data.msg, std::string{"hello"});
+			uUNIT_ASSERT_EQUAL(a.data.foo, 3.f);
+			uUNIT_ASSERT_EQUAL(a.data.bar, false);
+			uUNIT_ASSERT_EQUAL(a.data.msg, std::string{"hello"});
 		}
 	}
 
@@ -112,9 +112,9 @@ public:
 		}
 		Group<TestData> data{tmp};
 		TestData copy = data;
-		DGUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-		DGUNIT_ASSERT_EQUAL(copy.bar, false);
-		DGUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
+		uUNIT_ASSERT_EQUAL(copy.foo, 3.f);
+		uUNIT_ASSERT_EQUAL(copy.bar, false);
+		uUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 	}
 
 	void groupHasMoveCtor()
@@ -128,9 +128,9 @@ public:
 		}
 		Group<TestData> data{std::move(tmp)};
 		TestData copy = data;
-		DGUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-		DGUNIT_ASSERT_EQUAL(copy.bar, false);
-		DGUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
+		uUNIT_ASSERT_EQUAL(copy.foo, 3.f);
+		uUNIT_ASSERT_EQUAL(copy.bar, false);
+		uUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 	}
 
 	void groupHasCopyAssignOp()
@@ -144,9 +144,9 @@ public:
 		}
 		Group<TestData> data = tmp;
 		TestData copy = data;
-		DGUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-		DGUNIT_ASSERT_EQUAL(copy.bar, false);
-		DGUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
+		uUNIT_ASSERT_EQUAL(copy.foo, 3.f);
+		uUNIT_ASSERT_EQUAL(copy.bar, false);
+		uUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 	}
 
 	void groupHasMoveAssignOp()
@@ -160,9 +160,9 @@ public:
 		}
 		Group<TestData> data = std::move(tmp);
 		TestData copy = data;
-		DGUNIT_ASSERT_EQUAL(copy.foo, 3.f);
-		DGUNIT_ASSERT_EQUAL(copy.bar, false);
-		DGUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
+		uUNIT_ASSERT_EQUAL(copy.foo, 3.f);
+		uUNIT_ASSERT_EQUAL(copy.bar, false);
+		uUNIT_ASSERT_EQUAL(copy.msg, std::string{"hello"});
 	}
 
 	void mimicRealUse()
@@ -204,7 +204,7 @@ public:
 		if (copy.enabled) {
 			// do some stuff without locking
 		}
-		DGUNIT_ASSERT(copy.enabled);
+		uUNIT_ASSERT(copy.enabled);
 	}
 };
 

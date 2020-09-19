@@ -24,20 +24,20 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <midimapparser.h>
 
 #include "scopedfile.h"
 
 class MidimapParserTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	MidimapParserTest()
 	{
-		DGUNIT_TEST(MidimapParserTest::test);
-		DGUNIT_TEST(MidimapParserTest::invalid);
+		uUNIT_TEST(MidimapParserTest::test);
+		uUNIT_TEST(MidimapParserTest::invalid);
 	}
 
 	void test()
@@ -53,19 +53,19 @@ public:
 			"</midimap>");
 
 		MidiMapParser parser;
-		DGUNIT_ASSERT(parser.parseFile(scoped_file.filename()));
+		uUNIT_ASSERT(parser.parseFile(scoped_file.filename()));
 
-		DGUNIT_ASSERT(parser.midimap.find(54) != parser.midimap.end());
-		DGUNIT_ASSERT(parser.midimap.find(60) != parser.midimap.end());
-		DGUNIT_ASSERT(parser.midimap.find(55) != parser.midimap.end());
-		DGUNIT_ASSERT(parser.midimap.find(62) != parser.midimap.end());
-		DGUNIT_ASSERT(parser.midimap.find(56) != parser.midimap.end());
+		uUNIT_ASSERT(parser.midimap.find(54) != parser.midimap.end());
+		uUNIT_ASSERT(parser.midimap.find(60) != parser.midimap.end());
+		uUNIT_ASSERT(parser.midimap.find(55) != parser.midimap.end());
+		uUNIT_ASSERT(parser.midimap.find(62) != parser.midimap.end());
+		uUNIT_ASSERT(parser.midimap.find(56) != parser.midimap.end());
 
-		DGUNIT_ASSERT_EQUAL(std::string("Crash_left_tip"), parser.midimap[54]);
-		DGUNIT_ASSERT_EQUAL(std::string("Crash_left_whisker"), parser.midimap[60]);
-		DGUNIT_ASSERT_EQUAL(std::string("Crash_right_tip"), parser.midimap[55]);
-		DGUNIT_ASSERT_EQUAL(std::string("Crash_right_whisker"), parser.midimap[62]);
-		DGUNIT_ASSERT_EQUAL(std::string("Hihat_closed"), parser.midimap[56]);
+		uUNIT_ASSERT_EQUAL(std::string("Crash_left_tip"), parser.midimap[54]);
+		uUNIT_ASSERT_EQUAL(std::string("Crash_left_whisker"), parser.midimap[60]);
+		uUNIT_ASSERT_EQUAL(std::string("Crash_right_tip"), parser.midimap[55]);
+		uUNIT_ASSERT_EQUAL(std::string("Crash_right_whisker"), parser.midimap[62]);
+		uUNIT_ASSERT_EQUAL(std::string("Hihat_closed"), parser.midimap[56]);
 	}
 
 	void invalid()
@@ -81,7 +81,7 @@ public:
 			"</midimap>");
 
 		MidiMapParser parser;
-		DGUNIT_ASSERT(!parser.parseFile(scoped_file.filename()));
+		uUNIT_ASSERT(!parser.parseFile(scoped_file.filename()));
 	}
 };
 

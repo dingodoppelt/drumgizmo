@@ -24,17 +24,17 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <audiocacheeventhandler.h>
 
 class AudioCacheEventHandlerTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	AudioCacheEventHandlerTest()
 	{
-		DGUNIT_TEST(AudioCacheEventHandlerTest::threadedTest);
+		uUNIT_TEST(AudioCacheEventHandlerTest::threadedTest);
 	}
 
 public:

@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -49,27 +49,27 @@ protected:
 };
 
 class test_configtest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	test_configtest()
 	{
-		DGUNIT_TEST(test_configtest::loading_no_newline);
-		DGUNIT_TEST(test_configtest::loading_equal_sign);
-		DGUNIT_TEST(test_configtest::loading_newline);
-		DGUNIT_TEST(test_configtest::loading_padding_space);
-		DGUNIT_TEST(test_configtest::loading_padding_space_newline);
-		DGUNIT_TEST(test_configtest::loading_padding_tab);
-		DGUNIT_TEST(test_configtest::loading_padding_tab_newline);
-		DGUNIT_TEST(test_configtest::loading_comment);
-		DGUNIT_TEST(test_configtest::loading_inline_comment);
-		DGUNIT_TEST(test_configtest::loading_single_quoted_string);
-		DGUNIT_TEST(test_configtest::loading_double_quoted_string);
-		DGUNIT_TEST(test_configtest::loading_error_no_key);
-		DGUNIT_TEST(test_configtest::loading_error_no_value);
-		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_single);
-		DGUNIT_TEST(test_configtest::loading_error_string_not_terminated_double);
-		DGUNIT_TEST(test_configtest::empty_value);
+		uUNIT_TEST(test_configtest::loading_no_newline);
+		uUNIT_TEST(test_configtest::loading_equal_sign);
+		uUNIT_TEST(test_configtest::loading_newline);
+		uUNIT_TEST(test_configtest::loading_padding_space);
+		uUNIT_TEST(test_configtest::loading_padding_space_newline);
+		uUNIT_TEST(test_configtest::loading_padding_tab);
+		uUNIT_TEST(test_configtest::loading_padding_tab_newline);
+		uUNIT_TEST(test_configtest::loading_comment);
+		uUNIT_TEST(test_configtest::loading_inline_comment);
+		uUNIT_TEST(test_configtest::loading_single_quoted_string);
+		uUNIT_TEST(test_configtest::loading_double_quoted_string);
+		uUNIT_TEST(test_configtest::loading_error_no_key);
+		uUNIT_TEST(test_configtest::loading_error_no_value);
+		uUNIT_TEST(test_configtest::loading_error_string_not_terminated_single);
+		uUNIT_TEST(test_configtest::loading_error_string_not_terminated_double);
+		uUNIT_TEST(test_configtest::empty_value);
 	}
 
 	void teardown() override
@@ -93,8 +93,8 @@ public:
 		writeFile("a:b", false);
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_equal_sign()
@@ -102,8 +102,8 @@ public:
 		writeFile(" a =\tb\t");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_newline()
@@ -111,8 +111,8 @@ public:
 		writeFile("a:b");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_padding_space()
@@ -120,8 +120,8 @@ public:
 		writeFile(" a : b ", false);
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_padding_tab()
@@ -129,8 +129,8 @@ public:
 		writeFile("\ta\t:\tb\t", false);
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_padding_space_newline()
@@ -138,8 +138,8 @@ public:
 		writeFile(" a : b ");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_padding_tab_newline()
@@ -147,8 +147,8 @@ public:
 		writeFile("\ta\t:\tb\t");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_comment()
@@ -156,8 +156,8 @@ public:
 		writeFile("# comment\na:b");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_inline_comment()
@@ -165,8 +165,8 @@ public:
 		writeFile("a:b #comment");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("b"), cf.getValue("a"));
 	}
 
 	void loading_single_quoted_string()
@@ -174,8 +174,8 @@ public:
 		writeFile("a: '#\"b\" ' ");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT(cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("#\"b\" "), cf.getValue("a"));
+		uUNIT_ASSERT(cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("#\"b\" "), cf.getValue("a"));
 	}
 
 	void loading_double_quoted_string()
@@ -183,8 +183,8 @@ public:
 		writeFile("a: \"#'b' \" ");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string("#'b' "), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string("#'b' "), cf.getValue("a"));
 	}
 
 	void loading_error_no_key()
@@ -192,7 +192,7 @@ public:
 		writeFile(":foo");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(false, cf.load());
+		uUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 
 	void loading_error_no_value()
@@ -200,7 +200,7 @@ public:
 		writeFile("key");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(false, cf.load());
+		uUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 
 	void loading_error_string_not_terminated_single()
@@ -208,7 +208,7 @@ public:
 		writeFile("a:'b");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(false, cf.load());
+		uUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 
 	void loading_error_string_not_terminated_double()
@@ -216,7 +216,7 @@ public:
 		writeFile("a:\"b");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(false, cf.load());
+		uUNIT_ASSERT_EQUAL(false, cf.load());
 	}
 
 	void empty_value()
@@ -224,8 +224,8 @@ public:
 		writeFile("a:");
 
 		TestConfigFile cf;
-		DGUNIT_ASSERT_EQUAL(true, cf.load());
-		DGUNIT_ASSERT_EQUAL(std::string(""), cf.getValue("a"));
+		uUNIT_ASSERT_EQUAL(true, cf.load());
+		uUNIT_ASSERT_EQUAL(std::string(""), cf.getValue("a"));
 	}
 };
 

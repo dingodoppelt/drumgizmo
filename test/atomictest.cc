@@ -24,46 +24,46 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <atomic.h>
 
 class AtomicTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	AtomicTest()
 	{
-		DGUNIT_TEST(AtomicTest::podAtomicsUseStandardImpl);
-		DGUNIT_TEST(AtomicTest::nonPodAtomicsUseOwnImpl);
-		DGUNIT_TEST(AtomicTest::podAtomicCanBeDefaultInitialized);
-		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeDefaultInitialized);
-		DGUNIT_TEST(AtomicTest::podAtomicCanBeValueInitialized);
-		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueInitialized);
-		DGUNIT_TEST(AtomicTest::podAtomicCanBeValueAssigned);
-		DGUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueAssigned);
-		DGUNIT_TEST(AtomicTest::podAtomicsAreLockFree);
+		uUNIT_TEST(AtomicTest::podAtomicsUseStandardImpl);
+		uUNIT_TEST(AtomicTest::nonPodAtomicsUseOwnImpl);
+		uUNIT_TEST(AtomicTest::podAtomicCanBeDefaultInitialized);
+		uUNIT_TEST(AtomicTest::nonPodAtomicCanBeDefaultInitialized);
+		uUNIT_TEST(AtomicTest::podAtomicCanBeValueInitialized);
+		uUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueInitialized);
+		uUNIT_TEST(AtomicTest::podAtomicCanBeValueAssigned);
+		uUNIT_TEST(AtomicTest::nonPodAtomicCanBeValueAssigned);
+		uUNIT_TEST(AtomicTest::podAtomicsAreLockFree);
 	}
 
 	void podAtomicsUseStandardImpl()
 	{
-		DGUNIT_ASSERT(isUsingStandardImpl<bool>());
-		DGUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<short int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<long int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<long long int>());
-		DGUNIT_ASSERT(isUsingStandardImpl<float>());
-		DGUNIT_ASSERT(isUsingStandardImpl<double>());
-		DGUNIT_ASSERT(isUsingStandardImpl<long double>());
+		uUNIT_ASSERT(isUsingStandardImpl<bool>());
+		uUNIT_ASSERT(isUsingStandardImpl<unsigned short int>());
+		uUNIT_ASSERT(isUsingStandardImpl<short int>());
+		uUNIT_ASSERT(isUsingStandardImpl<unsigned int>());
+		uUNIT_ASSERT(isUsingStandardImpl<int>());
+		uUNIT_ASSERT(isUsingStandardImpl<unsigned long int>());
+		uUNIT_ASSERT(isUsingStandardImpl<long int>());
+		uUNIT_ASSERT(isUsingStandardImpl<unsigned long long int>());
+		uUNIT_ASSERT(isUsingStandardImpl<long long int>());
+		uUNIT_ASSERT(isUsingStandardImpl<float>());
+		uUNIT_ASSERT(isUsingStandardImpl<double>());
+		uUNIT_ASSERT(isUsingStandardImpl<long double>());
 	}
 
 	void nonPodAtomicsUseOwnImpl()
 	{
-		DGUNIT_ASSERT(!isUsingStandardImpl<std::string>());
+		uUNIT_ASSERT(!isUsingStandardImpl<std::string>());
 	}
 
 	void podAtomicCanBeDefaultInitialized()
@@ -76,52 +76,52 @@ public:
 	void nonPodAtomicCanBeDefaultInitialized()
 	{
 		Atomic<std::string> s;
-		DGUNIT_ASSERT_EQUAL(s.load(), std::string{});
+		uUNIT_ASSERT_EQUAL(s.load(), std::string{});
 	}
 
 	void podAtomicCanBeValueInitialized()
 	{
 		Atomic<int> i{5};
-		DGUNIT_ASSERT_EQUAL(i.load(), 5);
+		uUNIT_ASSERT_EQUAL(i.load(), 5);
 	}
 
 	void nonPodAtomicCanBeValueInitialized()
 	{
 		Atomic<std::string> s{"hello world"};
-		DGUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+		uUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
 	}
 
 	void podAtomicCanBeValueAssigned()
 	{
 		Atomic<int> i;
 		i = 5;
-		DGUNIT_ASSERT_EQUAL(i.load(), 5);
+		uUNIT_ASSERT_EQUAL(i.load(), 5);
 	}
 
 	void nonPodAtomicCanBeValueAssigned()
 	{
 		Atomic<std::string> s;
 		s = "hello world";
-		DGUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
+		uUNIT_ASSERT_EQUAL(s.load(), std::string{"hello world"});
 	}
 
 	void podAtomicsAreLockFree()
 	{
-		DGUNIT_ASSERT(isLockFree<bool>());
-		DGUNIT_ASSERT(isLockFree<unsigned short int>());
-		DGUNIT_ASSERT(isLockFree<short int>());
-		DGUNIT_ASSERT(isLockFree<unsigned int>());
-		DGUNIT_ASSERT(isLockFree<int>());
-		DGUNIT_ASSERT(isLockFree<unsigned long int>());
-		DGUNIT_ASSERT(isLockFree<long int>());
-		DGUNIT_ASSERT(isLockFree<float>());
-		DGUNIT_ASSERT(isLockFree<std::size_t>());
+		uUNIT_ASSERT(isLockFree<bool>());
+		uUNIT_ASSERT(isLockFree<unsigned short int>());
+		uUNIT_ASSERT(isLockFree<short int>());
+		uUNIT_ASSERT(isLockFree<unsigned int>());
+		uUNIT_ASSERT(isLockFree<int>());
+		uUNIT_ASSERT(isLockFree<unsigned long int>());
+		uUNIT_ASSERT(isLockFree<long int>());
+		uUNIT_ASSERT(isLockFree<float>());
+		uUNIT_ASSERT(isLockFree<std::size_t>());
 
 		// NOTE: Not lock free on small systems
-		//DGUNIT_ASSERT(isLockFree<unsigned long long int>());
-		//DGUNIT_ASSERT(isLockFree<long long int>());
-		//DGUNIT_ASSERT(isLockFree<double>());
-		//DGUNIT_ASSERT(isLockFree<long double>());
+		//uUNIT_ASSERT(isLockFree<unsigned long long int>());
+		//uUNIT_ASSERT(isLockFree<long long int>());
+		//uUNIT_ASSERT(isLockFree<double>());
+		//uUNIT_ASSERT(isLockFree<long double>());
 	}
 
 private:

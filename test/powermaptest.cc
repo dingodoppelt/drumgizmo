@@ -24,17 +24,17 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include "../src/powermap.h"
 
 class test_powermaptest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	test_powermaptest()
 	{
-		DGUNIT_TEST(test_powermaptest::check_values);
+		uUNIT_TEST(test_powermaptest::check_values);
 	}
 
 	void check_values()
@@ -43,7 +43,7 @@ public:
 
 		// TODO
 		// std::cout << powermap.map(.8) << std::endl;
-		// DGUNIT_ASSERT_EQUAL(powermap.map(.8), .8);
+		// uUNIT_ASSERT_EQUAL(powermap.map(.8), .8);
 	}
 };
 

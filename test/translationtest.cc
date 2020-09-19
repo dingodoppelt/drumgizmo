@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <locale>
 
@@ -33,13 +33,13 @@
 #include <stdlib.h>
 
 class TranslationTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	TranslationTest()
 	{
-		DGUNIT_TEST(TranslationTest::testFromFile);
-		DGUNIT_TEST(TranslationTest::testFromLocale);
+		uUNIT_TEST(TranslationTest::testFromFile);
+		uUNIT_TEST(TranslationTest::testFromLocale);
 	}
 
 	void testFromFile()
@@ -47,17 +47,17 @@ public:
 		Translation t;
 		char buf[100000];
 		FILE* fp = fopen(MO_SRC, "r");
-		DGUNIT_ASSERT(fp != nullptr);
+		uUNIT_ASSERT(fp != nullptr);
 		auto sz = fread(buf, 1, sizeof(buf), fp);
 		fclose(fp);
-		DGUNIT_ASSERT(t.load(buf, sz));
+		uUNIT_ASSERT(t.load(buf, sz));
 
 		// Look up translation from .mo file
-		DGUNIT_ASSERT_EQUAL(std::string("Trommesæt"),
+		uUNIT_ASSERT_EQUAL(std::string("Trommesæt"),
 		                    std::string(_("Drumkit")));
 
 		// No translation, return key
-		DGUNIT_ASSERT_EQUAL(std::string("No translation"),
+		uUNIT_ASSERT_EQUAL(std::string("No translation"),
 		                    std::string(_("No translation")));
 	}
 
@@ -67,11 +67,11 @@ public:
 		UITranslation t;
 
 		// Look up translation from .mo file
-		DGUNIT_ASSERT_EQUAL(std::string("Trommesæt"),
+		uUNIT_ASSERT_EQUAL(std::string("Trommesæt"),
 		                    std::string(_("Drumkit")));
 
 		// No translation, return key
-		DGUNIT_ASSERT_EQUAL(std::string("No translation"),
+		uUNIT_ASSERT_EQUAL(std::string("No translation"),
 		                    std::string(_("No translation")));
 	}
 };

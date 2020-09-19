@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <cassert>
 
@@ -49,46 +49,46 @@ public:
 };
 
 class ImageCacheTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	ImageCacheTest()
 	{
-		DGUNIT_TEST(ImageCacheTest::refCountTest);
+		uUNIT_TEST(ImageCacheTest::refCountTest);
 	}
 
 	void refCountTest()
 	{
 		TestableImageCache imageCache;
-		DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
-		DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+		uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 		{
 			auto image1{imageCache.getImage("foo")};
 			(void)image1;
-			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
-			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 
 			auto image2 = imageCache.getImage("bar");
-			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
-			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(1u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			auto image3 = imageCache.getImage("foo");
-			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
-			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 
 			{
 				auto image4 = imageCache.getImage("foo");
-				DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(3u));
-				DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+				uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(3u));
+				uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 			}
 
-			DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
-			DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(2u));
+			uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(1u));
 		}
 
-		DGUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
-		DGUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
+		uUNIT_ASSERT_EQUAL(imageCache.count("foo"), std::size_t(0u));
+		uUNIT_ASSERT_EQUAL(imageCache.count("bar"), std::size_t(0u));
 	}
 };
 

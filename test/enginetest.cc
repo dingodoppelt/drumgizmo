@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <thread>
 #include <chrono>
@@ -69,12 +69,12 @@ public:
 	bool isFreewheeling() const override { return true; }
 };
 
-class test_engine : public DGUnit
+class test_engine : public uUnit
 {
 public:
 	test_engine()
 	{
-		DGUNIT_TEST(test_engine::loading);
+		uUNIT_TEST(test_engine::loading);
 	}
 
 	DrumkitCreator drumkit_creator;

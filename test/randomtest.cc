@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <random.h>
 
@@ -32,14 +32,14 @@
 #include <cmath>
 
 class RandomTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	RandomTest()
 	{
-		DGUNIT_TEST(RandomTest::rangeTest);
-		DGUNIT_TEST(RandomTest::normalTest);
-		DGUNIT_TEST(RandomTest::chooseTest);
+		uUNIT_TEST(RandomTest::rangeTest);
+		uUNIT_TEST(RandomTest::normalTest);
+		uUNIT_TEST(RandomTest::chooseTest);
 	}
 
 	void rangeTest()
@@ -55,16 +55,16 @@ public:
 		{
 			float rand_float = rand.floatInRange(float_lb, float_ub);
 			float rand_int = rand.intInRange(int_lb, int_ub);
-			DGUNIT_ASSERT(rand_float >= float_lb && rand_float <= float_ub);
-			DGUNIT_ASSERT(rand_int >= int_lb && rand_int <= int_ub);
+			uUNIT_ASSERT(rand_float >= float_lb && rand_float <= float_ub);
+			uUNIT_ASSERT(rand_int >= int_lb && rand_int <= int_ub);
 		}
 
 		// check if the series of random numbers is the one we expect
 		// for a certain seed.
 		rand = Random(666);
-		DGUNIT_ASSERT_EQUAL(0, rand.intInRange(0,100));
-		DGUNIT_ASSERT_EQUAL(61, rand.intInRange(0,100));
-		DGUNIT_ASSERT_EQUAL(23, rand.intInRange(0,100));
+		uUNIT_ASSERT_EQUAL(0, rand.intInRange(0,100));
+		uUNIT_ASSERT_EQUAL(61, rand.intInRange(0,100));
+		uUNIT_ASSERT_EQUAL(23, rand.intInRange(0,100));
 	}
 
 	void normalTest()
@@ -89,8 +89,8 @@ public:
 		float estimated_stddev = sqrt(sum_of_squares/nr_of_samples - estimated_mean*estimated_mean);
 
 		float epsilon = 0.1;
-		DGUNIT_ASSERT(estimated_mean >= real_mean-epsilon && estimated_mean <= real_mean+epsilon);
-		DGUNIT_ASSERT(estimated_stddev >= real_stddev-epsilon && estimated_stddev <= real_stddev+epsilon);
+		uUNIT_ASSERT(estimated_mean >= real_mean-epsilon && estimated_mean <= real_mean+epsilon);
+		uUNIT_ASSERT(estimated_stddev >= real_stddev-epsilon && estimated_stddev <= real_stddev+epsilon);
 	}
 
 	void chooseTest()
@@ -102,7 +102,7 @@ public:
 
 		for (int i=0; i<nr_of_samples; i++)
 		{
-			DGUNIT_ASSERT_EQUAL(42, rand.choose(vec));
+			uUNIT_ASSERT_EQUAL(42, rand.choose(vec));
 		}
 	}
 };

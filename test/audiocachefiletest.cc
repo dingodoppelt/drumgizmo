@@ -24,7 +24,7 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#include "dgunit.h"
+#include <uunit.h>
 
 #include <cstring>
 
@@ -53,14 +53,14 @@ public:
 };
 
 class AudioCacheFileTest
-	: public DGUnit
+	: public uUnit
 {
 public:
 	AudioCacheFileTest()
 	{
-		DGUNIT_TEST(AudioCacheFileTest::refTest);
-		DGUNIT_TEST(AudioCacheFileTest::readTest);
-		DGUNIT_TEST(AudioCacheFileTest::noFileTest);
+		uUNIT_TEST(AudioCacheFileTest::refTest);
+		uUNIT_TEST(AudioCacheFileTest::readTest);
+		uUNIT_TEST(AudioCacheFileTest::noFileTest);
 	}
 
 	DrumkitCreator drumkit_creator;
@@ -72,19 +72,19 @@ public:
 
 		// Conduct tests
 		TestableAudioCacheFiles audiofiles;
-		DGUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
+		uUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 
 		audiofiles.getFile(filename);
-		DGUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
+		uUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
 
 		audiofiles.getFile(filename);
-		DGUNIT_ASSERT_EQUAL(2, audiofiles.getRef(filename));
+		uUNIT_ASSERT_EQUAL(2, audiofiles.getRef(filename));
 
 		audiofiles.releaseFile(filename);
-		DGUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
+		uUNIT_ASSERT_EQUAL(1, audiofiles.getRef(filename));
 
 		audiofiles.releaseFile(filename);
-		DGUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
+		uUNIT_ASSERT_EQUAL(-1, audiofiles.getRef(filename));
 	}
 
 	void readTestHelper(size_t buffer_size)
@@ -105,8 +105,8 @@ public:
 		std::vector<sample_t> read_buffer;
 
 		AudioCacheFile file(filename, read_buffer);
-		DGUNIT_ASSERT_EQUAL(filename, file.getFilename());
-		DGUNIT_ASSERT_EQUAL(13, (int)file.getChannelCount()); // Sanity check
+		uUNIT_ASSERT_EQUAL(filename, file.getFilename());
+		uUNIT_ASSERT_EQUAL(13, (int)file.getChannelCount()); // Sanity check
 
 		CacheChannels channels;
 
@@ -150,7 +150,7 @@ public:
 
 			for(size_t c = 0; c < 13; ++c)
 			{
-				DGUNIT_ASSERT_EQUAL(true, ready[c]?true:false);
+				uUNIT_ASSERT_EQUAL(true, ready[c]?true:false);
 			}
 
 			sample_t diff[13] = {0.0};
@@ -164,7 +164,7 @@ public:
 
 			for(int c = 0; c < 13; ++c)
 			{
-				DGUNIT_ASSERT_EQUAL((sample_t)0.0, diff[c]);
+				uUNIT_ASSERT_EQUAL((sample_t)0.0, diff[c]);
 			}
 		}
 
@@ -203,9 +203,9 @@ public:
 		std::vector<sample_t> read_buffer;
 
 		AudioCacheFile file(filename, read_buffer);
-		DGUNIT_ASSERT_EQUAL(filename, file.getFilename());
-		DGUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
-		DGUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());
+		uUNIT_ASSERT_EQUAL(filename, file.getFilename());
+		uUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getSize());
+		uUNIT_ASSERT_EQUAL(0u, (unsigned int)file.getChannelCount());
 
 		CacheChannels channels;
 
@@ -237,14 +237,14 @@ public:
 
 		for(size_t c = 0; c < 13; ++c)
 		{
-			DGUNIT_ASSERT_EQUAL(false, ready[c]?true:false);
+			uUNIT_ASSERT_EQUAL(false, ready[c]?true:false);
 		}
 
 		for(size_t c = 0; c < 13; ++c)
 		{
 			for(size_t i = 0; i < buffer_size; ++i)
 			{
-				DGUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
+				uUNIT_ASSERT_EQUAL(42.0f, samples[c][i]);
 			}
 		}
 	}
