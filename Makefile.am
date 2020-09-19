@@ -25,4 +25,7 @@ EXTRA_DIST = \
 	zita-resampler/libs/resampler.cc \
 	zita-resampler/libs/resampler-table.cc \
 	zita-resampler/libs/zita-resampler/resampler-table.h \
-	zita-resampler/libs/zita-resampler/resampler.h
+	zita-resampler/libs/zita-resampler/resampler.h \
+\
+	test/uunit/uunit.h \
+	test/uunit/uunit.cc

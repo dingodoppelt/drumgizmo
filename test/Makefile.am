@@ -15,7 +15,6 @@ TESTS += translationtest
 endif
 
 EXTRA_DIST = \
-	dgunit.h \
 	drumkit_creator.h \
 	lv2_test_host.h \
 	scopedfile.h \
@@ -25,7 +24,7 @@ if ENABLE_LV2
 TESTS += lv2
 endif
 
-check_PROGRAMS = $(TESTS) 
+check_PROGRAMS = $(TESTS)
 resource_CXXFLAGS = -I$(top_srcdir)/test/uunit -DOUTPUT=\"resource\" $(SNDFILE_CFLAGS) \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src \
