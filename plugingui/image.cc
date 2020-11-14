@@ -198,9 +198,9 @@ const Colour& Image::getPixel(size_t x, size_t y) const
 	return image_data[x + y * _width];
 }
 
-const std::uint8_t* Image::line(std::size_t y) const
+const std::uint8_t* Image::line(std::size_t y, std::size_t x_offset) const
 {
-	return image_data_raw.data() + y * _width * 4;
+	return image_data_raw.data() + y * _width * 4 + x_offset * 4;
 }
 
 bool Image::hasAlpha() const

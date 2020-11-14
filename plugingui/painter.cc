@@ -437,21 +437,21 @@ void Painter::drawImage(int x0, int y0, const Drawable& image)
 		}
 		else
 		{
-			std::size_t x = -1 * std::min(0, x0);
+			std::size_t x_offset = -1 * std::min(0, x0);
 			for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 			{
-				pixbuf.blendLine(x + x0, y + y0, image.line(y),
-				                 std::min((int)image.width(), fw - (int)x));
+				pixbuf.blendLine(x_offset + x0, y + y0, image.line(y, x_offset),
+				                 std::min((int)image.width(), fw - (int)x_offset));
 			}
 		}
 	}
 	else
 	{
-		std::size_t x = -1 * std::min(0, x0);
+		std::size_t x_offset = -1 * std::min(0, x0);
 		for(std::size_t y = -1 * std::min(0, y0); y < (std::size_t)fh; ++y)
 		{
-			pixbuf.writeLine(x + x0, y + y0, image.line(y),
-			                 std::min((int)image.width(), fw - (int)x));
+			pixbuf.writeLine(x_offset + x0, y + y0, image.line(y, x_offset),
+			                 std::min((int)image.width(), fw - (int)x_offset));
 		}
 	}
 }

@@ -43,7 +43,8 @@ public:
 	virtual std::size_t height() const = 0;
 
 	virtual const Colour& getPixel(std::size_t x, std::size_t y) const = 0;
-	virtual const std::uint8_t* line(std::size_t y) const = 0;
+	virtual const std::uint8_t* line(std::size_t y,
+	                                 std::size_t x_offset = 0) const = 0;
 
 	virtual bool hasAlpha() const = 0;
 };

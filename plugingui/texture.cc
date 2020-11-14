@@ -59,9 +59,9 @@ const Colour& Texture::getPixel(size_t x, size_t y) const
 	return image.getPixel(x + _x, y + _y);
 }
 
-const std::uint8_t* Texture::line(std::size_t y) const
+const std::uint8_t* Texture::line(std::size_t y, std::size_t x_offset) const
 {
-	return image.line(y + _y) + _x * 4;
+	return image.line(y + _y) + _x * 4 + x_offset * 4;
 }
 
 bool Texture::hasAlpha() const
