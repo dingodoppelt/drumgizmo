@@ -30,6 +30,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
 
 namespace GUI
 {
@@ -85,10 +86,10 @@ Rect PixelBuffer::updateBuffer(std::vector<PixelBufferAlpha*>& pixel_buffers)
 	{
 		if(pixel_buffer->dirty)
 		{
-			auto x1 = (std::size_t)pixel_buffer->x;
-			auto x2 = (std::size_t)(pixel_buffer->x + pixel_buffer->width);
-			auto y1 = (std::size_t)pixel_buffer->y;
-			auto y2 = (std::size_t)(pixel_buffer->y + pixel_buffer->height);
+			auto x1 = (std::size_t)std::max(pixel_buffer->x, 0);
+			auto x2 = (std::size_t)std::max((pixel_buffer->x + (int)pixel_buffer->width), 0);
+			auto y1 = (std::size_t)std::max(pixel_buffer->y, 0);
+			auto y2 = (std::size_t)std::max((pixel_buffer->y + (int)pixel_buffer->height), 0);
 
 			pixel_buffer->dirty = false;
 			if(!has_dirty_rect)

@@ -177,6 +177,10 @@ void Tooltip::show()
 		y += activating_widget->height();
 	}
 
+	// Make sure the tip is displayed inside the window
+	x = std::max(x, 0);
+	y = std::max(y, 0);
+
 	move(x, y);
 	Widget::show();
 
