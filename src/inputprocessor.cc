@@ -252,7 +252,16 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 		return false;
 	}
 
-	events_ds.startAddingNewGroup(instrument_id);
+	if(settings.enable_voice_limit.load())
+	{
+		limitVoices(instrument_id,
+		            settings.voice_limit_max.load(),
+		            settings.voice_limit_rampdown.load());
+	}
+
+	//Given that audio files could be invalid, maybe we must add the new
+	//group just before adding the first new sample...
+	bool new_group_added = false;
 	for(Channel& ch: kit.channels)
 	{
 		const auto af = sample->getAudioFile(ch);
@@ -263,8 +272,15 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 		else
 		{
 			//DEBUG(inputprocessor, "Adding event %d.\n", event.offset);
-			auto& event_sample = events_ds.emplace<SampleEvent>(ch.num, ch.num, 1.0, af,
-				                                                instr->getGroup(), instrument_id);
+			if(!new_group_added)
+			{
+				new_group_added=true;
+				events_ds.startAddingNewGroup(instrument_id);
+			}
+
+			auto& event_sample =
+				events_ds.emplace<SampleEvent>(ch.num, ch.num, 1.0, af,
+				                               instr->getGroup(), instrument_id);
 
 			event_sample.offset = (event.offset + pos) * resample_ratio;
 			if(settings.normalized_samples.load() && sample->getNormalized())
@@ -352,4 +368,69 @@ bool InputProcessor::processStop(event_t& event)
 	}
 
 	return true;
+}
+
+void InputProcessor::limitVoices(std::size_t instrument_id,
+                                 std::size_t max_voices,
+                                 float rampdown_time)
+{
+	const auto& group_ids=events_ds.getSampleEventGroupIDsOf(instrument_id);
+
+	if(group_ids.size() <= max_voices)
+	{
+		return;
+	}
+
+	//Filter out ramping events...
+	auto filter_ramping_predicate =
+		[this](EventGroupID group_id) -> bool
+		{
+			const auto& event_ids=events_ds.getEventIDsOf(group_id);
+			//TODO: This should not happen.
+			if(!event_ids.size())
+			{
+				return false;
+			}
+
+			const auto&	sample=events_ds.get<SampleEvent>(event_ids[0]);
+			return !sample.rampdownInProgress();
+		};
+
+	EventGroupIDs non_ramping;
+	std::copy_if(std::begin(group_ids),
+	             std::end(group_ids),
+	             std::back_inserter(non_ramping), filter_ramping_predicate);
+
+	if(!non_ramping.size())
+	{
+		return;
+	}
+
+	//Let us get the eldest...
+	//TODO: where is the playhead? Should we add it to the offset?
+	auto compare_event_offsets =
+		[this](EventGroupID a, EventGroupID b)
+		{
+			const auto& event_ids_a=events_ds.getEventIDsOf(a);
+			const auto& event_ids_b=events_ds.getEventIDsOf(b);
+
+			const auto&	sample_a=events_ds.get<SampleEvent>(event_ids_a[0]);
+			const auto& sample_b=events_ds.get<SampleEvent>(event_ids_b[0]);
+			return sample_a.offset < sample_b.offset;
+		};
+
+	auto it = std::min_element(std::begin(non_ramping),
+	                           std::end(non_ramping),
+	                           compare_event_offsets);
+	if(it == std::end(non_ramping))
+	{
+		return;
+	}
+
+	const auto& event_ids = events_ds.getEventIDsOf(*it);
+	for(const auto& event_id : event_ids)
+	{
+		auto& sample=events_ds.get<SampleEvent>(event_id);
+		applyChoke(settings, sample, rampdown_time, sample.offset);
+	}
 }

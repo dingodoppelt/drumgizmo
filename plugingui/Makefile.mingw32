@@ -56,6 +56,7 @@ GUI_SRC = \
 	verticalline.cc \
 	resource.cc \
 	resource_data.cc \
+	voicelimitframecontent.cc \
 	lodepng/lodepng.cpp
 
 GUI_CFLAGS=-DUSE_THREAD -DUI_WIN32 -DSTANDALONE

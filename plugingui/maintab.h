@@ -39,6 +39,7 @@
 #include "sampleselectionframecontent.h"
 #include "visualizerframecontent.h"
 #include "powerwidget.h"
+#include "voicelimitframecontent.h"
 
 struct Settings;
 class SettingsNotifier;
@@ -65,10 +66,11 @@ private:
 	void resamplingOnChange(bool on);
 	void timingOnChange(bool on);
 	void powerOnChange(bool on);
+	void voicelimitOnChange(bool status);
 
 	Image logo{":resources/logo.png"};
 
-	GridLayout layout{this, 2, 49};
+	GridLayout layout{this, 2, 64};
 
 	FrameWidget drumkit_frame{this, false};
 	FrameWidget status_frame{this, false};
@@ -80,6 +82,7 @@ private:
 	FrameWidget sampleselection_frame{this, false, true};
 	FrameWidget visualizer_frame{this, false, true};
 	FrameWidget power_frame{this, true, true};
+	FrameWidget voicelimit_frame{this, true, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
@@ -91,6 +94,7 @@ private:
 	SampleselectionframeContent sampleselectionframe_content;
 	VisualizerframeContent visualizerframe_content;
 	PowerWidget powerframe_content;
+	VoiceLimitFrameContent voicelimit_content;
 
 	void add(std::string const& title, FrameWidget& frame, Widget& content,
 	         std::size_t height, int column);

@@ -154,6 +154,7 @@ GUI_SRC = \
 	utf8.cc \
 	verticalline.cc \
 	visualizerframecontent.cc \
+	voicelimitframecontent.cc \
 	widget.cc \
 	window.cc
 
@@ -227,6 +228,7 @@ GUI_HDR = \
 	utf8.h \
 	verticalline.h \
 	visualizerframecontent.h \
+	voicelimitframecontent.h \
 	widget.h \
 	window.h
 

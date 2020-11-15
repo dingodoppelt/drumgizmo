@@ -165,6 +165,15 @@ struct Settings
 
 	// Notify UI about load errors
 	Atomic<std::string> load_status_text;
+
+	// Enables the ramping down of old samples once X groups of the same instrument are playing.
+	Atomic<bool> enable_voice_limit{false};
+	// Max number of voices before old samples are ramped down.
+	static std::size_t constexpr voice_limit_max_default = 15;
+	Atomic<std::size_t> voice_limit_max{voice_limit_max_default};
+	// Time it takes for an old sample to completely fall silent.
+	static float constexpr voice_limit_rampdown_default = 0.5f;
+	Atomic<float> voice_limit_rampdown{voice_limit_rampdown_default};
 };
 
 //! Settings getter class.
@@ -243,6 +252,10 @@ struct SettingsGetter
 
 	SettingRef<std::string> load_status_text;
 
+	SettingRef<bool> enable_voice_limit;
+	SettingRef<std::size_t> voice_limit_max;
+	SettingRef<float> voice_limit_rampdown;
+
 	SettingsGetter(Settings& settings)
 		: drumkit_file(settings.drumkit_file)
 		, drumkit_load_status(settings.drumkit_load_status)
@@ -300,6 +313,9 @@ struct SettingsGetter
 		, audition_instrument{settings.audition_instrument}
 		, audition_velocity{settings.audition_velocity}
 		, load_status_text{settings.load_status_text}
+		, enable_voice_limit{settings.enable_voice_limit}
+		, voice_limit_max{settings.voice_limit_max}
+		, voice_limit_rampdown{settings.voice_limit_rampdown}
 	{
 	}
 };
@@ -379,6 +395,10 @@ public:
 
 	Notifier<std::string> load_status_text;
 
+	Notifier<bool> enable_voice_limit;
+	Notifier<std::size_t> voice_limit_max;
+	Notifier<float> voice_limit_rampdown;
+
 	void evaluate()
 	{
 #define EVAL(x) if(settings.x.hasChanged()) { x(settings.x.getValue()); }
@@ -453,6 +473,10 @@ public:
 		EVAL(audition_velocity);
 
 		EVAL(load_status_text);
+
+		EVAL(enable_voice_limit);
+		EVAL(voice_limit_max);
+		EVAL(voice_limit_rampdown);
 	}
 
 	SettingsNotifier(Settings& settings)

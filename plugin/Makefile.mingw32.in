@@ -113,6 +113,7 @@ GUI_SRC = \
 	@top_srcdir@/plugingui/utf8.cc \
 	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/visualizerframecontent.cc \
+	@top_srcdir@/plugingui/voicelimitframecontent.cc \
 	@top_srcdir@/plugingui/widget.cc \
 	@top_srcdir@/plugingui/window.cc \
 	@top_srcdir@/plugingui/lodepng/lodepng.cpp

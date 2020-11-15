@@ -651,6 +651,12 @@ std::string DrumGizmoPlugin::ConfigStringIO::get()
 		float2str(settings.powermap_fixed2_y.load()) + "</value>\n"
 		"  <value name=\"powermap_shelf\">" +
 		bool2str(settings.powermap_shelf.load()) + "</value>\n"
+		"  <value name=\"enable_voice_limit\">" +
+		bool2str(settings.enable_voice_limit.load()) + "</value>\n"
+		"  <value name=\"voice_limit_max\">" +
+		int2str(settings.voice_limit_max.load()) + "</value>\n"
+		"  <value name=\"voice_limit_rampdown\">" +
+		float2str(settings.voice_limit_rampdown.load()) + "</value>\n"
 		"</config>";
 }
 
@@ -809,6 +815,21 @@ bool DrumGizmoPlugin::ConfigStringIO::set(std::string config_string)
 	if(p.value("powermap_shelf") != "")
 	{
 		settings.powermap_shelf.store(p.value("powermap_shelf") == "true");
+	}
+
+	if(p.value("enable_voice_limit") != "")
+	{
+		settings.enable_voice_limit.store(p.value("enable_voice_limit") == "true");
+	}
+
+	if(p.value("voice_limit_max") != "")
+	{
+		settings.voice_limit_max.store(str2int(p.value("voice_limit_max")));
+	}
+
+	if(p.value("voice_limit_rampdown") != "")
+	{
+		settings.voice_limit_rampdown.store(str2float(p.value("voice_limit_rampdown")));
 	}
 
 	std::string newkit = p.value("drumkitfile");

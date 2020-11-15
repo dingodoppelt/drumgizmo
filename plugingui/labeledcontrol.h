@@ -31,6 +31,7 @@
 
 #include <iomanip>
 #include <sstream>
+#include <functional>
 
 namespace GUI
 {
@@ -39,6 +40,10 @@ class LabeledControl
 	: public Widget
 {
 public:
+
+	using ValueTransformationFunction =
+		std::function<std::string(float, float, float)>;
+
 	LabeledControl(Widget* parent, const std::string& name)
 		: Widget(parent)
 	{
@@ -63,6 +68,11 @@ public:
 		layout.addItem(&value);
 	}
 
+	void setValueTransformationFunction(ValueTransformationFunction function)
+	{
+		value_transformation_func = function;
+	}
+
 	float offset{0.0f};
 	float scale{1.0f};
 
@@ -71,8 +81,17 @@ private:
 	Label caption{this};
 	Label value{this};
 
+	ValueTransformationFunction value_transformation_func;
+
 	void setValue(float new_value)
 	{
+		if(value_transformation_func)
+		{
+			value.setText(value_transformation_func(new_value, scale, offset));
+			return;
+		}
+
+		//TODO: Surely this could be the "default transformation function"?
 		new_value *= scale;
 		new_value += offset;
 		std::stringstream stream;

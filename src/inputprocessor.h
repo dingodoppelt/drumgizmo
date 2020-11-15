@@ -64,6 +64,11 @@ private:
 	bool processChoke(event_t& event, std::size_t pos, double resample_ratio);
 	bool processStop(event_t& event);
 
+	//! Ramps down samples from events_ds is there are more groups playing than
+	//! max_voices for a given instrument.
+	void limitVoices(std::size_t instrument_id, std::size_t max_voices,
+	                 float rampdown_time);
+
 	std::vector<std::unique_ptr<InputFilter>> filters;
 
 	Settings& settings;

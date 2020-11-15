@@ -46,6 +46,7 @@ MainTab::MainTab(Widget* parent,
 	, sampleselectionframe_content{this, settings, settings_notifier}
 	, visualizerframe_content{this, settings, settings_notifier}
 	, powerframe_content{this, settings, settings_notifier}
+	, voicelimit_content{this, settings, settings_notifier}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -116,30 +117,50 @@ MainTab::MainTab(Widget* parent,
 		_("the lower left corner, then the three control points, and then\n") +
 		_("the upper right corner, enabling to draw more complicated functions.");
 
+	const std::string voice_limit_tip = std::string(
+		_("This feature controls how many voices can simultaneously be in play for a given\n")) +
+		_("instrument. When this feature is active, Drumgizmo will silence any excess \n") +
+		_("voices to ease the burden of processing.\n") +
+		_("\n") +
+		_("This feature works on a per-instrument basis, e.g., voices played on the bass\n") +
+		_("drum can only be silenced by other bass drum hits, and not by the snare.\n") +
+		_("\n") +
+		_("  * Max voices: The maximum number of voices that should be allowed to play.\n") +
+		_("  * Rampdown time: How many seconds it takes to silence a voice.");
+
 	layout.setResizeChildren(true);
 
-	add(_("Drumkit"), drumkit_frame, drumkitframe_content, 12, 0);
-	add(_("Status"), status_frame, statusframe_content, 14, 0);
-	add(_("Resampling"), resampling_frame, resamplingframe_content, 9, 0);
-	add(_("Disk Streaming"), diskstreaming_frame, diskstreamingframe_content, 7, 0);
-	add(_("Bleed Control"), bleedcontrol_frame, bleedcontrolframe_content, 7, 0);
+	//Left column...
+	add(_("Drumkit"), drumkit_frame, drumkitframe_content, 14, 0);
+	add(_("Status"), status_frame, statusframe_content, 12, 0);
+	add(_("Resampling"), resampling_frame, resamplingframe_content, 10, 0);
+	add(_("Voice Limit"), voicelimit_frame, voicelimit_content, 10, 0);
+	voicelimit_frame.setHelpText(voice_limit_tip);
+	add(_("Disk Streaming"), diskstreaming_frame, diskstreamingframe_content, 9, 0);
+	add(_("Bleed Control"), bleedcontrol_frame, bleedcontrolframe_content, 9, 0);
 
-	add(_("Velocity Humanizer"), humanizer_frame, humanizerframe_content, 8, 1);
+	//Right column
+	add(_("Velocity Humanizer"), humanizer_frame, humanizerframe_content,10, 1);
 	humanizer_frame.setHelpText(humanizer_tip);
-	add(_("Timing Humanizer"), timing_frame, timingframe_content, 8, 1);
+
+	add(_("Timing Humanizer"), timing_frame, timingframe_content, 10, 1);
 	timing_frame.setHelpText(timing_tip);
+
 	add(_("Sample Selection"), sampleselection_frame,
-	    sampleselectionframe_content, 8, 1);
+	    sampleselectionframe_content, 10, 1);
 	sampleselection_frame.setHelpText(sampleselection_tip);
-	add(_("Visualizer"), visualizer_frame, visualizerframe_content, 8, 1);
+
+	add(_("Visualizer"), visualizer_frame, visualizerframe_content, 14, 1);
 	visualizer_frame.setHelpText(visualizer_tip);
-	add(_("Velocity Curve"), power_frame, powerframe_content, 17, 1);
+
+	add(_("Velocity Curve"), power_frame, powerframe_content, 20, 1);
 	power_frame.setHelpText(power_tip);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);
 	bleedcontrol_frame.setOnSwitch(settings.enable_bleed_control);
 	resampling_frame.setOnSwitch(settings.enable_resampling);
 	timing_frame.setOnSwitch(settings.enable_latency_modifier);
+	voicelimit_frame.setOnSwitch(settings.enable_voice_limit);
 
 	// FIXME:
 	bleedcontrol_frame.setEnabled(false);
@@ -160,11 +181,13 @@ MainTab::MainTab(Widget* parent,
 	        this, &MainTab::timingOnChange);
 	CONNECT(&bleedcontrol_frame, onEnabledChanged,
 	        &bleedcontrolframe_content, &BleedcontrolframeContent::setEnabled);
-
 	CONNECT(&settings_notifier, enable_powermap,
 	        &power_frame, &FrameWidget::setOnSwitch);
 	CONNECT(&power_frame, onSwitchChangeNotifier,
 	        this, &MainTab::powerOnChange);
+	CONNECT(&voicelimit_frame, onSwitchChangeNotifier,
+	        this, &MainTab::voicelimitOnChange);
+
 }
 
 void MainTab::resize(std::size_t width, std::size_t height)
@@ -200,6 +223,11 @@ void MainTab::timingOnChange(bool on)
 void MainTab::powerOnChange(bool on)
 {
 	settings.enable_powermap.store(on);
+}
+
+void MainTab::voicelimitOnChange(bool status)
+{
+	settings.enable_voice_limit.store(status);
 }
 
 void MainTab::add(std::string const& title, FrameWidget& frame, Widget& content,
