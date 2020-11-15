@@ -35,6 +35,7 @@
 #include "window.h"
 #include "resource.h"
 #include "uitranslation.h"
+#include "mainwindow.h"
 
 int main()
 {
@@ -62,11 +63,10 @@ int main()
 #endif
 	main_window.show();
 
-	// TODO: automatically use drumgizmo_plugin.h size here
 #ifndef UI_PUGL
-	parent.resize(750, 713);
+	parent.resize(GUI::MainWindow::main_width, GUI::MainWindow::main_height);
 #else
-	main_window.resize(750, 713);
+	main_window.resize(GUI::MainWindow::main_width, GUI::MainWindow::main_height);
 #endif
 
 	while(true)

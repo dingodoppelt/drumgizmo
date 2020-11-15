@@ -65,7 +65,7 @@ DrumGizmoPlugin::DrumGizmoPlugin()
 	init();
 
 	drumgizmo = std::make_shared<DrumGizmo>(settings, output, input);
-	resizeWindow(width, height);
+	resizeWindow(GUI::MainWindow::main_width, GUI::MainWindow::main_height);
 	drumgizmo->setFreeWheel(true);
 	drumgizmo->setSamplerate(44100);
 	drumgizmo->setFrameSize(2048);
@@ -317,7 +317,7 @@ bool DrumGizmoPlugin::hasGUI()
 void* DrumGizmoPlugin::createWindow(void* parent)
 {
 	plugin_gui = std::make_shared<GUI::MainWindow>(settings, parent);
-	resizeWindow(width, height);
+	resizeWindow(GUI::MainWindow::main_width, GUI::MainWindow::main_height);
 	onShowWindow();
 
 	return plugin_gui->getNativeWindowHandle();

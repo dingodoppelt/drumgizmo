@@ -114,6 +114,7 @@ public:
 	void closeWindow() override;
 
 private:
+
 	class Input
 		: public AudioInputEngineMidi
 	{
@@ -214,9 +215,6 @@ private:
 	std::uint32_t inlineDisplayBuffer[1024*1024];
 	GUI::Image inline_display_image{":resources/logo.png"};
 	bool inline_image_first_draw{true};
-
-	static constexpr std::size_t width{750};
-	static constexpr std::size_t height{713};
 
 #ifdef WITH_NLS
 	UITranslation translation;
