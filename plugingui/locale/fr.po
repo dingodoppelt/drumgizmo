@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: drumgizmo 0.9.18.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
-"PO-Revision-Date: 2020-08-25 23:13+0200\n"
+"PO-Revision-Date: 2020-11-21 16:49+0200\n"
 "Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: none\n"
 "Language: fr\n"
@@ -434,36 +434,46 @@ msgid ""
 "This feature controls how many voices can simultaneously be in play for a "
 "given\n"
 msgstr ""
+"Cette fonction contrôle le nombre de voix pouvant être jouées simultanément "
+"pour\n"
 
 #: maintab.cc:122
 msgid ""
 "instrument. When this feature is active, Drumgizmo will silence any excess \n"
 msgstr ""
+"un instrument donné. Lorsque cette fonction est activée, Drumgizmo fait \n"
 
 #: maintab.cc:123
 msgid "voices to ease the burden of processing.\n"
-msgstr ""
+msgstr "taire les voix en excès pour alléger la lourdeur du traitement.\n"
 
 #: maintab.cc:125
 msgid ""
 "This feature works on a per-instrument basis, e.g., voices played on the "
 "bass\n"
 msgstr ""
+"Cette caractéristique fonctionne instrument par instrument, c'est-à-dire "
+"que les\n"
 
 #: maintab.cc:126
 msgid ""
 "drum can only be silenced by other bass drum hits, and not by the snare.\n"
 msgstr ""
+"voix jouées à la grosse caisse ne peuvent être silencées que par d'autres \n"
+"coups de grosse caisse, et pas par la caisse claire.\n"
 
 #: maintab.cc:128
 msgid ""
 "  * Max voices: The maximum number of voices that should be allowed to "
 "play.\n"
 msgstr ""
+"  * Voix max : le nombre maximum de voix qui peuvent être autorisées à jouer.\n"
+
 
 #: maintab.cc:129
 msgid "  * Rampdown time: How many seconds it takes to silence a voice."
 msgstr ""
+"  * Durée de rampe : le nombre de secondes nécessaires pour silencer une voix."
 
 #: maintab.cc:134 mainwindow.cc:56
 msgid "Drumkit"
@@ -479,7 +489,7 @@ msgstr "Rééchantillonnage"
 
 #: maintab.cc:137
 msgid "Voice Limit"
-msgstr ""
+msgstr "Limite de voix"
 
 #: maintab.cc:139
 msgid "Disk Streaming"
@@ -603,7 +613,7 @@ msgstr "Pas de midimap chargée"
 
 #: voicelimitframecontent.cc:41
 msgid "Per-instrument voice limit:"
-msgstr ""
+msgstr "Limite de voix par instrument :"
 
 #: humanizerframecontent.h:61
 msgid "pAttack"
@@ -643,8 +653,8 @@ msgstr "pNonchalance"
 
 #: voicelimitframecontent.h:66
 msgid "Max voices"
-msgstr ""
+msgstr "Voix max"
 
 #: voicelimitframecontent.h:67
 msgid "Rampdown time"
-msgstr ""
+msgstr "Durée de rampe"
