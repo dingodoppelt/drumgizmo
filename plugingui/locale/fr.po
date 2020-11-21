@@ -172,300 +172,340 @@ msgstr "Erreur lors de la modification pour '%s'\n"
 msgid "Setting path of lineedit to %s\n"
 msgstr "Paramétrage du chemin de lineedit pour %s\n"
 
-#: maintab.cc:55
+#: maintab.cc:56
 msgid "The first two knobs influence how DrumGizmo simulates the\n"
 msgstr "Les deux premiers boutons influencent la façon dont DrumGizmo\n"
 
-#: maintab.cc:56
+#: maintab.cc:57
 msgid "stamina of a physical drummers, ie. the fact that they\n"
 msgstr "simule l'endurance d'un batteur physique, c'est à dire le fait qu'il\n"
 
-#: maintab.cc:57
+#: maintab.cc:58
 msgid "loose power in their strokes when playing fast notes:\n"
 msgstr ""
 "perde de la puissance dans ses coups quand il joue des notes rapides :\n"
 
-#: maintab.cc:58
+#: maintab.cc:59
 msgid "  * pAttack: How quickly the velocity gets reduced when\n"
 msgstr "  * pAttaque : la rapidité avec laquelle la vélocité est réduite\n"
 
-#: maintab.cc:59
+#: maintab.cc:60
 msgid "     playing fast notes.\n"
 msgstr "      lorsque vous jouez des notes rapides.\n"
 
-#: maintab.cc:60
+#: maintab.cc:61
 msgid "     Lower values result in faster velocity reduction.\n"
 msgstr ""
 "     Des valeurs plus faibles entraînent une réduction plus rapide\n"
 "     de la vitesse.\n"
 
-#: maintab.cc:61
+#: maintab.cc:62
 msgid "  * pRelease: How quickly the drummer regains the velocity\n"
 msgstr "  * pRelâche : la rapidité avec laquelle le batteur retrouve\n"
 
-#: maintab.cc:62
+#: maintab.cc:63
 msgid "     when there are spaces between the notes.\n"
 msgstr "     la vélocité lorsqu'il y a de l'espace entre les notes.\n"
 
-#: maintab.cc:63
+#: maintab.cc:64
 msgid "     Lower values result in faster regain.\n"
 msgstr ""
 "     Des valeurs plus faibles entraînent une récupération plus rapide.\n"
 
-#: maintab.cc:64 maintab.cc:85
+#: maintab.cc:65 maintab.cc:86 maintab.cc:124 maintab.cc:127
 msgid "\n"
 msgstr ""
 
-#: maintab.cc:65
+#: maintab.cc:66
 msgid "The last knob controls the randomization of the sample selection:\n"
 msgstr ""
 "Le dernier bouton contrôle la randomisation de la sélection\n"
 "de l'échantillon :\n"
 
-#: maintab.cc:66
+#: maintab.cc:67
 msgid "  * pStdDev: The standard-deviation for the sample selection.\n"
 msgstr "  * pStdDev : l'écart-type pour la sélection de l'échantillon.\n"
 
-#: maintab.cc:67
+#: maintab.cc:68
 msgid "     Higher value makes it more likely that a sample further\n"
 msgstr ""
 "     Plus la valeur est élevée, plus il est probable qu'un échantillon\n"
 
-#: maintab.cc:68
+#: maintab.cc:69
 msgid "     away from the input velocity will be played."
 msgstr "     plus éloigné de la vitesse d'entrée sera joué."
 
-#: maintab.cc:71
+#: maintab.cc:72
 msgid "These three knobs influence how DrumGizmo simulates the tightness\n"
 msgstr "Ces trois boutons influencent la façon dont DrumGizmo simule\n"
 
-#: maintab.cc:72
+#: maintab.cc:73
 msgid "of the drummer.\n"
 msgstr "la raideur du batteur.\n"
 
-#: maintab.cc:73
+#: maintab.cc:74
 msgid "The drifting is defined as the difference between\n"
 msgstr "La dérive est définie comme la différence entre\n"
 
-#: maintab.cc:74
+#: maintab.cc:75
 msgid ""
 "the perfect metronome (defined by the note positions) and the 'internal'\n"
 msgstr ""
 "le métronome parfait (défini par les positions des notes) et le métronome\n"
 
-#: maintab.cc:75
+#: maintab.cc:76
 msgid "metronome of the drummer which can then drift back and forth in a\n"
 msgstr "'interne' du batteur qui peut alors dériver d'avant en arrière\n"
 
-#: maintab.cc:76
+#: maintab.cc:77
 msgid "controlled fashion:\n"
 msgstr "d'une manière contrôlée :\n"
 
-#: maintab.cc:77
+#: maintab.cc:78
 msgid ""
 "  * pTightness: For each note how much is the drummer allowed to drift.\n"
 msgstr "  * pRaideur : pour chaque note, combien le batteur est à la dérive.\n"
 
-#: maintab.cc:78
+#: maintab.cc:79
 msgid "     Higher value make the drummer more tight, ie. drift less.\n"
 msgstr ""
 "     Plus la valeur est élevée, plus le batteur est raide,\n"
 "     c'est-à-dire qu'il dérive moins.\n"
 
-#: maintab.cc:79
+#: maintab.cc:80
 msgid ""
 "  * pTimingRegain: Once the drifted, how fast does the drummer's 'internal'\n"
 msgstr ""
 "  * pRetourTiming : une fois qu'il a dérivé, à quelle vitesse le métronome\n"
 
-#: maintab.cc:80
+#: maintab.cc:81
 msgid "     metronome get back in sync with the perfect metronome.\n"
 msgstr ""
 "     'interne' du batteur se resynchronise avec le métronome parfait.\n"
 
-#: maintab.cc:81
+#: maintab.cc:82
 msgid "     Higher values moves the timing back towards perfect faster.\n"
 msgstr ""
 "     Des valeurs plus élevées ramènent plus rapidement le timing\n"
 "     vers la perfection.\n"
 
-#: maintab.cc:82
+#: maintab.cc:83
 msgid ""
 "  * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n"
 msgstr ""
 "  * pNonchalance : ajoute ou soustrait un délai fixe en ms à toutes les "
 "notes.\n"
 
-#: maintab.cc:83
+#: maintab.cc:84
 msgid "     alter the feel of a beat.\n"
 msgstr "     Cela modifiera la sensation d'un battement.\n"
 
-#: maintab.cc:84
+#: maintab.cc:85
 msgid ""
 "     Positive values are up-beat, negative values are back on the beat.\n"
 msgstr ""
 "     Les valeurs positives sont en avance sur le temps, les valeurs\n"
 "     négatives sont en retard.\n"
 
-#: maintab.cc:86
+#: maintab.cc:87
 msgid ""
 "NOTE: Enabling timing humanization will introduce a fixed delay into the\n"
 msgstr ""
 "REMARQUE : l'activation de l'humanisation du timing introduira un délai\n"
 
-#: maintab.cc:87
+#: maintab.cc:88
 msgid "audio stream.\n"
 msgstr "fixe dans le flux audio.\n"
 
-#: maintab.cc:88
+#: maintab.cc:89
 msgid "So this feature should be disabled when using DrumGizmo in\n"
 msgstr ""
 "Donc, cette fonction devrait être désactivée lors de l'utilisation de\n"
 
-#: maintab.cc:89
+#: maintab.cc:90
 msgid "a real-time scenario such as live with a MIDI drumkit."
 msgstr ""
 "DrumGizmo dans un scénario temps-réel tel qu'un live avec\n"
 "un kit de batterie MIDI."
 
-#: maintab.cc:92
+#: maintab.cc:93
 msgid "These three knobs influence how DrumGizmo selects\n"
 msgstr "Ces trois boutons influencent la façon dont DrumGizmo\n"
 
-#: maintab.cc:93
+#: maintab.cc:94
 msgid "its samples in the following way:\n"
 msgstr "sélectionne ses échantillons de la manière suivante :\n"
 
-#: maintab.cc:94
+#: maintab.cc:95
 msgid "  * pClose: The importance given to choosing a sample close\n"
 msgstr "  * pProche : l'importance accordée au choix d'un échantillon\n"
 
-#: maintab.cc:95
+#: maintab.cc:96
 msgid "     to the actual MIDI value (after humanization)\n"
 msgstr "     proche de la valeur MIDI réelle (après humanisation)\n"
 
-#: maintab.cc:96
+#: maintab.cc:97
 msgid "  * pDiversity: The importance given to choosing samples\n"
 msgstr "  * pDiversité : l'importance accordée au choix d'échantillons\n"
 
-#: maintab.cc:97
+#: maintab.cc:98
 msgid "     which haven't been played recently.\n"
 msgstr "     qui n'ont pas été joués récemment.\n"
 
-#: maintab.cc:98
+#: maintab.cc:99
 msgid "  * pRandom: The amount of randomness added."
 msgstr "  * pAléatoire : la quantité de hasard ajoutée."
 
-#: maintab.cc:101
+#: maintab.cc:102
 msgid "This graph visualizes the time and velocity offsets of last note\n"
 msgstr "Ce graphique affiche les décalages de temps et de vélocité de la\n"
 
-#: maintab.cc:102
+#: maintab.cc:103
 msgid "played according to it's ideal input time and velocity.\n"
 msgstr ""
 "dernière note jouée en fonction de son temps d'entrée idéal\n"
 "et de sa vélocité.\n"
 
-#: maintab.cc:103
+#: maintab.cc:104
 msgid "The green lines indicate the ideal time and velocity positions.\n"
 msgstr ""
 "Les lignes vertes indiquent la position idéale du temps et\n"
 "de la vitesse.\n"
 
-#: maintab.cc:104
+#: maintab.cc:105
 msgid "The pink areas indicate the spread of the position and velocity\n"
 msgstr "Les zones roses indiquent l'étalement de la position et la vitesse\n"
 
-#: maintab.cc:105
+#: maintab.cc:106
 msgid "of the next note in line.\n"
 msgstr "de la note suivante sur la ligne.\n"
 
-#: maintab.cc:106
+#: maintab.cc:107
 msgid "The wider the area the more the note can move in time and velocity."
 msgstr ""
 "Plus la zone est large, plus la note peut se déplacer dans le temps\n"
 "et la vélocité."
 
-#: maintab.cc:109
+#: maintab.cc:110
 msgid "This function controls how the input powers are mapped to the powers\n"
 msgstr ""
 "Cette fonction contrôle comment les puissances d'entrée sont mises en\n"
 "correspondance avec les puissances que DrumGizmo utilise pour\n"
 
-#: maintab.cc:110
+#: maintab.cc:111
 msgid "that DrumGizmo uses for selecting samples.\n"
 msgstr "sélectionner les échantillons.\n"
 
-#: maintab.cc:111
+#: maintab.cc:112
 msgid "You can control the function by dragging and dropping the\n"
 msgstr "Vous pouvez contrôler la fonction en glissant et déposant les trois\n"
 
-#: maintab.cc:112
+#: maintab.cc:113
 msgid "three colorful control points.\n"
 msgstr "points de contrôle colorés.\n"
 
-#: maintab.cc:113
+#: maintab.cc:114
 msgid ""
 "Additionally, you can either use a shelf, which draws a horizontal line\n"
 msgstr ""
 "En outre, vous pouvez utiliser un plateau qui trace une ligne horizontale\n"
 
-#: maintab.cc:114
+#: maintab.cc:115
 msgid "from the green and red control points to the left/right side.\n"
 msgstr "entre les points de contrôle vert et rouge, à gauche et à droite.\n"
 
-#: maintab.cc:115
+#: maintab.cc:116
 msgid "Or you can turn off the shelf, and then the function goes through\n"
 msgstr "Ou vous pouvez également désactiver le plateau, pour que la fonction\n"
 
-#: maintab.cc:116
+#: maintab.cc:117
 msgid "the lower left corner, then the three control points, and then\n"
 msgstr ""
 "passe par le coin inférieur gauche, puis les trois points de contrôle,\n"
 
-#: maintab.cc:117
+#: maintab.cc:118
 msgid "the upper right corner, enabling to draw more complicated functions."
 msgstr ""
 "et enfin le coin supérieur droit, ce qui permet de dessiner des fonctions\n"
 "plus complexes."
 
-#: maintab.cc:121 mainwindow.cc:56
+#: maintab.cc:121
+msgid ""
+"This feature controls how many voices can simultaneously be in play for a "
+"given\n"
+msgstr ""
+
+#: maintab.cc:122
+msgid ""
+"instrument. When this feature is active, Drumgizmo will silence any excess \n"
+msgstr ""
+
+#: maintab.cc:123
+msgid "voices to ease the burden of processing.\n"
+msgstr ""
+
+#: maintab.cc:125
+msgid ""
+"This feature works on a per-instrument basis, e.g., voices played on the "
+"bass\n"
+msgstr ""
+
+#: maintab.cc:126
+msgid ""
+"drum can only be silenced by other bass drum hits, and not by the snare.\n"
+msgstr ""
+
+#: maintab.cc:128
+msgid ""
+"  * Max voices: The maximum number of voices that should be allowed to "
+"play.\n"
+msgstr ""
+
+#: maintab.cc:129
+msgid "  * Rampdown time: How many seconds it takes to silence a voice."
+msgstr ""
+
+#: maintab.cc:134 mainwindow.cc:56
 msgid "Drumkit"
 msgstr "Kit de batterie"
 
-#: maintab.cc:122
+#: maintab.cc:135
 msgid "Status"
 msgstr "Statut"
 
-#: maintab.cc:123
+#: maintab.cc:136
 msgid "Resampling"
 msgstr "Rééchantillonnage"
 
-#: maintab.cc:124
+#: maintab.cc:137
+msgid "Voice Limit"
+msgstr ""
+
+#: maintab.cc:139
 msgid "Disk Streaming"
 msgstr "Streaming de disque"
 
-#: maintab.cc:125
+#: maintab.cc:140
 msgid "Bleed Control"
 msgstr "Contrôle de la repisse"
 
-#: maintab.cc:127
+#: maintab.cc:143
 msgid "Velocity Humanizer"
 msgstr "Humaniseur de vélocité"
 
-#: maintab.cc:129
+#: maintab.cc:146
 msgid "Timing Humanizer"
 msgstr "Humaniseur de justesse"
 
-#: maintab.cc:131
+#: maintab.cc:149
 msgid "Sample Selection"
 msgstr "Sélection de l'échantillon"
 
-#: maintab.cc:134
+#: maintab.cc:153
 msgid "Visualizer"
 msgstr "Visualiseur"
 
-#: maintab.cc:136
+#: maintab.cc:156
 msgid "Velocity Curve"
 msgstr "Courbe de vélocité"
 
@@ -561,6 +601,10 @@ msgstr "Erreur"
 msgid "No Midimap Loaded"
 msgstr "Pas de midimap chargée"
 
+#: voicelimitframecontent.cc:41
+msgid "Per-instrument voice limit:"
+msgstr ""
+
 #: humanizerframecontent.h:61
 msgid "pAttack"
 msgstr "pAttaque"
@@ -596,3 +640,11 @@ msgstr "pRetourTiming"
 #: timingframecontent.h:75
 msgid "pLaidback"
 msgstr "pNonchalance"
+
+#: voicelimitframecontent.h:66
+msgid "Max voices"
+msgstr ""
+
+#: voicelimitframecontent.h:67
+msgid "Rampdown time"
+msgstr ""

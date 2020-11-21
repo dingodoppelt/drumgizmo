@@ -18,6 +18,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: abouttab.cc:82
+msgid ""
+"=============\n"
+"             About\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:90
+msgid ""
+"\n"
+"=============\n"
+"            Version\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:99
+msgid ""
+"\n"
+"=============\n"
+"            Bugs\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:108
+msgid ""
+"\n"
+"=============\n"
+"            Authors\n"
+"=============\n"
+"\n"
+msgstr ""
+
+#: abouttab.cc:117
+msgid ""
+"\n"
+"=============\n"
+"            License\n"
+"=============\n"
+"\n"
+msgstr ""
+
 #: bleedcontrolframecontent.cc:46
 msgid "Master Bleed Volume:"
 msgstr ""
@@ -108,266 +152,306 @@ msgstr ""
 msgid "Setting path of lineedit to %s\n"
 msgstr ""
 
-#: maintab.cc:55
+#: maintab.cc:56
 msgid "The first two knobs influence how DrumGizmo simulates the\n"
 msgstr ""
 
-#: maintab.cc:56
+#: maintab.cc:57
 msgid "stamina of a physical drummers, ie. the fact that they\n"
 msgstr ""
 
-#: maintab.cc:57
+#: maintab.cc:58
 msgid "loose power in their strokes when playing fast notes:\n"
 msgstr ""
 
-#: maintab.cc:58
+#: maintab.cc:59
 msgid "  * pAttack: How quickly the velocity gets reduced when\n"
 msgstr ""
 
-#: maintab.cc:59
+#: maintab.cc:60
 msgid "     playing fast notes.\n"
 msgstr ""
 
-#: maintab.cc:60
+#: maintab.cc:61
 msgid "     Lower values result in faster velocity reduction.\n"
 msgstr ""
 
-#: maintab.cc:61
+#: maintab.cc:62
 msgid "  * pRelease: How quickly the drummer regains the velocity\n"
 msgstr ""
 
-#: maintab.cc:62
+#: maintab.cc:63
 msgid "     when there are spaces between the notes.\n"
 msgstr ""
 
-#: maintab.cc:63
+#: maintab.cc:64
 msgid "     Lower values result in faster regain.\n"
 msgstr ""
 
-#: maintab.cc:64 maintab.cc:85
+#: maintab.cc:65 maintab.cc:86 maintab.cc:124 maintab.cc:127
 msgid "\n"
 msgstr ""
 
-#: maintab.cc:65
+#: maintab.cc:66
 msgid "The last knob controls the randomization of the sample selection:\n"
 msgstr ""
 
-#: maintab.cc:66
+#: maintab.cc:67
 msgid "  * pStdDev: The standard-deviation for the sample selection.\n"
 msgstr ""
 
-#: maintab.cc:67
+#: maintab.cc:68
 msgid "     Higher value makes it more likely that a sample further\n"
 msgstr ""
 
-#: maintab.cc:68
+#: maintab.cc:69
 msgid "     away from the input velocity will be played."
 msgstr ""
 
-#: maintab.cc:71
+#: maintab.cc:72
 msgid "These three knobs influence how DrumGizmo simulates the tightness\n"
 msgstr ""
 
-#: maintab.cc:72
+#: maintab.cc:73
 msgid "of the drummer.\n"
 msgstr ""
 
-#: maintab.cc:73
+#: maintab.cc:74
 msgid "The drifting is defined as the difference between\n"
 msgstr ""
 
-#: maintab.cc:74
+#: maintab.cc:75
 msgid ""
 "the perfect metronome (defined by the note positions) and the 'internal'\n"
 msgstr ""
 
-#: maintab.cc:75
+#: maintab.cc:76
 msgid "metronome of the drummer which can then drift back and forth in a\n"
 msgstr ""
 
-#: maintab.cc:76
+#: maintab.cc:77
 msgid "controlled fashion:\n"
 msgstr ""
 
-#: maintab.cc:77
+#: maintab.cc:78
 msgid ""
 "  * pTightness: For each note how much is the drummer allowed to drift.\n"
 msgstr ""
 
-#: maintab.cc:78
+#: maintab.cc:79
 msgid "     Higher value make the drummer more tight, ie. drift less.\n"
 msgstr ""
 
-#: maintab.cc:79
+#: maintab.cc:80
 msgid ""
 "  * pTimingRegain: Once the drifted, how fast does the drummer's 'internal'\n"
 msgstr ""
 
-#: maintab.cc:80
+#: maintab.cc:81
 msgid "     metronome get back in sync with the perfect metronome.\n"
 msgstr ""
 
-#: maintab.cc:81
+#: maintab.cc:82
 msgid "     Higher values moves the timing back towards perfect faster.\n"
 msgstr ""
 
-#: maintab.cc:82
+#: maintab.cc:83
 msgid ""
 "  * pLaidback: Add or subtract a fixed delay in ms to all notes. This will\n"
 msgstr ""
 
-#: maintab.cc:83
+#: maintab.cc:84
 msgid "     alter the feel of a beat.\n"
 msgstr ""
 
-#: maintab.cc:84
+#: maintab.cc:85
 msgid ""
 "     Positive values are up-beat, negative values are back on the beat.\n"
 msgstr ""
 
-#: maintab.cc:86
+#: maintab.cc:87
 msgid ""
 "NOTE: Enabling timing humanization will introduce a fixed delay into the\n"
 msgstr ""
 
-#: maintab.cc:87
+#: maintab.cc:88
 msgid "audio stream.\n"
 msgstr ""
 
-#: maintab.cc:88
+#: maintab.cc:89
 msgid "So this feature should be disabled when using DrumGizmo in\n"
 msgstr ""
 
-#: maintab.cc:89
+#: maintab.cc:90
 msgid "a real-time scenario such as live with a MIDI drumkit."
 msgstr ""
 
-#: maintab.cc:92
+#: maintab.cc:93
 msgid "These three knobs influence how DrumGizmo selects\n"
 msgstr ""
 
-#: maintab.cc:93
+#: maintab.cc:94
 msgid "its samples in the following way:\n"
 msgstr ""
 
-#: maintab.cc:94
+#: maintab.cc:95
 msgid "  * pClose: The importance given to choosing a sample close\n"
 msgstr ""
 
-#: maintab.cc:95
+#: maintab.cc:96
 msgid "     to the actual MIDI value (after humanization)\n"
 msgstr ""
 
-#: maintab.cc:96
+#: maintab.cc:97
 msgid "  * pDiversity: The importance given to choosing samples\n"
 msgstr ""
 
-#: maintab.cc:97
+#: maintab.cc:98
 msgid "     which haven't been played recently.\n"
 msgstr ""
 
-#: maintab.cc:98
+#: maintab.cc:99
 msgid "  * pRandom: The amount of randomness added."
 msgstr ""
 
-#: maintab.cc:101
+#: maintab.cc:102
 msgid "This graph visualizes the time and velocity offsets of last note\n"
 msgstr ""
 
-#: maintab.cc:102
+#: maintab.cc:103
 msgid "played according to it's ideal input time and velocity.\n"
 msgstr ""
 
-#: maintab.cc:103
+#: maintab.cc:104
 msgid "The green lines indicate the ideal time and velocity positions.\n"
 msgstr ""
 
-#: maintab.cc:104
+#: maintab.cc:105
 msgid "The pink areas indicate the spread of the position and velocity\n"
 msgstr ""
 
-#: maintab.cc:105
+#: maintab.cc:106
 msgid "of the next note in line.\n"
 msgstr ""
 
-#: maintab.cc:106
+#: maintab.cc:107
 msgid "The wider the area the more the note can move in time and velocity."
 msgstr ""
 
-#: maintab.cc:109
+#: maintab.cc:110
 msgid "This function controls how the input powers are mapped to the powers\n"
 msgstr ""
 
-#: maintab.cc:110
+#: maintab.cc:111
 msgid "that DrumGizmo uses for selecting samples.\n"
 msgstr ""
 
-#: maintab.cc:111
+#: maintab.cc:112
 msgid "You can control the function by dragging and dropping the\n"
 msgstr ""
 
-#: maintab.cc:112
+#: maintab.cc:113
 msgid "three colorful control points.\n"
 msgstr ""
 
-#: maintab.cc:113
+#: maintab.cc:114
 msgid ""
 "Additionally, you can either use a shelf, which draws a horizontal line\n"
 msgstr ""
 
-#: maintab.cc:114
+#: maintab.cc:115
 msgid "from the green and red control points to the left/right side.\n"
 msgstr ""
 
-#: maintab.cc:115
+#: maintab.cc:116
 msgid "Or you can turn off the shelf, and then the function goes through\n"
 msgstr ""
 
-#: maintab.cc:116
+#: maintab.cc:117
 msgid "the lower left corner, then the three control points, and then\n"
 msgstr ""
 
-#: maintab.cc:117
+#: maintab.cc:118
 msgid "the upper right corner, enabling to draw more complicated functions."
 msgstr ""
 
-#: maintab.cc:121 mainwindow.cc:56
-msgid "Drumkit"
+#: maintab.cc:121
+msgid ""
+"This feature controls how many voices can simultaneously be in play for a "
+"given\n"
 msgstr ""
 
 #: maintab.cc:122
-msgid "Status"
+msgid ""
+"instrument. When this feature is active, Drumgizmo will silence any excess \n"
 msgstr ""
 
 #: maintab.cc:123
-msgid "Resampling"
-msgstr ""
-
-#: maintab.cc:124
-msgid "Disk Streaming"
+msgid "voices to ease the burden of processing.\n"
 msgstr ""
 
 #: maintab.cc:125
-msgid "Bleed Control"
+msgid ""
+"This feature works on a per-instrument basis, e.g., voices played on the "
+"bass\n"
 msgstr ""
 
-#: maintab.cc:127
-msgid "Velocity Humanizer"
+#: maintab.cc:126
+msgid ""
+"drum can only be silenced by other bass drum hits, and not by the snare.\n"
+msgstr ""
+
+#: maintab.cc:128
+msgid ""
+"  * Max voices: The maximum number of voices that should be allowed to "
+"play.\n"
 msgstr ""
 
 #: maintab.cc:129
-msgid "Timing Humanizer"
+msgid "  * Rampdown time: How many seconds it takes to silence a voice."
 msgstr ""
 
-#: maintab.cc:131
-msgid "Sample Selection"
+#: maintab.cc:134 mainwindow.cc:56
+msgid "Drumkit"
 msgstr ""
 
-#: maintab.cc:134
-msgid "Visualizer"
+#: maintab.cc:135
+msgid "Status"
 msgstr ""
 
 #: maintab.cc:136
+msgid "Resampling"
+msgstr ""
+
+#: maintab.cc:137
+msgid "Voice Limit"
+msgstr ""
+
+#: maintab.cc:139
+msgid "Disk Streaming"
+msgstr ""
+
+#: maintab.cc:140
+msgid "Bleed Control"
+msgstr ""
+
+#: maintab.cc:143
+msgid "Velocity Humanizer"
+msgstr ""
+
+#: maintab.cc:146
+msgid "Timing Humanizer"
+msgstr ""
+
+#: maintab.cc:149
+msgid "Sample Selection"
+msgstr ""
+
+#: maintab.cc:153
+msgid "Visualizer"
+msgstr ""
+
+#: maintab.cc:156
 msgid "Velocity Curve"
 msgstr ""
 
@@ -463,6 +547,10 @@ msgstr ""
 msgid "No Midimap Loaded"
 msgstr ""
 
+#: voicelimitframecontent.cc:41
+msgid "Per-instrument voice limit:"
+msgstr ""
+
 #: humanizerframecontent.h:61
 msgid "pAttack"
 msgstr ""
@@ -497,4 +585,12 @@ msgstr ""
 
 #: timingframecontent.h:75
 msgid "pLaidback"
+msgstr ""
+
+#: voicelimitframecontent.h:66
+msgid "Max voices"
+msgstr ""
+
+#: voicelimitframecontent.h:67
+msgid "Rampdown time"
 msgstr ""
