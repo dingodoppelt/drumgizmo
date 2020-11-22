@@ -1,3 +1,39 @@
+Version 0.9.19
+==============
+Release date: November 22nd 2020
+Contributors: chaot4, TheMarlboroMan, trebmuh, deva
+
+This release is a feature release with some rather interesting new
+features in it:
+
+Highlights:
+ - Default midimaps now read from drumkit file so no explicit loading of
+   midimap are needed for kits that provide these.
+ - Add OSX retina display UI scaling.
+ - Sample selection default values improved
+ - UI rendering speed improvements
+ - New powermap feature, to make it easier to get a good natural feeling
+   when playing a midi-drumkit.
+ - Improved dgvalidater tool to include a lot more validation checks.
+ - Add gettext support to plugin UI with French translation.
+ - Per instrument voice limit feature to enable playing very fast with low
+   latency without the engine dropping out.
+ - Resampling quality (and thereby cpu usage) can now be controlled.
+
+Bugs:
+ - Choke handling fixed.
+ - Fix flickering of lv2 inline displays while loading.
+ - Fix LV2UI_Descriptor type error when using "new" LV2 sources.
+ - Fix clickmaps not aligning correctly with drumkit images in the drumkit
+   tab, when image is bigger than window.
+ - Notes with velocity 0 is now ignored.
+ - Default drumkitpath is now correctly stored on windows.
+ - Fixed crash in jack engine (command-line) when system is under load.
+
+For a more in depth description of the changes and fixes, see the
+changelog for 0.9.19:
+ https://drumgizmo.org/wiki/doku.php?id=changelog:drumgizmo-0.9.19
+
 Version 0.9.18.1-hotfix
 ======================
 Release date: October 23rd 2019
