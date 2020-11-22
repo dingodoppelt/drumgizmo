@@ -1,25 +1,25 @@
 [submodule "hugin"]
 	path = hugin
-	url = http://git.drumgizmo.org/hugin.git
+	url = git://git.drumgizmo.org/hugin.git
 [submodule "plugin/plugingizmo"]
 	path = plugin/plugingizmo
-	url = http://git.drumgizmo.org/plugingizmo.git
+	url = git://git.drumgizmo.org/plugingizmo.git
 [submodule "plugingui/lodepng"]
 	path = plugingui/lodepng
-	url = http://git.drumgizmo.org/lodepng.git
+	url = git://git.drumgizmo.org/lodepng.git
 	branch = a71964ed5fe4f82a32ac7f8201338900f66e855d
 [submodule "getoptpp"]
 	path = getoptpp
-	url = http://git.drumgizmo.org/getoptpp.git
+	url = git://git.drumgizmo.org/getoptpp.git
 [submodule "pugl"]
 	path = pugl
-	url = http://git.drumgizmo.org/pugl.git
+	url = git://git.drumgizmo.org/pugl.git
 [submodule "pugixml"]
 	path = pugixml
-	url = http://git.drumgizmo.org/pugixml.git
+	url = git://git.drumgizmo.org/pugixml.git
 [submodule "zita-resampler"]
 	path = zita-resampler
-	url = http://git.drumgizmo.org/zita-resampler.git
+	url = git://git.drumgizmo.org/zita-resampler.git
 [submodule "test/uunit"]
 	path = test/uunit
 	url = git://git.drumgizmo.org/uunit.git
