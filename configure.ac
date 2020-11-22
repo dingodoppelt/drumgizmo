@@ -362,6 +362,11 @@ AS_IF(
   dnl ======================
   AC_CHECK_HEADERS(getopt.h)
 
+  dnl ======================
+  dnl Check for wordexp
+  dnl ======================
+  AC_CHECK_FUNCS([wordexp])
+
   dnl ***
   dnl *** Input plugins
   dnl ***

@@ -34,7 +34,11 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#ifdef HAVE_WORDEXP
 #include <wordexp.h>
+#else
+#include <glob.h>
+#endif
 
 #include <hugin.hpp>
 
@@ -146,19 +150,31 @@ std::vector<ParmToken> parseParameters(std::string &parms)
 	std::string parm;
 	std::string val;
 	bool inval = false;
+#ifdef HAVE_WORDEXP
 	wordexp_t exp_result;
+#else
+	glob_t g;
+#endif
 	for(size_t i = 0; i < parms.size(); ++i)
 	{
 		if(parms[i] == ',')
 		{
+		#ifdef HAVE_WORDEXP
 			int error = wordexp(val.data(), &exp_result, 0);
+		#else
+			int error = glob(val.data(), 0, NULL, &g);
+		#endif
 			if(error)
 			{
 				std::cerr << "Wrong argument: ";
 				std::cerr << parm << " = " << val << std::endl;
 				exit(1);
 			}
+		#ifdef HAVE_WORDEXP
 			result.push_back({parm, exp_result.we_wordv[0]});
+		#else
+			result.push_back({parm, g.gl_pathv[0]});
+		#endif
 			parm = "";
 			val = "";
 			inval = false;
@@ -182,14 +198,22 @@ std::vector<ParmToken> parseParameters(std::string &parms)
 	}
 	if(parm != "")
 	{
+	#ifdef HAVE_WORDEXP
 		int error = wordexp(val.data(), &exp_result, 0);
+	#else
+		int error = glob(val.data(), 0, NULL, &g);
+	#endif
 		if(error)
 		{
 			std::cerr << "Wrong argument: ";
 			std::cerr << parm << " = " << val << std::endl;
 			exit(1);
 		}
+	#ifdef HAVE_WORDEXP
 		result.push_back({parm, exp_result.we_wordv[0]});
+	#else
+		result.push_back({parm, g.gl_pathv[0]});
+	#endif
 	}
 	return result;
 }
