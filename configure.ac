@@ -148,8 +148,14 @@ AC_ARG_WITH([nls],
             AS_IF([test "x$with_nls" == "xyes"],
                   [AC_MSG_RESULT([*** Building with nls support!])
                    AC_CHECK_PROGS([XGETTEXT], [xgettext])
+                   AS_IF([test "x$XGETTEXT" = "x"],
+                         AC_MSG_ERROR([Missing xgettext tool.]))
                    AC_CHECK_PROGS([MSGMERGE], [msgmerge])
+                   AS_IF([test "x$MSGMERGE" = "x"],
+                         AC_MSG_ERROR([Missing msgmerge tool.]))
                    AC_CHECK_PROGS([MSGFMT], [msgfmt])
+                   AS_IF([test "x$MSGFMT" = "x"],
+                         AC_MSG_ERROR([Missing msgfmt tool.]))
                    AC_DEFINE_UNQUOTED([WITH_NLS], , [Build with nls support])],
                   [AC_MSG_WARN([*** Building without nls support!])]
 )
