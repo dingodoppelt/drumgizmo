@@ -827,7 +827,6 @@ void NativeWindowCocoa::resized()
 void NativeWindowCocoa::pushBackEvent(std::shared_ptr<Event> event)
 {
 	event_queue.push_back(event);
-	redraw({});
 }
 
 } // GUI::
