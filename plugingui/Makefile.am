@@ -306,6 +306,7 @@ plugingui_SOURCES = \
 	testmain.cc \
 	$(top_srcdir)/hugin/hugin.c
 
+rcgen_LDFLAGS = -static
 rcgen_CXXFLAGS = -I$(top_srcdir)/getoptpp
 rcgen_SOURCES = \
 	rcgen.cc
