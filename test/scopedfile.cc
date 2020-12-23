@@ -34,6 +34,9 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #endif
 
 struct Pimpl
@@ -50,8 +53,8 @@ ScopedFile::ScopedFile(const std::string& data)
 	pimpl->fd = mkstemp(templ);
 #else
 	char templ[] = "dg-scoped-file-XXXXXX"; // buffer for filename
-	_mktemp_s(templ);
-	pimpl->fd = open(templ);
+	_mktemp_s(templ, sizeof(templ));
+	pimpl->fd = open(templ, O_CREAT | O_RDWR);
 #endif
 	pimpl->filename = templ;
 	auto sz = write(pimpl->fd, data.data(), data.size());

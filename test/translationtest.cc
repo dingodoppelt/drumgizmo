@@ -63,7 +63,11 @@ public:
 
 	void testFromLocale()
 	{
+#ifdef _WIN32
+		_putenv_s("LANG", "da_DK.UTF-8");
+#else
 		setenv("LANG", "da_DK.UTF-8", 1);
+#endif
 		UITranslation t;
 
 		// Look up translation from .mo file
