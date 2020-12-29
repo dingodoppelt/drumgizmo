@@ -19,6 +19,7 @@ drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
 	$(LV2_CFLAGS) \
 	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/plugin/plugingizmo \
+	-I$(top_srcdir)/ \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
@@ -35,7 +36,7 @@ drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
 	-no-undefined -export-symbols $(top_srcdir)/plugin/drumgizmo_lv2.sym
 
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
-	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/plugingui/libplugingui.la \
 	$(top_builddir)/src/libdg.la \
 	$(top_builddir)/src/libnls.la
 
@@ -93,6 +94,7 @@ drumgizmo_vst_la_CXXFLAGS = -DVST \
 	-I$(top_srcdir)/zita-resampler/libs \
 	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/plugin/plugingizmo \
+	-I$(top_srcdir)/ \
 	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin \
@@ -111,7 +113,7 @@ drumgizmo_vst_la_LDFLAGS = -shared -module -avoid-version \
 
 drumgizmo_vst_la_LIBADD = \
 	vst/libvstsdk.la \
-	$(top_builddir)/plugingui/libdggui.la \
+	$(top_builddir)/plugingui/libplugingui.la \
 	$(top_builddir)/src/libdg.la \
 	$(top_builddir)/src/libnls.la
 

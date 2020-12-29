@@ -29,7 +29,7 @@
 #include <version.h>
 #include <translation.h>
 
-#include "utf8.h"
+#include <dggui/utf8.h>
 
 namespace
 {

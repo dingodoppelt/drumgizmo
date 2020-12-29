@@ -26,10 +26,11 @@
  */
 #pragma once
 
-#include "knob.h"
+#include <dggui/knob.h>
+#include <dggui/layout.h>
+#include <dggui/widget.h>
+
 #include "labeledcontrol.h"
-#include "layout.h"
-#include "widget.h"
 
 #include <translation.h>
 

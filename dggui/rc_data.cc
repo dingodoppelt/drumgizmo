@@ -1,9 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* -*- Mode: c++ -*- */
 /***************************************************************************
- *            resource_data.h
+ *            rc_data.cc
  *
- *  Sun Mar 17 20:25:24 CET 2013
- *  Copyright 2013 Bent Bisballe Nyeng
+ *  Wed Dec 23 09:51:20 CET 2020
+ *  Copyright 2020 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -24,12 +24,6 @@
  *  along with DrumGizmo; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
-#pragma once
+#include "resource_data.h"
 
-typedef struct {
-	const char *name;
-	unsigned int size;
-	const char *data;
-} rc_data_t;
-
-extern const rc_data_t rc_data[];
+const rc_data_t* rc_data __attribute__((__weak__)) = nullptr;

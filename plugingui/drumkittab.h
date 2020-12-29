@@ -32,9 +32,9 @@
 
 #include <grid.h>
 
-#include "image.h"
-#include "label.h"
-#include "widget.h"
+#include <dggui/image.h>
+#include <dggui/label.h>
+#include <dggui/widget.h>
 
 struct Settings;
 class SettingsNotifier;

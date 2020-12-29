@@ -37,8 +37,6 @@
 #include <sstream>
 #include <climits>
 
-#include <lodepng/lodepng.h>
-
 #include <config.h>
 #include <platform.h>
 
@@ -48,11 +46,13 @@
 #include <unistd.h>
 #endif
 
-#include <image.h>
+#include <dggui/image.h>
 
 // Needed for Resource class
-#include <resource_data.h>
-const rc_data_t rc_data[] = {};
+#include <dggui/resource_data.h>
+
+const rc_data_t rc_dataX[] = {};
+const rc_data_t* rc_data = rc_dataX;
 
 namespace
 {

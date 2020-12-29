@@ -31,10 +31,10 @@
 #include <settings.h>
 #include <config.h>
 
-#include "mainwindow.h"
-#include "window.h"
-#include "resource.h"
-#include "uitranslation.h"
+#include <dggui/window.h>
+#include <dggui/resource.h>
+#include <dggui/uitranslation.h>
+
 #include "mainwindow.h"
 
 int main()

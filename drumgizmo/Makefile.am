@@ -109,7 +109,7 @@ dgvalidator_CXXFLAGS = \
 	-I$(top_srcdir)/src -I$(top_srcdir)/getoptpp \
 	-I$(top_srcdir)/hugin -DWITH_HUG_MUTEX -DWITH_HUG_FILTER \
 	$(SSEFLAGS) \
-	-I$(top_srcdir)/plugingui \
+	-I$(top_srcdir)/ \
 	-DLODEPNG_NO_COMPILE_ENCODER \
 	-DLODEPNG_NO_COMPILE_DISK \
 	-DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS \
@@ -122,9 +122,9 @@ dgvalidator_SOURCES = \
 	dgvalidator.cc \
 	$(top_srcdir)/hugin/hugin.c \
 	$(top_srcdir)/hugin/hugin_filter.c \
-	$(top_srcdir)/plugingui/lodepng/lodepng.cpp \
-	$(top_srcdir)/plugingui/image.cc \
-	$(top_srcdir)/plugingui/resource.cc \
-	$(top_srcdir)/plugingui/colour.cc
+	$(top_srcdir)/dggui/lodepng/lodepng.cpp \
+	$(top_srcdir)/dggui/image.cc \
+	$(top_srcdir)/dggui/resource.cc \
+	$(top_srcdir)/dggui/colour.cc
 
 endif # ENABLE_CLI

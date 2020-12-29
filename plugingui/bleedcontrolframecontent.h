@@ -25,9 +25,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "label.h"
-#include "slider.h"
-#include "widget.h"
+#include <dggui/label.h>
+#include <dggui/slider.h>
+#include <dggui/widget.h>
 
 struct Settings;
 class SettingsNotifier;

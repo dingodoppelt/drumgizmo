@@ -30,12 +30,12 @@
 #include <platform.h>
 #include <directory.h>
 
-#include "dialog.h"
-#include "button.h"
-#include "listbox.h"
-#include "lineedit.h"
-#include "label.h"
-#include "image.h"
+#include <dggui/dialog.h>
+#include <dggui/button.h>
+#include <dggui/listbox.h>
+#include <dggui/lineedit.h>
+#include <dggui/label.h>
+#include <dggui/image.h>
 
 namespace GUI
 {

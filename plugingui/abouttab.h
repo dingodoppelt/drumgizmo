@@ -26,9 +26,9 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "resource.h"
-#include "textedit.h"
+#include <dggui/widget.h>
+#include <dggui/resource.h>
+#include <dggui/textedit.h>
 
 #include <string>
 

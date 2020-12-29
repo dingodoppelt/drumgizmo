@@ -27,8 +27,9 @@
 #pragma once
 
 #include "settings.h"
-#include "textedit.h"
-#include "widget.h"
+
+#include <dggui/textedit.h>
+#include <dggui/widget.h>
 
 class SettingsNotifier;
 

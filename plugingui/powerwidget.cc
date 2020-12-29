@@ -26,11 +26,11 @@
  */
 #include "powerwidget.h"
 
-#include "painter.h"
+#include <dggui/painter.h>
+#include <dggui/colour.h>
 
 #include <notifier.h>
 #include <settings.h>
-#include <colour.h>
 #include <powermap.h>
 
 #include <hugin.hpp>

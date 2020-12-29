@@ -29,9 +29,9 @@
 #include <cstdint>
 #include <string>
 
-#include <image.h>
-#include <painter.h>
-#include <canvas.h>
+#include <dggui/image.h>
+#include <dggui/painter.h>
+#include <dggui/canvas.h>
 
 class TimedCanvas
 	: public GUI::Canvas

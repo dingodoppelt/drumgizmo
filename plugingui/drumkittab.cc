@@ -31,7 +31,9 @@
 #include <sstream>
 
 #include "cpp11fix.h" // required for c++11
-#include "painter.h"
+
+#include <dggui/painter.h>
+
 #include "settings.h"
 
 #include <dgxmlparser.h>

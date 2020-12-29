@@ -29,7 +29,7 @@
 #include <locale>
 
 #include <translation.h>
-#include <uitranslation.h>
+#include <dggui/uitranslation.h>
 #include <stdlib.h>
 
 class TranslationTest

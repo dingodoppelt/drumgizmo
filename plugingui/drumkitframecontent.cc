@@ -28,7 +28,6 @@
 
 #include <settings.h>
 
-#include "label.h"
 #include "pluginconfig.h"
 
 #include <translation.h>

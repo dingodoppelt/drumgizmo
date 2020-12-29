@@ -26,7 +26,7 @@
  */
 #include "humaniservisualiser.h"
 
-#include "painter.h"
+#include <dggui/painter.h>
 
 #include <notifier.h>
 #include <settings.h>

@@ -26,10 +26,10 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "textedit.h"
-#include "knob.h"
-#include "label.h"
+#include <dggui/widget.h>
+#include <dggui/textedit.h>
+#include <dggui/knob.h>
+#include <dggui/label.h>
 
 class SettingsNotifier;
 struct Settings;

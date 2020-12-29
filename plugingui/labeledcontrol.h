@@ -26,8 +26,8 @@
  */
 #pragma once
 
-#include "label.h"
-#include "widget.h"
+#include <dggui/label.h>
+#include <dggui/widget.h>
 
 #include <iomanip>
 #include <sstream>

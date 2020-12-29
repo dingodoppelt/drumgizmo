@@ -26,10 +26,10 @@
  */
 #pragma once
 
-#include "button.h"
-#include "label.h"
-#include "slider.h"
-#include "widget.h"
+#include <dggui/button.h>
+#include <dggui/label.h>
+#include <dggui/slider.h>
+#include <dggui/widget.h>
 
 struct Settings;
 class SettingsNotifier;

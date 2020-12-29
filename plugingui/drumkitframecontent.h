@@ -28,11 +28,12 @@
 
 #include <settings.h>
 
-#include "button.h"
-#include "label.h"
-#include "lineedit.h"
-#include "progressbar.h"
-#include "widget.h"
+#include <dggui/button.h>
+#include <dggui/label.h>
+#include <dggui/lineedit.h>
+#include <dggui/progressbar.h>
+#include <dggui/widget.h>
+
 #include "filebrowser.h"
 
 namespace GUI

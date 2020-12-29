@@ -29,9 +29,10 @@
 #include <thread>
 
 #include <hugin.hpp>
-#include <window.h>
-#include <button.h>
-#include <label.h>
+
+#include <dggui/window.h>
+#include <dggui/button.h>
+#include <dggui/label.h>
 #include <filebrowser.h>
 
 class TestWindow

@@ -26,10 +26,10 @@
  */
 #include <uunit.h>
 
-#include "../plugingui/canvas.h"
-#include "../plugingui/painter.h"
-#include "../plugingui/image.h"
-#include "../plugingui/font.h"
+#include <dggui/canvas.h>
+#include <dggui/painter.h>
+#include <dggui/image.h>
+#include <dggui/font.h>
 
 class TestColour
 {

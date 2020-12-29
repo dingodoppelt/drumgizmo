@@ -26,9 +26,9 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "texturedbox.h"
-#include "texture.h"
+#include <dggui/widget.h>
+#include <dggui/texturedbox.h>
+#include <dggui/texture.h>
 
 struct Settings;
 class SettingsNotifier;

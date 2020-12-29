@@ -32,7 +32,7 @@
 
 #include <translation.h>
 
-#include "painter.h"
+#include <dggui/painter.h>
 
 namespace GUI
 {

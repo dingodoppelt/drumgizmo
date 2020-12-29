@@ -28,10 +28,11 @@
 
 #include <translation.h>
 
-#include "label.h"
-#include "knob.h"
+#include <dggui/label.h>
+#include <dggui/knob.h>
+#include <dggui/widget.h>
+
 #include "labeledcontrol.h"
-#include "widget.h"
 
 struct Settings;
 class SettingsNotifier;

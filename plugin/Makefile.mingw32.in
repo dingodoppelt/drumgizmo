@@ -59,66 +59,70 @@ DG_CFLAGS = -I@top_srcdir@ -I@top_srcdir@/src \
 GUI_SRC = \
 	@top_srcdir@/plugingui/abouttab.cc \
 	@top_srcdir@/plugingui/bleedcontrolframecontent.cc \
-	@top_srcdir@/plugingui/button.cc \
-	@top_srcdir@/plugingui/button_base.cc \
-	@top_srcdir@/plugingui/checkbox.cc \
-	@top_srcdir@/plugingui/colour.cc \
-	@top_srcdir@/plugingui/combobox.cc \
-	@top_srcdir@/plugingui/dialog.cc \
 	@top_srcdir@/plugingui/diskstreamingframecontent.cc \
 	@top_srcdir@/plugingui/drumkitframecontent.cc \
 	@top_srcdir@/plugingui/drumkittab.cc \
-	@top_srcdir@/plugingui/eventhandler.cc \
 	@top_srcdir@/plugingui/filebrowser.cc \
-	@top_srcdir@/plugingui/font.cc \
-	@top_srcdir@/plugingui/frame.cc \
-	@top_srcdir@/plugingui/helpbutton.cc \
-	@top_srcdir@/plugingui/humanizerframecontent.cc \
 	@top_srcdir@/plugingui/humaniservisualiser.cc \
-	@top_srcdir@/plugingui/image.cc \
-	@top_srcdir@/plugingui/imagecache.cc \
-	@top_srcdir@/plugingui/knob.cc \
-	@top_srcdir@/plugingui/label.cc \
-	@top_srcdir@/plugingui/layout.cc \
-	@top_srcdir@/plugingui/led.cc \
-	@top_srcdir@/plugingui/lineedit.cc \
-	@top_srcdir@/plugingui/listbox.cc \
-	@top_srcdir@/plugingui/listboxbasic.cc \
-	@top_srcdir@/plugingui/listboxthin.cc \
+	@top_srcdir@/plugingui/humanizerframecontent.cc \
 	@top_srcdir@/plugingui/maintab.cc \
 	@top_srcdir@/plugingui/mainwindow.cc \
-	@top_srcdir@/plugingui/nativewindow_win32.cc \
-	@top_srcdir@/plugingui/painter.cc \
-	@top_srcdir@/plugingui/pixelbuffer.cc \
 	@top_srcdir@/plugingui/pluginconfig.cc \
-	@top_srcdir@/plugingui/powerbutton.cc \
 	@top_srcdir@/plugingui/powerwidget.cc \
-	@top_srcdir@/plugingui/progressbar.cc \
 	@top_srcdir@/plugingui/resamplingframecontent.cc \
-	@top_srcdir@/plugingui/resource.cc \
 	@top_srcdir@/plugingui/sampleselectionframecontent.cc \
-	@top_srcdir@/plugingui/scrollbar.cc \
-	@top_srcdir@/plugingui/slider.cc \
-	@top_srcdir@/plugingui/stackedwidget.cc \
 	@top_srcdir@/plugingui/statusframecontent.cc \
-	@top_srcdir@/plugingui/tabbutton.cc \
-	@top_srcdir@/plugingui/tabwidget.cc \
-	@top_srcdir@/plugingui/textedit.cc \
-	@top_srcdir@/plugingui/texture.cc \
-	@top_srcdir@/plugingui/texturedbox.cc \
 	@top_srcdir@/plugingui/timingframecontent.cc \
-	@top_srcdir@/plugingui/toggle.cc \
-	@top_srcdir@/plugingui/tooltip.cc \
-	@top_srcdir@/plugingui/uitranslation.cc \
-	@top_srcdir@/plugingui/utf8.cc \
-	@top_srcdir@/plugingui/verticalline.cc \
 	@top_srcdir@/plugingui/visualizerframecontent.cc \
 	@top_srcdir@/plugingui/voicelimitframecontent.cc \
-	@top_srcdir@/plugingui/widget.cc \
-	@top_srcdir@/plugingui/window.cc \
-	@top_srcdir@/plugingui/lodepng/lodepng.cpp
+\
+	@top_srcdir@/dggui/button.cc \
+	@top_srcdir@/dggui/button_base.cc \
+	@top_srcdir@/dggui/checkbox.cc \
+	@top_srcdir@/dggui/colour.cc \
+	@top_srcdir@/dggui/combobox.cc \
+	@top_srcdir@/dggui/dialog.cc \
+	@top_srcdir@/dggui/eventhandler.cc \
+	@top_srcdir@/dggui/font.cc \
+	@top_srcdir@/dggui/frame.cc \
+	@top_srcdir@/dggui/helpbutton.cc \
+	@top_srcdir@/dggui/image.cc \
+	@top_srcdir@/dggui/imagecache.cc \
+	@top_srcdir@/dggui/knob.cc \
+	@top_srcdir@/dggui/label.cc \
+	@top_srcdir@/dggui/layout.cc \
+	@top_srcdir@/dggui/led.cc \
+	@top_srcdir@/dggui/lineedit.cc \
+	@top_srcdir@/dggui/listbox.cc \
+	@top_srcdir@/dggui/listboxbasic.cc \
+	@top_srcdir@/dggui/listboxthin.cc \
+	@top_srcdir@/dggui/painter.cc \
+	@top_srcdir@/dggui/pixelbuffer.cc \
+	@top_srcdir@/dggui/powerbutton.cc \
+	@top_srcdir@/dggui/progressbar.cc \
+	@top_srcdir@/dggui/rc_data.cc \
+	@top_srcdir@/dggui/resource.cc \
+	@top_srcdir@/dggui/scrollbar.cc \
+	@top_srcdir@/dggui/slider.cc \
+	@top_srcdir@/dggui/stackedwidget.cc \
+	@top_srcdir@/dggui/tabbutton.cc \
+	@top_srcdir@/dggui/tabwidget.cc \
+	@top_srcdir@/dggui/textedit.cc \
+	@top_srcdir@/dggui/texture.cc \
+	@top_srcdir@/dggui/texturedbox.cc \
+	@top_srcdir@/dggui/toggle.cc \
+	@top_srcdir@/dggui/tooltip.cc \
+	@top_srcdir@/dggui/uitranslation.cc \
+	@top_srcdir@/dggui/utf8.cc \
+	@top_srcdir@/dggui/verticalline.cc \
+	@top_srcdir@/dggui/widget.cc \
+	@top_srcdir@/dggui/window.cc \
+\
+	@top_srcdir@/dggui/lodepng/lodepng.cpp \
+	@top_srcdir@/dggui/nativewindow_win32.cc
 
-GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -DUSE_THREAD @GUI_CPPFLAGS@
+
+GUI_CPPFLAGS=-I@top_srcdir@/plugingui/ -I@top_srcdir@/ -DUSE_THREAD @GUI_CPPFLAGS@
 GUI_LIBS=@GUI_LIBS@
 
 DBG_SRC = \
@@ -186,9 +190,9 @@ NLS_RES = \
 all:
 	(cd @top_srcdir@/plugingui/locale; msgfmt -c -v -o da.mo da.po)
 	(cd @top_srcdir@/plugingui/locale; msgfmt -c -v -o fr.mo fr.po)
-	g++ -I@top_srcdir@/getoptpp @top_srcdir@/plugingui/rcgen.cc -o @top_srcdir@/plugingui/rcgen
-	@top_srcdir@/plugingui/rcgen -s @top_srcdir@/plugingui/ -s @top_builddir@/plugingui/ $(RES) $(NLS_RES) -o @top_srcdir@/plugingui/resource_data.cc
-	g++ $(CXXFLAGS) @top_srcdir@/plugingui/resource_data.cc -c
+	g++ -I@top_srcdir@/getoptpp @top_srcdir@/dggui/rcgentool.cc -o @top_srcdir@/dggui/rcgen
+	@top_srcdir@/dggui/rcgen -s @top_srcdir@/dggui/ -s @top_builddir@/plugingui/ $(RES) $(NLS_RES) -o @top_srcdir@/plugingui/resource_data.cc
+	g++ $(CXXFLAGS) -I@top_srcdir@ @top_srcdir@/plugingui/resource_data.cc -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin.c -c
 	gcc $(CFLAGS) $(DBG_CFLAGS) @top_srcdir@/hugin/hugin_syslog.c -c
 	g++ $(LDFLAGS) $(CXXFLAGS) -std=c++11 -static -static-libgcc -O2 -g -Wall $(DBG_CFLAGS) $(DG_CFLAGS) $(DG_LIBS) $(VST_CFLAGS) hugin.o hugin_syslog.o resource_data.o $(DG_SRC) $(VST_SRC) ${SRC} ${GUI_SRC} ${GUI_CPPFLAGS} $(GUI_LIBS) $(SNDFILE_CFLAGS) $(SNDFILE_LIBS) -latomic -shared -Wl,-retain-symbols-file -Wl,drumgizmo_vst.sym -o drumgizmo_vst.dll -Wl,--out-implib,libdrumgizmo_vst.a

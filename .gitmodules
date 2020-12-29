@@ -5,7 +5,7 @@
 	path = plugin/plugingizmo
 	url = git://git.drumgizmo.org/plugingizmo.git
 [submodule "plugingui/lodepng"]
-	path = plugingui/lodepng
+	path = dggui/lodepng
 	url = git://git.drumgizmo.org/lodepng.git
 	branch = a71964ed5fe4f82a32ac7f8201338900f66e855d
 [submodule "getoptpp"]

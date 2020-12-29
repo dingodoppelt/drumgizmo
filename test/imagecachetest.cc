@@ -26,10 +26,8 @@
  */
 #include <uunit.h>
 
-#include <cassert>
-
-#include <imagecache.h>
-#include <image.h>
+#include <dggui/imagecache.h>
+#include <dggui/image.h>
 
 class TestableImageCache
 	: public GUI::ImageCache

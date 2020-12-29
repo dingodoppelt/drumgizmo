@@ -29,9 +29,10 @@
 #include <thread>
 
 #include <hugin.hpp>
-#include <window.h>
-#include <font.h>
-#include <painter.h>
+
+#include <dggui/window.h>
+#include <dggui/font.h>
+#include <dggui/painter.h>
 
 class TestWindow
 	: public GUI::Window

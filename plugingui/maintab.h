@@ -26,9 +26,10 @@
  */
 #pragma once
 
-#include "widget.h"
-#include "layout.h"
-#include "frame.h"
+#include <dggui/widget.h>
+#include <dggui/layout.h>
+#include <dggui/frame.h>
+
 #include "drumkitframecontent.h"
 #include "statusframecontent.h"
 #include "humanizerframecontent.h"

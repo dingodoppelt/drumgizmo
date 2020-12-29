@@ -26,7 +26,7 @@
  */
 #include <uunit.h>
 
-#include "../plugingui/resource.h"
+#include "../dggui/resource.h"
 
 #include "drumkit_creator.h"
 

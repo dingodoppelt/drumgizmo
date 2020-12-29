@@ -26,8 +26,8 @@
  */
 #include "filebrowser.h"
 
-#include "painter.h"
-#include "button.h"
+#include <dggui/painter.h>
+#include <dggui/button.h>
 
 #include <sys/types.h>
 #include <dirent.h>

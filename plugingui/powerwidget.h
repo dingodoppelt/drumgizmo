@@ -26,13 +26,14 @@
  */
 #pragma once
 
-#include <widget.h>
-#include <texturedbox.h>
-#include <texture.h>
-#include <knob.h>
-#include <checkbox.h>
-#include <label.h>
-#include <font.h>
+#include <dggui/widget.h>
+#include <dggui/texturedbox.h>
+#include <dggui/texture.h>
+#include <dggui/knob.h>
+#include <dggui/checkbox.h>
+#include <dggui/label.h>
+#include <dggui/font.h>
+
 #include <powermap.h>
 
 struct Settings;

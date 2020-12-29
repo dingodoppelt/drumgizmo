@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = tools src plugingui plugin drumgizmo man test
-DISTDIRS = tools src plugingui plugin drumgizmo man test
+SUBDIRS = tools src dggui plugingui plugin drumgizmo man test
+DISTDIRS = tools src dggui plugingui plugin drumgizmo man test
 
 EXTRA_DIST = \
 	version.h \
@@ -16,7 +16,7 @@ EXTRA_DIST = \
 \
 	getoptpp/getoptpp.hpp \
 \
-	plugingui/lodepng/lodepng.h \
+	dggui/lodepng/lodepng.h \
 \
 	pugixml/src/pugixml.hpp \
 	pugixml/src/pugiconfig.hpp \

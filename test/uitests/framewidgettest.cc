@@ -28,14 +28,15 @@
 #include <chrono>
 #include <thread>
 
-#include <button.h>
-#include <checkbox.h>
-#include <frame.h>
 #include <hugin.hpp>
-#include <label.h>
-#include <layout.h>
-#include <window.h>
-#include <painter.h>
+
+#include <dggui/button.h>
+#include <dggui/checkbox.h>
+#include <dggui/frame.h>
+#include <dggui/label.h>
+#include <dggui/layout.h>
+#include <dggui/window.h>
+#include <dggui/painter.h>
 
 // TODO: fix segfault on close
 

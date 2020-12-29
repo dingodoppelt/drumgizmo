@@ -39,14 +39,14 @@
 #endif
 
 #include <drumgizmo.h>
-#include <uitranslation.h>
 #include <audioinputenginemidi.h>
 #include <audiooutputengine.h>
 #include <mainwindow.h>
 
-#include <texturedbox.h>
-#include <imagecache.h>
-#include <image.h>
+#include <dggui/uitranslation.h>
+#include <dggui/texturedbox.h>
+#include <dggui/imagecache.h>
+#include <dggui/image.h>
 
 class DrumGizmoPlugin
 #ifdef LV2

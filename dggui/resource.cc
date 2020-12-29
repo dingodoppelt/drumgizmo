@@ -41,6 +41,8 @@
 // rcgen generated file containing rc_data declaration.
 #include "resource_data.h"
 
+extern const rc_data_t* rc_data;
+
 namespace GUI
 {
 
@@ -77,7 +79,7 @@ Resource::Resource(const std::string& name)
 
 		// Find internal resource in rc_data.
 		const rc_data_t* p = rc_data;
-		while(*p->name) // last entry in rc_data has the name := ""
+		while(p && *p->name) // last entry in rc_data has the name := ""
 		{
 			if(name == p->name)
 			{

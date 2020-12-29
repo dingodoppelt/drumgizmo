@@ -28,7 +28,7 @@
 
 #include <settings.h>
 
-#include "painter.h"
+#include <dggui/painter.h>
 
 namespace GUI
 {

@@ -720,6 +720,7 @@ AC_CONFIG_FILES(
 	src/Makefile
 	plugin/Makefile
 	plugin/vst/Makefile
+	dggui/Makefile
 	plugingui/Makefile
 	plugingui/locale/Makefile
 	man/Makefile

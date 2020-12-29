@@ -29,12 +29,13 @@
 #include <thread>
 
 #include <hugin.hpp>
-#include <window.h>
-#include <tabwidget.h>
-#include <label.h>
-#include <layout.h>
-#include <button.h>
-#include <painter.h>
+
+#include <dggui/window.h>
+#include <dggui/tabwidget.h>
+#include <dggui/label.h>
+#include <dggui/layout.h>
+#include <dggui/button.h>
+#include <dggui/painter.h>
 
 class Widget1
 	: public GUI::Widget

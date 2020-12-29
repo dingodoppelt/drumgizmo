@@ -28,12 +28,13 @@
 
 #include <settings.h>
 
+#include <dggui/image.h>
+#include <dggui/tabwidget.h>
+#include <dggui/texturedbox.h>
+#include <dggui/window.h>
+
 #include "abouttab.h"
 #include "drumkittab.h"
-#include "image.h"
-#include "tabwidget.h"
-#include "texturedbox.h"
-#include "window.h"
 #include "maintab.h"
 #include "pluginconfig.h"
 

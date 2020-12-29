@@ -1,9 +1,9 @@
-/* -*- Mode: c++ -*- */
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            visualizerframecontent.h
+ *            resource_data.h
  *
- *  Tue Jul 10 20:52:22 CEST 2018
- *  Copyright 2018 Bent Bisballe Nyeng
+ *  Sun Mar 17 20:25:24 CET 2013
+ *  Copyright 2013 Bent Bisballe Nyeng
  *  deva@aasimon.org
  ****************************************************************************/
 
@@ -26,33 +26,8 @@
  */
 #pragma once
 
-#include <dggui/layout.h>
-#include <dggui/widget.h>
-
-#include "humaniservisualiser.h"
-
-#include <settings.h>
-
-#include <iomanip>
-#include <sstream>
-
-class SettingsNotifier;
-
-namespace GUI
-{
-
-class VisualizerframeContent
-	: public Widget
-{
-public:
-	VisualizerframeContent(Widget* parent, Settings& settings,
-	                       SettingsNotifier& settings_notifier);
-
-		// From Widget
-	virtual void resize(std::size_t width, std::size_t height) override;
-
-private:
-	HumaniserVisualiser visualizer;
-};
-
-} // GUI::
+typedef struct {
+	const char *name;
+	unsigned int size;
+	const char *data;
+} rc_data_t;
