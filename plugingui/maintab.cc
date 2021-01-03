@@ -31,7 +31,7 @@
 namespace GUI
 {
 
-MainTab::MainTab(Widget* parent,
+MainTab::MainTab(dggui::Widget* parent,
                  Settings& settings,
                  SettingsNotifier& settings_notifier,
                  Config& config)
@@ -166,11 +166,11 @@ MainTab::MainTab(Widget* parent,
 	bleedcontrol_frame.setEnabled(false);
 
 	CONNECT(this, settings_notifier.enable_velocity_modifier,
-	        &humanizer_frame, &FrameWidget::setOnSwitch);
+	        &humanizer_frame, &dggui::FrameWidget::setOnSwitch);
 	CONNECT(this, settings_notifier.enable_resampling,
-	        &resampling_frame, &FrameWidget::setOnSwitch);
+	        &resampling_frame, &dggui::FrameWidget::setOnSwitch);
 	CONNECT(this, settings_notifier.has_bleed_control,
-	        &bleedcontrol_frame, &FrameWidget::setEnabled);
+	        &bleedcontrol_frame, &dggui::FrameWidget::setEnabled);
 	CONNECT(&humanizer_frame, onSwitchChangeNotifier,
 	        this, &MainTab::humanizerOnChange);
 	CONNECT(&bleedcontrol_frame, onSwitchChangeNotifier,
@@ -182,7 +182,7 @@ MainTab::MainTab(Widget* parent,
 	CONNECT(&bleedcontrol_frame, onEnabledChanged,
 	        &bleedcontrolframe_content, &BleedcontrolframeContent::setEnabled);
 	CONNECT(&settings_notifier, enable_powermap,
-	        &power_frame, &FrameWidget::setOnSwitch);
+	        &power_frame, &dggui::FrameWidget::setOnSwitch);
 	CONNECT(&power_frame, onSwitchChangeNotifier,
 	        this, &MainTab::powerOnChange);
 	CONNECT(&voicelimit_frame, onSwitchChangeNotifier,
@@ -192,10 +192,10 @@ MainTab::MainTab(Widget* parent,
 
 void MainTab::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	// DrumGizmo logo
-	Painter painter(*this);
+	dggui::Painter painter(*this);
 	painter.clear();
 	painter.drawImage(width - logo.width(), height - logo.height(), logo);
 }
@@ -230,18 +230,18 @@ void MainTab::voicelimitOnChange(bool status)
 	settings.enable_voice_limit.store(status);
 }
 
-void MainTab::add(std::string const& title, FrameWidget& frame, Widget& content,
-                  std::size_t height, int column)
+void MainTab::add(std::string const& title, dggui::FrameWidget& frame,
+                  dggui::Widget& content, std::size_t height, int column)
 {
 	layout.addItem(&frame);
 	frame.setTitle(title);
 	frame.setContent(&content);
 
 	auto grid_start = layout.lastUsedRow(column) + 1;
-	auto range = GridLayout::GridRange{column,
-	                                   column + 1,
-	                                   grid_start,
-	                                   grid_start + int(height)};
+	auto range = dggui::GridLayout::GridRange{column,
+	                                          column + 1,
+	                                          grid_start,
+	                                          grid_start + int(height)};
 	layout.setPosition(&frame, range);
 }
 

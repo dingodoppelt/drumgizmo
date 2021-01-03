@@ -32,9 +32,12 @@
 #include "texture.h"
 #include "notifier.h"
 
-namespace GUI {
+namespace dggui
+{
 
-class ScrollBar : public Widget {
+class ScrollBar
+	: public Widget
+{
 	friend class ListBoxBasic;
 public:
 	ScrollBar(Widget *parent);
@@ -71,4 +74,4 @@ private:
 	Texture bg_img{getImageCache(), ":resources/widget.png", 7, 7, 1, 63};
 };
 
-} // GUI::
+} // dggui::

@@ -35,22 +35,22 @@
 namespace GUI
 {
 
-DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
+DiskstreamingframeContent::DiskstreamingframeContent(dggui::Widget* parent,
                                                      Settings& settings,
                                                      SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, slider_width{250}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	label_text.setText(_("Cache limit (max memory usage):"));
-	label_text.setAlignment(TextAlignment::center);
+	label_text.setAlignment(dggui::TextAlignment::center);
 
 	button.setText(_("Apply"));
 	button.setEnabled(false);
 
 	label_value.setText(_("0 MB"));
-	label_value.setAlignment(TextAlignment::center);
+	label_value.setAlignment(dggui::TextAlignment::center);
 
 	CONNECT(this, settings_notifier.disk_cache_upper_limit,
 	        this, &DiskstreamingframeContent::limitSettingsValueChanged);
@@ -73,7 +73,7 @@ DiskstreamingframeContent::DiskstreamingframeContent(Widget* parent,
 
 void DiskstreamingframeContent::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	int slider_button_gap = 10;
 
@@ -98,14 +98,16 @@ void DiskstreamingframeContent::limitSettingsValueChanged(std::size_t value)
 	float new_slider_value = (float)(value - min_limit)/(max_limit - min_limit);
 	slider.setValue(new_slider_value);
 
-	if (new_slider_value < 0.99) {
+	if(new_slider_value < 0.99)
+	{
 		int value_in_mb = value/(1024 * 1024);
 		label_value.setText(std::to_string(value_in_mb) + " MB");
-		slider.setColour(Slider::Colour::Blue);
+		slider.setColour(dggui::Slider::Colour::Blue);
 	}
-	else {
+	else
+	{
 		label_value.setText(_("Unlimited"));
-		slider.setColour(Slider::Colour::Grey);
+		slider.setColour(dggui::Slider::Colour::Grey);
 	}
 
 	button.setEnabled(true);

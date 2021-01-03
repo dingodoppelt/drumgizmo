@@ -36,10 +36,12 @@ class SettingsNotifier;
 namespace GUI
 {
 
-class StatusframeContent : public Widget
+class StatusframeContent
+	: public dggui::Widget
 {
 public:
-	StatusframeContent(Widget* parent, SettingsNotifier& settings_notifier);
+	StatusframeContent(dggui::Widget* parent,
+	                   SettingsNotifier& settings_notifier);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -56,7 +58,7 @@ public:
 	void loadStatusTextChanged(const std::string& text);
 
 private:
-	TextEdit text_field{this};
+	dggui::TextEdit text_field{this};
 
 	SettingsNotifier& settings_notifier;
 

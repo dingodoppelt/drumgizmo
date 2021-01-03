@@ -31,9 +31,10 @@
 namespace GUI
 {
 
-StatusframeContent::StatusframeContent(Widget* parent,
+StatusframeContent::StatusframeContent(dggui::Widget* parent,
                                        SettingsNotifier& settings_notifier)
-	: Widget(parent), settings_notifier(settings_notifier)
+	: dggui::Widget(parent)
+	, settings_notifier(settings_notifier)
 {
 	CONNECT(this, settings_notifier.drumkit_load_status,
 	        this, &StatusframeContent::updateDrumkitLoadStatus);
@@ -62,7 +63,7 @@ StatusframeContent::StatusframeContent(Widget* parent,
 
 void StatusframeContent::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 	text_field.resize(width, height);
 }
 

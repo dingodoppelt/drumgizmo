@@ -34,7 +34,7 @@
 #include "eventhandler.h"
 #include "imagecache.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Window
@@ -116,4 +116,4 @@ protected:
 	ImageCache image_cache;
 };
 
-} // GUI::
+} // dggui::

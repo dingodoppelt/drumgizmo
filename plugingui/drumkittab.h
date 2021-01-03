@@ -45,21 +45,21 @@ namespace GUI
 class Config;
 
 class DrumkitTab
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	DrumkitTab(Widget* parent,
+	DrumkitTab(dggui::Widget* parent,
 	           Settings& settings,
 	           SettingsNotifier& settings_notifier);
 
-	// From Widget:
+	// From dggui::Widget:
 	void resize(std::size_t width, std::size_t height) override;
-	void buttonEvent(ButtonEvent* buttonEvent) override;
-	void scrollEvent(ScrollEvent* scrollEvent) override;
-	void mouseMoveEvent(MouseMoveEvent* mouseMoveEvent) override;
+	void buttonEvent(dggui::ButtonEvent* buttonEvent) override;
+	void scrollEvent(dggui::ScrollEvent* scrollEvent) override;
+	void mouseMoveEvent(dggui::MouseMoveEvent* mouseMoveEvent) override;
 	void mouseLeaveEvent() override;
 
-	void init(std::string const& image_file, std::string const& map_file);
+	void init(const std::string& image_file, const std::string& map_file);
 
 	Notifier<bool> imageChangeNotifier; // bool has_valid_image
 
@@ -72,34 +72,34 @@ private:
 	using Position = IndexGrid::Pos;
 	using Positions = std::vector<Position>;
 
-	std::vector<Colour> colours;
+	std::vector<dggui::Colour> colours;
 	IndexGrid pos_to_colour_index;
 	std::vector<Positions> colour_index_to_positions;
 	std::vector<std::string> to_instrument_name;
 
 	struct ColourInstrumentPair
 	{
-		Colour colour;
+		dggui::Colour colour;
 		std::string instrument;
 	};
 	// FIXME: load this from instrument file
 	std::vector<ColourInstrumentPair> colour_instrument_pairs = {
-		{Colour(0), "Snare"},
-		{Colour(255./255, 15./255, 55./255), "KdrumL"},
-		{Colour(154./255, 153./255, 33./255), "HihatClosed"},
-		{Colour(248./255, 221./255, 37./255), "Tom4"}
+		{dggui::Colour(0), "Snare"},
+		{dggui::Colour(255./255, 15./255, 55./255), "KdrumL"},
+		{dggui::Colour(154./255, 153./255, 33./255), "HihatClosed"},
+		{dggui::Colour(248./255, 221./255, 37./255), "Tom4"}
 	};
 
 	bool shows_overlay{false};
 	bool shows_instrument_overlay{false};
 
-	std::unique_ptr<Image> drumkit_image;
-	std::unique_ptr<Image> map_image;
+	std::unique_ptr<dggui::Image> drumkit_image;
+	std::unique_ptr<dggui::Image> map_image;
 	int drumkit_image_x;
 	int drumkit_image_y;
 
-	Label velocity_label{this};
-	Label instrument_name_label{this};
+	dggui::Label velocity_label{this};
+	dggui::Label instrument_name_label{this};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

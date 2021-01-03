@@ -41,7 +41,7 @@
 
 #include "window.h"
 
-namespace GUI
+namespace dggui
 {
 
 #define _NET_WM_STATE_REMOVE        0    // remove/unset property
@@ -712,4 +712,4 @@ void NativeWindowX11::updateImageFromBuffer(std::size_t x1, std::size_t y1,
 	}
 }
 
-} // GUI::
+} // dggui::

@@ -42,10 +42,10 @@ namespace GUI
 class Config;
 
 class BrowseFile
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	BrowseFile(Widget* parent);
+	BrowseFile(dggui::Widget* parent);
 
 	// From Widget
 	virtual void resize(std::size_t width, std::size_t height) override;
@@ -53,14 +53,14 @@ public:
 	std::size_t getLineEditWidth();
 	std::size_t getButtonWidth();
 
-	Button& getBrowseButton();
-	LineEdit& getLineEdit();
+	dggui::Button& getBrowseButton();
+	dggui::LineEdit& getLineEdit();
 
 private:
-	HBoxLayout layout{this};
+	dggui::HBoxLayout layout{this};
 
-	LineEdit lineedit{this};
-	Button browse_button{this};
+	dggui::LineEdit lineedit{this};
+	dggui::Button browse_button{this};
 
 	int lineedit_width;
 	int button_width;
@@ -68,10 +68,10 @@ private:
 };
 
 class DrumkitframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	DrumkitframeContent(Widget* parent,
+	DrumkitframeContent(dggui::Widget* parent,
 	                    Settings& settings,
 	                    SettingsNotifier& settings_notifier,
 	                    Config& config);
@@ -91,14 +91,14 @@ private:
 	void setDrumKitLoadStatus(LoadStatus load_status);
 	void setMidiMapLoadStatus(LoadStatus load_status);
 
-	VBoxLayout layout{this};
+	dggui::VBoxLayout layout{this};
 
-	Label drumkit_caption{this};
-	Label midimap_caption{this};
+	dggui::Label drumkit_caption{this};
+	dggui::Label midimap_caption{this};
 	BrowseFile drumkit_file{this};
 	BrowseFile midimap_file{this};
-	ProgressBar drumkit_file_progress{this};
-	ProgressBar midimap_file_progress{this};
+	dggui::ProgressBar drumkit_file_progress{this};
+	dggui::ProgressBar midimap_file_progress{this};
 
 	FileBrowser file_browser{this};
 

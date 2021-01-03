@@ -30,7 +30,7 @@
 #include <dggui/image.h>
 
 class TestableImageCache
-	: public GUI::ImageCache
+	: public dggui::ImageCache
 {
 public:
 	std::size_t count(const std::string& filename)

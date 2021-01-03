@@ -44,7 +44,7 @@
 #include "nativewindow_pugl.h"
 #endif // !UI_PUGL
 
-namespace GUI
+namespace dggui
 {
 
 Window::Window(void* native_window)
@@ -263,4 +263,4 @@ bool Window::updateBuffer()
 	return true;
 }
 
-} // GUI::
+} // dggui::

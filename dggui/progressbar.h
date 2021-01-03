@@ -32,7 +32,7 @@
 #include "painter.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 enum class ProgressBarState
@@ -86,4 +86,4 @@ private:
 	std::size_t value{0};
 };
 
-} // GUI::
+} // dggui::

@@ -34,17 +34,17 @@
 namespace GUI
 {
 
-VisualizerframeContent::VisualizerframeContent(Widget* parent,
+VisualizerframeContent::VisualizerframeContent(dggui::Widget* parent,
                                                Settings& settings,
                                                SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, visualizer(this, settings, settings_notifier)
 {
 }
 
 void VisualizerframeContent::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 	visualizer.resize(width, height);
 }
 

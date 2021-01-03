@@ -36,9 +36,12 @@
 #include "painter.h"
 #include "scrollbar.h"
 
-namespace GUI {
+namespace dggui
+{
 
-class ListBoxBasic : public Widget {
+class ListBoxBasic
+	: public Widget
+{
 public:
 	class Item {
 	public:
@@ -91,4 +94,4 @@ protected:
 	int btn_size;
 };
 
-} // GUI::
+} // dggui::

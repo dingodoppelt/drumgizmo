@@ -29,7 +29,8 @@
 #include "toggle.h"
 #include "texture.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class CheckBox : public Toggle {
 public:
@@ -46,4 +47,4 @@ private:
 	Texture knob;
 };
 
-} // GUI::
+} // dggui::

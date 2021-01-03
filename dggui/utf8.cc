@@ -26,6 +26,9 @@
  */
 #include "utf8.h"
 
+namespace dggui
+{
+
 UTF8::UTF8()
 {
 	// Encode Map
@@ -359,3 +362,5 @@ std::string UTF8::toLatin1(std::string const& s)
 
 	return ret;
 }
+
+} // ::dggui

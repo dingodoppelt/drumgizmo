@@ -29,7 +29,7 @@
 #include "texture.h"
 #include "toggle.h"
 
-namespace GUI
+namespace dggui
 {
 
 class PowerButton : public Toggle
@@ -55,4 +55,4 @@ private:
 	Texture disabled_clicked{getImageCache(), ":resources/bypass_button.png", 80, 0, 16, 16};
 };
 
-} // GUI::
+} // dggui::

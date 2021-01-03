@@ -29,7 +29,8 @@
 #include "painter.h"
 #include "font.h"
 
-namespace GUI {
+namespace dggui
+{
 
 ListBoxBasic::ListBoxBasic(Widget *parent)
 	: Widget(parent)
@@ -359,4 +360,4 @@ void ListBoxBasic::resize(std::size_t width, std::size_t height)
 	scroll.resize(scroll.width(), height);
 }
 
-} // GUI::
+} // dggui::

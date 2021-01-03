@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 static TabID getNextTabID()
@@ -129,4 +129,4 @@ void TabButton::clickHandler()
 	switchTabNotifier(tab_widget);
 }
 
-} // GUI::
+} // dggui::

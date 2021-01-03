@@ -26,7 +26,7 @@
  */
 #include "stackedwidget.h"
 
-namespace GUI
+namespace dggui
 {
 
 StackedWidget::StackedWidget(Widget *parent)
@@ -148,4 +148,4 @@ void StackedWidget::sizeChanged(int width, int height)
 	}
 }
 
-} // GUI::
+} // dggui::

@@ -37,13 +37,13 @@ std::string getLocalizedFile(const std::string& file)
 {
 	auto language = Translation::getISO639LanguageName();
 	std::string file_localized = file + "." + language;
-	GUI::Resource resource_localized{file_localized};
+	dggui::Resource resource_localized{file_localized};
 	if(resource_localized.valid())
 	{
 		return resource_localized.data();
 	}
 
-	GUI::Resource resource{file};
+	dggui::Resource resource{file};
 	if(resource.valid())
 	{
 		return resource.data();
@@ -56,8 +56,8 @@ std::string getLocalizedFile(const std::string& file)
 namespace GUI
 {
 
-AboutTab::AboutTab(Widget* parent)
-	: Widget(parent)
+AboutTab::AboutTab(dggui::Widget* parent)
+	: dggui::Widget(parent)
 {
 	text_edit.setText(getAboutText());
 	text_edit.setReadOnly(true);
@@ -68,7 +68,7 @@ AboutTab::AboutTab(Widget* parent)
 
 void AboutTab::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 	text_edit.resize(std::max((int)width - 2*margin, 0),
 	                 std::max((int)height - 2*margin, 0));
 }
@@ -83,7 +83,7 @@ std::string AboutTab::getAboutText()
 	"             About\n"
 	"=============\n"
 	"\n"));
-	about_text.append(UTF8().toLatin1(getLocalizedFile(":../ABOUT")));
+	about_text.append(dggui::UTF8().toLatin1(getLocalizedFile(":../ABOUT")));
 
 	// Version
 	about_text.append(_(
@@ -101,7 +101,7 @@ std::string AboutTab::getAboutText()
 	"            Bugs\n"
 	"=============\n"
 	"\n"));
-	about_text.append(UTF8().toLatin1(getLocalizedFile(":../BUGS")));
+	about_text.append(dggui::UTF8().toLatin1(getLocalizedFile(":../BUGS")));
 
 	// Authors
 	about_text.append(_(
@@ -110,7 +110,7 @@ std::string AboutTab::getAboutText()
 	"            Authors\n"
 	"=============\n"
 	"\n"));
-	about_text.append(UTF8().toLatin1(getLocalizedFile(":../AUTHORS")));
+	about_text.append(dggui::UTF8().toLatin1(getLocalizedFile(":../AUTHORS")));
 
 	// GPL
 	about_text.append(_(
@@ -119,7 +119,7 @@ std::string AboutTab::getAboutText()
 	"            License\n"
 	"=============\n"
 	"\n"));
-	about_text.append(UTF8().toLatin1(getLocalizedFile(":../COPYING")));
+	about_text.append(dggui::UTF8().toLatin1(getLocalizedFile(":../COPYING")));
 
 	return about_text;
 }

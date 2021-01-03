@@ -42,7 +42,7 @@
 
 #include <hugin.hpp>
 
-namespace GUI
+namespace dggui
 {
 
 NativeWindowPugl::NativeWindowPugl(void* native_window, Window& window)
@@ -379,4 +379,4 @@ void NativeWindowPugl::onKeyboard(PuglView* view, bool press, uint32_t key)
 	native->eventq.push_back(e);
 }
 
-} // GUI::
+} // dggui::

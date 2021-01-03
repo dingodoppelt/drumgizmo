@@ -31,11 +31,11 @@
 #include "drumkit_creator.h"
 
 class ResourceTester
-	: public GUI::Resource
+	: public dggui::Resource
 {
 public:
 	ResourceTester(const std::string& name)
-		: GUI::Resource(name)
+		: dggui::Resource(name)
 	{}
 
 	bool probeIsInternal()

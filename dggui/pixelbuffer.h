@@ -34,7 +34,7 @@
 
 #include "guievent.h"
 
-namespace GUI
+namespace dggui
 {
 
 class PixelBuffer
@@ -98,4 +98,4 @@ public:
 	bool has_last{false};
 };
 
-} // GUI::
+} // dggui::

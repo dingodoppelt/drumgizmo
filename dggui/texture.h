@@ -32,7 +32,7 @@
 #include "imagecache.h"
 #include "image.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Texture
@@ -61,4 +61,4 @@ private:
 	Colour outOfRange{0.0f, 0.0f, 0.0f, 0.0f};
 };
 
-} // GUI::
+} // dggui::

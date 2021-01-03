@@ -26,8 +26,9 @@
  */
 #pragma once
 
-typedef struct {
+struct rc_data_t
+{
 	const char *name;
 	unsigned int size;
 	const char *data;
-} rc_data_t;
+};

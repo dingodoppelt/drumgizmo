@@ -35,19 +35,19 @@
 namespace GUI
 {
 
-BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
+BleedcontrolframeContent::BleedcontrolframeContent(dggui::Widget* parent,
                                                    Settings& settings,
                                                    SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, slider_width{250}
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	label_text.setText(_("Master Bleed Volume:"));
-	label_text.setAlignment(TextAlignment::center);
+	label_text.setAlignment(dggui::TextAlignment::center);
 
 	label_value.setText(_("0 %"));
-	label_value.setAlignment(TextAlignment::center);
+	label_value.setAlignment(dggui::TextAlignment::center);
 
 	CONNECT(this, settings_notifier.master_bleed,
 	        this, &BleedcontrolframeContent::bleedSettingsValueChanged);
@@ -57,7 +57,7 @@ BleedcontrolframeContent::BleedcontrolframeContent(Widget* parent,
 
 void BleedcontrolframeContent::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	slider_width = 0.8 * width;
 	auto x_start = 0.1 * width;
@@ -75,12 +75,14 @@ void BleedcontrolframeContent::setEnabled(bool enabled)
 {
 	this->enabled = enabled;
 
-	if (enabled) {
+	if(enabled)
+	{
 		label_text.resetColour();
 		label_value.resetColour();
 		slider.setEnabled(true);
 	}
-	else {
+	else
+	{
 		label_text.setColour(0.7);
 		label_value.setColour(0.7);
 		slider.setEnabled(false);
@@ -95,7 +97,7 @@ void BleedcontrolframeContent::bleedSettingsValueChanged(float value)
 
 	int percentage = 100 * value;
 	label_value.setText(std::to_string(percentage) + " %");
-	slider.setColour(Slider::Colour::Blue);
+	slider.setColour(dggui::Slider::Colour::Blue);
 }
 
 void BleedcontrolframeContent::bleedValueChanged(float value)

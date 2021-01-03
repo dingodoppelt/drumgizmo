@@ -69,11 +69,11 @@
 {
 @public
 	NSWindow* window;
-	GUI::NativeWindowCocoa* native;
+	dggui::NativeWindowCocoa* native;
 }
 
 - (id) initWithWindow:(NSWindow*)ref
-               native:(GUI::NativeWindowCocoa*)_native;
+               native:(dggui::NativeWindowCocoa*)_native;
 - (void) dealloc;
 - (void) windowDidResize;
 - (void) windowWillResize;
@@ -83,7 +83,7 @@
 
 @implementation DGListener
 - (id) initWithWindow:(NSWindow*)ref
-               native:(GUI::NativeWindowCocoa*)_native
+               native:(dggui::NativeWindowCocoa*)_native
 {
 	[super init];
 
@@ -146,7 +146,7 @@
 		return;
 	}
 
-	auto closeEvent = std::make_shared<GUI::CloseEvent>();
+	auto closeEvent = std::make_shared<dggui::CloseEvent>();
 	native->pushBackEvent(closeEvent);
 }
 
@@ -162,7 +162,7 @@
 	int depthBits;
 
 @private
-	GUI::NativeWindowCocoa* native;
+	dggui::NativeWindowCocoa* native;
 	NSTrackingArea* trackingArea;
 }
 
@@ -188,7 +188,7 @@
 - (void) keyUp:(NSEvent*)event;
 
 - (void) dealloc;
-- (void) bindNative:(GUI::NativeWindowCocoa*)native;
+- (void) bindNative:(dggui::NativeWindowCocoa*)native;
 - (void) unbindNative;
 @end
 
@@ -228,7 +228,7 @@
 	[super mouseEntered:event];
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
-	auto mouseEnterEvent = std::make_shared<GUI::MouseEnterEvent>();
+	auto mouseEnterEvent = std::make_shared<dggui::MouseEnterEvent>();
 	mouseEnterEvent->x = loc.x - frame.origin.x;
 	mouseEnterEvent->y = frame.size.height - loc.y - frame.origin.y;
 	native->pushBackEvent(mouseEnterEvent);
@@ -240,7 +240,7 @@
 	[super mouseExited:event];
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
-	auto mouseLeaveEvent = std::make_shared<GUI::MouseLeaveEvent>();
+	auto mouseLeaveEvent = std::make_shared<dggui::MouseLeaveEvent>();
 	mouseLeaveEvent->x = loc.x - frame.origin.x;
 	mouseLeaveEvent->y = frame.size.height - loc.y - frame.origin.y;
 	native->pushBackEvent(mouseLeaveEvent);
@@ -251,7 +251,7 @@
 {
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
-	auto mouseMoveEvent = std::make_shared<GUI::MouseMoveEvent>();
+	auto mouseMoveEvent = std::make_shared<dggui::MouseMoveEvent>();
 	mouseMoveEvent->x = loc.x - frame.origin.x;
 	mouseMoveEvent->y = frame.size.height - loc.y - frame.origin.y;
 	native->pushBackEvent(mouseMoveEvent);
@@ -262,24 +262,24 @@
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
 
-	auto buttonEvent = std::make_shared<GUI::ButtonEvent>();
+	auto buttonEvent = std::make_shared<dggui::ButtonEvent>();
 	buttonEvent->x = loc.x - frame.origin.x;
 	buttonEvent->y = frame.size.height - loc.y - frame.origin.y;
 	switch((int)[event buttonNumber])
 	{
 	case 0:
-		buttonEvent->button = GUI::MouseButton::left;
+		buttonEvent->button = dggui::MouseButton::left;
 		break;
 	case 1:
-		buttonEvent->button = GUI::MouseButton::right;
+		buttonEvent->button = dggui::MouseButton::right;
 		break;
 	case 2:
-		buttonEvent->button = GUI::MouseButton::middle;
+		buttonEvent->button = dggui::MouseButton::middle;
 		break;
 	default:
 		return;
 	}
-	buttonEvent->direction = GUI::Direction::down;
+	buttonEvent->direction = dggui::Direction::down;
 	buttonEvent->doubleClick = [event clickCount] == 2;
 	native->pushBackEvent(buttonEvent);
 
@@ -291,24 +291,24 @@
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
 
-	auto buttonEvent = std::make_shared<GUI::ButtonEvent>();
+	auto buttonEvent = std::make_shared<dggui::ButtonEvent>();
 	buttonEvent->x = loc.x - frame.origin.x;
 	buttonEvent->y = frame.size.height - loc.y - frame.origin.y;
 	switch((int)[event buttonNumber])
 	{
 	case 0:
-		buttonEvent->button = GUI::MouseButton::left;
+		buttonEvent->button = dggui::MouseButton::left;
 		break;
 	case 1:
-		buttonEvent->button = GUI::MouseButton::right;
+		buttonEvent->button = dggui::MouseButton::right;
 		break;
 	case 2:
-		buttonEvent->button = GUI::MouseButton::middle;
+		buttonEvent->button = dggui::MouseButton::middle;
 		break;
 	default:
 		return;
 	}
-	buttonEvent->direction = GUI::Direction::up;
+	buttonEvent->direction = dggui::Direction::up;
 	buttonEvent->doubleClick = false;
 	native->pushBackEvent(buttonEvent);
 
@@ -362,7 +362,7 @@
 	auto frame = [self frame];
 	NSPoint loc = [event locationInWindow];
 
-	auto scrollEvent = std::make_shared<GUI::ScrollEvent>();
+	auto scrollEvent = std::make_shared<dggui::ScrollEvent>();
 	scrollEvent->x = loc.x - frame.origin.x;
 	scrollEvent->y = frame.size.height - loc.y - frame.origin.y;
 	scrollEvent->delta = [event deltaY] * -1.0f;
@@ -376,31 +376,31 @@
 	const NSString* chars = [event characters];
 	const char* str = [chars UTF8String];
 
-	auto keyEvent = std::make_shared<GUI::KeyEvent>();
+	auto keyEvent = std::make_shared<dggui::KeyEvent>();
 
 	switch([event keyCode])
 	{
-	case 123: keyEvent->keycode = GUI::Key::left; break;
-	case 124: keyEvent->keycode = GUI::Key::right; break;
-	case 126: keyEvent->keycode = GUI::Key::up; break;
-	case 125: keyEvent->keycode = GUI::Key::down; break;
-	case 117: keyEvent->keycode = GUI::Key::deleteKey; break;
-	case 51:  keyEvent->keycode = GUI::Key::backspace; break;
-	case 115: keyEvent->keycode = GUI::Key::home; break;
-	case 119: keyEvent->keycode = GUI::Key::end; break;
-	case 121: keyEvent->keycode = GUI::Key::pageDown; break;
-	case 116: keyEvent->keycode = GUI::Key::pageUp; break;
-	case 36:  keyEvent->keycode = GUI::Key::enter; break;
-	default:  keyEvent->keycode = GUI::Key::unknown; break;
+	case 123: keyEvent->keycode = dggui::Key::left; break;
+	case 124: keyEvent->keycode = dggui::Key::right; break;
+	case 126: keyEvent->keycode = dggui::Key::up; break;
+	case 125: keyEvent->keycode = dggui::Key::down; break;
+	case 117: keyEvent->keycode = dggui::Key::deleteKey; break;
+	case 51:  keyEvent->keycode = dggui::Key::backspace; break;
+	case 115: keyEvent->keycode = dggui::Key::home; break;
+	case 119: keyEvent->keycode = dggui::Key::end; break;
+	case 121: keyEvent->keycode = dggui::Key::pageDown; break;
+	case 116: keyEvent->keycode = dggui::Key::pageUp; break;
+	case 36:  keyEvent->keycode = dggui::Key::enter; break;
+	default:  keyEvent->keycode = dggui::Key::unknown; break;
 	}
 
-	if(strlen(str) && keyEvent->keycode == GUI::Key::unknown)
+	if(strlen(str) && keyEvent->keycode == dggui::Key::unknown)
 	{
-		keyEvent->keycode = GUI::Key::character;
+		keyEvent->keycode = dggui::Key::character;
 	}
 
 	keyEvent->text = str; // TODO: UTF8 decode
-	keyEvent->direction = GUI::Direction::down;
+	keyEvent->direction = dggui::Direction::down;
 
 	native->pushBackEvent(keyEvent);
 	[super keyDown: event];
@@ -410,31 +410,31 @@
 {
 	const NSString* chars = [event characters];
 	const char* str = [chars UTF8String];
-	auto keyEvent = std::make_shared<GUI::KeyEvent>();
+	auto keyEvent = std::make_shared<dggui::KeyEvent>();
 
 	switch([event keyCode])
 	{
-	case 123: keyEvent->keycode = GUI::Key::left; break;
-	case 124: keyEvent->keycode = GUI::Key::right; break;
-	case 126: keyEvent->keycode = GUI::Key::up; break;
-	case 125: keyEvent->keycode = GUI::Key::down; break;
-	case 117: keyEvent->keycode = GUI::Key::deleteKey; break;
-	case 51:  keyEvent->keycode = GUI::Key::backspace; break;
-	case 115: keyEvent->keycode = GUI::Key::home; break;
-	case 119: keyEvent->keycode = GUI::Key::end; break;
-	case 121: keyEvent->keycode = GUI::Key::pageDown; break;
-	case 116: keyEvent->keycode = GUI::Key::pageUp; break;
-	case 36:  keyEvent->keycode = GUI::Key::enter; break;
-	default:  keyEvent->keycode = GUI::Key::unknown; break;
+	case 123: keyEvent->keycode = dggui::Key::left; break;
+	case 124: keyEvent->keycode = dggui::Key::right; break;
+	case 126: keyEvent->keycode = dggui::Key::up; break;
+	case 125: keyEvent->keycode = dggui::Key::down; break;
+	case 117: keyEvent->keycode = dggui::Key::deleteKey; break;
+	case 51:  keyEvent->keycode = dggui::Key::backspace; break;
+	case 115: keyEvent->keycode = dggui::Key::home; break;
+	case 119: keyEvent->keycode = dggui::Key::end; break;
+	case 121: keyEvent->keycode = dggui::Key::pageDown; break;
+	case 116: keyEvent->keycode = dggui::Key::pageUp; break;
+	case 36:  keyEvent->keycode = dggui::Key::enter; break;
+	default:  keyEvent->keycode = dggui::Key::unknown; break;
 	}
 
-	if(strlen(str) && keyEvent->keycode == GUI::Key::unknown)
+	if(strlen(str) && keyEvent->keycode == dggui::Key::unknown)
 	{
-		keyEvent->keycode = GUI::Key::character;
+		keyEvent->keycode = dggui::Key::character;
 	}
 
 	keyEvent->text = str; // TODO: UTF8 decode
-	keyEvent->direction = GUI::Direction::up;
+	keyEvent->direction = dggui::Direction::up;
 
 	native->pushBackEvent(keyEvent);
 	[super keyUp: event];
@@ -445,7 +445,7 @@
 	[super dealloc];
 }
 
-- (void)bindNative:(GUI::NativeWindowCocoa*)_native
+- (void)bindNative:(dggui::NativeWindowCocoa*)_native
 {
 	native = _native;
 }
@@ -457,7 +457,7 @@
 @end
 
 
-namespace GUI
+namespace dggui
 {
 
 struct priv
@@ -818,7 +818,7 @@ void NativeWindowCocoa::resized()
 		updateLayerOffset();
 	}
 
-	auto resizeEvent = std::make_shared<GUI::ResizeEvent>();
+	auto resizeEvent = std::make_shared<dggui::ResizeEvent>();
 	resizeEvent->width = 42; // size is not actually used
 	resizeEvent->height = 42; // size is not actually used
 	pushBackEvent(resizeEvent);
@@ -829,4 +829,4 @@ void NativeWindowCocoa::pushBackEvent(std::shared_ptr<Event> event)
 	event_queue.push_back(event);
 }
 
-} // GUI::
+} // dggui::

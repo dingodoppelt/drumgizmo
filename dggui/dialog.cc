@@ -26,7 +26,7 @@
  */
 #include "dialog.h"
 
-namespace GUI
+namespace dggui
 {
 
 Dialog::Dialog(Widget* parent, bool modal)
@@ -51,4 +51,4 @@ bool Dialog::isModal() const
 	return is_modal;
 }
 
-} // GUI::
+} // dggui::

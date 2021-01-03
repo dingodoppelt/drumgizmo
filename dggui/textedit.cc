@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 TextEdit::TextEdit(Widget* parent) : Widget(parent), scroll(this)
@@ -198,4 +198,4 @@ void TextEdit::scrolled(int value)
 	redraw();
 }
 
-} // GUI::
+} // dggui::

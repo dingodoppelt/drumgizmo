@@ -82,19 +82,19 @@ msgstr ""
 msgid "0 MB"
 msgstr ""
 
-#: diskstreamingframecontent.cc:107
+#: diskstreamingframecontent.cc:109
 msgid "Unlimited"
 msgstr ""
 
-#: drumkitframecontent.cc:49
+#: drumkitframecontent.cc:48
 msgid "Browse..."
 msgstr ""
 
-#: drumkitframecontent.cc:96
+#: drumkitframecontent.cc:95
 msgid "Drumkit file:"
 msgstr ""
 
-#: drumkitframecontent.cc:97
+#: drumkitframecontent.cc:96
 msgid "Midimap file:"
 msgstr ""
 
@@ -467,15 +467,15 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: powerwidget.cc:52
+#: powerwidget.cc:55
 msgid "Shelf"
 msgstr ""
 
-#: powerwidget.cc:210
+#: powerwidget.cc:213
 msgid "in"
 msgstr ""
 
-#: powerwidget.cc:211
+#: powerwidget.cc:214
 msgid "out"
 msgstr ""
 
@@ -503,47 +503,47 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: statusframecontent.cc:72
+#: statusframecontent.cc:73
 msgid "Drumkit status:   "
 msgstr ""
 
-#: statusframecontent.cc:74
+#: statusframecontent.cc:75
 msgid "Drumkit name:   "
 msgstr ""
 
-#: statusframecontent.cc:75
+#: statusframecontent.cc:76
 msgid "Drumkit description:   "
 msgstr ""
 
-#: statusframecontent.cc:77
+#: statusframecontent.cc:78
 msgid "Session buffer size:   "
 msgstr ""
 
-#: statusframecontent.cc:78
+#: statusframecontent.cc:79
 msgid "Number of underruns: "
 msgstr ""
 
-#: statusframecontent.cc:79
+#: statusframecontent.cc:80
 msgid "Messages:\n"
 msgstr ""
 
-#: statusframecontent.cc:88
+#: statusframecontent.cc:89
 msgid "No Kit Loaded"
 msgstr ""
 
-#: statusframecontent.cc:91 statusframecontent.cc:133
+#: statusframecontent.cc:92 statusframecontent.cc:134
 msgid "Loading..."
 msgstr ""
 
-#: statusframecontent.cc:94 statusframecontent.cc:136
+#: statusframecontent.cc:95 statusframecontent.cc:137
 msgid "Ready"
 msgstr ""
 
-#: statusframecontent.cc:97 statusframecontent.cc:139
+#: statusframecontent.cc:98 statusframecontent.cc:140
 msgid "Error"
 msgstr ""
 
-#: statusframecontent.cc:130
+#: statusframecontent.cc:131
 msgid "No Midimap Loaded"
 msgstr ""
 
@@ -551,46 +551,46 @@ msgstr ""
 msgid "Per-instrument voice limit:"
 msgstr ""
 
-#: humanizerframecontent.h:61
+#: humanizerframecontent.h:62
 msgid "pAttack"
 msgstr ""
 
-#: humanizerframecontent.h:62
+#: humanizerframecontent.h:63
 msgid "pRelease"
 msgstr ""
 
-#: humanizerframecontent.h:63
+#: humanizerframecontent.h:64
 msgid "pStdDev"
 msgstr ""
 
-#: sampleselectionframecontent.h:61
+#: sampleselectionframecontent.h:62
 msgid "pClose"
 msgstr ""
 
-#: sampleselectionframecontent.h:62
+#: sampleselectionframecontent.h:63
 msgid "pDiverse"
 msgstr ""
 
-#: sampleselectionframecontent.h:63
+#: sampleselectionframecontent.h:64
 msgid "pRandom"
 msgstr ""
 
-#: timingframecontent.h:73
+#: timingframecontent.h:74
 msgid "pTightness"
 msgstr ""
 
-#: timingframecontent.h:74
+#: timingframecontent.h:75
 msgid "pTimingRegain"
 msgstr ""
 
-#: timingframecontent.h:75
+#: timingframecontent.h:76
 msgid "pLaidback"
 msgstr ""
 
-#: voicelimitframecontent.h:66
+#: voicelimitframecontent.h:67
 msgid "Max voices"
 msgstr ""
 
-#: voicelimitframecontent.h:67
+#: voicelimitframecontent.h:68
 msgid "Rampdown time"
 msgstr ""

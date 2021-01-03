@@ -41,10 +41,10 @@ namespace GUI
 {
 
 class FileBrowser
-	: public Dialog
+	: public dggui::Dialog
 {
 public:
-	FileBrowser(Widget* parent);
+	FileBrowser(dggui::Widget* parent);
 
 	void setPath(const std::string& path);
 
@@ -54,7 +54,7 @@ public:
 
 	// From Widget:
 	bool isFocusable() override { return true; }
-	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
+	virtual void repaintEvent(dggui::RepaintEvent* repaintEvent) override;
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 	//! Return the filename selected in the browser.
@@ -81,16 +81,16 @@ private:
 	void select(const std::string& file);
 	void changeDir();
 
-	Label lbl_path;
+	dggui::Label lbl_path;
 
-	LineEdit lineedit;
-	ListBox listbox;
+	dggui::LineEdit lineedit;
+	dggui::ListBox listbox;
 
-	Button btn_sel;
-	Button btn_def;
-	Button btn_esc;
+	dggui::Button btn_sel;
+	dggui::Button btn_def;
+	dggui::Button btn_esc;
 
-	Image back;
+	dggui::Image back;
 
 	bool has_filename{false};
 	std::string filename;

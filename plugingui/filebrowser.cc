@@ -48,8 +48,8 @@
 namespace GUI
 {
 
-FileBrowser::FileBrowser(Widget* parent)
-	: Dialog(parent, true)
+FileBrowser::FileBrowser(dggui::Widget* parent)
+	: dggui::Dialog(parent, true)
 	, dir(Directory::cwd())
 	, lbl_path(this)
 	, lineedit(this)
@@ -106,7 +106,7 @@ void FileBrowser::setPath(const std::string& path)
 
 void FileBrowser::resize(std::size_t width, std::size_t height)
 {
-	Dialog::resize(width, height);
+	dggui::Dialog::resize(width, height);
 
 	int offset = 0;
 	int brd = 5; // border
@@ -139,9 +139,9 @@ void FileBrowser::resize(std::size_t width, std::size_t height)
 	btn_sel.resize(btn_w, btn_h);
 }
 
-void FileBrowser::repaintEvent(RepaintEvent* repaintEvent)
+void FileBrowser::repaintEvent(dggui::RepaintEvent* repaintEvent)
 {
-	Painter p(*this);
+	dggui::Painter p(*this);
 	p.drawImageStretched(0,0, back, width(), height());
 }
 
@@ -233,7 +233,7 @@ void FileBrowser::changeDir()
 	  return;
 	}
 
-	std::vector<ListBoxBasic::Item> items;
+	std::vector<dggui::ListBoxBasic::Item> items;
 
 #if DG_PLATFORM == DG_PLATFORM_WINDOWS
 	if(Directory::isRoot(dir.path()) && (value == ".."))
@@ -241,7 +241,7 @@ void FileBrowser::changeDir()
 		DEBUG(filebrowser, _("Showing partitions...\n"));
 		for(auto drive : dir.drives())
 		{
-			ListBoxBasic::Item item;
+			dggui::ListBoxBasic::Item item;
 			item.name = drive.name;
 			item.value = drive.name;
 			items.push_back(item);
@@ -271,7 +271,7 @@ void FileBrowser::changeDir()
 
 		for(auto entry : entries)
 		{
-			ListBoxBasic::Item item;
+			dggui::ListBoxBasic::Item item;
 			item.name = entry;
 			item.value = entry;
 			items.push_back(item);

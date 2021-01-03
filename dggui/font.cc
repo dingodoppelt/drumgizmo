@@ -28,7 +28,7 @@
 
 #include <cassert>
 
-namespace GUI
+namespace dggui
 {
 
 Font::Font(const std::string& fontfile)
@@ -133,4 +133,4 @@ PixelBufferAlpha *Font::render(const std::string& text) const
 	return pb;
 }
 
-} // GUI::
+} // dggui::

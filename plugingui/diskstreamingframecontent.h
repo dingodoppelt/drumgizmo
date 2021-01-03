@@ -37,10 +37,11 @@ class SettingsNotifier;
 namespace GUI
 {
 
-class DiskstreamingframeContent : public Widget
+class DiskstreamingframeContent
+	: public dggui::Widget
 {
 public:
-	DiskstreamingframeContent(Widget* parent,
+	DiskstreamingframeContent(dggui::Widget* parent,
 	                          Settings& settings,
 	                          SettingsNotifier& settings_notifier);
 
@@ -57,11 +58,11 @@ private:
 	static constexpr std::size_t min_limit = 1024.0 * 1024.0 * 32;
 	static constexpr std::size_t max_limit = 1024.0 * 1024.0 * 1024.0 * 4.0 - 1;
 
-	Label label_text{this};
-	Label label_value{this};
+	dggui::Label label_text{this};
+	dggui::Label label_value{this};
 
-	Slider slider{this};
-	Button button{this};
+	dggui::Slider slider{this};
+	dggui::Button button{this};
 
 	int slider_width;
 	int button_width;

@@ -43,7 +43,7 @@
 
 extern const rc_data_t* rc_data;
 
-namespace GUI
+namespace dggui
 {
 
 // TODO: Replace with std::filesystem::is_regular_file once we update the
@@ -191,4 +191,4 @@ bool Resource::valid()
 	return isValid;
 }
 
-} // GUI::
+} // dggui::

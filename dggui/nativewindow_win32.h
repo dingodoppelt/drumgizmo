@@ -34,7 +34,8 @@
 #include <windows.h>
 typedef HWND WNDID;
 
-namespace GUI {
+namespace dggui
+{
 
 class Window;
 class Event;
@@ -75,4 +76,4 @@ private:
 	bool always_on_top{false};
 };
 
-} // GUI::
+} // dggui::

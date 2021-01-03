@@ -36,10 +36,10 @@ namespace GUI
 {
 
 class AboutTab
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	AboutTab(Widget* parent);
+	AboutTab(dggui::Widget* parent);
 
 	// From Widget:
 	void resize(std::size_t width, std::size_t height) override;
@@ -47,7 +47,7 @@ public:
 private:
 	std::string getAboutText();
 
-	TextEdit text_edit{this};
+	dggui::TextEdit text_edit{this};
 	int margin{10};
 };
 

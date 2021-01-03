@@ -28,7 +28,7 @@
 
 #include <cstring>
 
-namespace GUI
+namespace dggui
 {
 
 Colour::Colour()
@@ -79,4 +79,4 @@ bool Colour::operator!=(const Colour& other) const
 	return !(*this == other);
 }
 
-} // GUI::
+} // dggui::

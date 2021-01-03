@@ -28,7 +28,7 @@
 
 #include "window.h"
 
-namespace GUI
+namespace dggui
 {
 
 //! This class is used the base window for pop-up dialogs, such as a file
@@ -60,4 +60,4 @@ private:
 	Widget* parent{nullptr};
 };
 
-} // GUI::
+} // dggui::

@@ -34,7 +34,7 @@
 
 #include "guievent.h"
 
-namespace GUI
+namespace dggui
 {
 
 struct Point;
@@ -97,4 +97,4 @@ public:
 	virtual Point translateToScreen(const Point& point) = 0;
 };
 
-} // GUI::
+} // dggui::

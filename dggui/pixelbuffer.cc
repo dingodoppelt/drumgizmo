@@ -32,7 +32,7 @@
 #include <cstring>
 #include <algorithm>
 
-namespace GUI
+namespace dggui
 {
 
 PixelBuffer::PixelBuffer(std::size_t width, std::size_t height)
@@ -366,4 +366,4 @@ const std::uint8_t* PixelBufferAlpha::getLine(std::size_t x, std::size_t y) cons
 	return buf + (x + y * width) * 4;
 }
 
-} // GUI::
+} // dggui::

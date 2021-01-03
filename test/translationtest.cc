@@ -68,7 +68,7 @@ public:
 #else
 		setenv("LANG", "da_DK.UTF-8", 1);
 #endif
-		UITranslation t;
+		dggui::UITranslation t;
 
 		// Look up translation from .mo file
 		uUNIT_ASSERT_EQUAL(std::string("Trommesæt"),

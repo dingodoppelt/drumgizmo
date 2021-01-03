@@ -30,7 +30,7 @@
 
 #include "image.h"
 
-namespace GUI
+namespace dggui
 {
 
 ScopedImageBorrower::ScopedImageBorrower(ImageCache& imageCache,
@@ -100,4 +100,4 @@ void ImageCache::giveBack(const std::string& filename)
 	}
 }
 
-} // GUI::
+} // dggui::

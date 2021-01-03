@@ -28,7 +28,7 @@
 
 #include <cassert>
 
-namespace GUI
+namespace dggui
 {
 
 TexturedBox::TexturedBox(ImageCache& image_cache, const std::string& filename,
@@ -144,4 +144,4 @@ bool TexturedBox::hasAlpha() const
 	return true;
 }
 
-} // GUI::
+} // dggui::

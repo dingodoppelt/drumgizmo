@@ -35,10 +35,11 @@ class SettingsNotifier;
 namespace GUI
 {
 
-class BleedcontrolframeContent : public Widget
+class BleedcontrolframeContent
+	: public dggui::Widget
 {
 public:
-	BleedcontrolframeContent(Widget* parent,
+	BleedcontrolframeContent(dggui::Widget* parent,
 	                         Settings& settings,
 	                         SettingsNotifier& settings_notifier);
 
@@ -53,10 +54,10 @@ private:
 
 	bool enabled = true;
 
-	Label label_text{this};
-	Label label_value{this};
+	dggui::Label label_text{this};
+	dggui::Label label_value{this};
 
-	Slider slider{this};
+	dggui::Slider slider{this};
 
 	int slider_width;
 

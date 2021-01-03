@@ -32,7 +32,7 @@
 #include "font.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 class ScrollEvent;
@@ -82,4 +82,4 @@ private:
 	Font font{":resources/fontemboss.png"};
 };
 
-} // GUI::
+} // dggui::

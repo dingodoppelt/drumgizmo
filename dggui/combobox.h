@@ -35,7 +35,7 @@
 #include "painter.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 class ComboBox
@@ -73,4 +73,4 @@ private:
 	ListBoxThin listbox;
 };
 
-} // GUI::
+} // dggui::

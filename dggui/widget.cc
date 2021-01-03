@@ -31,7 +31,7 @@
 #include "painter.h"
 #include "window.h"
 
-namespace GUI
+namespace dggui
 {
 
 Widget::Widget(Widget* parent)
@@ -294,4 +294,4 @@ std::size_t Widget::translateToWindowY()
 	return window_y;
 }
 
-} // GUI::
+} // dggui::

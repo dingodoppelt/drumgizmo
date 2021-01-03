@@ -38,10 +38,10 @@ namespace GUI
 {
 
 class ResamplingframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	ResamplingframeContent(Widget* parent,
+	ResamplingframeContent(dggui::Widget* parent,
 	                       Settings& settings,
 	                       SettingsNotifier& settings_notifier);
 
@@ -58,9 +58,9 @@ private:
 	void valueChangedNotifier(float value);
 
 private:
-	TextEdit text_field{this};
-	Knob quality_knob{this};
-	Label quality_label{this};
+	dggui::TextEdit text_field{this};
+	dggui::Knob quality_knob{this};
+	dggui::Label quality_label{this};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

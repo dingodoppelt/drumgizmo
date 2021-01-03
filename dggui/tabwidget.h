@@ -31,7 +31,7 @@
 #include "stackedwidget.h"
 #include "texture.h"
 
-namespace GUI
+namespace dggui
 {
 
 class TabWidget
@@ -81,4 +81,4 @@ private:
 	std::size_t tab_width{64};
 };
 
-} // GUI::
+} // dggui::

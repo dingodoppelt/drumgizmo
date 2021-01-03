@@ -33,10 +33,10 @@
 namespace GUI
 {
 
-SampleselectionframeContent::SampleselectionframeContent(Widget* parent,
+SampleselectionframeContent::SampleselectionframeContent(dggui::Widget* parent,
                                              Settings& settings,
                                              SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -63,9 +63,9 @@ SampleselectionframeContent::SampleselectionframeContent(Widget* parent,
 	f_random.setControl(&f_random_knob);
 	layout.addItem(&f_random);
 
-	layout.setPosition(&f_close, GridLayout::GridRange{0, 1, 0, 1});
-	layout.setPosition(&f_diverse, GridLayout::GridRange{1, 2, 0, 1});
-	layout.setPosition(&f_random, GridLayout::GridRange{2, 3, 0, 1});
+	layout.setPosition(&f_close, dggui::GridLayout::GridRange{0, 1, 0, 1});
+	layout.setPosition(&f_diverse, dggui::GridLayout::GridRange{1, 2, 0, 1});
+	layout.setPosition(&f_random, dggui::GridLayout::GridRange{2, 3, 0, 1});
 
 	CONNECT(this, settings_notifier.sample_selection_f_close,
 	        this, &SampleselectionframeContent::fCloseSettingsValueChanged);

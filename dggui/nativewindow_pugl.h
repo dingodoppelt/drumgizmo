@@ -34,7 +34,7 @@ extern "C"
 
 #include <list>
 
-namespace GUI
+namespace dggui
 {
 
 class Event;
@@ -80,4 +80,4 @@ private:
 	std::uint32_t last_click{0};
 };
 
-} // GUI::
+} // dggui::

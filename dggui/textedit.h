@@ -35,7 +35,7 @@
 #include "texturedbox.h"
 #include "widget.h"
 
-namespace GUI
+namespace dggui
 {
 
 class TextEdit
@@ -89,4 +89,4 @@ private:
 	std::vector<std::string> preprocessed_text;
 };
 
-} // GUI::
+} // dggui::

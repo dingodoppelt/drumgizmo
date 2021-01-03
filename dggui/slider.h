@@ -30,7 +30,7 @@
 #include "texturedbox.h"
 #include "widget.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Slider
@@ -150,4 +150,4 @@ private:
 	void recomputeCurrentValue(float x);
 };
 
-} // GUI::
+} // dggui::

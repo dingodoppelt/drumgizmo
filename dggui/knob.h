@@ -32,7 +32,8 @@
 #include "texture.h"
 #include "font.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class Knob : public Widget {
 public:
@@ -85,4 +86,4 @@ private:
 	Font font;
 };
 
-} // GUI::
+} // dggui::

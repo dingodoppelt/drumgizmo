@@ -50,10 +50,10 @@ namespace GUI
 {
 
 class MainTab
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	MainTab(Widget* parent,
+	MainTab(dggui::Widget* parent,
 	        Settings& settings,
 	        SettingsNotifier& settings_notifier,
 	        Config& config);
@@ -69,21 +69,21 @@ private:
 	void powerOnChange(bool on);
 	void voicelimitOnChange(bool status);
 
-	Image logo{":resources/logo.png"};
+	dggui::Image logo{":resources/logo.png"};
 
-	GridLayout layout{this, 2, 64};
+	dggui::GridLayout layout{this, 2, 64};
 
-	FrameWidget drumkit_frame{this, false};
-	FrameWidget status_frame{this, false};
-	FrameWidget diskstreaming_frame{this, false};
-	FrameWidget bleedcontrol_frame{this, true};
-	FrameWidget resampling_frame{this, true};
-	FrameWidget humanizer_frame{this, true, true};
-	FrameWidget timing_frame{this, true, true};
-	FrameWidget sampleselection_frame{this, false, true};
-	FrameWidget visualizer_frame{this, false, true};
-	FrameWidget power_frame{this, true, true};
-	FrameWidget voicelimit_frame{this, true, true};
+	dggui::FrameWidget drumkit_frame{this, false};
+	dggui::FrameWidget status_frame{this, false};
+	dggui::FrameWidget diskstreaming_frame{this, false};
+	dggui::FrameWidget bleedcontrol_frame{this, true};
+	dggui::FrameWidget resampling_frame{this, true};
+	dggui::FrameWidget humanizer_frame{this, true, true};
+	dggui::FrameWidget timing_frame{this, true, true};
+	dggui::FrameWidget sampleselection_frame{this, false, true};
+	dggui::FrameWidget visualizer_frame{this, false, true};
+	dggui::FrameWidget power_frame{this, true, true};
+	dggui::FrameWidget voicelimit_frame{this, true, true};
 
 	DrumkitframeContent drumkitframe_content;
 	StatusframeContent statusframe_content;
@@ -97,8 +97,8 @@ private:
 	PowerWidget powerframe_content;
 	VoiceLimitFrameContent voicelimit_content;
 
-	void add(std::string const& title, FrameWidget& frame, Widget& content,
-	         std::size_t height, int column);
+	void add(std::string const& title, dggui::FrameWidget& frame,
+	         dggui::Widget& content, std::size_t height, int column);
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

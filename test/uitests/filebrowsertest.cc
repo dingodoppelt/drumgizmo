@@ -36,11 +36,11 @@
 #include <filebrowser.h>
 
 class TestWindow
-	: public GUI::Window
+	: public dggui::Window
 {
 public:
 	TestWindow()
-		: GUI::Window(nullptr)
+		: dggui::Window(nullptr)
 	{
 		setCaption("FileBrowserTest Window");
 		CONNECT(eventHandler(), closeNotifier,
@@ -100,22 +100,22 @@ public:
 		return !closing;
 	}
 
-	void repaintEvent(GUI::RepaintEvent* repaintEvent)
+	void repaintEvent(dggui::RepaintEvent* repaintEvent)
 	{
-		GUI::Painter painter(*this);
+		dggui::Painter painter(*this);
 
 		label.resize(width(), 30);
 
 		//painter.clear();
-		painter.setColour(GUI::Colour(0,1,0));
+		painter.setColour(dggui::Colour(0,1,0));
 		painter.drawFilledRectangle(0, 0, width(), height());
 	}
 
 private:
 	bool closing{false};
 
-	GUI::Button button{this};
-	GUI::Label label{this};
+	dggui::Button button{this};
+	dggui::Label label{this};
 
 	GUI::FileBrowser file_browser{this};
 };

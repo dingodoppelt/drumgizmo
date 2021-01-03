@@ -29,7 +29,8 @@
 #include "painter.h"
 #include "font.h"
 
-namespace GUI {
+namespace dggui
+{
 
 ListBox::ListBox(Widget *parent)
 	: Widget(parent)
@@ -102,4 +103,4 @@ void ListBox::resize(std::size_t width, std::size_t height)
 	             height - (7 + 7));
 }
 
-} // GUI::
+} // dggui::

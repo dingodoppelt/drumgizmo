@@ -36,7 +36,7 @@
 #include "texturedbox.h"
 #include "font.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Tooltip
@@ -75,4 +75,4 @@ private:
 	Widget* activating_widget;
 };
 
-} // GUI::
+} // dggui::

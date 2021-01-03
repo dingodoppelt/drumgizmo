@@ -31,7 +31,7 @@
 #include "window.h"
 #include <iostream>
 
-namespace GUI
+namespace dggui
 {
 
 Tooltip::Tooltip(Widget *parent)
@@ -197,4 +197,4 @@ void Tooltip::buttonEvent(ButtonEvent* buttonEvent)
 	}
 }
 
-} // GUI::
+} // dggui::

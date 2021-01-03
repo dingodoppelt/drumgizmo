@@ -38,67 +38,67 @@
 #include <dggui/painter.h>
 
 class Widget1
-	: public GUI::Widget
+	: public dggui::Widget
 {
 public:
-	Widget1(GUI::Widget* parent)
-		: GUI::Widget(parent)
+	Widget1(dggui::Widget* parent)
+		: dggui::Widget(parent)
 	{
 		layout.setResizeChildren(true);
-		layout.setHAlignment(GUI::HAlignment::center);
+		layout.setHAlignment(dggui::HAlignment::center);
 
 		label1.setText("Label1");
-		label1.setAlignment(GUI::TextAlignment::left);
+		label1.setAlignment(dggui::TextAlignment::left);
 		layout.addItem(&label1);
 
 		label2.setText("Label2");
-		label2.setAlignment(GUI::TextAlignment::center);
+		label2.setAlignment(dggui::TextAlignment::center);
 		layout.addItem(&label2);
 
 		label3.setText("Label3");
-		label3.setAlignment(GUI::TextAlignment::right);
+		label3.setAlignment(dggui::TextAlignment::right);
 		layout.addItem(&label3);
 	}
 
 private:
-	GUI::VBoxLayout layout{this};
-	GUI::Label label1{this};
-	GUI::Label label2{this};
-	GUI::Label label3{this};
+	dggui::VBoxLayout layout{this};
+	dggui::Label label1{this};
+	dggui::Label label2{this};
+	dggui::Label label3{this};
 };
 
 class Widget2
-	: public GUI::Button
+	: public dggui::Button
 {
 public:
-	Widget2(GUI::Widget* parent)
-		: GUI::Button(parent)
+	Widget2(dggui::Widget* parent)
+		: dggui::Button(parent)
 	{
 		setText("Widget2");
 	}
 };
 
 class Widget3
-	: public GUI::Widget
+	: public dggui::Widget
 {
 public:
-	Widget3(GUI::Widget* parent)
-		: GUI::Widget(parent)
+	Widget3(dggui::Widget* parent)
+		: dggui::Widget(parent)
 	{
 		label.move(100, 80);
 		label.resize(100, 20);
 		label.setText("Widget3");
 	}
 private:
-	GUI::Label label{this};
+	dggui::Label label{this};
 };
 
 class TestWindow
-	: public GUI::Window
+	: public dggui::Window
 {
 public:
 	TestWindow()
-		: GUI::Window(nullptr)
+		: dggui::Window(nullptr)
 	{
 		setCaption("TabWidgetTest Window");
 		CONNECT(eventHandler(), closeNotifier,
@@ -126,16 +126,16 @@ public:
 		return !closing;
 	}
 
-	void repaintEvent(GUI::RepaintEvent* repaintEvent) override
+	void repaintEvent(dggui::RepaintEvent* repaintEvent) override
 	{
-		GUI::Painter painter(*this);
-		painter.setColour(GUI::Colour(0.85));
+		dggui::Painter painter(*this);
+		painter.setColour(dggui::Colour(0.85));
 		painter.drawFilledRectangle(0, 0, width() - 1, height() - 1);
 	}
 
 private:
 	bool closing{false};
-	GUI::TabWidget tabs{this};
+	dggui::TabWidget tabs{this};
 	Widget1 widget1{this};
 	Widget2 widget2{this};
 	Widget3 widget3{this};

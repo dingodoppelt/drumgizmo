@@ -36,7 +36,7 @@
 #include "resource.h"
 #include "lodepng/lodepng.h"
 
-namespace GUI
+namespace dggui
 {
 
 Image::Image(const char* data, size_t size)
@@ -213,4 +213,4 @@ bool Image::isValid() const
 	return valid;
 }
 
-} // GUI::
+} // dggui::

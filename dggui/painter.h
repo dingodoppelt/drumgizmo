@@ -31,7 +31,7 @@
 #include "colour.h"
 #include "pixelbuffer.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Font;
@@ -100,4 +100,4 @@ void Painter::draw(Iterator begin, Iterator end, int x_offset, int y_offset, Col
 	}
 }
 
-} // GUI::
+} // dggui::

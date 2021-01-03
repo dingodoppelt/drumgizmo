@@ -31,7 +31,7 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
-namespace GUI
+namespace dggui
 {
 
 Slider::Slider(Widget* parent) : Widget(parent)
@@ -214,4 +214,4 @@ void Slider::recomputeCurrentValue(float x)
 	}
 }
 
-} // GUI::
+} // dggui::

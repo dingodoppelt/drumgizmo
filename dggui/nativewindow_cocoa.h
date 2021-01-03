@@ -30,7 +30,7 @@
 
 #include "nativewindow.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Window;
@@ -75,4 +75,4 @@ private:
 	float scale{1.0};
 };
 
-} // GUI::
+} // dggui::

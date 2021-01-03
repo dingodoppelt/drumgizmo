@@ -33,7 +33,7 @@
 
 #include "nativewindow.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Window;
@@ -96,4 +96,4 @@ private:
 	EventQueue event_queue;
 };
 
-} // GUI::
+} // dggui::

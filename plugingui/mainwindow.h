@@ -42,7 +42,7 @@ namespace GUI
 {
 
 class MainWindow
-	: public Window
+	: public dggui::Window
 {
 public:
 
@@ -65,31 +65,31 @@ private:
 	void changeDrumkitTabVisibility(bool visible);
 
 	// From Widget
-	void repaintEvent(RepaintEvent* repaintEvent) override final;
+	void repaintEvent(dggui::RepaintEvent* repaintEvent) override final;
 
 	Config config;
 	SettingsNotifier settings_notifier;
 
-	TabWidget tabs{this};
+	dggui::TabWidget tabs{this};
 	MainTab main_tab;
 	DrumkitTab drumkit_tab;
 	AboutTab about_tab{&tabs};
 
-	Image back{":resources/bg.png"};
+	dggui::Image back{":resources/bg.png"};
 
-	TexturedBox sidebar{getImageCache(), ":resources/sidebar.png",
+	dggui::TexturedBox sidebar{getImageCache(), ":resources/sidebar.png",
 			0, 0, // offset
 			16, 0, 0, // delta-x
 			14, 1, 14}; // delta-y
 
-	TexturedBox topbar{getImageCache(), ":resources/topbar.png",
+	dggui::TexturedBox topbar{getImageCache(), ":resources/topbar.png",
 			0, 0, // atlas offset (x, y)
 			1, 1, 1, // dx1, dx2, dx3
 			17, 1, 1}; // dy1, dy2, dy3
 
 	bool closing{false};
 
-	TabID drumkit_tab_id;
+	dggui::TabID drumkit_tab_id;
 };
 
 } // GUI::

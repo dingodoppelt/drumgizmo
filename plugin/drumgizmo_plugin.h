@@ -188,23 +188,23 @@ private:
 	ConfigStringIO config_string_io;
 	SettingsGetter settingsGetter{settings};
 
-	GUI::ImageCache imageCache;
-	GUI::TexturedBox box{imageCache, ":resources/progress.png",
+	dggui::ImageCache imageCache;
+	dggui::TexturedBox box{imageCache, ":resources/progress.png",
 			0, 0, // atlas offset (x, y)
 			6, 1, 6, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_red{imageCache, ":resources/progress.png",
+	dggui::TexturedBox bar_red{imageCache, ":resources/progress.png",
 			13, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_green{imageCache, ":resources/progress.png",
+	dggui::TexturedBox bar_green{imageCache, ":resources/progress.png",
 			18, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
 
-	GUI::TexturedBox bar_blue{imageCache, ":resources/progress.png",
+	dggui::TexturedBox bar_blue{imageCache, ":resources/progress.png",
 			23, 0, // atlas offset (x, y)
 			2, 1, 2, // dx1, dx2, dx3
 			11, 0, 0}; // dy1, dy2, dy3
@@ -213,10 +213,10 @@ private:
 	std::shared_ptr<DrumGizmo> drumgizmo;
 
 	std::uint32_t inlineDisplayBuffer[1024*1024];
-	GUI::Image inline_display_image{":resources/logo.png"};
+	dggui::Image inline_display_image{":resources/logo.png"};
 	bool inline_image_first_draw{true};
 
 #ifdef WITH_NLS
-	UITranslation translation;
+	dggui::UITranslation translation;
 #endif // WITH_NLS
 };

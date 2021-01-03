@@ -31,7 +31,8 @@
 
 #define BORDER 10
 
-namespace GUI {
+namespace dggui
+{
 
 LineEdit::LineEdit(Widget *parent)
 	: Widget(parent)
@@ -282,4 +283,4 @@ void LineEdit::repaintEvent(RepaintEvent *repaintEvent)
 	}
 }
 
-} // GUI::
+} // dggui::

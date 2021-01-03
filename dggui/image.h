@@ -33,7 +33,8 @@
 #include "colour.h"
 #include "resource.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class Image
 	: public Drawable
@@ -72,4 +73,4 @@ protected:
 	bool has_alpha{false};
 };
 
-} // GUI::
+} // dggui::

@@ -26,7 +26,7 @@
  */
 #include "progressbar.h"
 
-namespace GUI
+namespace dggui
 {
 
 ProgressBar::ProgressBar(Widget *parent)
@@ -101,4 +101,4 @@ void ProgressBar::repaintEvent(RepaintEvent* repaintEvent)
 
 }
 
-} // GUI::
+} // dggui::

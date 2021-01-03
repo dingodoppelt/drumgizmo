@@ -33,10 +33,10 @@
 namespace GUI
 {
 
-ResamplingframeContent::ResamplingframeContent(Widget* parent,
+ResamplingframeContent::ResamplingframeContent(dggui::Widget* parent,
                                                Settings& settings,
                                                SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -57,7 +57,7 @@ ResamplingframeContent::ResamplingframeContent(Widget* parent,
 	quality_knob.showValue(false);
 
 	quality_label.setText(_("Quality"));
-	quality_label.setAlignment(TextAlignment::center);
+	quality_label.setAlignment(dggui::TextAlignment::center);
 	quality_label.resize(40, 16);
 
 	CONNECT(&quality_knob, valueChangedNotifier,

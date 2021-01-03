@@ -32,7 +32,7 @@
 
 #include <notifier.h>
 
-namespace GUI
+namespace dggui
 {
 
 class Layout;
@@ -192,4 +192,4 @@ private:
 	    LayoutItem& item, GridRange const& range, CellSize cell_size) const;
 };
 
-} // GUI::
+} // dggui::

@@ -34,7 +34,7 @@
 
 #include <vector>
 
-namespace GUI
+namespace dggui
 {
 
 struct Point
@@ -136,4 +136,4 @@ protected:
 	bool dirty{true};
 };
 
-} // GUI::
+} // dggui::

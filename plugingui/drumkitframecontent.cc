@@ -35,11 +35,11 @@
 namespace GUI
 {
 
-BrowseFile::BrowseFile(Widget* parent)
-	: Widget(parent)
+BrowseFile::BrowseFile(dggui::Widget* parent)
+	: dggui::Widget(parent)
 {
 	layout.setResizeChildren(false);
-	layout.setVAlignment(VAlignment::center);
+	layout.setVAlignment(dggui::VAlignment::center);
 	layout.setSpacing(gap);
 
 	layout.addItem(&lineedit);
@@ -50,7 +50,7 @@ BrowseFile::BrowseFile(Widget* parent)
 
 void BrowseFile::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	lineedit_width = std::max((int)(0.77 * (int)width - gap), 0);
 	button_width = std::max((int)width - lineedit_width - gap, 0);
@@ -71,26 +71,26 @@ std::size_t BrowseFile::getButtonWidth()
 	return button_width;
 }
 
-Button& BrowseFile::getBrowseButton()
+dggui::Button& BrowseFile::getBrowseButton()
 {
 	return browse_button;
 }
 
-LineEdit& BrowseFile::getLineEdit()
+dggui::LineEdit& BrowseFile::getLineEdit()
 {
 	return lineedit;
 }
 
-DrumkitframeContent::DrumkitframeContent(Widget* parent,
+DrumkitframeContent::DrumkitframeContent(dggui::Widget* parent,
                                          Settings& settings,
                                          SettingsNotifier& settings_notifier,
                                          Config& config)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 	, config(config)
 {
-	layout.setHAlignment(HAlignment::left);
+	layout.setHAlignment(dggui::HAlignment::left);
 
 	drumkit_caption.setText(_("Drumkit file:"));
 	midimap_caption.setText(_("Midimap file:"));
@@ -110,20 +110,20 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
 
 
 	CONNECT(this, settings_notifier.drumkit_file,
-	        &drumkit_file.getLineEdit(), &LineEdit::setText);
+	        &drumkit_file.getLineEdit(), &dggui::LineEdit::setText);
 	CONNECT(this, settings_notifier.drumkit_load_status,
 	        this, &DrumkitframeContent::setDrumKitLoadStatus);
 
 	CONNECT(this, settings_notifier.midimap_file,
-	        &midimap_file.getLineEdit(), &LineEdit::setText);
+	        &midimap_file.getLineEdit(), &dggui::LineEdit::setText);
 	CONNECT(this, settings_notifier.midimap_load_status,
 	        this, &DrumkitframeContent::setMidiMapLoadStatus);
 
 	CONNECT(this, settings_notifier.number_of_files,
-	        &drumkit_file_progress, &ProgressBar::setTotal);
+	        &drumkit_file_progress, &dggui::ProgressBar::setTotal);
 
 	CONNECT(this, settings_notifier.number_of_files_loaded,
-	        &drumkit_file_progress, &ProgressBar::setValue);
+	        &drumkit_file_progress, &dggui::ProgressBar::setValue);
 
 	CONNECT(this, file_browser. defaultPathChangedNotifier,
 	        this, &DrumkitframeContent::defaultPathChanged);
@@ -136,7 +136,7 @@ DrumkitframeContent::DrumkitframeContent(Widget* parent,
 
 void DrumkitframeContent::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	drumkit_caption.resize(width, 15);
 	drumkit_file.resize(width, 37);
@@ -169,8 +169,8 @@ void DrumkitframeContent::kitBrowseClick()
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectKitFile);
 	file_browser.show();
-	Point p{ window()->x() + (int)window()->width() / 2,
-	         window()->y() + (int)window()->height() / 2 };
+	dggui::Point p{ window()->x() + (int)window()->width() / 2,
+	                window()->y() + (int)window()->height() / 2 };
 	auto p0 = window()->translateToScreen(p);
 	auto sz = file_browser.window()->getNativeSize();
 	file_browser.move(p0.x - sz.width / 2,
@@ -197,8 +197,8 @@ void DrumkitframeContent::midimapBrowseClick()
 	CONNECT(&file_browser, fileSelectNotifier,
 	        this, &DrumkitframeContent::selectMapFile);
 	file_browser.show();
-	Point p{ window()->x() + (int)window()->width() / 2,
-	         window()->y() + (int)window()->height() / 2 };
+	dggui::Point p{ window()->x() + (int)window()->width() / 2,
+	                window()->y() + (int)window()->height() / 2 };
 	auto p0 = window()->translateToScreen(p);
 	auto sz = file_browser.window()->getNativeSize();
 	file_browser.move(p0.x - sz.width / 2,
@@ -229,18 +229,18 @@ void DrumkitframeContent::selectMapFile(const std::string& filename)
 
 void DrumkitframeContent::setDrumKitLoadStatus(LoadStatus load_status)
 {
-	ProgressBarState state = ProgressBarState::Blue;
+	auto state = dggui::ProgressBarState::Blue;
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
 	case LoadStatus::Loading:
-		state = ProgressBarState::Blue;
+		state = dggui::ProgressBarState::Blue;
 		break;
 	case LoadStatus::Done:
-		state = ProgressBarState::Green;
+		state = dggui::ProgressBarState::Green;
 		break;
 	case LoadStatus::Error:
-		state = ProgressBarState::Red;
+		state = dggui::ProgressBarState::Red;
 		break;
 	}
 
@@ -249,7 +249,7 @@ void DrumkitframeContent::setDrumKitLoadStatus(LoadStatus load_status)
 
 void DrumkitframeContent::setMidiMapLoadStatus(LoadStatus load_status)
 {
-	ProgressBarState state = ProgressBarState::Blue;
+	auto state = dggui::ProgressBarState::Blue;
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
@@ -257,15 +257,15 @@ void DrumkitframeContent::setMidiMapLoadStatus(LoadStatus load_status)
 		break;
 	case LoadStatus::Loading:
 		midimap_file_progress.setValue(1);
-		state = ProgressBarState::Blue;
+		state = dggui::ProgressBarState::Blue;
 		break;
 	case LoadStatus::Done:
 		midimap_file_progress.setValue(2);
-		state = ProgressBarState::Green;
+		state = dggui::ProgressBarState::Green;
 		break;
 	case LoadStatus::Error:
 		midimap_file_progress.setValue(2);
-		state = ProgressBarState::Red;
+		state = dggui::ProgressBarState::Red;
 		break;
 	}
 

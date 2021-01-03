@@ -36,7 +36,7 @@ class TestColour
 public:
 	TestColour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
 		: colour(r, g, b, a) {}
-	TestColour(const GUI::Colour& colour)
+	TestColour(const dggui::Colour& colour)
 		: colour(colour) {}
 
 	bool operator!=(const TestColour& other) const
@@ -49,7 +49,7 @@ public:
 			;
 	}
 
-	const GUI::Colour colour;
+	const dggui::Colour colour;
 };
 
 std::ostream& operator<<(std::ostream& stream, const TestColour& col)
@@ -63,28 +63,28 @@ std::ostream& operator<<(std::ostream& stream, const TestColour& col)
 }
 
 class TestableCanvas
-	: public GUI::Canvas
+	: public dggui::Canvas
 {
 public:
 	TestableCanvas(std::size_t width, std::size_t height)
 		: pixbuf(width, height)
 	{}
 
-	GUI::PixelBufferAlpha& getPixelBuffer() override
+	dggui::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
 	}
 
 private:
-	GUI::PixelBufferAlpha pixbuf;
+	dggui::PixelBufferAlpha pixbuf;
 };
 
 class TestImage
-	: public GUI::Image
+	: public dggui::Image
 {
 public:
 	TestImage(std::uint8_t width, std::uint8_t height, bool alpha)
-		: GUI::Image(":resources/logo.png") // just load some default image
+		: dggui::Image(":resources/logo.png") // just load some default image
 	{
 		_width = width;
 		_height = height;
@@ -98,7 +98,7 @@ public:
 		{
 			for(std::uint8_t y = 0; y < _height; ++y)
 			{
-				image_data[x + _width * y] = GUI::Colour(x, y, 0, alpha ? 128 : 255);
+				image_data[x + _width * y] = dggui::Colour(x, y, 0, alpha ? 128 : 255);
 				image_data_raw[4 * (x + _width * y) + 0] = x;
 				image_data_raw[4 * (x + _width * y) + 1] = y;
 				image_data_raw[4 * (x + _width * y) + 2] = 0;
@@ -124,35 +124,35 @@ public:
 	void testDrawImage()
 	{
 		// Success criterion is simply to not assert in the drawing routines...
-		GUI::Image image(":resources/logo.png");
+		dggui::Image image(":resources/logo.png");
 
 		{ // Image fits in pixelbuffer
 			TestableCanvas canvas(image.width(), image.height());
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(0, 0, image);
 		}
 
 		{ // Image fits in pixelbuffer, negative offset
 			TestableCanvas canvas(image.width(), image.height());
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(-10, -10, image);
 		}
 
 		{ // Image too big for pixelbuffer
 			TestableCanvas canvas(image.width() / 2, image.height() / 2);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(0, 0, image);
 		}
 
 		{ // Image fits in pixelbuffer but offset so it is drawn over the edge.
 			TestableCanvas canvas(image.width(), image.height());
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(10, 10, image);
 		}
 
 		{ // Image is offset to the right and down so nothing is to be drawn.
 			TestableCanvas canvas(image.width(), image.height());
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(image.width() + 1,
 			                  image.height() + 1,
 			                  image);
@@ -160,7 +160,7 @@ public:
 
 		{ // Image is offset to the left and up so nothing is to be drawn.
 			TestableCanvas canvas(image.width(), image.height());
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawImage(-1 * (image.width() + 1),
 			                  -1 * (image.height() + 1),
 			                  image);
@@ -170,7 +170,7 @@ public:
 	void testDrawText()
 	{
 		// Success criterion is simply to not assert in the drawing routines...
-		GUI::Font font;
+		dggui::Font font;
 		// a string with unicode characters
 		std::string someText = "Hello World - лæ Библиотека";
 		std::size_t width = font.textWidth(someText);
@@ -178,31 +178,31 @@ public:
 
 		{ // Text fits in pixelbuffer
 			TestableCanvas canvas(width, height);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(0, 0, font, someText);
 		}
 
 		{ // Text fits in pixelbuffer, negative offset
 			TestableCanvas canvas(width, height);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(-10, -10, font, someText);
 		}
 
 		{ // Text too big for pixelbuffer
 			TestableCanvas canvas(width / 2, height / 2);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(0, 0, font, someText);
 		}
 
 		{ // Text fits in pixelbuffer but offset so it is drawn over the edge.
 			TestableCanvas canvas(width, height);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(10, 10, font, someText);
 		}
 
 		{ // Text is offset to the right and down so nothing is to be drawn.
 			TestableCanvas canvas(width, height);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(width + 1,
 			                 height + 1,
 			                 font, someText);
@@ -210,7 +210,7 @@ public:
 
 		{ // Text is offset to the left and up so nothing is to be drawn.
 			TestableCanvas canvas(width, height);
-			GUI::Painter painter(canvas);
+			dggui::Painter painter(canvas);
 			painter.drawText(-1 * (width + 1),
 			                 -1 * (height + 1),
 			                 font, someText);
@@ -221,7 +221,7 @@ public:
 	void testClipping()
 	{
 		TestableCanvas canvas(100, 100);
-		GUI::Painter painter(canvas);
+		dggui::Painter painter(canvas);
 
 		{ // Without alpha
 			TestImage image(16, 16, false);

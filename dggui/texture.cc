@@ -26,7 +26,7 @@
  */
 #include "texture.h"
 
-namespace GUI
+namespace dggui
 {
 
 Texture::Texture(ImageCache& image_cache, const std::string& filename,
@@ -69,4 +69,4 @@ bool Texture::hasAlpha() const
 	return true;
 }
 
-} // GUI::
+} // dggui::

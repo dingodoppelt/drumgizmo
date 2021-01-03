@@ -34,7 +34,7 @@
 #include "guievent.h"
 #include "nativewindow.h"
 
-namespace GUI
+namespace dggui
 {
 
 class Window;
@@ -75,4 +75,4 @@ private:
 	std::list<Dialog*> dialogs;
 };
 
-} // GUI::
+} // dggui::

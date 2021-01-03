@@ -29,9 +29,12 @@
 #include "widget.h"
 #include "image.h"
 
-namespace GUI {
+namespace dggui
+{
 
-class VerticalLine : public Widget {
+class VerticalLine
+	: public Widget
+{
 public:
 	VerticalLine(Widget* parent);
 	virtual ~VerticalLine() = default;
@@ -44,4 +47,4 @@ private:
 	Image vline;
 };
 
-} // GUI::
+} // dggui::

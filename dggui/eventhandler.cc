@@ -30,7 +30,7 @@
 #include "painter.h"
 #include "dialog.h"
 
-namespace GUI
+namespace dggui
 {
 
 EventHandler::EventHandler(NativeWindow& nativeWindow, Window& window)
@@ -294,4 +294,4 @@ void EventHandler::unregisterDialog(Dialog* dialog)
 }
 
 
-} // GUI::
+} // dggui::

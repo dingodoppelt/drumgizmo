@@ -30,7 +30,7 @@
 
 #include <notifier.h>
 
-namespace GUI
+namespace dggui
 {
 
 class Toggle : public Widget
@@ -67,4 +67,4 @@ private:
 	void internalSetChecked(bool checked);
 };
 
-} // GUI::
+} // dggui::

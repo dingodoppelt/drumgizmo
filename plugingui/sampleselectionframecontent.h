@@ -41,10 +41,10 @@ namespace GUI
 {
 
 class SampleselectionframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	SampleselectionframeContent(Widget* parent,
+	SampleselectionframeContent(dggui::Widget* parent,
 	                            Settings& settings,
 	                            SettingsNotifier& settings_notifier);
 
@@ -57,15 +57,15 @@ private:
 	void fDiverseSettingsValueChanged(float value);
 	void fRandomSettingsValueChanged(float value);
 
-	GridLayout layout{this, 3, 1};
+	dggui::GridLayout layout{this, 3, 1};
 
 	LabeledControl f_close{this, _("pClose")};
 	LabeledControl f_diverse{this, _("pDiverse")};
 	LabeledControl f_random{this, _("pRandom")};
 
-	Knob f_close_knob{&f_close};
-	Knob f_diverse_knob{&f_diverse};
-	Knob f_random_knob{&f_random};
+	dggui::Knob f_close_knob{&f_close};
+	dggui::Knob f_diverse_knob{&f_diverse};
+	dggui::Knob f_random_knob{&f_random};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

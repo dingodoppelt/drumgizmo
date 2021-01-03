@@ -35,11 +35,11 @@
 #include <dggui/painter.h>
 
 class TestWindow
-	: public GUI::Window
+	: public dggui::Window
 {
 public:
 	TestWindow()
-		: GUI::Window(nullptr)
+		: dggui::Window(nullptr)
 	{
 		setCaption("ResizeTest Window");
 		CONNECT(eventHandler(), closeNotifier,
@@ -71,19 +71,19 @@ public:
 		return !closing;
 	}
 
-	void repaintEvent(GUI::RepaintEvent* repaintEvent)
+	void repaintEvent(dggui::RepaintEvent* repaintEvent)
 	{
-		GUI::Painter painter(*this);
+		dggui::Painter painter(*this);
 
 		//painter.clear();
-		painter.setColour(GUI::Colour(0,1,0));
+		painter.setColour(dggui::Colour(0,1,0));
 		painter.drawFilledRectangle(0, 0, width(), height());
 
 		auto currentSize = std::make_pair(width(), height());
 		auto currentPosition = std::make_pair(x(), y());
 
 		{
-			painter.setColour(GUI::Colour(1,0,0));
+			painter.setColour(dggui::Colour(1,0,0));
 			char str[64];
 			sprintf(str, "reported: (%d, %d); (%d, %d)",
 			        (int)reportedPosition.first,
@@ -98,7 +98,7 @@ public:
 		}
 
 		{
-			painter.setColour(GUI::Colour(1,0,0));
+			painter.setColour(dggui::Colour(1,0,0));
 			char str[64];
 			sprintf(str, "current: (%d, %d); (%d, %d)",
 			        (int)currentPosition.first,
@@ -115,7 +115,7 @@ public:
 
 private:
 	bool closing{false};
-	GUI::Font font{":resources/font.png"};
+	dggui::Font font{":resources/font.png"};
 	std::pair<std::size_t, std::size_t> reportedSize;
 	std::pair<int, int> reportedPosition;
 };

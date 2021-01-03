@@ -28,9 +28,11 @@
 
 #include <string>
 
-namespace GUI {
+namespace dggui
+{
 
-class Resource {
+class Resource
+{
 public:
 	Resource(const std::string& name);
 
@@ -47,4 +49,4 @@ protected:
 	size_t internalSize{0};
 };
 
-} // GUI::
+} // dggui::

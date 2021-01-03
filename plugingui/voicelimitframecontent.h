@@ -41,10 +41,10 @@ namespace GUI
 {
 
 class VoiceLimitFrameContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	VoiceLimitFrameContent(Widget* parent,
+	VoiceLimitFrameContent(dggui::Widget* parent,
 	                       Settings& settings,
 	                       SettingsNotifier& settings_notifier);
 
@@ -60,15 +60,15 @@ private:
 	Settings& settings;
 	SettingsNotifier& settings_notifier;
 
-	Label label_text{this};
+	dggui::Label label_text{this};
 
-	GridLayout layout{this, 2, 1};
+	dggui::GridLayout layout{this, 2, 1};
 
 	LabeledControl lc_max_voices{this, _("Max voices")};
 	LabeledControl lc_rampdown_time{this, _("Rampdown time")};
 
-	Knob knob_max_voices{&lc_max_voices};
-	Knob knob_rampdown_time{&lc_rampdown_time};
+	dggui::Knob knob_max_voices{&lc_max_voices};
+	dggui::Knob knob_rampdown_time{&lc_rampdown_time};
 };
 
 } // GUI::

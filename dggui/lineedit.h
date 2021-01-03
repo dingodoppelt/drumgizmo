@@ -33,7 +33,7 @@
 #include "painter.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 class LineEdit
@@ -84,4 +84,4 @@ private:
 	bool readonly;
 };
 
-} // GUI::
+} // dggui::

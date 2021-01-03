@@ -28,7 +28,8 @@
 
 #include "painter.h"
 
-namespace GUI {
+namespace dggui
+{
 
 LED::LED(Widget *parent)
 	: Widget(parent)
@@ -94,4 +95,4 @@ void LED::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawFilledCircle(w / 3, h / 3, size / 6);
 }
 
-} // GUI::
+} // dggui::

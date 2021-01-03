@@ -31,7 +31,8 @@
 
 #include <cpp11fix.h>
 
-namespace GUI {
+namespace dggui
+{
 
 Label::Label(Widget *parent)
 	: Widget(parent)
@@ -93,4 +94,4 @@ void Label::repaintEvent(RepaintEvent* repaintEvent)
 	}
 }
 
-} // GUI::
+} // dggui::

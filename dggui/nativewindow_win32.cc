@@ -32,7 +32,7 @@
 
 #include "window.h"
 
-namespace GUI
+namespace dggui
 {
 
 static BOOL trackMouse(HWND hwnd)
@@ -581,4 +581,4 @@ Point NativeWindowWin32::translateToScreen(const Point& point)
 	return { p.x, p.y };
 }
 
-} // GUI::
+} // dggui::

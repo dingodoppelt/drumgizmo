@@ -31,6 +31,9 @@
 #include <translation.h>
 
 #ifdef WITH_NLS
+namespace dggui
+{
+
 class UITranslation
 	: public Translation
 {
@@ -38,4 +41,6 @@ public:
 	UITranslation();
 	~UITranslation() = default;
 };
+
+} // ::dggui
 #endif

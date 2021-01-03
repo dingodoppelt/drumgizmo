@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 TabWidget::TabWidget(Widget *parent)
@@ -211,4 +211,4 @@ const TabButton* TabWidget::getButtonFromWidget(const Widget* tab_widget)
 	return nullptr;
 }
 
-} // GUI::
+} // dggui::

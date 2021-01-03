@@ -33,7 +33,7 @@
 #include "helpbutton.h"
 #include "widget.h"
 
-namespace GUI
+namespace dggui
 {
 
 class FrameWidget
@@ -76,8 +76,8 @@ private:
 	// label
 	Font font;
 	std::string title;
-	GUI::Colour label_colour{0.1};
-	GUI::Colour label_colour_disabled{0.5};
+	dggui::Colour label_colour{0.1};
+	dggui::Colour label_colour_disabled{0.5};
 	std::size_t label_width;
 
 	// switch
@@ -89,18 +89,18 @@ private:
 
 	// grey box
 	int bar_height;
-	GUI::Colour grey_box_colour{0.7};
-	GUI::Colour grey_box_colour_disabled{0.7};
-	GUI::Colour background_colour{0.85, 0.8};
+	dggui::Colour grey_box_colour{0.7};
+	dggui::Colour grey_box_colour_disabled{0.7};
+	dggui::Colour background_colour{0.85, 0.8};
 
 	//
 	// content
 	//
 
 	// content frame
-	GUI::Colour frame_colour_top{0.95};
-	GUI::Colour frame_colour_bottom{0.4};
-	GUI::Colour frame_colour_side{0.6};
+	dggui::Colour frame_colour_top{0.95};
+	dggui::Colour frame_colour_bottom{0.4};
+	dggui::Colour frame_colour_side{0.6};
 
 	// content box
 	Widget* content{nullptr};
@@ -112,4 +112,4 @@ private:
 	int content_height;
 };
 
-} // GUI::
+} // dggui::

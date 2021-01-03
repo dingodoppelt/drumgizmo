@@ -28,7 +28,7 @@
 
 #include "pixelbuffer.h"
 
-namespace GUI
+namespace dggui
 {
 
 //! Abstract class that can be used by the Painter to draw on.
@@ -41,4 +41,4 @@ public:
 	virtual PixelBufferAlpha& getPixelBuffer() = 0;
 };
 
-} // GUI::
+} // dggui::

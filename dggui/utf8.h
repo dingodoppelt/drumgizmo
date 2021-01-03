@@ -29,6 +29,9 @@
 #include <string>
 #include <unordered_map>
 
+namespace dggui
+{
+
 // Class to convert utf8 to latin1 and the other way around.
 class UTF8
 {
@@ -45,3 +48,5 @@ private:
 	std::unordered_map<std::string, std::string> map_encode;
 	std::unordered_map<std::string, std::string> map_decode;
 };
+
+} // ::dggui

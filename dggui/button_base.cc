@@ -26,7 +26,8 @@
  */
 #include "button_base.h"
 
-namespace GUI {
+namespace dggui
+{
 
 ButtonBase::ButtonBase(Widget *parent)
 	: Widget(parent)
@@ -113,4 +114,4 @@ void ButtonBase::mouseEnterEvent()
 	}
 }
 
-} // GUI::
+} // dggui::

@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 CheckBox::CheckBox(Widget* parent)
@@ -61,4 +61,4 @@ void CheckBox::repaintEvent(RepaintEvent* repaintEvent)
 	}
 }
 
-} // GUI::
+} // dggui::

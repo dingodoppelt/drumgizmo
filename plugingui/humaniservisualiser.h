@@ -33,33 +33,36 @@
 struct Settings;
 class SettingsNotifier;
 
+namespace GUI
+{
+
 class HumaniserVisualiser
-	: public GUI::Widget
+	: public dggui::Widget
 {
 public:
-	HumaniserVisualiser(GUI::Widget* parent,
+	HumaniserVisualiser(dggui::Widget* parent,
 	                    Settings& settings,
 	                    SettingsNotifier& settings_notifier);
 
 	// From Widget:
-	virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
+	virtual void repaintEvent(dggui::RepaintEvent *repaintEvent) override;
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	GUI::TexturedBox box{getImageCache(), ":resources/widget.png",
+	dggui::TexturedBox box{getImageCache(), ":resources/widget.png",
 			0, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			7, 63, 7}; // dy1, dy2, dy3
 
 	class Canvas
-		: public GUI::Widget
+		: public dggui::Widget
 	{
 	public:
-		Canvas(GUI::Widget* parent, Settings& settings,
+		Canvas(dggui::Widget* parent, Settings& settings,
 		       SettingsNotifier& settings_notifier);
 
 		// From Widget:
-		virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
+		virtual void repaintEvent(dggui::RepaintEvent *repaintEvent) override;
 
 		void latencyEnabledChanged(bool enabled);
 		void velocityEnabledChanged(bool enabled);
@@ -69,10 +72,10 @@ private:
 		void latencyLaidbackChanged(float laidback);
 		void velocityStddevChanged(float stddev);
 
-		GUI::Texture stddev_h{getImageCache(), ":resources/stddev_horizontal.png"};
-		GUI::Texture stddev_h_disabled{getImageCache(), ":resources/stddev_horizontal_disabled.png"};
-		GUI::Texture stddev_v{getImageCache(), ":resources/stddev_vertical.png"};
-		GUI::Texture stddev_v_disabled{getImageCache(), ":resources/stddev_vertical_disabled.png"};
+		dggui::Texture stddev_h{getImageCache(), ":resources/stddev_horizontal.png"};
+		dggui::Texture stddev_h_disabled{getImageCache(), ":resources/stddev_horizontal_disabled.png"};
+		dggui::Texture stddev_v{getImageCache(), ":resources/stddev_vertical.png"};
+		dggui::Texture stddev_v_disabled{getImageCache(), ":resources/stddev_vertical_disabled.png"};
 
 		bool latency_enabled{false};
 		bool velocity_enabled{false};
@@ -90,3 +93,5 @@ private:
 
 	Canvas canvas;
 };
+
+} // ::GUI

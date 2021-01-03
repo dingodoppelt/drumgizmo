@@ -40,14 +40,14 @@
 int main()
 {
 #ifdef WITH_NLS
-	UITranslation translation;
+	dggui::UITranslation translation;
 #endif // WITH_NLS
 
 	INFO(example, "We are up and running");
 
 	void* native_window_handle{nullptr};
 #ifndef UI_PUGL
-	GUI::Window parent{nullptr};
+	dggui::Window parent{nullptr};
 	parent.setCaption("PluginGui Test Application");
 	native_window_handle = parent.getNativeWindowHandle();
 #endif
@@ -57,7 +57,7 @@ int main()
 
 #ifndef UI_PUGL
 	CONNECT(&parent, eventHandler()->closeNotifier, &main_window,
-	    &GUI::MainWindow::closeEventHandler);
+	        &GUI::MainWindow::closeEventHandler);
 
 	parent.show();
 #endif

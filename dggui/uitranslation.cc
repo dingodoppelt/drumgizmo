@@ -30,6 +30,9 @@
 
 #include "resource.h"
 
+namespace dggui
+{
+
 UITranslation::UITranslation()
 {
 	auto lang = Translation::getISO639LanguageName();
@@ -37,7 +40,7 @@ UITranslation::UITranslation()
 	std::string res = ":locale/";
 	res += lang + ".mo";
 
-	GUI::Resource mo(res);
+	Resource mo(res);
 	if(!mo.valid())
 	{
 		printf("Locale not in resources - use default\n");
@@ -48,4 +51,5 @@ UITranslation::UITranslation()
 	load(mo.data(), mo.size());
 }
 
+} // ::dggui
 #endif // WITH_NLS

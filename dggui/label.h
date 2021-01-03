@@ -33,7 +33,8 @@
 #include <string>
 #include <memory>
 
-namespace GUI {
+namespace dggui
+{
 
 enum class TextAlignment {
 	left,
@@ -66,4 +67,4 @@ private:
 	std::unique_ptr<Colour> colour;
 };
 
-} // GUI::
+} // dggui::

@@ -28,7 +28,8 @@
 
 #include "painter.h"
 
-namespace GUI {
+namespace dggui
+{
 
 VerticalLine::VerticalLine(Widget *parent)
 	: Widget(parent)
@@ -48,4 +49,4 @@ void VerticalLine::repaintEvent(RepaintEvent* repaintEvent)
 	                     vline, width(), vline.height());
 }
 
-} // GUI::
+} // dggui::

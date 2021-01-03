@@ -33,7 +33,7 @@
 
 #define BORDER 10
 
-namespace GUI
+namespace dggui
 {
 
 void ComboBox::listboxSelectHandler()
@@ -231,4 +231,4 @@ void ComboBox::buttonEvent(ButtonEvent* buttonEvent)
 	listbox.setVisible(!listbox.visible());
 }
 
-} // GUI::
+} // dggui::

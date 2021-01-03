@@ -28,7 +28,8 @@
 
 #include "widget.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class LED : public Widget {
 public:
@@ -51,4 +52,4 @@ private:
 	state_t state;
 };
 
-} // GUI::
+} // dggui::

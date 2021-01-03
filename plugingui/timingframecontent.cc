@@ -34,10 +34,10 @@
 namespace GUI
 {
 
-TimingframeContent::TimingframeContent(Widget* parent,
+TimingframeContent::TimingframeContent(dggui::Widget* parent,
                                        Settings& settings,
                                        SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -65,9 +65,9 @@ TimingframeContent::TimingframeContent(Widget* parent,
 	laidback.setControl(&laidback_knob);
 	layout.addItem(&laidback);
 
-	layout.setPosition(&tightness, GridLayout::GridRange{0, 1, 0, 1});
-	layout.setPosition(&regain, GridLayout::GridRange{1, 2, 0, 1});
-	layout.setPosition(&laidback, GridLayout::GridRange{2, 3, 0, 1});
+	layout.setPosition(&tightness, dggui::GridLayout::GridRange{0, 1, 0, 1});
+	layout.setPosition(&regain, dggui::GridLayout::GridRange{1, 2, 0, 1});
+	layout.setPosition(&laidback, dggui::GridLayout::GridRange{2, 3, 0, 1});
 
 	CONNECT(this, settings_notifier.latency_stddev,
 	        this, &TimingframeContent::tightnessSettingsValueChanged);

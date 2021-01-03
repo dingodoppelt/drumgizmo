@@ -30,7 +30,7 @@
 #include <list>
 #include <memory>
 
-namespace GUI
+namespace dggui
 {
 
 enum class EventType
@@ -209,4 +209,4 @@ struct Rect
 	}
 };
 
-} // GUI::
+} // dggui::

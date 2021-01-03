@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-namespace GUI
+namespace dggui
 {
 
 HelpButton::HelpButton(Widget* parent)
@@ -72,4 +72,4 @@ void HelpButton::showHelpText()
 	tip.show();
 }
 
-} // GUI::
+} // dggui::

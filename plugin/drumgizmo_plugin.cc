@@ -176,7 +176,7 @@ bool DrumGizmoPlugin::hasInlineGUI()
 }
 
 class InlinePixelBufferAlpha
-	: public GUI::PixelBufferAlpha
+	: public dggui::PixelBufferAlpha
 {
 public:
 	InlinePixelBufferAlpha(Plugin::InlineDrawContext& context)
@@ -190,7 +190,7 @@ public:
 };
 
 class InlineCanvas
-	: public GUI::Canvas
+	: public dggui::Canvas
 {
 public:
 	InlineCanvas(Plugin::InlineDrawContext& context)
@@ -199,7 +199,7 @@ public:
 	}
 
 	// From Canvas:
-	GUI::PixelBufferAlpha& getPixelBuffer() override
+	dggui::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
 	}
@@ -257,7 +257,7 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 
 		context.data = (unsigned char*)inlineDisplayBuffer;
 		InlineCanvas canvas(context);
-		GUI::Painter painter(canvas);
+		dggui::Painter painter(canvas);
 
 		double progress =
 			(double)settingsGetter.number_of_files_loaded.getValue() /

@@ -37,34 +37,34 @@ namespace GUI
 {
 
 class LabeledControl
-	: public Widget
+	: public dggui::Widget
 {
 public:
 
 	using ValueTransformationFunction =
 		std::function<std::string(float, float, float)>;
 
-	LabeledControl(Widget* parent, const std::string& name)
-		: Widget(parent)
+	LabeledControl(dggui::Widget* parent, const std::string& name)
+		: dggui::Widget(parent)
 	{
 		layout.setResizeChildren(false);
-		layout.setHAlignment(HAlignment::center);
+		layout.setHAlignment(dggui::HAlignment::center);
 		layout.setSpacing(2);
 
 		caption.setText(name);
 		caption.resize(100, 20);
-		caption.setAlignment(TextAlignment::center);
+		caption.setAlignment(dggui::TextAlignment::center);
 		layout.addItem(&caption);
 	}
 
-	void setControl(Knob* control)
+	void setControl(dggui::Knob* control)
 	{
 		layout.addItem(control);
 
 		CONNECT(control, valueChangedNotifier, this, &LabeledControl::setValue);
 		setValue(control->value());
 		value.resize(100, 20);
-		value.setAlignment(TextAlignment::center);
+		value.setAlignment(dggui::TextAlignment::center);
 		layout.addItem(&value);
 	}
 
@@ -77,9 +77,9 @@ public:
 	float scale{1.0f};
 
 private:
-	VBoxLayout layout{this};
-	Label caption{this};
-	Label value{this};
+	dggui::VBoxLayout layout{this};
+	dggui::Label caption{this};
+	dggui::Label value{this};
 
 	ValueTransformationFunction value_transformation_func;
 

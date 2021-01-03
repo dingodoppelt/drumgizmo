@@ -46,10 +46,10 @@ namespace GUI
 {
 
 class TimingframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	TimingframeContent(Widget* parent,
+	TimingframeContent(dggui::Widget* parent,
 	                   Settings& settings,
 	                   SettingsNotifier& settings_notifier);
 
@@ -69,15 +69,15 @@ private:
 	void latencyOffsetChanged(int offset);
 	void velocityOffsetChanged(float offset);
 
-	GridLayout layout{this, 3, 1};
+	dggui::GridLayout layout{this, 3, 1};
 
 	LabeledControl tightness{this, _("pTightness")};
 	LabeledControl regain{this, _("pTimingRegain")};
 	LabeledControl laidback{this, _("pLaidback")};
 
-	Knob tightness_knob{&tightness};
-	Knob regain_knob{&regain};
-	Knob laidback_knob{&laidback};
+	dggui::Knob tightness_knob{&tightness};
+	dggui::Knob regain_knob{&regain};
+	dggui::Knob laidback_knob{&laidback};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

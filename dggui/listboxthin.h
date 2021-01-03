@@ -36,7 +36,7 @@
 #include "listboxbasic.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 class ListBoxThin
@@ -55,7 +55,7 @@ public:
 	std::string selectedValue();
 
 	// From Widget:
-	virtual void repaintEvent(GUI::RepaintEvent* repaintEvent) override;
+	virtual void repaintEvent(RepaintEvent* repaintEvent) override;
 	virtual void resize(std::size_t height, std::size_t width) override;
 
 	// Forwarded notifier from ListBoxBasic::basic
@@ -72,4 +72,4 @@ private:
 			1, 1, 1}; // dy1, dy2, dy3
 };
 
-} // GUI::
+} // dggui::

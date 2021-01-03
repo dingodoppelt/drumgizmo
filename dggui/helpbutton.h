@@ -30,7 +30,7 @@
 #include "button_base.h"
 #include "tooltip.h"
 
-namespace GUI
+namespace dggui
 {
 
 class HelpButton
@@ -55,4 +55,4 @@ private:
 	Tooltip tip;
 };
 
-} // GUI::
+} // dggui::

@@ -35,7 +35,7 @@
 #include "image.h"
 #include "canvas.h"
 
-namespace GUI
+namespace dggui
 {
 
 Painter::Painter(Canvas& canvas)
@@ -641,4 +641,4 @@ void Painter::drawBar(int x, int y, const Bar& bar, int width, int height)
 	                   bar.right->width(), height);
 }
 
-} // GUI::
+} // dggui::

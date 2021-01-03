@@ -33,10 +33,10 @@
 namespace GUI
 {
 
-HumanizerframeContent::HumanizerframeContent(Widget* parent,
+HumanizerframeContent::HumanizerframeContent(dggui::Widget* parent,
                                              Settings& settings,
                                              SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -63,14 +63,14 @@ HumanizerframeContent::HumanizerframeContent(Widget* parent,
 	stddev.setControl(&stddev_knob);
 	layout.addItem(&stddev);
 
-	layout.setPosition(&attack, GridLayout::GridRange{0, 1, 0, 1});
-	layout.setPosition(&falloff, GridLayout::GridRange{1, 2, 0, 1});
-	layout.setPosition(&stddev, GridLayout::GridRange{2, 3, 0, 1});
+	layout.setPosition(&attack, dggui::GridLayout::GridRange{0, 1, 0, 1});
+	layout.setPosition(&falloff, dggui::GridLayout::GridRange{1, 2, 0, 1});
+	layout.setPosition(&stddev, dggui::GridLayout::GridRange{2, 3, 0, 1});
 
 	CONNECT(this, settings_notifier.velocity_modifier_weight,
-	        &attack_knob, &Knob::setValue);
+	        &attack_knob, &dggui::Knob::setValue);
 	CONNECT(this, settings_notifier.velocity_modifier_falloff,
-	        &falloff_knob, &Knob::setValue);
+	        &falloff_knob, &dggui::Knob::setValue);
 	CONNECT(this, settings_notifier.velocity_stddev,
 	        this, &HumanizerframeContent::stddevSettingsValueChanged);
 

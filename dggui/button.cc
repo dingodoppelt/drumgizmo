@@ -31,7 +31,7 @@
 #include <hugin.hpp>
 #include <stdio.h>
 
-namespace GUI
+namespace dggui
 {
 
 Button::Button(Widget* parent)
@@ -85,4 +85,4 @@ void Button::repaintEvent(RepaintEvent* repaintEvent)
 	p.drawText(x, y, font, text, enabled);
 }
 
-} // GUI::
+} // dggui::

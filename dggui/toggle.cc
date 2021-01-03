@@ -26,7 +26,7 @@
  */
 #include "toggle.h"
 
-namespace GUI
+namespace dggui
 {
 
 Toggle::Toggle(Widget* parent) : Widget(parent)
@@ -107,4 +107,4 @@ void Toggle::internalSetChecked(bool checked)
 	redraw();
 }
 
-} // GUI::
+} // dggui::

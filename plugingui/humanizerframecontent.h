@@ -41,10 +41,10 @@ namespace GUI
 {
 
 class HumanizerframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	HumanizerframeContent(Widget* parent,
+	HumanizerframeContent(dggui::Widget* parent,
 	                      Settings& settings,
 	                      SettingsNotifier& settings_notifier);
 
@@ -57,15 +57,15 @@ private:
 
 	void stddevSettingsValueChanged(float value);
 
-	GridLayout layout{this, 3, 1};
+	dggui::GridLayout layout{this, 3, 1};
 
 	LabeledControl attack{this, _("pAttack")}; // drummer strength
 	LabeledControl falloff{this, _("pRelease")}; // regain
 	LabeledControl stddev{this, _("pStdDev")};
 
-	Knob attack_knob{&attack};
-	Knob falloff_knob{&falloff};
-	Knob stddev_knob{&stddev};
+	dggui::Knob attack_knob{&attack};
+	dggui::Knob falloff_knob{&falloff};
+	dggui::Knob stddev_knob{&stddev};
 
 	Settings& settings;
 	SettingsNotifier& settings_notifier;

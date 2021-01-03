@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 PowerButton::PowerButton(Widget* parent) : Toggle(parent)
@@ -85,4 +85,4 @@ void PowerButton::repaintEvent(RepaintEvent* repaintEvent)
 	}
 }
 
-} // GUI::
+} // dggui::

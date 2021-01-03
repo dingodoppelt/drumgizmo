@@ -34,10 +34,10 @@
 #include <dggui/canvas.h>
 
 class TimedCanvas
-	: public GUI::Canvas
+	: public dggui::Canvas
 {
 public:
-	GUI::PixelBufferAlpha& getPixelBuffer() override
+	dggui::PixelBufferAlpha& getPixelBuffer() override
 	{
 		return pixbuf;
 	}
@@ -48,7 +48,7 @@ public:
 	}
 
 private:
-	GUI::PixelBufferAlpha pixbuf{800, 600};
+	dggui::PixelBufferAlpha pixbuf{800, 600};
 };
 
 class TimedScope
@@ -82,16 +82,16 @@ private:
 int main()
 {
 	TimedCanvas canvas;
-	GUI::Painter painter(canvas);
-	GUI::Image image_no_alpha(":benchmarktest_resources/image_no_alpha.png");
-	GUI::Image image_full_alpha(":benchmarktest_resources/image_full_alpha.png");
-	GUI::Image image_edge_alpha(":benchmarktest_resources/image_edge_alpha.png");
-	GUI::Image image_inner_alpha(":benchmarktest_resources/image_inner_alpha.png");
+	dggui::Painter painter(canvas);
+	dggui::Image image_no_alpha(":benchmarktest_resources/image_no_alpha.png");
+	dggui::Image image_full_alpha(":benchmarktest_resources/image_full_alpha.png");
+	dggui::Image image_edge_alpha(":benchmarktest_resources/image_edge_alpha.png");
+	dggui::Image image_inner_alpha(":benchmarktest_resources/image_inner_alpha.png");
 
 	{
 		TimedCanvas canvas;
 		TimedScope timed("Pixelbuffer resize", 100000);
-		painter.setColour(GUI::Colour(1.f, 1.f, 1.f, 1.f));
+		painter.setColour(dggui::Colour(1.f, 1.f, 1.f, 1.f));
 		for(int i = 0; i < 100000; ++i)
 		{
 			canvas.resize(i % 1000 + 100, i % 1000 + 100);
@@ -108,7 +108,7 @@ int main()
 
 	{
 		TimedScope timed("Filled rect, with alpha", 100000);
-		painter.setColour(GUI::Colour(1.f, 1.f, 1.f, 0.5f));
+		painter.setColour(dggui::Colour(1.f, 1.f, 1.f, 0.5f));
 		for(int i = 0; i < 100000; ++i)
 		{
 			painter.drawRectangle(0, 0, 800, 600);
@@ -148,11 +148,11 @@ int main()
 	}
 
 	{
-		GUI::PixelBuffer wpixbuf(800, 600);
-		std::vector<GUI::PixelBufferAlpha*> children;
+		dggui::PixelBuffer wpixbuf(800, 600);
+		std::vector<dggui::PixelBufferAlpha*> children;
 		for(int i = 0; i < 100; ++i)
 		{
-			auto child = new GUI::PixelBufferAlpha(300, 300);
+			auto child = new dggui::PixelBufferAlpha(300, 300);
 			child->x = i * 2;
 			child->y = i * 2;
 			children.push_back(child);

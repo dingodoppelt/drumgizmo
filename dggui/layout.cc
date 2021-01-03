@@ -30,7 +30,7 @@
 
 #include <algorithm>
 
-namespace GUI
+namespace dggui
 {
 
 LayoutItem::LayoutItem()
@@ -383,4 +383,4 @@ void GridLayout::moveAndResize(
 	}
 }
 
-} // GUI::
+} // dggui::

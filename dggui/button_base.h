@@ -32,7 +32,8 @@
 
 #include "widget.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class ButtonBase
 	: public Widget
@@ -75,4 +76,4 @@ protected:
 	State button_state{State::Up};
 };
 
-} // GUI::
+} // dggui::

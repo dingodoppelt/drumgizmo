@@ -43,11 +43,11 @@
 #include <powerwidget.h>
 
 class TestWindow
-	: public GUI::Window
+	: public dggui::Window
 {
 public:
 	TestWindow()
-		: GUI::Window()
+		: dggui::Window()
 	{
 		setCaption("PowerWidgetTest Window");
 		CONNECT(eventHandler(), closeNotifier, this,
@@ -96,10 +96,10 @@ public:
 		return !closing;
 	}
 
-	void repaintEvent(GUI::RepaintEvent* repaintEvent) override
+	void repaintEvent(dggui::RepaintEvent* repaintEvent) override
 	{
-		GUI::Painter painter(*this);
-		painter.setColour(GUI::Colour(0.85));
+		dggui::Painter painter(*this);
+		painter.setColour(dggui::Colour(0.85));
 		painter.drawFilledRectangle(0, 0, width() - 1, height() - 1);
 	}
 
@@ -108,7 +108,7 @@ private:
 
 	Settings settings;
 	SettingsNotifier settings_notifier{settings};
-	PowerWidget w{this, settings, settings_notifier};
+	GUI::PowerWidget w{this, settings, settings_notifier};
 };
 
 int main()

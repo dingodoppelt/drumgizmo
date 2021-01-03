@@ -360,7 +360,7 @@ int main(int argc, char* argv[])
 			else
 			{
 				// Check if the image_map can be loaded (is a valid png file)
-				GUI::Image img(image);
+				dggui::Image img(image);
 				if(!img.isValid())
 				{
 					logger(LogLevel::Error, "Drumkit image, '" + image +
@@ -392,7 +392,7 @@ int main(int argc, char* argv[])
 			else
 			{
 				// Check if the image_map can be loaded (is a valid png file)
-				GUI::Image image(image_map);
+				dggui::Image image(image_map);
 				if(!image.isValid())
 				{
 					logger(LogLevel::Error, "Drumkit image_map, '" + image_map +
@@ -423,7 +423,7 @@ int main(int argc, char* argv[])
 							float red   = (hex_colour >> 16 & 0xff) / 255.0f;
 							float green = (hex_colour >>  8 & 0xff) / 255.0f;
 							float blue  = (hex_colour >>  0 & 0xff) / 255.0f;
-							GUI::Colour colour(red, green, blue);
+							dggui::Colour colour(red, green, blue);
 
 							bool found{false};
 							for(int y = 0; y < image.height() && !found; ++y)
@@ -548,7 +548,7 @@ int main(int argc, char* argv[])
 			else
 			{
 				// Check if the logo can be loaded (is a valid png file)
-				GUI::Image img(image);
+				dggui::Image img(image);
 				if(!img.isValid())
 				{
 					logger(LogLevel::Error, "Drumkit logo, '" + image +

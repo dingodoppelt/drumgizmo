@@ -38,7 +38,7 @@ namespace GUI
 {
 
 MainWindow::MainWindow(Settings& settings, void* native_window)
-	: Window(native_window)
+	: dggui::Window(native_window)
 	, settings_notifier(settings)
 	, main_tab(this, settings, settings_notifier, config)
 	, drumkit_tab(this, settings, settings_notifier)
@@ -81,14 +81,14 @@ bool MainWindow::processEvents()
 	return true;
 }
 
-void MainWindow::repaintEvent(RepaintEvent* repaintEvent)
+void MainWindow::repaintEvent(dggui::RepaintEvent* repaintEvent)
 {
 	if(!visible())
 	{
 		return;
 	}
 
-	Painter painter(*this);
+	dggui::Painter painter(*this);
 
 	auto bar_height = tabs.getBarHeight();
 

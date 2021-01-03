@@ -31,7 +31,7 @@
 #include "widget.h"
 #include "notifier.h"
 
-namespace GUI
+namespace dggui
 {
 
 //! A StackedWidget is a widget containing a list of widgets but only showing
@@ -78,4 +78,4 @@ private:
 	std::list<Widget*> widgets;
 };
 
-} // GUI::
+} // dggui::

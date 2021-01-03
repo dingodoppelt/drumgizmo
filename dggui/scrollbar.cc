@@ -30,7 +30,8 @@
 
 #include "painter.h"
 
-namespace GUI {
+namespace dggui
+{
 
 ScrollBar::ScrollBar(Widget *parent)
 	: Widget(parent)
@@ -211,4 +212,4 @@ void ScrollBar::buttonEvent(ButtonEvent* buttonEvent)
 	dragging = (buttonEvent->direction == Direction::down);
 }
 
-} // GUI::
+} // dggui::

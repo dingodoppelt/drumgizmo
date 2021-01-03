@@ -28,7 +28,7 @@
 
 #include "painter.h"
 
-namespace GUI
+namespace dggui
 {
 
 FrameWidget::FrameWidget(Widget* parent, bool has_switch, bool has_help_text)
@@ -143,4 +143,4 @@ void FrameWidget::sizeChanged(int width, int height)
 	help_button.move(width - 4 - 16, help_button.y());
 }
 
-} // GUI::
+} // dggui::

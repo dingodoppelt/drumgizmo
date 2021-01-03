@@ -29,7 +29,7 @@
 #include <cstdlib>
 #include <cstdint>
 
-namespace GUI
+namespace dggui
 {
 
 class Colour;
@@ -49,4 +49,4 @@ public:
 	virtual bool hasAlpha() const = 0;
 };
 
-} // GUI::
+} // dggui::

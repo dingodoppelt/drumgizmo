@@ -33,18 +33,21 @@
 
 #include <hugin.hpp>
 
-HumaniserVisualiser::HumaniserVisualiser(GUI::Widget* parent,
+namespace GUI
+{
+
+HumaniserVisualiser::HumaniserVisualiser(dggui::Widget* parent,
                                          Settings& settings,
                                          SettingsNotifier& settings_notifier)
-	: GUI::Widget(parent)
+	: dggui::Widget(parent)
 	, canvas(this, settings, settings_notifier)
 {
 	canvas.move(7, 7);
 }
 
-void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
+void HumaniserVisualiser::repaintEvent(dggui::RepaintEvent *repaintEvent)
 {
-	GUI::Painter p(*this);
+	dggui::Painter p(*this);
 
 	box.setSize(width(), height());
 	p.drawImage(0, 0, box);
@@ -52,7 +55,7 @@ void HumaniserVisualiser::repaintEvent(GUI::RepaintEvent *repaintEvent)
 
 void HumaniserVisualiser::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 	if(width < 14 || height < 14)
 	{
 		canvas.resize(1, 1);
@@ -61,10 +64,10 @@ void HumaniserVisualiser::resize(std::size_t width, std::size_t height)
 	canvas.resize(width - 14, height - 14);
 }
 
-HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
+HumaniserVisualiser::Canvas::Canvas(dggui::Widget* parent,
                                     Settings& settings,
                                     SettingsNotifier& settings_notifier)
-	: GUI::Widget(parent)
+	: dggui::Widget(parent)
 	, settings_notifier(settings_notifier)
 	, latency_max_ms(settings.latency_max_ms.load())
 	, settings(settings)
@@ -87,14 +90,14 @@ HumaniserVisualiser::Canvas::Canvas(GUI::Widget* parent,
 	        this, &HumaniserVisualiser::Canvas::velocityStddevChanged);
 }
 
-void HumaniserVisualiser::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
+void HumaniserVisualiser::Canvas::repaintEvent(dggui::RepaintEvent *repaintEvent)
 {
 	if(width() < 1 || height() < 1)
 	{
 		return;
 	}
 
-	GUI::Painter p(*this);
+	dggui::Painter p(*this);
 
 	p.clear();
 
@@ -131,26 +134,26 @@ void HumaniserVisualiser::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	// Lines
 	if(velocity_enabled)
 	{
-		p.setColour(GUI::Colour(0.0f, 1.0f, 1.0f));
+		p.setColour(dggui::Colour(0.0f, 1.0f, 1.0f));
 	}
 	else
 	{
-		p.setColour(GUI::Colour(0.4f, 0.4f, 0.4f));
+		p.setColour(dggui::Colour(0.4f, 0.4f, 0.4f));
 	}
 	p.drawLine(0, y, width(), y);
 
 	if(latency_enabled)
 	{
-		p.setColour(GUI::Colour(0.0f, 1.0f, 1.0f));
+		p.setColour(dggui::Colour(0.0f, 1.0f, 1.0f));
 	}
 	else
 	{
-		p.setColour(GUI::Colour(0.4f, 0.4f, 0.4f));
+		p.setColour(dggui::Colour(0.4f, 0.4f, 0.4f));
 	}
 	p.drawLine(x, 0, x, height());
 
 	// Zero-lines
-	p.setColour(GUI::Colour(0.0f, 1.0f, 0.0f, 0.9f));
+	p.setColour(dggui::Colour(0.0f, 1.0f, 0.0f, 0.9f));
 	p.drawLine(0, height() * 0.2f, width(), height() * 0.2f);
 	p.drawLine(width() / 2, 0, width() / 2, height());
 }
@@ -196,3 +199,5 @@ void HumaniserVisualiser::Canvas::velocityStddevChanged(float stddev)
 	velocity_stddev = stddev;
 	redraw();
 }
+
+} // ::GUI

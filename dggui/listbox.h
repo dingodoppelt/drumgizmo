@@ -34,7 +34,7 @@
 #include "listboxbasic.h"
 #include "texturedbox.h"
 
-namespace GUI
+namespace dggui
 {
 
 class ListBox
@@ -71,4 +71,4 @@ private:
 			7, 63, 7}; // dy1, dy2, dy3
 };
 
-} // GUI::
+} // dggui::

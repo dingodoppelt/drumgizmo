@@ -30,7 +30,8 @@
 #include "font.h"
 #include "texturedbox.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class Button
 	: public ButtonBase {
@@ -61,4 +62,4 @@ private:
 	Font font{":resources/fontemboss.png"};
 };
 
-} // GUI::
+} // dggui::

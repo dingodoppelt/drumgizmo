@@ -102,19 +102,19 @@ msgstr "Appliquer"
 msgid "0 MB"
 msgstr ""
 
-#: diskstreamingframecontent.cc:107
+#: diskstreamingframecontent.cc:109
 msgid "Unlimited"
 msgstr "Illimité"
 
-#: drumkitframecontent.cc:49
+#: drumkitframecontent.cc:48
 msgid "Browse..."
 msgstr "Naviguer..."
 
-#: drumkitframecontent.cc:96
+#: drumkitframecontent.cc:95
 msgid "Drumkit file:"
 msgstr "Fichier de kit de batterie :"
 
-#: drumkitframecontent.cc:97
+#: drumkitframecontent.cc:96
 msgid "Midimap file:"
 msgstr "Fichier midimap :"
 
@@ -452,8 +452,8 @@ msgid ""
 "This feature works on a per-instrument basis, e.g., voices played on the "
 "bass\n"
 msgstr ""
-"Cette caractéristique fonctionne instrument par instrument, c'est-à-dire "
-"que les\n"
+"Cette caractéristique fonctionne instrument par instrument, c'est-à-dire que "
+"les\n"
 
 #: maintab.cc:126
 msgid ""
@@ -467,13 +467,14 @@ msgid ""
 "  * Max voices: The maximum number of voices that should be allowed to "
 "play.\n"
 msgstr ""
-"  * Voix max : le nombre maximum de voix qui peuvent être autorisées à jouer.\n"
-
+"  * Voix max : le nombre maximum de voix qui peuvent être autorisées à "
+"jouer.\n"
 
 #: maintab.cc:129
 msgid "  * Rampdown time: How many seconds it takes to silence a voice."
 msgstr ""
-"  * Durée de rampe : le nombre de secondes nécessaires pour silencer une voix."
+"  * Durée de rampe : le nombre de secondes nécessaires pour silencer une "
+"voix."
 
 #: maintab.cc:134 mainwindow.cc:56
 msgid "Drumkit"
@@ -531,15 +532,15 @@ msgstr "Principal"
 msgid "About"
 msgstr "À propos"
 
-#: powerwidget.cc:52
+#: powerwidget.cc:55
 msgid "Shelf"
 msgstr "Plateau"
 
-#: powerwidget.cc:210
+#: powerwidget.cc:213
 msgid "in"
 msgstr "entrée"
 
-#: powerwidget.cc:211
+#: powerwidget.cc:214
 msgid "out"
 msgstr "sortie"
 
@@ -567,47 +568,47 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: statusframecontent.cc:72
+#: statusframecontent.cc:73
 msgid "Drumkit status:   "
 msgstr "Status du kit de batterie :   "
 
-#: statusframecontent.cc:74
+#: statusframecontent.cc:75
 msgid "Drumkit name:   "
 msgstr "Nom du kit de batterie :   "
 
-#: statusframecontent.cc:75
+#: statusframecontent.cc:76
 msgid "Drumkit description:   "
 msgstr "Description du kit de batterie :   "
 
-#: statusframecontent.cc:77
+#: statusframecontent.cc:78
 msgid "Session buffer size:   "
 msgstr "Taille du tampon de session :   "
 
-#: statusframecontent.cc:78
+#: statusframecontent.cc:79
 msgid "Number of underruns: "
 msgstr "Nombre de désynchros : "
 
-#: statusframecontent.cc:79
+#: statusframecontent.cc:80
 msgid "Messages:\n"
 msgstr "Messages :\n"
 
-#: statusframecontent.cc:88
+#: statusframecontent.cc:89
 msgid "No Kit Loaded"
 msgstr "pas de kit chargé"
 
-#: statusframecontent.cc:91 statusframecontent.cc:133
+#: statusframecontent.cc:92 statusframecontent.cc:134
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: statusframecontent.cc:94 statusframecontent.cc:136
+#: statusframecontent.cc:95 statusframecontent.cc:137
 msgid "Ready"
 msgstr "Prêt"
 
-#: statusframecontent.cc:97 statusframecontent.cc:139
+#: statusframecontent.cc:98 statusframecontent.cc:140
 msgid "Error"
 msgstr "Erreur"
 
-#: statusframecontent.cc:130
+#: statusframecontent.cc:131
 msgid "No Midimap Loaded"
 msgstr "Pas de midimap chargée"
 
@@ -615,46 +616,46 @@ msgstr "Pas de midimap chargée"
 msgid "Per-instrument voice limit:"
 msgstr "Limite de voix par instrument :"
 
-#: humanizerframecontent.h:61
+#: humanizerframecontent.h:62
 msgid "pAttack"
 msgstr "pAttaque"
 
-#: humanizerframecontent.h:62
+#: humanizerframecontent.h:63
 msgid "pRelease"
 msgstr "pRelâche"
 
-#: humanizerframecontent.h:63
+#: humanizerframecontent.h:64
 msgid "pStdDev"
 msgstr "pDévStd"
 
-#: sampleselectionframecontent.h:61
+#: sampleselectionframecontent.h:62
 msgid "pClose"
 msgstr "pProche"
 
-#: sampleselectionframecontent.h:62
+#: sampleselectionframecontent.h:63
 msgid "pDiverse"
 msgstr "pDiversité"
 
-#: sampleselectionframecontent.h:63
+#: sampleselectionframecontent.h:64
 msgid "pRandom"
 msgstr "pAléatoire"
 
-#: timingframecontent.h:73
+#: timingframecontent.h:74
 msgid "pTightness"
 msgstr "pRaideur"
 
-#: timingframecontent.h:74
+#: timingframecontent.h:75
 msgid "pTimingRegain"
 msgstr "pRetourTiming"
 
-#: timingframecontent.h:75
+#: timingframecontent.h:76
 msgid "pLaidback"
 msgstr "pNonchalance"
 
-#: voicelimitframecontent.h:66
+#: voicelimitframecontent.h:67
 msgid "Max voices"
 msgstr "Voix max"
 
-#: voicelimitframecontent.h:67
+#: voicelimitframecontent.h:68
 msgid "Rampdown time"
 msgstr "Durée de rampe"

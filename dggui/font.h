@@ -32,7 +32,8 @@
 #include "pixelbuffer.h"
 #include "image.h"
 
-namespace GUI {
+namespace dggui
+{
 
 class Font {
 public:
@@ -61,4 +62,4 @@ private:
 	int spacing{1};
 };
 
-} // GUI::
+} // dggui::

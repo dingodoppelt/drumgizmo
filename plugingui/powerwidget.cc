@@ -38,10 +38,13 @@
 
 #include <translation.h>
 
-PowerWidget::PowerWidget(GUI::Widget* parent,
+namespace GUI
+{
+
+PowerWidget::PowerWidget(dggui::Widget* parent,
                          Settings& settings,
                          SettingsNotifier& settings_notifier)
-	: GUI::Widget(parent)
+	: dggui::Widget(parent)
 	, canvas(this, settings, settings_notifier)
 	, settings(settings)
 {
@@ -50,12 +53,12 @@ PowerWidget::PowerWidget(GUI::Widget* parent,
 	CONNECT(&shelf_checkbox, stateChangedNotifier, this, &PowerWidget::chk_shelf);
 
 	shelf_label.setText(_("Shelf"));
-	shelf_label.setAlignment(GUI::TextAlignment::center);
+	shelf_label.setAlignment(dggui::TextAlignment::center);
 	shelf_label.resize(59, 16);
 	shelf_checkbox.resize(59, 40);
 
 	CONNECT(&settings_notifier, powermap_shelf, &shelf_checkbox,
-	        &GUI::CheckBox::setChecked);
+	        &dggui::CheckBox::setChecked);
 }
 
 void PowerWidget::chk_shelf(bool v)
@@ -63,9 +66,9 @@ void PowerWidget::chk_shelf(bool v)
 	settings.powermap_shelf.store(v);
 }
 
-void PowerWidget::repaintEvent(GUI::RepaintEvent *repaintEvent)
+void PowerWidget::repaintEvent(dggui::RepaintEvent *repaintEvent)
 {
-	GUI::Painter p(*this);
+	dggui::Painter p(*this);
 	box.setSize(width() - 59 - 64, height());
 	p.drawImage(0, 0, box);
 }
@@ -84,10 +87,10 @@ void PowerWidget::resize(std::size_t width, std::size_t height)
 	shelf_checkbox.move(width - 59 + 5 - 32, 16);
 }
 
-PowerWidget::Canvas::Canvas(GUI::Widget* parent,
+PowerWidget::Canvas::Canvas(dggui::Widget* parent,
                             Settings& settings,
                             SettingsNotifier& settings_notifier)
-	: GUI::Widget(parent)
+	: dggui::Widget(parent)
 	, settings_notifier(settings_notifier)
 	, settings(settings)
 {
@@ -115,7 +118,7 @@ PowerWidget::Canvas::Canvas(GUI::Widget* parent,
 	parameterChangedFloat(0);
 }
 
-void PowerWidget::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
+void PowerWidget::Canvas::repaintEvent(dggui::RepaintEvent *repaintEvent)
 {
 	if(width() < 1 || height() < 1)
 	{
@@ -127,29 +130,29 @@ void PowerWidget::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	const float width0 = (int)width() - 2 * brd;
 	const float height0 = (int)height() - 2 * brd;
 
-	GUI::Painter p(*this);
+	dggui::Painter p(*this);
 
 	p.clear();
 
-	p.setColour(GUI::Colour(1.0f, 1.0f, 1.0f, 0.2f));
+	p.setColour(dggui::Colour(1.0f, 1.0f, 1.0f, 0.2f));
 	p.drawRectangle(x0, y0 + height0, x0 + width0, y0);
 
 	if(enabled)
 	{
 		// draw 1:1 line in grey in the background to indicate where 1:1 is
-		p.setColour(GUI::Colour(0.5));
+		p.setColour(dggui::Colour(0.5));
 		p.drawLine(x0, y0 + height0, x0 + width0, y0);
 	}
 
 	if(enabled)
 	{
 		// enabled green
-		p.setColour(GUI::Colour(0.0f, 1.0f, 0.0f, 1.0f));
+		p.setColour(dggui::Colour(0.0f, 1.0f, 0.0f, 1.0f));
 	}
 	else
 	{
 		// disabled grey
-		p.setColour(GUI::Colour(0.5f));
+		p.setColour(dggui::Colour(0.5f));
 	}
 
 	// Draw very short line segments across the region
@@ -172,14 +175,14 @@ void PowerWidget::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 	if(!enabled)
 	{
 		// draw 1:1 line in green in the foreground
-		p.setColour(GUI::Colour(0.0f, 1.0f, 0.0f, 1.0f));
+		p.setColour(dggui::Colour(0.0f, 1.0f, 0.0f, 1.0f));
 		p.drawLine(x0, y0 + height0, x0 + width0, y0);
 	}
 
 	// draw the input/output of the last hit
 	if(settings.powermap_input.load() != -1 && settings.powermap_output.load() != -1)
 	{
-		p.setColour(GUI::Colour(.8f, 0.0f, .2f, .5f));
+		p.setColour(dggui::Colour(.8f, 0.0f, .2f, .5f));
 		p.drawLine(x0 + settings.powermap_input.load()*width0, y0 + height0,
 				   x0 + settings.powermap_input.load()*width0, y0);
 		p.drawLine(x0, y0 + height0 - settings.powermap_output.load()*height0,
@@ -188,30 +191,30 @@ void PowerWidget::Canvas::repaintEvent(GUI::RepaintEvent *repaintEvent)
 
 	// draw the fixed nodes of the spline
 	float rad = radius * width();
-	p.setColour(GUI::Colour{0.0f, 1.0f, 0.0f, 0.7f});
+	p.setColour(dggui::Colour{0.0f, 1.0f, 0.0f, 0.7f});
 	p.drawFilledCircle(x0 + std::round(settings.powermap_fixed0_x.load() * width0),
 	                   y0 + height0 - std::round(settings.powermap_fixed0_y.load() * height0), rad);
 	p.drawCircle(x0 + std::round(power_map.getFixed0().in * width0),
 	             y0 + height0 - std::round(power_map.getFixed0().out * height0), rad + 1);
 
-	p.setColour(GUI::Colour{1.0f, 1.0f, 0.0f, 0.7f});
+	p.setColour(dggui::Colour{1.0f, 1.0f, 0.0f, 0.7f});
 	p.drawFilledCircle(x0 + std::round(settings.powermap_fixed1_x.load() * width0),
 	                   y0 + height0 - std::round(settings.powermap_fixed1_y.load() * height0), rad);
 	p.drawCircle(x0 + std::round(power_map.getFixed1().in * width0),
 	             y0 + height0 - std::round(power_map.getFixed1().out * height0), rad + 1);
 
-	p.setColour(GUI::Colour{1.0f, 0.0f, 0.0f, 0.7f});
+	p.setColour(dggui::Colour{1.0f, 0.0f, 0.0f, 0.7f});
 	p.drawFilledCircle(x0 + std::round(settings.powermap_fixed2_x.load() * width0),
 	                   y0 + height0 - std::round(settings.powermap_fixed2_y.load() * height0), rad);
 	p.drawCircle(x0 + std::round(power_map.getFixed2().in * width0),
 	             y0 + height0 - std::round(power_map.getFixed2().out * height0), rad + 1);
 
-	p.setColour(GUI::Colour(1.0f, 1.0f, 1.0f, 0.2f));
+	p.setColour(dggui::Colour(1.0f, 1.0f, 1.0f, 0.2f));
 	p.drawText(width() / 2 - (font.textWidth(_("in")) / 2), height() - 8, font, _("in"));
 	p.drawText(8, height() / 2 - (font.textWidth(_("out")) / 2), font, _("out"), false, true);
 }
 
-void PowerWidget::Canvas::buttonEvent(GUI::ButtonEvent* buttonEvent)
+void PowerWidget::Canvas::buttonEvent(dggui::ButtonEvent* buttonEvent)
 {
 	const float x0 = brd;
 	const float y0 = brd;
@@ -226,10 +229,10 @@ void PowerWidget::Canvas::buttonEvent(GUI::ButtonEvent* buttonEvent)
 
 	switch(buttonEvent->direction)
 	{
-	case GUI::Direction::up:
+	case dggui::Direction::up:
 		in_point = -1;
 		break;
-	case GUI::Direction::down:
+	case dggui::Direction::down:
 		if(std::abs(mx0 - settings.powermap_fixed0_x.load()) < radius_x &&
 		   std::abs(my0 - settings.powermap_fixed0_y.load()) < radius_y)
 		{
@@ -259,7 +262,7 @@ float clamp(float val, float min, float max)
 }
 }
 
-void PowerWidget::Canvas::mouseMoveEvent(GUI::MouseMoveEvent* mouseMoveEvent)
+void PowerWidget::Canvas::mouseMoveEvent(dggui::MouseMoveEvent* mouseMoveEvent)
 {
 	const float x0 = brd;
 	const float y0 = brd;
@@ -332,3 +335,5 @@ void PowerWidget::Canvas::parameterChangedBool(bool)
 {
 	parameterChangedFloat(0);
 }
+
+} // ::GUI

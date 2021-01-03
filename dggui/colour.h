@@ -29,7 +29,7 @@
 #include <array>
 #include <cstdint>
 
-namespace GUI
+namespace dggui
 {
 
 class Colour
@@ -58,4 +58,4 @@ private:
 	std::array<std::uint8_t, 4> pixel{{255, 255, 255, 255}};
 };
 
-} // GUI::
+} // dggui::

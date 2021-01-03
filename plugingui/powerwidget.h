@@ -39,36 +39,39 @@
 struct Settings;
 class SettingsNotifier;
 
+namespace GUI
+{
+
 class PowerWidget
-	: public GUI::Widget
+	: public dggui::Widget
 {
 public:
-	PowerWidget(GUI::Widget* parent,
+	PowerWidget(dggui::Widget* parent,
 	            Settings& settings,
 	            SettingsNotifier& settings_notifier);
 
 	// From Widget:
-	virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
+	virtual void repaintEvent(dggui::RepaintEvent *repaintEvent) override;
 	virtual void resize(std::size_t width, std::size_t height) override;
 
 private:
-	GUI::TexturedBox box{getImageCache(), ":resources/widget.png",
+	dggui::TexturedBox box{getImageCache(), ":resources/widget.png",
 			0, 0, // atlas offset (x, y)
 			7, 1, 7, // dx1, dx2, dx3
 			7, 63, 7}; // dy1, dy2, dy3
 
 	class Canvas
-		: public GUI::Widget
+		: public dggui::Widget
 	{
 	public:
-		Canvas(GUI::Widget* parent, Settings& settings,
+		Canvas(dggui::Widget* parent, Settings& settings,
 		       SettingsNotifier& settings_notifier);
 
 		// From Widget:
 		virtual bool catchMouse() override { return true; }
-		virtual void repaintEvent(GUI::RepaintEvent *repaintEvent) override;
-		virtual void buttonEvent(GUI::ButtonEvent* buttonEvent) override;
-		virtual void mouseMoveEvent(GUI::MouseMoveEvent* mouseMoveEvent) override;
+		virtual void repaintEvent(dggui::RepaintEvent *repaintEvent) override;
+		virtual void buttonEvent(dggui::ButtonEvent* buttonEvent) override;
+		virtual void mouseMoveEvent(dggui::MouseMoveEvent* mouseMoveEvent) override;
 		virtual void mouseLeaveEvent() override;
 
 	private:
@@ -85,14 +88,16 @@ private:
 		int in_point{-1};
 		const float radius = 0.02f;
 		const float brd = 6.0f;
-		GUI::Font font{":resources/fontemboss.png"};
+		dggui::Font font{":resources/fontemboss.png"};
 	};
 
 	void chk_shelf(bool v);
 
 	Canvas canvas;
-	GUI::Label shelf_label{this};
-	GUI::CheckBox shelf_checkbox{this};
+	dggui::Label shelf_label{this};
+	dggui::CheckBox shelf_checkbox{this};
 
 	Settings& settings;
 };
+
+} // ::GUI

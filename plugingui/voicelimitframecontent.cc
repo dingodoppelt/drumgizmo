@@ -30,25 +30,25 @@
 namespace GUI
 {
 
-VoiceLimitFrameContent::VoiceLimitFrameContent(Widget* parent,
+VoiceLimitFrameContent::VoiceLimitFrameContent(dggui::Widget* parent,
                                                Settings& settings,
                                                SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
 	//Setup frame.
 	label_text.setText(_("Per-instrument voice limit:"));
-	label_text.setAlignment(TextAlignment::center);
+	label_text.setAlignment(dggui::TextAlignment::center);
 
 	//Setup layout
 	layout.setResizeChildren(false);
 
 	auto setup_control =
-		[](Knob& knob,
+		[](dggui::Knob& knob,
 		   LabeledControl& label,
-		   GridLayout& layout,
-		   const GridLayout::GridRange& gridrange,
+		   dggui::GridLayout& layout,
+		   const dggui::GridLayout::GridRange& gridrange,
 		   float min,
 		   float max,
 		   float defaultval)

@@ -36,7 +36,7 @@ namespace
 const double pi = std::atan(1.0) * 4.0;
 }
 
-namespace GUI
+namespace dggui
 {
 
 Knob::Knob(Widget *parent)
@@ -252,4 +252,4 @@ void Knob::internalSetValue(float new_value)
 	redraw();
 }
 
-} // GUI::
+} // dggui::

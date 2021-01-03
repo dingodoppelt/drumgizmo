@@ -30,7 +30,7 @@
 #include <map>
 #include <utility>
 
-namespace GUI
+namespace dggui
 {
 
 class Image;
@@ -69,4 +69,4 @@ protected:
 	std::map<std::string, std::pair<std::size_t, Image>> imageCache;
 };
 
-} // GUI::
+} // dggui::

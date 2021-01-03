@@ -42,10 +42,10 @@
 namespace GUI
 {
 
-DrumkitTab::DrumkitTab(Widget* parent,
+DrumkitTab::DrumkitTab(dggui::Widget* parent,
                        Settings& settings,
                        SettingsNotifier& settings_notifier)
-	: Widget(parent)
+	: dggui::Widget(parent)
 	, settings(settings)
 	, settings_notifier(settings_notifier)
 {
@@ -65,11 +65,11 @@ DrumkitTab::DrumkitTab(Widget* parent,
 
 void DrumkitTab::resize(std::size_t width, std::size_t height)
 {
-	Widget::resize(width, height);
+	dggui::Widget::resize(width, height);
 
 	if(drumkit_image)
 	{
-		Painter painter(*this);
+		dggui::Painter painter(*this);
 		painter.clear();
 
 		drumkit_image_x = (this->width()-drumkit_image->width())/2;
@@ -82,24 +82,24 @@ void DrumkitTab::resize(std::size_t width, std::size_t height)
 	                           height-instrument_name_label.height()-5);
 }
 
-void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
+void DrumkitTab::buttonEvent(dggui::ButtonEvent* buttonEvent)
 {
 	if(map_image)
 	{
-		if(buttonEvent->button == MouseButton::right)
+		if(buttonEvent->button == dggui::MouseButton::right)
 		{
-			if(buttonEvent->direction == GUI::Direction::down)
+			if(buttonEvent->direction == dggui::Direction::down)
 			{
-				Painter painter(*this);
+				dggui::Painter painter(*this);
 				painter.drawImage(drumkit_image_x, drumkit_image_y, *map_image);
 				shows_overlay = true;
 				redraw();
 				return;
 			}
 
-			if(buttonEvent->direction == GUI::Direction::up)
+			if(buttonEvent->direction == dggui::Direction::up)
 			{
-				Painter painter(*this);
+				dggui::Painter painter(*this);
 				painter.clear();
 				painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
 
@@ -112,20 +112,20 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 		}
 	}
 
-	if(buttonEvent->button == MouseButton::left)
+	if(buttonEvent->button == dggui::MouseButton::left)
 	{
-		if(buttonEvent->direction == GUI::Direction::down)
+		if(buttonEvent->direction == dggui::Direction::down)
 		{
 			triggerAudition(buttonEvent->x, buttonEvent->y);
 			highlightInstrument(current_index);
 			redraw();
 		}
 
-		if(buttonEvent->direction == GUI::Direction::up)
+		if(buttonEvent->direction == dggui::Direction::up)
 		{
 			if(shows_instrument_overlay)
 			{
-				Painter painter(*this);
+				dggui::Painter painter(*this);
 				painter.clear();
 				painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
 				if(shows_overlay)
@@ -140,9 +140,9 @@ void DrumkitTab::buttonEvent(ButtonEvent* buttonEvent)
 	}
 }
 
-void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
+void DrumkitTab::scrollEvent(dggui::ScrollEvent* scrollEvent)
 {
-	current_velocity -=  0.01*scrollEvent->delta;
+	current_velocity -=  0.01 * scrollEvent->delta;
 	current_velocity = std::max(std::min(current_velocity, 1.0f), 0.0f);
 	updateVelocityLabel();
 	velocity_label.resizeToText();
@@ -150,18 +150,22 @@ void DrumkitTab::scrollEvent(ScrollEvent* scrollEvent)
 	triggerAudition(scrollEvent->x, scrollEvent->y);
 }
 
-void DrumkitTab::mouseMoveEvent(MouseMoveEvent* mouseMoveEvent)
+void DrumkitTab::mouseMoveEvent(dggui::MouseMoveEvent* mouseMoveEvent)
 {
 	// change to image coordinates
-	auto const x = mouseMoveEvent->x - drumkit_image_x;
-	auto const y = mouseMoveEvent->y - drumkit_image_y;
+	const auto x = mouseMoveEvent->x - drumkit_image_x;
+	const auto y = mouseMoveEvent->y - drumkit_image_y;
 
 	auto index = pos_to_colour_index(x, y);
 
-	if(index == current_index) { return; }
+	if(index == current_index)
+	{
+		return;
+	}
+
 	current_index = index;
 
-	Painter painter(*this);
+	dggui::Painter painter(*this);
 	painter.clear();
 	painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
 	if(shows_overlay)
@@ -178,7 +182,7 @@ void DrumkitTab::mouseLeaveEvent()
 {
 	if(map_image && (shows_overlay || shows_instrument_overlay))
 	{
-		Painter painter(*this);
+		dggui::Painter painter(*this);
 		painter.clear();
 		painter.drawImage(drumkit_image_x, drumkit_image_y, *drumkit_image);
 
@@ -212,8 +216,8 @@ void DrumkitTab::highlightInstrument(int index)
 {
 	if(index != -1)
 	{
-		Painter painter(*this);
-		auto const& colour = colours[index];
+		dggui::Painter painter(*this);
+		const auto& colour = colours[index];
 		//Colour colour(1.0f, 1.0f, 0.0f);
 		auto const& positions = colour_index_to_positions[index];
 		painter.draw(positions.begin(), positions.end(),
@@ -240,11 +244,11 @@ void DrumkitTab::updateInstrumentLabel(int index)
 	instrument_name_label.resizeToText();
 }
 
-void DrumkitTab::init(std::string const& image_file,
-                      std::string const& map_file)
+void DrumkitTab::init(const std::string& image_file,
+                      const std::string& map_file)
 {
-	drumkit_image = std::make_unique<Image>(image_file);
-	map_image = std::make_unique<Image>(map_file);
+	drumkit_image = std::make_unique<dggui::Image>(image_file);
+	map_image = std::make_unique<dggui::Image>(map_file);
 
 	// collect all colours and build lookup table
 	auto const height = map_image->height();
@@ -321,7 +325,7 @@ void DrumkitTab::drumkitFileChanged(const std::string& drumkit_file)
 				float red   = (hex_colour >> 16 & 0xff) / 255.0f;
 				float green = (hex_colour >>  8 & 0xff) / 255.0f;
 				float blue  = (hex_colour >>  0 & 0xff) / 255.0f;
-				Colour colour(red, green, blue);
+				dggui::Colour colour(red, green, blue);
 				colour_instrument_pairs.push_back({colour, clickmap.instrument});
 			}
 			catch(...)

@@ -42,10 +42,10 @@ namespace GUI
 {
 
 class VisualizerframeContent
-	: public Widget
+	: public dggui::Widget
 {
 public:
-	VisualizerframeContent(Widget* parent, Settings& settings,
+	VisualizerframeContent(dggui::Widget* parent, Settings& settings,
 	                       SettingsNotifier& settings_notifier);
 
 		// From Widget
