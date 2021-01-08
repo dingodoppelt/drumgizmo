@@ -192,7 +192,7 @@ static void applyDirectedChoke(Settings& settings, DrumKit& kit,
 				   event_sample.rampdown_count == -1) // Only if not already ramping.
 				{
 					// choke.choketime is in ms
-					applyChoke(settings, event_sample, choke.choketime, event_sample.offset);
+					applyChoke(settings, event_sample, choke.choketime, event.offset);
 				}
 			}
 		}
