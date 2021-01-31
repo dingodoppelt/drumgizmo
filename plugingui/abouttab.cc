@@ -35,6 +35,7 @@ namespace
 {
 std::string getLocalizedFile(const std::string& file)
 {
+#ifdef WITH_NLS
 	auto language = Translation::getISO639LanguageName();
 	std::string file_localized = file + "." + language;
 	dggui::Resource resource_localized{file_localized};
@@ -42,6 +43,7 @@ std::string getLocalizedFile(const std::string& file)
 	{
 		return resource_localized.data();
 	}
+#endif
 
 	dggui::Resource resource{file};
 	if(resource.valid())
