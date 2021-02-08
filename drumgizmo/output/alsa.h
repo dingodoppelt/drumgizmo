@@ -49,6 +49,7 @@ public:
 	void pre(size_t nsamples) override;
 	void run(int ch, sample_t* samples, size_t nsamples) override;
 	void post(size_t nsamples) override;
+	size_t getBufferSize() const override;
 	size_t getSamplerate() const override;
 	bool isFreewheeling() const override;
 
