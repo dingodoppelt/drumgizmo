@@ -49,6 +49,9 @@ EngineFactory::EngineFactory()
 #ifdef HAVE_INPUT_JACKMIDI
 	input.push_back("jackmidi");
 #endif
+#ifdef HAVE_INPUT_ALSAMIDI
+	input.push_back("alsamidi");
+#endif
 #ifdef HAVE_INPUT_OSS
 	input.push_back("oss");
 #endif
@@ -116,6 +119,12 @@ std::unique_ptr<AudioInputEngine> EngineFactory::createInput(const std::string& 
 	{
 		prepareJack();
 		return std::make_unique<JackMidiInputEngine>(*jack);
+	}
+#endif
+#ifdef HAVE_INPUT_ALSAMIDI
+	if(name == "alsamidi")
+	{
+		return std::make_unique<AlsaMidiInputEngine>();
 	}
 #endif
 #ifdef HAVE_INPUT_OSSMIDI

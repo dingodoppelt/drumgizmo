@@ -18,6 +18,7 @@ AC_SYS_LARGEFILE
 AM_SILENT_RULES([yes])
 
 need_jack=no
+need_alsa=no
 
 dnl ===========================
 dnl Compile with C++11 support.
@@ -417,6 +418,20 @@ AS_IF(
     have_input_jackmidi=no]
   )
 
+  dnl *** alsamidi
+  AC_ARG_ENABLE([input_alsamidi],
+    AS_HELP_STRING([--disable-input-alsamidi], [Disable input alsamidi plugin [default=enabled]]),,
+           [enable_input_alsamidi="yes"])
+
+  AS_IF(
+    [test "x$enable_input_alsamidi" = "xyes"],
+    [have_input_alsamidi=yes
+     need_alsa=yes],
+
+    [AC_MSG_RESULT([*** input alsamidi plugin disabled per user request ***])
+    have_input_alsamidi=no]
+  )
+
   dnl *** Midifile
   AC_ARG_ENABLE([input_midifile],
 		AS_HELP_STRING([--disable-input-midifile], [Disable input midifile plugin [default=enabled]]),,
@@ -513,10 +528,7 @@ AS_IF(
   AS_IF(
     [test "x$enable_output_alsa" = "xyes"],
     [have_output_alsa=yes
-     dnl ======================
-     dnl Check for alsa library
-     dnl ======================
-     PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)],
+     need_alsa=yes],
 
     [AC_MSG_RESULT([*** output alsa plugin disabled per user request ***])
      have_output_alsa=no]
@@ -593,6 +605,7 @@ AM_CONDITIONAL([ENABLE_CLI], [test "x$enable_cli" == "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_DUMMY], [test "x$have_input_dummy" = "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_TEST], [test "x$have_input_test" = "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_JACKMIDI], [test "x$have_input_jackmidi" = "xyes"])
+AM_CONDITIONAL([HAVE_INPUT_ALSAMIDI], [test "x$have_input_alsamidi" = "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_OSSMIDI], [test "x$have_input_ossmidi" = "xyes"])
 AM_CONDITIONAL([HAVE_INPUT_MIDIFILE], [test "x$have_input_midifile" = "xyes"])
 AM_CONDITIONAL([HAVE_OUTPUT_DUMMY], [test "x$have_output_dummy" = "xyes"])
@@ -707,6 +720,11 @@ dnl ======================
 dnl Check for jack
 dnl ======================
 AS_IF([test "x$need_jack" = "xyes"], [PKG_CHECK_MODULES(JACK, jack >= 0.120.1)])
+
+dnl ======================
+dnl Check for alsa library
+dnl ======================
+AS_IF([test "x$need_alsa" = "xyes"], [PKG_CHECK_MODULES(ALSA, alsa >= 1.0.18)])
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)

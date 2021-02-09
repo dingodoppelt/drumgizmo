@@ -94,6 +94,7 @@ static std::string arguments()
 	output <<
 		"Input engine parameters:\n"
 		"  jackmidi:  midimap=<midimapfile>\n"
+		"  alsamidi:  midimap=<midimapfile>\n"
 		"  midifile:  file=<midifile>, speed=<tempo> (default 1.0),\n"
 		"             track=<miditrack> (default -1, all tracks)\n"
 		"             midimap=<midimapfile>, loop=<true|false>\n"
@@ -105,7 +106,8 @@ static std::string arguments()
 		"\n"
 		"Output engine parameters:\n"
 		"  alsa:      dev=<device> (default 'default'), frames=<frames> (default "
-		"32)\n"
+		"32),\n"
+		"             periods=<periods> (default 3)\n"
 		"             srate=<samplerate> (default 441000)\n"
 		"  oss:       dev=<device> (default '/dev/dsp'), srate=<samplerate>,\n"
 		"             max_fragments=<number> (default 4, see man page for more info),\n"
@@ -261,7 +263,7 @@ int main(int argc, char* argv[])
 	        });
 
 	opt.add("inputengine", required_argument, 'i',
-	        "dummy|test|jackmidi|midifile  Use said event input engine.",
+	        "dummy|test|jackmidi|alsamidi|midifile  Use said event input engine.",
 	        [&]()
 	        {
 		        std::string engine = optarg;

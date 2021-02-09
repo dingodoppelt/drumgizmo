@@ -77,6 +77,10 @@ drumgizmo_SOURCES += input/ossmidi.cc
 drumgizmo_CXXFLAGS += -DHAVE_INPUT_OSSMIDI
 endif # HAVE_INPUT_OSSMIDI
 
+if HAVE_INPUT_ALSAMIDI
+drumgizmo_SOURCES += input/alsamidi.cc
+drumgizmo_CXXFLAGS += -DHAVE_INPUT_ALSAMIDI
+endif # HAVE_INPUT_ALSAMIDI
 
 # Only compile jackclient.cc if at least one of the jack modules are included.
 if HAVE_OUTPUT_JACKAUDIO
@@ -93,6 +97,7 @@ EXTRA_DIST = \
 	input/inputdummy.h \
 	input/test.h \
 	input/jackmidi.h \
+	input/alsamidi.h \
 	input/midifile.h \
 	input/ossmidi.h \
 	output/alsa.h \
