@@ -62,4 +62,5 @@ private:
 	std::string dev;
 	unsigned int srate; // samplerate
 	snd_pcm_uframes_t frames;
+	unsigned int periods;
 };

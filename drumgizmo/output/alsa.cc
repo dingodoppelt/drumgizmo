@@ -58,6 +58,7 @@ AlsaOutputEngine::AlsaOutputEngine()
 	, dev{"default"}
 	, srate{44100}
 	, frames{32}
+	, periods{3}
 {
 }
 
@@ -104,6 +105,9 @@ bool AlsaOutputEngine::init(const Channels& channels)
 		value =
 		    snd_pcm_hw_params_set_period_size_near(handle, params, &frames, 0);
 		AlsaInitError::test(value, "snd_pcm_hw_params_set_period_size_near");
+		value =
+		    snd_pcm_hw_params_set_periods_near(handle, params, &periods, 0);
+		AlsaInitError::test(value, "snd_pcm_hw_params_set_periods_near");
 		value = snd_pcm_hw_params(handle, params);
 		AlsaInitError::test(value, "snd_pcm_hw_params");
 	}
@@ -137,6 +141,19 @@ void AlsaOutputEngine::setParm(const std::string& parm, const std::string& value
 		catch(...)
 		{
 			std::cerr << "[AlsaOutputEngine] Invalid buffer size " << value
+			          << "\n";
+		}
+	}
+	else if(parm == "periods")
+	{
+		// try to apply number of periods
+		try
+		{
+			periods = std::stoi(value);
+		}
+		catch(...)
+		{
+			std::cerr << "[AlsaOutputEngine] Invalid number of periods " << value
 			          << "\n";
 		}
 	}
@@ -184,7 +201,23 @@ void AlsaOutputEngine::run(int ch, sample_t* samples, size_t nsamples)
 void AlsaOutputEngine::post(size_t nsamples)
 {
 	// Write the interleaved buffer to the soundcard
-	snd_pcm_writei(handle, data.data(), nsamples);
+	snd_pcm_sframes_t value = snd_pcm_writei(handle, data.data(), nsamples);
+
+	if(value == -EPIPE) // under-run
+	{
+		snd_pcm_prepare(handle);
+	}
+	else if(value == -ESTRPIPE)
+	{
+		while((value = snd_pcm_resume(handle)) == -EAGAIN)
+		{
+			sleep(1); // wait until the suspend flag is released
+		}
+		if(value < 0)
+		{
+			snd_pcm_prepare(handle);
+		}
+	}
 }
 
 size_t AlsaOutputEngine::getBufferSize() const
