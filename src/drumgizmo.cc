@@ -463,10 +463,13 @@ void DrumGizmo::setSamplerate(float samplerate, float resampling_quality)
 		zita[c].set_inp_data(nullptr);
 		zita[c].set_inp_count(null_size);
 
-		constexpr auto sz = 4096 * 16;
-		sample_t s[sz];
-		zita[c].set_out_data(s);
-		zita[c].set_out_count(sz);
+		auto scratch_buffer_size = (null_size / ratio) + 1;
+		if(scratch_buffer.size() < scratch_buffer_size)
+		{
+			scratch_buffer.resize(scratch_buffer_size);
+		}
+		zita[c].set_out_data(scratch_buffer.data());
+		zita[c].set_out_count(scratch_buffer_size);
 
 		zita[c].process();
 	}
