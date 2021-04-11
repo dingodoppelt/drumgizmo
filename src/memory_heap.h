@@ -61,6 +61,7 @@ public:
 	T& get(Index index);
 	const T& get(Index index) const;
 	void remove(Index index);
+	void clear();
 
 private:
 	std::vector<T> memory;
@@ -118,4 +119,11 @@ template <typename T>
 void MemoryHeap<T>::remove(Index index)
 {
 	free_indices.push_back(index);
+}
+
+template <typename T>
+void MemoryHeap<T>::clear()
+{
+	memory.clear();
+	free_indices.clear();
 }

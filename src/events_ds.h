@@ -96,6 +96,9 @@ public:
 	//! when startAddingNewGroup is again called.
 	void startAddingNewGroup(InstrumentID instrument_id = InstrumentID());
 
+	//! Clears the whole data structure to make it ready for a new drum kit.
+	void clear();
+
 private:
 	struct ChannelData
 	{

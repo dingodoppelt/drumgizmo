@@ -99,6 +99,25 @@ void EventsDS::startAddingNewGroup(InstrumentID instrument_id)
 	}
 }
 
+void EventsDS::clear()
+{
+	// *this = EventsDS();
+
+	id_to_info.clear();
+	id_to_group_data.clear();
+	for (auto& channel_data: channel_data_array)
+	{
+		channel_data.sample_events.clear();
+	}
+	for (auto& event_group_ids:  instruments_sample_event_group_ids)
+	{
+		event_group_ids.clear();
+	}
+
+	current_group_id.invalidate();
+	current_groups_instrument_id.invalidate();
+}
+
 void EventsDS::removeGroup(EventGroupID group_id, InstrumentID instrument_id)
 {
 	// if we remove the current group, then invalidate it
