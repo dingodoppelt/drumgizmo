@@ -34,7 +34,8 @@ class EventsDSTest
 public:
 	EventsDSTest()
 	{
-		uUNIT_TEST(EventsDSTest::test_all);
+		uTEST(EventsDSTest::test_all);
+		uTEST(EventsDSTest::test_clear);
 	}
 
 public:
@@ -48,27 +49,27 @@ public:
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "b", 42);
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "c", 42);
 
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(13).empty());
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		uASSERT(events_ds.getSampleEventGroupIDsOf(13).empty());
+		uASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
 		auto group_id = events_ds.getSampleEventGroupIDsOf(42).back();
 
 		const auto& event_ids = events_ds.getEventIDsOf(group_id);
-		uUNIT_ASSERT(event_ids.size() == 3);
+		uASSERT(event_ids.size() == 3);
 
 		// group 2
 		events_ds.startAddingNewGroup(42);
 		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "d", 42);
 
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+		uASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
 
 		// group 3
 		events_ds.startAddingNewGroup(23);
 		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "foo", 23);
 		events_ds.emplace<SampleEvent>(7, 7, 1.0, nullptr, "bar", 23);
 
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
-		uUNIT_ASSERT(events_ds.numberOfEvents(13) == 4);
-		uUNIT_ASSERT(events_ds.numberOfEvents(7) == 2);
+		uASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 2);
+		uASSERT(events_ds.numberOfEvents(13) == 4);
+		uASSERT(events_ds.numberOfEvents(7) == 2);
 
 		// iterate over
 		std::string group_concat = "";
@@ -76,27 +77,55 @@ public:
 		{
 			group_concat.append(sample_event.group);
 		}
-		uUNIT_ASSERT(group_concat == "abcd");
+		uASSERT(group_concat == "abcd");
 
 		// get and getType
 		for (const auto& sample_event: events_ds.iterateOver<SampleEvent>(13))
 		{
-			uUNIT_ASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
-			uUNIT_ASSERT(events_ds.getType(sample_event.id) == Event::Type::SampleEvent);
+			uASSERT(events_ds.get<SampleEvent>(sample_event.id).channel == 13);
+			uASSERT(events_ds.getType(sample_event.id) == Event::Type::SampleEvent);
 		}
 
 		// remove
 		auto event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(42).back()).back();
 		events_ds.remove(event_id);
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		uASSERT(events_ds.getSampleEventGroupIDsOf(42).size() == 1);
 
 		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
 		events_ds.remove(event_id);
-		uUNIT_ASSERT(!events_ds.getSampleEventGroupIDsOf(23).empty());
+		uASSERT(!events_ds.getSampleEventGroupIDsOf(23).empty());
 		event_id = events_ds.getEventIDsOf(events_ds.getSampleEventGroupIDsOf(23).back()).back();
 		events_ds.remove(event_id);
-		uUNIT_ASSERT(events_ds.getSampleEventGroupIDsOf(23).empty());
+		uASSERT(events_ds.getSampleEventGroupIDsOf(23).empty());
 	}
+
+	void test_clear()
+	{
+		EventsDS events_ds;
+
+		uASSERT_EQUAL(0u, events_ds.getSampleEventGroupIDsOf(42).size());
+		uASSERT_EQUAL(0u, events_ds.getSampleEventGroupIDsOf(43).size());
+
+		// group 1
+		events_ds.startAddingNewGroup(42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "a", 42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "b", 42);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "c", 42);
+
+		// group 2
+		events_ds.startAddingNewGroup(43);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "a", 43);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "b", 43);
+		events_ds.emplace<SampleEvent>(13, 13, 1.0, nullptr, "c", 43);
+
+		uASSERT_EQUAL(1u, events_ds.getSampleEventGroupIDsOf(42).size() == 1);
+		uASSERT_EQUAL(1u, events_ds.getSampleEventGroupIDsOf(43).size() == 1);
+
+		events_ds.clear();
+
+		uASSERT_EQUAL(0u, events_ds.getSampleEventGroupIDsOf(42).size());
+		uASSERT_EQUAL(0u, events_ds.getSampleEventGroupIDsOf(43).size());
+}
 };
 
 // Registers the fixture into the 'registry'
