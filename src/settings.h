@@ -38,6 +38,7 @@
 enum class LoadStatus : unsigned int
 {
 	Idle,
+	Parsing,
 	Loading,
 	Done,
 	Error

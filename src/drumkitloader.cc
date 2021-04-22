@@ -138,7 +138,7 @@ bool DrumKitLoader::loadkit(const std::string& file)
 	settings.drumkit_samplerate.store(44100);
 	settings.load_status_text.store("");
 
-	settings.drumkit_load_status.store(LoadStatus::Loading);
+	settings.drumkit_load_status.store(LoadStatus::Parsing);
 
 	// Parse drumkit and instrument xml
 
@@ -225,6 +225,9 @@ bool DrumKitLoader::loadkit(const std::string& file)
 		const std::string drumkit_path = Directory::pathDirectory(settings.drumkit_file);
 		settings.midimap_file = drumkit_path + "/" + drumkitdom.metadata.default_midimap_file;
 	}
+
+	// Done parsing. Now start loading the audio
+	settings.midimap_load_status.store(LoadStatus::Loading);
 
 	loadKitAudio(kit);
 

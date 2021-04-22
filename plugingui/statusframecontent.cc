@@ -88,6 +88,7 @@ void StatusframeContent::updateDrumkitLoadStatus(LoadStatus load_status)
 	case LoadStatus::Idle:
 		drumkit_load_status = _("No Kit Loaded");
 		break;
+	case LoadStatus::Parsing:
 	case LoadStatus::Loading:
 		drumkit_load_status = _("Loading...");
 		break;
@@ -130,6 +131,7 @@ void StatusframeContent::updateMidimapLoadStatus(LoadStatus load_status)
 	case LoadStatus::Idle:
 		midimap_load_status = _("No Midimap Loaded");
 		break;
+	case LoadStatus::Parsing:
 	case LoadStatus::Loading:
 		midimap_load_status = _("Loading...");
 		break;

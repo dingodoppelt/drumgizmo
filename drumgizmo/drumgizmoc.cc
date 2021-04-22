@@ -326,6 +326,7 @@ int main(int argc, char* argv[])
 		        }
 		        oe = factory.createOutput(engine);
 		        if(ie == NULL)
+		        if(oe == NULL)
 		        {
 			        std::cerr << "Invalid output engine: " << engine << std::endl;
 			        return 1;
@@ -699,6 +700,34 @@ int main(int argc, char* argv[])
 			}
 		}
 		std::cout << "\ndone" << std::endl;
+	}
+	else
+	{
+		// Async loading in progress
+
+		// Wait until the loader has passed the kit parsing step before proceeding.
+		bool parsing_done{false};
+		while(!parsing_done)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+			switch(settings.drumkit_load_status.load())
+			{
+			case LoadStatus::Idle:
+			case LoadStatus::Parsing:
+				// Not yet past the parsing step
+				break;
+			case LoadStatus::Loading:
+			case LoadStatus::Done:
+				// Past parsing step
+				parsing_done = true;
+				break;
+			case LoadStatus::Error:
+				// Kit parser error?
+				std::cout << "\nFailed to load " << kitfile << std::endl;
+				return 1;
+			}
+		}
 	}
 
 	gizmo.setSamplerate(oe->getSamplerate());

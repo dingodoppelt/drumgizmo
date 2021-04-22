@@ -233,6 +233,7 @@ void DrumkitframeContent::setDrumKitLoadStatus(LoadStatus load_status)
 	switch(load_status)
 	{
 	case LoadStatus::Idle:
+	case LoadStatus::Parsing:
 	case LoadStatus::Loading:
 		state = dggui::ProgressBarState::Blue;
 		break;
@@ -255,6 +256,7 @@ void DrumkitframeContent::setMidiMapLoadStatus(LoadStatus load_status)
 	case LoadStatus::Idle:
 		midimap_file_progress.setValue(0);
 		break;
+	case LoadStatus::Parsing:
 	case LoadStatus::Loading:
 		midimap_file_progress.setValue(1);
 		state = dggui::ProgressBarState::Blue;

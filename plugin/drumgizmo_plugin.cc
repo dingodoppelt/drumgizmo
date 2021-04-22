@@ -281,6 +281,7 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 				bar_green.setSize(val, bar_height);
 				painter.drawImage(brd, height - bar_height, bar_green);
 				break;
+			case LoadStatus::Parsing:
 			case LoadStatus::Loading:
 			case LoadStatus::Idle:
 				bar_blue.setSize(val, bar_height);
