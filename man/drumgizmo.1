@@ -176,6 +176,23 @@ Higher value makes it more likely that a sample further
 away from the input velocity will be played. [0,4.5])
 
 .RE
+\fB-l, --voice-limit\fR
+.RS 7
+Enable voice limit.
+
+.RE
+\fB-L, --voice-limitparms parmlist\fR
+.RS 7
+Voice limit options.
+
+.P
+\fBmax\fR=<val> (Maximum number of voices for each instrument before
+old samples are ramped down. [1,30])
+.P
+\fBrampdown\fR=<val> (Time it takes for an old sample to completely fall
+silent. [0.01,2.0])
+
+.RE
 \fB-p, --parameters parmlist\fR
 .RS 7
 Parameters for the sample selection algorithm.

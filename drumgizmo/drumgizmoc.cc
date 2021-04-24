@@ -142,6 +142,12 @@ static std::string arguments()
 		"  diverse:       The importance given to choosing samples\n"
 		"                 which haven't been played recently. [0,1]\n"
 		"  random:        The amount of randomness added. [0,1]\n"
+		"\n"
+		"Voice limit parameters:\n"
+		"  max:           Maximum number of voices for each instrument before\n"
+		"                 old samples are ramped down. [1,30]\n"
+		"  rampdown:      Time it takes for an old sample to completely fall\n"
+		"                 silent. [0.01,2.0]\n"
 		"\n";
 	return output.str();
 }
@@ -539,6 +545,54 @@ int main(int argc, char* argv[])
 			        else
 			        {
 				        std::cerr << "Unknown velocity-humanizerparms argument " << token.key << std::endl;
+				        return 1;
+			        }
+		        }
+		        return 0;
+	        });
+
+	// Default is to disable voice limit
+	settings.enable_voice_limit.store(false);
+
+	opt.add("voice-limit", no_argument, 'l',
+	        "Enable voice limit.",
+	        [&]()
+	        {
+		        settings.enable_voice_limit.store(true);
+		        return 0;
+	        });
+
+	opt.add("voice-limitparms", required_argument, 'L',
+	        "Voice limit options.",
+	        [&]()
+	        {
+		        std::string parms = optarg;
+		        auto tokens = parseParameters(parms);
+		        for(auto& token : tokens)
+		        {
+			        if(token.key == "max")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 1.0 || val > 30.0)
+				        {
+					        std::cerr << "max range is [1, 30].\n";
+					        return 1;
+				        }
+				        settings.voice_limit_max.store(val);
+			        }
+			        else if(token.key == "rampdown")
+			        {
+				        auto val = atof_nol(token.value.data());
+				        if(val < 0.01 || val > 2.0)
+				        {
+					        std::cerr << "rampdown range is [0.01, 2.0].\n";
+					        return 1;
+				        }
+				        settings.voice_limit_rampdown.store(val);
+			        }
+			        else
+			        {
+				        std::cerr << "Unknown voice limitparms argument " << token.key << std::endl;
 				        return 1;
 			        }
 		        }
