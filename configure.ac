@@ -72,7 +72,7 @@ dnl Check for -ffloat-store support
 dnl ===========================
 AC_LANG_PUSH([C++])
 TMP_CXXFLAGS="$CXXFLAGS"
-CXXFLAGS="-Wall -Werror -ffloat-store"
+CXXFLAGS="-Wall -Werror -Wextra -ffloat-store"
 AC_MSG_CHECKING([whether CXX supports -ffloat-store])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
 	[AC_MSG_RESULT([yes])
