@@ -24,7 +24,9 @@ if ENABLE_LV2
 TESTS += lv2
 endif
 
+noinst_PROGRAMS = $(TESTS)
 check_PROGRAMS = $(TESTS)
+
 resource_CXXFLAGS = \
 	-I$(top_srcdir)/test/uunit -DOUTPUT=\"resource\" \
 	$(SNDFILE_CFLAGS) \
