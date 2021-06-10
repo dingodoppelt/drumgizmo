@@ -26,6 +26,8 @@
  */
 #pragma once
 
+#include <cstdint>
+
 #include <config.h>
 
 #ifdef WITH_NLS
