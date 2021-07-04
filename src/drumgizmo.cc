@@ -352,8 +352,9 @@ void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 
 		if(!af.isLoaded() || !af.isValid() || (s == nullptr))
 		{
-			removeevent = true;
-			break;
+			// This event cannot be played - schedule for deletion and continue.
+			to_remove.push_back(sample_event.id);
+			continue;
 		}
 
 		if(sample_event.offset > (pos + sz))
