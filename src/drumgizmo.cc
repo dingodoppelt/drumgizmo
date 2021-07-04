@@ -438,7 +438,7 @@ float DrumGizmo::samplerate()
 
 void DrumGizmo::setSamplerate(float samplerate, float resampling_quality)
 {
-	DEBUG(dgeditor, "%s samplerate: %f\n", __PRETTY_FUNCTION__, samplerate);
+	DEBUG(engine, "%s samplerate: %f\n", __PRETTY_FUNCTION__, samplerate);
 	settings.samplerate.store(samplerate);
 
 	// Notify input engine of the samplerate change.
@@ -470,7 +470,8 @@ void DrumGizmo::setSamplerate(float samplerate, float resampling_quality)
 		zita[c].set_inp_data(nullptr);
 		zita[c].set_inp_count(null_size);
 
-		auto scratch_buffer_size = (null_size / ratio) + 1;
+		std::size_t scratch_buffer_size = (null_size / ratio);
+
 		if(scratch_buffer.size() < scratch_buffer_size)
 		{
 			scratch_buffer.resize(scratch_buffer_size);
