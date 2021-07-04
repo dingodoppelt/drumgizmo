@@ -119,6 +119,12 @@ void DrumGizmo::setRandomSeed(unsigned int seed)
 
 bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 {
+	if(settings_getter.drumkit_file.hasChanged())
+	{
+		// New kit loaded/loading - old events no longer makes sense.
+		events_ds.clear();
+	}
+
 	if(settings_getter.enable_resampling.hasChanged())
 	{
 		enable_resampling = settings_getter.enable_resampling.getValue();
