@@ -135,7 +135,7 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
 		break;
 
 	case NoteAftertouch:
-		if(velocity == 0 && instrument_idx != -1)
+		if(velocity > 0 && instrument_idx != -1)
 		{
 			events.push_back({EventType::Choke, (std::size_t)instrument_idx,
 			                  offset, .0f});
