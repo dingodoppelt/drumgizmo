@@ -163,6 +163,11 @@ static void applyChokeGroup(Settings& settings, DrumKit& kit,
 	// Add event to ramp down all existing events with the same groupname.
 	for(const auto& ch : kit.channels)
 	{
+		if(ch.num >= NUM_CHANNELS) // kit may have more channels than the engine
+		{
+			continue;
+		}
+
 		for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 		{
 			if(event_sample.group == instr.getGroup() &&
@@ -186,6 +191,11 @@ static void applyDirectedChoke(Settings& settings, DrumKit& kit,
 		// Add event to ramp down all existing events with the same groupname.
 		for(const auto& ch : kit.channels)
 		{
+			if(ch.num >= NUM_CHANNELS) // kit may have more channels than the engine
+			{
+				continue;
+			}
+
 			for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 			{
 				if(choke.instrument_id == event_sample.instrument_id &&
@@ -264,6 +274,11 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 	bool new_group_added = false;
 	for(Channel& ch: kit.channels)
 	{
+		if(ch.num >= NUM_CHANNELS) // kit may have more channels than the engine
+		{
+			continue;
+		}
+
 		const auto af = sample->getAudioFile(ch);
 		if(af == nullptr || !af->isValid())
 		{
@@ -330,6 +345,11 @@ bool InputProcessor::processChoke(event_t& event,
 	// Add event to ramp down all existing events with the same groupname.
 	for(const auto& ch : kit.channels)
 	{
+		if(ch.num >= NUM_CHANNELS) // kit may have more channels than the engine
+		{
+			continue;
+		}
+
 		for(auto& event_sample : events_ds.iterateOver<SampleEvent>(ch.num))
 		{
 			if(event_sample.instrument_id == instrument_id &&
@@ -357,6 +377,11 @@ bool InputProcessor::processStop(event_t& event)
 		int num_active_events = 0;
 		for(auto& ch: kit.channels)
 		{
+			if(ch.num >= NUM_CHANNELS) // kit may have more channels than the engine
+			{
+				continue;
+			}
+
 			num_active_events += events_ds.numberOfEvents(ch.num);
 		}
 

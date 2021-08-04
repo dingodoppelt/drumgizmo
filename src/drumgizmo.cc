@@ -197,6 +197,11 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
+			if(c >= NUM_CHANNELS) // kit may have more channels than the engine
+			{
+				break;
+			}
+
 			sample_t *buf = samples;
 			bool internal = false;
 			if(oe.getBuffer(c))
@@ -224,6 +229,11 @@ bool DrumGizmo::run(size_t pos, sample_t *samples, size_t nsamples)
 		size_t kitpos = pos * ratio;
 		for(size_t c = 0; c < kit.channels.size(); ++c)
 		{
+			if(c >= NUM_CHANNELS) // kit may have more channels than the engine
+			{
+				break;
+			}
+
 			sample_t *buf = samples;
 			bool internal = false;
 			if(oe.getBuffer(c))
@@ -339,6 +349,8 @@ repeat:
 
 void DrumGizmo::getSamples(int ch, int pos, sample_t* s, size_t sz)
 {
+	assert(ch < NUM_CHANNELS);
+
 	// Store local values of settings to ensure they don't change intra-iteration
 	const auto enable_bleed_control = settings.enable_bleed_control.load();
 	const auto master_bleed = settings.master_bleed.load();
