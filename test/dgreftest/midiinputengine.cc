@@ -155,16 +155,15 @@ void MidifileInputEngine::run(size_t pos, size_t len, std::vector<event_t>& even
 				int key = current_event->midi_buffer[1];
 				int velocity = current_event->midi_buffer[2];
 
-				events.emplace_back();
-				auto& event = events.back();
-				event.type = EventType::OnSet;
-				size_t evpos = current_event->time_seconds * (samplerate / speed);
-				event.offset = evpos - pos;
-
-				int i = mmap.lookup(key);
-				if(i != -1)
+				auto instruments = mmap.lookup(key);
+				for(const auto& instrument_idx : instruments)
 				{
-					event.instrument = i;
+					events.emplace_back();
+					auto& event = events.back();
+					event.type = EventType::OnSet;
+					size_t evpos = current_event->time_seconds * (samplerate / speed);
+					event.offset = evpos - pos;
+					event.instrument = instrument_idx;
 					event.velocity = velocity / 127.0;
 				}
 			}

@@ -117,32 +117,35 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
 	auto key = midi_buffer[1];
 	auto velocity = midi_buffer[2];
 	auto instrument_idx = mmap.lookup(key);
-
-	switch(midi_buffer[0] & NoteMask)
+	auto instruments = mmap.lookup(key);
+	for(const auto& instrument_idx : instruments)
 	{
-	case NoteOff:
-		// Ignore for now
-		break;
-
-	case NoteOn:
-		if(velocity != 0 && instrument_idx != -1)
+		switch(midi_buffer[0] & NoteMask)
 		{
-			// maps velocities to [.5/127, 126.5/127]
-			auto centered_velocity = (velocity-.5f)/127.0f;
-			events.push_back({EventType::OnSet, (std::size_t)instrument_idx,
-			                  offset, centered_velocity});
-		}
-		break;
+		case NoteOff:
+			// Ignore for now
+			break;
 
-	case NoteAftertouch:
-		if(velocity > 0 && instrument_idx != -1)
-		{
-			events.push_back({EventType::Choke, (std::size_t)instrument_idx,
-			                  offset, .0f});
-		}
-		break;
+		case NoteOn:
+			if(velocity != 0)
+			{
+				// maps velocities to [.5/127, 126.5/127]
+				auto centered_velocity = (velocity-.5f)/127.0f;
+				events.push_back({EventType::OnSet, (std::size_t)instrument_idx,
+				                  offset, centered_velocity});
+			}
+			break;
 
-	default:
-		break;
+		case NoteAftertouch:
+			if(velocity > 0)
+			{
+				events.push_back({EventType::Choke, (std::size_t)instrument_idx,
+				                  offset, .0f});
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 }

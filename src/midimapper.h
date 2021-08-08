@@ -29,16 +29,22 @@
 #include <map>
 #include <string>
 #include <mutex>
+#include <vector>
 
-typedef std::map<int, std::string> midimap_t;
-typedef std::map<std::string, int> instrmap_t;
+struct MidimapEntry
+{
+	int note_id;
+	std::string instrument_name;
+};
+
+using midimap_t = std::vector<MidimapEntry>;
+using instrmap_t = std::map<std::string, int>;
 
 class MidiMapper
 {
 public:
-	//! Lookup note in map and return its index.
-	//! \returns -1 if not found or the note index.
-	int lookup(int note);
+	//! Lookup note in map and returns the corresponding instrument index list.
+	std::vector<int> lookup(int note_id);
 
 	//! Set new map sets.
 	void swap(instrmap_t& instrmap, midimap_t& midimap);

@@ -50,7 +50,8 @@ bool MidiMapParser::parseFile(const std::string& filename)
 			continue;
 		}
 
-		midimap[note] = instr;
+		MidimapEntry entry{note, instr};
+		midimap.push_back(entry);
 	}
 
 	return true;

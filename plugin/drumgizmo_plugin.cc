@@ -410,7 +410,18 @@ bool DrumGizmoPlugin::Input::loadMidiMap(const std::string& file,
 	bool result = AudioInputEngineMidi::loadMidiMap(file, i);
 	std::vector<std::pair<int, std::string>> midnam;
 
-	const auto& map = mmap.getMap();
+	const auto& midimap = mmap.getMap();
+	std::map<int, std::string> map;
+	for(const auto& entry : midimap)
+	{
+		// in case of multiple instruments mapped to one note, use '/' as separator
+		if(!map[entry.note_id].empty())
+		{
+			map[entry.note_id] += "/";
+		}
+		map[entry.note_id] += entry.instrument_name;
+	}
+
 	midnam.reserve(map.size());
 	for(const auto& m : map)
 	{

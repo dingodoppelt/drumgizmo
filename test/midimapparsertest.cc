@@ -36,8 +36,8 @@ class MidimapParserTest
 public:
 	MidimapParserTest()
 	{
-		uUNIT_TEST(MidimapParserTest::test);
-		uUNIT_TEST(MidimapParserTest::invalid);
+		uTEST(MidimapParserTest::test);
+		uTEST(MidimapParserTest::invalid);
 	}
 
 	void test()
@@ -49,23 +49,35 @@ public:
 			"	<map note=\"60\" instr=\"Crash_left_whisker\"/>\n" \
 			"	<map note=\"55\" instr=\"Crash_right_tip\"/>\n" \
 			"	<map note=\"62\" instr=\"Crash_right_whisker\"/>\n" \
+			"	<map note=\"62\" instr=\"Hihat_closed\"/>\n" \
 			"	<map note=\"56\" instr=\"Hihat_closed\"/>\n" \
 			"</midimap>");
 
 		MidiMapParser parser;
-		uUNIT_ASSERT(parser.parseFile(scoped_file.filename()));
+		uASSERT(parser.parseFile(scoped_file.filename()));
 
-		uUNIT_ASSERT(parser.midimap.find(54) != parser.midimap.end());
-		uUNIT_ASSERT(parser.midimap.find(60) != parser.midimap.end());
-		uUNIT_ASSERT(parser.midimap.find(55) != parser.midimap.end());
-		uUNIT_ASSERT(parser.midimap.find(62) != parser.midimap.end());
-		uUNIT_ASSERT(parser.midimap.find(56) != parser.midimap.end());
+		const auto& midimap = parser.midimap;
+		uASSERT_EQUAL(6u, midimap.size());
 
-		uUNIT_ASSERT_EQUAL(std::string("Crash_left_tip"), parser.midimap[54]);
-		uUNIT_ASSERT_EQUAL(std::string("Crash_left_whisker"), parser.midimap[60]);
-		uUNIT_ASSERT_EQUAL(std::string("Crash_right_tip"), parser.midimap[55]);
-		uUNIT_ASSERT_EQUAL(std::string("Crash_right_whisker"), parser.midimap[62]);
-		uUNIT_ASSERT_EQUAL(std::string("Hihat_closed"), parser.midimap[56]);
+		uASSERT_EQUAL(54, midimap[0].note_id);
+		uASSERT_EQUAL(std::string("Crash_left_tip"), midimap[0].instrument_name);
+
+		uASSERT_EQUAL(60, midimap[1].note_id);
+		uASSERT_EQUAL(std::string("Crash_left_whisker"), midimap[1].instrument_name);
+
+		uASSERT_EQUAL(55, midimap[2].note_id);
+		uASSERT_EQUAL(std::string("Crash_right_tip"), midimap[2].instrument_name);
+
+		// These next two note numbers are intentionally the same and trigger two
+		// different instruments:
+		uASSERT_EQUAL(62, midimap[3].note_id);
+		uASSERT_EQUAL(std::string("Crash_right_whisker"), midimap[3].instrument_name);
+
+		uASSERT_EQUAL(62, midimap[4].note_id);
+		uASSERT_EQUAL(std::string("Hihat_closed"), midimap[4].instrument_name);
+
+		uASSERT_EQUAL(56, midimap[5].note_id);
+		uASSERT_EQUAL(std::string("Hihat_closed"), midimap[5].instrument_name);
 	}
 
 	void invalid()
@@ -81,7 +93,7 @@ public:
 			"</midimap>");
 
 		MidiMapParser parser;
-		uUNIT_ASSERT(!parser.parseFile(scoped_file.filename()));
+		uASSERT(!parser.parseFile(scoped_file.filename()));
 	}
 };
 

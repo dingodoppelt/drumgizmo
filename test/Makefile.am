@@ -8,7 +8,7 @@ TESTS = resource enginetest paintertest configfile audiocache \
 	randomtest atomictest syncedsettingstest imagecachetest \
 	semaphoretest drumkitcreatortest bytesizeparsertest notifiertest \
 	dgxmlparsertest domloadertest configparsertest midimapparsertest \
-	eventsdstest powermaptest
+	eventsdstest powermaptest midimappertest
 
 if WITH_NLS
 TESTS += translationtest
@@ -333,6 +333,21 @@ powermaptest_LDFLAGS =
 powermaptest_SOURCES = \
 	$(top_srcdir)/src/powermap.cc \
 	powermaptest.cc \
+	uunit/uunit.cc
+
+midimappertest_CXXFLAGS = \
+	-I$(top_srcdir)/test/uunit -DOUTPUT=\"midimappertest\" \
+	$(DEBUG_FLAGS) \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/hugin \
+	-I$(top_srcdir)/pugixml/src
+midimappertest_LDFLAGS =
+midimappertest_SOURCES = \
+	$(top_srcdir)/hugin/hugin.c \
+	$(top_srcdir)/src/midimapper.cc \
+	$(top_srcdir)/pugixml/src/pugixml.cpp \
+	scopedfile.cc \
+	midimappertest.cc \
 	uunit/uunit.cc
 
 RES = \

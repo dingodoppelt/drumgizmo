@@ -26,23 +26,25 @@
  */
 #include "midimapper.h"
 
-int MidiMapper::lookup(int note)
+std::vector<int> MidiMapper::lookup(int note_id)
 {
+	std::vector<int> instruments;
+
 	std::lock_guard<std::mutex> guard(mutex);
 
-	auto midimap_it = midimap.find(note);
-	if(midimap_it == midimap.end())
+	for(const auto& map_entry : midimap)
 	{
-		return -1;
+		if(map_entry.note_id == note_id)
+		{
+			auto instrmap_it = instrmap.find(map_entry.instrument_name);
+			if(instrmap_it != instrmap.end())
+			{
+				instruments.push_back(instrmap_it->second);
+			}
+		}
 	}
 
-	auto instrmap_it = instrmap.find(midimap_it->second);
-	if(instrmap_it == instrmap.end())
-	{
-		return -1;
-	}
-
-	return instrmap_it->second;
+	return instruments;
 }
 
 void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap)
