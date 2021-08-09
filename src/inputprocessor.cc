@@ -356,7 +356,7 @@ bool InputProcessor::processChoke(event_t& event,
 			   event_sample.rampdown_count == -1) // Only if not already ramping.
 			{
 				// Fixed group rampdown time of 68ms, independent of samplerate
-				applyChoke(settings, event_sample, 68, event.offset);
+				applyChoke(settings, event_sample, 450, event.offset);
 			}
 		}
 	}
