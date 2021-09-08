@@ -32,8 +32,6 @@
 #include <limits>
 #include <mutex>
 
-#include <sndfile.h>
-
 #include "audio.h"
 #include "channel.h"
 #include "logger.h"
