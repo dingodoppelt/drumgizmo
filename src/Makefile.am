@@ -32,7 +32,7 @@ libpugi_la_SOURCES = \
 libdg_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
-	$(SSEFLAGS) -I$(top_srcdir)/zita-resampler/libs
+	$(SSEFLAGS) -I$(top_srcdir)/zita-resampler/libs \
 	$(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
 
 libdg_la_LIBADD = \
