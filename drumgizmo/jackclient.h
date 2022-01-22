@@ -27,7 +27,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <set>
+#include <list>
 
 #include <jack/jack.h>
 
@@ -38,7 +38,7 @@ class JackClient;
 class JackProcess
 {
 public:
-	virtual ~JackProcess();
+	virtual ~JackProcess() = default;
 	virtual void process(jack_nframes_t num_frames) = 0;
 	virtual void jackLatencyCallback(jack_latency_callback_mode_t mode) {}
 };
@@ -76,7 +76,13 @@ public:
 
 private:
 	jack_client_t* client;
-	std::set<JackProcess*> processes;
+	bool dirty{false};
+	struct JackProcessContainer
+	{
+		JackProcess *process;
+		bool active{true};
+	};
+	std::list<JackProcessContainer> processes;
 	bool is_active;
 	bool is_freewheeling;
 

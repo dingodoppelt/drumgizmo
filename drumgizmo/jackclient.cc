@@ -28,12 +28,6 @@
 
 #include "jackclient.h"
 
-JackProcess::~JackProcess()
-{
-}
-
-// --------------------------------------------------------------------
-
 JackPort::JackPort(JackClient& client, const std::string& name,
                    const char* type, JackPortFlags flags)
 	: client{client.client} // register jack port for given client
@@ -57,8 +51,7 @@ int JackClient::wrapJackProcess(jack_nframes_t nframes, void* arg)
 	return static_cast<JackClient*>(arg)->process(nframes);
 }
 
-void JackClient::latencyCallback(jack_latency_callback_mode_t mode,
-                                 void* arg)
+void JackClient::latencyCallback(jack_latency_callback_mode_t mode, void* arg)
 {
 	static_cast<JackClient*>(arg)->jackLatencyCallback(mode);
 }
@@ -92,12 +85,23 @@ JackClient::~JackClient()
 
 void JackClient::add(JackProcess& process)
 {
-	processes.insert(&process);
+	JackProcessContainer c;
+	c.process = &process;
+	processes.push_back(std::move(c));
 }
 
 void JackClient::remove(JackProcess& process)
 {
-	processes.erase(&process);
+	// Do not erase here. Instead mark as disabled - it will be erased at next
+	// JackClient::process call.
+	for(auto& ptr : processes)
+	{
+		if(ptr.process == &process)
+		{
+			ptr.active = false;
+		}
+	}
+	dirty = true;
 }
 
 void JackClient::activate()
@@ -111,10 +115,30 @@ void JackClient::activate()
 
 int JackClient::process(jack_nframes_t num_frames)
 {
+	// Clear out any inactive processes before iterating
+	if(dirty)
+	{
+		auto it = processes.begin();
+		while(it != processes.end())
+		{
+			if(it->active == false)
+			{
+				it = processes.erase(it);
+			}
+			else
+			{
+				it++;
+			}
+		}
+
+		dirty = false;
+	}
+
 	for(auto& ptr : processes)
 	{
-		ptr->process(num_frames);
+		ptr.process->process(num_frames);
 	}
+
 	return 0;
 }
 
@@ -122,7 +146,7 @@ void JackClient::jackLatencyCallback(jack_latency_callback_mode_t mode)
 {
 	for(auto& ptr : processes)
 	{
-		ptr->jackLatencyCallback(mode);
+		ptr.process->jackLatencyCallback(mode);
 	}
 }
 
