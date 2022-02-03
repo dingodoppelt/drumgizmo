@@ -78,7 +78,7 @@ bool AudioInputEngineMidi::loadMidiMap(const std::string& file,
 		instrmap[instruments[i]->getName()] = i;
 	}
 
-	mmap.swap(instrmap, midimap_parser.midimap);
+	mmap.swap(instrmap, midimap_parser.midimap, midimap_parser.ccmap);
 
 	midimap = file;
 	is_valid = true;
@@ -100,6 +100,7 @@ bool AudioInputEngineMidi::isValid() const
 static const std::uint8_t NoteOff = 0x80;
 static const std::uint8_t NoteOn = 0x90;
 static const std::uint8_t NoteAftertouch = 0xA0;
+static const std::uint8_t CC = 0xB0;
 
 // Note type mask:
 static int const NoteMask = 0xF0;
@@ -114,9 +115,23 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
 		return;
 	}
 
+	if(((midi_buffer[0] & NoteMask) == CC) && (midi_buffer[2] == 127))
+	{
+		std::uint8_t intermediateBuffer[3];
+		auto notes = mmap.lookupCC(midi_buffer[1]);
+		intermediateBuffer[0] = NoteOn;
+		intermediateBuffer[2] = 127;
+		for(const auto& note_idx : notes)
+		{
+			intermediateBuffer[1] = (std::size_t)note_idx;
+			processNote(intermediateBuffer, 3, offset, events);
+		}
+		return;
+	}
+
 	auto key = midi_buffer[1];
 	auto velocity = midi_buffer[2];
-	auto instrument_idx = mmap.lookup(key);
+	//auto instrument_idx = mmap.lookup(key);
 	auto instruments = mmap.lookup(key);
 	for(const auto& instrument_idx : instruments)
 	{

@@ -54,5 +54,19 @@ bool MidiMapParser::parseFile(const std::string& filename)
 		midimap.push_back(entry);
 	}
 
+	for(pugi::xml_node ccmap_node : midimap_node.children("CCmap"))
+	{
+		constexpr int bad_value = 10000;
+		auto cc = ccmap_node.attribute("cc").as_int(bad_value);
+		auto note = ccmap_node.attribute("note").as_int(bad_value);
+		if(cc == bad_value || note == bad_value)
+		{
+			continue;
+		}
+
+		MidiCCmapEntry entry{cc, note};
+		ccmap.push_back(entry);
+	}
+
 	return true;
 }

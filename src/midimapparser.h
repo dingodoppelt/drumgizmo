@@ -35,4 +35,5 @@ public:
 	bool parseFile(const std::string& filename);
 
 	midimap_t midimap;
+	ccmap_t ccmap;
 };
