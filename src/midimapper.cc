@@ -47,12 +47,30 @@ std::vector<int> MidiMapper::lookup(int note_id)
 	return instruments;
 }
 
-void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap)
+std::vector<int> MidiMapper::lookupCC(int cc_id)
+{
+	std::vector<int> notes;
+
+	std::lock_guard<std::mutex> guard(mutex);
+
+	for(const auto& map_entry : ccmap)
+	{
+		if(map_entry.cc_id == cc_id)
+		{
+			notes.push_back(map_entry.note_id);
+		}
+	}
+
+	return notes;
+}
+
+void MidiMapper::swap(instrmap_t& instrmap, midimap_t& midimap, ccmap_t& ccmap)
 {
 	std::lock_guard<std::mutex> guard(mutex);
 
 	std::swap(this->instrmap, instrmap);
 	std::swap(this->midimap, midimap);
+	std::swap(this->ccmap, ccmap);
 }
 
 const midimap_t& MidiMapper::getMap()
