@@ -62,8 +62,17 @@ public:
 			{ "Hihat_closed", 4 },
 		};
 
+		ccmap_t ccmap
+		{
+			{ 64, 51 },
+			{ 65, 52 },
+			{ 66, 53 },
+			{ 67, 54 },
+			{ 67, 55 },
+		};
+
 		MidiMapper mapper;
-		mapper.swap(instrmap, midimap);
+		mapper.swap(instrmap, midimap, ccmap);
 
 		{
 			auto is = mapper.lookup(54);
@@ -119,8 +128,17 @@ public:
 			{ "Hihat_closed", 4 },
 		};
 
+		ccmap_t ccmap
+		{
+			{ 64, 51 },
+			{ 65, 52 },
+			{ 66, 53 },
+			{ 67, 54 },
+			{ 67, 55 },
+		};
+
 		MidiMapper mapper;
-		mapper.swap(instrmap, midimap);
+		mapper.swap(instrmap, midimap, ccmap);
 
 		// no such note id
 		{
