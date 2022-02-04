@@ -105,6 +105,32 @@ public:
 			uASSERT_EQUAL(1u, is.size());
 			uASSERT_EQUAL(4, is[0]);
 		}
+
+		{
+			auto is = mapper.lookupCC(64);
+			uASSERT_EQUAL(1u, is.size());
+			uASSERT_EQUAL(51, is[0]);
+		}
+
+		{
+			auto is = mapper.lookupCC(65);
+			uASSERT_EQUAL(1u, is.size());
+			uASSERT_EQUAL(52, is[0]);
+		}
+
+		{
+			auto is = mapper.lookupCC(66);
+			uASSERT_EQUAL(1u, is.size());
+			uASSERT_EQUAL(53, is[0]);
+		}
+
+		{
+			auto is = mapper.lookupCC(67);
+			uASSERT_EQUAL(2u, is.size());
+			// We don't care about the order, so just count the instances
+			uASSERT_EQUAL(1u, std::count(is.begin(), is.end(), 54));
+			uASSERT_EQUAL(1u, std::count(is.begin(), is.end(), 55));
+		}
 	}
 
 	void exceptional()
@@ -149,6 +175,18 @@ public:
 		// no such instrument
 		{
 			auto is = mapper.lookup(60);
+			uASSERT_EQUAL(0u, is.size());
+		}
+
+		// no such cc id
+		{
+			auto is = mapper.lookupCC(1);
+			uASSERT_EQUAL(0u, is.size());
+		}
+
+		// no such note
+		{
+			auto is = mapper.lookupCC(-1);
 			uASSERT_EQUAL(0u, is.size());
 		}
 	}
