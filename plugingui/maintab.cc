@@ -131,7 +131,7 @@ MainTab::MainTab(dggui::Widget* parent,
 	layout.setResizeChildren(true);
 
 	//Left column...
-	add(_("Drumkit"), drumkit_frame, drumkitframe_content, 14, 0);
+	add(_("Drumkit"), drumkit_frame, drumkitframe_content, 15, 0);
 	add(_("Status"), status_frame, statusframe_content, 12, 0);
 	add(_("Resampling"), resampling_frame, resamplingframe_content, 10, 0);
 	add(_("Voice Limit"), voicelimit_frame, voicelimit_content, 10, 0);
@@ -153,7 +153,7 @@ MainTab::MainTab(dggui::Widget* parent,
 	add(_("Visualizer"), visualizer_frame, visualizerframe_content, 14, 1);
 	visualizer_frame.setHelpText(visualizer_tip);
 
-	add(_("Velocity Curve"), power_frame, powerframe_content, 20, 1);
+	add(_("Velocity Curve"), power_frame, powerframe_content, 21, 1);
 	power_frame.setHelpText(power_tip);
 
 	humanizer_frame.setOnSwitch(settings.enable_velocity_modifier);

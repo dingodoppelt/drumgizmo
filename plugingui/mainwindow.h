@@ -47,7 +47,7 @@ class MainWindow
 public:
 
 	static constexpr std::size_t main_width{750};
-	static constexpr std::size_t main_height{800};
+	static constexpr std::size_t main_height{740};
 
 	MainWindow(Settings& settings, void* native_window);
 	~MainWindow();
