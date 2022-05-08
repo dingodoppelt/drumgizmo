@@ -155,21 +155,55 @@ Options du timing de l'humaniseur.
 \fBregain\fR=<val> (Contrôle la rapidité avec laquelle le batteur se rattrape au tempo. [0; 1])
 
 .RE
+\fB-t, --velocity-humanizer\fR
+.RS 7
+Permet d'adapter les vitesses d'entrée pour obtenir un son plus réaliste.
+
+.RE
+\fB-T, --velocity-humanizerparms parmlist\fR
+.RS 7
+Options de l'humaniseur de vélocité.
+
+.P
+\fBattack\fR=<val> (La vitesse à laquelle la vélocité est réduite lorsque vous jouez des notes rapides.
+Des valeurs plus faibles entraînent une réduction plus rapide de la vitesse. [0,1])
+.P
+\fBrelease\fR=<val> (La vitesse à laquelle le batteur retrouve la vélocité
+lorsqu'il y a des espaces entre les notes. Des valeurs plus faibles entraînent une reprise plus rapide. [0,1])
+.P
+\fBstddev\fR=<val> (L'écart-type pour l'humaniseur de vitesse.
+Une valeur plus élevée rend plus probable qu'un échantillon
+plus éloigné de la vélocité d'entrée soit joué. [0,4.5])
+
+.RE
+\fB-l, --voice-limit\fR
+.RS 7
+Activer la limite vocale.
+
+.RE
+\fB-L, --voice-limitparms parmlist\fR
+.RS 7
+Options de limite de voix.
+
+.P
+\fBmax\fR=<val> (Nombre maximum de voix pour chaque instrument avant
+que les anciens échantillons ne soient réduits. [1,30])
+.P
+\fBrampdown\fR=<val> (Temps qu'il faut à un ancien échantillon pour
+devenir complètement silencieux. [0.01,2.0])
+
+.RE
 \fB-p, --parameters parmlist\fR
 .RS 7
 Paramètres de l'algorithme de sélection des échantillons.
 .P
 \fBclose\fR=<val> (L'importance accordée au choix d'un échantillon proche de 
-la valeur réelle de la vitesse (après humanisation) [0; 16])
+la valeur réelle de la vitesse (après humanisation) [0,1])
 .P
 \fBdiverse\fR=<val> (L'importance accordée au choix d'échantillons qui
-n'ont pas été joués récemment [0; 0.5])
+n'ont pas été joués récemment [0,1])
 .P
-\fBrandom\fR=<val> (La quantité d'aléatoire ajoutée [0; 0.5])
-.P
-\fBstddev\fR=<val> (L'écart type pour la sélection de l'échantillon.
-Plus la valeur est élevée, plus il est probable qu'un échantillon
-plus éloigné de la vitesse d'entrée sera joué [0; 4.5])
+\fBrandom\fR=<val> (La quantité d'aléatoire ajoutée [0,1])
 
 .RE
 \fB-v, --version\fR
