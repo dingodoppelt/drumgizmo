@@ -4,7 +4,7 @@ Check list for releasing:
 
  [ ]  Update man page
 
- [ ]  Bump version in version.h
+ [ ]  Bump version in version.h and in man pages and po/pot files.
 
  [ ]  Update ChangeLog
 

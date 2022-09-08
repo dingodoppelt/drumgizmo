@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: drumgizmo 0.9.17\n"
+"Project-Id-Version: drumgizmo 0.9.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-13 21:07+0200\n"
 "PO-Revision-Date: 2019-09-13 19:42+0200\n"

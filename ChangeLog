@@ -1,3 +1,82 @@
+Version 0.9.20
+==============
+Release date: September 8th 2022
+Contributors: chaot4, corrados, trebmuh, deva
+
+This release was originally intended as a bugfix release, but quite a few
+features also managed to find their way in.
+
+Noteworthy bugs that has been fixed:
+ - Software regression error in cymbal choke code has been fixed. So now
+   choking of cymbals using both directed chokes and after-touch midi
+   events work again as expected.
+ - A compilation error due to an update in LV2 API (we used an
+   obsolete LV2 type) has been fixed, so now compilation should work for
+   everybody again.
+ - Code can now properly be compiled with NSL support disabled at
+   configure time.
+ - Compilation with the modern gcc-11 compiler has been fixed.
+
+On top of this a lot of crash-bugs has been fixed.
+
+Thanks to corrados, this version adds support for midi input through
+the alsa seq driver for the command line version of drumgizmo. So now
+drumgizmo can be run from the commandline entirely without the need
+for jack.
+
+Compilation Bugs:
+ - Fix compilation with gcc-11
+ - Fix compilation issue when compiling without nls enabled.
+ - Remove sndfile.h from audiofile header
+ - Fix missing backslash in libdg includepaths
+ - Fix compiler warning.
+ - Add missing include
+ - Make configure fail if nls is enabled but gettext tools not found.
+
+Crash Bugs:
+  - Fix crash when loading a kit with more channels than the engine
+    was compiled for.
+  - Fix crash when loading Crocell kit in ardour (stack allocation
+    issue) - see Ardour bug report.
+    - Get rid of big stack allocation during resampler (re-)configuration.
+  - Prevent processing jack clients that are being deleted.
+  - Fix crash when pressing play while loading a drumkit.
+    - Skip events whose audio-files has not yet been loaded.
+  - Fix crash when doing async-load in cli.
+
+Other Bugs:
+ - Fixed directed-chokes regression error.
+ - Fix after-touch chokes regression error.
+ - Fix wrong sample selection with instruments having only two samples.
+ - Make aftertouch choke if velocities > 0 instead of == 0 as this
+   seem to be the vdrum vendor concensus.
+ - Clear all active events (ie. stop playing samples) when loading a new kit.
+ - Fix ALSA output frame size change.
+   - added getBufferSize function for alsa out
+
+Features:
+ - Record and measure real cymbal choke-time and use this value
+   instead of the current 68ms.
+   - Adjust choke ramp-down time to better reflect the actual
+     dampening time of a hand-dampened cymbal.
+ - Add support for triggering multiple instruments with one midi note.
+ - Add voice-limit parameters to cli
+ - Add setting for controlling ALSA periods to output module.
+ - Add ALSA MIDI seq input support
+
+Other:
+ - Add unit-test for EventsDS::clear() method.
+ - Add clear member function to EventsDS.
+ - Add assert to break infinite loop in case of a bug.
+ - Add -Wextra to debug compilation flags.
+ - Make it possible to (only) build unit-test in parrallel.
+ - Add dggui namespace to libdggui components.
+ - Split UI code into application/plugin UI and UI library.
+ - Run and fix unit-tests on windows.
+ - Make rcgen compile and work on windows again through autotools.
+ - Improve cocoa/macOS rendering speed by removing redraw on all events.
+ - Reduce UI window height to fit on low-res displays.
+
 Version 0.9.19
 ==============
 Release date: November 22nd 2020
