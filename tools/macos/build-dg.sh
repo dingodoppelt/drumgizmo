@@ -59,7 +59,8 @@ echo ==== Package pkgconfig ====
 
 if [ ! -f ${DOWNLOADS}/pkg-config-${PKG_CONFIG_VERSION}.tar.gz ]; then
   pushd ${DOWNLOADS}
-  curl -O https://pkg-config.freedesktop.org/releases/pkg-config-${PKG_CONFIG_VERSION}.tar.gz
+  curl -O https://pkg-config.freedesktop.org/releases/pkg-config-${PKG_CONFIG_VERSION}.tar.gz || \
+  curl -k -O https://drumgizmo.org/mirror/pkg-config-${PKG_CONFIG_VERSION}.tar.gz
   popd
 fi
 
@@ -81,7 +82,8 @@ echo ==== Package libogg ====
 
 if [ ! -f ${DOWNLOADS}/libogg-${LIBOGG_VERSION}.tar.gz ]; then
   pushd ${DOWNLOADS}
-  curl -O http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-${LIBOGG_VERSION}.tar.gz
+  curl -O http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-${LIBOGG_VERSION}.tar.gz || \
+  curl -k -O https://drumgizmo.org/mirror/libogg-${LIBOGG_VERSION}.tar.gz
   popd
 fi
 
@@ -103,7 +105,8 @@ echo ==== Package libvorbis ====
 
 if [ ! -f ${DOWNLOADS}/libvorbis-${LIBVORBIS_VERSION}.tar.gz ]; then
   pushd ${DOWNLOADS}
-  curl -O http://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${LIBVORBIS_VERSION}.tar.gz
+  curl -O http://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-${LIBVORBIS_VERSION}.tar.gz || \
+  curl -k -O https://drumgizmo.org/mirror/libvorbis-${LIBVORBIS_VERSION}.tar.gz
   popd
 fi
 
@@ -125,7 +128,8 @@ echo ==== Package flac ====
 
 if [ ! -f ${DOWNLOADS}/flac-${FLAC_VERSION}.tar.xz ]; then
   pushd ${DOWNLOADS}
-  curl -O http://ftp.osuosl.org/pub/xiph/releases/flac/flac-${FLAC_VERSION}.tar.xz
+  curl -O http://ftp.osuosl.org/pub/xiph/releases/flac/flac-${FLAC_VERSION}.tar.xz || \
+  curl -k -O https://drumgizmo.org/mirror/flac-${FLAC_VERSION}.tar.xz
   popd
 fi
 if [ ! -d flac-${FLAC_VERSION} ]; then
@@ -150,7 +154,8 @@ echo ==== Package libsndfile ====
 
 if [ ! -f ${DOWNLOADS}/libsndfile-${LIBSNDFILE_VERSION}.tar.gz ]; then
   pushd ${DOWNLOADS}
-  curl -O http://www.mega-nerd.com/libsndfile/files/libsndfile-${LIBSNDFILE_VERSION}.tar.gz
+  curl -O http://www.mega-nerd.com/libsndfile/files/libsndfile-${LIBSNDFILE_VERSION}.tar.gz || \
+  curl -k -O https://drumgizmo.org/mirror/libsndfile-${LIBSNDFILE_VERSION}.tar.gz
   popd
 fi
 
@@ -174,7 +179,8 @@ echo ==== Package zita-resampler ====
 
 if [ ! -f ${DOWNLOADS}/zita-resampler-${ZITA_RESAMPLER_VERSION}.tar.bz2 ]; then
   pushd ${DOWNLOADS}
-  curl -O http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-resampler-${ZITA_RESAMPLER_VERSION}.tar.bz2
+  curl -O http://kokkinizita.linuxaudio.org/linuxaudio/downloads/zita-resampler-${ZITA_RESAMPLER_VERSION}.tar.bz2 || \
+  curl -k -O https://drumgizmo.org/mirror/zita-resampler-${ZITA_RESAMPLER_VERSION}.tar.bz2
   popd
 fi
 
