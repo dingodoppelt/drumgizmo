@@ -45,27 +45,32 @@ bool MidiMapParser::parseFile(const std::string& filename)
 		constexpr int bad_value = 10000;
 		auto note = map_node.attribute("note").as_int(bad_value);
 		auto instr = map_node.attribute("instr").as_string();
-		if(std::string(instr) == "" || note == bad_value)
+		auto cc = map_node.attribute("cc").as_int(bad_value);
+        auto mode = map_node.attribute("mode").as_string();
+		if(note != bad_value)
+		{
+			if(instr !=  "" && cc ==  bad_value)
+			{
+				MidimapEntry entry{note, instr};
+				midimap.push_back(entry);
+				continue;
+			}
+			else if(cc != bad_value && instr == "")
+			{
+				if(mode == "") mode = "param";
+				MidiCCmapEntry entry{cc, note, mode};
+				ccmap.push_back(entry);
+				continue;
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else
 		{
 			continue;
 		}
-
-		MidimapEntry entry{note, instr};
-		midimap.push_back(entry);
-	}
-
-	for(pugi::xml_node ccmap_node : midimap_node.children("CCmap"))
-	{
-		constexpr int bad_value = 10000;
-		auto cc = ccmap_node.attribute("cc").as_int(bad_value);
-		auto note = ccmap_node.attribute("note").as_int(bad_value);
-		if(cc == bad_value || note == bad_value)
-		{
-			continue;
-		}
-
-		MidiCCmapEntry entry{cc, note};
-		ccmap.push_back(entry);
 	}
 
 	return true;

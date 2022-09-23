@@ -47,9 +47,9 @@ std::vector<int> MidiMapper::lookup(int note_id)
 	return instruments;
 }
 
-std::vector<int> MidiMapper::lookupCC(int cc_id)
+std::vector<MidiCCmapEntry> MidiMapper::lookupCC(int cc_id)
 {
-	std::vector<int> notes;
+	std::vector<MidiCCmapEntry> notes;
 
 	std::lock_guard<std::mutex> guard(mutex);
 
@@ -57,7 +57,7 @@ std::vector<int> MidiMapper::lookupCC(int cc_id)
 	{
 		if(map_entry.cc_id == cc_id)
 		{
-			notes.push_back(map_entry.note_id);
+			notes.push_back(map_entry);
 		}
 	}
 

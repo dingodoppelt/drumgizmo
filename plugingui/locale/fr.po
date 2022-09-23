@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: abouttab.cc:82
+#: abouttab.cc:84
 msgid ""
 "=============\n"
 "             About\n"
@@ -31,7 +31,7 @@ msgstr ""
 "=============\n"
 "\n"
 
-#: abouttab.cc:90
+#: abouttab.cc:92
 msgid ""
 "\n"
 "=============\n"
@@ -40,7 +40,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: abouttab.cc:99
+#: abouttab.cc:101
 msgid ""
 "\n"
 "=============\n"
@@ -54,7 +54,7 @@ msgstr ""
 "=============\n"
 "\n"
 
-#: abouttab.cc:108
+#: abouttab.cc:110
 msgid ""
 "\n"
 "=============\n"
@@ -68,7 +68,7 @@ msgstr ""
 "=============\n"
 "\n"
 
-#: abouttab.cc:117
+#: abouttab.cc:119
 msgid ""
 "\n"
 "=============\n"
@@ -596,19 +596,19 @@ msgstr "Messages :\n"
 msgid "No Kit Loaded"
 msgstr "pas de kit chargé"
 
-#: statusframecontent.cc:92 statusframecontent.cc:134
+#: statusframecontent.cc:93 statusframecontent.cc:136
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: statusframecontent.cc:95 statusframecontent.cc:137
+#: statusframecontent.cc:96 statusframecontent.cc:139
 msgid "Ready"
 msgstr "Prêt"
 
-#: statusframecontent.cc:98 statusframecontent.cc:140
+#: statusframecontent.cc:99 statusframecontent.cc:142
 msgid "Error"
 msgstr "Erreur"
 
-#: statusframecontent.cc:131
+#: statusframecontent.cc:132
 msgid "No Midimap Loaded"
 msgstr "Pas de midimap chargée"
 

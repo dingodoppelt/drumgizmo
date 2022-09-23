@@ -120,10 +120,12 @@ void AudioInputEngineMidi::processNote(const std::uint8_t* midi_buffer,
 		std::uint8_t intermediateBuffer[3];
 		auto notes = mmap.lookupCC(midi_buffer[1]);
 		intermediateBuffer[0] = NoteOn;
-		intermediateBuffer[2] = 127;
+		intermediateBuffer[2] = midi_buffer[2];
 		for(const auto& note_idx : notes)
 		{
-			intermediateBuffer[1] = (std::size_t)note_idx;
+			intermediateBuffer[1] = (std::size_t)note_idx.note_id;
+			if(note_idx.mode == "invparam") intermediateBuffer[2] = (midi_buffer[2] * -1) + 127;
+			if(note_idx.mode == "fixed") intermediateBuffer[2] = 127;
 			processNote(intermediateBuffer, 3, offset, events);
 		}
 		return;

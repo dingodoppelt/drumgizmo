@@ -41,6 +41,7 @@ struct MidiCCmapEntry
 {
 	int cc_id;
 	int note_id;
+    std::string mode;
 };
 
 using midimap_t = std::vector<MidimapEntry>;
@@ -52,7 +53,7 @@ class MidiMapper
 public:
 	//! Lookup note in map and returns the corresponding instrument index list.
 	std::vector<int> lookup(int note_id);
-	std::vector<int> lookupCC(int cc_id);
+	std::vector<MidiCCmapEntry> lookupCC(int cc_id);
 
 	//! Set new map sets.
 	void swap(instrmap_t& instrmap, midimap_t& midimap, ccmap_t& ccmap);
