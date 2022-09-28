@@ -122,6 +122,6 @@ void JackMidiInputEngine::process(jack_nframes_t num_frames)
 		jack_midi_event_get(&event, buffer, i);
 		processNote(event.buffer, event.size, event.time, events);
 	}
-	jack_midi_clear_buffer(buffer);
+
 	pos += num_frames;
 }
