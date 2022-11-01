@@ -16,6 +16,7 @@ mkdir -p actest
 cat << EOF > actest/configure.ac
 AC_INIT([actest], [1.0.0])
 AC_PROG_OBJCXX
+AC_OUTPUT([])
 EOF
 [ -f acinclude.m4 ] && rm acinclude.m4
 autoreconf -W error actest 2>/dev/null || echo "AC_DEFUN([AC_PROG_OBJCXX],[echo ' - ObjC++ hack - not support by this platform, but not needed either.'])" > acinclude.m4
