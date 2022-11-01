@@ -33,7 +33,8 @@ libdg_la_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/hugin -I$(top_srcdir)/pugixml/src \
 	$(SSEFLAGS) -I$(top_srcdir)/zita-resampler/libs \
-	$(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS)
+	$(SNDFILE_CFLAGS) $(PTHREAD_CFLAGS) \
+	-Wno-deprecated-declarations
 
 libdg_la_LIBADD = \
 	$(SNDFILE_LIBS) $(PTHREAD_LIBS) libzr.la libpugi.la
