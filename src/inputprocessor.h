@@ -30,13 +30,13 @@
 #include <list>
 #include <memory>
 
-#include <event.h>
 
 #include "drumkit.h"
 #include "events.h"
 #include "events_ds.h"
 #include "id.h"
 #include "inputfilter.h"
+#include "engineevent.h"
 
 struct Settings;
 class Random;

@@ -26,7 +26,7 @@
  */
 #pragma once
 
-#include <event.h>
+#include "engineevent.h"
 
 //! An abstract filter component for the InputProcessor class filter chain.
 class InputFilter

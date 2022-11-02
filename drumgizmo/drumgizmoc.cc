@@ -46,8 +46,6 @@
 #include "enginefactory.h"
 #include "bytesizeparser.h"
 
-#include "event.h"
-
 #include "nolocale.h"
 
 struct ParmToken

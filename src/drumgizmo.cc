@@ -32,7 +32,6 @@
 #include <cstring>
 #include <mutex>
 
-#include <event.h>
 #include <audiotypes.h>
 #include <config.h>
 

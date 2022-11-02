@@ -27,7 +27,6 @@
 #pragma once
 #include <string>
 
-#include "event.h"
 #include "audioinputengine.h"
 
 class TestInputEngine

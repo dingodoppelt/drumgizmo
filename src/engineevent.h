@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            event.h
+ *            engineevent.h
  *
  *  Fri Jun  3 12:10:50 CEST 2011
  *  Copyright 2011 Bent Bisballe Nyeng

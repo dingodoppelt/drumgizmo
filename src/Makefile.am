@@ -107,7 +107,7 @@ EXTRA_DIST = \
 	drumgizmoconf.h \
 	drumkit.h \
 	drumkitloader.h \
-	event.h \
+	engineevent.h \
 	events.h \
 	events_ds.h \
 	grid.h \
