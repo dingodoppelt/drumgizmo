@@ -84,6 +84,7 @@ const Channel* PowerList::getMasterChannel()
 			af->load(nullptr, LOAD_SIZE);
 
 			float silence{0.f};
+			(void)silence;
 			std::size_t silence_length{4u};
 			for (auto s = af->size; s > 0 && s > af->size - silence_length; --s)
 			{
