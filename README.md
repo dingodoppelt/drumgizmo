@@ -1,3 +1,4 @@
+[![build drumgizmo for linux x86_64](https://github.com/dingodoppelt/drumgizmo/actions/workflows/build.yml/badge.svg)](https://github.com/dingodoppelt/drumgizmo/actions/workflows/build.yml)
 # THIS IS A FORK OF THE ORIGINAL DRUMGIZMO CODE WITH SMALL ADDITIONS
 ## IF YOU'RE LOOKING FOR THE ORIGINAL DRUMGIZMO CODE VISIT THE OFFICIAL REPOSITORIES @ http://git.drumgizmo.org/
 ### If you're looking for general information about DrumGizmo check out the official website: https://drumgizmo.org/
