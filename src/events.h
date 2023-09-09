@@ -84,10 +84,11 @@ public:
 	{
 	}
 
-	bool rampdownInProgress() const
+	bool hasRampdown() const
 	{
 		return rampdown_count != -1;
 	}
+
 
 	cacheid_t cache_id;
 	sample_t* buffer;

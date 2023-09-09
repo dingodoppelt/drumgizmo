@@ -26,14 +26,14 @@
  */
 #pragma once
 
-#include <audioinputenginemidi.h>
-#include <midimapper.h>
-#include <midimapparser.h>
 #include <string>
 #include <vector>
 
-#include <event.h>
 #include <smf.h>
+
+#include <audioinputenginemidi.h>
+#include <midimapper.h>
+#include <midimapparser.h>
 
 class MidifileInputEngine
 	: public AudioInputEngineMidi

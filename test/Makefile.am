@@ -51,7 +51,8 @@ audiocache_CXXFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN \
 	$(PTHREAD_CFLAGS) \
-	$(SNDFILE_CFLAGS)
+	$(SNDFILE_CFLAGS)  \
+	-Wno-deprecated-declarations
 audiocache_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocache_SOURCES = \
 	$(top_srcdir)/src/audiocache.cc \
@@ -72,7 +73,8 @@ audiocachefile_CXXFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN \
 	$(PTHREAD_CFLAGS) \
-	$(SNDFILE_CFLAGS)
+	$(SNDFILE_CFLAGS) \
+	-Wno-deprecated-declarations
 audiocachefile_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocachefile_SOURCES = \
 	$(top_srcdir)/src/audiocachefile.cc \
@@ -102,7 +104,8 @@ audiocacheeventhandler_CXXFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin -DDISABLE_HUGIN \
 	$(PTHREAD_CFLAGS) \
-	$(SNDFILE_CFLAGS)
+	$(SNDFILE_CFLAGS) \
+	-Wno-deprecated-declarations
 audiocacheeventhandler_LDFLAGS = $(PTHREAD_LIBS) $(SNDFILE_LIBS)
 audiocacheeventhandler_SOURCES = \
 	$(top_srcdir)/src/audiocacheeventhandler.cc \
@@ -218,7 +221,8 @@ semaphoretest_CXXFLAGS = \
 	$(DEBUG_FLAGS) \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin \
-	$(PTHREAD_CFLAGS)
+	$(PTHREAD_CFLAGS) \
+	-Wno-deprecated-declarations
 semaphoretest_LDFLAGS = $(PTHREAD_LIBS)
 semaphoretest_SOURCES = \
 	$(top_srcdir)/hugin/hugin.c \

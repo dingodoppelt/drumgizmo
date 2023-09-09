@@ -139,20 +139,18 @@ std::size_t InputProcessor::getLatency() const
 	return latency;
 }
 
-//! Applies choke with rampdown time in ms to event starting at offset.
-static void applyChoke(Settings& settings, SampleEvent& event,
-                       double length_ms, timepos_t offset)
+void InputProcessor::applyChoke(Settings& settings, SampleEvent& event,
+                                double length_ms, timepos_t offset, std::size_t pos)
 {
 	std::size_t ramp_length = (length_ms / 1000.) * settings.samplerate.load();
 	event.rampdown_count = ramp_length;
-	event.rampdown_offset = offset;
+	event.rampdown_offset = offset + pos;
 	event.ramp_length = ramp_length;
 }
 
-//! Applies choke group actions to active events based on the input event
-static void applyChokeGroup(Settings& settings, DrumKit& kit,
-                            Instrument& instr, event_t& event,
-                            EventsDS& events_ds)
+void InputProcessor::applyChokeGroup(Settings& settings, DrumKit& kit,
+                                     Instrument& instr, event_t& event,
+                                     EventsDS& events_ds, std::size_t pos)
 {
 	std::size_t instrument_id = event.instrument;
 	if(instr.getGroup() == "")
@@ -175,16 +173,15 @@ static void applyChokeGroup(Settings& settings, DrumKit& kit,
 			   event_sample.rampdown_count == -1) // Only if not already ramping.
 			{
 				// Fixed group rampdown time of 68ms, independent of samplerate
-				applyChoke(settings, event_sample, 68, event.offset);
+				applyChoke(settings, event_sample, 68, event.offset, pos);
 			}
 		}
 	}
 }
 
-//! Applies directed choke actions to active events based on the input event
-static void applyDirectedChoke(Settings& settings, DrumKit& kit,
-                               Instrument& instr, event_t& event,
-                               EventsDS& events_ds)
+void InputProcessor::applyDirectedChoke(Settings& settings, DrumKit& kit,
+                                        Instrument& instr, event_t& event,
+                                        EventsDS& events_ds, std::size_t pos)
 {
 	for(const auto& choke : instr.getChokes())
 	{
@@ -202,7 +199,7 @@ static void applyDirectedChoke(Settings& settings, DrumKit& kit,
 				   event_sample.rampdown_count == -1) // Only if not already ramping.
 				{
 					// choke.choketime is in ms
-					applyChoke(settings, event_sample, choke.choketime, event.offset);
+					applyChoke(settings, event_sample, choke.choketime, event.offset, pos);
 				}
 			}
 		}
@@ -245,10 +242,10 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 	}
 
 	// Mute other instruments in the same instrument/choke group
-	applyChokeGroup(settings, kit, *instr, event, events_ds);
+	applyChokeGroup(settings, kit, *instr, event, events_ds, pos);
 
 	// Apply directed chokes to mute other instruments if needed
-	applyDirectedChoke(settings, kit, *instr, event, events_ds);
+	applyDirectedChoke(settings, kit, *instr, event, events_ds, pos);
 
 	auto const power_max = instr->getMaxPower();
 	auto const power_min = instr->getMinPower();
@@ -266,7 +263,7 @@ bool InputProcessor::processOnset(event_t& event, std::size_t pos,
 	{
 		limitVoices(instrument_id,
 		            settings.voice_limit_max.load(),
-		            settings.voice_limit_rampdown.load());
+		            settings.voice_limit_rampdown.load(), pos);
 	}
 
 	//Given that audio files could be invalid, maybe we must add the new
@@ -356,7 +353,7 @@ bool InputProcessor::processChoke(event_t& event,
 			   event_sample.rampdown_count == -1) // Only if not already ramping.
 			{
 				// Fixed group rampdown time of 68ms, independent of samplerate
-				applyChoke(settings, event_sample, 450, event.offset);
+				applyChoke(settings, event_sample, 450, event.offset, pos);
 			}
 		}
 	}
@@ -397,7 +394,7 @@ bool InputProcessor::processStop(event_t& event)
 
 void InputProcessor::limitVoices(std::size_t instrument_id,
                                  std::size_t max_voices,
-                                 float rampdown_time)
+                                 float rampdown_time, std::size_t pos)
 {
 	const auto& group_ids=events_ds.getSampleEventGroupIDsOf(instrument_id);
 
@@ -418,7 +415,7 @@ void InputProcessor::limitVoices(std::size_t instrument_id,
 			}
 
 			const auto&	sample=events_ds.get<SampleEvent>(event_ids[0]);
-			return !sample.rampdownInProgress();
+			return !sample.hasRampdown();
 		};
 
 	EventGroupIDs non_ramping;
@@ -432,7 +429,6 @@ void InputProcessor::limitVoices(std::size_t instrument_id,
 	}
 
 	//Let us get the eldest...
-	//TODO: where is the playhead? Should we add it to the offset?
 	auto compare_event_offsets =
 		[this](EventGroupID a, EventGroupID b)
 		{
@@ -456,6 +452,6 @@ void InputProcessor::limitVoices(std::size_t instrument_id,
 	for(const auto& event_id : event_ids)
 	{
 		auto& sample=events_ds.get<SampleEvent>(event_id);
-		applyChoke(settings, sample, rampdown_time, sample.offset);
+		applyChoke(settings, sample, rampdown_time, sample.offset, pos);
 	}
 }

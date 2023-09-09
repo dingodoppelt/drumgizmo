@@ -30,13 +30,13 @@
 #include <list>
 #include <memory>
 
-#include <event.h>
 
 #include "drumkit.h"
 #include "events.h"
 #include "events_ds.h"
 #include "id.h"
 #include "inputfilter.h"
+#include "engineevent.h"
 
 struct Settings;
 class Random;
@@ -64,10 +64,23 @@ private:
 	bool processChoke(event_t& event, std::size_t pos, double resample_ratio);
 	bool processStop(event_t& event);
 
+	//! Applies choke with rampdown time in ms to event starting at offset.
+	void applyChoke(Settings& settings, SampleEvent& event,
+	                double length_ms, timepos_t offset, std::size_t pos);
+
+	//! Applies choke group actions to active events based on the input event
+	void applyChokeGroup(Settings& settings, DrumKit& kit,
+	                     Instrument& instr, event_t& event,
+	                     EventsDS& events_ds, std::size_t pos);
+	//! Applies directed choke actions to active events based on the input event
+	void applyDirectedChoke(Settings& settings, DrumKit& kit,
+	                        Instrument& instr, event_t& event,
+	                        EventsDS& events_ds, std::size_t pos);
+
 	//! Ramps down samples from events_ds is there are more groups playing than
 	//! max_voices for a given instrument.
 	void limitVoices(std::size_t instrument_id, std::size_t max_voices,
-	                 float rampdown_time);
+	                 float rampdown_time, std::size_t pos);
 
 	std::vector<std::unique_ptr<InputFilter>> filters;
 

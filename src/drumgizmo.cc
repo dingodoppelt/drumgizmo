@@ -32,7 +32,6 @@
 #include <cstring>
 #include <mutex>
 
-#include <event.h>
 #include <audiotypes.h>
 #include <config.h>
 
@@ -312,7 +311,7 @@ repeat:
 		assert(t >= 0);
 		assert(t < evt.buffer_size - evt.buffer_ptr);
 
-		if(evt.rampdownInProgress() && evt.rampdown_offset < (evt.t + t) &&
+		if(evt.hasRampdown() && evt.rampdown_offset < (pos + t) &&
 		   evt.rampdown_count > 0)
 		{
 			if(evt.ramp_length > 0)

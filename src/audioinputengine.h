@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-#include <event.h>
+#include "engineevent.h"
 
 #include "instrument.h"
 
