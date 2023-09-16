@@ -65,7 +65,9 @@ DrumGizmoPlugin::DrumGizmoPlugin()
 	init();
 
 	drumgizmo = std::make_shared<DrumGizmo>(settings, output, input);
+#ifdef ENABLE_HEADLESS
 	resizeWindow(GUI::MainWindow::main_width, GUI::MainWindow::main_height);
+#endif
 	drumgizmo->setFreeWheel(true);
 	drumgizmo->setSamplerate(44100);
 	drumgizmo->setFrameSize(2048);
@@ -172,9 +174,13 @@ void DrumGizmoPlugin::process(size_t pos,
 
 bool DrumGizmoPlugin::hasInlineGUI()
 {
+#ifdef ENABLE_HEADLESS
+	return false;
+#else
 	return true;
+#endif
 }
-
+#ifdef ENABLE_HEADLESS
 class InlinePixelBufferAlpha
 	: public dggui::PixelBufferAlpha
 {
@@ -309,12 +315,16 @@ void DrumGizmoPlugin::onInlineRedraw(std::size_t width,
 		}
 	}
 }
-
+#endif
 bool DrumGizmoPlugin::hasGUI()
 {
+#ifdef ENABLE_HEADLESS
+	return false;
+#else
 	return true;
+#endif
 }
-
+#ifdef ENABLE_HEADLESS
 void* DrumGizmoPlugin::createWindow(void* parent)
 {
 	plugin_gui = std::make_shared<GUI::MainWindow>(settings, parent);
@@ -347,7 +357,7 @@ void DrumGizmoPlugin::onIdle()
 void DrumGizmoPlugin::closeWindow()
 {
 }
-
+#endif
 
 //
 // Input Engine

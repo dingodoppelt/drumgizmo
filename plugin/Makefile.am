@@ -20,10 +20,11 @@ drumgizmo_la_CXXFLAGS = -DLV2 -DLV2_PLUGIN_URI=\"http://drumgizmo.org/lv2\" \
 	$(SNDFILE_CFLAGS) \
 	-I$(top_srcdir)/plugin/plugingizmo \
 	-I$(top_srcdir)/ \
-	-I$(top_srcdir)/plugingui \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/hugin
-
+if !ENABLE_HEADLESS
+drumgizmo_la_CXXFLAGS += -I$(top_srcdir)/plugingui
+endif
 drumgizmo_la_CFLAGS = -fvisibility=hidden
 
 drumgizmo_la_SOURCES = \
@@ -36,10 +37,11 @@ drumgizmo_la_LDFLAGS = -shared -module -avoid-version \
 	-no-undefined -export-symbols $(top_srcdir)/plugin/drumgizmo_lv2.sym
 
 drumgizmo_la_LIBADD = $(LV2_LIBS) \
-	$(top_builddir)/plugingui/libplugingui.la \
 	$(top_builddir)/src/libdg.la \
 	$(top_builddir)/src/libnls.la
-
+if !ENABLE_HEADLESS
+drumgizmo_la_LIBADD += $(top_builddir)/plugingui/libplugingui.la
+endif
 ttlgen_CPPFLAGS = \
 	$(DEBUG_FLAGS) \
 	$(DL_CFLAGS) -I$(top_srcdir)/plugin/plugingizmo
@@ -69,6 +71,10 @@ endif
 
 if ENABLE_PUGL_COCOA
 UITYPE=CocoaUI
+endif
+
+if ENABLE_HEADLESS
+UITYPE=noUI
 endif
 
 ttlgen_verbose = $(ttlgen_verbose_@AM_V@)

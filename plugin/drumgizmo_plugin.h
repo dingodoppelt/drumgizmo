@@ -41,13 +41,13 @@
 #include <drumgizmo.h>
 #include <audioinputenginemidi.h>
 #include <audiooutputengine.h>
+#ifdef ENABLE_HEADLESS
 #include <mainwindow.h>
-
 #include <dggui/uitranslation.h>
 #include <dggui/texturedbox.h>
 #include <dggui/imagecache.h>
 #include <dggui/image.h>
-
+#endif
 class DrumGizmoPlugin
 #ifdef LV2
 	: public PluginLV2
@@ -93,11 +93,12 @@ public:
 	             const std::vector<const float*>& input_samples,
 	             const std::vector<float*>& output_samples,
 	             size_t count) override;
-
+	bool hasInlineGUI() override;
+	bool hasGUI() override;
+#ifdef ENABLE_HEADLESS
 	//
 	// Inline GUI
 	//
-	bool hasInlineGUI() override;
 	void onInlineRedraw(std::size_t width,
 	                    std::size_t max_height,
 	                    InlineDrawContext& context) override;
@@ -105,14 +106,13 @@ public:
 	//
 	// GUI
 	//
-	bool hasGUI() override;
 	void* createWindow(void *parent) override;
 	void onDestroyWindow() override;
 	void onShowWindow() override;
 	void onHideWindow() override;
 	void onIdle() override;
 	void closeWindow() override;
-
+#endif
 private:
 
 	class Input
@@ -187,7 +187,7 @@ private:
 	Settings settings;
 	ConfigStringIO config_string_io;
 	SettingsGetter settingsGetter{settings};
-
+#ifdef ENABLE_HEADLESS
 	dggui::ImageCache imageCache;
 	dggui::TexturedBox box{imageCache, ":resources/progress.png",
 			0, 0, // atlas offset (x, y)
@@ -210,7 +210,6 @@ private:
 			11, 0, 0}; // dy1, dy2, dy3
 
 	std::shared_ptr<GUI::MainWindow> plugin_gui;
-	std::shared_ptr<DrumGizmo> drumgizmo;
 
 	std::uint32_t inlineDisplayBuffer[1024*1024];
 	dggui::Image inline_display_image{":resources/logo.png"};
@@ -219,4 +218,6 @@ private:
 #ifdef WITH_NLS
 	dggui::UITranslation translation;
 #endif // WITH_NLS
+#endif
+	std::shared_ptr<DrumGizmo> drumgizmo;
 };

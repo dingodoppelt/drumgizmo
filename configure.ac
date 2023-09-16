@@ -168,7 +168,7 @@ dnl Check for GUI backend
 dnl ===========================
 AC_CANONICAL_HOST
 AC_ARG_ENABLE([gui],
-	AS_HELP_STRING([--enable-gui[=backend]], [Use specified gui backend. Can be x11, win32, cocoa, pugl-x11, pugl-win32, pugl-cocoa or auto [default=auto]]),,
+	AS_HELP_STRING([--enable-gui[=backend]], [Use specified gui backend. Can be x11, win32, cocoa, pugl-x11, pugl-win32, pugl-cocoa, headless or auto [default=auto]]),,
         [enable_gui="auto"])
 
 AS_IF([test "x$enable_gui" = "xyes"], [enable_gui="auto"])
@@ -220,6 +220,11 @@ AS_IF(
   GUI_CPPFLAGS="-DUI_PUGL -DPUGL_HAVE_GL"
   GUI_LIBS="-framework OpenGL -framework Cocoa"],
 
+  [test "x$enable_gui" = "xheadless"],
+  [AC_MSG_RESULT([Setting gui backend to headless])
+  GUI_CPPFLAGS=""
+  GUI_LIBS=""],
+
   AC_MSG_ERROR([*** No GUI backend has been selected ***])
 )
 
@@ -232,6 +237,7 @@ AM_CONDITIONAL([ENABLE_COCOA], [test "x$enable_gui" = "xcocoa"])
 AM_CONDITIONAL([ENABLE_PUGL_X11], [test "x$enable_gui" = "xpugl-x11"])
 AM_CONDITIONAL([ENABLE_PUGL_WIN32], [test "x$enable_gui" = "xpugl-win32"])
 AM_CONDITIONAL([ENABLE_PUGL_COCOA], [test "x$enable_gui" = "xpugl-cocoa"])
+AM_CONDITIONAL([ENABLE_HEADLESS], [test "x$enable_gui" = "xheadless"])
 
 dnl ===========================
 dnl Custom number of outputs?
@@ -738,13 +744,7 @@ AC_CONFIG_FILES(
 	src/Makefile
 	plugin/Makefile
 	plugin/vst/Makefile
-	dggui/Makefile
-	plugingui/Makefile
-	plugingui/locale/Makefile
 	man/Makefile
-	test/Makefile
-	test/dgreftest/Makefile
-	test/uitests/Makefile
 	drumgizmo/Makefile)
 
 AC_OUTPUT()

@@ -1,6 +1,10 @@
 AUTOMAKE_OPTIONS = gnu
-SUBDIRS = tools src dggui plugingui plugin drumgizmo man test
-DISTDIRS = tools src dggui plugingui plugin drumgizmo man test
+SUBDIRS = tools src plugin drumgizmo
+DISTDIRS = tools src plugin drumgizmo
+if !ENABLE_HEADLESS
+SUBDIRS += dggui plugingui test man
+DISTDIRS += dggui plugingui test man
+endif
 
 EXTRA_DIST = \
 	version.h \
@@ -16,7 +20,6 @@ EXTRA_DIST = \
 \
 	getoptpp/getoptpp.hpp \
 \
-	dggui/lodepng/lodepng.h \
 \
 	pugixml/src/pugixml.hpp \
 	pugixml/src/pugiconfig.hpp \
@@ -25,7 +28,7 @@ EXTRA_DIST = \
 	zita-resampler/libs/resampler.cc \
 	zita-resampler/libs/resampler-table.cc \
 	zita-resampler/libs/zita-resampler/resampler-table.h \
-	zita-resampler/libs/zita-resampler/resampler.h \
-\
-	test/uunit/uunit.h \
-	test/uunit/uunit.cc
+	zita-resampler/libs/zita-resampler/resampler.h
+if !ENABLE_HEADLESS
+EXTRA_DIST += dggui/lodepng/lodepng.h test/uunit/uunit.h test/uunit/uunit.cc
+endif
