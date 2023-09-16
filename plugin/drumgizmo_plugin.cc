@@ -174,11 +174,7 @@ void DrumGizmoPlugin::process(size_t pos,
 
 bool DrumGizmoPlugin::hasInlineGUI()
 {
-#ifdef ENABLE_HEADLESS
-	return false;
-#else
 	return true;
-#endif
 }
 #ifdef ENABLE_HEADLESS
 class InlinePixelBufferAlpha
